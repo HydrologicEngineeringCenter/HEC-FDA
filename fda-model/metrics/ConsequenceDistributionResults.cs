@@ -133,60 +133,60 @@ namespace HEC.FDA.Model.metrics
         /// </summary>
         /// <param name="damageCategory"></param> either residential, commercial, etc...the default is null
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
-        /// <param name="impactAreaID"></param> the default is the null value -999
+        /// <param name="impactAreaID"></param> the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
         /// <returns></returns>The mean of consequences
-        public double MeanDamage(string damageCategory = null, string assetCategory = null, int impactAreaID = -999)
+        public double MeanDamage(string damageCategory = null, string assetCategory = null, int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
         {
             double consequenceValue = 0;
             foreach (ConsequenceDistributionResult consequenceResult in _consequenceResultList)
             {
-                if (damageCategory == null && assetCategory == null && impactAreaID == -999)
+                if (damageCategory == null && assetCategory == null && impactAreaID == utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
                 {
                     consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
                 }
-                if (damageCategory != null && assetCategory == null && impactAreaID == -999)
+                if (damageCategory != null && assetCategory == null && impactAreaID == utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
                 {
                     if (damageCategory.Equals(consequenceResult.DamageCategory))
                     {
                         consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
                     }
                 }
-                if (damageCategory == null && assetCategory != null && impactAreaID == -999)
+                if (damageCategory == null && assetCategory != null && impactAreaID == utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
                 {
                     if (assetCategory.Equals(consequenceResult.AssetCategory))
                     {
                         consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
                     }
                 }
-                if (damageCategory == null && assetCategory == null && impactAreaID != -999)
+                if (damageCategory == null && assetCategory == null && impactAreaID != utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
                 {
                     if (impactAreaID.Equals(consequenceResult.RegionID))
                     {
                         consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
                     }
                 }
-                if (damageCategory != null && assetCategory != null && impactAreaID == -999)
+                if (damageCategory != null && assetCategory != null && impactAreaID == utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
                 {
                     if (damageCategory.Equals(consequenceResult.DamageCategory) && assetCategory.Equals(consequenceResult.AssetCategory))
                     {
                         consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
                     }
                 }
-                if (damageCategory != null && assetCategory == null && impactAreaID != -999)
+                if (damageCategory != null && assetCategory == null && impactAreaID != utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
                 {
                     if (damageCategory.Equals(consequenceResult.DamageCategory) && impactAreaID.Equals(consequenceResult.RegionID))
                     {
                         consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
                     }
                 }
-                if (damageCategory == null && assetCategory != null && impactAreaID != -999)
+                if (damageCategory == null && assetCategory != null && impactAreaID != utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
                 {
                     if (assetCategory.Equals(consequenceResult.AssetCategory) && impactAreaID.Equals(consequenceResult.RegionID))
                     {
                         consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
                     }
                 }
-                if (damageCategory != null && assetCategory != null && impactAreaID != -999)
+                if (damageCategory != null && assetCategory != null && impactAreaID != utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
                 {
                     return GetConsequenceResult(damageCategory, assetCategory, impactAreaID).MeanExpectedAnnualConsequences();
                 }
@@ -202,60 +202,60 @@ namespace HEC.FDA.Model.metrics
         /// <param name="damageCategory"></param> either residential, commercial, etc....the default is null
         /// <param name="exceedanceProbability"></param>
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
-        /// <param name="impactAreaID"></param>the default is the null value -999
+        /// <param name="impactAreaID"></param>the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
         /// <returns></returns>the level of consequences exceeded by the specified probability 
-        public double ConsequenceExceededWithProbabilityQ(double exceedanceProbability, string damageCategory = null, string assetCategory = null, int impactAreaID = -999)
+        public double ConsequenceExceededWithProbabilityQ(double exceedanceProbability, string damageCategory = null, string assetCategory = null, int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
         {
             double consequenceValue = 0;
             foreach (ConsequenceDistributionResult consequenceResult in _consequenceResultList)
             {
-                if (damageCategory == null && assetCategory == null && impactAreaID == -999)
+                if (damageCategory == null && assetCategory == null && impactAreaID == utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
                 {
                     consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
                 }
-                if (damageCategory != null && assetCategory == null && impactAreaID == -999)
+                if (damageCategory != null && assetCategory == null && impactAreaID == utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
                 {
                     if (damageCategory.Equals(consequenceResult.DamageCategory))
                     {
                         consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
                     }
                 }
-                if (damageCategory == null && assetCategory != null && impactAreaID == -999)
+                if (damageCategory == null && assetCategory != null && impactAreaID == utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
                 {
                     if (assetCategory.Equals(consequenceResult.AssetCategory))
                     {
                         consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
                     }
                 }
-                if (damageCategory == null && assetCategory == null && impactAreaID != -999)
+                if (damageCategory == null && assetCategory == null && impactAreaID != utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
                 {
                     if (impactAreaID.Equals(consequenceResult.RegionID))
                     {
                         consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
                     }
                 }
-                if (damageCategory != null && assetCategory != null && impactAreaID == -999)
+                if (damageCategory != null && assetCategory != null && impactAreaID == utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
                 {
                     if (damageCategory.Equals(consequenceResult.DamageCategory) && assetCategory.Equals(consequenceResult.AssetCategory))
                     {
                         consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
                     }
                 }
-                if (damageCategory != null && assetCategory == null && impactAreaID != -999)
+                if (damageCategory != null && assetCategory == null && impactAreaID != utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
                 {
                     if (damageCategory.Equals(consequenceResult.DamageCategory) && impactAreaID.Equals(consequenceResult.RegionID))
                     {
                         consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
                     }
                 }
-                if (damageCategory == null && assetCategory != null && impactAreaID != -999)
+                if (damageCategory == null && assetCategory != null && impactAreaID != utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
                 {
                     if (assetCategory.Equals(consequenceResult.AssetCategory) && impactAreaID.Equals(consequenceResult.RegionID))
                     {
                         consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
                     }
                 }
-                if (damageCategory != null && assetCategory != null && impactAreaID != -999)
+                if (damageCategory != null && assetCategory != null && impactAreaID != utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
                 {
                     return GetConsequenceResult(damageCategory, assetCategory, impactAreaID).ConsequenceExceededWithProbabilityQ(exceedanceProbability);
                 }
@@ -265,13 +265,13 @@ namespace HEC.FDA.Model.metrics
         /// <summary>
         /// This method returns a consequence result for the given damage category, asset category, and impact area 
         /// Impact area ID is used for alternative and alternative comparison reports 
-        /// Impact area ID is -999 otherwise 
+        /// Impact area ID is utilities.IntegerConstants.DEFAULT_MISSING_VALUE otherwise 
         /// </summary>
         /// <param name="damageCategory"></param>
         /// <param name="assetCategory"></param>
         /// <param name="impactAreaID"></param>
         /// <returns></returns>
-        public ConsequenceDistributionResult GetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID = -999)
+        public ConsequenceDistributionResult GetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
         {
             //foreach (ConsequenceDistributionResult damageResult in _consequenceResultList)
             for (int i = 0; i < _consequenceResultList.Count; i++)
@@ -327,60 +327,60 @@ namespace HEC.FDA.Model.metrics
         /// </summary>
         /// <param name="damageCategory"></param> The default is null 
         /// <param name="assetCategory"></param> The default is null 
-        /// <param name="impactAreaID"></param> The default is a null value (-999)
+        /// <param name="impactAreaID"></param> The default is a null value (utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
         /// <returns></returns> Aggregated consequences histogram 
-        public IHistogram GetConsequenceResultsHistogram(string damageCategory = null, string assetCategory = null, int impactAreaID = -999)
+        public IHistogram GetConsequenceResultsHistogram(string damageCategory = null, string assetCategory = null, int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
         {
             List<IHistogram> histograms = new List<IHistogram>();
             foreach (ConsequenceDistributionResult consequenceResult in _consequenceResultList)
             {
-                if (damageCategory == null && assetCategory == null && impactAreaID == -999)
+                if (damageCategory == null && assetCategory == null && impactAreaID == utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
                 {
                     histograms.Add(consequenceResult.ConsequenceHistogram);
                 }
-                if (damageCategory != null && assetCategory == null && impactAreaID == -999)
+                if (damageCategory != null && assetCategory == null && impactAreaID == utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
                 {
                     if (damageCategory.Equals(consequenceResult.DamageCategory))
                     {
                         histograms.Add(consequenceResult.ConsequenceHistogram);
                     }
                 }
-                if (damageCategory == null && assetCategory != null && impactAreaID == -999)
+                if (damageCategory == null && assetCategory != null && impactAreaID == utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
                 {
                     if (assetCategory.Equals(consequenceResult.AssetCategory))
                     {
                         histograms.Add(consequenceResult.ConsequenceHistogram);
                     }
                 }
-                if (damageCategory == null && assetCategory == null && impactAreaID != -999)
+                if (damageCategory == null && assetCategory == null && impactAreaID != utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
                 {
                     if (impactAreaID.Equals(consequenceResult.RegionID))
                     {
                         histograms.Add(consequenceResult.ConsequenceHistogram);
                     }
                 }
-                if (damageCategory != null && assetCategory != null && impactAreaID == -999)
+                if (damageCategory != null && assetCategory != null && impactAreaID == utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
                 {
                     if (damageCategory.Equals(consequenceResult.DamageCategory) && assetCategory.Equals(consequenceResult.AssetCategory))
                     {
                         histograms.Add(consequenceResult.ConsequenceHistogram);
                     }
                 }
-                if (damageCategory != null && assetCategory == null && impactAreaID != -999)
+                if (damageCategory != null && assetCategory == null && impactAreaID != utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
                 {
                     if (damageCategory.Equals(consequenceResult.DamageCategory) && impactAreaID.Equals(consequenceResult.RegionID))
                     {
                         histograms.Add(consequenceResult.ConsequenceHistogram);
                     }
                 }
-                if (damageCategory == null && assetCategory != null && impactAreaID != -999)
+                if (damageCategory == null && assetCategory != null && impactAreaID != utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
                 {
                     if (assetCategory.Equals(consequenceResult.AssetCategory) && impactAreaID.Equals(consequenceResult.RegionID))
                     {
                         histograms.Add(consequenceResult.ConsequenceHistogram);
                     }
                 }
-                if (damageCategory != null && assetCategory != null && impactAreaID != -999)
+                if (damageCategory != null && assetCategory != null && impactAreaID != utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
                 {
                     ConsequenceDistributionResult consequence = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
                     return consequence.ConsequenceHistogram;
