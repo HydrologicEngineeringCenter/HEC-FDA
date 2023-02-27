@@ -17,7 +17,7 @@ namespace HEC.FDA.Model.metrics
         private IHistogram _consequenceHistogram;
         private string _damageCategory;
         private string _assetCategory;
-        private int _regionID = -999;
+        private int _regionID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE;
         private ConvergenceCriteria _convergenceCriteria;
         private bool _isNull;
 
