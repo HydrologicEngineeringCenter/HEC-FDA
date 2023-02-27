@@ -118,7 +118,7 @@ namespace HEC.FDA.Model.alternatives
                     //I must be able to handle a null ConsequenceDistributionResult in this method to handle uneven results
                     //such as there being base year results for a particular damage category asset category combination but none for the future year
                     //that is unlikely but reasonable 
-                    ConsequenceDistributionResult aaeqResult = IterateOnAAEQ(baseYearDamageResult, mlfYearDamageResult, baseYear, futureYear, periodOfAnalysis, discountRate, randomProvider, false);
+                    SingleEmpiricalDistributionOfConsequences aaeqResult = IterateOnAAEQ(baseYearDamageResult, mlfYearDamageResult, baseYear, futureYear, periodOfAnalysis, discountRate, randomProvider, false);
 
                     //to keep track of having processed most likely future year results 
                     //because there could be more most likely future year results than base year results 
@@ -148,7 +148,7 @@ namespace HEC.FDA.Model.alternatives
                         ConsequenceDistributionResult baseYearDamageResult = baseYearResults.ConsequenceResults.GetConsequenceResult(mlfYearDamageResult.DamageCategory, mlfYearDamageResult.AssetCategory, mlfYearDamageResult.RegionID);
                         //I must be able to handle a null ConsequenceDistributionResult here. We are unlikely to have a baseYearDamageResult that matches the mlfYearDamageResult if we got to this point. 
                         //The assumption must be zero damage in the base year 
-                        ConsequenceDistributionResult aaeqResult = IterateOnAAEQ(baseYearDamageResult, mlfYearDamageResult, baseYear, futureYear, periodOfAnalysis, discountRate, randomProvider);
+                        SingleEmpiricalDistributionOfConsequences aaeqResult = IterateOnAAEQ(baseYearDamageResult, mlfYearDamageResult, baseYear, futureYear, periodOfAnalysis, discountRate, randomProvider);
 
                         //our aaeq result is complete 
                         alternativeResults.AddConsequenceResults(aaeqResult);
@@ -186,7 +186,7 @@ namespace HEC.FDA.Model.alternatives
                         ConsequenceDistributionResult baseYearDamageResult = baseYearResults.ConsequenceResults.GetConsequenceResult(futureYearDamageResult.DamageCategory, futureYearDamageResult.AssetCategory, futureYearDamageResult.RegionID);
                         //I must be able to handle a consequence distribution result with zero damage in this method 
                         //baseYearDamageResult is probably zero damage 
-                        ConsequenceDistributionResult aaeqResult = IterateOnAAEQ(baseYearDamageResult, futureYearDamageResult, baseYear, futureYear, periodOfAnalysis, discountRate, randomProvider);
+                        SingleEmpiricalDistributionOfConsequences aaeqResult = IterateOnAAEQ(baseYearDamageResult, futureYearDamageResult, baseYear, futureYear, periodOfAnalysis, discountRate, randomProvider);
 
                         //to keep track of base year damage results 
                         //in case there is a base year damage result that does not match with a future year damage result
@@ -208,7 +208,7 @@ namespace HEC.FDA.Model.alternatives
                             ConsequenceDistributionResult futureYearDamageResult = futureYearResults.ConsequenceResults.GetConsequenceResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, baseYearDamageResult.RegionID);
 
                             //so what happens here - we have null base year result but we have a future year result? 
-                            ConsequenceDistributionResult aaeqResult = IterateOnAAEQ(baseYearDamageResult, futureYearDamageResult, baseYear, futureYear, periodOfAnalysis, discountRate, randomProvider, false);
+                            SingleEmpiricalDistributionOfConsequences aaeqResult = IterateOnAAEQ(baseYearDamageResult, futureYearDamageResult, baseYear, futureYear, periodOfAnalysis, discountRate, randomProvider, false);
                             alternativeResults.AddConsequenceResults(aaeqResult);
 
                             //I am concerned about our possibility of getting here. We need to wave a really big red flag if it happens. 
@@ -240,9 +240,9 @@ namespace HEC.FDA.Model.alternatives
             return canCompute;
         }
 
-        private ConsequenceDistributionResult IterateOnAAEQ(ConsequenceDistributionResult baseYearDamageResult, ConsequenceDistributionResult mlfYearDamageResult, int baseYear, int futureYear, int periodOfAnalysis, double discountRate, interfaces.IProvideRandomNumbers randomProvider, bool iterateOnFutureYear = true)
+        private SingleEmpiricalDistributionOfConsequences IterateOnAAEQ(ConsequenceDistributionResult baseYearDamageResult, ConsequenceDistributionResult mlfYearDamageResult, int baseYear, int futureYear, int periodOfAnalysis, double discountRate, interfaces.IProvideRandomNumbers randomProvider, bool iterateOnFutureYear = true)
         {
-            ConsequenceDistributionResult aaeqResult = new ConsequenceDistributionResult();
+            SingleEmpiricalDistributionOfConsequences aaeqResult = new SingleEmpiricalDistributionOfConsequences();
             ConvergenceCriteria convergenceCriteria;
             if (iterateOnFutureYear)
             {
@@ -284,15 +284,14 @@ namespace HEC.FDA.Model.alternatives
                 }
             }
             );
-            Histogram histogram = new Histogram(resultCollection.ToList(), convergenceCriteria);
             if (iterateOnFutureYear)
             {
-                aaeqResult = new ConsequenceDistributionResult(mlfYearDamageResult.DamageCategory, mlfYearDamageResult.AssetCategory, histogram, mlfYearDamageResult.RegionID);
+                aaeqResult = new SingleEmpiricalDistributionOfConsequences(mlfYearDamageResult.DamageCategory, mlfYearDamageResult.AssetCategory, resultCollection.ToList(), mlfYearDamageResult.RegionID);
 
             }
             else
             {
-                aaeqResult = new ConsequenceDistributionResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, histogram, baseYearDamageResult.RegionID);
+                aaeqResult = new SingleEmpiricalDistributionOfConsequences(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, resultCollection.ToList(), baseYearDamageResult.RegionID);
             }
             MessageEventArgs endComputeMessageArgs = new MessageEventArgs(new Message($"Average annual equivalent damage compute for damage category {aaeqResult.DamageCategory}, asset category {aaeqResult.AssetCategory}, and impact area ID {aaeqResult.RegionID} has completed." + Environment.NewLine));
             ReportMessage(this, endComputeMessageArgs);

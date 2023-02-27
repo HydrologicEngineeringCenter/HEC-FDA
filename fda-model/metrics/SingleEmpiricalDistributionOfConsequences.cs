@@ -112,6 +112,7 @@ namespace HEC.FDA.Model.metrics
         #endregion
 
         #region Methods
+        
         internal double MeanExpectedAnnualConsequences()
         {
             return _consequenceDistribution.Mean;

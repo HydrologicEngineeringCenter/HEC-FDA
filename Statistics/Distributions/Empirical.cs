@@ -421,7 +421,7 @@ namespace Statistics.Distributions
             }
         }
         /// <summary>
-        /// 
+        /// If subtracts, will subtract all distributions from first 
         /// </summary>
         /// <param name="empiricalDistributionsForStacking"></param>
         /// <param name="addOrSubtract"></param> Either Empirical.Sum or Empirical.Subtract

@@ -159,5 +159,38 @@ namespace StatisticsTests.Distributions
             Assert.True(relativeDifferenceAddedMeans < tolerance);
             Assert.True(relativeDifferenceSubtractedMeans < tolerance);
         }
+
+        [Fact]
+        public void StacksCorrectlyWithDummyData()
+        {
+            Empirical empirical0 = new Empirical();
+            Normal normal = new Normal(1,2);
+
+            int probabilitySteps = 2500;
+            double[] probabilities = new double[probabilitySteps];
+            double[] invCDFs = new double[probabilitySteps];
+            for (int i = 0; i < probabilitySteps; i++)
+            {
+                probabilities[i] = (i + 0.5) / probabilitySteps;
+                invCDFs[i] = normal.InverseCDF(probabilities[i]);
+            }
+
+            Empirical empirical1 = new Empirical(probabilities, invCDFs);
+
+            List<Empirical> zeroThen1 = new List<Empirical>() { empirical0, empirical1 };
+            List<Empirical> oneThen0 = new List<Empirical>() { empirical1, empirical0 };
+
+            Empirical zeroMinusOne = Empirical.StackEmpiricalDistributions(zeroThen1, Empirical.Subtract);
+            Empirical zeroPlusOne = Empirical.StackEmpiricalDistributions(zeroThen1, Empirical.Sum);
+            Empirical oneMinusZero = Empirical.StackEmpiricalDistributions(oneThen0, Empirical.Subtract);
+            Empirical onePlusZero = Empirical.StackEmpiricalDistributions(oneThen0, Empirical.Sum);
+
+            Assert.Equal(-1, zeroMinusOne.Mean, 2);
+            Assert.Equal(1, zeroPlusOne.Mean, 2);
+            Assert.Equal(1, oneMinusZero.Mean, 2);
+            Assert.Equal(1, onePlusZero.Mean, 2);
+
+
+        }
     }
 }

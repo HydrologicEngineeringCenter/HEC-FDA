@@ -23,7 +23,13 @@ namespace HEC.FDA.Model.metrics
         #endregion
 
         #region Properties 
-        public List<SingleEmpiricalDistributionOfConsequences> ConsequenceResultList;
+        public List<SingleEmpiricalDistributionOfConsequences> ConsequenceResultList
+        {
+            get
+            { 
+                return _ConsequenceResultList; 
+            }
+        }
         public event MessageReportedEventHandler MessageReport;
         public bool IsNull
         {

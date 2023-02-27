@@ -7,6 +7,7 @@ using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using System.Collections.Generic;
 using System.Linq;
+using Statistics.Distributions;
 
 namespace HEC.FDA.Model.metrics
 { //TODO: I THINK SOME OR ALL OF THIS CLASS SHOULD BE INTERNAL 
@@ -155,7 +156,11 @@ namespace HEC.FDA.Model.metrics
             }
             return true;
         }
-
+        public static SingleEmpiricalDistributionOfConsequences ConvertToSingleEmpiricalDistributionOfConsequences(ConsequenceDistributionResult consequenceDistributionResult)
+        {
+            Empirical empirical = Histogram.ConvertToEmpiricalDistribution(consequenceDistributionResult.ConsequenceHistogram);
+            return new SingleEmpiricalDistributionOfConsequences(consequenceDistributionResult.DamageCategory, consequenceDistributionResult.AssetCategory, empirical, consequenceDistributionResult.RegionID);
+        }
         public XElement WriteToXML()
         {
             XElement masterElement = new XElement("ConsequenceResult");
