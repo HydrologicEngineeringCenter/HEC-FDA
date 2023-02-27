@@ -122,7 +122,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
         public void ReturnProjectionFromVector()
         {
             //Act
-            Projection proj = Inventory.GetVectorProjection(pathToNSIShapefile);
+            Projection proj = Inventory.GetVectorProjection(new PointFeatureLayer("unusedName",pathToNSIShapefile));
             //Assert
             Assert.NotNull(proj);
         }
@@ -140,7 +140,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
             //These projections are VERY Slightly different.
             //It's enough to show that reprojection changes coords though, and lets us not add another file to the repo. 
             //Arrange 
-            Projection projPnt = Inventory.GetVectorProjection(pathToNSIShapefile);
+            Projection projPnt = Inventory.GetVectorProjection(new PointFeatureLayer("unusedName", pathToNSIShapefile));
             Projection projTerr = Inventory.GetTerrainProjection(new TerrainLayer("ThisNameIsNotUsed", pathToTerrainHDF));
             PointM pnt= new PointM(0,0);
             //Act
