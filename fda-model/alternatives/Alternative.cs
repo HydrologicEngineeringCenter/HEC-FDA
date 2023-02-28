@@ -275,13 +275,8 @@ namespace HEC.FDA.Model.alternatives
                 //calculate AAEQ at probability step
                 double aaeqDamage = ComputeEEAD(eadSampledBaseYear, baseYear, eadSampledFutureYear, futureYear, periodOfAnalysis, discountRate);
 
-                //add to collection a number of times equal to the sum of the bin counts 
-                Int64 aaeqFrequency = sampledBaseYearEADBinCount + sampledFutureYearEADBinCount;
-
-                for (Int64 j = 0; j < aaeqFrequency; j++)
-                {
-                    resultCollection.Add(aaeqDamage);
-                }
+                resultCollection.Add(aaeqDamage);
+              
             }
             );
             if (iterateOnFutureYear)
