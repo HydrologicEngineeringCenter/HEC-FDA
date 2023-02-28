@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:mvvmView="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=View"
+             xmlns:mvvmView="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=HEC.MVVMFramework.View"
              xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
              xmlns:local="clr-namespace:HEC.FDA.View.ImpactAreaScenario.Editor"     
              xmlns:cmds="clr-namespace:HEC.FDA.View.Commands"

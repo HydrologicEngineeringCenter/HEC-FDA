@@ -8,8 +8,8 @@
              xmlns:twp="clr-namespace:HEC.FDA.View.TableWithPlot"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <twp:FdaDataGrid ItemsSource="{Binding Rows}" AutoGenerateColumns="False" HorizontalAlignment="Left"
+  <Grid>
+    <twp:FdaDataGrid ItemsSource="{Binding Rows}" AutoGenerateColumns="False" HorizontalAlignment="Left"
                   VerticalAlignment="Top"  IsReadOnly="True" CanUserResizeColumns="True" CanUserReorderColumns="False"
                   CanUserSortColumns="false" Margin="5" SelectionUnit="Cell">
             <DataGrid.Columns>

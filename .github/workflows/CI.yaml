@@ -8,11 +8,11 @@ on:
 
 jobs:
   CI:
-    runs-on: windows-latest
+    runs-on: windows-latest                         
     env:
       Solution_Name: Fda.sln                                  
       dotnet-version: '6.0.x'
-      
+
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -29,7 +29,7 @@ jobs:
       run:  |
         dotnet nuget add source --username HydrologicEngineeringCenter --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/HydrologicEngineeringCenter/index.json"
         dotnet nuget add source --name fda-nuget "https://www.hec.usace.army.mil/nexus/repository/fda-nuget/"
-
+      
     - name: Install dependencies
       run: dotnet restore -v quiet
         
@@ -47,7 +47,7 @@ jobs:
       
     - name: Publish
       run: dotnet publish -v quiet View/HEC.FDA.View.csproj
-
+    
     - name: Zip
       run: 7z a D:\a\HEC-FDA\HEC-FDA\Build\publish\HEC-FDA.7z D:\a\HEC-FDA\HEC-FDA\Build\publish\FDA2.0\ 
       
