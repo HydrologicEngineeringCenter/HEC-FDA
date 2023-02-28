@@ -4,13 +4,5 @@
 	<PropertyGroup>
 		<OutputPath>..\Build\FDA2.0</OutputPath>
 	</PropertyGroup>
-	
-	<ItemGroup>
-		<!--Package recommended by MS. Automates some setting when packing that helps build packages more consistently.-->
-		<PackageReference Include="DotNet.ReproducibleBuilds" Version="1.1.1">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		
-	</ItemGroup>
+
 </Project>
