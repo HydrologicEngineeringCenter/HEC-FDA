@@ -253,7 +253,7 @@ namespace HEC.FDA.ModelTest.unittests
                 {commercialOccupancyTypeName, commercialOccupancyTypeNormalDists }
             };
 
-            Inventory inventory = new Inventory(null, null, null, occupancyTypesList, null, false, null, structures);
+            Inventory inventory = new Inventory(occupancyTypesList,structures);
             return inventory;
         }
  

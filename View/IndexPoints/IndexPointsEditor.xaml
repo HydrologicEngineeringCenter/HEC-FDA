@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
-             xmlns:frameworkControls="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=View"
+             xmlns:frameworkControls="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=HEC.MVVMFramework.View"
              xmlns:OkClose="clr-namespace:HEC.FDA.View.Utilities"
              xmlns:local="clr-namespace:HEC.FDA.View.IndexPoints"
              Loaded="UserControl_Loaded"
