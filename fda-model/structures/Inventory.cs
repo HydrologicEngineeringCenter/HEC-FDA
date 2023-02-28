@@ -14,22 +14,22 @@ using HEC.MVVMFramework.Model.Messaging;
 namespace HEC.FDA.Model.structures
 {
     //TODO: Figure out how to set Occupany Type Set
-    public class Inventory: Validation, IContainValidationGroups
+    public class Inventory : Validation, IContainValidationGroups
     {
         #region Properties
         public List<Structure> Structures { get; } = new List<Structure>();
         public Dictionary<string, OccupancyType> OccTypes { get; set; }
         public double PriceIndex { get; set; }
         public List<ValidationGroup> ValidationGroups { get; } = new List<ValidationGroup>();
-    #endregion
+        #endregion
 
-    #region Constructors
-    public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureSelectionMapping map, Dictionary<string, OccupancyType> occTypes, bool updateGroundElevFromTerrain, string terrainPath, double priceIndex = 1)
+        #region Constructors
+        public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureSelectionMapping map, Dictionary<string, OccupancyType> occTypes, bool updateGroundElevFromTerrain, string terrainPath, double priceIndex = 1)
         {
             OccTypes = occTypes;
             PriceIndex = priceIndex;
             TerrainLayer terrainLayer = new TerrainLayer("ThisNameIsNotUsed", terrainPath);
-            PointFeatureLayer structureFeatureLayer= new PointFeatureLayer("ThisNameIsNotUsed", pointShapefilePath);
+            PointFeatureLayer structureFeatureLayer = new PointFeatureLayer("ThisNameIsNotUsed", pointShapefilePath);
             PolygonFeatureLayer impactAreaFeatureLayer = new PolygonFeatureLayer("ThisNameIsNotUsed", impactAreaShapefilePath);
             LoadStructuresFromSourceFiles(structureFeatureLayer, map, terrainLayer, updateGroundElevFromTerrain, impactAreaFeatureLayer);
             AddRules();
@@ -45,6 +45,17 @@ namespace HEC.FDA.Model.structures
         #endregion
 
         #region Methods
+
+        private void AddValidationGroup()
+        {
+            ValidationGroup vg = new ValidationGroup("This inventory has the following errors:");
+            foreach (OccupancyType ot in OccTypes.Values)
+            {
+                vg.ChildGroups.AddRange(ot.ValidationGroups);
+            }
+            ValidationGroups.Add(vg);
+        }
+
         public float[] GetGroundElevations()
         {
             float[] result = new float[Structures.Count];
@@ -57,7 +68,7 @@ namespace HEC.FDA.Model.structures
         internal List<string> GetDamageCategories()
         {
             List<string> uniqueDamageCategories = new List<string>();
-            foreach( Structure structure in Structures)
+            foreach (Structure structure in Structures)
             {
                 if (!uniqueDamageCategories.Contains(structure.DamageCatagory))
                 {
@@ -83,56 +94,11 @@ namespace HEC.FDA.Model.structures
                 List<Polygon> ImpactAreas = new List<Polygon>();
                 foreach (Polygon poly in polygons)
                 {
-                    result[i] = (float)Structures[i].GroundElevation;
+                    Polygon newPoly = ReprojectPolygon(poly, impactAreaPrj, terrainProjection);
+                    ImpactAreas.Add(newPoly);
                 }
-                return result;
+                return ImpactAreas;
             }
-        }
-        #endregion
-
-        #region Constructors
-        public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureSelectionMapping map, Dictionary<string, OccupancyType> occTypes,
-            string impactAreaUniqueColumnHeader, bool updateGroundElevFromTerrain, string terrainPath, double priceIndex = 1)
-        {
-            _structureInventoryShapefile = pointShapefilePath;
-            _impactAreaShapefile = impactAreaShapefilePath;
-            _map = map;
-            _occtypes = occTypes;
-            _impactAreaUniqueColumnHeader = impactAreaUniqueColumnHeader;
-            _updateGroundElevsFromTerrain = updateGroundElevFromTerrain;
-            _terrainPath = terrainPath;
-            _priceIndex = priceIndex;
-            //TODO: Add some validation here
-            //If we have a bad shapefile name, then we get a null ref exception in the below method
-            LoadStructuresFromSourceFiles();
-            AddRules();
-        }
-        public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureSelectionMapping map, Dictionary<string, OccupancyType> occTypes,
-        string impactAreaUniqueColumnHeader, bool updateGroundElevFromTerrain, string terrainPath, List<Structure> structures, double priceIndex = 1)
-        {
-            _structureInventoryShapefile = pointShapefilePath;
-            _impactAreaShapefile = impactAreaShapefilePath;
-            _map = map;
-            _occtypes = occTypes;
-            _impactAreaUniqueColumnHeader = impactAreaUniqueColumnHeader;
-            _updateGroundElevsFromTerrain = updateGroundElevFromTerrain;
-            _terrainPath = terrainPath;
-            Structures = structures;
-            _priceIndex = priceIndex;
-            AddRules();
-
-        }
-        #endregion
-
-        #region Methods
-        private void AddValidationGroup()
-        {
-            ValidationGroup vg = new ValidationGroup("This inventory has the following errors:");
-            foreach (OccupancyType ot in _occtypes.Values)
-            {
-                vg.ChildGroups.AddRange(ot.ValidationGroups);
-            }
-            ValidationGroups.Add(vg);
         }
         private void AddRules()
         {
