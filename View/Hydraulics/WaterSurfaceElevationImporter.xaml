@@ -6,7 +6,7 @@
              xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              xmlns:local="clr-namespace:HEC.FDA.View.Hydraulics"
              xmlns:Util="clr-namespace:HEC.FDA.View.Utilities"
-             xmlns:frameworkControls="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=View"
+             xmlns:frameworkControls="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=HEC.MVVMFramework.View"
              Loaded="UserControl_Loaded"
              mc:Ignorable="d"
              d:DesignHeight="520" d:DesignWidth="550">

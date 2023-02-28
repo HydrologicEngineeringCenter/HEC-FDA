@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+	<IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HEC.MVVMFramework.Model\HEC.MVVMFramework.Model.csproj" />
+    <ProjectReference Include="..\HEC.MVVMFramework.ViewModel\HEC.MVVMFramework.ViewModel.csproj" />
+    <ProjectReference Include="..\HEC.MVVMFramework.View\HEC.MVVMFramework.View.csproj" />
+  </ItemGroup>
+
+</Project>
