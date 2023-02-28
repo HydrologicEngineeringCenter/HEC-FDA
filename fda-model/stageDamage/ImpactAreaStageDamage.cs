@@ -74,7 +74,7 @@ namespace HEC.FDA.Model.stageDamage
             }
             else
             {
-                _inventory = inventory.GetInventoryTrimmmedToPolygon(impactAreaID);
+                _inventory = inventory.GetInventoryTrimmedToImpactArea(impactAreaID);
             }
             _hydraulicDataset = hydraulicDataset;
             convergenceCriteria = convergence;
@@ -212,7 +212,7 @@ namespace HEC.FDA.Model.stageDamage
             else
             {
                 _StageFrequency = CreateStageFrequency();
-                List<string> damCats = _inventory.DamageCategories;
+                List<string> damCats = _inventory.GetDamageCategories();
                 (List<double>, List<float[]>) wsesAtEachStructureByProfile = _hydraulicDataset.GetHydraulicDatasetInFloatsWithProbabilities(_inventory, _HydraulicParentDirectory);
 
                 //Run the compute by dam cat to simplify data collection 
