@@ -9,11 +9,18 @@ using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Model.Messaging;
 using HEC.MVVMFramework.Base.Enumerations;
 using Statistics.Distributions;
+using System.Threading.Tasks;
 
 namespace HEC.FDA.Model.alternativeComparisonReport
 {
     public class AlternativeComparisonReport: IReportMessage, IProgressReport
     {
+        #region Fields
+        private List<ManyEmpiricalDistributionsOfConsequences> _aaeqResults;
+        private List<ManyEmpiricalDistributionsOfConsequences> _baseYearEADResults;
+        private List<ManyEmpiricalDistributionsOfConsequences> _futureYearEADResults;
+        #endregion
+
         #region Properties
         public event MessageReportedEventHandler MessageReport;
         public event ProgressReportedEventHandler ProgressReport;
@@ -31,23 +38,17 @@ namespace HEC.FDA.Model.alternativeComparisonReport
             ReportMessage(this, new MessageEventArgs(new ErrorMessage("Starting alternative comparison report compute", ErrorLevel.Info)));
             ReportProgress(this, new ProgressReportEventArgs(10));
 
-            MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message("The alternative results are being processed for the alternative comparison report."));
-            ReportMessage(this, beginComputeMessageArgs);
-            List<ManyEmpiricalDistributionsOfConsequences> aaeqResults = ComputeDistributionOfAAEQDamageReduced(withoutProjectAlternativeResults, withProjectAlternativesResults);
-            MessageEventArgs aaeqResultsMessageArgs = new MessageEventArgs(new Message("The distributions of AAEQ Damage Reduced for the given with-project conditions have been computed."));
-            ReportMessage(this, aaeqResultsMessageArgs);
-            List<ManyEmpiricalDistributionsOfConsequences> baseYearEADResults = ComputeDistributionEADReducedBaseYear(withoutProjectAlternativeResults, withProjectAlternativesResults);
-            MessageEventArgs baseYearEADReducedMessageArgs = new MessageEventArgs(new Message("THe distributions of base year EAD reduced for the given with-project conditions have been computed."));
-            ReportMessage(this, baseYearEADReducedMessageArgs);
-            List<ManyEmpiricalDistributionsOfConsequences> futureYearEADResults = ComputeDistributionEADReducedFutureYear(withoutProjectAlternativeResults, withProjectAlternativesResults);
-            MessageEventArgs futureYearEADReducedMessageArgs = new MessageEventArgs(new Message("The distributions of future year EAD reduced for the given with-project conditions have been computed."));
-            ReportMessage(this, futureYearEADReducedMessageArgs);
+            Parallel.Invoke(
+                () => ComputeDistributionOfAAEQDamageReduced(withoutProjectAlternativeResults, withProjectAlternativesResults),
+                () => ComputeDistributionEADReducedBaseYear(withoutProjectAlternativeResults, withProjectAlternativesResults),
+                () => ComputeDistributionEADReducedFutureYear(withoutProjectAlternativeResults, withProjectAlternativesResults)
+                );
 
             //TODO: Fix the hacked in progress reporting 
             ReportProgress(this, new ProgressReportEventArgs(100));
-            return new AlternativeComparisonReportResults(withProjectAlternativesResults, withoutProjectAlternativeResults, aaeqResults, baseYearEADResults, futureYearEADResults);
+            return new AlternativeComparisonReportResults(withProjectAlternativesResults, withoutProjectAlternativeResults, _aaeqResults, _baseYearEADResults , _futureYearEADResults);
         }
-        private List<ManyEmpiricalDistributionsOfConsequences> ComputeDistributionOfAAEQDamageReduced(AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
+        private  void ComputeDistributionOfAAEQDamageReduced(AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
         {
             //We calculate a list of many empirical distributions of consequences - one for each with-project alternative 
             List<ManyEmpiricalDistributionsOfConsequences> damagesReducedAllAlternatives = new List<ManyEmpiricalDistributionsOfConsequences>();
@@ -85,7 +86,7 @@ namespace HEC.FDA.Model.alternativeComparisonReport
                 }
                 damagesReducedAllAlternatives.Add(damageReducedOneAlternative);
             }
-            return damagesReducedAllAlternatives;
+            _aaeqResults = damagesReducedAllAlternatives;
         }
 
         private SingleEmpiricalDistributionOfConsequences IterateOnConsequenceDistributionResult(SingleEmpiricalDistributionOfConsequences withProjectDamageResult, SingleEmpiricalDistributionOfConsequences withoutProjectDamageResult, bool iterateOnWithProject = true)
@@ -124,7 +125,7 @@ namespace HEC.FDA.Model.alternativeComparisonReport
             return singleEmpiricalDistributionOfConsequences;
         }
 
-        private List<ManyEmpiricalDistributionsOfConsequences> ComputeDistributionEADReducedBaseYear(AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
+        private void ComputeDistributionEADReducedBaseYear(AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
         {
             List<ManyEmpiricalDistributionsOfConsequences> damageReducedAllAlternatives = new List<ManyEmpiricalDistributionsOfConsequences>();
             foreach (AlternativeResults withProjectResults in withProjectAlternativesResults)
@@ -168,12 +169,12 @@ namespace HEC.FDA.Model.alternativeComparisonReport
                 }
                 damageReducedAllAlternatives.Add(damageReducedAlternative);
             }
-            return damageReducedAllAlternatives;
+            _baseYearEADResults = damageReducedAllAlternatives;
 
         }
 
 
-        private List<ManyEmpiricalDistributionsOfConsequences> ComputeDistributionEADReducedFutureYear(AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
+        private void ComputeDistributionEADReducedFutureYear(AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
         {
             List<ManyEmpiricalDistributionsOfConsequences> damageReducedAlternatives = new List<ManyEmpiricalDistributionsOfConsequences>();
             foreach (AlternativeResults alternative in withProjectAlternativesResults)
@@ -216,7 +217,7 @@ namespace HEC.FDA.Model.alternativeComparisonReport
                 }
                 damageReducedAlternatives.Add(damageReducedAlternative);
             }
-            return damageReducedAlternatives;
+            _futureYearEADResults = damageReducedAlternatives;
 
         }
 
