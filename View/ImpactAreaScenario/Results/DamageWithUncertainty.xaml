@@ -8,7 +8,6 @@
              Loaded="UserControl_Loaded"
              xmlns:controls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
-             DataContextChanged="UserControl_DataContextChanged"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid x:Name="main_grd">
         <Grid.RowDefinitions>

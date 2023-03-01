@@ -41,16 +41,5 @@ namespace HEC.FDA.View.ImpactAreaScenario.Results
 
         }
 
-        private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (e.NewValue is DamageWithUncertaintyVM vm && _chart != null)
-            {
-                _chart.DataContext = vm.ChartViewModel;
-                if (!vm.HistogramVisible)
-                {
-                    _chart.Visibility = Visibility.Collapsed;
-                }
-            }
-        }
     }
 }
