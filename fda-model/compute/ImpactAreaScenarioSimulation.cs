@@ -13,6 +13,7 @@ using HEC.MVVMFramework.Model.Messaging;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.interfaces;
+using System.Text;
 
 namespace HEC.FDA.Model.compute
 {
@@ -195,14 +196,18 @@ namespace HEC.FDA.Model.compute
                 else
                 {
                     LogSimulationErrors();
-                    if (randomProvider is MedianRandomProvider && convergenceCriteria.MaxIterations != 1)
+                    if (randomProvider is MedianRandomProvider)
                     {
-                        string message = $"The simulation for impact area {_impactAreaID} was requested to provide a mean estimate, but asked for more than one iteration." + Environment.NewLine;
-                        ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
-                        ReportMessage(this, new MessageEventArgs(errorMessage));
-                        canCompute = false;
+                        if (convergenceCriteria.MaxIterations != 1)
+                        {
+
+                            string message = $"The simulation for impact area {_impactAreaID} was requested to provide a mean estimate, but asked for more than one iteration." + Environment.NewLine;
+                            ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
+                            ReportMessage(this, new MessageEventArgs(errorMessage));
+                            canCompute = false;
+                        }
                     }
-                    else if(convergenceCriteria.MinIterations < 100)
+                    else if (convergenceCriteria.MinIterations < 100)
                     {
                         string message = $"The simulation for impact area {_impactAreaID} was requested to provide a random estimate, but asked for a minimum of one iteration." + Environment.NewLine;
                         ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
@@ -231,7 +236,7 @@ namespace HEC.FDA.Model.compute
                 }
             }
             return canCompute;
-            
+
         }
 
         private void ComputeIterations(ConvergenceCriteria convergenceCriteria, IProvideRandomNumbers randomProvider, int masterseed, bool computeWithDamage, bool giveMeADamageFrequency, bool computeIsDeterministic)
