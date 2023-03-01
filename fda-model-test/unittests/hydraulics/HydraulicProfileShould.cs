@@ -42,7 +42,7 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
             Dictionary<string, OccupancyType> occupancyTypes = new Dictionary<string, OccupancyType>() { { "occtype", occupancyType } };
 
 
-            Inventory inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, IANameColumnHeader, useTerrainFile, pathTerrain);
+            Inventory inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, useTerrainFile, pathTerrain);
             float[] wses = profile.GetWSE(inventory.GetPointMs(), dataSource, parentDirectory);
             Assert.Equal(682, wses.Length); // All structures have a value
             Assert.True( wses[0] > 900); // first structure has value for WSE

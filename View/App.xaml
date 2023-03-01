@@ -1,6 +1,6 @@
 ﻿<Application x:Class="HEC.FDA.View.App"                
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
-                     
+                    
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              
@@ -78,8 +78,8 @@
              xmlns:SteadyHydraulicsVM="clr-namespace:HEC.FDA.ViewModel.Hydraulics.SteadyHDF;assembly=HEC.FDA.ViewModel"
              xmlns:UnsteadyHydraulicsVM="clr-namespace:HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF;assembly=HEC.FDA.ViewModel"
              
-             xmlns:frameworkControls="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=View"
-                          
+             xmlns:frameworkControls="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=HEC.MVVMFramework.View"
+             
              StartupUri="ViewWindow.xaml">
   <Application.Resources>
     <Style TargetType="Control" x:Key="defaultErrorTemplate">

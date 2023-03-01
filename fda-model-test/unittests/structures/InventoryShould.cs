@@ -4,6 +4,9 @@ using HEC.FDA.Model.structures;
 using RasMapperLib;
 using static HEC.FDA.Model.structures.OccupancyType;
 using HEC.FDA.Model.compute;
+using Geospatial.GDALAssist;
+using System.IO;
+using System;
 
 namespace HEC.FDA.ModelTest.unittests.structures
 {
@@ -32,6 +35,23 @@ namespace HEC.FDA.ModelTest.unittests.structures
         private const string DescriptionCol = "";
         private const string NumberOfStructuresCol = "";
 
+        public InventoryShould()
+        {
+            InitializeGDAL();
+        }
+        
+
+        private void InitializeGDAL()
+        {
+            string gdalPath = @"GDAL\";
+            if (!Directory.Exists(gdalPath))
+            {
+                Console.WriteLine("GDAL directory not found: " + gdalPath);
+                return;
+            }
+            GDALSetup.InitializeMultiplatform(gdalPath);
+        }
+
         private Inventory GetTestInventory(bool useTerrainFile)
         {
             StructureSelectionMapping map = new StructureSelectionMapping(false, useTerrainFile, StructureIDCol,OccTypeCol,FirstFloorElevCol,StructureValueCol,FoundationHeightCol,
@@ -39,7 +59,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
             //Empty (default) occupancy types
             OccupancyType occupancyType = OccupancyType.builder().build();
             Dictionary<string, OccupancyType> occupancyTypes = new Dictionary<string, OccupancyType>() { { "occtype", occupancyType } };
-            return new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, IANameColumnHeader, useTerrainFile, pathToTerrainHDF);
+            return new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, useTerrainFile, pathToTerrainHDF);
         }
 
         [Fact]
@@ -47,24 +67,15 @@ namespace HEC.FDA.ModelTest.unittests.structures
         {
             Inventory inventory = GetTestInventory(false);
             Assert.NotNull(inventory);
-            Assert.Equal(4, inventory.ImpactAreas.Count);
             Assert.Equal(682, inventory.Structures.Count);
         }
 
         [Fact]
         public void GetGroundElevationFromTerrain()
         {
-            float[] groundelevs = Inventory.GetGroundElevationFromTerrain(pathToNSIShapefile, pathToTerrainHDF);
+            float[] groundelevs = Inventory.GetGroundElevationFromTerrain(new PointFeatureLayer("ThisNameIsNotUsed",pathToNSIShapefile), new TerrainLayer("ThisNameIsNotUsed",pathToTerrainHDF));
             Assert.Equal(682, groundelevs.Length);
             Assert.Equal(946.5, groundelevs[0], 1);
-        }
-        [Fact]
-        public void GetImpactAreaFID()
-        {
-            Inventory inv = GetTestInventory(false);
-            PointM pnt = inv.GetPointMs()[0];
-            int actual = inv.GetImpactAreaFID(pnt);
-            Assert.Equal(0, actual);
         }
         [Fact]
         public void ConstructsWithTerrainGroundElevs()
@@ -77,23 +88,16 @@ namespace HEC.FDA.ModelTest.unittests.structures
         public void filterInventoryToIAPolygon()
         {
             Inventory inv = GetTestInventory(false);
-            Inventory trimmedInv1 = inv.GetInventoryTrimmmedToPolygon(0);
-            Inventory trimmedInv2 = inv.GetInventoryTrimmmedToPolygon(1);
-            Inventory trimmedInv3 = inv.GetInventoryTrimmmedToPolygon(2);
-            Inventory trimmedInv4 = inv.GetInventoryTrimmmedToPolygon(3);
+            Inventory trimmedInv1 = inv.GetInventoryTrimmedToImpactArea(0);
+            Inventory trimmedInv2 = inv.GetInventoryTrimmedToImpactArea(1);
+            Inventory trimmedInv3 = inv.GetInventoryTrimmedToImpactArea(2);
+            Inventory trimmedInv4 = inv.GetInventoryTrimmedToImpactArea(3);
             int countActual = inv.Structures.Count;
             int count1 = trimmedInv1.Structures.Count;
             int count2 = trimmedInv2.Structures.Count;
             int count3 = trimmedInv3.Structures.Count;
             int count4 = trimmedInv4.Structures.Count;
             Assert.Equal(countActual, count1 + count2 + count3 + count4);
-        }
-        [Fact]
-        public void returnsUniqueImpactAreaIDs()
-        {
-            Inventory inv = GetTestInventory(false);
-            List<int> uniqueImpactAreaIDs = inv.ImpactAreas;
-            Assert.Equal(4, uniqueImpactAreaIDs.Count);
         }
 
         [Fact]
@@ -105,8 +109,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
             //link the occtype name of "NA" to the occtype
             Dictionary<string, OccupancyType> occupancyTypes = new Dictionary<string, OccupancyType>() { { "NA", ot } };
             //this inventory has hundreds of structures that have an occtype name of "NA"
-            Inventory inv = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, IANameColumnHeader, false, pathToTerrainHDF);
-
+            Inventory inv = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, false, pathToTerrainHDF);
             //if the struction in the inventory has an occtype name that isn't in the above dictionary then it will get removed 
             //from the inventory during the sample.
             int inventoryCount = inv.Structures.Count;
@@ -114,6 +117,36 @@ namespace HEC.FDA.ModelTest.unittests.structures
             int afterSampleCount = deterministicInventory.Inventory.Count;
 
             Assert.Equal(inventoryCount, afterSampleCount);
+        }
+        [Fact]
+        public void ReturnProjectionFromVector()
+        {
+            //Act
+            Projection proj = Inventory.GetVectorProjection(new PointFeatureLayer("unusedName",pathToNSIShapefile));
+            //Assert
+            Assert.NotNull(proj);
+        }
+        [Fact]
+        public void ReturnProjectionFromTerrain()
+        {
+            //Act
+            Projection proj = Inventory.GetTerrainProjection(new TerrainLayer("ThisNameIsNotUsed",pathToTerrainHDF));
+            //Assert
+            Assert.NotNull(proj);
+        }
+        [Fact]
+        public void ReprojectPoints()
+        {
+            //These projections are VERY Slightly different.
+            //It's enough to show that reprojection changes coords though, and lets us not add another file to the repo. 
+            //Arrange 
+            Projection projPnt = Inventory.GetVectorProjection(new PointFeatureLayer("unusedName", pathToNSIShapefile));
+            Projection projTerr = Inventory.GetTerrainProjection(new TerrainLayer("ThisNameIsNotUsed", pathToTerrainHDF));
+            PointM pnt= new PointM(0,0);
+            //Act
+            PointM newPnt = Inventory.ReprojectPoint(pnt, projTerr, projPnt);
+            //Assert
+            Assert.NotEqual(pnt.X, newPnt.X);
         }
     }
 }

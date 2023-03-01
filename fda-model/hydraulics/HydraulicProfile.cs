@@ -12,32 +12,35 @@ namespace HEC.FDA.Model.hydraulics
 {
     public class HydraulicProfile :  IHydraulicProfile
     {
+        #region Fields
         private const string PROFILE = "HydraulicProfile";
         private const string PATH = "Path";
         private const string PROB = "Probability";
         private const string PROFILE_NAME = "ProfileName";
-
+        #endregion
+        #region Properties
         public double Probability { get; set; }
         /// <summary>
         /// This is not the full path. This is just the file name with extension. You need to get the hydraulic element name to create the full path.
         /// </summary>
         public string FileName { get; set; }
         public string ProfileName { get; set; }
-
+        #endregion
+        #region Constructors
         public HydraulicProfile(double probability, string fileName, string profileName = "MAX" )
         {
             Probability = probability;
             FileName = fileName;
             ProfileName = profileName;
         }
-
         public HydraulicProfile(XElement elem)
         {
             Probability = Convert.ToDouble(elem.Attribute(PROB).Value);
             FileName = elem.Attribute(PATH).Value;
             ProfileName = elem.Attribute(PROFILE_NAME).Value;
         }
-
+        #endregion
+        #region Methods
         public float[] GetWSE(PointMs pts, HydraulicDataSource dataSource, string parentDirectory)
         { 
             
@@ -50,7 +53,6 @@ namespace HEC.FDA.Model.hydraulics
                 return GetWSEFromHDF(pts, dataSource, parentDirectory);
             }
         }
-
         private float[] GetWSEFromGrids(PointMs pts, string parentDirectory)
         {
             //THIS IS A HACK TO KEEP IMPORT FROM GRIDS WORKING FOR TESTERS
@@ -79,7 +81,6 @@ namespace HEC.FDA.Model.hydraulics
             //resultsGrid.SamplePoints(points, 0, wses);
             //return wses;
         }
-
         private float[] GetWSEFromHDF(PointMs pts, HydraulicDataSource dataSource, string parentDirectory)
         {
             string fullPathToResult = GetFilePath(parentDirectory);
@@ -107,6 +108,12 @@ namespace HEC.FDA.Model.hydraulics
             rasResult.ComputeSwitch(rasWSMap, mapPixels, profileIndex, mockTerrainElevs, null, ref WSE);
             return WSE;
         }
+        /// <summary>
+        /// allows for sorting based on probability of the profile.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public bool Equals(IHydraulicProfile hydraulicProfileForComparison)
         {
             bool hydraulicProfilesAreEqual = true;
@@ -120,15 +127,6 @@ namespace HEC.FDA.Model.hydraulics
             }
             return hydraulicProfilesAreEqual;
         }
-
-        /// <summary>
-        /// allows for sorting based on probability of the profile.
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
-
-
         public XElement ToXML()
         {
             XElement elem = new XElement(PROFILE);
@@ -137,7 +135,6 @@ namespace HEC.FDA.Model.hydraulics
             elem.SetAttributeValue(PROFILE_NAME, ProfileName);
             return elem;
         }
-
         public string GetFilePath(string parentDirectory)
         {
             return parentDirectory + "\\" + FileName;
@@ -152,6 +149,7 @@ namespace HEC.FDA.Model.hydraulics
             else
                 throw new ArgumentException("Object is not a HydraulicProfile");
         }
+        #endregion
     }
 }
 
