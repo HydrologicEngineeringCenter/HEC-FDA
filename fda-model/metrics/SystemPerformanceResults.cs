@@ -7,13 +7,13 @@ using Statistics.Histograms;
 using System.Xml.Linq;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
-using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Enumerations;
 using HEC.FDA.Model.paireddata;
+using HEC.MVVMFramework.Model.Messaging;
 
 namespace HEC.FDA.Model.metrics
 {
-    public class SystemPerformanceResults : Validation, IReportMessage
+    public class SystemPerformanceResults : ValidationErrorLogger
     {
         #region Fields
         private const string AEP_ASSURANCE_TYPE = "AEP";
@@ -37,7 +37,6 @@ namespace HEC.FDA.Model.metrics
                 return _assuranceList;
             }
         }
-        public event MessageReportedEventHandler MessageReport;
         #endregion
         #region Constructors 
         ///
@@ -57,8 +56,6 @@ namespace HEC.FDA.Model.metrics
                 AssuranceResultStorage dummyAssurance = new AssuranceResultStorage(STAGE_ASSURANCE_TYPE, probability);
                 _assuranceList.Add(dummyAssurance);
             }
-            MessageHub.Register(this);
-
         }
         public SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, ConvergenceCriteria convergenceCriteria)
         {
@@ -70,7 +67,6 @@ namespace HEC.FDA.Model.metrics
             _assuranceList.Add(aepAssurance);
             AssuranceResultStorage aepAssuranceForPlotting = new AssuranceResultStorage(AEP_ASSURANCE_FOR_PLOTTING, convergenceCriteria);
             _assuranceList.Add(aepAssuranceForPlotting);
-            MessageHub.Register(this);
         }
         public SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData systemResponseFunction, ConvergenceCriteria convergenceCriteria)
         {
@@ -84,8 +80,6 @@ namespace HEC.FDA.Model.metrics
             AssuranceResultStorage aepAssuranceForPlotting = new AssuranceResultStorage(AEP_ASSURANCE_FOR_PLOTTING, convergenceCriteria);
             _assuranceList.Add(aepAssuranceForPlotting);
             _ConvergenceCriteria = convergenceCriteria;
-            MessageHub.Register(this);
-
         }
         private SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, ConvergenceCriteria convergenceCriteria, List<AssuranceResultStorage> assurances)
         {
@@ -93,7 +87,6 @@ namespace HEC.FDA.Model.metrics
             _thresholdValue = thresholdValue;
             _assuranceList = assurances;
             _ConvergenceCriteria = convergenceCriteria;
-            MessageHub.Register(this);
         }
         private SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData systemResponseFunction, ConvergenceCriteria convergenceCriteria, List<AssuranceResultStorage> assurances)
         {
@@ -103,7 +96,6 @@ namespace HEC.FDA.Model.metrics
             _thresholdValue = thresholdValue;
             _assuranceList = assurances;
             _ConvergenceCriteria = convergenceCriteria;
-            MessageHub.Register(this);
         }
 
 
@@ -141,10 +133,7 @@ namespace HEC.FDA.Model.metrics
             ThreadsafeInlineHistogram aepHistogram = GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram;
             return aepHistogram;
         }
-        public void ReportMessage(object sender, MessageEventArgs e)
-        {
-            MessageReport?.Invoke(sender, e);
-        }
+
         public void AddAEPForAssurance(double aep, long iteration)
         {
             GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram.AddObservationToHistogram(aep, iteration);

@@ -8,6 +8,7 @@ using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
+using HEC.MVVMFramework.Model.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -585,10 +586,18 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         /// <returns>The list of UPD curves created during the compute</returns>
         private List<UncertainPairedData> ComputeStageDamageFunctions(StageDamageConfiguration config)
         {
+            ValidationGroup vg = new ValidationGroup("Errors while trying to compute stage damage functions:");
+
             List<UncertainPairedData> stageDamageFunctions = new List<UncertainPairedData>();
             try
             {
-                ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(config.CreateStageDamages());
+                List<ImpactAreaStageDamage> impactAreaStageDamages = config.CreateStageDamages();
+                foreach(ImpactAreaStageDamage area in impactAreaStageDamages)
+                {
+                    vg.ChildGroups.AddRange(area.ValidationGroups);
+                }
+
+                ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(impactAreaStageDamages);
                 int seed = 1234;
                 Model.compute.RandomProvider randomProvider = new Model.compute.RandomProvider(seed);
                 Study.StudyPropertiesElement propElem = StudyCache.GetStudyPropertiesElement();
@@ -609,6 +618,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             {
                 MessageBox.Show("An error occured while trying to compute stage damages:\n" + ex.Message, "Compute Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
+            //maybe i need to validate everything?
+            string msg = vg.GetErrorMessages();
+
             return stageDamageFunctions;
         }
 

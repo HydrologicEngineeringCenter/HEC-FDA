@@ -10,7 +10,7 @@ using Statistics.Histograms;
 
 namespace HEC.FDA.Model.metrics
 {
-    public class ScenarioResults : Validation, IReportMessage
+    public class ScenarioResults : ValidationErrorLogger
     {
         #region Fields 
         List<IContainImpactAreaScenarioResults> _resultsList;
@@ -25,7 +25,6 @@ namespace HEC.FDA.Model.metrics
             }
         }
         public int AnalysisYear { get; }
-        public event MessageReportedEventHandler MessageReport;
 
         #endregion
 
@@ -37,13 +36,11 @@ namespace HEC.FDA.Model.metrics
             ImpactAreaScenarioResults dummyImpactAreaScenarioResults = new ImpactAreaScenarioResults(dummyImpactAreaID, true);
             _resultsList.Add(dummyImpactAreaScenarioResults);
             AnalysisYear = 1900;
-            MessageHub.Register(this);
         }
         public ScenarioResults(int year)
         {
             _resultsList = new List<IContainImpactAreaScenarioResults>();
             AnalysisYear = year;
-            MessageHub.Register(this);
         }
         #endregion
 
@@ -393,10 +390,7 @@ namespace HEC.FDA.Model.metrics
             ReportMessage(this, new MessageEventArgs(errorMessage));
             return dummyResults;
         }
-        public void ReportMessage(object sender, MessageEventArgs e)
-        {
-            MessageReport?.Invoke(sender, e);
-        }
+
         public bool Equals(ScenarioResults scenarioResultsForComparison)
         {
             bool resultsAreEqual = true;

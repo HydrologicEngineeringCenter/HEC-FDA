@@ -11,17 +11,15 @@ using HEC.MVVMFramework.Base.Enumerations;
 
 namespace HEC.FDA.Model.alternativeComparisonReport
 {
-    public class AlternativeComparisonReport: IReportMessage, IProgressReport
+    public class AlternativeComparisonReport: ValidationErrorLogger, IProgressReport
     {
         #region Properties
-        public event MessageReportedEventHandler MessageReport;
         public event ProgressReportedEventHandler ProgressReport;
         #endregion
 
         #region Constructor 
         public AlternativeComparisonReport()
         {
-            MessageHub.Register(this);
         }
         #endregion 
 
@@ -257,11 +255,6 @@ namespace HEC.FDA.Model.alternativeComparisonReport
             }
             return damageReducedAlternatives;
 
-        }
-
-        public void ReportMessage(object sender, MessageEventArgs e)
-        {
-            MessageReport?.Invoke(sender, e);
         }
 
         public void ReportProgress(object sender, ProgressReportEventArgs e)

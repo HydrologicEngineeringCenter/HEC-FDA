@@ -1,24 +1,22 @@
-﻿using Statistics;
-using System;
-using System.Collections.Generic;
-using HEC.MVVMFramework.Base.Events;
-using HEC.MVVMFramework.Base.Implementations;
-using HEC.MVVMFramework.Base.Interfaces;
-using HEC.MVVMFramework.Base.Enumerations;
-using HEC.MVVMFramework.Model.Messaging;
-using HEC.FDA.Model.hydraulics;
+﻿using HEC.FDA.Model.hydraulics;
+using HEC.FDA.Model.hydraulics.Interfaces;
+using HEC.FDA.Model.interfaces;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.structures;
-using HEC.FDA.Model.interfaces;
-using RasMapperLib;
-using HEC.FDA.Model.hydraulics.Interfaces;
 using HEC.FDA.Model.utilities;
+using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Base.Implementations;
+using HEC.MVVMFramework.Model.Messaging;
+using Statistics;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace HEC.FDA.Model.stageDamage
 {
-    public class ImpactAreaStageDamage : Validation, IReportMessage
+    public class ImpactAreaStageDamage : ValidationErrorLogger, IContainValidationGroups
     {
         #region Fields 
         private const double MIN_PROBABILITY = 0.0001;
@@ -53,7 +51,8 @@ namespace HEC.FDA.Model.stageDamage
             get { return _ImpactAreaID; }
         }
 
-        public event MessageReportedEventHandler MessageReport;
+        public List<ValidationGroup> ValidationGroups { get; } = new List<ValidationGroup>();
+
         public event ProgressReportedEventHandler ProgressReport;
         #endregion
         #region Constructor
@@ -80,7 +79,10 @@ namespace HEC.FDA.Model.stageDamage
             convergenceCriteria = convergence;
             SetMinAndMaxStage();
             AddRules();
-            MessageHub.Register(this);
+
+            ValidationGroup vg = new ValidationGroup("Impact area stage damage with impact area id '" + ImpactAreaID + "' has the following errors:");
+            vg.ChildGroups.AddRange(_inventory.ValidationGroups);
+            ValidationGroups.Add(vg);
         }
         #endregion
 
@@ -486,10 +488,6 @@ namespace HEC.FDA.Model.stageDamage
                 extrapolatedStages[i] = stagesAtStructuresHighestProfile[i] + upperInterval * stepCount;
             }
             return extrapolatedStages;
-        }
-        public void ReportMessage(object sender, MessageEventArgs e)
-        {
-            MessageReport?.Invoke(sender, e);
         }
         public void ReportProgress(object sender, ProgressReportEventArgs e)
         {
