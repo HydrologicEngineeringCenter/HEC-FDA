@@ -49,18 +49,13 @@ namespace HEC.FDA.View.Alternatives.Results
             //The alternative has three different DamageWithUncertaintyVM. The content control caches this view
             //and was not updating the histogram plot because the chart that we added above was not switching
             //its data context to the new vm. We do that here.
-            if (e.NewValue is DamageWithUncertaintyVM vm)
+            if (e.NewValue is DamageWithUncertaintyVM vm && _chart != null)
             {
-                if (_chart != null)
-                {
-                    _chart.DataContext = vm.ChartViewModel;
-                    if (!vm.HistogramVisible)
-                    {
-                        _chart.Visibility = Visibility.Collapsed;
-                    }
-                }
+                vm.ChartViewModel = new SciChart2DChartViewModel(vm.ChartViewModel);
+                _chart.DataContext = vm.ChartViewModel;
+
                 frequency_textblock.Text = vm.ProbabilityExceedsValueLabel;
-            }          
+            }      
         }
     }
 }
