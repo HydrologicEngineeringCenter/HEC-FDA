@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
+using HEC.MVVMFramework.Model.Messaging;
 using Statistics;
 using Statistics.Distributions;
 using Statistics.Histograms;
 
 namespace HEC.FDA.Model.metrics
 {
-    public class AlternativeResults : Validation, IReportMessage, IProgressReport
+    public class AlternativeResults : ValidationErrorLogger, IProgressReport
     {
         #region Fields
         private int _alternativeID;
@@ -31,7 +32,6 @@ namespace HEC.FDA.Model.metrics
         }
         public List<int> AnalysisYears { get; }
         public int PeriodOfAnalysis { get; }
-        public event MessageReportedEventHandler MessageReport;
         public event ProgressReportedEventHandler ProgressReport;
 
         public bool IsNull
@@ -56,7 +56,6 @@ namespace HEC.FDA.Model.metrics
             AnalysisYears = new List<int>() { 2030, 2049 };
             PeriodOfAnalysis = 50;
             AddRules();
-            MessageHub.Register(this);
         }
 
 
@@ -69,7 +68,6 @@ namespace HEC.FDA.Model.metrics
             _isNull = false;
             AnalysisYears = analysisYears;
             AddRules();
-            MessageHub.Register(this);
         }
         internal AlternativeResults(int id, List<int> analysisYears, int periodOfAnalysis, bool isNull)
         {
@@ -79,7 +77,6 @@ namespace HEC.FDA.Model.metrics
             AnalysisYears = analysisYears;
             PeriodOfAnalysis = periodOfAnalysis;
             AddRules();
-            MessageHub.Register(this);
         }
         private AlternativeResults(int id, ManyEmpiricalDistributionsOfConsequences consequenceResults, List<int> analysisYears, int periodOfAnalysis)
         {
@@ -89,8 +86,6 @@ namespace HEC.FDA.Model.metrics
             _isNull = false;
             AnalysisYears = analysisYears;
             AddRules();
-            MessageHub.Register(this);
-
         }
         #endregion
         #region Methods
@@ -280,10 +275,6 @@ namespace HEC.FDA.Model.metrics
             {
                 _aaeqResults.ConsequenceResultList.Add(consequenceResultToAdd);
             }
-        }
-        public void ReportMessage(object sender, MessageEventArgs e)
-        {
-            MessageReport?.Invoke(sender, e);
         }
 
         public void ReportProgress(object sender, ProgressReportEventArgs e)

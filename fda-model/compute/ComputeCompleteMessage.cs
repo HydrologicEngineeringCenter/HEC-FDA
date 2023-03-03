@@ -25,5 +25,10 @@ namespace HEC.FDA.Model.compute
             _iterations = iterations;
             _impactAreaID = impactAreaID;
         }
+
+        public override string ToString()
+        {
+            return  Message;
+        }
     }
 }

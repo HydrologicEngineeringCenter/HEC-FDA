@@ -4,10 +4,7 @@ using Statistics.GraphicalRelationships;
 using Statistics;
 using System.Xml.Linq;
 using System;
-using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
-using HEC.MVVMFramework.Base.Interfaces;
-using HEC.MVVMFramework.Base.Enumerations;
 using HEC.FDA.Model.interfaces;
 using HEC.MVVMFramework.Model.Messaging;
 
@@ -106,7 +103,6 @@ namespace HEC.FDA.Model.paireddata
         {
             _metaData = new CurveMetaData();
             AddRules();
-            MessageHub.Register(this);
         }
         [Obsolete("This constructor is deprecated. Construct a CurveMetaData, then inject into constructor")]
         public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, string xlabel, string ylabel, string name, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
@@ -124,8 +120,6 @@ namespace HEC.FDA.Model.paireddata
             _EquivalentRecordLength = equivalentRecordLength;
             _metaData = new CurveMetaData(xlabel, ylabel, name, CurveTypesEnum.StrictlyMonotonicallyIncreasing);
             AddRules();
-            MessageHub.Register(this);
-
         }
         public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, CurveMetaData curveMetaData, bool usingStagesNotFlows, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
         {
@@ -142,8 +136,6 @@ namespace HEC.FDA.Model.paireddata
             _EquivalentRecordLength = equivalentRecordLength;
             _metaData = curveMetaData;
             AddRules();
-            MessageHub.Register(this);
-
         }
         private GraphicalUncertainPairedData(double[] exceedanceProbabilities, Normal[] flowOrStageDistributions, double[] inputFlowsOrStages, int equivalentRecordLength, CurveMetaData curveMetaData, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
         {
@@ -157,7 +149,6 @@ namespace HEC.FDA.Model.paireddata
             _EquivalentRecordLength = equivalentRecordLength;
             _metaData = curveMetaData;
             AddRules();
-            MessageHub.Register(this);
         }
         #endregion
 

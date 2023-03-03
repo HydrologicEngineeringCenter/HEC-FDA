@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace HEC.FDA.Model.alternativeComparisonReport
 {
-    public class AlternativeComparisonReport: IReportMessage, IProgressReport
+    public class AlternativeComparisonReport: ValidationErrorLogger, IProgressReport
     {
         #region Fields
         private List<ManyEmpiricalDistributionsOfConsequences> _aaeqResults;
@@ -22,14 +22,12 @@ namespace HEC.FDA.Model.alternativeComparisonReport
         #endregion
 
         #region Properties
-        public event MessageReportedEventHandler MessageReport;
         public event ProgressReportedEventHandler ProgressReport;
         #endregion
 
         #region Constructor 
         public AlternativeComparisonReport()
         {
-            MessageHub.Register(this);
         }
         #endregion 
 
@@ -219,11 +217,6 @@ namespace HEC.FDA.Model.alternativeComparisonReport
             }
             _futureYearEADResults = damageReducedAlternatives;
 
-        }
-
-        public void ReportMessage(object sender, MessageEventArgs e)
-        {
-            MessageReport?.Invoke(sender, e);
         }
 
         public void ReportProgress(object sender, ProgressReportEventArgs e)

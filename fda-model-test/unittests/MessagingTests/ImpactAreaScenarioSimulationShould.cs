@@ -81,7 +81,6 @@ namespace HEC.FDA.ModelTest.unittests.MessagingTests
 
 
             Listener listener = new Listener();
-            MessageHub.Register(simulation);
             MessageHub.Subscribe(listener);
             ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria);
             MessageHub.UnsubscribeAll(listener);

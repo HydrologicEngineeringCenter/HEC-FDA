@@ -35,7 +35,6 @@ namespace HEC.FDA.ViewModel.Compute
             Alternative alt = new Alternative();
             alt.ProgressReport += Alt_ProgressReport;
             MessageVM.InstanceHash.Add(alt.GetHashCode());
-            MessageHub.Register(alt);
 
             Task.Run(() =>
             {

@@ -139,7 +139,7 @@ namespace HEC.FDA.ViewModel.Utilities
                 var str = s.ToString();
                 if (!string.IsNullOrEmpty(str))
                 {
-                    sw.Write(DateTime.Now + " " + str);
+                    sw.Write(str);
                 }
             }
             catch (Exception ex)

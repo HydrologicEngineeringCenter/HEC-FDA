@@ -52,7 +52,6 @@ namespace HEC.MVVMFramework.Model.Messaging
             return errorsMsg;
         }
 
-
         public void LogErrors(string introMessage)
         {
             string errorMsg = GetErrorMessages(introMessage);

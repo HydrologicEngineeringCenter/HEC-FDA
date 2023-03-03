@@ -2,10 +2,11 @@
 using HEC.MVVMFramework.Base.Enumerations;
 using Statistics;
 using Statistics.Distributions;
+using HEC.MVVMFramework.Model.Messaging;
 
 namespace HEC.FDA.Model.structures
 {
-    public class ValueUncertainty : Validation
+    public class ValueUncertainty : ValidationErrorLogger
     {
         #region Fields
         private double _percentOfInventoryValueStandardDeviationOrMin;
