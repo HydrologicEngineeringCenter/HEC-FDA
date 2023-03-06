@@ -19,8 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HEC.FDA.Statistics\HEC.FDA.Statistics.csproj" />
     <ProjectReference Include="..\HEC.MVVMFramework.Model\HEC.MVVMFramework.Model.csproj" />
-    <ProjectReference Include="..\Statistics\HEC.FDA.Statistics.csproj" />
   </ItemGroup>
 
 </Project>
