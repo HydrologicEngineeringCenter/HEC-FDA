@@ -10,23 +10,23 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
     [Collection("Serial")]
     public class HydraulicProfileShould
     {
-        private const string pathToNSIShapefile = @"..\..\..\fda-model-test\Resources\MuncieNSI\Muncie-SI_CRS2965.shp";
+        private const string pathToNSIShapefile = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieNSI\Muncie-SI_CRS2965.shp";
 
-        private const string pathToIAShapefile = @"..\..\..\fda-model-test\Resources\MuncieImpactAreas\ImpactAreas.shp";
+        private const string pathToIAShapefile = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieImpactAreas\ImpactAreas.shp";
 
-        private const string ParentDirectoryToUnsteadyResult = @"..\..\..\fda-model-test\Resources\MuncieResult";
+        private const string ParentDirectoryToUnsteadyResult = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieResult";
         private const string UnsteadyHDFFileName = @"Muncie.p04.hdf";
 
-        private const string ParentDirectoryToGrid = @"..\..\..\fda-model-test\Resources\MuncieGrid";
+        private const string ParentDirectoryToGrid = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieGrid";
         private const string GridFileName = @"WSE (Max).Terrain.muncie_clip.tif";
 
-        private const string ParentDirectoryToSteadyResult = @"..\..\..\fda-model-test\Resources\MuncieSteadyResult";
+        private const string ParentDirectoryToSteadyResult = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieSteadyResult";
         private const string SteadyHDFFileName = @"Muncie.p10.hdf";
 
         private const string IANameColumnHeader = "Name";
         private const string SteadyHydraulicProfileName = "500";
 
-        private const string TerrainPath = @"..\..\..\fda-model-test\Resources\MuncieTerrain\Terrain (1)_30ft_clip.hdf";
+        private const string TerrainPath = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieTerrain\Terrain (1)_30ft_clip.hdf";
 
 
         [Theory]

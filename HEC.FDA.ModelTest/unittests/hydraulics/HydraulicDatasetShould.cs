@@ -14,9 +14,9 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
     [Collection("Serial")]
     public class HydraulicDatasetShould
     {
-        private const string ParentDirectoryToSteadyResult = @"..\..\..\fda-model-test\Resources\MuncieSteadyResult";
+        private const string ParentDirectoryToSteadyResult = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieSteadyResult";
         private const string SteadyHDFFileName = @"Muncie.p10.hdf";
-        private const string PathToIndexPointShapefile = @"..\..\..\fda-model-test\Resources\MuncieIndexPoints\MuncieIndexPts.shp";
+        private const string PathToIndexPointShapefile = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieIndexPoints\MuncieIndexPts.shp";
         [Fact]
         void retreiveGraphicalFrequencyFunctionsAsPairedData()
         {
