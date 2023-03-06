@@ -53,15 +53,17 @@ namespace Statistics
         public static IDistribution FromXML(XElement xElement)
         {           
             string name = xElement.Name.ToString();
+            Assembly ass = Assembly.GetExecutingAssembly();
+            string AssemblyName = ass.GetName().FullName;
             string libraryName = "Statistics";//this libraries name and the appropriate namespace.
             ObjectHandle objectHandle = null;
             if(name.Equals("Histogram"))
             {
-                objectHandle = Activator.CreateInstance(libraryName, libraryName + ".Histograms." + name);//requires empty constructor
+                objectHandle = Activator.CreateInstance(AssemblyName, libraryName + ".Histograms." + name);//requires empty constructor
             }
             else
             {
-                objectHandle = Activator.CreateInstance(libraryName, libraryName + ".Distributions." + name);//requires empty constructor
+                objectHandle = Activator.CreateInstance(AssemblyName, libraryName + ".Distributions." + name);//requires empty constructor
             }
             IDistribution iDistribution = objectHandle.Unwrap() as IDistribution;
   

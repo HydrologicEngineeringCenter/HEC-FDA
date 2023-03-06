@@ -32,7 +32,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HEC.FDA.ModelCmd", "fda-mod
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HEC.FDA.ModelTest", "fda-model-test\HEC.FDA.ModelTest.csproj", "{2D770541-506D-472B-BCA3-F9286AFB517D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Statistics", "Statistics\Statistics.csproj", "{647DC29F-872B-4F2E-AA4F-D6E014EA42C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HEC.FDA.Statistics", "Statistics\HEC.FDA.Statistics.csproj", "{647DC29F-872B-4F2E-AA4F-D6E014EA42C9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StatisticsTests", "StatisticsTests\StatisticsTests.csproj", "{7B39294F-45BC-48F0-BC07-545C3532DD0D}"
 EndProject
