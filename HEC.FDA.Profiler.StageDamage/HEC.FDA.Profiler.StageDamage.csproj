@@ -11,7 +11,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\fda-model-test\HEC.FDA.ModelTest.csproj" />
+	  <ProjectReference Include="..\HEC.FDA.ModelTest\HEC.FDA.ModelTest.csproj" />
 	</ItemGroup>
 
 </Project>

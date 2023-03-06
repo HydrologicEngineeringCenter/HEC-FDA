@@ -27,6 +27,7 @@ jobs:
       
     - name: Add Github and Nexus Source
       run:  |
+        dotnet nuget add source --name nuget "https://api.nuget.org/v3/index.json"
         dotnet nuget add source --username HydrologicEngineeringCenter --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/HydrologicEngineeringCenter/index.json"
         dotnet nuget add source --name fda-nuget "https://www.hec.usace.army.mil/nexus/repository/fda-nuget/"
       
@@ -40,7 +41,7 @@ jobs:
       run: dotnet test --nologo --no-build --filter RunsOn=Remote
       
     - name: Publish
-      run: dotnet publish -v quiet View/HEC.FDA.View.csproj
+      run: dotnet publish -v quiet HEC.FDA.View/HEC.FDA.View.csproj
     
     - name: Zip
       run: 7z a D:\a\HEC-FDA\HEC-FDA\Build\publish\HEC-FDA.7z D:\a\HEC-FDA\HEC-FDA\Build\publish\FDA2.0\ 

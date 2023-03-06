@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<UseWindowsForms>true</UseWindowsForms>
+		<UseWPF>true</UseWPF>
+		<RootNamespace>HEC.FDA.ViewModel</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Reference Include="DatabaseManager">
+			<HintPath>..\lib\DatabaseManager.dll</HintPath>
+			<Private>true</Private>
+		</Reference>
+	</ItemGroup>
+	
+	<ItemGroup>
+		<ProjectReference Include="..\HEC.FDA.Importer\HEC.FDA.Importer.csproj" />
+		<ProjectReference Include="..\HEC.FDA.Model\HEC.FDA.Model.csproj" />
+		<ProjectReference Include="..\HEC.MVVMFramework.ViewModel\HEC.MVVMFramework.ViewModel.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="CsvHelper" Version="30.0.0" />
+		<PackageReference Include="PlottingLibrary2D" Version="1.0.0-beta-gdc08aa8621" />
+		<PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+		<PackageReference Include="System.Data.SQLite" Version="1.0.113.7" />
+		<PackageReference Include="System.ServiceModel.Duplex" Version="4.8.1" />
+		<PackageReference Include="System.ServiceModel.NetTcp" Version="4.8.1" />
+		<PackageReference Include="System.ServiceModel.Federation" Version="4.8.1" />
+		<PackageReference Include="OxyPlot.Wpf" Version="2.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!--Even though GDAL Assist is available as a transative dependency through Ras.Mapper, it needs
+		to be directly referenced as well to ensure GDAL is copied into the output directory.-->
+		<PackageReference Include="Geospatial.GDALAssist" Version="1.0.24-beta-gf5955b1108" />
+		<PackageReference Include="Ras.Mapper" Version="1.0.24-beta-gf5955b1108" />
+	</ItemGroup>
+
+</Project>

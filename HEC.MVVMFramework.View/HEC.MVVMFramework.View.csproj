@@ -5,7 +5,6 @@
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<UseWPF>True</UseWPF>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<OutputPath>..\Output\</OutputPath>
 	</PropertyGroup>
 
 	<PropertyGroup>

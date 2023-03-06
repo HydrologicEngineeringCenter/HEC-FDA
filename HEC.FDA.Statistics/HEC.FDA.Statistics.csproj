@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+	<PropertyGroup>
+		<PackageId>USACE.HEC.FDA.Statistics</PackageId>
+		<VersionPrefix>1.1.0</VersionPrefix>
+		<Description>A library for computing statistics within HEC-FDA</Description>
+		<Authors>Hydrologic Engineering Center</Authors>
+		<RepositoryUrl>https://github.com/HydrologicEngineeringCenter/fda-model</RepositoryUrl>
+		<DebugType>pdbonly</DebugType>
+		<DebugSymbols>true</DebugSymbols>
+		<TieredCompilation>false</TieredCompilation>
+	</PropertyGroup>
+
+  <ItemGroup>
+	<PackageReference Include="USACE.HEC.FDA.Utilities" Version="2.0.0-alpha-2022-7-25-2237" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HEC.MVVMFramework.Model\HEC.MVVMFramework.Model.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,60 @@
+﻿<UserControl x:Class="HEC.FDA.View.GeoTech.LeveeFeatureEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HEC.FDA.View.GeoTech"
+             xmlns:Utilities="clr-namespace:HEC.FDA.View.Utilities"
+             xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=HEC.FDA.UserControls"
+             xmlns:twp="clr-namespace:HEC.FDA.View.TableWithPlot"
+             mc:Ignorable="d" 
+             Loaded="UserControl_Loaded"
+             d:DesignHeight="400" d:DesignWidth="620">
+    <UserControl.Resources>
+        <Utilities:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+    </UserControl.Resources>
+    <Grid x:Name="MainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <Grid x:Name="LeveeGrid" Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="35"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <Label Grid.Row="0" Grid.Column="0" Content="Name:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <Label Grid.Row="1" Grid.Column="0" Content="Description:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <Label Grid.Row="2" Grid.Column="0" Content="Top of Levee Elevation:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+
+            <TextBox Name="txt_name" Height="20" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Text="{Binding Path=Name,ValidatesOnDataErrors=True}"  Margin="5" VerticalAlignment="Center" />
+            <UserControls:TextBoxDescription Height="20" Grid.Row="1" Grid.Column="1" Text="{Binding Description}" Margin="5" />
+            <TextBox Height="20" Grid.Row="2" Grid.Column="1" Text="{Binding Elevation}" HorizontalAlignment="Stretch" Margin="5" VerticalAlignment="Center" />
+        </Grid>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Bottom">
+            <TextBlock Grid.Row="1" Text="System Response Curve:" VerticalAlignment="Bottom" Margin="5,0,0,0" />
+            <RadioButton Name="rad_default" Content="Default" IsChecked="{Binding IsUsingDefault}" Margin="10,0,0,0"  Checked="rad_default_Checked"/>
+            <RadioButton Name="rad_userDefined" Content="User Defined" IsChecked="{Binding IsUsingDefault,Converter={StaticResource InverseBooleanConverter}}" Margin="10,0,0,0" Checked="rad_userDefined_Checked" />
+        </StackPanel>
+
+        <Grid x:Name="PlotGrid" Grid.Row="2" Visibility="Hidden" >
+
+            <twp:TableWithPlotControl DataContext="{Binding TableWithPlot}" Grid.Column="0" Margin="5"/>
+        </Grid>
+
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Utilities:SaveCloseControl Grid.Row="3" VerticalAlignment="Bottom"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

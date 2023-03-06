@@ -1,0 +1,56 @@
+﻿<UserControl x:Class="HEC.FDA.View.ImpactAreaScenario.Results.PerformanceAEP"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HEC.FDA.View.ImpactAreaScenario.Results"
+             mc:Ignorable="d" 
+             Loaded="UserControl_Loaded"
+             xmlns:controls="clr-namespace:UserControls.UserControls;assembly=HEC.FDA.UserControls"
+             xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid x:Name="main_grd">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="500"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Row="0" Grid.Column="0" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Row="0" Grid.Column="0" Content="Mean:" HorizontalAlignment="Right" />
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Mean, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" VerticalAlignment="Center"/>
+            <Label Grid.Row="1" Grid.Column="0" Content="Median:" HorizontalAlignment="Right" />
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Median, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" VerticalAlignment="Center"/>
+        </Grid>
+
+        <controls:CopyPasteDataGrid Grid.Row="2" Grid.Column="0"  ItemsSource="{Binding Rows}" AutoGenerateColumns="False" 
+                   HorizontalAlignment="Left" SelectionUnit="Cell"
+                  VerticalAlignment="Top" Width="250" IsReadOnly="True" CanUserReorderColumns="False"
+                  CanUserSortColumns="false" Margin="5">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Frequency}" Width="110">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="AEP" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding AEP, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" Width="*">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Assurance of AEP" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+
+        </controls:CopyPasteDataGrid>
+    </Grid>
+</UserControl>

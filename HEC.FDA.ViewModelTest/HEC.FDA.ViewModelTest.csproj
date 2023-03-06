@@ -6,8 +6,7 @@
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
-	<ItemGroup>	
-		<PackageReference Include="HEC.MVVMFramework.ViewModel" Version="1.0.14-beta" />
+	<ItemGroup>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
 		<PackageReference Include="xunit" Version="2.4.1" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
@@ -20,10 +19,8 @@
 		</PackageReference>
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\fda-model\HEC.FDA.Model.csproj" />
+		<ProjectReference Include="..\HEC.FDA.ViewModel\HEC.FDA.ViewModel.csproj" />
 		<ProjectReference Include="..\HEC.MVVMFramework.ViewModel\HEC.MVVMFramework.ViewModel.csproj" />
-		<ProjectReference Include="..\Importer\Importer.csproj" />
-		<ProjectReference Include="..\ViewModel\HEC.FDA.ViewModel.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -31,10 +28,6 @@
 		to be directly referenced as well to ensure GDAL is copied into the output directory.-->
 		<PackageReference Include="Geospatial.GDALAssist" Version="1.0.24-beta-gf5955b1108" />
 		<PackageReference Include="Ras.Mapper" Version="1.0.24-beta-gf5955b1108" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Integration\" />
 	</ItemGroup>
 	
 </Project>
