@@ -1,0 +1,31 @@
+﻿<UserControl x:Class="HEC.FDA.View.Output.HistogramViewer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HEC.FDA.View.Output"
+        xmlns:oxy="http://oxyplot.org/wpf"
+        mc:Ignorable="d"
+        Loaded="Window_Loaded"
+         Height="550" Width="950">
+        <!--DataContext="{Binding RelativeSource={RelativeSource Self}}"-->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width=".87*"/>
+                <ColumnDefinition Width=".13*"/>
+            </Grid.ColumnDefinitions>
+        <Label Name="lbl_MeanValue" Width="80" Content="45.632" FontSize="16" FontWeight="SemiBold" Foreground="#4C0099" Margin="5" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" />
+            <Label Name="lbl_MeanValueText" FontSize="16" Foreground="#4C0099" FontWeight="SemiBold" VerticalAlignment="Center" Content="Mean Annual Exceedance Probabilities:"  Width="295" Margin="5" Grid.Row="0" HorizontalAlignment="Right" />
+        </Grid>
+
+        <Border Name="PlotBorder"  Grid.Row="1" Margin="5" CornerRadius="1" BorderBrush="Black" BorderThickness="1">
+            <oxy:PlotView Name="CurvePlot" Margin="0,0,40,0" Model="{Binding HistogramPlotModel}"/>
+        </Border>
+    </Grid>
+</UserControl>

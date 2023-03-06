@@ -1,0 +1,54 @@
+﻿<UserControl x:Class="HEC.FDA.View.Output.IndexLocations"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:OkClose="clr-namespace:HEC.FDA.View.Utilities"
+             mc:Ignorable="d"
+        Height="455" Width="250" Background="WhiteSmoke">
+    <!--<UserControl.Resources>
+        <output:IndexLocationsVM x:Key="vm" />
+    </UserControl.Resources>-->
+    <Grid DataContext="{DynamicResource vm}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="38" />
+            <RowDefinition Height="38" />
+            <RowDefinition Height="38" />
+            <RowDefinition Height="121*"/>
+            <RowDefinition Height="162*"/>
+            <RowDefinition Height="38" />
+        </Grid.RowDefinitions>
+
+        <!--<QH:HelpButton Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Margin="2" PathIsEmbeddedResource="True" xmlPATH="IndexLocationEditor.xml" AssemblyName="HEC-GeoFDA" RootNamespace="GeoFDA" ToolTip="Get Help On Index Location Editor"/>-->
+
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="88*"/>
+                <ColumnDefinition Width="120*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Reach Name:" Height="28" HorizontalAlignment="Right" Name="Label1" VerticalAlignment="Center" />
+            <ComboBox Grid.Column="1" HorizontalAlignment="Stretch" Margin="5" Name="ReachName" VerticalAlignment="Center" ItemsSource="{Binding Path=ReachName}" />
+        </Grid>
+        <Grid Grid.Row="2" DataContext="{Binding Path=IndexLocation,NotifyOnTargetUpdated=True}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="88*"/>
+                <ColumnDefinition Width="120*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="River Station:"  Height="28" HorizontalAlignment="Right" Name="Label3" VerticalAlignment="Center" />
+            <TextBox Grid.Column="1" HorizontalAlignment="Stretch" Margin="5" Name="TxtRiverStat" Text="{Binding Path=Stationing,NotifyOnTargetUpdated=True}"  VerticalAlignment="Center" IsReadOnly="True"/>
+        </Grid>
+        <Grid Grid.Row="3" DataContext="{Binding Path=IndexLocation,NotifyOnTargetUpdated=True}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="88*"/>
+                <ColumnDefinition Width="120*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Invert:"  Height="28" HorizontalAlignment="Right" Name="Label4" VerticalAlignment="Center" />
+            <TextBox Grid.Column="1" HorizontalAlignment="Stretch" Margin="5" Name="TxtInvert" Text="{Binding Path=Invert,NotifyOnTargetUpdated=True, ValidatesOnDataErrors=True}" VerticalAlignment="Center"/>
+        </Grid>
+
+        <OkClose:OKCloseControl Grid.Row="6" />
+
+    </Grid>
+</UserControl>
