@@ -38,7 +38,7 @@ jobs:
       run: dotnet build -v quiet --configuration Release --no-restore
 
     - name: Test Solution
-      run: dotnet test -v quiet --nologo -l:"console;verbosity=quiet" --no-build --filter RunsOn=Remote
+      run: dotnet test --nologo --no-build --filter RunsOn=Remote
       
     - name: Publish
       run: dotnet publish -v quiet HEC.FDA.View/HEC.FDA.View.csproj
