@@ -22,7 +22,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\fda-model\HEC.FDA.Model.csproj" />
 		<ProjectReference Include="..\HEC.MVVMFramework.ViewModel\HEC.MVVMFramework.ViewModel.csproj" />
-		<ProjectReference Include="..\Importer\Importer.csproj" />
+		<ProjectReference Include="..\Importer\HEC.FDA.Importer.csproj" />
 		<ProjectReference Include="..\ViewModel\HEC.FDA.ViewModel.csproj" />
 	</ItemGroup>
 
