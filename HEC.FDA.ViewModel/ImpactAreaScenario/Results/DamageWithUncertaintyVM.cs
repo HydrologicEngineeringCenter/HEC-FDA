@@ -6,6 +6,7 @@ using System.Linq;
 using Statistics.Histograms;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.Model.metrics;
+using Statistics.Distributions;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
@@ -34,15 +35,16 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
         private void LoadHistogram(ImpactAreaScenarioResults iasResult)
         {
-            IHistogram totalHistogram = iasResult.ConsequenceResults.GetConsequenceResultsHistogram(impactAreaID: iasResult.ImpactAreaID);
-            double[] binsAsDoubles = totalHistogram.BinCounts.Select(x => (double)x / totalHistogram.SampleSize).ToArray();
-            if (binsAsDoubles.Length == 0 || binsAsDoubles.Length == 1)
+            Empirical empirical = iasResult.ConsequenceResults.GetAggregateEmpiricalDistribution(impactAreaID: iasResult.ImpactAreaID);
+            //double[] binsAsDoubles = totalHistogram.BinCounts.Select(x => (double)x / totalHistogram.SampleSize).ToArray();
+            if (empirical.CumulativeProbabilities.Length <= 1)
             {
                 HistogramVisible = false;
             }
             else
             {
-                _data = new HistogramData2D(totalHistogram.BinWidth, totalHistogram.Min, binsAsDoubles, "Chart", "Series", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);
+                (double min, double valueStep, double[] cumulativeRelativeFrequencies) = empirical.ComputeCumulativeFrequenciesForPlotting();
+                _data = new HistogramData2D(valueStep, min, cumulativeRelativeFrequencies, "Chart", "Cumulative Relative Frequency", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);
                 HistogramColor.SetHistogramColor(_data);
                 ChartViewModel.LineData.Set(new List<SciLineData>() { _data });
             }

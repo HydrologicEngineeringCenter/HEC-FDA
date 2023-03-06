@@ -6,7 +6,7 @@ namespace HEC.FDA.Model.compute
     public class RandomProvider : IProvideRandomNumbers
     {
         private Random _randomNumberGenerator;
-        private int _seed;
+        private int _seed = 1234;
         public int Seed
         {
             get

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Statistics.Histograms;
 using System.Linq;
 using System.Xml.Linq;
+using Statistics.Distributions;
 
 namespace HEC.FDA.Model.metrics
 {
@@ -116,9 +117,13 @@ namespace HEC.FDA.Model.metrics
         /// <param name="assetCategory"></param> The default is null 
         /// <param name="impactAreaID"></param> The default is a null value (utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
         /// <returns></returns>
-        public IHistogram GetConsequencesHistogram(int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+        public Empirical GetAggregateEmpiricalDistribution(int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
-            return ConsequenceResults.GetConsequenceResultsHistogram(damageCategory, assetCategory, impactAreaID);
+            return ConsequenceResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID);
+        }
+        public IHistogram GetSpecificHistogram(int impactAreaID, string damageCategory, string assetCategory)
+        {
+            return ConsequenceResults.GetSpecificHistogram(damageCategory, assetCategory, impactAreaID);
         }
         private bool IsEADConverged(bool computeWithDamage)
         {

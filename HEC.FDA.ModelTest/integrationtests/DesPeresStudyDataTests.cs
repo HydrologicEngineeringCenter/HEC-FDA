@@ -59,7 +59,7 @@ namespace HEC.FDA.ModelTest.integrationtests
 
             ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(randomProvider, new ConvergenceCriteria());
 
-            Assert.True(impactAreaScenarioResults.ConsequenceResults.GetConsequenceResultsHistogram("res", "struct", impactAreaID).HistogramIsZeroValued);
+            Assert.True(impactAreaScenarioResults.ConsequenceResults.GetSpecificHistogram("res", "struct", impactAreaID).HistogramIsZeroValued);
 
         }
     }
