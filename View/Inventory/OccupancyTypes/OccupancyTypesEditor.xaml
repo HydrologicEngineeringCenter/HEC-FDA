@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HEC.FDA.View.Inventory.OccupancyTypes"
              xmlns:controls="clr-namespace:HEC.FDA.View.Inventory.OccupancyTypes.Controls"
-             xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
+             xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=HEC.FDA.UserControls"
              mc:Ignorable="d" 
              xmlns:Utils="clr-namespace:HEC.FDA.View.Utilities"
              d:DesignHeight="1000" d:DesignWidth="1000" >

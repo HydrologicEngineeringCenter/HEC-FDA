@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HEC.FDA.View.Inventory.OccupancyTypes.Controls"
-             xmlns:controls="clr-namespace:UserControls.UserControls;assembly=UserControls"
+             xmlns:controls="clr-namespace:UserControls.UserControls;assembly=HEC.FDA.UserControls"
              mc:Ignorable="d"  
              DataContextChanged="UserControl_DataContextChanged"
              Loaded="UserControl_Loaded"

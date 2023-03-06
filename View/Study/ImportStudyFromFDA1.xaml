@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HEC.FDA.View.Study"
              xmlns:Utils="clr-namespace:HEC.FDA.View.Utilities"
-             xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
+             xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=HEC.FDA.UserControls"
              xmlns:frameworkControls="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=HEC.MVVMFramework.View"
              xmlns:cmds="clr-namespace:HEC.FDA.View.Commands"
              mc:Ignorable="d" 

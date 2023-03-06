@@ -5,7 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:Utilities="clr-namespace:HEC.FDA.View.Utilities"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
-             xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
+             xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=HEC.FDA.UserControls"
              xmlns:ViewModel="clr-namespace:HEC.FDA.ViewModel.Study;assembly=HEC.FDA.ViewModel"
              mc:Ignorable="d">
     <UserControl.Resources>

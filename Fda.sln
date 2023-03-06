@@ -5,7 +5,7 @@ VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HEC.FDA.View", "View\HEC.FDA.View.csproj", "{CB13C644-E9D3-400F-B9ED-CFF9BEAF5E20}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "UserControls", "UserControls\UserControls.vbproj", "{80EB938B-BC8F-44F7-B4DD-6127010F2D96}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "HEC.FDA.UserControls", "UserControls\HEC.FDA.UserControls.vbproj", "{80EB938B-BC8F-44F7-B4DD-6127010F2D96}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HEC.FDA.Importer", "Importer\HEC.FDA.Importer.csproj", "{2DB60C23-9754-4548-BCF3-4D1BBA79570C}"
 EndProject

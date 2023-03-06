@@ -6,7 +6,7 @@
              xmlns:Utilities="clr-namespace:HEC.FDA.View.Utilities"
              mc:Ignorable="d" 
              xmlns:twp="clr-namespace:HEC.FDA.View.TableWithPlot"
-             xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
+             xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=HEC.FDA.UserControls"
              d:DesignHeight="420" d:DesignWidth="610">
     <Grid>
         <Grid.RowDefinitions>
