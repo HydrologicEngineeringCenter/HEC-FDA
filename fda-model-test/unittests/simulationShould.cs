@@ -291,7 +291,7 @@ namespace HEC.FDA.ModelTest.unittests
             ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(randomProvider, new ConvergenceCriteria());
             double actualMeanEAD = impactAreaScenarioResults.MeanExpectedAnnualConsequences();
             Assert.Equal(expectedEAD, actualMeanEAD);
-            bool actualHistogramZeroValued = impactAreaScenarioResults.GetConsequencesHistogram(impactAreaID, damCat, assetCat).HistogramIsZeroValued;
+            bool actualHistogramZeroValued = impactAreaScenarioResults.GetSpecificHistogram(impactAreaID, damCat, assetCat).HistogramIsZeroValued;
             Assert.Equal(expectedZeroValued, actualHistogramZeroValued);
         }
 

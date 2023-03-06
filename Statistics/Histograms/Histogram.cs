@@ -6,13 +6,13 @@ using System.Collections.Generic;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Implementations;
+using Statistics.Distributions;
 
 namespace Statistics.Histograms
 {
     public class Histogram: IHistogram, IReportMessage
     {
         #region Fields
-        private bool _HistogramIsZeroValued = false;
         private Int64[] _BinCounts = new Int64[] { };
         private double _SampleMean = 10;
         private double _SampleVariance;
@@ -568,60 +568,22 @@ namespace Statistics.Histograms
                 
             }
         }
-        public static IHistogram AddHistograms(List<IHistogram> histograms)
+
+
+        public static Empirical ConvertToEmpiricalDistribution(IHistogram histogram)
         {
-            double probabilitySteps = 5000;
-            IHistogram aggregatedHistogram;
-
-            if (histograms.Count > 0)
+            int probabilitySteps = 2500;
+            double[] cumulativeProbabilities = new double[probabilitySteps];
+            double[] invCDS = new double[probabilitySteps];
+            for (int i = 0; i < probabilitySteps; i++)
             {
-                if(histograms.Count == 1)
-                {
-                    aggregatedHistogram = histograms[0];
-                }
-                else
-                {
-                    ConvergenceCriteria convergenceCriteria = histograms[0].ConvergenceCriteria;
-                    double min = 0;
-                    double max = 0;
-                    int binQuantity = 0;
-                    double binWidth = 0;
-                    foreach (IHistogram histogramToAdd in histograms)
-                    {
-                        min += histogramToAdd.Min;
-                        max += histogramToAdd.Max;
-                        binQuantity = Math.Max(binQuantity, histogramToAdd.BinCounts.Length);
-                        binWidth += histogramToAdd.BinWidth;
-                    }
-                    binWidth = binWidth / histograms.Count; //use the average of the binWidths 
-                    aggregatedHistogram = new Histogram(min, binWidth, convergenceCriteria);
-                    //walk across the probability domain of each histogram at equal probability intervals 
-                    for (int i = 0; i < probabilitySteps; i++)
-                    {
-                        double probabilityStep = (i + 0.5) / probabilitySteps;
-                        double summedValue = 0;
-                        Int64 summedBinCount = 0;
-
-                        foreach (IHistogram histogramToSample in histograms)
-                        {
-                            histogramToSample.ForceDeQueue();
-                            double sampledValue = histogramToSample.InverseCDF(probabilityStep); //what is the value of each histogram at the given probability step
-                            summedValue += sampledValue; //sum those values 
-                            summedBinCount += histogramToSample.FindBinCount(sampledValue, false); //sum their frequencies 
-                        }
-                        for (int j = 0; j < summedBinCount; j++)
-                        {//this is a coarse approximation, there is probably a more granular way of doing this 
-                            aggregatedHistogram.AddObservationToHistogram(summedValue, j); // add the summed value to a new histogram x times where x is the sum of frequencies 
-                        }
-                    }
-                }
+                double probabilityStep = (i + 0.5) / probabilitySteps;
+                cumulativeProbabilities[i] = probabilityStep;
+                invCDS[i] = histogram.InverseCDF(probabilityStep);
             }
-            else
-            {
-                aggregatedHistogram = new Histogram(0,1);
-            }
-            return aggregatedHistogram;
+            return new Empirical(cumulativeProbabilities, invCDS);
         }
+
         public XElement ToXML()
         {
             XElement masterElem = new XElement("Histogram");
@@ -749,6 +711,7 @@ namespace Statistics.Histograms
         }
         public bool Equals(IDistribution distribution)
         {
+            
             if (distribution == null)
             {
                 return false;
