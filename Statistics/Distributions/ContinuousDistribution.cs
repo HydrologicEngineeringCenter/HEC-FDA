@@ -42,7 +42,7 @@ namespace Statistics
             PropertyInfo[] propertyList = this.GetType().GetProperties();
             foreach (PropertyInfo propertyInfo in propertyList)
             {
-                Distributions.StoredAttribute storedAttribute = (Distributions.StoredAttribute)propertyInfo.GetCustomAttribute(typeof(Distributions.StoredAttribute));
+                StoredAttribute storedAttribute = (StoredAttribute)propertyInfo.GetCustomAttribute(typeof(StoredAttribute));
                 if (storedAttribute != null)
                 {
                     element.SetAttributeValue(storedAttribute.Name, propertyInfo.GetValue(this));
@@ -55,7 +55,7 @@ namespace Statistics
             string name = xElement.Name.ToString();
             Assembly ass = Assembly.GetExecutingAssembly();
             string AssemblyName = ass.GetName().FullName;
-            string libraryName = "Statistics";//this libraries name and the appropriate namespace.
+            string libraryName = typeof(ContinuousDistribution).Namespace ;//this libraries name and the appropriate namespace.
             ObjectHandle objectHandle = null;
             if(name.Equals("Histogram"))
             {
@@ -70,7 +70,7 @@ namespace Statistics
                 PropertyInfo[] propertyList = iDistribution.GetType().GetProperties();
                 foreach (PropertyInfo propertyInfo in propertyList)
                 {
-                    Distributions.StoredAttribute storedAttribute = (Distributions.StoredAttribute)propertyInfo.GetCustomAttribute(typeof(Distributions.StoredAttribute));
+                StoredAttribute storedAttribute = (StoredAttribute)propertyInfo.GetCustomAttribute(typeof(StoredAttribute));
                     if (storedAttribute != null)
                     {
                         switch (storedAttribute.type.Name)
