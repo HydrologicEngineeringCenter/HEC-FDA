@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\fda-model\HEC.FDA.Model.csproj" />
+		<ProjectReference Include="..\HEC.FDA.Model\HEC.FDA.Model.csproj" />
 		<ProjectReference Include="..\HEC.MVVMFramework.Model\HEC.MVVMFramework.Model.csproj" />
 		<ProjectReference Include="..\Statistics\HEC.FDA.Statistics.csproj" />
 	</ItemGroup>
