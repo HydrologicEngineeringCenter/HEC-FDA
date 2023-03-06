@@ -20,8 +20,8 @@
 		</PackageReference>
 	</ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\HEC.FDA.Importer\HEC.FDA.Importer.csproj" />
 		<ProjectReference Include="..\HEC.MVVMFramework.ViewModel\HEC.MVVMFramework.ViewModel.csproj" />
-		<ProjectReference Include="..\Importer\HEC.FDA.Importer.csproj" />
 		<ProjectReference Include="..\ViewModel\HEC.FDA.ViewModel.csproj" />
 	</ItemGroup>
 

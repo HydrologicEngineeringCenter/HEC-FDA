@@ -17,9 +17,9 @@
 	</ItemGroup>
 	
 	<ItemGroup>
+		<ProjectReference Include="..\HEC.FDA.Importer\HEC.FDA.Importer.csproj" />
 		<ProjectReference Include="..\HEC.FDA.Model\HEC.FDA.Model.csproj" />
 		<ProjectReference Include="..\HEC.MVVMFramework.ViewModel\HEC.MVVMFramework.ViewModel.csproj" />
-		<ProjectReference Include="..\Importer\HEC.FDA.Importer.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="CsvHelper" Version="30.0.0" />
