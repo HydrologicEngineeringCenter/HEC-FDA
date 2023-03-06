@@ -10,7 +10,8 @@ using Statistics.Distributions;
 
 namespace StatisticsTests.Distributions
 {
-    public class EmpiricalTests
+  [Trait("RunsOn", "Remote")]
+  public class EmpiricalTests
     {
         [Theory]
         [InlineData(1234, 1000000, 0, 1)]
