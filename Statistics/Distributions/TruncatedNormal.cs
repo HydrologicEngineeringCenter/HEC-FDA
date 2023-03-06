@@ -7,7 +7,7 @@ using HEC.MVVMFramework.Base.Enumerations;
 
 namespace Statistics.Distributions
 {
-    internal class TruncatedNormal : Normal
+    public class TruncatedNormal : Normal
     {
         //TODO: Sample
         #region Fields and Propertiesj

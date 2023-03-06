@@ -34,7 +34,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HEC.FDA.ModelTest", "fda-mo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HEC.FDA.Statistics", "Statistics\HEC.FDA.Statistics.csproj", "{647DC29F-872B-4F2E-AA4F-D6E014EA42C9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StatisticsTests", "StatisticsTests\StatisticsTests.csproj", "{7B39294F-45BC-48F0-BC07-545C3532DD0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HEC.FDA.StatisticsTest", "StatisticsTests\HEC.FDA.StatisticsTest.csproj", "{7B39294F-45BC-48F0-BC07-545C3532DD0D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HEC.FDA.Profiler.StageDamage", "HEC.FDA.Profiler.StageDamage\HEC.FDA.Profiler.StageDamage.csproj", "{8EB66CF4-515E-4201-A5AB-CEB556063E46}"
 EndProject

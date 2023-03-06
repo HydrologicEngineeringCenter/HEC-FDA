@@ -2,7 +2,7 @@
 
 namespace Statistics.Distributions
 {
-    internal class PearsonIII
+    public class PearsonIII
     {
         /// <summary>
         /// A minimum skewness value based on the PearsonIII class in the William Lehman's Statistics assembly.

@@ -6,7 +6,7 @@ using Utilities;
 
 namespace Statistics.Distributions
 {
-    internal class TruncatedLogNormal : ContinuousDistribution
+    public class TruncatedLogNormal : ContinuousDistribution
     {
         #region Fields and Properties
         private double _mean;
