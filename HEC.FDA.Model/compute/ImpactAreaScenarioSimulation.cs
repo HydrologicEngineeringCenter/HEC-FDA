@@ -653,7 +653,7 @@ namespace HEC.FDA.Model.compute
                 //TODO: This is a hacked-in way of figuring out whether the system response function is the "default" function 
                 if (_systemResponseFunction_stage_failureProbability.Xvals.Length == 2)
                 {
-                    return new Threshold(DEFAULT_THRESHOLD_ID, convergenceCriteria, ThresholdEnum.TopOfLevee, _topOfLeveeElevation);
+                    return new Threshold(DEFAULT_THRESHOLD_ID, _systemResponseFunction_stage_failureProbability, convergenceCriteria, ThresholdEnum.TopOfLevee, _topOfLeveeElevation);
 
                 }
                 else
