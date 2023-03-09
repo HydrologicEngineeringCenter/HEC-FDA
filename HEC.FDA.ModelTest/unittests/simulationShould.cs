@@ -50,7 +50,7 @@ namespace HEC.FDA.ModelTest.unittests
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
 
-            Threshold threshold = new Threshold(1, convergenceCriteria, ThresholdEnum.ExteriorStage, 150000);//do we want to access this through _results?
+            Threshold threshold = new Threshold(1, convergenceCriteria, ThresholdEnum.DefaultExteriorStage, 150000);//do we want to access this through _results?
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
@@ -88,7 +88,7 @@ namespace HEC.FDA.ModelTest.unittests
             UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, metaData);
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
-            Threshold threshold = new Threshold(1, convergenceCriteria, ThresholdEnum.ExteriorStage, 150000);
+            Threshold threshold = new Threshold(1, convergenceCriteria, ThresholdEnum.DefaultExteriorStage, 150000);
             ImpactAreaScenarioSimulation s = ImpactAreaScenarioSimulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
@@ -226,7 +226,7 @@ namespace HEC.FDA.ModelTest.unittests
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
 
-            Threshold threshold = new Threshold(1, convergenceCriteria, ThresholdEnum.ExteriorStage, 150000);//do we want to access this through _results?
+            Threshold threshold = new Threshold(1, convergenceCriteria, ThresholdEnum.DefaultExteriorStage, 150000);//do we want to access this through _results?
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)

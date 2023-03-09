@@ -42,7 +42,7 @@ namespace HEC.FDA.Model.metrics
         ///
         public SystemPerformanceResults()
         {
-            _thresholdType = ThresholdEnum.ExteriorStage;
+            _thresholdType = ThresholdEnum.DefaultExteriorStage;
             _thresholdValue = 0;
             _ConvergenceCriteria = new ConvergenceCriteria();
             _assuranceList = new List<AssuranceResultStorage>();

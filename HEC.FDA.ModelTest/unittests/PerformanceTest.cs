@@ -61,7 +61,7 @@ namespace HEC.FDA.ModelTest.unittests
             uncertainPairedDataList.Add(stage_damage);
             int thresholdID = 1;
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
-            Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.ExteriorStage, thresholdValue);
+            Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.DefaultExteriorStage, thresholdValue);
 
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
                 .withFlowFrequency(flow_frequency)
@@ -113,7 +113,7 @@ namespace HEC.FDA.ModelTest.unittests
 
             int thresholdID = 1;
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
-            Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.ExteriorStage, thresholdValue);
+            Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.DefaultExteriorStage, thresholdValue);
 
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
                 .withFlowFrequency(flow_frequency)
@@ -164,7 +164,7 @@ namespace HEC.FDA.ModelTest.unittests
             int thresholdID = 1;
 
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 10000, maxIterations: iterations, tolerance: .001);
-            Threshold threshold = new Threshold(thresholdID, convergenceCriteria, ThresholdEnum.ExteriorStage, thresholdValue);
+            Threshold threshold = new Threshold(thresholdID, convergenceCriteria, ThresholdEnum.DefaultExteriorStage, thresholdValue);
 
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
                 .withFlowFrequency(flow_frequency)
@@ -193,7 +193,7 @@ namespace HEC.FDA.ModelTest.unittests
         public void ConvergenceTest()
         {
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
-            ThresholdEnum thresholdType = ThresholdEnum.ExteriorStage;
+            ThresholdEnum thresholdType = ThresholdEnum.DefaultExteriorStage;
             double thresholdValue = 4.1;
             int thresholdID1 = 1;
             int thresholdID2 = 2;
@@ -259,7 +259,7 @@ namespace HEC.FDA.ModelTest.unittests
             int thresholdID = 1;
 
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations, tolerance: .001);
-            Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.ExteriorStage, thresholdValue);
+            Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.DefaultExteriorStage, thresholdValue);
 
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
                 .withFlowFrequency(flow_frequency)

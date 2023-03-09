@@ -326,6 +326,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
         private ThresholdType ConvertStringToMetricEnum(string metric)
         {
+            //TODO: there are a lot of cases here that are old - is this for backward compatibility? 
+            //TODO: I think these cases will need to be updated to reflect the new types
             switch (metric.ToUpper())
             {
                 case "NOTSET":
@@ -335,18 +337,18 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 case "EXTERIORSTAGEAEP":
                 case "EXTERIORSTAGE":
                     {
-                        return new ThresholdType(ThresholdEnum.ExteriorStage, "Exterior Stage");
+                        return new ThresholdType(ThresholdEnum.DefaultExteriorStage, "Default Exterior Stage");
                     }
                 case "INTERIORSTAGEAEP":
                 case "INTERIORSTAGE":
                     {
-                        return new ThresholdType(ThresholdEnum.InteriorStage, "Interior Stage");
+                        return new ThresholdType(ThresholdEnum.DefaultExteriorStage, "Default Interior Stage");
                     }
                 case "DAMAGEAEP":
                 case "DAMAGES":
                 case "DAMAGE":
                     {
-                        return new ThresholdType(ThresholdEnum.Damage, "Damages");
+                        return new ThresholdType(ThresholdEnum.DefaultExteriorStage, "Default Interior Stage");
                     }
                 default:
                     {

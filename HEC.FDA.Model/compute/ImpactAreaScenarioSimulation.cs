@@ -645,12 +645,21 @@ namespace HEC.FDA.Model.compute
                 }
                 double thresholdDamage = THRESHOLD_DAMAGE_PERCENT * frequencyDamage.f(THRESHOLD_DAMAGE_RECURRENCE_INTERVAL);
                 double thresholdStage = totalStageDamage.f_inverse(thresholdDamage);
-                return new Threshold(DEFAULT_THRESHOLD_ID, convergenceCriteria, ThresholdEnum.InteriorStage, thresholdStage);
+                return new Threshold(DEFAULT_THRESHOLD_ID, convergenceCriteria, ThresholdEnum.DefaultExteriorStage, thresholdStage);
 
             }
             else
             {
-                return new Threshold(DEFAULT_THRESHOLD_ID, _systemResponseFunction_stage_failureProbability, convergenceCriteria, ThresholdEnum.ExteriorStage, _topOfLeveeElevation);
+                //TODO: This is a hacked-in way of figuring out whether the system response function is the "default" function 
+                if (_systemResponseFunction_stage_failureProbability.Xvals.Length == 2)
+                {
+                    return new Threshold(DEFAULT_THRESHOLD_ID, convergenceCriteria, ThresholdEnum.TopOfLevee, _topOfLeveeElevation);
+
+                }
+                else
+                {
+                    return new Threshold(DEFAULT_THRESHOLD_ID, _systemResponseFunction_stage_failureProbability, convergenceCriteria, ThresholdEnum.LeveeSystemResponse, _topOfLeveeElevation);
+                }
             }
         }
 

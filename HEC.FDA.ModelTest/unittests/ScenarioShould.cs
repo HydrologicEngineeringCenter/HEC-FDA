@@ -47,7 +47,7 @@ namespace HEC.FDA.ModelTest.unittests
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
 
-            Threshold threshold = new Threshold(1, convergenceCriteria, ThresholdEnum.ExteriorStage, 150000);//do we want to access this through _results?
+            Threshold threshold = new Threshold(1, convergenceCriteria, ThresholdEnum.DefaultExteriorStage, 150000);//do we want to access this through _results?
 
             // build IAS for Impact Area 1
             ImpactAreaScenarioSimulation simulation1 = ImpactAreaScenarioSimulation.builder(id1)
@@ -96,7 +96,7 @@ namespace HEC.FDA.ModelTest.unittests
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
 
-            Threshold threshold = new Threshold(1, convergenceCriteria, ThresholdEnum.ExteriorStage, 150000);//do we want to access this through _results?
+            Threshold threshold = new Threshold(1, convergenceCriteria, ThresholdEnum.DefaultExteriorStage, 150000);//do we want to access this through _results?
 
             // build IAS for Impact Area 1
             ImpactAreaScenarioSimulation simulation1 = ImpactAreaScenarioSimulation.builder(id1)
