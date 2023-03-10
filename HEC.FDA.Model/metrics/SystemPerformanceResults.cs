@@ -118,9 +118,9 @@ namespace HEC.FDA.Model.metrics
         /// The standard non-exceedance probabilities are one of the double[] { .9, .96, .98, .99, .996, .998 };
         /// </summary>
         /// <param name="standardNonExceedanceProbability"></param>
-        public void AddAssuranceHistogram(double standardNonExceedanceProbability)
+        public void AddAssuranceHistogram(double standardNonExceedanceProbability, double binWidth = 0.05)
         {
-            AssuranceResultStorage assurance = new AssuranceResultStorage(STAGE_ASSURANCE_TYPE, _ConvergenceCriteria, standardNonExceedanceProbability);
+            AssuranceResultStorage assurance = new AssuranceResultStorage(STAGE_ASSURANCE_TYPE, binWidth, _ConvergenceCriteria, standardNonExceedanceProbability);
             if (!_assuranceList.Contains(assurance))
             {
                 _assuranceList.Add(assurance);
