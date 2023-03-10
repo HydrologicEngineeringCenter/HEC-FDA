@@ -195,8 +195,10 @@ namespace HEC.FDA.ModelTest.unittests
             double actualAssuranceOfAEP = results.AssuranceOfAEP(thresholdID, 1 - recurrenceInterval);
             double actualAssuranceOfAEPWithLevee = resultsWithLevee.AssuranceOfAEP(thresholdID: 0, 1 - recurrenceInterval);
             double differenceAssuranceOfAEP = Math.Abs(actualAssuranceOfAEP - expected); //assurance of AEP is theoretically equal to assurance of threshold 
-            double relativeDifferenceAssuranceOfAEP = differenceAssuranceOfAEP / expected;
+            double relativeDifferenceAssuranceOfAEP = differenceAssuranceOfAEP / expected;//expected here is assurance of AEP being compared to assurance of threshold 
 
+            //TODO: This tolerance seems kind of high for me 
+            //Investigate why the error in threshold is so much higher 
             double tolerance = 0.10;
             Assert.True(relativeDifferenceAssuranceOfThreshold < tolerance);
             Assert.True(relativeDifferenceAssuranceOfAEP < tolerance);
@@ -300,7 +302,7 @@ namespace HEC.FDA.ModelTest.unittests
             double _FailureMargin = 0.001;
             double[] xs = new double[] { elev, elev + _FailureMargin };
             IDistribution[] ys = new IDistribution[] { new Deterministic(0), new Deterministic(1) };
-            CurveMetaData curveMetaData = new CurveMetaData();
+            CurveMetaData curveMetaData = new CurveMetaData(xlabel: "Stages", ylabel: "Damage", name: "Stage-Damage");
             return new UncertainPairedData(xs, ys, curveMetaData);
         }
     }

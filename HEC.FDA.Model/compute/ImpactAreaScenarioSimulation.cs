@@ -372,7 +372,13 @@ namespace HEC.FDA.Model.compute
                         {
                             ComputeDamagesFromStageFrequency_WithLevee(randomProvider, frequency_stage, systemResponse_sample, giveMeADamageFrequency, iteration, computeIsDeterministic);
                         }
-                        ComputeLeveePerformance(frequency_stage, systemResponse_sample, iteration);
+                        if (systemResponse_sample.Xvals.Length <= 2)
+                        {
+                            ComputePerformance(frequency_stage, iteration);
+                        } else
+                        {
+                            ComputeLeveePerformance(frequency_stage, systemResponse_sample, iteration);
+                        }
                     }
 
                 }
@@ -401,7 +407,14 @@ namespace HEC.FDA.Model.compute
                         {
                             ComputeDamagesFromStageFrequency_WithLeveeAndInteriorExterior(randomProvider, _channelstage_floodplainstage_sample, frequency_stage, systemResponse_sample, giveMeADamageFrequency, iteration, computeIsDeterministic);
                         }
-                        ComputeLeveePerformance(frequency_stage, systemResponse_sample, iteration);
+                        if (systemResponse_sample.Xvals.Length <= 2)
+                        {
+                            ComputePerformance(frequency_stage, iteration);
+                        }
+                        else
+                        {
+                            ComputeLeveePerformance(frequency_stage, systemResponse_sample, iteration);
+                        }
                     }
 
                 }

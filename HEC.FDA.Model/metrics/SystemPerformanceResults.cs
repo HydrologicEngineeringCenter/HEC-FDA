@@ -71,7 +71,13 @@ namespace HEC.FDA.Model.metrics
         public SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData systemResponseFunction, ConvergenceCriteria convergenceCriteria)
         {
             _systemResponseFunction = systemResponseFunction;
-            _calculatePerformanceForLevee = true;
+            if(_systemResponseFunction.Xvals.Length <= 2)
+            {
+                _calculatePerformanceForLevee = false;
+            } else
+            {
+                _calculatePerformanceForLevee = true;
+            }
             _thresholdType = thresholdType;
             _thresholdValue = thresholdValue;
             _assuranceList = new List<AssuranceResultStorage>();
@@ -91,7 +97,14 @@ namespace HEC.FDA.Model.metrics
         private SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData systemResponseFunction, ConvergenceCriteria convergenceCriteria, List<AssuranceResultStorage> assurances)
         {
             _systemResponseFunction = systemResponseFunction;
-            _calculatePerformanceForLevee = true;
+            if (_systemResponseFunction.Xvals.Length <= 2)
+            {
+                _calculatePerformanceForLevee = false;
+            }
+            else
+            {
+                _calculatePerformanceForLevee = true;
+            }
             _thresholdType = thresholdType;
             _thresholdValue = thresholdValue;
             _assuranceList = assurances;
