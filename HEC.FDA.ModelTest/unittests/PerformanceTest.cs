@@ -201,7 +201,7 @@ namespace HEC.FDA.ModelTest.unittests
 
             //TODO: This tolerance seems kind of high for me 
             //Investigate why the error in threshold is so much higher 
-            double tolerance = 0.10;
+            double tolerance = 0.02;
             Assert.True(relativeDifferenceAssuranceOfThreshold < tolerance);
             Assert.True(relativeDifferenceAssuranceOfAEP < tolerance);
 
