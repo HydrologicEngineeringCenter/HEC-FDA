@@ -71,7 +71,8 @@ namespace HEC.FDA.Model.metrics
         public SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData systemResponseFunction, ConvergenceCriteria convergenceCriteria)
         {
             _systemResponseFunction = systemResponseFunction;
-            if(_systemResponseFunction.Xvals.Length <= 2)
+            //If the system response function is the default function
+            if (_systemResponseFunction.Xvals.Length <= 2)
             {
                 _calculatePerformanceForLevee = false;
             } else
@@ -116,6 +117,7 @@ namespace HEC.FDA.Model.metrics
         #region Methods
         /// <summary>
         /// The standard non-exceedance probabilities are one of the double[] { .9, .96, .98, .99, .996, .998 };
+        /// For now, bin width for histograms of stages will be 0.05 - so 5/100 of a foot
         /// </summary>
         /// <param name="standardNonExceedanceProbability"></param>
         public void AddAssuranceHistogram(double standardNonExceedanceProbability, double binWidth = 0.05)
