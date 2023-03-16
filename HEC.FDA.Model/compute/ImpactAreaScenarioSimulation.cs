@@ -377,6 +377,7 @@ namespace HEC.FDA.Model.compute
                         {
                             ComputeDamagesFromStageFrequency_WithLevee(randomProvider, frequency_stage, systemResponse_sample, giveMeADamageFrequency, iteration, computeIsDeterministic);
                         }
+                        //If the system response function is the default function 
                         if (systemResponse_sample.Xvals.Length <= 2)
                         {
                             ComputePerformance(frequency_stage, iteration);
@@ -412,6 +413,7 @@ namespace HEC.FDA.Model.compute
                         {
                             ComputeDamagesFromStageFrequency_WithLeveeAndInteriorExterior(randomProvider, _channelstage_floodplainstage_sample, frequency_stage, systemResponse_sample, giveMeADamageFrequency, iteration, computeIsDeterministic);
                         }
+                        //If the system response function is the default function
                         if (systemResponse_sample.Xvals.Length <= 2)
                         {
                             ComputePerformance(frequency_stage, iteration);
@@ -571,6 +573,7 @@ namespace HEC.FDA.Model.compute
         }
         public void CreateHistogramsForAssuranceOfThresholds()
         {//TODO: get rid of these hard-coded doubles 
+            //TODO: I think that we need to calculate bin width here 
             double[] er101RequiredNonExceedanceProbabilities = new double[] { .9, .96, .98, .99, .996, .998 };
             foreach (var thresholdEntry in _impactAreaScenarioResults.PerformanceByThresholds.ListOfThresholds)
             {
@@ -668,8 +671,8 @@ namespace HEC.FDA.Model.compute
             }
             else
             {
-                //TODO: This is a hacked-in way of figuring out whether the system response function is the "default" function 
-                if (_systemResponseFunction_stage_failureProbability.Xvals.Length == 2)
+                //If the system response function is the default function 
+                if (_systemResponseFunction_stage_failureProbability.Xvals.Length <= 2)
                 {
                     return new Threshold(DEFAULT_THRESHOLD_ID, _systemResponseFunction_stage_failureProbability, convergenceCriteria, ThresholdEnum.TopOfLevee, _topOfLeveeElevation);
 
