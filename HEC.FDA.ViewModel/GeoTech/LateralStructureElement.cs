@@ -20,7 +20,7 @@ namespace HEC.FDA.ViewModel.GeoTech
         private const string IS_DEFAULT = "IsUsingDefaultCurve";
         private const string ELEVATION = "Elevation";
         private double _Elevation;
-
+        private const double _FailureMargin = 0.001;
         #endregion
         #region Properties
        public bool IsDefaultCurveUsed
@@ -77,7 +77,7 @@ namespace HEC.FDA.ViewModel.GeoTech
         public UncertainPairedData CreateDefaultCurve()
         {
             double elev = Elevation;
-            double[] xs = new double[] { elev, elev + double.Epsilon };
+            double[] xs = new double[] { elev, elev + _FailureMargin };
             IDistribution[] ys = new IDistribution[] { new Deterministic(0), new Deterministic(1) };
             CurveMetaData curveMetaData = new CurveMetaData(StringConstants.STAGE, StringConstants.FREQUENCY, StringConstants.FAILURE_FREQUENCY);
             return new UncertainPairedData(xs, ys, curveMetaData);

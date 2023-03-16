@@ -31,7 +31,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         }
         public void AddRow()
         {
-            Rows.Add(new ThresholdRowItem(getNextIdInteger(), ThresholdEnum.ExteriorStage, 0));
+            Rows.Add(new ThresholdRowItem(getNextIdInteger(), ThresholdEnum.DefaultExteriorStage, 0));
             SelectedRow = Rows[Rows.Count - 1];
         }
 

@@ -27,9 +27,15 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private void LoadThresholdTypes()
         {
-            ThresholdTypes.Add(new ThresholdType( ThresholdEnum.ExteriorStage, "Exterior Stage"));
+            ThresholdTypes.Add(new ThresholdType(ThresholdEnum.DefaultExteriorStage, "Default Exterior Stage"));
+            ThresholdTypes.Add(new ThresholdType(ThresholdEnum.TopOfLevee, "Top Elevation of Levee"));
+            ThresholdTypes.Add(new ThresholdType(ThresholdEnum.LeveeSystemResponse, "Levee with System Response"));
+            ThresholdTypes.Add(new ThresholdType(ThresholdEnum.AdditionalExteriorStage, "Additional Exterior Stage"));
+            //TODO: THese are relics. Do we need to keep them for backward compatibilty?
+            ThresholdTypes.Add(new ThresholdType(ThresholdEnum.ExteriorStage, "Exterior Stage"));
             ThresholdTypes.Add(new ThresholdType(ThresholdEnum.InteriorStage, "Interior Stage"));
             ThresholdTypes.Add(new ThresholdType(ThresholdEnum.Damage, "Damage"));
+
         }
 
         public Threshold GetThreshold()
