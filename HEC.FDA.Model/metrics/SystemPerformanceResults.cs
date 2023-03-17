@@ -116,10 +116,10 @@ namespace HEC.FDA.Model.metrics
         #region Methods
         /// <summary>
         /// The standard non-exceedance probabilities are one of the double[] { .9, .96, .98, .99, .996, .998 };
-        /// For now, bin width for histograms of stages will be 0.001 - so 1/1000 of a foot
+        /// For now, bin width for histograms of stages will be 0.005 - so 5/1000 of a foot
         /// </summary>
         /// <param name="standardNonExceedanceProbability"></param>
-        public void AddAssuranceHistogram(double standardNonExceedanceProbability, double binWidth = 0.001)
+        public void AddAssuranceHistogram(double standardNonExceedanceProbability, double binWidth = 0.005)
         {
             AssuranceResultStorage assurance = new AssuranceResultStorage(STAGE_ASSURANCE_TYPE, binWidth, _ConvergenceCriteria, standardNonExceedanceProbability);
             if (!_assuranceList.Contains(assurance))

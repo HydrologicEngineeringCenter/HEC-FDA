@@ -330,7 +330,6 @@ namespace HEC.FDA.ModelTest.unittests
 
             Parallel.For(0, iterations, i =>
             {
-                //check if it is a mean random provider or not
                 IProvideRandomNumbers threadlocalRandomProvider;
                 threadlocalRandomProvider = new RandomProvider(seeds[i]);
                 double invCDF = standardNormal.InverseCDF(threadlocalRandomProvider.NextRandom());
