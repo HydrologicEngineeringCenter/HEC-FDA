@@ -20,6 +20,7 @@ namespace HEC.FDA.Model.metrics
         private const string AEP_ASSURANCE_FOR_PLOTTING = "AEP_PLOT";
         private const string STAGE_ASSURANCE_TYPE = "STAGE";
         private const double AEP_BIN_WIDTH = 0.0002;
+        private const double STAGE_BIN_WIDTH = 0.01;
         private bool _calculatePerformanceForLevee;
         private ThresholdEnum _thresholdType;
         private double _thresholdValue;
@@ -116,10 +117,9 @@ namespace HEC.FDA.Model.metrics
         #region Methods
         /// <summary>
         /// The standard non-exceedance probabilities are one of the double[] { .9, .96, .98, .99, .996, .998 };
-        /// For now, bin width for histograms of stages will be 0.005 - so 5/1000 of a foot
         /// </summary>
         /// <param name="standardNonExceedanceProbability"></param>
-        public void AddAssuranceHistogram(double standardNonExceedanceProbability, double binWidth = 0.005)
+        public void AddAssuranceHistogram(double standardNonExceedanceProbability, double binWidth = STAGE_BIN_WIDTH)
         {
             AssuranceResultStorage assurance = new AssuranceResultStorage(STAGE_ASSURANCE_TYPE, binWidth, _ConvergenceCriteria, standardNonExceedanceProbability);
             if (!_assuranceList.Contains(assurance))
