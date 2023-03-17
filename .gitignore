@@ -384,3 +384,7 @@ OpenGLMapper/
 ViewModelTest/bin/Debug/net6.0/testhost.exe
 ViewModelTest/bin/Debug/net6.0/ViewModelTest.deps.json
 ViewModelTest/bin/Debug/net6.0/ViewModelTest.runtimeconfig.json
+
+# Hide framwork intermediate files 
+Output/HEC.MVVMFramework.View.deps.json
+Output/netstandard2.0/HEC.MVVMFramework.ViewModel.deps.json
