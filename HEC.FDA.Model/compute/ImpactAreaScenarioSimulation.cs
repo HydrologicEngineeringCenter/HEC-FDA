@@ -1134,6 +1134,9 @@ namespace HEC.FDA.Model.compute
             {
                 _simulation._discharge_stage = uncertainPairedData;
                 _simulation.AddSinglePropertyRule("flow stage", new Rule(() => { _simulation._discharge_stage.Validate(); return !_simulation._discharge_stage.HasErrors; }, $"Flow-Stage has errors  for the impact area with ID {_simulation._impactAreaID}."));
+                double stageMin = uncertainPairedData.Yvals[0].InverseCDF(p: 0.001);
+                double stageMax = uncertainPairedData.Yvals[uncertainPairedData.Yvals.Length - 1].InverseCDF(p: 0.999);
+                _simulation.AddSinglePropertyRule("stage range", new Rule(() => (stageMax - stageMin) < 1000, "The range of stages must be less than 1000. Ranges larger than this will cause memory problems", ErrorLevel.Fatal));
                 return new SimulationBuilder(_simulation);
             }
             public SimulationBuilder withFrequencyStage(GraphicalUncertainPairedData graphicalUncertainPairedData)
