@@ -1140,6 +1140,7 @@ namespace HEC.FDA.Model.compute
             public SimulationBuilder withFlowFrequency(GraphicalUncertainPairedData graphicalUncertainPairedData)
             {
                 _simulation._frequency_discharge_graphical = graphicalUncertainPairedData;
+                _simulation.AddSinglePropertyRule("flow frequency", new Rule(() => { _simulation._frequency_discharge_graphical.Validate(); return !_simulation._frequency_discharge_graphical.HasErrors; }, string.Join(Environment.NewLine, _simulation._frequency_discharge_graphical.GetErrors())));
                 return new SimulationBuilder(_simulation);
             }
             public SimulationBuilder withInflowOutflow(UncertainPairedData uncertainPairedData)

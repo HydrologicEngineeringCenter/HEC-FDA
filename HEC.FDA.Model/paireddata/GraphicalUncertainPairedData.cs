@@ -7,6 +7,7 @@ using System;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.FDA.Model.interfaces;
 using HEC.MVVMFramework.Model.Messaging;
+using HEC.MVVMFramework.Base.Enumerations;
 
 namespace HEC.FDA.Model.paireddata
 {
@@ -160,17 +161,18 @@ namespace HEC.FDA.Model.paireddata
         /// </summary>
         private void AddRules()
         {
-            switch (_metaData.CurveType)
+            if (_metaData.CurveType != CurveTypesEnum.StrictlyMonotonicallyIncreasing)
             {
-                case CurveTypesEnum.StrictlyMonotonicallyIncreasing:
-                    AddSinglePropertyRule(nameof(_NonExceedanceProbabilities), new Rule(() => IsArrayValid(_NonExceedanceProbabilities, (a, b) => a > b), $"X must be strictly monotonically decreasing but are not for graphical frequency function named {_metaData.Name}."));
-                    break;
-                default:
-                    break;
+                _metaData.CurveType = CurveTypesEnum.StrictlyMonotonicallyIncreasing;
             }
+            AddSinglePropertyRule(nameof(_NonExceedanceProbabilities), new Rule(() => IsArrayValid(_NonExceedanceProbabilities, (a, b) => a > b), $"Non exceedance probabilities must be strictly monotonically increasing but are not for graphical frequency function named {_metaData.Name}.", ErrorLevel.Fatal));
 
         }
-        private bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
+        //the comparison we pass in is that which should not occur
+        //so if i should be less than i + 1 
+        //we check if i > i + 1
+        //in which case we return false 
+        private static bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
         {
             if (arrayOfData == null) return false;
             for (int i = 0; i < arrayOfData.Length - 1; i++)
@@ -200,11 +202,23 @@ namespace HEC.FDA.Model.paireddata
                 y[i] = _StageOrLogFlowDistributions[i].InverseCDF(probability);
             }
             PairedData pairedData = new PairedData(_NonExceedanceProbabilities, y, _metaData);
-            if (!pairedData.IsValidPerMetadata)
+            bool isMonotonicallyIncreasing = IsMonotonicallyIncreasing(pairedData);
+            if (!isMonotonicallyIncreasing)
             {
                 pairedData.ForceMonotonic();
             }
             return pairedData;
+        }
+        private bool IsMonotonicallyIncreasing(IPairedData pairedData)
+        {
+            for (int i = 1; i < pairedData.Yvals.Length; i++)
+            {
+                if (pairedData.Yvals[i] < pairedData.Yvals[i - 1])
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         public bool Equals(GraphicalUncertainPairedData incomingGraphicalUncertainPairedData)
