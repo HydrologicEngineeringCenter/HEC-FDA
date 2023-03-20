@@ -61,7 +61,7 @@ namespace HEC.FDA.ModelTest.unittests
             uncertainPairedDataList.Add(stage_damage);
             int thresholdID = 1;
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
-            Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.ExteriorStage, thresholdValue);
+            Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.DefaultExteriorStage, thresholdValue);
 
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
                 .withFlowFrequency(flow_frequency)
@@ -113,7 +113,7 @@ namespace HEC.FDA.ModelTest.unittests
 
             int thresholdID = 1;
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
-            Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.ExteriorStage, thresholdValue);
+            Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.DefaultExteriorStage, thresholdValue);
 
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
                 .withFlowFrequency(flow_frequency)
@@ -164,7 +164,7 @@ namespace HEC.FDA.ModelTest.unittests
             int thresholdID = 1;
 
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 10000, maxIterations: iterations, tolerance: .001);
-            Threshold threshold = new Threshold(thresholdID, convergenceCriteria, ThresholdEnum.ExteriorStage, thresholdValue);
+            Threshold threshold = new Threshold(thresholdID, convergenceCriteria, ThresholdEnum.DefaultExteriorStage, thresholdValue);
 
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
                 .withFlowFrequency(flow_frequency)
@@ -173,27 +173,46 @@ namespace HEC.FDA.ModelTest.unittests
                 .withAdditionalThreshold(threshold)
                 .build();
 
+            UncertainPairedData systemResponse = CreateDefaultCurve(thresholdValue);
+
+            ImpactAreaScenarioSimulation simulationWithLevee = ImpactAreaScenarioSimulation.builder(id)
+                .withFlowFrequency(flow_frequency)
+                .withFlowStage(flow_stage)
+                .withStageDamages(uncertainPairedDataList)
+                .withLevee(systemResponse, thresholdValue)
+                .build();
+
+
             RandomProvider randomProvider = new RandomProvider(seed);
             ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria, false);
+            ImpactAreaScenarioResults resultsWithLevee = simulationWithLevee.Compute(randomProvider, convergenceCriteria);
 
             double actualAssuranceOfThreshold = results.AssuranceOfEvent(thresholdID, recurrenceInterval);
+            double actualAssuranceOfLevee = resultsWithLevee.AssuranceOfEvent(thresholdID: 0, recurrenceInterval);
             double differenceAssuranceOfThreshold = Math.Abs(actualAssuranceOfThreshold - expected);
             double relativeDifferenceAssuranceOfThreshold = differenceAssuranceOfThreshold / expected;
 
             double actualAssuranceOfAEP = results.AssuranceOfAEP(thresholdID, 1 - recurrenceInterval);
+            double actualAssuranceOfAEPWithLevee = resultsWithLevee.AssuranceOfAEP(thresholdID: 0, 1 - recurrenceInterval);
             double differenceAssuranceOfAEP = Math.Abs(actualAssuranceOfAEP - expected); //assurance of AEP is theoretically equal to assurance of threshold 
-            double relativeDifferenceAssuranceOfAEP = differenceAssuranceOfAEP / expected;
+            double relativeDifferenceAssuranceOfAEP = differenceAssuranceOfAEP / expected;//expected here is assurance of AEP being compared to assurance of threshold 
 
+            //TODO: This tolerance seems kind of high for me 
+            //Investigate why the error in threshold is so much higher 
             double tolerance = 0.10;
             Assert.True(relativeDifferenceAssuranceOfThreshold < tolerance);
             Assert.True(relativeDifferenceAssuranceOfAEP < tolerance);
+
+            //Levee with Default System Response function should have same project performance as a threshold of the same stage
+            Assert.Equal(actualAssuranceOfThreshold, actualAssuranceOfLevee, .01);
+            Assert.Equal(actualAssuranceOfAEP, actualAssuranceOfAEPWithLevee, .01);
         }
 
         [Fact]
         public void ConvergenceTest()
         {
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
-            ThresholdEnum thresholdType = ThresholdEnum.ExteriorStage;
+            ThresholdEnum thresholdType = ThresholdEnum.DefaultExteriorStage;
             double thresholdValue = 4.1;
             int thresholdID1 = 1;
             int thresholdID2 = 2;
@@ -259,7 +278,7 @@ namespace HEC.FDA.ModelTest.unittests
             int thresholdID = 1;
 
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations, tolerance: .001);
-            Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.ExteriorStage, thresholdValue);
+            Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.DefaultExteriorStage, thresholdValue);
 
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
                 .withFlowFrequency(flow_frequency)
@@ -274,6 +293,17 @@ namespace HEC.FDA.ModelTest.unittests
             SystemPerformanceResults projectPerformanceResults = SystemPerformanceResults.ReadFromXML(xElement);
             bool success = results.PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.Equals(projectPerformanceResults);
             Assert.True(success);
+        }
+
+        //This function was copied and pasted from the Lateral Structure Element class
+        private static UncertainPairedData CreateDefaultCurve(double Elevation)
+        {
+            double elev = Elevation;
+            double _FailureMargin = 0.001;
+            double[] xs = new double[] { elev, elev + _FailureMargin };
+            IDistribution[] ys = new IDistribution[] { new Deterministic(0), new Deterministic(1) };
+            CurveMetaData curveMetaData = new CurveMetaData(xlabel: "Stages", ylabel: "Damage", name: "Stage-Damage");
+            return new UncertainPairedData(xs, ys, curveMetaData);
         }
     }
 }

@@ -32,7 +32,7 @@ namespace HEC.FDA.Model.metrics
         #region Constructors 
         public Threshold()
         {
-            ThresholdType = ThresholdEnum.ExteriorStage;
+            ThresholdType = ThresholdEnum.DefaultExteriorStage;
             ThresholdID = 9999;
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
             SystemPerformanceResults = new SystemPerformanceResults();
