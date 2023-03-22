@@ -209,6 +209,8 @@ namespace HEC.FDA.Model.paireddata
             }
             return pairedData;
         }
+        //This method duplicates the IsArrayValid method functionality
+        //I don't like IsArrayValid, too complicated. 
         private bool IsMonotonicallyIncreasing(IPairedData pairedData)
         {
             for (int i = 1; i < pairedData.Yvals.Length; i++)

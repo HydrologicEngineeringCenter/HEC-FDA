@@ -296,11 +296,6 @@ namespace HEC.FDA.Model.compute
                         {
                             //If threadlocalRandomProvider is medianRandomProvider then we get a quasi-deterministic result
                             frequencyDischarge = _frequency_discharge_graphical.SamplePairedData(threadlocalRandomProvider.NextRandom());
-                            bool flowIsINcreasing = IsMonotonicallyIncreasing(frequencyDischarge);
-                            if (!flowIsINcreasing)
-                            {
-                                Console.WriteLine("poo");
-                            }
                         }
                         //if frequency_flow is not defined throw big errors.
                         //check if flow transform exists, and use it here
@@ -766,19 +761,6 @@ namespace HEC.FDA.Model.compute
                 ReportMessage(this, new MessageEventArgs(errorMessage));
             }
         }
-
-        private bool IsMonotonicallyIncreasing(IPairedData pairedData)
-        {
-            for (int i = 1; i < pairedData.Yvals.Length; i++)
-            {
-                if (pairedData.Yvals[i] < pairedData.Yvals[i - 1])
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
 
         //TODO: Add messaging to indicate which curves do not overlap
         private bool SimulationCurvesHaveOverlap()
