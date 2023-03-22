@@ -19,9 +19,9 @@ namespace HEC.FDA.Model.metrics
         private const string AEP_ASSURANCE_TYPE = "AEP";
         private const string AEP_ASSURANCE_FOR_PLOTTING = "AEP_PLOT";
         private const string STAGE_ASSURANCE_TYPE = "STAGE";
-        private const double AEP_BIN_WIDTH = 0.002;
+        private const double AEP_BIN_WIDTH = 0.0002;
+        private const double STAGE_BIN_WIDTH = 0.001;
         private bool _calculatePerformanceForLevee;
-        //TODO: handle performance by different threshold types 
         private ThresholdEnum _thresholdType;
         private double _thresholdValue;
         private List<AssuranceResultStorage> _assuranceList;
@@ -71,7 +71,8 @@ namespace HEC.FDA.Model.metrics
         public SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData systemResponseFunction, ConvergenceCriteria convergenceCriteria)
         {
             _systemResponseFunction = systemResponseFunction;
-            if(_systemResponseFunction.Xvals.Length <= 2)
+            //If the system response function is the default function
+            if (_systemResponseFunction.Xvals.Length <= 2)
             {
                 _calculatePerformanceForLevee = false;
             } else
@@ -118,9 +119,9 @@ namespace HEC.FDA.Model.metrics
         /// The standard non-exceedance probabilities are one of the double[] { .9, .96, .98, .99, .996, .998 };
         /// </summary>
         /// <param name="standardNonExceedanceProbability"></param>
-        public void AddAssuranceHistogram(double standardNonExceedanceProbability)
+        public void AddAssuranceHistogram(double standardNonExceedanceProbability, double binWidth = STAGE_BIN_WIDTH)
         {
-            AssuranceResultStorage assurance = new AssuranceResultStorage(STAGE_ASSURANCE_TYPE, _ConvergenceCriteria, standardNonExceedanceProbability);
+            AssuranceResultStorage assurance = new AssuranceResultStorage(STAGE_ASSURANCE_TYPE, binWidth, _ConvergenceCriteria, standardNonExceedanceProbability);
             if (!_assuranceList.Contains(assurance))
             {
                 _assuranceList.Add(assurance);

@@ -14,8 +14,8 @@ namespace HEC.FDA.ModelTest.unittests
     public class PerformanceTest
     {
         static double[] Flows = { 0, 100000 };
-        static double[] Stages = { 0, 20000 };
-        static double[] StageForNonLeveeFailureProbs = { 5000, 8000, 9000, 9600, 9800, 9900, 9960, 9980 };
+        static double[] Stages = { 0, 2 };
+        static double[] StageForNonLeveeFailureProbs = { .5000, .8000, .9000, .9600, .9800, .9900, .9960, .9980 };
         static double[] ProbLeveeFailure = { .01, .02, .05, .1, .2, .3, .4, 1 };
         static string xLabel = "x label";
         static string yLabel = "y label";
@@ -34,10 +34,10 @@ namespace HEC.FDA.ModelTest.unittests
         /// <param name="expectedAEP"></param>
         /// <param name="expectedLTEP"></param>
         [Theory]
-        [InlineData(9200, 80, 1, .08, 0.998732271693343)]
-        [InlineData(9400, 60, 1, .06, 0.975584185541488)]
-        [InlineData(9600, 40, 1, .04, 0.80463384844468)]
-        [InlineData(9800, 20, 1, .02, 0.332392028244906)]
+        [InlineData(.9200, 80, 1, .08, 0.998732271693343)]
+        [InlineData(.9400, 60, 1, .06, 0.975584185541488)]
+        [InlineData(.9600, 40, 1, .04, 0.80463384844468)]
+        [InlineData(.9800, 20, 1, .02, 0.332392028244906)]
         public void ComputePerformanceWithSimulation_Test(double thresholdValue, int years, int iterations, double expectedAEP, double expectedLTEP)
         {
 
@@ -46,7 +46,7 @@ namespace HEC.FDA.ModelTest.unittests
             IDistribution[] stages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
             {
-                stages[i] = IDistributionFactory.FactoryUniform(0, 20000 * i, 10);
+                stages[i] = IDistributionFactory.FactoryUniform(0, 2 * i, 10);
             }
             UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, metaData);
             //create a damage distribution
@@ -92,7 +92,7 @@ namespace HEC.FDA.ModelTest.unittests
         /// <param name="iterations"></param>
         /// <param name="expected"></param>
         [Theory]
-        [InlineData(9980, 1, .026)]
+        [InlineData(.998, 1, .026)]
         public void ComputeLeveeAEP_Test(double thresholdValue, int iterations, double expected)
         {
             ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
@@ -100,7 +100,7 @@ namespace HEC.FDA.ModelTest.unittests
             IDistribution[] stages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
             {
-                stages[i] = IDistributionFactory.FactoryUniform(0, 20000 * i, 10);
+                stages[i] = IDistributionFactory.FactoryUniform(0, 2 * i, 10);
             }
             UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, metaData);
             //create a damage distribution
@@ -125,6 +125,24 @@ namespace HEC.FDA.ModelTest.unittests
             MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, cc, false);
             double actual = results.MeanAEP(thresholdID);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             Assert.Equal(expected, actual, 2);
         }
         /// <summary>
@@ -136,11 +154,11 @@ namespace HEC.FDA.ModelTest.unittests
         /// <param name="recurrenceInterval"></param>
         /// <param name="expected"></param>
         [Theory]
-        [InlineData(3456, 10001, 12000, .9, .666667)]
-        [InlineData(5678, 10001, 13000, .98, .663265)]
-        [InlineData(6789, 10001, 14000, .99, .707071)]
-        [InlineData(8910, 10001, 15000, .996, .753012)]
-        //[InlineData(9102, 10001, 16000, .998, .801603)] //the two tests pass for all cases except this one
+        [InlineData(3456, 10001, 1.2, .9, .666667)]
+        [InlineData(5678, 10001, 1.3, .98, .663265)]
+        [InlineData(6789, 10001, 1.4, .99, .707071)]
+        [InlineData(8910, 10001, 1.5, .996, .753012)]
+        //[InlineData(9102, 10001, 1.6, .998, .801603)] //the two tests pass for all cases except this one
         public void ComputeConditionalNonExceedanceProbability_Test(int seed, int iterations, double thresholdValue, double recurrenceInterval, double expected)
         {
             ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
@@ -148,7 +166,7 @@ namespace HEC.FDA.ModelTest.unittests
             IDistribution[] stages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
             {
-                stages[i] = IDistributionFactory.FactoryUniform(0, 20000 * i, 10);
+                stages[i] = IDistributionFactory.FactoryUniform(0, 2 * i, 10);
             }
             UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, metaData);
             //create a damage distribution
@@ -254,7 +272,7 @@ namespace HEC.FDA.ModelTest.unittests
         }
 
         [Theory]
-        [InlineData(9102, 10001, 16000)]
+        [InlineData(9102, 10001, 1.6)]
         public void SerializationShouldReadTheSameObjectItWrites(int seed, int iterations, double thresholdValue)
         {
             ContinuousDistribution flow_frequency = new Uniform(0, 100000);
@@ -262,7 +280,7 @@ namespace HEC.FDA.ModelTest.unittests
             IDistribution[] stages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
             {
-                stages[i] = IDistributionFactory.FactoryUniform(0, 20000 * i, 10);
+                stages[i] = IDistributionFactory.FactoryUniform(0, 2 * i, 10);
             }
             UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, metaData);
             //create a damage distribution
