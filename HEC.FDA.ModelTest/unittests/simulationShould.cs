@@ -16,7 +16,7 @@ namespace HEC.FDA.ModelTest.unittests
     public class SimulationShould
     {
         static double[] Flows = { 0, 100000 };
-        static double[] Stages = { 0, 150000, 300000 };
+        static double[] Stages = { 0, 15, 30 };
         static string xLabel = "x label";
         static string yLabel = "y label";
         static string name = "name";
@@ -36,7 +36,7 @@ namespace HEC.FDA.ModelTest.unittests
             IDistribution[] stages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
             {
-                stages[i] = IDistributionFactory.FactoryUniform(0, 300000 * i, 10);
+                stages[i] = IDistributionFactory.FactoryUniform(0, 30 * i, 10);
             }
             UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, metaData);
             //create a damage distribution
@@ -75,7 +75,7 @@ namespace HEC.FDA.ModelTest.unittests
             IDistribution[] stages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
             {
-                stages[i] = IDistributionFactory.FactoryUniform(0, 300000 * i, 10);
+                stages[i] = IDistributionFactory.FactoryUniform(0, 30 * i, 10);
             }
             UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, metaData);
             //create a damage distribution
@@ -118,7 +118,7 @@ namespace HEC.FDA.ModelTest.unittests
             IDistribution[] stages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
             {
-                stages[i] = IDistributionFactory.FactoryUniform(0, 300000 * i, 10);
+                stages[i] = IDistributionFactory.FactoryUniform(0, 30 * i, 10);
             }
             UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, metaData);
             //create a damage distribution
@@ -147,7 +147,7 @@ namespace HEC.FDA.ModelTest.unittests
         }
 
         [Theory]
-        [InlineData(83333.33, 100000.0d)]
+        [InlineData(83333.33, 10.0d)]
         [InlineData(0.0, 400000.0d)] //top of levee elevation above all stages
         public void ComputeEAD_withLevee(double expected, double topOfLeveeElevation)
         {
@@ -157,7 +157,7 @@ namespace HEC.FDA.ModelTest.unittests
             IDistribution[] stages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
             {
-                stages[i] = IDistributionFactory.FactoryUniform(0, 300000 * i, 10);
+                stages[i] = IDistributionFactory.FactoryUniform(0, 30 * i, 10);
             }
             UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, metaData);
             double epsilon = 0.0001;
@@ -212,7 +212,7 @@ namespace HEC.FDA.ModelTest.unittests
             IDistribution[] stages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
             {
-                stages[i] = IDistributionFactory.FactoryUniform(0, 300000 * i, 10);
+                stages[i] = IDistributionFactory.FactoryUniform(0, 30 * i, 10);
             }
             UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, metaData);
             //create a damage distribution
