@@ -14,6 +14,9 @@ using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.interfaces;
 using System.Text;
+using System.IO;
+using System.Collections.Concurrent;
+using Statistics.Distributions;
 
 namespace HEC.FDA.Model.compute
 {
@@ -22,7 +25,7 @@ namespace HEC.FDA.Model.compute
         public const int IMPACT_AREA_SIM_COMPLETED = -1001;
 
         private const double THRESHOLD_DAMAGE_PERCENT = 0.05;
-        private const double THRESHOLD_DAMAGE_RECURRENCE_INTERVAL = 0.99; //this should be a non-exceedance probability 
+        private const double THRESHOLD_DAMAGE_RECURRENCE_INTERVAL = 0.99; //this is a non-exceedance probability 
         private const int DEFAULT_THRESHOLD_ID = 0;
         private ContinuousDistribution _frequency_discharge;
         private GraphicalUncertainPairedData _frequency_discharge_graphical;
@@ -166,6 +169,8 @@ namespace HEC.FDA.Model.compute
 
             ValidationGroup validationGroup = new ValidationGroup(validationObjects, validationIntroMessages, $"The simulation for impact area {_impactAreaID} contains warnings:");
 
+
+            //TODO - is there a reason for keeping this commented out code? 
             //    ReportMessage(this, new MessageEventArgs(new ErrorMessage($"The simulation for impact area {_impactAreaID} contains warnings:", errorLevel)));
 
             //    _frequency_discharge?.LogErrors(nameof(_frequency_discharge) + $" has the following messages for the impact area with ID {_impactAreaID}:");
@@ -240,7 +245,7 @@ namespace HEC.FDA.Model.compute
         }
 
         private void ComputeIterations(ConvergenceCriteria convergenceCriteria, IProvideRandomNumbers randomProvider, int masterseed, bool computeWithDamage, bool giveMeADamageFrequency, bool computeIsDeterministic)
-        {
+        {         
             long progressChunks = 1;
             long _completedIterations = 0;
             long _ExpectedIterations = convergenceCriteria.MaxIterations;
@@ -255,7 +260,7 @@ namespace HEC.FDA.Model.compute
                 seeds[i] = masterSeedList.Next();
             }
             long iterations = convergenceCriteria.MinIterations;
-            //_leveeIsValid = LeveeIsValid();///this should be integrated into more formal validation routines above.
+            //_leveeIsValid = LeveeIsValid();///this should be integrated into more formal validation routines above./.
 
             while (!_impactAreaScenarioResults.IsConverged(computeWithDamage))
             {
@@ -349,8 +354,7 @@ namespace HEC.FDA.Model.compute
             }
             ReportProgress(this, new ProgressReportEventArgs(IMPACT_AREA_SIM_COMPLETED));
             _impactAreaScenarioResults.ForceDeQueue();
-        }
-
+        } 
         private void ComputeFromStageFrequency(IProvideRandomNumbers randomProvider, IPairedData frequency_stage, bool giveMeADamageFrequency, long iteration, bool computeWithDamage, bool computeIsDeterministic)
         {
 

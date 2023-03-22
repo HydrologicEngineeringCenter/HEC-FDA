@@ -106,7 +106,7 @@ namespace HEC.FDA.Model.paireddata
             AddRules();
         }
         [Obsolete("This constructor is deprecated. Construct a CurveMetaData, then inject into constructor")]
-        public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, string xlabel, string ylabel, string name, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
+        public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, string xlabel, string ylabel, string name, bool usingStagesNotFlows = true, double maximumProbability = 0.999, double minimumProbability = 0.0001)
         {
             _inputFlowOrStageValues = flowOrStageValues;
             _UsingStagesNotFlows = usingStagesNotFlows;
