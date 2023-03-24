@@ -154,36 +154,6 @@ namespace HEC.FDA.Model.paireddata
         #endregion
 
         #region Methods
-        /// <summary>
-        /// We have rules on monotonicity for non-exceedance probabilities. So we test for strict monotonic decreasing. 
-        /// This means that the exceecance probabilities are strictly monotonically increasing
-        /// Satisfying the curve type enum.
-        /// </summary>
-        private void AddRules()
-        {
-            if (_metaData.CurveType != CurveTypesEnum.StrictlyMonotonicallyIncreasing)
-            {
-                _metaData.CurveType = CurveTypesEnum.StrictlyMonotonicallyIncreasing;
-            }
-            AddSinglePropertyRule(nameof(_NonExceedanceProbabilities), new Rule(() => IsArrayValid(_NonExceedanceProbabilities, (a, b) => a > b), $"Non exceedance probabilities must be strictly monotonically increasing but are not for graphical frequency function named {_metaData.Name}.", ErrorLevel.Fatal));
-
-        }
-        //the comparison we pass in is that which should not occur
-        //so if i should be less than i + 1 
-        //we check if i > i + 1
-        //in which case we return false 
-        private static bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
-        {
-            if (arrayOfData == null) return false;
-            for (int i = 0; i < arrayOfData.Length - 1; i++)
-            {
-                if (comparison(arrayOfData[i], arrayOfData[i + 1]))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
         private double[] ExceedanceToNonExceedance(double[] exceedanceProbabilities)
         {
             double[] nonExceedanceProbabilities = new double[exceedanceProbabilities.Length];
