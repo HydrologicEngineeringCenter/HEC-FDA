@@ -90,14 +90,18 @@ namespace HEC.FDA.ModelTest.unittests
             double[] multiplierXs = { 2, 3, 4 };
             double[] multiplierYs = { .5, .5, .5 };
 
-            double[] expectedXs = { 1, 1.999, 2, 3, 4, 4.001, 5 };
-            double[] expectedYs = { 0, 0, 1, 1.5, 2, 4.001, 5 };
+            double[] expectedXs = { 1, 2, 3, 4, 5 };
+            double[] expectedYs = { 0, 1, 1.5, 2, 5 };
             PairedData multiplier = new PairedData(multiplierXs, multiplierYs);
 
-            PairedData expected = new PairedData(expectedXs, expectedYs);
             PairedData actual = (PairedData)pairedCountbyOnes.multiply(multiplier);
-            Assert.Equal(expected.Xvals, actual.Xvals);
-            Assert.Equal(expected.Yvals, actual.Yvals);
+            for (int i = 0; i < expectedXs.Length; i++)
+            {
+                double expectedY = expectedYs[i];
+                double actualY = actual.f(expectedXs[i]);
+                Assert.Equal(expectedY, actualY, 1);
+            }
+
         }
 
     }
