@@ -247,7 +247,24 @@ namespace HEC.FDA.Model.paireddata
                 newXvals.Add(stageFromStageDamage);
                 newYvals.Add(probabilityWeightedDamage);
             }
-            return new PairedData(newXvals.ToArray(), newYvals.ToArray());
+            for (int i = 0; i < newSystemResponse.Xvals.Length; i++)
+            {
+                double fragilityStage = newSystemResponse.Xvals[i];
+                bool fragilityStageIsInStages = newXvals.Contains(fragilityStage);
+                if (!fragilityStageIsInStages)
+                {
+                    double probabilityOfFailure = newSystemResponse.Yvals[i];
+                    double unweightedDamage = f(fragilityStage);
+                    double probabilityWeightedDamage = probabilityOfFailure*unweightedDamage;
+                    newXvals.Add(fragilityStage);
+                    newYvals.Add(probabilityWeightedDamage);
+                }
+            }
+            double[] stages = newXvals.ToArray();
+            double[] damages = newYvals.ToArray();
+            //This sorts the stages and sorts the damage based on the sorting of the stages
+            Array.Sort(stages, damages);
+            return new PairedData(stages,damages);
         }
 
         private IPairedData EnsureBottomAndTopHaveCorrectProbabilities(IPairedData systemResponseFunction)
