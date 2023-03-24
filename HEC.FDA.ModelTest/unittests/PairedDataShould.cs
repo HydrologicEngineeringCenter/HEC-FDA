@@ -99,5 +99,15 @@ namespace HEC.FDA.ModelTest.unittests
             Assert.Equal(expected.Yvals, actual.Yvals);
         }
 
+        [Theory]
+        [InlineData(new double[] { 0.01, 0.5, 0.99 }, new double[]  { 0.99, 1.5, 1.2 }, false )]
+        [InlineData(new double[] { 0.01, 0.5, 0.99 }, new double[] { 0.99, 1.2, 1.5 }, true)]
+        public void InvalidArrayIsNotValid(double[] xs, double[] ys, bool expected)
+        {
+            CurveMetaData curveMetaData = new CurveMetaData(damageCategory: "none", curvetype: CurveTypesEnum.StrictlyMonotonicallyIncreasing);
+            PairedData pairedDataToTest = new PairedData(xs, ys, curveMetaData);
+            bool isValid = pairedDataToTest.IsValidPerMetadata;
+            Assert.Equal(expected, isValid);
+        }
     }
 }
