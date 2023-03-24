@@ -89,6 +89,7 @@ namespace HEC.FDA.ModelTest.unittests
         {
             double[] multiplierXs = { 2, 3, 4 };
             double[] multiplierYs = { .5, .5, .5 };
+
             double[] expectedXs = { 1, 1.999, 2, 3, 4, 4.001, 5 };
             double[] expectedYs = { 0, 0, 1, 1.5, 2, 4.001, 5 };
             PairedData multiplier = new PairedData(multiplierXs, multiplierYs);
