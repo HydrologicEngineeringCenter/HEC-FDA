@@ -103,7 +103,6 @@ namespace HEC.FDA.Model.paireddata
         public GraphicalUncertainPairedData()
         {
             _metaData = new CurveMetaData();
-            AddRules();
         }
         [Obsolete("This constructor is deprecated. Construct a CurveMetaData, then inject into constructor")]
         public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, string xlabel, string ylabel, string name, bool usingStagesNotFlows = true, double maximumProbability = 0.999, double minimumProbability = 0.0001)
@@ -120,7 +119,6 @@ namespace HEC.FDA.Model.paireddata
             _StageOrLogFlowDistributions = graphical.StageOrLogFlowDistributions;
             _EquivalentRecordLength = equivalentRecordLength;
             _metaData = new CurveMetaData(xlabel, ylabel, name, CurveTypesEnum.StrictlyMonotonicallyIncreasing);
-            AddRules();
         }
         public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, CurveMetaData curveMetaData, bool usingStagesNotFlows, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
         {
@@ -136,7 +134,6 @@ namespace HEC.FDA.Model.paireddata
             _StageOrLogFlowDistributions = graphical.StageOrLogFlowDistributions;
             _EquivalentRecordLength = equivalentRecordLength;
             _metaData = curveMetaData;
-            AddRules();
         }
         private GraphicalUncertainPairedData(double[] exceedanceProbabilities, Normal[] flowOrStageDistributions, double[] inputFlowsOrStages, int equivalentRecordLength, CurveMetaData curveMetaData, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
         {
@@ -149,7 +146,6 @@ namespace HEC.FDA.Model.paireddata
             _StageOrLogFlowDistributions = flowOrStageDistributions;
             _EquivalentRecordLength = equivalentRecordLength;
             _metaData = curveMetaData;
-            AddRules();
         }
         #endregion
 
