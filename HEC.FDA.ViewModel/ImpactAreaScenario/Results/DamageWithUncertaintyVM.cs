@@ -18,9 +18,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
         public List<EadRowItem> Rows { get; } = new List<EadRowItem>();
         public double Mean { get; set; }
-        public DamageWithUncertaintyVM(ImpactAreaScenarioResults iasResult, ScenarioResults scenarioResults)
+        public DamageWithUncertaintyVM(ScenarioResults scenarioResults, int impactAreaID)
         {
-            int impactAreaID = iasResult.ImpactAreaID;
+            ImpactAreaScenarioResults iasResult = scenarioResults.GetResults(impactAreaID);
             Mean = iasResult.MeanExpectedAnnualConsequences(impactAreaID: impactAreaID);
 
             LoadHistogram(iasResult);
@@ -36,7 +36,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         private void LoadHistogram(ImpactAreaScenarioResults iasResult)
         {
             Empirical empirical = iasResult.ConsequenceResults.GetAggregateEmpiricalDistribution(impactAreaID: iasResult.ImpactAreaID);
-            //double[] binsAsDoubles = totalHistogram.BinCounts.Select(x => (double)x / totalHistogram.SampleSize).ToArray();
             if (empirical.CumulativeProbabilities.Length <= 1)
             {
                 HistogramVisible = false;

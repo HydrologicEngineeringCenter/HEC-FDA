@@ -35,7 +35,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
     private PerformanceVMBase _performanceAEPVM;
     private PerformanceVMBase _performanceAssuranceOfThresholdVM;
     private PerformanceVMBase _performanceLongTermRiskVM;
-
     private BaseViewModel _currentResultVM;
     #endregion
 
@@ -121,13 +120,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
     private void loadVMs(List<string> damCats, ScenarioResults scenarioResults, int impactAreaID)
     {
-
-
       StudyPropertiesElement studyPropElem = StudyCache.GetStudyPropertiesElement();
       double discountRate = studyPropElem.DiscountRate;
       int period = studyPropElem.PeriodOfAnalysis;
 
-      _damageWithUncertaintyVM = new DamageWithUncertaintyVM(_IASResult, scenarioResults);
+      _damageWithUncertaintyVM = new DamageWithUncertaintyVM(scenarioResults,impactAreaID);
       _damageByDamageCategoryVM = new DamageByDamCatVM(_IASResult, damCats, discountRate, period);
       _performanceAEPVM = new PerformanceAEPVM(scenarioResults, impactAreaID, Thresholds);
       _performanceAEPVM.updateSelectedMetric(SelectedThreshold);
