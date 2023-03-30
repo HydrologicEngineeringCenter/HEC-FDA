@@ -32,25 +32,15 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         private void DefineHistogramSettings(ImpactAreaScenarioResults iasResult)
         {
             Empirical empirical = iasResult.ConsequenceResults.GetAggregateEmpiricalDistribution(impactAreaID: iasResult.ImpactAreaID);
-            (double min, double valueStep, double[] cumulativeRelativeFrequencies) = empirical.ComputeCumulativeFrequenciesForPlotting();
-            double[] damageValues = new double[cumulativeRelativeFrequencies.Length];
-
-            double damageValue = min;
-            for (int i =0; i< cumulativeRelativeFrequencies.Length;i++)
-            {
-                damageValues[i] = (damageValue);
-                damageValue += valueStep;
-            }
-
             PlotModel model = new PlotModel();
             model.Title = "EAD Distribution";
             double MajorAxisTickInterval = (empirical.Max- empirical.Min)/5;
             model.Axes.Add(new LinearAxis() { Title = "Expected Annual Damage ($)", Position = AxisPosition.Bottom, MajorStep = MajorAxisTickInterval });
             model.Axes.Add(new LinearAxis() { Title = "Frequency", Position = AxisPosition.Left});
             var lineSeries = new LineSeries();
-            for(int i =0; i < cumulativeRelativeFrequencies.Length; i++)
+            for(int i =0; i < empirical.CumulativeProbabilities.Length; i++)
             {
-                lineSeries.Points.Add(new DataPoint(damageValues[i], cumulativeRelativeFrequencies[i]));
+                lineSeries.Points.Add(new DataPoint(empirical.ObservationValues[i], empirical.CumulativeProbabilities[i]));
             }
             lineSeries.Title = "EAD Distribution";
             model.Series.Add(lineSeries);
