@@ -32,7 +32,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
         {
             get { return _UniqueNames; }
             set { _UniqueNames = value; NotifyPropertyChanged(); }
-        } 
+        }
         public string SelectedUniqueNameColumnHeader
         {
             get { return _SelectedUniqueNameColumnHeader; }
@@ -42,6 +42,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
         #region Constructors
         public ImpactAreaImporterVM(EditorActionManager actionManager):base(actionManager)
         {
+            AddValidationRules();
         }
 
         public ImpactAreaImporterVM(ImpactAreaElement element, List<ImpactAreaRowItem> impactAreaRows, EditorActionManager actionManager) :base(element, actionManager)
@@ -50,10 +51,18 @@ namespace HEC.FDA.ViewModel.ImpactArea
             ListOfRows.AddRange( impactAreaRows);
             Description = element.Description;
             SelectedPath = Storage.Connection.Instance.ImpactAreaDirectory + "\\" + Name;
-
+            AddValidationRules();
         }
         #endregion
         #region Voids
+        private void AddValidationRules()
+        {
+            AddRule(nameof(SelectedUniqueNameColumnHeader), () =>
+            {
+                return !string.IsNullOrEmpty(SelectedUniqueNameColumnHeader);
+            }, "No unique name column header selected");
+        }
+
         /// <summary>
         /// This method grabs all the column headers from the dbf and loads them into a unique name combobox.
         /// </summary>
@@ -114,7 +123,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
             }
             else
             {
-                StudyFilesManager.RenameDirectory(OriginalElement.Name, Name, elementToSave.GetType());     
+                StudyFilesManager.RenameDirectory(OriginalElement.Name, Name, elementToSave.GetType());
             }
             //this call handles the sqlite data
             Save(elementToSave);
