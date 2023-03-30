@@ -47,9 +47,6 @@
              xmlns:InventoryVM="clr-namespace:HEC.FDA.ViewModel.Inventory;assembly=HEC.FDA.ViewModel"
                           
              xmlns:FlowTransformsVM="clr-namespace:HEC.FDA.ViewModel.FlowTransforms;assembly=HEC.FDA.ViewModel"
-                          
-             xmlns:OutputView="clr-namespace:HEC.FDA.View.Output"
-             xmlns:OutputVM="clr-namespace:HEC.FDA.ViewModel.Output;assembly=HEC.FDA.ViewModel"
              
              xmlns:StudyVM="clr-namespace:HEC.FDA.ViewModel.Study;assembly=HEC.FDA.ViewModel"
              xmlns:StudyView="clr-namespace:HEC.FDA.View.Study"
@@ -303,14 +300,6 @@
 
     <DataTemplate DataType="{x:Type ScenarioResultsVM:DamageWithUncertaintyVM }" >
       <IASResultsView:DamageWithUncertainty/>
-    </DataTemplate>
-
-    <!--Output Region-->
-    <DataTemplate DataType="{x:Type OutputVM:IndexLocationsVM }" >
-      <OutputView:IndexLocations/>
-    </DataTemplate>
-    <DataTemplate DataType="{x:Type ImpactAreaScenarioVM:EnterSeedVM }" >
-      <ImpactAreaScenarioView:EnterSeed/>
     </DataTemplate>
 
     <!--Study Region-->
