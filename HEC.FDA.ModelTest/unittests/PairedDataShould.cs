@@ -84,14 +84,13 @@ namespace HEC.FDA.ModelTest.unittests
             Assert.Equal(expected, actual);
         }
 
-        [Fact]
-        public void Multiply()
+        [Theory]
+        [InlineData(new double[] { 1, 2, 3, 4, 5 }, new double[] {0.1, 0.2, 0.5, 0.9, 1}, new double[] { 1, 2, 3, 4, 5 }, new double[] {0.1, 0.4, 1.5, 3.6, 5})] //identical x vals 
+        [InlineData(new double[] { 2, 3, 4, 5, 6 }, new double[] {0.1, 0.2, 0.3, 0.8, 1}, new double[] { 1, 2, 3, 4, 5, 6 }, new double[] {0, 0.2, 0.6, 1.2, 4, 5})] //same quantity xvals but different range
+        [InlineData(new double[] { 2, 3, 4 }, new double[] { .5, .5, .5 }, new double[] { 1, 2, 3, 4, 5 }, new double[] { 0, 1, 1.5, 2, 5 })] //multiplier has less x vals
+        [InlineData(new double[] { 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5}, new double[] {.1, .2, .3, .4, .5, .6, .7, .8, .9, .95, 1}, new double[] { 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5 }, new double[] {.1, .2, .45, .8, 1.25, 1.8, 2.45, 3.2, 4.05, 4.75, 5})] //multiplier has more x vals and greater range
+        public void Multiply(double[] multiplierXs, double[] multiplierYs, double[] expectedXs, double[] expectedYs)
         {
-            double[] multiplierXs = { 2, 3, 4 };
-            double[] multiplierYs = { .5, .5, .5 };
-
-            double[] expectedXs = { 1, 2, 3, 4, 5 };
-            double[] expectedYs = { 0, 1, 1.5, 2, 5 };
             PairedData multiplier = new PairedData(multiplierXs, multiplierYs);
 
             PairedData actual = (PairedData)pairedCountbyOnes.multiply(multiplier);
