@@ -12,7 +12,7 @@
              xmlns:AlternativeResultsVM="clr-namespace:HEC.FDA.ViewModel.Alternatives.Results;assembly=HEC.FDA.ViewModel"
              xmlns:AlternativeResultsView ="clr-namespace:HEC.FDA.View.Alternatives.Results"
 
-             xmlns:IASResultsVM ="clr-namespace:HEC.FDA.ViewModel.ImpactAreaScenario.Results;assembly=HEC.FDA.ViewModel"
+             xmlns:ScenarioResultsVM ="clr-namespace:HEC.FDA.ViewModel.ImpactAreaScenario.Results;assembly=HEC.FDA.ViewModel"
              xmlns:IASResultsView ="clr-namespace:HEC.FDA.View.ImpactAreaScenario.Results"
              
              xmlns:IASEditorVM ="clr-namespace:HEC.FDA.ViewModel.ImpactAreaScenario.Editor;assembly=HEC.FDA.ViewModel"
@@ -47,9 +47,6 @@
              xmlns:InventoryVM="clr-namespace:HEC.FDA.ViewModel.Inventory;assembly=HEC.FDA.ViewModel"
                           
              xmlns:FlowTransformsVM="clr-namespace:HEC.FDA.ViewModel.FlowTransforms;assembly=HEC.FDA.ViewModel"
-                          
-             xmlns:OutputView="clr-namespace:HEC.FDA.View.Output"
-             xmlns:OutputVM="clr-namespace:HEC.FDA.ViewModel.Output;assembly=HEC.FDA.ViewModel"
              
              xmlns:StudyVM="clr-namespace:HEC.FDA.ViewModel.Study;assembly=HEC.FDA.ViewModel"
              xmlns:StudyView="clr-namespace:HEC.FDA.View.Study"
@@ -281,36 +278,28 @@
       </DataTemplate.Resources>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type IASResultsVM:IASResultsVM }" >
+    <DataTemplate DataType="{x:Type ScenarioResultsVM:ScenarioResultsVM }" >
       <IASResultsView:IASResults/>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type IASResultsVM:SpecificIASResultVM }" >
+    <DataTemplate DataType="{x:Type ScenarioResultsVM:SpecificIASResultVM }" >
       <IASResultsView:SpecificIASResultsControl/>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type IASResultsVM:PerformanceAEPVM }" >
+    <DataTemplate DataType="{x:Type ScenarioResultsVM:PerformanceAEPVM }" >
       <IASResultsView:PerformanceAEP/>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type IASResultsVM:PerformanceAssuranceOfThresholdVM }" >
+    <DataTemplate DataType="{x:Type ScenarioResultsVM:PerformanceAssuranceOfThresholdVM }" >
       <IASResultsView:PerformanceAssuranceOfThreshold/>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type IASResultsVM:PerformanceLongTermRiskVM }" >
+    <DataTemplate DataType="{x:Type ScenarioResultsVM:PerformanceLongTermRiskVM }" >
       <IASResultsView:PerformanceLongTermRisk/>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type IASResultsVM:DamageWithUncertaintyVM }" >
+    <DataTemplate DataType="{x:Type ScenarioResultsVM:DamageWithUncertaintyVM }" >
       <IASResultsView:DamageWithUncertainty/>
-    </DataTemplate>
-
-    <!--Output Region-->
-    <DataTemplate DataType="{x:Type OutputVM:IndexLocationsVM }" >
-      <OutputView:IndexLocations/>
-    </DataTemplate>
-    <DataTemplate DataType="{x:Type ImpactAreaScenarioVM:EnterSeedVM }" >
-      <ImpactAreaScenarioView:EnterSeed/>
     </DataTemplate>
 
     <!--Study Region-->

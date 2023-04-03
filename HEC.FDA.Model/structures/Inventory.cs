@@ -10,6 +10,7 @@ using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Enumerations;
 using Geospatial.Terrain;
 using HEC.MVVMFramework.Model.Messaging;
+using Utilities;
 
 namespace HEC.FDA.Model.structures
 {
@@ -24,14 +25,18 @@ namespace HEC.FDA.Model.structures
         #endregion
 
         #region Constructors
-        public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureSelectionMapping map, Dictionary<string, OccupancyType> occTypes, bool updateGroundElevFromTerrain, string terrainPath, double priceIndex = 1)
+        public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureSelectionMapping map, Dictionary<string, OccupancyType> occTypes, bool updateGroundElevFromTerrain,
+            string terrainPath, double priceIndex = 1, string projectionFilePath = "")
         {
             OccTypes = occTypes;
             PriceIndex = priceIndex;
+            //Projection.FromFile returns Null if the path is bad. We'll check for null before we reproject. 
+            Projection studyProjection = Projection.FromFile(projectionFilePath);
             TerrainLayer terrainLayer = new TerrainLayer("ThisNameIsNotUsed", terrainPath);
             PointFeatureLayer structureFeatureLayer = new PointFeatureLayer("ThisNameIsNotUsed", pointShapefilePath);
             PolygonFeatureLayer impactAreaFeatureLayer = new PolygonFeatureLayer("ThisNameIsNotUsed", impactAreaShapefilePath);
-            LoadStructuresFromSourceFiles(structureFeatureLayer, map, terrainLayer, updateGroundElevFromTerrain, impactAreaFeatureLayer);
+
+            LoadStructuresFromSourceFiles(structureFeatureLayer, map, terrainLayer, updateGroundElevFromTerrain, impactAreaFeatureLayer, studyProjection);
             AddRules();
         }
 
@@ -78,27 +83,33 @@ namespace HEC.FDA.Model.structures
             return uniqueDamageCategories;
         }
 
-        private List<Polygon> LoadImpactAreasFromSourceFiles(PolygonFeatureLayer impactAreaSet, TerrainLayer terrain)
+        private List<Polygon> LoadImpactAreasFromSourceFiles(PolygonFeatureLayer impactAreaSet, Projection studyProjection)
         {
-            Projection terrainProjection = GetTerrainProjection(terrain);
             List<Polygon> polygons = impactAreaSet.Polygons().ToList();
-
-            //Projections
             Projection impactAreaPrj = GetVectorProjection(impactAreaSet);
-            if (impactAreaPrj.IsEqual(terrainProjection))
+            if (studyProjection.IsNull())
+            {
+                return polygons;
+            }
+            if (impactAreaPrj.IsEqual(studyProjection) )
             {
                 return polygons;
             }
             else
             {
-                List<Polygon> ImpactAreas = new List<Polygon>();
-                foreach (Polygon poly in polygons)
-                {
-                    Polygon newPoly = ReprojectPolygon(poly, impactAreaPrj, terrainProjection);
-                    ImpactAreas.Add(newPoly);
-                }
-                return ImpactAreas;
+                return ReprojectPolygons(studyProjection, polygons, impactAreaPrj);
             }
+        }
+
+        private static List<Polygon> ReprojectPolygons(Projection studyProjection, List<Polygon> polygons, Projection impactAreaPrj)
+        {
+            List<Polygon> ImpactAreas = new List<Polygon>();
+            foreach (Polygon poly in polygons)
+            {
+                Polygon newPoly = ReprojectPolygon(poly, impactAreaPrj, studyProjection);
+                ImpactAreas.Add(newPoly);
+            }
+            return ImpactAreas;
         }
         private void AddRules()
         {
@@ -133,16 +144,17 @@ namespace HEC.FDA.Model.structures
             return retval;
         }
 
-        private void LoadStructuresFromSourceFiles(PointFeatureLayer structureFeatureLayer, StructureSelectionMapping map, TerrainLayer terrainLayer, bool updateGroundElevFromTerrain, PolygonFeatureLayer ImpactAreaShapefilePath)
+        private void LoadStructuresFromSourceFiles(PointFeatureLayer structureFeatureLayer, StructureSelectionMapping map, TerrainLayer terrainLayer, bool updateGroundElevFromTerrain,
+            PolygonFeatureLayer ImpactAreaShapefilePath, Projection studyProjection)
         {
-            List<Polygon> impactAreas = LoadImpactAreasFromSourceFiles(ImpactAreaShapefilePath, terrainLayer);
+            List<Polygon> impactAreas = LoadImpactAreasFromSourceFiles(ImpactAreaShapefilePath, studyProjection);
             float[] groundelevs = Array.Empty<float>();
             int defaultMissingValue = utilities.IntegerConstants.DEFAULT_MISSING_VALUE;
             PointMs pointMs = new PointMs(structureFeatureLayer.Points().Select(p => p.PointM()));
 
             if (updateGroundElevFromTerrain)
             {
-                groundelevs = GetGroundElevationFromTerrain(structureFeatureLayer, terrainLayer);
+                groundelevs = GetGroundElevationFromRASTerrain(structureFeatureLayer, terrainLayer, studyProjection);
             }
 
             for (int i = 0; i < structureFeatureLayer.FeatureCount(); i++)
@@ -189,21 +201,29 @@ namespace HEC.FDA.Model.structures
             }
             Console.WriteLine("finished");
         }
-        public static float[] GetGroundElevationFromTerrain(PointFeatureLayer pointLayer, TerrainLayer terrain)
+        public static float[] GetGroundElevationFromRASTerrain(PointFeatureLayer pointLayer, TerrainLayer terrain, Projection studyProjection)
         {
-            Projection terrainProjection = GetTerrainProjection(terrain);
             Projection siProjection = GetVectorProjection(pointLayer);
             PointMs pointMs = new PointMs(pointLayer.Points().Select(p => p.PointM()));
-            if (!terrainProjection.IsEqual(siProjection))
+            if (!studyProjection.IsNull())
             {
-                PointMs reprojPointMs = new PointMs();
-                foreach (PointM pt in pointMs)
+                if (!studyProjection.IsEqual(siProjection))
                 {
-                    reprojPointMs.Add(ReprojectPoint(pt, terrainProjection, siProjection));
+                    pointMs = ReprojectPoints(studyProjection, siProjection, pointMs);
                 }
-                pointMs = reprojPointMs;
             }
             return terrain.ComputePointElevations(pointMs);
+        }
+
+        public static PointMs ReprojectPoints(Projection studyProjection, Projection siProjection, PointMs pointMs)
+        {
+            PointMs reprojPointMs = new PointMs();
+            foreach (PointM pt in pointMs)
+            {
+                reprojPointMs.Add(ReprojectPoint(pt, studyProjection, siProjection));
+            }
+            return reprojPointMs;
+         
         }
         #region Projection
         public static PointM ReprojectPoint(PointM point, Projection newProjection, Projection currentProjection)
@@ -219,12 +239,6 @@ namespace HEC.FDA.Model.structures
             Geospatial.Vectors.Polygon reprojPoly = VectorExtensions.Reproject(poly, currentProjection, newProjection);
             return Converter.Convert(reprojPoly);
 
-        }
-        public static Projection GetTerrainProjection(TerrainLayer terrain)
-        {
-            string terrainFilename = terrain.get_RasterFilename(0);
-            GDALRaster raster = new GDALRaster(terrainFilename);
-            return raster.GetProjection();
         }
         public static Projection GetVectorProjection(FeatureLayer featureLayer)
         {
