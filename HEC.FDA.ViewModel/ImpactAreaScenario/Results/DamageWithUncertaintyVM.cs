@@ -1,29 +1,25 @@
 ﻿using HEC.Plotting.SciChart2D.DataModel;
-using HEC.Plotting.SciChart2D.ViewModel;
 using System.Collections.Generic;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
-using System.Linq;
-using Statistics.Histograms;
-using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.Model.metrics;
 using Statistics.Distributions;
+using OxyPlot;
+using OxyPlot.Series;
+using OxyPlot.Axes;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
     public class DamageWithUncertaintyVM : BaseViewModel
     {
-        private HistogramData2D _data;
-        public SciChart2DChartViewModel ChartViewModel { get; set; } = new SciChart2DChartViewModel("Damage Uncertainty");
-        public bool HistogramVisible { get; set; } = true;
-
+        public PlotModel MyPlot { get; set; } = new PlotModel();
         public List<EadRowItem> Rows { get; } = new List<EadRowItem>();
         public double Mean { get; set; }
-        public DamageWithUncertaintyVM(ImpactAreaScenarioResults iasResult, ScenarioResults scenarioResults)
+        public DamageWithUncertaintyVM(ScenarioResults scenarioResults, int impactAreaID)
         {
-            int impactAreaID = iasResult.ImpactAreaID;
+            ImpactAreaScenarioResults iasResult = scenarioResults.GetResults(impactAreaID);
             Mean = iasResult.MeanExpectedAnnualConsequences(impactAreaID: impactAreaID);
 
-            LoadHistogram(iasResult);
+            DefineHistogramSettings(iasResult);
 
             List<double> qValues = new List<double>();
             qValues.Add(scenarioResults.ConsequencesExceededWithProbabilityQ(.75, impactAreaID));
@@ -33,21 +29,23 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             loadTableValues(qValues);
         }
 
-        private void LoadHistogram(ImpactAreaScenarioResults iasResult)
+        private void DefineHistogramSettings(ImpactAreaScenarioResults iasResult)
         {
             Empirical empirical = iasResult.ConsequenceResults.GetAggregateEmpiricalDistribution(impactAreaID: iasResult.ImpactAreaID);
-            //double[] binsAsDoubles = totalHistogram.BinCounts.Select(x => (double)x / totalHistogram.SampleSize).ToArray();
-            if (empirical.CumulativeProbabilities.Length <= 1)
+            PlotModel model = new PlotModel();
+            model.Title = "EAD Distribution";
+            double MajorAxisTickInterval = (empirical.Max- empirical.Min)/5;
+            model.Axes.Add(new LinearAxis() { Title = "Expected Annual Damage ($)", Position = AxisPosition.Bottom, MajorStep = MajorAxisTickInterval });
+            model.Axes.Add(new LinearAxis() { Title = "Frequency", Position = AxisPosition.Left});
+            var lineSeries = new LineSeries();
+            for(int i =0; i < empirical.CumulativeProbabilities.Length; i++)
             {
-                HistogramVisible = false;
+                lineSeries.Points.Add(new DataPoint(empirical.ObservationValues[i], empirical.CumulativeProbabilities[i]));
             }
-            else
-            {
-                (double min, double valueStep, double[] cumulativeRelativeFrequencies) = empirical.ComputeCumulativeFrequenciesForPlotting();
-                _data = new HistogramData2D(valueStep, min, cumulativeRelativeFrequencies, "Chart", "Cumulative Relative Frequency", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);
-                HistogramColor.SetHistogramColor(_data);
-                ChartViewModel.LineData.Set(new List<SciLineData>() { _data });
-            }
+            lineSeries.Title = "EAD Distribution";
+            model.Series.Add(lineSeries);
+            MyPlot = model;
+            MyPlot.InvalidatePlot(true);
         }
 
         private void loadTableValues(List<double> qValues)
@@ -63,7 +61,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                     rows.Add(new EadRowItem(xValNames[i], qValues[i]));
                 }
             }
-            Rows.AddRange( rows);
+            Rows.AddRange(rows);
         }
 
     }

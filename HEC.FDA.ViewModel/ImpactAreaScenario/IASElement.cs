@@ -170,7 +170,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             List<SpecificIASResultVM> results = GetResults();
             if (results.Count>0)
             {
-                IASResultsVM resultViewer = new IASResultsVM(results);
+                ScenarioResultsVM resultViewer = new ScenarioResultsVM(results);
                 string header = "Results for " + Name;
                 DynamicTabVM tab = new DynamicTabVM(header, resultViewer, "resultViewer" + Name);
                 Navigate(tab, false, false);
