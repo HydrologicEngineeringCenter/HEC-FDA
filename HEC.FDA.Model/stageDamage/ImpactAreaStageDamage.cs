@@ -24,6 +24,7 @@ namespace HEC.FDA.Model.stageDamage
         private ContinuousDistribution _AnalyticalFlowFrequency;
         private GraphicalUncertainPairedData _GraphicalFrequency;
         private UncertainPairedData _DischargeStage;
+        private UncertainPairedData _UnregulatedRegulated;
         private int _ImpactAreaID;
         private int _AnalysisYear;
         private bool _usingMockData;
@@ -57,13 +58,14 @@ namespace HEC.FDA.Model.stageDamage
         #endregion
         #region Constructor
         public ImpactAreaStageDamage(int impactAreaID, Inventory inventory, HydraulicDataset hydraulicDataset, ConvergenceCriteria convergence, string hydroParentDirectory, int analysisYear = 9999,
-            ContinuousDistribution analyticalFlowFrequency = null, GraphicalUncertainPairedData graphicalFrequency = null, UncertainPairedData dischargeStage = null, bool usingMockData = false)
+            ContinuousDistribution analyticalFlowFrequency = null, GraphicalUncertainPairedData graphicalFrequency = null, UncertainPairedData dischargeStage = null, UncertainPairedData unregulatedRegulated = null, bool usingMockData = false)
         {
             //TODO: Validate provided functions here
             _HydraulicParentDirectory = hydroParentDirectory;
             _AnalyticalFlowFrequency = analyticalFlowFrequency;
             _GraphicalFrequency = graphicalFrequency;
             _DischargeStage = dischargeStage;
+            _UnregulatedRegulated = unregulatedRegulated;
             _ImpactAreaID = impactAreaID;
             _AnalysisYear = analysisYear;
             _usingMockData = usingMockData;
@@ -113,12 +115,19 @@ namespace HEC.FDA.Model.stageDamage
             {
                 if (_DischargeStage != null)
                 {
-                    double minFLow = _AnalyticalFlowFrequency.InverseCDF(MIN_PROBABILITY);
                     IPairedData minStagesOnRating = _DischargeStage.SamplePairedData(MIN_PROBABILITY);
-                    _minStageForArea = minStagesOnRating.f(minFLow);
-
-                    double maxFLow = _AnalyticalFlowFrequency.InverseCDF(MAX_PROBABILITY);
                     IPairedData maxStagesOnRating = _DischargeStage.SamplePairedData(MAX_PROBABILITY);
+
+                    double minFLow = _AnalyticalFlowFrequency.InverseCDF(MIN_PROBABILITY);
+                    double maxFLow = _AnalyticalFlowFrequency.InverseCDF(MAX_PROBABILITY);
+
+                    if (_UnregulatedRegulated != null)
+                    {
+                        minFLow = _UnregulatedRegulated.SamplePairedData(MIN_PROBABILITY).f(minFLow);
+                        maxFLow = _UnregulatedRegulated.SamplePairedData(MAX_PROBABILITY).f(maxFLow);
+                    }
+
+                    _minStageForArea = minStagesOnRating.f(minFLow);
                     _maxStageForArea = maxStagesOnRating.f(maxFLow);
                 }
                 else
@@ -143,11 +152,19 @@ namespace HEC.FDA.Model.stageDamage
                     {
                         IPairedData minFlows = _GraphicalFrequency.SamplePairedData(MIN_PROBABILITY);
                         double minFlow = minFlows.Yvals[0];
-                        IPairedData minStages = _DischargeStage.SamplePairedData(MIN_PROBABILITY);
-                        _minStageForArea = minStages.f(minFlow);
                         IPairedData maxFlows = _GraphicalFrequency.SamplePairedData(MAX_PROBABILITY);
                         double maxFlow = maxFlows.Yvals[maxFlows.Yvals.Length - 1];
+
+                        if (_UnregulatedRegulated != null)
+                        {
+                            minFlow = _UnregulatedRegulated.SamplePairedData(MIN_PROBABILITY).f(minFlow);
+                            maxFlow = _UnregulatedRegulated.SamplePairedData(MAX_PROBABILITY).f(maxFlow);
+                        }
+
+                        IPairedData minStages = _DischargeStage.SamplePairedData(MIN_PROBABILITY);
                         IPairedData maxStages = _DischargeStage.SamplePairedData(MAX_PROBABILITY);
+                        
+                        _minStageForArea = minStages.f(minFlow);
                         _maxStageForArea = maxStages.f(maxFlow);
                     }
                     else
@@ -179,21 +196,29 @@ namespace HEC.FDA.Model.stageDamage
                 {
                     Tuple<double[], double[]> flowFreqAsTuple = _AnalyticalFlowFrequency.ToCoordinates();
                     PairedData flowFrequencyPairedData = new PairedData(flowFreqAsTuple.Item1, flowFreqAsTuple.Item2);
-                    return stageFrequency = _DischargeStage.SamplePairedData(0.5).compose(flowFrequencyPairedData) as PairedData;
+                    if(_UnregulatedRegulated != null)
+                    {
+                        flowFrequencyPairedData = _UnregulatedRegulated.SamplePairedData(0.5, true).compose(flowFrequencyPairedData) as PairedData;
+                    }
+                    return stageFrequency = _DischargeStage.SamplePairedData(0.5, true).compose(flowFrequencyPairedData) as PairedData;
                 }
             }
             else if (_GraphicalFrequency != null)
             {
                 if (_GraphicalFrequency.UsesStagesNotFlows)
                 {
-                    return stageFrequency = _GraphicalFrequency.SamplePairedData(0.5) as PairedData;
+                    return stageFrequency = _GraphicalFrequency.SamplePairedData(0.5, true) as PairedData;
                 }
                 else
                 {
                     if (_DischargeStage != null)
                     {
-                        PairedData flowFrequencyPairedData = _GraphicalFrequency.SamplePairedData(0.5) as PairedData;
-                        return stageFrequency = _DischargeStage.SamplePairedData(0.5).compose(flowFrequencyPairedData) as PairedData;
+                        PairedData flowFrequencyPairedData = _GraphicalFrequency.SamplePairedData(0.5, true) as PairedData;
+                        if (_UnregulatedRegulated != null)
+                        {
+                            flowFrequencyPairedData = _UnregulatedRegulated.SamplePairedData(0.5, true).compose(flowFrequencyPairedData) as PairedData;
+                        }
+                        return stageFrequency = _DischargeStage.SamplePairedData(0.5, true).compose(flowFrequencyPairedData) as PairedData;
                     }
                 }
             }
