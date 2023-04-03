@@ -57,7 +57,7 @@ namespace HEC.FDA.Model.stageDamage
         #endregion
         #region Constructor
         public ImpactAreaStageDamage(int impactAreaID, Inventory inventory, HydraulicDataset hydraulicDataset, ConvergenceCriteria convergence, string hydroParentDirectory, int analysisYear = 9999,
-            ContinuousDistribution analyticalFlowFrequency = null, GraphicalUncertainPairedData graphicalFrequency = null, UncertainPairedData dischargeStage = null, bool usingMockData = false)
+            ContinuousDistribution analyticalFlowFrequency = null, GraphicalUncertainPairedData graphicalFrequency = null, UncertainPairedData dischargeStage = null, bool usingMockData = false, string projectionFile = "")
         {
             //TODO: Validate provided functions here
             _HydraulicParentDirectory = hydroParentDirectory;
