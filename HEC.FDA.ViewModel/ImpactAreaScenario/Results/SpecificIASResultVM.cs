@@ -16,13 +16,13 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
     private const string DAMAGE_WITH_UNCERTAINTY = "Damage with Uncertainty";
     private const string DAMAGE_BY_DAMCAT = "Damage by Damage Category";
     private const string ANNUAL_EXC_PROB = "Annual Exceedance Probability";
-    private const string LONG_TERM_RISK = "Long-Term Exceedance Probability";
+    private const string LONG_TERM_EXCEEDANCE_PROBABILITY = "Long-Term Exceedance Probability";
     private const string ASSURANCE_OF_THRESHOLD = "Assurance of Threshold";
     #endregion
 
     #region Property Backing Fields
     private readonly List<string> _damageReports = new List<string>() { DAMAGE_WITH_UNCERTAINTY, DAMAGE_BY_DAMCAT };
-    private readonly List<string> _performanceReports = new List<string>() { ANNUAL_EXC_PROB, LONG_TERM_RISK, ASSURANCE_OF_THRESHOLD };
+    private readonly List<string> _performanceReports = new List<string>() { ANNUAL_EXC_PROB, LONG_TERM_EXCEEDANCE_PROBABILITY, ASSURANCE_OF_THRESHOLD };
     private readonly ImpactAreaScenarioResults _IASResult;
     private string _selectedOutcome;
     private string _selectedReport;
@@ -164,7 +164,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             CurrentResultVM = _performanceAEPVM;
             break;
           }
-        case LONG_TERM_RISK:
+        case LONG_TERM_EXCEEDANCE_PROBABILITY:
           {
             CurrentResultVM = _performanceLongTermRiskVM;
             break;
