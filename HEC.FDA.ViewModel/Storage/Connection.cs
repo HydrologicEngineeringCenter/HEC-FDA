@@ -13,6 +13,7 @@ namespace HEC.FDA.ViewModel.Storage
         private static DatabaseManager.SQLiteManager _SqliteReader = null;
         private const string TERRAIN_DIRECTORY = "Terrains";
         private const string HYDRAULIC_DIRECTORY = "Hydraulic Data";
+        private const string PROJECTION_DIRECTORY = "Projection";
         private const string IMPACT_AREA_DIRECTORY = "Impact Areas";
         private const string INVENTORY_DIRECTORY = "Structure Inventories";
         private const string INDEX_POINTS_DIRECTORY = "Index Points";
@@ -65,18 +66,20 @@ namespace HEC.FDA.ViewModel.Storage
 
         private void SetUpForExistingStudy(string value)
         {
-            _ProjectDirectory = Path.GetDirectoryName(value);
-            if (!Directory.Exists(ProjectDirectory)) { Directory.CreateDirectory(ProjectDirectory); }
-            if (!Directory.Exists(TerrainDirectory)) { Directory.CreateDirectory(TerrainDirectory); }
-            if (!Directory.Exists(HydraulicsDirectory)) { Directory.CreateDirectory(HydraulicsDirectory); }
+            EnforceFolderStructure(value);
         }
         private void SetUpForNewStudy(string value)
+        {
+            EnforceFolderStructure(value);
+            DatabaseManager.SQLiteManager.CreateSqLiteFile(value);         
+        }
+        private void EnforceFolderStructure(string value)
         {
             _ProjectDirectory = Path.GetDirectoryName(value);
             if (!Directory.Exists(ProjectDirectory)) { Directory.CreateDirectory(ProjectDirectory); }
             if (!Directory.Exists(TerrainDirectory)) { Directory.CreateDirectory(TerrainDirectory); }
             if (!Directory.Exists(HydraulicsDirectory)) { Directory.CreateDirectory(HydraulicsDirectory); }
-            DatabaseManager.SQLiteManager.CreateSqLiteFile(value);         
+            if (!Directory.Exists(ProjectionDirectory)) { Directory.CreateDirectory(ProjectionDirectory); }
         }
 
         public DatabaseManager.SQLiteManager Reader
@@ -95,6 +98,10 @@ namespace HEC.FDA.ViewModel.Storage
         public string HydraulicsDirectory
         {
             get { return _ProjectDirectory + "\\" + HYDRAULIC_DIRECTORY; }
+        }
+        public string ProjectionDirectory
+        {
+            get { return _ProjectDirectory + "\\" + PROJECTION_DIRECTORY; }
         }
         public string ImpactAreaDirectory
         {
