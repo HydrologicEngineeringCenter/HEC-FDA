@@ -7,6 +7,8 @@ using Statistics.Distributions;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.compute;
+using System.Threading.Tasks;
+using HEC.FDA.Model.interfaces;
 
 namespace HEC.FDA.ModelTest.unittests
 {
@@ -217,7 +219,7 @@ namespace HEC.FDA.ModelTest.unittests
 
             //TODO: This tolerance seems kind of high for me 
             //Investigate why the error in threshold is so much higher 
-            double tolerance = 0.10;
+            double tolerance = 0.02;
             Assert.True(relativeDifferenceAssuranceOfThreshold < tolerance);
             Assert.True(relativeDifferenceAssuranceOfAEP < tolerance);
 
@@ -322,6 +324,40 @@ namespace HEC.FDA.ModelTest.unittests
             IDistribution[] ys = new IDistribution[] { new Deterministic(0), new Deterministic(1) };
             CurveMetaData curveMetaData = new CurveMetaData(xlabel: "Stages", ylabel: "Damage", name: "Stage-Damage");
             return new UncertainPairedData(xs, ys, curveMetaData);
+        }
+
+        private static Normal standardNormal = new Normal();
+
+        [Theory]
+        [InlineData(ThresholdEnum.DefaultExteriorStage, 2.878162, 0.998)]
+        public void AssuranceResultStorageShould(ThresholdEnum thresholdEnum, double thresholdValue, double expected)
+        {
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
+            SystemPerformanceResults systemPerformanceResults = new SystemPerformanceResults(thresholdEnum, thresholdValue, convergenceCriteria);
+            double standardProbability = 0.998;
+            systemPerformanceResults.AddAssuranceHistogram(standardProbability, .01);
+            RandomProvider randomProvider = new RandomProvider(1234);
+            int masterseed = 1234;
+            Random masterSeedList = new Random(masterseed);//must be seeded.
+            int[] seeds = new int[convergenceCriteria.MinIterations];
+            for (int i = 0; i < convergenceCriteria.MinIterations; i++)
+            {
+                seeds[i] = masterSeedList.Next();
+            }
+            long iterations = convergenceCriteria.MinIterations;
+
+            Parallel.For(0, iterations, i =>
+            {
+                //check if it is a mean random provider or not
+                IProvideRandomNumbers threadlocalRandomProvider;
+                threadlocalRandomProvider = new RandomProvider(seeds[i]);
+                double invCDF = standardNormal.InverseCDF(threadlocalRandomProvider.NextRandom());
+                systemPerformanceResults.AddStageForAssurance(standardProbability, invCDF, i);
+
+            });
+
+            double actual = systemPerformanceResults.AssuranceOfEvent(standardProbability);
+            Assert.Equal(expected, actual, 3);
         }
     }
 }

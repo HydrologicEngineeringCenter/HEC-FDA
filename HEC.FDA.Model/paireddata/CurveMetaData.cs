@@ -12,7 +12,7 @@ namespace HEC.FDA.Model.paireddata
         public string DamageCategory { get; }
         public string AssetCategory { get; }
         public bool IsNull { get; set; }
-        public CurveTypesEnum CurveType { get; }
+        public CurveTypesEnum CurveType { get; internal set; }
         public int ImpactAreaID
         {
             get
