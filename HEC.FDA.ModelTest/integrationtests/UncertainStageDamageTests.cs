@@ -62,8 +62,8 @@ namespace HEC.FDA.ModelTest.integrationtests
             HydraulicDataset hydraulicDataset = new HydraulicDataset(dummyHydraulicProfiles, Model.hydraulics.enums.HydraulicDataSource.WSEGrid);
             return hydraulicDataset;
         }
-        private static HydraulicDataset hydraulicDataset_34 = ComputeHydraulicDataset();
-        private static HydraulicDataset hydraulicDataset_56 = ComputeHydraulicDataset();
+        private static HydraulicDataset hydraulicDataset_A = ComputeHydraulicDataset();
+        private static HydraulicDataset hydraulicDataset_B = ComputeHydraulicDataset();
 
 
         #endregion
@@ -118,23 +118,23 @@ namespace HEC.FDA.ModelTest.integrationtests
         private static PointM pointM = new PointM();
 
         //First impact area structures
-        private static int impactAreaID_34 = 34;
-        private static Structure structure1 = new Structure(fid: 1, point: pointM, firstFloorElevation: 473, val_struct: 100, st_damcat: residentialDamCat, occtype: res2OccType, impactAreaID: impactAreaID_34);
-        private static Structure structure2 = new Structure(fid: 2, point: pointM, firstFloorElevation: 474, val_struct: 200, st_damcat: residentialDamCat, occtype: res2OccType, impactAreaID: impactAreaID_34);
-        private static Structure structure3 = new Structure(fid: 3, point: pointM, firstFloorElevation: 473.5, val_struct: 300, st_damcat: residentialDamCat, occtype: res1OccType, impactAreaID: impactAreaID_34);
-        private static Structure structure4 = new Structure(fid: 4, point: pointM, firstFloorElevation: 474.5, val_struct: 400, st_damcat: residentialDamCat, occtype: res1OccType, impactAreaID: impactAreaID_34);
+        private static int impactAreaID_A = 34;
+        private static Structure structure1 = new Structure(fid: 1, point: pointM, firstFloorElevation: 473, val_struct: 100, st_damcat: residentialDamCat, occtype: res2OccType, impactAreaID: impactAreaID_A);
+        private static Structure structure2 = new Structure(fid: 2, point: pointM, firstFloorElevation: 474, val_struct: 200, st_damcat: residentialDamCat, occtype: res2OccType, impactAreaID: impactAreaID_A);
+        private static Structure structure3 = new Structure(fid: 3, point: pointM, firstFloorElevation: 473.5, val_struct: 300, st_damcat: residentialDamCat, occtype: res1OccType, impactAreaID: impactAreaID_A);
+        private static Structure structure4 = new Structure(fid: 4, point: pointM, firstFloorElevation: 474.5, val_struct: 400, st_damcat: residentialDamCat, occtype: res1OccType, impactAreaID: impactAreaID_A);
 
         //Second impact area structures 
-        private static int impactAreaID_56 = 56;
-        private static Structure structure5 = new Structure(fid: 5, point: pointM, firstFloorElevation: 473, val_struct: 100, st_damcat: residentialDamCat, occtype: res2OccType, impactAreaID: impactAreaID_56);
-        private static Structure structure6 = new Structure(fid: 6, point: pointM, firstFloorElevation: 474, val_struct: 200, st_damcat: residentialDamCat, occtype: res2OccType, impactAreaID: impactAreaID_56);
-        private static Structure structure7 = new Structure(fid: 7, point: pointM, firstFloorElevation: 473.5, val_struct: 300, st_damcat: residentialDamCat, occtype: res1OccType, impactAreaID: impactAreaID_56);
-        private static Structure structure8 = new Structure(fid: 8, point: pointM, firstFloorElevation: 474.5, val_struct: 400, st_damcat: residentialDamCat, occtype: res1OccType, impactAreaID: impactAreaID_56);
+        private static int impactAreaID_B = 56;
+        private static Structure structure5 = new Structure(fid: 5, point: pointM, firstFloorElevation: 473, val_struct: 100, st_damcat: residentialDamCat, occtype: res2OccType, impactAreaID: impactAreaID_B);
+        private static Structure structure6 = new Structure(fid: 6, point: pointM, firstFloorElevation: 474, val_struct: 200, st_damcat: residentialDamCat, occtype: res2OccType, impactAreaID: impactAreaID_B);
+        private static Structure structure7 = new Structure(fid: 7, point: pointM, firstFloorElevation: 473.5, val_struct: 300, st_damcat: residentialDamCat, occtype: res1OccType, impactAreaID: impactAreaID_B);
+        private static Structure structure8 = new Structure(fid: 8, point: pointM, firstFloorElevation: 474.5, val_struct: 400, st_damcat: residentialDamCat, occtype: res1OccType, impactAreaID: impactAreaID_B);
 
         private static StructureSelectionMapping map = new StructureSelectionMapping(false, false, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
-        private static Inventory impactArea_34_StructureInventory = new Inventory(occupancyTypes, new List<Structure>() { structure1, structure2, structure3, structure4 });
-        private static Inventory impactArea_56_StructureInventory = new Inventory(occupancyTypes, new List<Structure>() { structure5, structure6, structure7, structure8 });
+        private static Inventory impactArea_A_StructureInventory = new Inventory(occupancyTypes, new List<Structure>() { structure1, structure2, structure3, structure4 });
+        private static Inventory impactArea_B_StructureInventory = new Inventory(occupancyTypes, new List<Structure>() { structure5, structure6, structure7, structure8 });
 
         #endregion
 
@@ -149,10 +149,10 @@ namespace HEC.FDA.ModelTest.integrationtests
         //some of these stages were directly entered and others will be interpolated 
         private static double[] stageAtWhichToCheckForDamage = new double[] { 472, 473, 477, 478, 479 };
 
-        private static double[] expected_mean_residentialDamage_34 = new double[] { 2.13, 16.08, 471.53, 642.29, 814.11 }; 
-        private static double[] expected_standardDeviation_residentialDamage_34 = new double[] { 6.17, 21.17, 97.83, 102.39, 104.30 };
-        private static double[] expected_mean_residentialDamage_56 = new double[] { 2.13, 16.08, 471.53, 642.29, 814.11 };
-        private static double[] expected_standardDeviation_residentialDamage_56 = new double[] { 6.17, 21.17, 97.83, 102.39, 106.31 };
+        private static double[] expected_mean_residentialDamage_A = new double[] { 2.13, 16.08, 471.53, 642.29, 814.11 }; 
+        private static double[] expected_standardDeviation_residentialDamage_A = new double[] { 6.17, 21.17, 97.83, 102.39, 104.30 };
+        private static double[] expected_mean_residentialDamage_B = new double[] { 2.13, 16.08, 471.53, 642.29, 814.11 };
+        private static double[] expected_standardDeviation_residentialDamage_B = new double[] { 6.17, 21.17, 97.83, 102.39, 106.31 };
 
         #endregion
 
@@ -161,9 +161,9 @@ namespace HEC.FDA.ModelTest.integrationtests
         public void UncertainStageDamageTest()
         {
             //Arrange
-            ImpactAreaStageDamage impactAreaStageDamage_34 = new ImpactAreaStageDamage(impactAreaID_34, impactArea_34_StructureInventory, hydraulicDataset_34, convergenceCriteria, "fakeHydroDir", analyticalFlowFrequency: lp3, dischargeStage: dischargeStage, usingMockData: true);
-            ImpactAreaStageDamage impactAreaStageDamage_56 = new ImpactAreaStageDamage(impactAreaID_56, impactArea_56_StructureInventory, hydraulicDataset_56, convergenceCriteria, "fakeHydroDir", graphicalFrequency: frequencyStage, usingMockData: true);
-            List<ImpactAreaStageDamage> impactAreas = new List<ImpactAreaStageDamage>() { impactAreaStageDamage_34, impactAreaStageDamage_56 };
+            ImpactAreaStageDamage impactAreaStageDamage_A = new ImpactAreaStageDamage(impactAreaID_A, impactArea_A_StructureInventory, hydraulicDataset_A, convergenceCriteria, "fakeHydroDir", analyticalFlowFrequency: lp3, dischargeStage: dischargeStage, usingMockData: true);
+            ImpactAreaStageDamage impactAreaStageDamage_B = new ImpactAreaStageDamage(impactAreaID_B, impactArea_B_StructureInventory, hydraulicDataset_B, convergenceCriteria, "fakeHydroDir", graphicalFrequency: frequencyStage, usingMockData: true);
+            List<ImpactAreaStageDamage> impactAreas = new List<ImpactAreaStageDamage>() { impactAreaStageDamage_A, impactAreaStageDamage_B };
             ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(impactAreas);
 
             //Act
@@ -182,68 +182,67 @@ namespace HEC.FDA.ModelTest.integrationtests
                 conf95DamageFunctions.Add(conf95Function);
             }
 
-            double[] actual_meanDamages_34 = new double[stageAtWhichToCheckForDamage.Length];
-            double[] actual_Conf95Damages_34 = new double[stageAtWhichToCheckForDamage.Length];
-            double[] actual_meanDamages_56 = new double[stageAtWhichToCheckForDamage.Length];
-            double[] actual_Conf95Damages_56 = new double[stageAtWhichToCheckForDamage.Length];
+            double[] actual_meanDamages_A = new double[stageAtWhichToCheckForDamage.Length];
+            double[] actual_Conf95Damages_A = new double[stageAtWhichToCheckForDamage.Length];
+            double[] actual_meanDamages_B = new double[stageAtWhichToCheckForDamage.Length];
+            double[] actual_Conf95Damages_B = new double[stageAtWhichToCheckForDamage.Length];
 
             for (int i = 0; i < stageAtWhichToCheckForDamage.Length; i++)
             {
-                double meanDamage34 = 0;
-                double conf95Damage34 = 0;
+                double meanDamageA = 0;
+                double conf95DamageA = 0;
 
-                double meanDamage56 = 0;
-                double conf95Damage56 = 0;
+                double meanDamageB = 0;
+                double conf95DamageB = 0;
 
                 foreach (PairedData stageDamageFunction in meanDamageFunctions)
                 {
-                    if (stageDamageFunction.MetaData.ImpactAreaID == impactAreaID_34)
+                    if (stageDamageFunction.MetaData.ImpactAreaID == impactAreaID_A)
                     {
-                        meanDamage34 += stageDamageFunction.f(stageAtWhichToCheckForDamage[i]);
+                        meanDamageA += stageDamageFunction.f(stageAtWhichToCheckForDamage[i]);
                     }
                     else
                     {
-                        meanDamage56 += stageDamageFunction.f(stageAtWhichToCheckForDamage[i]);
+                        meanDamageB += stageDamageFunction.f(stageAtWhichToCheckForDamage[i]);
                     }
                 }
-                actual_meanDamages_34[i] = meanDamage34;
-                actual_meanDamages_56[i] = meanDamage56;
+                actual_meanDamages_A[i] = meanDamageA;
+                actual_meanDamages_B[i] = meanDamageB;
                 foreach (PairedData stageDamageFunction in conf95DamageFunctions)
                 {
-                    if (stageDamageFunction.MetaData.ImpactAreaID == impactAreaID_34)
+                    if (stageDamageFunction.MetaData.ImpactAreaID == impactAreaID_A)
                     {
-                        conf95Damage34 += stageDamageFunction.f(stageAtWhichToCheckForDamage[i]);
+                        conf95DamageA += stageDamageFunction.f(stageAtWhichToCheckForDamage[i]);
                     }
                     else
                     {
-                        conf95Damage56 += stageDamageFunction.f(stageAtWhichToCheckForDamage[i]);
+                        conf95DamageB += stageDamageFunction.f(stageAtWhichToCheckForDamage[i]);
                     }
                 }
-                actual_Conf95Damages_34[i] = conf95Damage34;
-                actual_Conf95Damages_56[i] = conf95Damage56;
+                actual_Conf95Damages_A[i] = conf95DamageA;
+                actual_Conf95Damages_B[i] = conf95DamageB;
             }
 
             //Assert
-            double[] expected_conf95_damageDists_34 = new double[stageAtWhichToCheckForDamage.Length];
-            double[] expected_conf95_damageDists_56 = new double[stageAtWhichToCheckForDamage.Length];
+            double[] expected_conf95_damageDists_A = new double[stageAtWhichToCheckForDamage.Length];
+            double[] expected_conf95_damageDists_B = new double[stageAtWhichToCheckForDamage.Length];
 
             for (int i = 0; i < stageAtWhichToCheckForDamage.Length; i++)
             {
-                expected_conf95_damageDists_34[i] = new Normal(expected_mean_residentialDamage_34[i], expected_standardDeviation_residentialDamage_34[i]).InverseCDF(conf95Prob);
-                expected_conf95_damageDists_56[i] = new Normal(expected_mean_residentialDamage_56[i], expected_standardDeviation_residentialDamage_56[i]).InverseCDF(conf95Prob);
+                expected_conf95_damageDists_A[i] = new Normal(expected_mean_residentialDamage_A[i], expected_standardDeviation_residentialDamage_A[i]).InverseCDF(conf95Prob);
+                expected_conf95_damageDists_B[i] = new Normal(expected_mean_residentialDamage_B[i], expected_standardDeviation_residentialDamage_B[i]).InverseCDF(conf95Prob);
             }
 
             for (int i = 0; i < stageAtWhichToCheckForDamage.Length; i++)
             {
-                //TODO: These two lines are being commented out. They do not pass at this time. 
-                //Making sure that the test passes for Impact Area 34 will take place during the stage-damage refactor 
-                //Impact Area 34 Assertion
-                Assert.True(AssertWithinTolerance(actual_meanDamages_34[i], expected_mean_residentialDamage_34[i]));
-                Assert.True(AssertWithinTolerance(actual_Conf95Damages_34[i], expected_conf95_damageDists_34[i]));
 
-                //Impact Area 56 Assertion 
-                Assert.True(AssertWithinTolerance(expected_mean_residentialDamage_56[i],actual_meanDamages_56[i]));
-                Assert.True(AssertWithinTolerance(expected_conf95_damageDists_56[i],actual_Conf95Damages_56[i]));
+                //Impact Area A Assertion
+                Assert.True(AssertWithinTolerance(actual_meanDamages_A[i], expected_mean_residentialDamage_A[i]));
+                Assert.True(AssertWithinTolerance(actual_Conf95Damages_A[i], expected_conf95_damageDists_A[i]));
+
+                //Impact Area B Assertion 
+                Assert.True(AssertWithinTolerance(expected_mean_residentialDamage_B[i],actual_meanDamages_B[i]));
+                Assert.True(AssertWithinTolerance(expected_conf95_damageDists_B[i],actual_Conf95Damages_B[i]));
 
 
             }
