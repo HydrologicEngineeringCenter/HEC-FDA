@@ -23,18 +23,18 @@ namespace HEC.FDA.ModelTest.integrationtests
 
         //First impact area
         private static ContinuousDistribution lp3 = new LogPearson3(2.8, .438, .075, 50);
-        private static double[] RatingCurveFlows = { 0, 1500, 2120, 3140, 4210, 5070, 6240, 7050, 9680 };
+        private static double[] RatingCurveFlows = { 0, lp3.InverseCDF(1-0.5), lp3.InverseCDF(1-0.2), lp3.InverseCDF(1-0.1), lp3.InverseCDF(1-0.04), lp3.InverseCDF(1-0.02), lp3.InverseCDF(1-0.01), lp3.InverseCDF(1-0.004), lp3.InverseCDF(1-0.002) };
         private static IDistribution[] StageDistributions =
         {
             new Normal(458,0.00001),
-            new Normal(468.33,.312),
-            new Normal(469.97,.362),
-            new Normal(471.95,.422),
-            new Normal(473.06,.456),
-            new Normal(473.66,.474),
-            new Normal(474.53,.5),
-            new Normal(475.11,.5),
-            new Normal(477.4,.5)
+            new Normal(468,.312),
+            new Normal(469,.362),
+            new Normal(470,.422),
+            new Normal(471,.456),
+            new Normal(473,.474),
+            new Normal(475,.5),
+            new Normal(477,.5),
+            new Normal(479,.5)
         };
         private static UncertainPairedData dischargeStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, new CurveMetaData("flows", "stages", "rating curve"));
 
@@ -149,7 +149,7 @@ namespace HEC.FDA.ModelTest.integrationtests
         //some of these stages were directly entered and others will be interpolated 
         private static double[] stageAtWhichToCheckForDamage = new double[] { 472, 473, 477, 478, 479 };
 
-        private static double[] expected_mean_residentialDamage_34 = new double[] { 2.13, 16.08, 471.53, 642.29, 728.18 }; //478.5 is highest stage in 1.4.3 stage damage function and 728.18 is damage at 478.5 ft 
+        private static double[] expected_mean_residentialDamage_34 = new double[] { 2.13, 16.08, 471.53, 642.29, 814.11 }; 
         private static double[] expected_standardDeviation_residentialDamage_34 = new double[] { 6.17, 21.17, 97.83, 102.39, 104.30 };
         private static double[] expected_mean_residentialDamage_56 = new double[] { 2.13, 16.08, 471.53, 642.29, 814.11 };
         private static double[] expected_standardDeviation_residentialDamage_56 = new double[] { 6.17, 21.17, 97.83, 102.39, 106.31 };
@@ -238,8 +238,8 @@ namespace HEC.FDA.ModelTest.integrationtests
                 //TODO: These two lines are being commented out. They do not pass at this time. 
                 //Making sure that the test passes for Impact Area 34 will take place during the stage-damage refactor 
                 //Impact Area 34 Assertion
-                //Assert.True(AssertWithinTolerance(actual_meanDamages_34[i],expected_mean_residentialDamage_34[i]));
-                //Assert.True(AssertWithinTolerance(actual_Conf95Damages_34[i], expected_conf95_damageDists_34[i]));
+                Assert.True(AssertWithinTolerance(actual_meanDamages_34[i], expected_mean_residentialDamage_34[i]));
+                Assert.True(AssertWithinTolerance(actual_Conf95Damages_34[i], expected_conf95_damageDists_34[i]));
 
                 //Impact Area 56 Assertion 
                 Assert.True(AssertWithinTolerance(expected_mean_residentialDamage_56[i],actual_meanDamages_56[i]));
