@@ -18,6 +18,10 @@ namespace HEC.FDA.Model.paireddata
         #endregion
 
         #region Properties 
+        public CurveMetaData MetaData
+        {
+            get { return _metadata; }
+        }
         public double[] Xvals { get; }
         public double[] Yvals { get; private set; }
         public bool IsValidPerMetadata
@@ -28,7 +32,7 @@ namespace HEC.FDA.Model.paireddata
                 {
                     if (IsArrayValid(Xvals, (a, b) => a > b) && IsArrayValid(Xvals, (a, b) => a > b))
                     {
-                        return true; 
+                        return true;
                     }
                 }
                 if (_metadata.CurveType == CurveTypesEnum.StrictlyMonotonicallyIncreasing)

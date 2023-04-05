@@ -18,6 +18,7 @@ namespace HEC.FDA.Model.structures
     {
         #region Properties
         public List<Structure> Structures { get; } = new List<Structure>();
+        //The string key is the occupancy type name 
         public Dictionary<string, OccupancyType> OccTypes { get; set; }
         public double PriceIndex { get; set; }
         public List<ValidationGroup> ValidationGroups { get; } = new List<ValidationGroup>();
