@@ -236,62 +236,69 @@ namespace HEC.FDA.Model.paireddata
         /// </summary>
         public IPairedData multiply(IPairedData systemResponseFunction)
         {
-            double belowFragilityCurveValue = 0.0;
-            double aboveFragilityCurveValue = 1.0;
-            List<double> newXvals = new List<double>();
-            List<double> newYvals = new List<double>();
-            double buffer = .001; //buffer to define point just above and just below the multiplying curve.
-            if (Xvals[0] < systemResponseFunction.Xvals[0])
+            IPairedData newSystemResponse = EnsureBottomAndTopHaveCorrectProbabilities(systemResponseFunction);
+
+            List<double> newXvals = new List<double>(); //xvals are stages in the stage-damage function
+            List<double> newYvals = new List<double>(); //yvals are damage*prob(failure)
+
+            // calculate damages for the range of the stage-damage function 
+            for (int i = 0; i < Xvals.Count(); i++)
             {
-                //cacluate no damage until the bottom of the fragility curve
-                double bottomStageOfSystemResponse = systemResponseFunction.Xvals[0];
-                foreach (double damageValue in Xvals)
-                {
-                    if (damageValue < bottomStageOfSystemResponse)
-                    {
-                        //set to zero
-                        newXvals.Add(damageValue);
-                        newYvals.Add(belowFragilityCurveValue);
-                    }
-                    else
-                    {
-                        //create a point on the curve just below the bottom of the levee at damage zero.
-                        newXvals.Add(bottomStageOfSystemResponse - buffer);
-                        newYvals.Add(belowFragilityCurveValue);
-                        break;
-                    }
-                }
-            }
-            // calculate damages for the range of the fragility curve
-            for (int index = 0; index < systemResponseFunction.Xvals.Count(); index++)
-            {
-                //modify
-                double stageOnSystemResponse = systemResponseFunction.Xvals[index];
-                double probabilityWeightedDamage = f(stageOnSystemResponse) * systemResponseFunction.Yvals[index];
-                newXvals.Add(stageOnSystemResponse);
+                double stageFromStageDamage = Xvals[i];
+                double probabilityOfFailure = newSystemResponse.f(stageFromStageDamage);
+                double probabilityWeightedDamage = probabilityOfFailure*Yvals[i];
+
+                newXvals.Add(stageFromStageDamage);
                 newYvals.Add(probabilityWeightedDamage);
             }
-            // calculate damages above the fragility curve
-            if (systemResponseFunction.Xvals.Last() < Xvals.Last())
+            for (int i = 0; i < newSystemResponse.Xvals.Length; i++)
             {
-                double topStageOfSystemResponseFunction = systemResponseFunction.Xvals.Last();
-                //create a point at the top of the fragility curve
-                newXvals.Add(topStageOfSystemResponseFunction + buffer);
-                double damageabove = f(topStageOfSystemResponseFunction + buffer) * aboveFragilityCurveValue;
-                newYvals.Add(damageabove);
-                for (int idx = 0; idx < Xvals.Count(); idx++)
+                double fragilityStage = newSystemResponse.Xvals[i];
+                bool fragilityStageIsInStages = newXvals.Contains(fragilityStage);
+                if (!fragilityStageIsInStages)
                 {
-                    double dcx = Xvals[idx];
-                    if (dcx > topStageOfSystemResponseFunction)
-                    {
-                        //set to max val
-                        newXvals.Add(dcx);
-                        double d = Yvals[idx] * aboveFragilityCurveValue;
-                        newYvals.Add(d);
-                    }
+                    double probabilityOfFailure = newSystemResponse.Yvals[i];
+                    double unweightedDamage = f(fragilityStage);
+                    double probabilityWeightedDamage = probabilityOfFailure*unweightedDamage;
+                    newXvals.Add(fragilityStage);
+                    newYvals.Add(probabilityWeightedDamage);
                 }
             }
-            return new PairedData(newXvals.ToArray(), newYvals.ToArray());
+            double[] stages = newXvals.ToArray();
+            double[] damages = newYvals.ToArray();
+            //This sorts the stages and sorts the damage based on the sorting of the stages
+            Array.Sort(stages, damages);
+            return new PairedData(stages,damages);
+        }
+
+        private IPairedData EnsureBottomAndTopHaveCorrectProbabilities(IPairedData systemResponseFunction)
+        {
+            List<double> tempXvals = new List<double>(); //xvals are stages
+            List<double> tempYvals = new List<double>(); //yvals are prob failure 
+
+            //First step is to ensure that the fragility function begins with 0 prob failure and ends with 1 prob failure 
+            double buffer = .001; //buffer to define point just above and just below the multiplying curve.
+
+            double belowFragilityCurveValue = 0.0;
+            double stageToAddBelowFragility = systemResponseFunction.Xvals[0] - buffer;
+
+            tempXvals.Add(stageToAddBelowFragility);
+            tempYvals.Add(belowFragilityCurveValue);
+
+            for (int i = 0; i < systemResponseFunction.Xvals.Length; i++)
+            {
+                tempXvals.Add(systemResponseFunction.Xvals[i]);
+                tempYvals.Add(systemResponseFunction.Yvals[i]);
+            }
+
+            double aboveFragilityCurveValue = 1.0;
+            double stageToAddAboveFragility = systemResponseFunction.Xvals[systemResponseFunction.Xvals.Length - 1] + buffer;
+
+            tempXvals.Add(stageToAddAboveFragility);
+            tempYvals.Add(aboveFragilityCurveValue);
+
+            PairedData newSystemREsponse = new PairedData(tempXvals.ToArray(), tempYvals.ToArray());
+            return newSystemREsponse;
         }
 
         public void ForceMonotonic(double max = double.MaxValue, double min = double.MinValue)

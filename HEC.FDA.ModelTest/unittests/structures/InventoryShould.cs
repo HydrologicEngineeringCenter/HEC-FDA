@@ -18,6 +18,8 @@ namespace HEC.FDA.ModelTest.unittests.structures
         private const string pathToNSIShapefile = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieNSI\Muncie-SI_CRS2965.shp";
         private const string pathToIAShapefile = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieImpactAreas\ImpactAreas.shp";
         private const string pathToTerrainHDF = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieTerrain\Terrain (1)_30ft_clip.hdf";
+        private const string pathToMuncieProjection = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieImpactAreas\ImpactAreas.prj";
+        private const string pathToAlternativeProjection = @"..\..\..\HEC.FDA.ModelTest\Resources\Projections\26844.prj";
 
         //NSI Headers
         private const string StructureIDCol = "fd_id";
@@ -73,7 +75,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
         [Fact]
         public void GetGroundElevationFromTerrain()
         {
-            float[] groundelevs = Inventory.GetGroundElevationFromTerrain(new PointFeatureLayer("ThisNameIsNotUsed",pathToNSIShapefile), new TerrainLayer("ThisNameIsNotUsed",pathToTerrainHDF));
+            float[] groundelevs = Inventory.GetGroundElevationFromRASTerrain(new PointFeatureLayer("ThisNameIsNotUsed",pathToNSIShapefile), new TerrainLayer("ThisNameIsNotUsed",pathToTerrainHDF),Projection.FromFile(pathToMuncieProjection));
             Assert.Equal(682, groundelevs.Length);
             Assert.Equal(946.5, groundelevs[0], 1);
         }
@@ -127,21 +129,13 @@ namespace HEC.FDA.ModelTest.unittests.structures
             Assert.NotNull(proj);
         }
         [Fact]
-        public void ReturnProjectionFromTerrain()
-        {
-            //Act
-            Projection proj = Inventory.GetTerrainProjection(new TerrainLayer("ThisNameIsNotUsed",pathToTerrainHDF));
-            //Assert
-            Assert.NotNull(proj);
-        }
-        [Fact]
         public void ReprojectPoints()
         {
             //These projections are VERY Slightly different.
             //It's enough to show that reprojection changes coords though, and lets us not add another file to the repo. 
             //Arrange 
             Projection projPnt = Inventory.GetVectorProjection(new PointFeatureLayer("unusedName", pathToNSIShapefile));
-            Projection projTerr = Inventory.GetTerrainProjection(new TerrainLayer("ThisNameIsNotUsed", pathToTerrainHDF));
+            Projection projTerr = Projection.FromFile(pathToAlternativeProjection);
             PointM pnt= new PointM(0,0);
             //Act
             PointM newPnt = Inventory.ReprojectPoint(pnt, projTerr, projPnt);

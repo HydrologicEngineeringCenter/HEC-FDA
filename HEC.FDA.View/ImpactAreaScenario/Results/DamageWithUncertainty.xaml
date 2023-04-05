@@ -5,43 +5,49 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HEC.FDA.View.ImpactAreaScenario.Results"
              mc:Ignorable="d" 
-             Loaded="UserControl_Loaded"
+             xmlns:oxy="http://oxyplot.org/wpf"
              xmlns:controls="clr-namespace:UserControls.UserControls;assembly=HEC.FDA.UserControls"
-             xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid x:Name="main_grd">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="500"/>
-            
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+             xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel" 
+             xmlns:results="clr-namespace:HEC.FDA.ViewModel.ImpactAreaScenario.Results;assembly=HEC.FDA.ViewModel"
+             d:DesignHeight="450" d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance results:DamageWithUncertaintyVM}">
+  <Grid x:Name="main_grd">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="500"/>
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal">
-            <Label Content="Mean:" />
-            <TextBlock Text="{Binding Mean, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" VerticalAlignment="Center"/>
-        </StackPanel>
-        <controls:CopyPasteDataGrid Grid.Row="1" Grid.Column="0"  ItemsSource="{Binding Rows}" AutoGenerateColumns="False" 
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="*"/>
+    </Grid.ColumnDefinitions>
+
+    <oxy:PlotView Margin="5" Grid.Column="1" Grid.Row="1" Model="{Binding MyPlot}"/>
+
+    <StackPanel Grid.Row="0" Orientation="Horizontal">
+      <Label Content="Mean:" />
+      <TextBlock Text="{Binding Mean, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" 
+                 VerticalAlignment="Center"/>
+    </StackPanel>
+    <controls:CopyPasteDataGrid Grid.Row="1" Grid.Column="0"  ItemsSource="{Binding Rows}" AutoGenerateColumns="False" 
                    HorizontalAlignment="Left"
                   VerticalAlignment="Top" Width="200" IsReadOnly="True" SelectionUnit="Cell" CanUserReorderColumns="False"
                   CanUserSortColumns="false" Margin="5">
-            <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Frequency}" Width="110">
-                    <DataGridTextColumn.Header>
-                        <TextBlock Text="Quartile of EAD Distribution" TextWrapping="Wrap" />
-                    </DataGridTextColumn.Header>    
-                </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Value, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="*">
-                    <DataGridTextColumn.Header>
-                        <TextBlock Text="Quartile Value" TextWrapping="Wrap" />
-                    </DataGridTextColumn.Header>
-                </DataGridTextColumn>
-            </DataGrid.Columns>
+      <DataGrid.Columns>
+        <DataGridTextColumn Binding="{Binding Frequency}" Width="110">
+          <DataGridTextColumn.Header>
+            <TextBlock Text="Quartile of EAD Distribution" TextWrapping="Wrap" />
+          </DataGridTextColumn.Header>
+        </DataGridTextColumn>
+        <DataGridTextColumn Binding="{Binding Value, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}"
+                            Width="*">
+          <DataGridTextColumn.Header>
+            <TextBlock Text="Quartile Value" TextWrapping="Wrap" />
+          </DataGridTextColumn.Header>
+        </DataGridTextColumn>
+      </DataGrid.Columns>
 
-        </controls:CopyPasteDataGrid>
+    </controls:CopyPasteDataGrid>
 
-    </Grid>
+  </Grid>
 </UserControl>

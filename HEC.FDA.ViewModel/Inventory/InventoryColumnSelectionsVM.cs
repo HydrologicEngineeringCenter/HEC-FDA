@@ -8,6 +8,9 @@ using System.Linq;
 using HEC.FDA.ViewModel.Watershed;
 using HEC.FDA.Model.structures;
 using RasMapperLib;
+using System.Data.SQLite;
+using HEC.FDA.ViewModel.Storage;
+using Geospatial.GDALAssist;
 
 namespace HEC.FDA.ViewModel.Inventory
 {
@@ -264,8 +267,7 @@ namespace HEC.FDA.ViewModel.Inventory
             List<StructureMissingDataRowItem> missingDataRows = new List<StructureMissingDataRowItem>();
             int badElevationNumber = -9999;
             _StructureElevations.Clear();
-            _StructureElevations.AddRange(Model.structures.Inventory.GetGroundElevationFromTerrain(new PointFeatureLayer("ThisNameIsNotUsed",Path), new TerrainLayer("ThisNameIsNotUsed",getTerrainFile())));
-
+            _StructureElevations.AddRange(Model.structures.Inventory.GetGroundElevationFromRASTerrain(new PointFeatureLayer("ThisNameIsNotUsed",Path), new TerrainLayer("ThisNameIsNotUsed",getTerrainFile()),Projection.FromFile(Storage.Connection.Instance.ProjectionFile)));
             List<int> idsWithNoElevation = new List<int>();
             for (int i = 0; i < _StructureElevations.Count(); i++)
             {
