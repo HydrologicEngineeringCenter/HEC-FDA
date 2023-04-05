@@ -7,6 +7,7 @@ using System;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.FDA.Model.interfaces;
 using HEC.MVVMFramework.Model.Messaging;
+using HEC.MVVMFramework.Base.Enumerations;
 
 namespace HEC.FDA.Model.paireddata
 {
@@ -102,10 +103,9 @@ namespace HEC.FDA.Model.paireddata
         public GraphicalUncertainPairedData()
         {
             _metaData = new CurveMetaData();
-            AddRules();
         }
         [Obsolete("This constructor is deprecated. Construct a CurveMetaData, then inject into constructor")]
-        public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, string xlabel, string ylabel, string name, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
+        public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, string xlabel, string ylabel, string name, bool usingStagesNotFlows = true, double maximumProbability = 0.999, double minimumProbability = 0.0001)
         {
             _inputFlowOrStageValues = flowOrStageValues;
             _UsingStagesNotFlows = usingStagesNotFlows;
@@ -119,7 +119,6 @@ namespace HEC.FDA.Model.paireddata
             _StageOrLogFlowDistributions = graphical.StageOrLogFlowDistributions;
             _EquivalentRecordLength = equivalentRecordLength;
             _metaData = new CurveMetaData(xlabel, ylabel, name, CurveTypesEnum.StrictlyMonotonicallyIncreasing);
-            AddRules();
         }
         public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, CurveMetaData curveMetaData, bool usingStagesNotFlows, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
         {
@@ -135,7 +134,6 @@ namespace HEC.FDA.Model.paireddata
             _StageOrLogFlowDistributions = graphical.StageOrLogFlowDistributions;
             _EquivalentRecordLength = equivalentRecordLength;
             _metaData = curveMetaData;
-            AddRules();
         }
         private GraphicalUncertainPairedData(double[] exceedanceProbabilities, Normal[] flowOrStageDistributions, double[] inputFlowsOrStages, int equivalentRecordLength, CurveMetaData curveMetaData, bool usingStagesNotFlows = true, double maximumProbability = 0.9999, double minimumProbability = 0.0001)
         {
@@ -148,40 +146,10 @@ namespace HEC.FDA.Model.paireddata
             _StageOrLogFlowDistributions = flowOrStageDistributions;
             _EquivalentRecordLength = equivalentRecordLength;
             _metaData = curveMetaData;
-            AddRules();
         }
         #endregion
 
         #region Methods
-        /// <summary>
-        /// We have rules on monotonicity for non-exceedance probabilities. So we test for strict monotonic decreasing. 
-        /// This means that the exceecance probabilities are strictly monotonically increasing
-        /// Satisfying the curve type enum.
-        /// </summary>
-        private void AddRules()
-        {
-            switch (_metaData.CurveType)
-            {
-                case CurveTypesEnum.StrictlyMonotonicallyIncreasing:
-                    AddSinglePropertyRule(nameof(_NonExceedanceProbabilities), new Rule(() => IsArrayValid(_NonExceedanceProbabilities, (a, b) => a > b), $"X must be strictly monotonically decreasing but are not for graphical frequency function named {_metaData.Name}."));
-                    break;
-                default:
-                    break;
-            }
-
-        }
-        private bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
-        {
-            if (arrayOfData == null) return false;
-            for (int i = 0; i < arrayOfData.Length - 1; i++)
-            {
-                if (comparison(arrayOfData[i], arrayOfData[i + 1]))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
         private double[] ExceedanceToNonExceedance(double[] exceedanceProbabilities)
         {
             double[] nonExceedanceProbabilities = new double[exceedanceProbabilities.Length];
@@ -200,11 +168,25 @@ namespace HEC.FDA.Model.paireddata
                 y[i] = _StageOrLogFlowDistributions[i].InverseCDF(probability);
             }
             PairedData pairedData = new PairedData(_NonExceedanceProbabilities, y, _metaData);
-            if (!pairedData.IsValidPerMetadata)
+            bool isMonotonicallyIncreasing = IsMonotonicallyIncreasing(pairedData);
+            if (!isMonotonicallyIncreasing)
             {
                 pairedData.ForceMonotonic();
             }
             return pairedData;
+        }
+        //This method duplicates the IsArrayValid method functionality
+        //I don't like IsArrayValid, too complicated. 
+        private bool IsMonotonicallyIncreasing(IPairedData pairedData)
+        {
+            for (int i = 1; i < pairedData.Yvals.Length; i++)
+            {
+                if (pairedData.Yvals[i] < pairedData.Yvals[i - 1])
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         public bool Equals(GraphicalUncertainPairedData incomingGraphicalUncertainPairedData)

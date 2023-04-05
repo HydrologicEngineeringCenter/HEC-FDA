@@ -34,6 +34,7 @@ namespace HEC.FDA.ViewModel.Study
         public double UpdatedPriceIndex { get; set; }
 
         public ConvergenceCriteriaVM ConvergenceCriteria { get; set; }
+        public ProjectionPickerVM ProjectionPicker { get; set; } = new ProjectionPickerVM();
 
         #endregion
         #region Constructors      
@@ -77,7 +78,7 @@ namespace HEC.FDA.ViewModel.Study
             int id = 1;
             StudyPropertiesElement elemToSave = new StudyPropertiesElement(StudyName, StudyPath, StudyDescription, CreatedBy,
                 CreatedDate, StudyNotes, MonetaryUnit, UnitSystem, SurveyedYear, UpdatedYear, UpdatedPriceIndex, DiscountRate, PeriodOfAnalysis, ConvergenceCriteria, id);
-
+            ProjectionPicker.Save(); 
             base.Save(elemToSave);
         }
         #endregion        

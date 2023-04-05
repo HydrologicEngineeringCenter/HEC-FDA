@@ -18,11 +18,46 @@ namespace HEC.FDA.ModelTest.integrationtests
     public class TractableStageDamageTests
     {
         #region H&H Data 
+
+
+
         private static double[] probabilities = new double[] {.5, .2, .1, .04, .02, .01, .004, .002 };
-        private static double[] stages = new double[] {12, 13, 14, 15, 16, 17, 18, 19 };
+        private static double[] graphicalStages = new double[] {12, 13, 14, 15, 16, 17, 18, 19 };
+
         private static int equivalentRecordLength = 50;
-        private static CurveMetaData stageFreqMetaData = new CurveMetaData("probability", "stages", "graphical stage frequency");
-        private static GraphicalUncertainPairedData stageFrequency = new GraphicalUncertainPairedData(probabilities, stages, equivalentRecordLength, stageFreqMetaData, true);
+        private static GraphicalUncertainPairedData stageFrequency = new GraphicalUncertainPairedData(probabilities, graphicalStages, equivalentRecordLength, new CurveMetaData("probability", "stages", "graphical stage frequency"), true);
+
+        private static double[] inflows = new double[] { 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900 };
+        private static GraphicalUncertainPairedData flowFrequency = new GraphicalUncertainPairedData(probabilities, inflows, equivalentRecordLength, new CurveMetaData("probability", "discharge", "graphical flow frequency"), false);
+
+        private static IDistribution[] outflows = new IDistribution[]
+        {
+            new Deterministic(120),
+            new Deterministic(130),
+            new Deterministic(140),
+            new Deterministic(150),
+            new Deterministic(160),
+            new Deterministic(170),
+            new Deterministic(180),
+            new Deterministic(190),
+        };
+        private static UncertainPairedData unregReg = new UncertainPairedData(inflows, outflows, new CurveMetaData("unregulated", "regulated", "reg unreg function"));
+
+        private static double[] flows = new double[] { 120, 130, 140, 150, 160, 170, 180, 190 };
+        private static IDistribution[] stages = new IDistribution[]
+        {
+            new Deterministic(12),
+            new Deterministic(13),
+            new Deterministic(14),
+            new Deterministic(15),
+            new Deterministic(16),
+            new Deterministic(17),
+            new Deterministic(18),
+            new Deterministic(19)
+        };
+        private static UncertainPairedData dischargeStage = new UncertainPairedData(flows, stages, new CurveMetaData("discharge", "stage", "stage discharge function"));
+
+
 
         private static List<float[]> ComputeStagesAtStructures(float stage1, float stage2)
         {
@@ -129,21 +164,40 @@ namespace HEC.FDA.ModelTest.integrationtests
         /// The solution for the below test is available at https://docs.google.com/spreadsheets/d/1QTjZ6BzGMBmxB-xWurNz08wnQx7HrmOm/edit?usp=share_link&ouid=105470256128470573157&rtpof=true&sd=true
         /// </summary>
         [Theory]
-        [InlineData(new double[] {0, 0, 30, 60, 90, 120, 150, 180}, new double[] {0, 0, 0, 0, 84, 168, 252, 336}, "Residential", 13, 14)]
-        [InlineData(new double[] { 0, 0, 30, 60, 90, 120, 150, 180 }, new double[] { 0, 0, 0, 0, 84, 168, 252, 336 }, "Commercial", 15, 16)]
-        public void TrackStageDamageTest(double[] expectedResDamage, double[] expectedComDamage, string damageCategory, float stage1, float stage2)
+        [InlineData(new double[] {0, 0, 30, 60, 90, 120, 150, 180}, new double[] {0, 0, 0, 0, 84, 168, 252, 336}, "Residential", 13, 14, false)]
+        [InlineData(new double[] { 0, 0, 30, 60, 90, 120, 150, 180 }, new double[] { 0, 0, 0, 0, 84, 168, 252, 336 }, "Commercial", 15, 16, false)]
+        [InlineData(new double[] { 0, 0, 30, 60, 90, 120, 150, 180 }, new double[] { 0, 0, 0, 0, 84, 168, 252, 336 }, "Residential", 13, 14, true)]
+        [InlineData(new double[] { 0, 0, 30, 60, 90, 120, 150, 180 }, new double[] { 0, 0, 0, 0, 84, 168, 252, 336 }, "Commercial", 15, 16, true)]
+        public void TrackStageDamageTest(double[] expectedResDamage, double[] expectedComDamage, string damageCategory, float stage1, float stage2, bool useRegUnreg)
         {
             HydraulicDataset hydraulicDataset = ComputeHydraulicDataset(stage1, stage2);
-            List<UncertainPairedData> stageDamageFunctions = new List<UncertainPairedData>(); 
-            if (damageCategory == residentialDamAndOccType)
+            List<UncertainPairedData> stageDamageFunctions = new List<UncertainPairedData>();
+
+            if (useRegUnreg)
             {
-                ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, residentialStructureInventory, hydraulicDataset, convergenceCriteria, "fakeHydroDir", graphicalFrequency: stageFrequency, usingMockData: true);
-                stageDamageFunctions = impactAreaStageDamage.Compute(new MedianRandomProvider());
-            }
+                if (damageCategory == residentialDamAndOccType)
+                {
+                    ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, residentialStructureInventory, hydraulicDataset, convergenceCriteria, "fakeHydroDir", graphicalFrequency: flowFrequency, dischargeStage: dischargeStage, unregulatedRegulated: unregReg, usingMockData: true);
+                    stageDamageFunctions = impactAreaStageDamage.Compute(new MedianRandomProvider());
+                }
+                else
+                {
+                    ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, commercialStructureInventory, hydraulicDataset, convergenceCriteria, "fakeHydroDir", graphicalFrequency: flowFrequency, dischargeStage: dischargeStage, unregulatedRegulated: unregReg, usingMockData: true);
+                    stageDamageFunctions = impactAreaStageDamage.Compute(new MedianRandomProvider());
+                }
+            } 
             else
             {
-                ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, commercialStructureInventory, hydraulicDataset, convergenceCriteria, "fakeHydroDir", graphicalFrequency: stageFrequency, usingMockData: true);
-                stageDamageFunctions = impactAreaStageDamage.Compute(new MedianRandomProvider());
+                if (damageCategory == residentialDamAndOccType)
+                {
+                    ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, residentialStructureInventory, hydraulicDataset, convergenceCriteria, "fakeHydroDir", graphicalFrequency: stageFrequency, usingMockData: true);
+                    stageDamageFunctions = impactAreaStageDamage.Compute(new MedianRandomProvider());
+                }
+                else
+                {
+                    ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, commercialStructureInventory, hydraulicDataset, convergenceCriteria, "fakeHydroDir", graphicalFrequency: stageFrequency, usingMockData: true);
+                    stageDamageFunctions = impactAreaStageDamage.Compute(new MedianRandomProvider());
+                }
             }
                 
             double absoluteTolerance = 3;
@@ -155,10 +209,10 @@ namespace HEC.FDA.ModelTest.integrationtests
                 {
                     if (stageDamageFunction.CurveMetaData.AssetCategory == structureAssetType)
                     {
-                        for (int i = 0; i < stages.Length; i++)
+                        for (int i = 0; i < graphicalStages.Length; i++)
                         {
                             //TODO: f(stage) not f(probability) 
-                            double actualDamage = pairedData.f(stages[i]);
+                            double actualDamage = pairedData.f(graphicalStages[i]);
                             if (expectedResDamage[i] == 0)
                             {
                                 double difference = Math.Abs(actualDamage - expectedResDamage[i]);
@@ -176,9 +230,9 @@ namespace HEC.FDA.ModelTest.integrationtests
                 {
                     if (stageDamageFunction.CurveMetaData.AssetCategory == contentAssetType)
                     {
-                        for (int i = 0; i < stages.Length; i++)
+                        for (int i = 0; i < graphicalStages.Length; i++)
                         {
-                            double actualDamage = pairedData.f(stages[i]);
+                            double actualDamage = pairedData.f(graphicalStages[i]);
                             if (expectedComDamage[i] == 0)
                             {
                                 double diff = Math.Abs(actualDamage - expectedComDamage[i]);

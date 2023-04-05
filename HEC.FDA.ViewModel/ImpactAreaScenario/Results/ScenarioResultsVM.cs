@@ -2,7 +2,7 @@
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
-    public class IASResultsVM : BaseViewModel
+    public class ScenarioResultsVM : BaseViewModel
     {
 
         private SpecificIASResultVM _selectedResult;
@@ -15,7 +15,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         }
 
 
-        public IASResultsVM(List<SpecificIASResultVM> results)
+        public ScenarioResultsVM(List<SpecificIASResultVM> results)
         {
             Results.AddRange( results);
             SelectedResult = results[0];
