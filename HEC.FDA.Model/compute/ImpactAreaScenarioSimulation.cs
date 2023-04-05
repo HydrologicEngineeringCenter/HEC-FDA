@@ -290,7 +290,7 @@ namespace HEC.FDA.Model.compute
                         if (_frequency_discharge_graphical.CurveMetaData.IsNull)
                         {
                             //If threadlocalRandomProvider is medianRandomProvider then we get a quasi-deterministic result
-                            frequencyDischarge = BootstrapToPairedData(threadlocalRandomProvider, _frequency_discharge, 200);//ordinates defines the number of values in the frequency curve, more would be a better approximation.
+                            frequencyDischarge = PairedData.BootstrapToPairedData(threadlocalRandomProvider, _frequency_discharge, _RequiredExceedanceProbabilities, 200);//ordinates defines the number of values in the frequency curve, more would be a better approximation.
                         }
                         else
                         {
@@ -427,24 +427,7 @@ namespace HEC.FDA.Model.compute
 
             }
         }
-        private IPairedData BootstrapToPairedData(IProvideRandomNumbers randomProvider, ContinuousDistribution continuousDistribution, int ordinates)
-        {
-            double[] samples = randomProvider.NextRandomSequence(continuousDistribution.SampleSize);
-            IDistribution bootstrap = continuousDistribution.Sample(samples);
-            double[] x = new double[_RequiredExceedanceProbabilities.Length];
-            double[] y = new double[_RequiredExceedanceProbabilities.Length];
-            for (int i = 0; i < _RequiredExceedanceProbabilities.Length; i++)
-            {
-                //same exceedance probs as graphical and as 1.4.3
-                double prob = 1 - _RequiredExceedanceProbabilities[i];
-                x[i] = prob;
 
-                //y values in increasing order 
-                y[i] = bootstrap.InverseCDF(prob);
-            }
-            return new PairedData(x, y);
-
-        }
         private void ComputeDamagesFromStageFrequency(IProvideRandomNumbers randomProvider, IPairedData frequency_stage, bool giveMeADamageFrequency, long iteration, bool computeIsDeterministic)
         {
             CurveMetaData metadata = new CurveMetaData("Total", "Total");
@@ -607,7 +590,7 @@ namespace HEC.FDA.Model.compute
                     IPairedData frequencyFlow;
                     if (_frequency_discharge_graphical.CurveMetaData.IsNull)
                     {
-                        frequencyFlow = BootstrapToPairedData(meanRandomProvider, _frequency_discharge, 200);
+                        frequencyFlow = PairedData.BootstrapToPairedData(meanRandomProvider, _frequency_discharge, _RequiredExceedanceProbabilities, 200);
                     }
                     else
                     {
