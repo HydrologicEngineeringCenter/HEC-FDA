@@ -14,6 +14,8 @@ using Xunit;
 
 namespace HEC.FDA.ModelTest.integrationtests
 {
+    [Trait("RunsOn", "Remote")]
+
     public class UncertainStageDamageTests
     {
         #region H&H Data
