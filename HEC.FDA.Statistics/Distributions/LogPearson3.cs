@@ -186,37 +186,6 @@ namespace Statistics.Distributions
                 return Math.Pow(10, logflow);
             }
         }
-        public static double FastInverseCDF(double mean, double sd, double skew, double skewdividedbysix, double twodividedbyskew, double p)
-        {
-
-            if (p <= 0)
-            {
-                p = 0.000000000001;
-            }
-            if (p >= 1)
-            {
-                p = 0.999999999999;
-            };
-
-            //PearsonIII d = new PearsonIII(Mean, StandardDeviation, Skewness, SampleSize);
-            //return Math.Pow(10, d.InverseCDF(p));
-            if (skew == 0)
-            {
-                //Normal zeroSkewNorm = new Normal(Mean, StandardDeviation);
-                double logflow = (Normal.StandardNormalInverseCDF(p) * sd) + mean;
-                return Math.Pow(10, logflow);
-            }
-            else
-            {
-
-                //Normal sn = new Normal();
-                double z = Normal.StandardNormalInverseCDF(p);
-                double whfactor = (z - skewdividedbysix) * skew / 6.0 + 1;
-                double k = (twodividedbyskew) * ((whfactor * whfactor * whfactor) - 1); //pemdas says you cant substitute for the divide in that other instance... so dont do it!
-                double logflow = mean + (k * sd);
-                return Math.Pow(10, logflow);
-            }
-        }
         public override string Print(bool round = false) => round ? Print(Mean, StandardDeviation, Skewness, SampleSize) : $"log PearsonIII(mean: {Mean}, sd: {StandardDeviation}, skew: {Skewness}, sample size: {SampleSize})";
         public override string Requirements(bool printNotes) => RequiredParameterization(printNotes);
         public override bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print(), StringComparison.InvariantCultureIgnoreCase) == 0 ? true : false;
