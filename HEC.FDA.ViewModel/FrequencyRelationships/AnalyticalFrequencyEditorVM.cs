@@ -4,6 +4,7 @@ using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using OxyPlot;
 using OxyPlot.Axes;
+using OxyPlot.Legends;
 using OxyPlot.Series;
 using Statistics.Distributions;
 using System;
@@ -137,7 +138,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             _Skew = DefaultData.LP3Skew;
             _POR = DefaultData.PeriodOfRecord;
             GraphicalTableWithPlotVM = new TableWithPlotVM(new GraphicalVM(Utilities.StringConstants.GRAPHICAL_FREQUENCY,StringConstants.EXCEEDANCE_PROBABILITY,StringConstants.DISCHARGE), true);
-            GraphicalTableWithPlotVM.PlotModel.LegendPosition = LegendPosition.TopLeft;
+            AddLegendToPlot();
             LoadDefaultFlows();
             InitializePlotModel();
             NotifyPropertyChanged(nameof(IsAnalytical));
@@ -157,11 +158,18 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             elem.MyGraphicalVM = new GraphicalVM(elem.MyGraphicalVM.ToXML());
 
             GraphicalTableWithPlotVM = new TableWithPlotVM(elem.MyGraphicalVM, true);
-            GraphicalTableWithPlotVM.PlotModel.LegendPosition = LegendPosition.TopLeft;
+            AddLegendToPlot();
+        }
+
+        private void AddLegendToPlot()
+        {
+            Legend legend = new Legend();
+            legend.LegendPosition = LegendPosition.TopLeft;
+            GraphicalTableWithPlotVM.PlotModel.Legends.Add(legend);
         }
         #endregion
         #region Voids  
-        
+
         private void LoadFlows(AnalyticalFrequencyElement elem)
         {
             if (elem.AnalyticalFlows.Count == 0)
@@ -182,7 +190,9 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         {
             _plotModel = new ViewResolvingPlotModel();
             _plotModel.Title = StringConstants.ANALYTICAL_FREQUENCY;
-            _plotModel.LegendPosition = LegendPosition.BottomRight;
+            Legend legend = new Legend();
+            legend.LegendPosition = LegendPosition.BottomRight;
+            _plotModel.Legends.Add(legend);
 
             LinearAxis x = new LinearAxis()
             {

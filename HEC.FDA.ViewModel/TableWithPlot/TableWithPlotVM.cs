@@ -8,6 +8,7 @@ using HEC.MVVMFramework.ViewModel.Events;
 using HEC.MVVMFramework.ViewModel.Implementations;
 using OxyPlot;
 using OxyPlot.Axes;
+using OxyPlot.Legends;
 using OxyPlot.Series;
 using System;
 using System.Collections;
@@ -99,7 +100,10 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         private void InitPlotModel(PlotModel plotModel)
         {
             plotModel.Title = _curveComponentVM.Name;
-            plotModel.LegendPosition = LegendPosition.BottomRight;
+            
+            Legend legend = new Legend();
+            legend.LegendPosition= LegendPosition.BottomRight;
+            plotModel.Legends.Add(legend);
 
             if (_reverseXAxis)
             {
