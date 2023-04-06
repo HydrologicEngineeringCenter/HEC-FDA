@@ -1,4 +1,6 @@
-﻿using HEC.FDA.Model.paireddata;
+﻿using HEC.FDA.Model.compute;
+using HEC.FDA.Model.extensions;
+using HEC.FDA.Model.paireddata;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
@@ -11,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Printing;
 using System.Windows;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships
@@ -225,18 +228,12 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         public void UpdateChartLineData()
         {
             _plotModel.Series.Clear();
-            LineSeries lineSeries = new LineSeries();
             UncertainPairedData function = GetCoordinatesFunction();
             if (function != null)
             {
-                for (int i = 0; i < function.Xvals.Length; i++)
-                {
-                    //todo: should we do uncertainty bounds around the y?
-                    double xVal = 1 - function.Xvals[i];
-                    double yVal = function.Yvals[i].InverseCDF(.5);
-                    lineSeries.Points.Add(new DataPoint(xVal, yVal));
-                }
-                _plotModel.Series.Add(lineSeries);
+                AddLineSeriesToPlot(function);
+                AddLineSeriesToPlot(function, 0.025);
+                AddLineSeriesToPlot(function, 0.975);
             }
             else
             {
@@ -244,6 +241,20 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             }
             _plotModel.InvalidatePlot(true);
         }
+
+        private void AddLineSeriesToPlot(UncertainPairedData function, double probability = 0.5)
+        {
+            LineSeries lineSeries = new LineSeries();
+            for (int i = 0; i < function.Xvals.Length; i++)
+            {
+                double xVal = function.Xvals[i];
+                double yVal = function.Yvals[i].InverseCDF(probability);
+                lineSeries.Points.Add(new DataPoint(xVal, yVal));
+            }
+            _plotModel.Series.Add(lineSeries);
+        }
+
+
 
         #endregion
 
@@ -296,18 +307,10 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         {
             UncertainPairedData upd = null;
             LogPearson3 lp3 = CreateLP3();
-            
             FdaValidationResult result = IsLP3Valid(lp3);
             if (result.IsValid)
             {
-
-                double[] probs = new double[] { .001, .01, .05, .25, .5, .75, .95, .99, .999 };
-                List<double> yVals = new List<double>();
-                foreach (double prob in probs)
-                {
-                    yVals.Add(lp3.InverseCDF(prob));
-                }
-                upd = UncertainPairedDataFactory.CreateDeterminateData(new List<double>(probs), yVals, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE, StringConstants.ANALYTICAL_FREQUENCY);
+                upd = lp3.BootstrapToUncertainPairedData(new RandomProvider(1234), LogPearson3._RequiredExceedanceProbabilitiesForBootstrapping);
                 if (!IsStandard)
                 {
                     //if we are on "fit to flows" then update the labels.
@@ -324,7 +327,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 FitToFlowStDev = ST_DEV + "N/A";
                 FitToFlowSkew = SKEW + "N/A";
                 FitToFlowRecordLength = RECORD_LENGTH + "N/A";
-
                 MessageBox.Show(result.ErrorMessage, "Unable to Create LP3", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             return upd;
