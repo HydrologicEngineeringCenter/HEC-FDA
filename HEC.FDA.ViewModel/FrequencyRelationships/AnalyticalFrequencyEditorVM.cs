@@ -232,8 +232,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             if (function != null)
             {
                 AddLineSeriesToPlot(function);
-                AddLineSeriesToPlot(function, 0.025);
-                AddLineSeriesToPlot(function, 0.975);
+                AddLineSeriesToPlot(function, 0.025, true);
+                AddLineSeriesToPlot(function, 0.975, true);
             }
             else
             {
@@ -242,7 +242,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             _plotModel.InvalidatePlot(true);
         }
 
-        private void AddLineSeriesToPlot(UncertainPairedData function, double probability = 0.5)
+        private void AddLineSeriesToPlot(UncertainPairedData function, double probability = 0.5, bool isConfidenceLimit = false)
         {
             LineSeries lineSeries = new LineSeries();
             for (int i = 0; i < function.Xvals.Length; i++)
@@ -251,6 +251,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 double yVal = function.Yvals[i].InverseCDF(probability);
                 lineSeries.Points.Add(new DataPoint(xVal, yVal));
             }
+            if (isConfidenceLimit) { lineSeries.Color = OxyColors.Blue; lineSeries.LineStyle = LineStyle.Dash; }
+            else { lineSeries.Color = OxyColors.Black; }
             _plotModel.Series.Add(lineSeries);
         }
 
