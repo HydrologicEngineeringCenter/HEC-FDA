@@ -54,10 +54,6 @@ namespace HEC.FDA.Model.paireddata
 
         #region Methods
 
-        #region Statics
-
- 
-        #endregion
         private bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
         {
             if (arrayOfData == null) return false;
@@ -75,7 +71,6 @@ namespace HEC.FDA.Model.paireddata
         /// </summary>
         public double f(double x)
         {
-            //binary search.
             int index = Array.BinarySearch(Xvals, x);
             if (index >= 0)
             {
