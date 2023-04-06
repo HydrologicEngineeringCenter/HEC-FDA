@@ -103,6 +103,10 @@ namespace HEC.FDA.ViewModel.Storage
         {
             get { return _ProjectDirectory + "\\" + PROJECTION_DIRECTORY; }
         }
+        public string ProjectionFile
+        {
+            get { return Directory.GetFiles(ProjectionDirectory)[0]; }
+        }
         public string ImpactAreaDirectory
         {
             get { return _ProjectDirectory + "\\" + IMPACT_AREA_DIRECTORY; }
