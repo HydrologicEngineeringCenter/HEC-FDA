@@ -55,27 +55,8 @@ namespace HEC.FDA.Model.paireddata
         #region Methods
 
         #region Statics
-        public static PairedData BootstrapToPairedData(IProvideRandomNumbers randomProvider, ContinuousDistribution continuousDistribution, double[] ExceedanceProbabilities, int ordinatesToSample = 0)
-        {
-            double[] samples;
-            if (ordinatesToSample <= 0)
-            {
-                ordinatesToSample = (int)continuousDistribution.SampleSize;
-            }
-            samples = randomProvider.NextRandomSequence(ordinatesToSample);
-            IDistribution bootstrap = continuousDistribution.Sample(samples);
-            double[] x = new double[ExceedanceProbabilities.Length];
-            double[] y = new double[ExceedanceProbabilities.Length];
-            for (int i = 0; i < ExceedanceProbabilities.Length; i++)
-            {
-                //same exceedance probs as graphical and as 1.4.3
-                double prob = 1 - ExceedanceProbabilities[i];
-                x[i] = prob;
-                //y values in increasing order 
-                y[i] = bootstrap.InverseCDF(prob);
-            }
-            return new PairedData(x, y);
-        }
+
+ 
         #endregion
         private bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
         {

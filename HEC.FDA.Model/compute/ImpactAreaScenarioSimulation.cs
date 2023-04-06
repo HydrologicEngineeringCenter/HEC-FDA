@@ -17,6 +17,7 @@ using System.Text;
 using System.IO;
 using System.Collections.Concurrent;
 using Statistics.Distributions;
+using HEC.FDA.Model.extensions;
 
 namespace HEC.FDA.Model.compute
 {
@@ -290,7 +291,8 @@ namespace HEC.FDA.Model.compute
                         if (_frequency_discharge_graphical.CurveMetaData.IsNull)
                         {
                             //If threadlocalRandomProvider is medianRandomProvider then we get a quasi-deterministic result
-                            frequencyDischarge = PairedData.BootstrapToPairedData(threadlocalRandomProvider, _frequency_discharge, _RequiredExceedanceProbabilities, 200);//ordinates defines the number of values in the frequency curve, more would be a better approximation.
+                            frequencyDischarge = _frequency_discharge.BootstrapToPairedData(threadlocalRandomProvider, _RequiredExceedanceProbabilities, 200);//ordinates defines the number of values in the frequency curve, more would be a better approximation.
+                                                                                                                                                                          
                         }
                         else
                         {
@@ -590,7 +592,7 @@ namespace HEC.FDA.Model.compute
                     IPairedData frequencyFlow;
                     if (_frequency_discharge_graphical.CurveMetaData.IsNull)
                     {
-                        frequencyFlow = PairedData.BootstrapToPairedData(meanRandomProvider, _frequency_discharge, _RequiredExceedanceProbabilities, 200);
+                        frequencyFlow = _frequency_discharge.BootstrapToPairedData(meanRandomProvider, _RequiredExceedanceProbabilities, 200);
                     }
                     else
                     {
