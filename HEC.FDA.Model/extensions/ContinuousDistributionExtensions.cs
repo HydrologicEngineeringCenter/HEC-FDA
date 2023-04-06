@@ -10,18 +10,20 @@ namespace HEC.FDA.Model.extensions
     {
         public static PairedData BootstrapToPairedData(this ContinuousDistribution continuousDistribution, IProvideRandomNumbers randomProvider, double[] ExceedanceProbabilities)
         {
-            Array.Sort(ExceedanceProbabilities);
-            double[] samples;
-            samples = randomProvider.NextRandomSequence(continuousDistribution.SampleSize);
+            double[] samples = randomProvider.NextRandomSequence(continuousDistribution.SampleSize);
             IDistribution bootstrap = continuousDistribution.Sample(samples);
+            double[] x = new double[ExceedanceProbabilities.Length];
             double[] y = new double[ExceedanceProbabilities.Length];
             for (int i = 0; i < ExceedanceProbabilities.Length; i++)
             {
-                //y values in decreasing order 
-                // "1-x" because LP3 is done in Non-Exceedence Probabilities, but we want to speak in exceedence. The 500YR flood should have a tiny probability associated with it. Not a large one 
-                y[i] = bootstrap.InverseCDF(1-ExceedanceProbabilities[i]);
+                //same exceedance probs as graphical and as 1.4.3
+                double prob = 1 - ExceedanceProbabilities[i];
+                x[i] = prob;
+
+                //y values in increasing order 
+                y[i] = bootstrap.InverseCDF(prob);
             }
-            return new PairedData(ExceedanceProbabilities, y);
+            return new PairedData(x, y);
         }
 
         public static UncertainPairedData BootstrapToUncertainPairedData(this ContinuousDistribution continuousDistribution, IProvideRandomNumbers randomProvider, double[] ExceedanceProbabilities,int realizations = 10000 , double histogramBinWidth = 0.5 )
@@ -37,9 +39,7 @@ namespace HEC.FDA.Model.extensions
                 PairedData pd = continuousDistribution.BootstrapToPairedData( randomProvider, ExceedanceProbabilities);
                 for(int j=0;j<ExceedanceProbabilities.Length;j++)
                 {
-                    double prob = ExceedanceProbabilities[j];
-                    double flow = pd.f(prob); 
-                    ys[j].AddObservationToHistogram(flow) ;
+                    ys[j].AddObservationToHistogram(pd.Yvals[j]) ;
                 }
             }
             return new UncertainPairedData(ExceedanceProbabilities, ys, new CurveMetaData("Exceedance Probs", "Flow Histograms"));
