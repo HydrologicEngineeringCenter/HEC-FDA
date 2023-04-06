@@ -29,7 +29,7 @@ namespace HEC.FDA.Model.extensions
             return new PairedData(x, y);
         }
 
-        public static UncertainPairedData BootstrapMultiRealization(this ContinuousDistribution continuousDistribution, IProvideRandomNumbers randomProvider, double[] ExceedanceProbabilities,int realizations , double histogramBinWidth, int ordinatesToSample = 0)
+        public static UncertainPairedData BootstrapToUncertainPairedData(this ContinuousDistribution continuousDistribution, IProvideRandomNumbers randomProvider, double[] ExceedanceProbabilities,int realizations , double histogramBinWidth, int ordinatesToSample = 0)
         {
             Histogram[] ys = new Histogram[ExceedanceProbabilities.Length];
             for (int iterator = 0; iterator < ys.Length; iterator++)
