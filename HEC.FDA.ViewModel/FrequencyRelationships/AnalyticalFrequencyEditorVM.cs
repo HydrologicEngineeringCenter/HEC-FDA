@@ -168,6 +168,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         {
             Legend legend = new Legend();
             legend.LegendPosition = LegendPosition.TopLeft;
+            GraphicalTableWithPlotVM.PlotModel.Legends.Clear();
             GraphicalTableWithPlotVM.PlotModel.Legends.Add(legend);
         }
         #endregion
