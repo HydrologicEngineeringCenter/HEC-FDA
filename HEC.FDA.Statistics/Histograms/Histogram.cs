@@ -379,10 +379,10 @@ namespace Statistics.Histograms
                 Max = newMax;
             } else
             {
-                int newObsIndex = 0;
+                Int64 newObsIndex = 0;
                 if (observation != _Min)
                 {
-                    newObsIndex = Convert.ToInt32(Math.Floor((observation - _Min) / _BinWidth));
+                    newObsIndex = Convert.ToInt64(Math.Floor((observation - _Min) / _BinWidth));
                 }
                 if (observation == _Max)
                 {
