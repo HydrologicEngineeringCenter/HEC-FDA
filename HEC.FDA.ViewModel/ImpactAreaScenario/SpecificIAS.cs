@@ -156,7 +156,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         {
             FdaValidationResult vr = new FdaValidationResult();
             //required elems
-            FrequencyElement freqElem = (FrequencyElement)StudyCache.GetChildElementOfType(typeof(FrequencyElement), FlowFreqID);
+            AnalyticalFrequencyElement freqElem = (AnalyticalFrequencyElement)StudyCache.GetChildElementOfType(typeof(AnalyticalFrequencyElement), FlowFreqID);
             AggregatedStageDamageElement stageDamageElem = (AggregatedStageDamageElement)StudyCache.GetChildElementOfType(typeof(AggregatedStageDamageElement), StageDamageID);
 
             if(InflowOutflowID != -1)
@@ -225,7 +225,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
         private SimulationCreator GetSimulationCreator()
         {
-            FrequencyElement freqElem = (FrequencyElement)StudyCache.GetChildElementOfType(typeof(FrequencyElement), FlowFreqID);
+            AnalyticalFrequencyElement freqElem = (AnalyticalFrequencyElement)StudyCache.GetChildElementOfType(typeof(AnalyticalFrequencyElement), FlowFreqID);
             InflowOutflowElement inOutElem = (InflowOutflowElement)StudyCache.GetChildElementOfType(typeof(InflowOutflowElement), InflowOutflowID);
             StageDischargeElement ratElem = (StageDischargeElement)StudyCache.GetChildElementOfType(typeof(StageDischargeElement), RatingID);
             ExteriorInteriorElement extIntElem = (ExteriorInteriorElement)StudyCache.GetChildElementOfType(typeof(ExteriorInteriorElement), ExtIntStageID);

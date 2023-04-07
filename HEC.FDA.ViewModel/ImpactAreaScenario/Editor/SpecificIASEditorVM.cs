@@ -299,7 +299,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             //this means that when asking for the selected combo item, it should never be null.
             List<ChildElement> childElems = new List<ChildElement>();
 
-            List<FrequencyElement> analyticalFrequencyElements = StudyCache.GetChildElementsOfType<FrequencyElement>();
+            List<AnalyticalFrequencyElement> analyticalFrequencyElements = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();
             childElems.Clear();
             childElems.AddRange(analyticalFrequencyElements);
             FrequencyElements.AddRange(CreateComboItems(childElems));
@@ -343,7 +343,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private void UpdateRatingRequired()
         {
-            if (SelectedFrequencyElement != null && SelectedFrequencyElement.ChildElement is FrequencyElement elem)
+            if (SelectedFrequencyElement != null && SelectedFrequencyElement.ChildElement is AnalyticalFrequencyElement elem)
             {
                 RatingRequired = false;
                 if (elem.IsAnalytical || elem.MyGraphicalVM.UseFlow)
@@ -489,7 +489,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         {
             ChildElementComboItem selectedStageDamage = _SelectedStageDamage();
 
-            FrequencyElement freqElem = SelectedFrequencyElement.ChildElement as FrequencyElement;
+            AnalyticalFrequencyElement freqElem = SelectedFrequencyElement.ChildElement as AnalyticalFrequencyElement;
             InflowOutflowElement inOutElem = SelectedInflowOutflowElement.ChildElement as InflowOutflowElement;
             StageDischargeElement ratElem = SelectedRatingCurveElement.ChildElement as StageDischargeElement;
             ExteriorInteriorElement extIntElem = SelectedExteriorInteriorElement.ChildElement as ExteriorInteriorElement;
@@ -552,7 +552,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             UncertainPairedData retval = null;
             if (SelectedFrequencyElement != null && SelectedFrequencyElement.ChildElement != null)
             {
-                if(SelectedFrequencyElement.ChildElement is FrequencyElement elem)
+                if(SelectedFrequencyElement.ChildElement is AnalyticalFrequencyElement elem)
                 {
                     retval = elem.CreatePairedData();
                 }

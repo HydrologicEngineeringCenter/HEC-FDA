@@ -443,10 +443,10 @@ namespace HEC.FDA.ViewModel.Utilities
         #endregion
 
         #region LP3
-        public static List<FrequencyElement> CreateFlowFrequencyElements(ProbabilityFunctionList probFuncs)
+        public static List<AnalyticalFrequencyElement> CreateFlowFrequencyElements(ProbabilityFunctionList probFuncs)
         {
-            List<FrequencyElement> elems = new List<FrequencyElement>();
-            int id = PersistenceFactory.GetElementManager<FrequencyElement>().GetNextAvailableId();
+            List<AnalyticalFrequencyElement> elems = new List<AnalyticalFrequencyElement>();
+            int id = PersistenceFactory.GetElementManager<AnalyticalFrequencyElement>().GetNextAvailableId();
             int i = 0;
             foreach (KeyValuePair<string, ProbabilityFunction> kvp in probFuncs.ProbabilityFunctions)
             {
@@ -455,7 +455,7 @@ namespace HEC.FDA.ViewModel.Utilities
                 FrequencyFunctionType typeID = pf.ProbabilityFunctionTypeId;
                 if (typeID == FrequencyFunctionType.ANALYTICAL || typeID == FrequencyFunctionType.GRAPHICAL)
                 {
-                    FrequencyElement freqElem = CreateFrequencyElement(pf, elemID);
+                    AnalyticalFrequencyElement freqElem = CreateFrequencyElement(pf, elemID);
                     if (freqElem != null)
                     {
                         elems.Add(freqElem);
@@ -468,7 +468,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
 
 
-        private static FrequencyElement CreateManualAnalyticalElement(ProbabilityFunction pf, int elemID)
+        private static AnalyticalFrequencyElement CreateManualAnalyticalElement(ProbabilityFunction pf, int elemID)
         {
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
             double mean = pf.MomentsLp3[0];
@@ -485,15 +485,15 @@ namespace HEC.FDA.ViewModel.Utilities
             GraphicalVM graphicalVM = new GraphicalVM(StringConstants.GRAPHICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
             CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
 
-            return new FrequencyElement(pf.Name, editDate, CreatePYSRDescription(pf), por, isAnalytical, isStandard, mean, stDev, skew,
+            return new AnalyticalFrequencyElement(pf.Name, editDate, CreatePYSRDescription(pf), por, isAnalytical, isStandard, mean, stDev, skew,
                  analyticalFlows, graphicalVM, curveComponentVM, elemID);
 
         }
 
-        private static FrequencyElement CreateFrequencyElement(ProbabilityFunction pf, int elemID)
+        private static AnalyticalFrequencyElement CreateFrequencyElement(ProbabilityFunction pf, int elemID)
         {
             CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
-            FrequencyElement elem = null;
+            AnalyticalFrequencyElement elem = null;
             if (pf.ProbabilityFunctionTypeId == FrequencyFunctionType.ANALYTICAL)
             {
                 if (pf.SourceOfStatisticsId == SourceOfStatistics.ENTERED)
@@ -504,7 +504,7 @@ namespace HEC.FDA.ViewModel.Utilities
             else if (pf.ProbabilityFunctionTypeId == FrequencyFunctionType.GRAPHICAL)
             {
                 GraphicalVM vm = new GraphicalVM(pf);
-                elem = new FrequencyElement(pf.Name, DateTime.Now.ToString(), pf.Description, pf.EquivalentLengthOfRecord, false, false, 5, .25, .1, new List<double>(), vm, curveComponentVM, elemID); //this sucks. Why am I making up a fake analytical curve to import a graphical one?
+                elem = new AnalyticalFrequencyElement(pf.Name, DateTime.Now.ToString(), pf.Description, pf.EquivalentLengthOfRecord, false, false, 5, .25, .1, new List<double>(), vm, curveComponentVM, elemID); //this sucks. Why am I making up a fake analytical curve to import a graphical one?
             }
             return elem;
         }

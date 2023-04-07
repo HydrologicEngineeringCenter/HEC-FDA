@@ -272,7 +272,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         {
             foreach(ImpactAreaFrequencyFunctionRowItem row in ImpactAreaFrequencyRows)
             {
-                row.FrequencyFunctions.Add(new FrequencyElementWrapper((FrequencyElement)e.Element));
+                row.FrequencyFunctions.Add(new FrequencyElementWrapper((AnalyticalFrequencyElement)e.Element));
             }
         }
 
@@ -304,7 +304,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 {
                     if(freq.Element != null && freq.Element.ID == e.NewElement.ID)
                     {
-                        freq.Element = (FrequencyElement)e.NewElement;
+                        freq.Element = (AnalyticalFrequencyElement)e.NewElement;
                     }
                 }
             }        
@@ -318,7 +318,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             if (impAreaElems.Count > 0)
             {
                 List<ImpactAreaRowItem> impactAreaRowsCollection = impAreaElems[0].ImpactAreaRows;
-                List<FrequencyElement> analyticalFrequencyElements = StudyCache.GetChildElementsOfType<FrequencyElement>();
+                List<AnalyticalFrequencyElement> analyticalFrequencyElements = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();
                 List<StageDischargeElement> ratingCurveElements = StudyCache.GetChildElementsOfType<StageDischargeElement>();
 
                 foreach (ImpactAreaRowItem impactAreaRow in impactAreaRowsCollection)

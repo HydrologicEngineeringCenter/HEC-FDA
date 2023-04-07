@@ -102,17 +102,17 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         private void AddFrequencyRelationship(UncertainPairedData upd, string name)
         {
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-            int id = PersistenceFactory.GetElementManager<FrequencyElement>().GetNextAvailableId();
+            int id = PersistenceFactory.GetElementManager<AnalyticalFrequencyElement>().GetNextAvailableId();
             //Create graphical VM
             GraphicalVM graphicalVM = new GraphicalVM(StringConstants.GRAPHICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
             graphicalVM.Options[0].UpdateFromUncertainPairedData(upd);
 
-            FrequencyElement element = new FrequencyElement(name, editDate, "Retrieved from Hydraulics", DefaultData.PeriodOfRecord, false, true, DefaultData.LP3Mean, DefaultData.LP3StDev, DefaultData.LP3Skew, new List<double>(), graphicalVM, new CurveComponentVM(), id);
+            AnalyticalFrequencyElement element = new AnalyticalFrequencyElement(name, editDate, "Retrieved from Hydraulics", DefaultData.PeriodOfRecord, false, true, DefaultData.LP3Mean, DefaultData.LP3StDev, DefaultData.LP3Skew, new List<double>(), graphicalVM, new CurveComponentVM(), id);
             IElementManager elementManager = PersistenceFactory.GetElementManager(element);
 
-            List<FrequencyElement> existingElements = StudyCache.GetChildElementsOfType<FrequencyElement>();
+            List<AnalyticalFrequencyElement> existingElements = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();
             bool newElementMatchesExisting = false;
-            foreach (FrequencyElement ele in existingElements)
+            foreach (AnalyticalFrequencyElement ele in existingElements)
             {
                 if (ele.Name.Equals(name))
                 {

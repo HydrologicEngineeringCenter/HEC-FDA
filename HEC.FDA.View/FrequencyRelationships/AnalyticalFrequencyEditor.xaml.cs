@@ -9,11 +9,11 @@ using System.Windows.Media;
 namespace HEC.FDA.View.FrequencyRelationships
 {
     /// <summary>
-    /// Interaction logic for FrequencyEditor.xaml
+    /// Interaction logic for AnalyticalFrequencyEditor.xaml
     /// </summary>
-    public partial class FrequencyEditor : UserControl
+    public partial class AnalyticalFrequencyEditor : UserControl
     {
-        public FrequencyEditor()
+        public AnalyticalFrequencyEditor()
         {
             InitializeComponent();
 
@@ -27,7 +27,7 @@ namespace HEC.FDA.View.FrequencyRelationships
             //This was added to allow the table to complete it's enter/edit complete action and then perform the add logic.
             Dispatcher.BeginInvoke(new Action(() =>
             {
-                if (DataContext is FrequencyEditorVM vm)
+                if (DataContext is AnalyticalFrequencyEditorVM vm)
                 {
                     vm.AddRow();
                     int lastRowIndex = dg_table.Items.Count - 1;
@@ -38,7 +38,7 @@ namespace HEC.FDA.View.FrequencyRelationships
 
         private void Dg_table_RowsDeleted(List<int> rowindices)
         {
-            if (DataContext is FrequencyEditorVM vm)
+            if (DataContext is AnalyticalFrequencyEditorVM vm)
             {
                 vm.DeleteRows(rowindices);
             }
@@ -46,7 +46,7 @@ namespace HEC.FDA.View.FrequencyRelationships
 
         private void Dg_table_RowsAdded(int startrow, int numrows)
         {
-            if (DataContext is FrequencyEditorVM vm)
+            if (DataContext is AnalyticalFrequencyEditorVM vm)
             {
                 vm.AddRows(startrow, numrows);
             }
@@ -77,7 +77,7 @@ namespace HEC.FDA.View.FrequencyRelationships
                 grid_analyticalLeft_standard.Visibility = Visibility.Visible;
                 grid_analyticalLeft_fitToFlows.Visibility = Visibility.Hidden;
 
-                if (DataContext is FrequencyEditorVM vm)
+                if (DataContext is AnalyticalFrequencyEditorVM vm)
                 {
                     vm.UpdateChartLineData();
                 }
@@ -91,7 +91,7 @@ namespace HEC.FDA.View.FrequencyRelationships
                 grid_analyticalLeft_standard.Visibility = Visibility.Hidden;
                 grid_analyticalLeft_fitToFlows.Visibility = Visibility.Visible;
 
-                if (DataContext is FrequencyEditorVM vm)
+                if (DataContext is AnalyticalFrequencyEditorVM vm)
                 {
                     vm.UpdateChartLineData();
                 }
@@ -178,7 +178,7 @@ namespace HEC.FDA.View.FrequencyRelationships
 
         private void FitToFlows_Click(object sender, RoutedEventArgs e)
         {
-            if (DataContext is FrequencyEditorVM vm)
+            if (DataContext is AnalyticalFrequencyEditorVM vm)
             {
                 vm.UpdateChartLineData();
             }
@@ -186,7 +186,7 @@ namespace HEC.FDA.View.FrequencyRelationships
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if (DataContext is FrequencyEditorVM vm)
+            if (DataContext is AnalyticalFrequencyEditorVM vm)
             {
                 vm.HasChanges = false;
             }

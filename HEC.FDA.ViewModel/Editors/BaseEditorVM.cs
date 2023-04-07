@@ -198,7 +198,7 @@ namespace HEC.FDA.ViewModel.Editors
                 StudyCache.WaterSurfaceElevationAdded += SiblingWasAdded;
                 StudyCache.WaterSurfaceElevationUpdated += SiblingNameChanged;
             }
-            if (childElementType == typeof(FrequencyElement))
+            if (childElementType == typeof(AnalyticalFrequencyElement))
             {
                 StudyCache.FlowFrequencyAdded += SiblingWasAdded;
                 StudyCache.FlowFrequencyUpdated += SiblingNameChanged;

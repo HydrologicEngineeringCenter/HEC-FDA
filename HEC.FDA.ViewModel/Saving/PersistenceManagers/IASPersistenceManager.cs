@@ -91,7 +91,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
             string msg = null;
 
-            if (elemModified is FrequencyElement)
+            if (elemModified is AnalyticalFrequencyElement)
             {
                 msg = WasAnalyticalFrequencyElementModified(iasSet,elemModified, elemID);
             }

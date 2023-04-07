@@ -19,8 +19,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
         public override void Save()
         {
-            IElementManager manager = Saving.PersistenceFactory.GetElementManager<FrequencyElement>();
-            foreach (FrequencyElement elem in ElementsToImport)
+            IElementManager manager = Saving.PersistenceFactory.GetElementManager<AnalyticalFrequencyElement>();
+            foreach (AnalyticalFrequencyElement elem in ElementsToImport)
             {
                 manager.SaveNew(elem);
             }
@@ -34,7 +34,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
             if (checkForNameConflict)
             {
-                List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(FrequencyElement));
+                List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(AnalyticalFrequencyElement));
                 FdaValidationResult vr = CheckForDuplicateNames(ElementsToImport, existingElems);
                 if (!vr.IsValid)
                 {
