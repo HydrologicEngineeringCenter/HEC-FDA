@@ -1,0 +1,18 @@
+﻿<UserControl x:Class="HEC.FDA.ViewTest.FrequencyEditor.GraphicalTableWithPlotControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             xmlns:plot="clr-namespace:HEC.FDA.View.TableWithPlot"
+             xmlns:FEcontrols="clr-namespace:HEC.FDA.ViewTest.FrequencyEditor"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <FEcontrols:GraphicalControl DataContext="{Binding Path=CurveComponentVM}" Grid.Column="0"/>
+        <plot:PlotWithToolbar Grid.Column="1"/>
+    </Grid>
+</UserControl>

@@ -86,6 +86,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                .WithSiblingRules(this);
 
             CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
+            ///AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(curveComponentVM, actionManager);
             AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(curveComponentVM, actionManager);
             string header = StringConstants.CREATE_FREQUENCY_HEADER;
             DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.CREATE_FREQUENCY_HEADER);

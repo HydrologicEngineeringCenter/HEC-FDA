@@ -1,0 +1,34 @@
+﻿<Application x:Class="HEC.FDA.ViewTest.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:HEC.FDA.ViewTest"
+             StartupUri="MainWindow.xaml"
+             
+             xmlns:FEcontrols="clr-namespace:HEC.FDA.ViewTest.FrequencyEditor"
+             xmlns:FEvm ="clr-namespace:HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor;assembly=HEC.FDA.ViewModel"
+             
+             xmlns:TWPcontrols="clr-namespace:HEC.FDA.ViewTest.TableWithPlot"
+             xmlns:TWPvm ="clr-namespace:HEC.FDA.ViewModel.TableWithPlot;assembly=HEC.FDA.ViewModel">
+
+    <Application.Resources>
+        <Style TargetType="Control" x:Key="defaultErrorTemplate">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="ToolTip">
+                        <Setter.Value>
+                            <ToolTip DataContext="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget}">
+                                <ItemsControl ItemsSource="{Binding Path=(Validation.Errors)}" DisplayMemberPath="ErrorContent" />
+                            </ToolTip>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="TextBox" BasedOn="{StaticResource defaultErrorTemplate}" />
+
+        <DataTemplate DataType="{x:Type FEvm:FrequencyEditorVM}">
+            <FEcontrols:FrequencyEditorControl/>
+        </DataTemplate>
+
+    </Application.Resources>
+</Application>

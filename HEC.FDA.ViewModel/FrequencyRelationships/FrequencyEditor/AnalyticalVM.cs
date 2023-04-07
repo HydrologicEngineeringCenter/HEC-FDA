@@ -67,7 +67,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
                 }
                 else if (elementName.Equals("TableWithPlotVM"))
                 {
-                    ParameterEntryVM = new TableWithPlotVM();
                 }
             }
         }
