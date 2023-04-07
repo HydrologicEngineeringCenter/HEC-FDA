@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HEC.FDA.ViewModel.FrequencyRelationships
+namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
 {
-    internal class FrequencyEditorAnalyticalFitToFlowVM
+    internal class FrequencyEditorAnalyticalVM
     {
     }
 }
