@@ -9,7 +9,7 @@ using HEC.FDA.Model.paireddata;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships
 {
-    public class FrequencyEditorGraphicalVM : CurveComponentVM
+    public class FEGraphicalVM : CurveComponentVM
     {
         private int _equivalentRecordLength = Utilities.DefaultData.PeriodOfRecord;
         private bool _useFlow = true;
@@ -40,7 +40,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 NotifyPropertyChanged();
             }
         }
-
         public bool UseFlow
         {
             get { return _useFlow; }
@@ -58,20 +57,19 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 NotifyPropertyChanged();
             }
         }
-
-        public FrequencyEditorGraphicalVM(string name, string xlabel, string ylabel) : base(name, xlabel,ylabel)
+        public FEGraphicalVM(string name, string xlabel, string ylabel) : base(name, xlabel,ylabel)
         {
             Options.Clear();
             Options.Add(new GraphicalDataProvider(UseFlow));
             SelectedItem = Options[0];
             Initialize();
         }
-        public FrequencyEditorGraphicalVM(XElement vmEle)
+        public FEGraphicalVM(XElement vmEle)
         {
             LoadFromXML(vmEle);
             Initialize();
         }
-        public FrequencyEditorGraphicalVM(ProbabilityFunction probabilityFunction)
+        public FEGraphicalVM(ProbabilityFunction probabilityFunction)
         {
             LoadFromProbabilityFunction(probabilityFunction);
             Initialize();
@@ -96,7 +94,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             base.LoadFromXML(element);
         }
         /// <summary>
-        /// This loads a default FrequencyEditorGraphicalVM from a ProbabilityFunction Object which is the output of the FDA1.4Import Helper. 
+        /// This loads a default FEGraphicalVM from a ProbabilityFunction Object which is the output of the FDA1.4Import Helper. 
         /// </summary>
         /// <param name="pf"></param>
         private void LoadFromProbabilityFunction(ProbabilityFunction pf)
@@ -156,7 +154,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
            return new GraphicalUncertainPairedData(((GraphicalDataProvider)SelectedItem).Xs, ((GraphicalDataProvider)SelectedItem).Ys , EquivalentRecordLength, meta, !UseFlow);
         }
 
-        public bool Equals(FrequencyEditorGraphicalVM elem)
+        public bool Equals(FEGraphicalVM elem)
         {
             bool isEqual = true;
 
