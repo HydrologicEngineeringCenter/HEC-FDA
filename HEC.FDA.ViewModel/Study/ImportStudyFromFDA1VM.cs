@@ -153,7 +153,7 @@ namespace HEC.FDA.ViewModel.Study
 
         public override void Save()
         {
-            IElementManager flowFreqManager = PersistenceFactory.GetElementManager<AnalyticalFrequencyElement>();
+            IElementManager flowFreqManager = PersistenceFactory.GetElementManager<FrequencyElement>();
             foreach (ChildElement elem in _FlowFrequencyElements)
             {
                 flowFreqManager.SaveNew(elem);

@@ -23,10 +23,10 @@ namespace HEC.FDA.ViewModelTest
             GraphicalVM graphicalVM = new GraphicalVM("graph", "xLabel", "yLabel");
             CurveComponentVM compVM = new CurveComponentVM();
 
-            AnalyticalFrequencyElement elem1 = new AnalyticalFrequencyElement("test", "lastEdit", "desc", por, isAnalytical, isStandard, mean, stDev, skew, flows, graphicalVM, compVM, id);
+            FrequencyElement elem1 = new FrequencyElement("test", "lastEdit", "desc", por, isAnalytical, isStandard, mean, stDev, skew, flows, graphicalVM, compVM, id);
             XElement elemXML = elem1.ToXML();
 
-            AnalyticalFrequencyElement elem2 = new AnalyticalFrequencyElement(elemXML, id);
+            FrequencyElement elem2 = new FrequencyElement(elemXML, id);
 
             Assert.True(elem1.Equals(elem2));
         }

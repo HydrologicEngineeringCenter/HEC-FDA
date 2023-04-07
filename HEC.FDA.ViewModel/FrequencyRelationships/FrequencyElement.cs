@@ -10,7 +10,7 @@ using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships
 {
-    public class AnalyticalFrequencyElement : CurveChildElement
+    public class FrequencyElement : CurveChildElement
     {
         #region Notes
         #endregion
@@ -40,7 +40,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         #endregion
         #region Constructors
         //fresh editor
-        public AnalyticalFrequencyElement(string name, string lastEditDate, string desc, int por, bool isAnalytical, bool isStandard,
+        public FrequencyElement(string name, string lastEditDate, string desc, int por, bool isAnalytical, bool isStandard,
             double mean, double stDev, double skew, List<double> analyticalFlows, GraphicalVM graphicalVM, CurveComponentVM function, int id) 
             : base(name, lastEditDate, desc, function, id)
         {
@@ -58,7 +58,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             AddDefaultActions(EditFlowFreq, StringConstants.EDIT_FREQUENCY_FUNCTIONS_MENU);
         }
         //load from database
-        public AnalyticalFrequencyElement(XElement flowFreqElem, int id) : base(flowFreqElem, id)
+        public FrequencyElement(XElement flowFreqElem, int id) : base(flowFreqElem, id)
         {            
             ReadHeaderXElement(flowFreqElem.Element(HEADER_XML_TAG));          
 
@@ -102,7 +102,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             EditorActionManager actionManager = new EditorActionManager()
                 .WithSiblingRules(this);
 
-            AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(this, actionManager);
+            FrequencyEditorVM vm = new FrequencyEditorVM(this, actionManager);
             string header = "Edit " + vm.Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditAnalyticalFrequency" + vm.Name);
             Navigate(tab, false, false);
@@ -232,7 +232,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             }           
         }
 
-        public bool Equals(AnalyticalFrequencyElement elem)
+        public bool Equals(FrequencyElement elem)
         {
             bool isEqual = true;
 

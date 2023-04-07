@@ -56,7 +56,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
                 AsyncLogger logger = new AsyncLogger();
 
-                IElementManager freqPersistenceManager = Saving.PersistenceFactory.GetElementManager<AnalyticalFrequencyElement>();
+                IElementManager freqPersistenceManager = Saving.PersistenceFactory.GetElementManager<FrequencyElement>();
                 int id = freqPersistenceManager.GetNextAvailableId();
                 int numRows = dbr.NumberOfRows;
                 ImportLog += "Reading " + numRows + " rows:\n";
@@ -83,7 +83,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 }
 
                 //check name conflicts
-                List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(AnalyticalFrequencyElement));
+                List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(FrequencyElement));
                 FdaValidationResult duplicateNamesResult = CheckForDuplicateNames(ElementsToImport, existingElems);
                 if (!duplicateNamesResult.IsValid)
                 {
@@ -111,7 +111,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             return isValid;
         }
 
-        private AnalyticalFrequencyElement CreateFrequencyElement(string name, string description, double mean, double stDev, double skew, int por, int id)
+        private FrequencyElement CreateFrequencyElement(string name, string description, double mean, double stDev, double skew, int por, int id)
         {
             string lastEditDate = DateTime.Now.ToString("G");
 
@@ -119,7 +119,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
             GraphicalVM vm = new GraphicalVM(StringConstants.GRAPHICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
 
-            AnalyticalFrequencyElement newFreqElem = new AnalyticalFrequencyElement(name, lastEditDate, description, por, true, true, mean, stDev, skew, fitToFlows, vm, curveComponentVM, id);
+            FrequencyElement newFreqElem = new FrequencyElement(name, lastEditDate, description, por, true, true, mean, stDev, skew, fitToFlows, vm, curveComponentVM, id);
             return newFreqElem; 
         }
 
