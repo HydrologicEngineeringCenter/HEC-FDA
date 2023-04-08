@@ -116,7 +116,7 @@ namespace HEC.FDA.Model.structures
                     }
                     if (deterministicOccupancyType.IsStructureValueLogNormal)
                     {
-                        sampledStructureValue = Math.Pow((deterministicOccupancyType.StructureValueOffset),InventoriedStructureValue)*Math.Exp(InventoriedStructureValue);
+                        sampledStructureValue = Math.Pow((deterministicOccupancyType.StructureValueOffset), Math.Log(InventoriedStructureValue))*(InventoriedStructureValue);
                         structDamage = (structDamagepercent / 100) * priceIndex * NumberOfStructures * sampledStructureValue;
                     } else
                     {
@@ -144,7 +144,7 @@ namespace HEC.FDA.Model.structures
                         {
                             if (deterministicOccupancyType.IsContentValueLogNormal)
                             {
-                                double sampledContentValue = Math.Pow(deterministicOccupancyType.ContentValueOffset, InventoriedContentValue) * Math.Exp(InventoriedContentValue);
+                                double sampledContentValue = Math.Pow(deterministicOccupancyType.ContentValueOffset, Math.Log(InventoriedContentValue)) * (InventoriedContentValue);
                                 contDamage = (contentDamagePercent/100) * priceIndex * NumberOfStructures * (sampledContentValue);
                             } else
                             {
@@ -169,7 +169,7 @@ namespace HEC.FDA.Model.structures
                         }
                         if (deterministicOccupancyType.IsVehicleValueLogNormal)
                         {
-                            double sampledVehicleValue = Math.Pow(deterministicOccupancyType.VehicleValueOffset, InventoriedVehicleValue)*Math.Exp(InventoriedVehicleValue);
+                            double sampledVehicleValue = Math.Pow(deterministicOccupancyType.VehicleValueOffset, Math.Log(InventoriedVehicleValue))*(InventoriedVehicleValue);
                             vehicleDamage = (vehicleDamagePercent / 100) * priceIndex * NumberOfStructures * sampledVehicleValue;
                         } else
                         {
@@ -197,7 +197,7 @@ namespace HEC.FDA.Model.structures
                         {
                             if (deterministicOccupancyType.IsOtherValueLogNormal)
                             {
-                                double sampledOtherValue = Math.Pow(deterministicOccupancyType.OtherValueOffset, InventoriedOtherValue) * Math.Exp(InventoriedOtherValue);
+                                double sampledOtherValue = Math.Pow(deterministicOccupancyType.OtherValueOffset, Math.Log(InventoriedOtherValue)) * (InventoriedOtherValue);
                                 otherDamage = (otherDamagePercent / 100) * priceIndex * NumberOfStructures * sampledOtherValue;
                             } else
                             {

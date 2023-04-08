@@ -1,4 +1,4 @@
-﻿using HEC.MVVMFramework.Base.Implementations;
+﻿                                                             using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Enumerations;
 using System;
 using System.Linq;
