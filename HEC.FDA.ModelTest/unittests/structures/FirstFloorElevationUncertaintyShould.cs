@@ -7,7 +7,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
     [Trait("RunsOn", "Remote")]
     public class FirstFloorElevationUncertaintyShould
     {
-        //Demonstration of use of log normal accessible at 
+        //Demonstration of use of log normal accessible at https://docs.google.com/spreadsheets/d/1suqLnNJEF2Gq4du3yvXcaupYzIGzUbaJ/edit?usp=share_link&ouid=105470256128470573157&rtpof=true&sd=true
         [Theory]
         [InlineData(IDistributionEnum.Normal, .5, 0, 5, .4, 4.873326)]
         [InlineData(IDistributionEnum.LogNormal, .050636, 0, 10, .7, 10.26909)]
