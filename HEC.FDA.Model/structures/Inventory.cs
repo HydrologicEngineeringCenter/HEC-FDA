@@ -247,7 +247,8 @@ namespace HEC.FDA.Model.structures
             string siFilename = featureLayer.SourceFilename;
             VectorDataset vector = new VectorDataset(siFilename);
             VectorLayer vectorLayer = vector.GetLayer(0);
-            return vectorLayer.GetProjection();
+            Projection projection = vectorLayer.GetProjection();
+            return projection;
         }
         #endregion
         public Inventory GetInventoryTrimmedToImpactArea(int impactAreaFID)
