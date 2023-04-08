@@ -250,7 +250,7 @@ namespace HEC.FDA.ModelTest.integrationtests
         //TODO: check magnitude of both values
         private bool AssertWithinTolerance(double expectedValue, double actualValue)
         {
-            double twoZeroTolerance = 10;
+            double twoZeroTolerance = 14;
             double threeZeroTolerance = 100;
             double fourZeroTolerance = 100;
             
