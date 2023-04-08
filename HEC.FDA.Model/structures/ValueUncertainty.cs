@@ -53,25 +53,18 @@ namespace HEC.FDA.Model.structures
         /// <returns></returns>        
         public double Sample(double probability, bool computeIsDeterministic)
         {
-            double centerOfDistribution = 0;
+            double centerOfDistribution = 100;
             double sampledValueOffset;
             if (computeIsDeterministic)
             {
-                if(_distributionType == IDistributionEnum.LogNormal)
-                {
-                    sampledValueOffset = 1;
-                } else
-                {
-                    sampledValueOffset = centerOfDistribution;
-
-                }
+                    sampledValueOffset = centerOfDistribution/100;
             } 
             else
             {
             switch (_distributionType)
             {
                 case IDistributionEnum.Normal:
-                    Normal normal = new Normal(centerOfDistribution, (_percentOfInventoryValueStandardDeviationOrMin/100));
+                    Normal normal = new Normal(centerOfDistribution/100, (_percentOfInventoryValueStandardDeviationOrMin/100));
                     sampledValueOffset = normal.InverseCDF(probability);
                     break;
 
@@ -79,7 +72,7 @@ namespace HEC.FDA.Model.structures
                     sampledValueOffset = Math.Exp(Normal.StandardNormalInverseCDF(probability)* (_percentOfInventoryValueStandardDeviationOrMin/100));
                     break;
                 case IDistributionEnum.Triangular:
-                    Triangular triangular = new Triangular(_percentOfInventoryValueStandardDeviationOrMin/100, 1, _percentOfInventoryValueMax/100);
+                    Triangular triangular = new Triangular(_percentOfInventoryValueStandardDeviationOrMin/100, centerOfDistribution/100, _percentOfInventoryValueMax/100);
                     sampledValueOffset = triangular.InverseCDF(probability);
                     break;
                 case IDistributionEnum.Uniform:
@@ -87,9 +80,13 @@ namespace HEC.FDA.Model.structures
                     sampledValueOffset = uniform.InverseCDF(probability);
                     break;
                 default:
-                    sampledValueOffset = centerOfDistribution;
+                    sampledValueOffset = centerOfDistribution/100;
                     break;
             }
+            }
+            if (sampledValueOffset < 0)
+            {
+                sampledValueOffset = 0;
             }
             return sampledValueOffset;
         }

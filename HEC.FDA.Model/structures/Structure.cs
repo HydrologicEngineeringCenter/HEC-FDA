@@ -4,6 +4,7 @@ using HEC.MVVMFramework.Base.Enumerations;
 using RasMapperLib;
 using HEC.FDA.Model.metrics;
 using System.Collections.Generic;
+using System;
 
 namespace HEC.FDA.Model.structures
 {
@@ -115,11 +116,11 @@ namespace HEC.FDA.Model.structures
                     }
                     if (deterministicOccupancyType.IsStructureValueLogNormal)
                     {
-                        sampledStructureValue = (InventoriedStructureValue * deterministicOccupancyType.StructureValueOffset);
+                        sampledStructureValue = Math.Pow((deterministicOccupancyType.StructureValueOffset),InventoriedStructureValue)*Math.Exp(InventoriedStructureValue);
                         structDamage = (structDamagepercent / 100) * priceIndex * NumberOfStructures * sampledStructureValue;
                     } else
                     {
-                        sampledStructureValue = InventoriedStructureValue * (1 + deterministicOccupancyType.StructureValueOffset);
+                        sampledStructureValue = InventoriedStructureValue * (deterministicOccupancyType.StructureValueOffset);
                         structDamage = (structDamagepercent / 100) * priceIndex * NumberOfStructures * sampledStructureValue;
                     }
 
@@ -143,10 +144,12 @@ namespace HEC.FDA.Model.structures
                         {
                             if (deterministicOccupancyType.IsContentValueLogNormal)
                             {
-                                contDamage = (contentDamagePercent/100) * priceIndex * NumberOfStructures * (InventoriedContentValue*deterministicOccupancyType.ContentValueOffset);
+                                double sampledContentValue = Math.Pow(deterministicOccupancyType.ContentValueOffset, InventoriedContentValue) * Math.Exp(InventoriedContentValue);
+                                contDamage = (contentDamagePercent/100) * priceIndex * NumberOfStructures * (sampledContentValue);
                             } else
                             {
-                                contDamage = (contentDamagePercent / 100) * priceIndex * NumberOfStructures * (InventoriedContentValue * (1+deterministicOccupancyType.ContentValueOffset));
+                                double sampledContentValue = (InventoriedContentValue * (deterministicOccupancyType.ContentValueOffset));
+                                contDamage = (contentDamagePercent / 100) * priceIndex * NumberOfStructures * sampledContentValue;
 
                             }
                         }
@@ -166,10 +169,12 @@ namespace HEC.FDA.Model.structures
                         }
                         if (deterministicOccupancyType.IsVehicleValueLogNormal)
                         {
-                            vehicleDamage = (vehicleDamagePercent / 100) * priceIndex * NumberOfStructures * (InventoriedVehicleValue * deterministicOccupancyType.VehicleValueOffset);
+                            double sampledVehicleValue = Math.Pow(deterministicOccupancyType.VehicleValueOffset, InventoriedVehicleValue)*Math.Exp(InventoriedVehicleValue);
+                            vehicleDamage = (vehicleDamagePercent / 100) * priceIndex * NumberOfStructures * sampledVehicleValue;
                         } else
                         {
-                            vehicleDamage = (vehicleDamagePercent / 100) * priceIndex * NumberOfStructures*InventoriedVehicleValue*(1+deterministicOccupancyType.VehicleValueOffset);
+                            double sampledVehicleValue = InventoriedVehicleValue * (deterministicOccupancyType.VehicleValueOffset);
+                            vehicleDamage = (vehicleDamagePercent / 100) * priceIndex * NumberOfStructures* sampledVehicleValue;
                         }
                     }
 
@@ -192,10 +197,12 @@ namespace HEC.FDA.Model.structures
                         {
                             if (deterministicOccupancyType.IsOtherValueLogNormal)
                             {
-                                otherDamage = (otherDamagePercent / 100) * priceIndex * NumberOfStructures * (InventoriedOtherValue) * (deterministicOccupancyType.OtherValueOffset);
+                                double sampledOtherValue = Math.Pow(deterministicOccupancyType.OtherValueOffset, InventoriedOtherValue) * Math.Exp(InventoriedOtherValue);
+                                otherDamage = (otherDamagePercent / 100) * priceIndex * NumberOfStructures * sampledOtherValue;
                             } else
                             {
-                                otherDamage = (otherDamagePercent / 100) * priceIndex * NumberOfStructures*(InventoriedOtherValue)*(1+deterministicOccupancyType.OtherValueOffset);
+                                double sampledOtherValue = (InventoriedOtherValue) * (deterministicOccupancyType.OtherValueOffset);
+                                otherDamage = (otherDamagePercent / 100) * priceIndex * NumberOfStructures*sampledOtherValue;
                             }
                         }
                     }
