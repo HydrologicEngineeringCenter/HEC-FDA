@@ -5,6 +5,8 @@ using Xunit;
 using HEC.FDA.Model.structures;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.compute;
+using System.Collections.Generic;
+using HEC.FDA.Model.metrics;
 
 namespace HEC.FDA.ModelTest.unittests.structures
 {
@@ -46,6 +48,18 @@ namespace HEC.FDA.ModelTest.unittests.structures
         private static int impactAreaID = 55;
         private static float GroundElev = 0;
         private static Structure structure = new Structure(structureID, pointM, firstFloorElevation, inventoriedStructureValue, damageCategory, occupancyTypeName, impactAreaID, groundElevation: GroundElev);
+
+        [Theory]
+        [InlineData(102, 200, 180)]
+        [InlineData(104, 400, 360)]
+        public void ComputeStructureDamage(float wse, double expectedStructureDamage, double expectedContentDamage)
+        {
+            List<DeterministicOccupancyType> deterministicOccupancyTypes = new List<DeterministicOccupancyType>();
+            deterministicOccupancyTypes.Add(occupancyType.Sample(medianRandomProvider, true));
+            ConsequenceResult consequenceResult = structure.ComputeDamage(wse, deterministicOccupancyTypes);
+            Assert.Equal(expectedStructureDamage, consequenceResult.StructureDamage,0);
+            Assert.Equal(expectedContentDamage, consequenceResult.ContentDamage,0);
+        }
 
         //TODO: Replace tests in this class 
         //TODO: Replace deterministic tests into here

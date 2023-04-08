@@ -152,7 +152,7 @@ namespace HEC.FDA.Model.structures
             {
                 if (_useContentToStructureValueRatio)
                 {
-                    contentValueRatioSampled = (_contentToStructureValueRatio.Sample(randomNumbers.NextRandom(), computeIsDeterministic))/100;
+                    contentValueRatioSampled = (_contentToStructureValueRatio.Sample(randomNumbers.NextRandom(), computeIsDeterministic));
                 }
                 else
                 {
