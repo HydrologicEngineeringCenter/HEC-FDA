@@ -247,7 +247,7 @@ namespace HEC.FDA.ModelTest.integrationtests
 
             }
         }
-
+        //TODO: check magnitude of both values
         private bool AssertWithinTolerance(double expectedValue, double actualValue)
         {
             double twoZeroTolerance = 10;

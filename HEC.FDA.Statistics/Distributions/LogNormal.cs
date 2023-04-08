@@ -86,6 +86,7 @@ namespace Statistics.Distributions
             double z = (Math.Log(x) - Mean) / StandardDeviation;
             return standardNormal.CDF(z);
         }
+        //This function returns the raw value, not the logged value
         public override double InverseCDF(double p)
         {
             if (p <= 0) return 0;

@@ -284,10 +284,10 @@ namespace HEC.FDA.Model.stageDamage
             bool dictionariesAreNotConstructed = true;
             for (int i = 0; i < iterations; i++)
             {
-                DeterministicInventory deterministicInventory = inventoryAndWaterTupled.Item1.Sample(randomProvider);
-                ComputeLowerStageDamage(ref assetCatDamagesAllCoordinates, ref allStagesAtIndexLocation, ref consequenceDistributionResults, damageCategory, randomProvider, deterministicInventory, inventoryAndWaterTupled.Item2[0], profileProbabilities, isFirstPass, dictionariesAreNotConstructed);
-                ComputeMiddleStageDamage(ref assetCatDamagesAllCoordinates, ref allStagesAtIndexLocation, ref consequenceDistributionResults, damageCategory, randomProvider, deterministicInventory, inventoryAndWaterTupled.Item2, profileProbabilities, isFirstPass, dictionariesAreNotConstructed);
-                ComputeUpperStageDamage(ref assetCatDamagesAllCoordinates, ref allStagesAtIndexLocation, ref consequenceDistributionResults, damageCategory, randomProvider, deterministicInventory, inventoryAndWaterTupled.Item2[inventoryAndWaterTupled.Item2.Count - 1], profileProbabilities, isFirstPass, dictionariesAreNotConstructed);
+                List<DeterministicOccupancyType> deterministicOccTypes = _inventory.SampleOccupancyTypes(randomProvider);
+                ComputeLowerStageDamage(ref assetCatDamagesAllCoordinates, ref allStagesAtIndexLocation, ref consequenceDistributionResults, damageCategory, randomProvider, deterministicOccTypes, inventoryAndWaterTupled.Item2[0], profileProbabilities, isFirstPass, dictionariesAreNotConstructed);
+                ComputeMiddleStageDamage(ref assetCatDamagesAllCoordinates, ref allStagesAtIndexLocation, ref consequenceDistributionResults, damageCategory, randomProvider, deterministicOccTypes, inventoryAndWaterTupled.Item2, profileProbabilities, isFirstPass, dictionariesAreNotConstructed);
+                ComputeUpperStageDamage(ref assetCatDamagesAllCoordinates, ref allStagesAtIndexLocation, ref consequenceDistributionResults, damageCategory, randomProvider, deterministicOccTypes, inventoryAndWaterTupled.Item2[inventoryAndWaterTupled.Item2.Count - 1], profileProbabilities, isFirstPass, dictionariesAreNotConstructed);
                 dictionariesAreNotConstructed = false;
             }
             if (isFirstPass)
@@ -332,7 +332,7 @@ namespace HEC.FDA.Model.stageDamage
         /// <summary>
         /// This method computes damage at stages lower than the most frequent profile 
         /// </summary>
-        private void ComputeLowerStageDamage(ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, ref List<double> allStagesAtIndexLocation, ref List<ConsequenceDistributionResults> consequenceDistributionResults, string damageCategory, IProvideRandomNumbers randomProvider, DeterministicInventory deterministicInventory, float[] lowestProfile, List<double> profileProbabilities, bool isFirstPass, bool dictionariesAreNotConstructed)
+        private void ComputeLowerStageDamage(ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, ref List<double> allStagesAtIndexLocation, ref List<ConsequenceDistributionResults> consequenceDistributionResults, string damageCategory, IProvideRandomNumbers randomProvider, List<DeterministicOccupancyType> deterministicOccTypes, float[] lowestProfile, List<double> profileProbabilities, bool isFirstPass, bool dictionariesAreNotConstructed)
         {
             //the probability of a profile is an EXCEEDANCE probability but in the model we use NONEXCEEDANCE PROBABILITY
             double stageAtProbabilityOfLowestProfile = _StageFrequency.f(1 - profileProbabilities.Max());
@@ -345,7 +345,7 @@ namespace HEC.FDA.Model.stageDamage
             {
                 float[] WSEsParallelToIndexLocation = ExtrapolateFromBelowStagesAtIndexLocation(lowestProfile, interval, i, _numExtrapolatedStagesToCompute);
                 //this inventory is not trimmed 
-                ConsequenceResult consequenceResult = deterministicInventory.ComputeDamages(WSEsParallelToIndexLocation, _AnalysisYear, damageCategory);
+                ConsequenceResult consequenceResult = _inventory.ComputeDamages(WSEsParallelToIndexLocation, _AnalysisYear, damageCategory, deterministicOccTypes);
                 if (isFirstPass)
                 {
                     if (dictionariesAreNotConstructed)
@@ -398,7 +398,7 @@ namespace HEC.FDA.Model.stageDamage
         /// <summary>
         /// This method calculates a stage damage function within the hydraulic profiles 
         /// </summary>
-        private void ComputeMiddleStageDamage(ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, ref List<double> allStagesAtIndexLocation, ref List<ConsequenceDistributionResults> consequenceDistributionResults, string damageCategory, IProvideRandomNumbers randomProvider, DeterministicInventory deterministicInventory, List<float[]> allProfiles, List<double> profileProbabilities, bool isFirstPass, bool dictionariesAreNotConstructed)
+        private void ComputeMiddleStageDamage(ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, ref List<double> allStagesAtIndexLocation, ref List<ConsequenceDistributionResults> consequenceDistributionResults, string damageCategory, IProvideRandomNumbers randomProvider, List<DeterministicOccupancyType> deterministicOccTypes, List<float[]> allProfiles, List<double> profileProbabilities, bool isFirstPass, bool dictionariesAreNotConstructed)
         {
             int numProfiles = profileProbabilities.Count;
             for (int i = 1; i < numProfiles; i++)
@@ -410,10 +410,11 @@ namespace HEC.FDA.Model.stageDamage
                     nextProfile = allProfiles[i + 1];
                     nextProbability = profileProbabilities[i + 1];
                 }
-                InterpolateBetweenProfiles(deterministicInventory, randomProvider, allProfiles[i - 1], profileProbabilities[i - 1], allProfiles[i], profileProbabilities[i], nextProfile, nextProbability, damageCategory, ref allStagesAtIndexLocation, ref assetCatDamagesAllCoordinates, isFirstPass, ref consequenceDistributionResults, dictionariesAreNotConstructed, i);
+                InterpolateBetweenProfiles(deterministicOccTypes, randomProvider, allProfiles[i - 1], profileProbabilities[i - 1], allProfiles[i], profileProbabilities[i], nextProfile, nextProbability, damageCategory, ref allStagesAtIndexLocation, ref assetCatDamagesAllCoordinates, isFirstPass, ref consequenceDistributionResults, dictionariesAreNotConstructed, i);
             }
         }
-        private void InterpolateBetweenProfiles(DeterministicInventory inventory, IProvideRandomNumbers randomProvider, float[] previousHydraulicProfile, double previousProbability, float[] currentHydraulicProfile, double currentProbability, float[] nextHydraulicProfile, double nextProbability, string damageCategory, ref List<double> allStagesAtIndexLocation, ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, bool isFirstPass, ref List<ConsequenceDistributionResults> consequenceDistributionResults, bool dictionariesAreNotConstructed, int profileCount)
+        //TODO: Why are there arguments here that appear to go unused? 
+        private void InterpolateBetweenProfiles(List<DeterministicOccupancyType> occTypes, IProvideRandomNumbers randomProvider, float[] previousHydraulicProfile, double previousProbability, float[] currentHydraulicProfile, double currentProbability, float[] nextHydraulicProfile, double nextProbability, string damageCategory, ref List<double> allStagesAtIndexLocation, ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, bool isFirstPass, ref List<ConsequenceDistributionResults> consequenceDistributionResults, bool dictionariesAreNotConstructed, int profileCount)
         {
             double previousStageAtIndexLocation = _StageFrequency.f(1 - previousProbability);
             double currentStageAtIndexLocation = _StageFrequency.f(1 - currentProbability);
@@ -426,7 +427,7 @@ namespace HEC.FDA.Model.stageDamage
             {
                 float[] stages = CalculateIncrementOfStages(previousHydraulicProfile, intervalsAtStructures, i+1);
                 //what are the stages here for the first coordinate?
-                ConsequenceResult consequenceResult = inventory.ComputeDamages(stages, _AnalysisYear, damageCategory);
+                ConsequenceResult consequenceResult = _inventory.ComputeDamages(stages, _AnalysisYear, damageCategory, occTypes);
                 if (isFirstPass)
                 {
                     if (dictionariesAreNotConstructed)
@@ -472,7 +473,7 @@ namespace HEC.FDA.Model.stageDamage
         /// <summary>
         /// this method calculates the stage damage function for stages higher than the least frequent profile 
         /// </summary>
-        private void ComputeUpperStageDamage(ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, ref List<double> allStagesAtIndexLocation, ref List<ConsequenceDistributionResults> consequenceDistributionResults, string damageCategory, IProvideRandomNumbers randomProvider, DeterministicInventory deterministicInventory, float[] highestProfile, List<double> profileProbabilities, bool isFirstPass, bool dictionariesAreNotConstructed)
+        private void ComputeUpperStageDamage(ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, ref List<double> allStagesAtIndexLocation, ref List<ConsequenceDistributionResults> consequenceDistributionResults, string damageCategory, IProvideRandomNumbers randomProvider, List<DeterministicOccupancyType> deterministicOccTypes, float[] highestProfile, List<double> profileProbabilities, bool isFirstPass, bool dictionariesAreNotConstructed)
         {
             //the probability of a profile is an EXCEEDANCE probability but in the model we use NONEXCEEDANCE PROBABILITY
             double stageAtProbabilityOfHighestProfile = _StageFrequency.f(1 - profileProbabilities.Min());
@@ -481,7 +482,7 @@ namespace HEC.FDA.Model.stageDamage
             for (int i = 1; i < _numExtrapolatedStagesToCompute; i++)
             {
                 float[] WSEsParallelToIndexLocation = ExtrapolateFromAboveAtIndexLocation(highestProfile, upperInterval, i);
-                ConsequenceResult consequenceResult = deterministicInventory.ComputeDamages(WSEsParallelToIndexLocation, _AnalysisYear, damageCategory);
+                ConsequenceResult consequenceResult = _inventory.ComputeDamages(WSEsParallelToIndexLocation, _AnalysisYear, damageCategory, deterministicOccTypes);
                 if (isFirstPass)
                 {
                     if (dictionariesAreNotConstructed)
@@ -522,18 +523,19 @@ namespace HEC.FDA.Model.stageDamage
         {
             //this list will be the size of the number of structures + 1 where the first string is the header
             List<string> structureDetails = _inventory.StructureDetails();
-            DeterministicInventory deterministicInventory = _inventory.Sample(new compute.MedianRandomProvider(), computeIsDeterministic: true);
+            List<DeterministicOccupancyType> deterministicOccupancyTypes = _inventory.SampleOccupancyTypes(new compute.MedianRandomProvider());
+            //DeterministicInventory deterministicInventory = .Sample(, computeIsDeterministic: true);
             StagesToStrings(ref structureDetails);
-            DepthsToStrings(deterministicInventory, ref structureDetails);
-            DamagesToStrings(deterministicInventory, StringConstants.STRUCTURE_ASSET_CATEGORY, ref structureDetails);
-            DamagesToStrings(deterministicInventory, StringConstants.CONTENT_ASSET_CATEGORY, ref structureDetails);
-            DamagesToStrings(deterministicInventory, StringConstants.OTHER_ASSET_CATEGORY, ref structureDetails);
-            DamagesToStrings(deterministicInventory, StringConstants.VEHICLE_ASSET_CATEGORY, ref structureDetails);
+            DepthsToStrings(ref structureDetails);
+            DamagesToStrings(StringConstants.STRUCTURE_ASSET_CATEGORY, deterministicOccupancyTypes, ref structureDetails);
+            DamagesToStrings(StringConstants.CONTENT_ASSET_CATEGORY, deterministicOccupancyTypes, ref structureDetails);
+            DamagesToStrings(StringConstants.OTHER_ASSET_CATEGORY, deterministicOccupancyTypes, ref structureDetails);
+            DamagesToStrings(StringConstants.VEHICLE_ASSET_CATEGORY, deterministicOccupancyTypes, ref structureDetails);
 
             return structureDetails;
         }
 
-        private void DamagesToStrings(DeterministicInventory deterministicInventory, string assetType, ref List<string> structureDetails)
+        private void DamagesToStrings(string assetType, List<DeterministicOccupancyType> deterministicOccupancyType, ref List<string> structureDetails)
         {
             foreach (IHydraulicProfile hydraulicProfile in _hydraulicDataset.HydraulicProfiles)
             {
@@ -546,7 +548,7 @@ namespace HEC.FDA.Model.stageDamage
 
                 for (int i = 0; i < stagesAtStructures.Length; i++)
                 {
-                    ConsequenceResult consequenceResult = deterministicInventory.Inventory[i].ComputeDamage(stagesAtStructures[i]);
+                    ConsequenceResult consequenceResult = _inventory.Structures[i].ComputeDamage(stagesAtStructures[i], deterministicOccupancyType);
                     consequenceResultList.Add(consequenceResult);
                 }
 
@@ -589,7 +591,7 @@ namespace HEC.FDA.Model.stageDamage
             }
         }
 
-        private void DepthsToStrings(DeterministicInventory deterministicInventory, ref List<string> structureDetails)
+        private void DepthsToStrings(ref List<string> structureDetails)
         {
             foreach (IHydraulicProfile hydraulicProfile in _hydraulicDataset.HydraulicProfiles)
             {
@@ -599,7 +601,7 @@ namespace HEC.FDA.Model.stageDamage
                 structureDetails[0] += $"DepthAboveFirstFloorOf{hydraulicProfile.Probability}AEP,";
                 for (int i = 0; i < stagesAtStructures.Length; i++)
                 {
-                    structureDetails[i + 1] += $"{stagesAtStructures[i] - deterministicInventory.Inventory[i].FirstFloorElevation},";
+                    structureDetails[i + 1] += $"{stagesAtStructures[i] - _inventory.Structures[i].FirstFloorElevation},";
                 }
             }
         }

@@ -46,16 +46,16 @@ namespace HEC.FDA.ModelTest.unittests.structures
                 .withContentToStructureValueRatio(_contentToStructureValueRatio)
                 .build();
 
-            SampledStructureParameters sampledStructureParameters = occupancyType.Sample(medianRandomProvider, structureValue, firstFloorElevation);
-            double expectedContentValue = expectedCSVR * sampledStructureParameters.StructureValueSampled;
+            DeterministicOccupancyType sampledStructureParameters = occupancyType.Sample(medianRandomProvider, structureValue, firstFloorElevation);
+            double expectedContentValue = expectedCSVR * sampledStructureParameters.StructureValueOffset;
 
             Assert.Equal(name, sampledStructureParameters.OccupancyTypeName);
             Assert.Equal(damageCategory, sampledStructureParameters.OccupancyTypeDamageCategory);
             Assert.Equal(expectedPercentDamage, sampledStructureParameters.StructPercentDamagePairedData.Yvals);
-            Assert.Equal(structureValue, sampledStructureParameters.StructureValueSampled);
-            Assert.Equal(expectedContentValue, sampledStructureParameters.ContentValueSampled);
+            Assert.Equal(structureValue, sampledStructureParameters.StructureValueOffset);
+            Assert.Equal(expectedContentValue, sampledStructureParameters.ContentValueOffset);
             Assert.Equal(expectedPercentDamage, sampledStructureParameters.ContentPercentDamagePairedData.Yvals);
-            Assert.Equal(firstFloorElevation, sampledStructureParameters.FirstFloorElevationSampled);
+            Assert.Equal(firstFloorElevation, sampledStructureParameters.FirstFloorElevationOffset);
 
         }
 

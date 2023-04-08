@@ -11,6 +11,7 @@ using HEC.MVVMFramework.Base.Enumerations;
 using Geospatial.Terrain;
 using HEC.MVVMFramework.Model.Messaging;
 using Utilities;
+using HEC.FDA.Model.metrics;
 
 namespace HEC.FDA.Model.structures
 {
@@ -321,19 +322,6 @@ namespace HEC.FDA.Model.structures
             }
             return -9999;
         }
-        public DeterministicInventory Sample(IProvideRandomNumbers randomProvider, bool computeIsDeterministic = false)
-        {
-            List<DeterministicStructure> inventorySample = new List<DeterministicStructure>();
-            foreach (Structure structure in Structures)
-            {
-                if (OccTypes.ContainsKey(structure.OccTypeName))
-                {
-                    OccupancyType occupancyType = OccTypes[structure.OccTypeName];
-                    inventorySample.Add(structure.Sample(randomProvider, occupancyType, computeIsDeterministic));
-                }
-            }
-            return new DeterministicInventory(inventorySample, PriceIndex);
-        }
         internal List<string> StructureDetails()
         {
             string header = "StructureID,YearInService,DamageCategory,OccupancyType,X_Coordinate,Y_Coordinate,StructureValueInDatabase,StructureValueInflated,ContentValue,ContentValueInflated,OtherValue,OtherValueInflated,VehicleValue,VehicleValueInflated,TotalValue,TotalValueInflated,NumberOfStructures,FirstFloorElevation,GroundElevation,FoundationHeight,DepthBeginningDamage,";
@@ -343,6 +331,35 @@ namespace HEC.FDA.Model.structures
                 structureDetails.Add(structure.ProduceDetails(PriceIndex));
             }
             return structureDetails;
+        }
+        
+        public List<DeterministicOccupancyType> SampleOccupancyTypes(IProvideRandomNumbers randomNumberProvider)
+        {
+            List<DeterministicOccupancyType> deterministicOccupancyTypes = new List<DeterministicOccupancyType>();
+            foreach(OccupancyType occupancyType in OccTypes.Values)
+            {
+                DeterministicOccupancyType deterministicOccupancyType = occupancyType.Sample(randomNumberProvider);
+                deterministicOccupancyTypes.Add(deterministicOccupancyType);
+            }
+
+            return deterministicOccupancyTypes;
+        }
+
+
+        public ConsequenceResult ComputeDamages(float[] wses, int analysisYear, string damageCategory, List<DeterministicOccupancyType> deterministicOccupancyType)
+        {
+            ConsequenceResult aggregateConsequenceResult = new ConsequenceResult(damageCategory);
+            //assume each structure has a corresponding index to the depth
+            for (int i = 0; i < Structures.Count; i++)
+            {
+                float wse = wses[i];
+                if (wse != -9999)
+                {
+                    ConsequenceResult consequenceResult = Structures[i].ComputeDamage(wse, deterministicOccupancyType, PriceIndex, analysisYear);
+                    aggregateConsequenceResult.IncrementConsequence(consequenceResult.StructureDamage, consequenceResult.ContentDamage, consequenceResult.VehicleDamage, consequenceResult.OtherDamage);
+                }
+            }
+            return aggregateConsequenceResult;
         }
         #endregion
 

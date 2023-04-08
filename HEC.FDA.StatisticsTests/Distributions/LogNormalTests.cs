@@ -59,5 +59,16 @@ namespace StatisticsTests.Distributions
             Assert.Equal(expectedPDF, actualPDF, 2);
             Assert.Equal(expectedCDF, actualCDF, 2);
         }
+
+        [Theory]
+        [InlineData(3.5, 2.75, .269, 6.098)]
+        public void MeanCanBeBackedOut_Test(double mean, double standardDeviation, double probability, double expected)
+        {
+            double offset = 3;
+            LogNormal logNormal = new LogNormal(mean + offset, standardDeviation);
+            double actual = logNormal.InverseCDF(probability) * Math.Exp(-offset);
+            Assert.Equal(expected, actual, 1);
+        }
+
     }
 }
