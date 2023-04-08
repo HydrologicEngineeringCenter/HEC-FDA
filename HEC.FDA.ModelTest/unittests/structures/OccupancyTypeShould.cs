@@ -46,7 +46,11 @@ namespace HEC.FDA.ModelTest.unittests.structures
                 .withContentToStructureValueRatio(_contentToStructureValueRatio)
                 .build();
 
-            DeterministicOccupancyType sampledStructureParameters = occupancyType.Sample(medianRandomProvider, structureValue, firstFloorElevation);
+            DeterministicOccupancyType sampledStructureParameters = occupancyType.Sample(medianRandomProvider);
+
+            structureValue += sampledStructureParameters.StructureValueOffset;
+            firstFloorElevation += sampledStructureParameters.FirstFloorElevationOffset;
+
             double expectedContentValue = expectedCSVR * sampledStructureParameters.StructureValueOffset;
 
             Assert.Equal(name, sampledStructureParameters.OccupancyTypeName);

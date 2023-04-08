@@ -47,15 +47,31 @@ namespace HEC.FDA.ModelTest.unittests.structures
         private static float GroundElev = 0;
         private static Structure structure = new Structure(structureID, pointM, firstFloorElevation, inventoriedStructureValue, damageCategory, occupancyTypeName, impactAreaID, groundElevation: GroundElev);
 
-        [Theory]
-        [InlineData(1000, 100, 900, new double[] { 0, 10, 20, 30, 40, 50 })]
-        public void StructureShouldSampleCorrectly(double expectedStructureValue, double expectedFirstFloorElevation, double expectedContentValue, double[] expectedPercentDamage)
-        {
-            DeterministicStructure deterministicStructure = structure.Sample(medianRandomProvider, occupancyType, computeIsDeterministic: true);
-            Assert.Equal(expectedStructureValue, deterministicStructure.StructValueSample);
-            Assert.Equal(expectedFirstFloorElevation, deterministicStructure.FirstFloorElevation);
-            Assert.Equal(expectedContentValue, deterministicStructure.ContentValueSample);
-            Assert.Equal(expectedPercentDamage, deterministicStructure.SampledStructureParameters.StructPercentDamagePairedData.Yvals);
-        }
+        //TODO: Replace tests in this class 
+        //TODO: Replace deterministic tests into here
+        //TODO: Rewrite the below test to make sure that we retrieve the correct occupancy type
+
+        //The test that needs to be re-written is the following 
+        //and will basically test line 75 of Structure.cs
+        //[Fact]
+        //public void occtypesDictionaryCorrectlyMapsOcctypeNameToOcctype()
+        //{
+        //    OccupancyType ot = StageDamageShould.residentialOccupancyTypeNormalDists;
+        //    //the occtype created above has an occtype name of Residential_One_Story_No_Basement_Normal
+        //    StructureSelectionMapping map = new StructureSelectionMapping(false, false, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        //    //link the occtype name of "NA" to the occtype
+        //    Dictionary<string, OccupancyType> occupancyTypes = new Dictionary<string, OccupancyType>() { { "NA", ot } };
+        //    //this inventory has hundreds of structures that have an occtype name of "NA"
+        //    Inventory inv = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, false, pathToTerrainHDF);
+        //    //if the struction in the inventory has an occtype name that isn't in the above dictionary then it will get removed 
+        //    //from the inventory during the sample.
+
+
+        //    int inventoryCount = inv.Structures.Count;
+        //    DeterministicInventory deterministicInventory = inv.Sample(new MedianRandomProvider(), false);
+        //    int afterSampleCount = deterministicInventory.Inventory.Count;
+
+        //    Assert.Equal(inventoryCount, afterSampleCount);
+        //}
     }
 }

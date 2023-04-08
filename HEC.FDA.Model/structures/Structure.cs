@@ -68,7 +68,10 @@ namespace HEC.FDA.Model.structures
 
         public ConsequenceResult ComputeDamage(float waterSurfaceElevation, List<DeterministicOccupancyType> deterministicOccupancyTypeList, double priceIndex = 1, int analysisYear = 9999)
         {
+            //Create a default deterministic occupancy type 
             DeterministicOccupancyType deterministicOccupancyType = new DeterministicOccupancyType();
+
+            //see if we can match an occupancy type from the provided list to the structure occ type name 
             foreach (DeterministicOccupancyType deterministicOccupancy in deterministicOccupancyTypeList)
             {
                 if (deterministicOccupancy.OccupancyTypeName == OccTypeName)
@@ -77,7 +80,9 @@ namespace HEC.FDA.Model.structures
                 }
             }
             ConsequenceResult consequenceResult = new ConsequenceResult(DamageCatagory);
+
             //TODO: We need a way to make sure that the sampled first floor elevation is reasonable 
+            //that is hard when we throw away the foundation height 
             double sampledFFE = 0;
             if (deterministicOccupancyType.IsFirstFloorElevationLogNormal)
             {

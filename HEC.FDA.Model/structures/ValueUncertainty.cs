@@ -79,7 +79,7 @@ namespace HEC.FDA.Model.structures
                     sampledValueOffset = Math.Exp(Normal.StandardNormalInverseCDF(probability)* (_percentOfInventoryValueStandardDeviationOrMin/100));
                     break;
                 case IDistributionEnum.Triangular:
-                    Triangular triangular = new Triangular(_percentOfInventoryValueStandardDeviationOrMin/100 - 1, centerOfDistribution, _percentOfInventoryValueMax/100 - 1);
+                    Triangular triangular = new Triangular(_percentOfInventoryValueStandardDeviationOrMin/100, 1, _percentOfInventoryValueMax/100);
                     sampledValueOffset = triangular.InverseCDF(probability);
                     break;
                 case IDistributionEnum.Uniform:
