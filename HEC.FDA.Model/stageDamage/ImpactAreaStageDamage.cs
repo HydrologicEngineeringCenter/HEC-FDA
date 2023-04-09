@@ -341,6 +341,7 @@ namespace HEC.FDA.Model.stageDamage
             //this interval defines the interval in stages by which we'll compute damage 
             float interval = indexStationLowerStageDelta / _numExtrapolatedStagesToCompute;
             //Collect damage for first part of function up to and including the stages at the lowest profile 
+            
             for (int i = 0; i < _numExtrapolatedStagesToCompute + 1; i++)
             {
                 float[] WSEsParallelToIndexLocation = ExtrapolateFromBelowStagesAtIndexLocation(lowestProfile, interval, i, _numExtrapolatedStagesToCompute);

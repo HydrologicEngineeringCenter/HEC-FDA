@@ -70,15 +70,21 @@ namespace HEC.FDA.Model.structures
         public ConsequenceResult ComputeDamage(float waterSurfaceElevation, List<DeterministicOccupancyType> deterministicOccupancyTypeList, double priceIndex = 1, int analysisYear = 9999)
         {
             //Create a default deterministic occupancy type 
-            DeterministicOccupancyType deterministicOccupancyType = new DeterministicOccupancyType();
-
+            DeterministicOccupancyType deterministicOccupancyType = null;
+            bool occTypeFound = false;
             //see if we can match an occupancy type from the provided list to the structure occ type name 
             foreach (DeterministicOccupancyType deterministicOccupancy in deterministicOccupancyTypeList)
             {
                 if (deterministicOccupancy.OccupancyTypeName == OccTypeName)
                 {
                     deterministicOccupancyType = deterministicOccupancy;
+                    occTypeFound = true;
+                    break;
                 }
+            }
+            if (!occTypeFound)
+            {
+                deterministicOccupancyType = new DeterministicOccupancyType();
             }
             ConsequenceResult consequenceResult = new ConsequenceResult(DamageCatagory);
 
