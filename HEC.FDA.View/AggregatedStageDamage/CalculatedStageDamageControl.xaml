@@ -25,51 +25,48 @@
 
         <GroupBox Header="Configure and Compute" Grid.Row="0" Margin="5">
             
-        <Grid Grid.Row="0" Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width=".5*" MinWidth="260"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+        <Grid Grid.Row="0" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-            <Grid Grid.Row="0" Grid.Column="0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Label Grid.Row="0" Grid.Column="0" Content="Water Surface Elevations:" HorizontalAlignment="Right"/>
-                    <ComboBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Margin="5"  ItemsSource="{Binding WaterSurfaceElevations}" SelectedItem="{Binding SelectedWaterSurfaceElevation}" DisplayMemberPath="Name"/>
+                <Label Grid.Row="0" Grid.Column="0" Content="Water Surface Elevations:" HorizontalAlignment="Right"/>
+                <ComboBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Margin="5"  ItemsSource="{Binding WaterSurfaceElevations}" SelectedItem="{Binding SelectedWaterSurfaceElevation}" DisplayMemberPath="Name"/>
 
-                    <Label Grid.Row="1" Grid.Column="0" Content="Structures:" HorizontalAlignment="Right" />
-                    <ComboBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Margin="5"  ItemsSource="{Binding Structures}" SelectedItem="{Binding SelectedStructures}" DisplayMemberPath="Name"/>
+                <Label Grid.Row="0" Grid.Column="2" Content="Structures:" HorizontalAlignment="Right" />
+                <ComboBox Grid.Row="0" Grid.Column="3" HorizontalAlignment="Stretch" Margin="5"  ItemsSource="{Binding Structures}" SelectedItem="{Binding SelectedStructures}" DisplayMemberPath="Name"/>
                     
-                    <Button Content="Compute Curves" Grid.Row="3" Grid.Column="0"  Width="100" HorizontalAlignment="Right" Height="22" Margin="5" Click="calculate_btn_Click" VerticalAlignment="Bottom"/>
-                    <CheckBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"  Content="Write Details to CSV" IsChecked="{Binding WriteDetailsFile}" VerticalAlignment="Bottom" Margin="5" 
+                <Button Content="Compute Curves" Grid.Row="2" Grid.Column="0"  Width="100" HorizontalAlignment="Right" Height="22" Margin="5" Click="calculate_btn_Click" VerticalAlignment="Bottom"/>
+                <CheckBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"  Content="Write Details to CSV" IsChecked="{Binding WriteDetailsFile}" VerticalAlignment="Bottom" Margin="5" 
                               ToolTip="Writes structure stage damage details to a csv file in your study directory. Path: yourStudy\StructureStageDamageDetails\[Name]StructureStageDamageDetails.csv" />
 
-                </Grid>
 
-                <ListView Grid.Row="0" Grid.Column="2"  Margin="5" ItemsSource="{Binding ImpactAreaFrequencyRows}" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" 
-                           SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto" SizeChanged="ImpactAreaFrequencyListView_SizeChanged" >
-                    <ListView.Resources>
+                <ListView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4"  Margin="5" ItemsSource="{Binding ImpactAreaFrequencyRows}" 
+                           SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto" SizeChanged="ImpactAreaFrequencyListView_SizeChanged"  >
+                    <!--<ListView.Resources>
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                         </Style>
-                    </ListView.Resources>
+                    </ListView.Resources>-->
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Impact Area" Width="150">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock    Text="{Binding ImpactArea.Name}"  />
+                                        <TextBlock Text="{Binding ImpactArea.Name}" />
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
@@ -93,11 +90,19 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
+                            <GridViewColumn Header="Regulated-Unregulated (optional)" Width="150">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox Width="Auto" Height="22" ItemsSource="{Binding RegulatedUnregulatedFunctions}" SelectedItem="{Binding RegulatedUnregulatedFunction}"                  
+                                                  HorizontalAlignment="Stretch"  DisplayMemberPath="Name" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
                         </GridView>
                     </ListView.View>
                 </ListView>
-                
-        </Grid>
+
+            </Grid>
         </GroupBox>
 
         <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch"/>
