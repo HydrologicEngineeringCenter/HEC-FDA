@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Printing;
 using System.Windows;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships
@@ -140,7 +139,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             _StDev = DefaultData.LP3StDev;
             _Skew = DefaultData.LP3Skew;
             _POR = DefaultData.PeriodOfRecord;
-            GraphicalTableWithPlotVM = new TableWithPlotVM(new GraphicalVM(Utilities.StringConstants.GRAPHICAL_FREQUENCY,StringConstants.EXCEEDANCE_PROBABILITY,StringConstants.DISCHARGE), true);
+            GraphicalTableWithPlotVM = new TableWithPlotVM(new GraphicalVM(StringConstants.GRAPHICAL_FREQUENCY,StringConstants.EXCEEDANCE_PROBABILITY,StringConstants.DISCHARGE), true);
             AddLegendToPlot();
             LoadDefaultFlows();
             InitializePlotModel();
@@ -201,11 +200,9 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             LinearAxis x = new LinearAxis()
             {
                 Position = AxisPosition.Bottom,
-                StartPosition = .999,
-                EndPosition = .001,
-                AbsoluteMaximum = .999,
-                AbsoluteMinimum = .001,
-                Title = StringConstants.EXCEEDANCE_PROBABILITY
+                Title = StringConstants.EXCEEDANCE_PROBABILITY,
+                LabelFormatter = _formatter,
+                MinorTickSize= 0
             };
             _plotModel.Axes.Add(x);
 
@@ -215,6 +212,13 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 Title = StringConstants.DISCHARGE
             };
             _plotModel.Axes.Add(y);
+        }
+
+        private static string _formatter(double d)
+        {
+            Normal standardNormal = new Normal(0,1);
+            double value = standardNormal.CDF(d);
+            return Math.Round(value, 3).ToString();
         }
 
         private void LoadDefaultFlows()
@@ -245,15 +249,26 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
         private void AddLineSeriesToPlot(UncertainPairedData function, double probability = 0.5, bool isConfidenceLimit = false)
         {
-            LineSeries lineSeries = new LineSeries();
+            LineSeries lineSeries = new LineSeries()
+            {
+                TrackerFormatString = "X: {Probability:0.####}, Y: {4:F2} "
+            };
+
+            NormalDataPoint[] points = new NormalDataPoint[function.Xvals.Length];
+
             for (int i = 0; i < function.Xvals.Length; i++)
             {
-                double xVal = function.Xvals[i];
-                double yVal = function.Yvals[i].InverseCDF(probability);
-                lineSeries.Points.Add(new DataPoint(xVal, yVal));
+                
+                double zScore = Normal.StandardNormalInverseCDF(function.Xvals[i]);
+                double flowValue = function.Yvals[i].InverseCDF(probability);
+                points[i] = new NormalDataPoint(function.Xvals[i], zScore, flowValue);
             }
             if (isConfidenceLimit) { lineSeries.Color = OxyColors.Blue; lineSeries.LineStyle = LineStyle.Dash; }
             else { lineSeries.Color = OxyColors.Black; }
+
+            lineSeries.ItemsSource= points;
+            lineSeries.DataFieldX = nameof(NormalDataPoint.ZScore);
+            lineSeries.DataFieldY = nameof(NormalDataPoint.Value);
             _plotModel.Series.Add(lineSeries);
         }
 
