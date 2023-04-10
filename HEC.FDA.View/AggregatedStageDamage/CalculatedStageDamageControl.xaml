@@ -51,16 +51,11 @@
 
                 <ListView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4"  Margin="5" ItemsSource="{Binding ImpactAreaFrequencyRows}" 
                            SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto" SizeChanged="ImpactAreaFrequencyListView_SizeChanged"  >
-                    <!--<ListView.Resources>
+                    <ListView.Resources>
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                         </Style>
-                    </ListView.Resources>-->
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        </Style>
-                    </ListView.ItemContainerStyle>
+                    </ListView.Resources>
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Impact Area" Width="150">

@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.ViewModel.AggregatedStageDamage;
+using HEC.FDA.ViewModel.FlowTransforms;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.StageTransforms;
@@ -29,7 +30,7 @@ namespace HEC.FDA.ViewModelTest
 
             curves.Add(new StageDamageCurve(ri, "damCat", compVM, "assetCat", StageDamageConstructionType.USER));
             List<ImpactAreaFrequencyFunctionRowItem> functions = new List<ImpactAreaFrequencyFunctionRowItem>();
-            functions.Add(new ImpactAreaFrequencyFunctionRowItem(ri, new List<AnalyticalFrequencyElement>(), new List<StageDischargeElement>()));
+            functions.Add(new ImpactAreaFrequencyFunctionRowItem(ri, new List<AnalyticalFrequencyElement>(), new List<StageDischargeElement>(), new List<InflowOutflowElement>()));
 
             AggregatedStageDamageElement elem1 = new AggregatedStageDamageElement("myName", "lastEditDate", "desc",
                 selectedWSE, selectedStructs, curves, functions, true,false, id);
