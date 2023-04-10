@@ -1,9 +1,12 @@
-﻿using HEC.FDA.Model.paireddata;
+﻿using HEC.FDA.Model.compute;
+using HEC.FDA.Model.extensions;
+using HEC.FDA.Model.paireddata;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using OxyPlot;
 using OxyPlot.Axes;
+using OxyPlot.Legends;
 using OxyPlot.Series;
 using Statistics.Distributions;
 using System;
@@ -136,8 +139,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             _StDev = DefaultData.LP3StDev;
             _Skew = DefaultData.LP3Skew;
             _POR = DefaultData.PeriodOfRecord;
-            GraphicalTableWithPlotVM = new TableWithPlotVM(new GraphicalVM(Utilities.StringConstants.GRAPHICAL_FREQUENCY,StringConstants.EXCEEDANCE_PROBABILITY,StringConstants.DISCHARGE), true);
-            GraphicalTableWithPlotVM.PlotModel.LegendPosition = LegendPosition.TopLeft;
+            GraphicalTableWithPlotVM = new TableWithPlotVM(new GraphicalVM(StringConstants.GRAPHICAL_FREQUENCY,StringConstants.EXCEEDANCE_PROBABILITY,StringConstants.DISCHARGE), true);
+            AddLegendToPlot();
             LoadDefaultFlows();
             InitializePlotModel();
             NotifyPropertyChanged(nameof(IsAnalytical));
@@ -157,11 +160,19 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             elem.MyGraphicalVM = new GraphicalVM(elem.MyGraphicalVM.ToXML());
 
             GraphicalTableWithPlotVM = new TableWithPlotVM(elem.MyGraphicalVM, true);
-            GraphicalTableWithPlotVM.PlotModel.LegendPosition = LegendPosition.TopLeft;
+            AddLegendToPlot();
+        }
+
+        private void AddLegendToPlot()
+        {
+            Legend legend = new Legend();
+            legend.LegendPosition = LegendPosition.TopLeft;
+            GraphicalTableWithPlotVM.PlotModel.Legends.Clear();
+            GraphicalTableWithPlotVM.PlotModel.Legends.Add(legend);
         }
         #endregion
         #region Voids  
-        
+
         private void LoadFlows(AnalyticalFrequencyElement elem)
         {
             if (elem.AnalyticalFlows.Count == 0)
@@ -182,16 +193,16 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         {
             _plotModel = new ViewResolvingPlotModel();
             _plotModel.Title = StringConstants.ANALYTICAL_FREQUENCY;
-            _plotModel.LegendPosition = LegendPosition.BottomRight;
+            Legend legend = new Legend();
+            legend.LegendPosition = LegendPosition.BottomRight;
+            _plotModel.Legends.Add(legend);
 
             LinearAxis x = new LinearAxis()
             {
                 Position = AxisPosition.Bottom,
-                StartPosition = .999,
-                EndPosition = .001,
-                AbsoluteMaximum = .999,
-                AbsoluteMinimum = .001,
-                Title = StringConstants.EXCEEDANCE_PROBABILITY
+                Title = StringConstants.EXCEEDANCE_PROBABILITY,
+                LabelFormatter = _formatter,
+                MinorTickSize= 0
             };
             _plotModel.Axes.Add(x);
 
@@ -201,6 +212,13 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 Title = StringConstants.DISCHARGE
             };
             _plotModel.Axes.Add(y);
+        }
+
+        private static string _formatter(double d)
+        {
+            Normal standardNormal = new Normal(0,1);
+            double value = standardNormal.CDF(d);
+            return Math.Round(value, 3).ToString();
         }
 
         private void LoadDefaultFlows()
@@ -215,18 +233,12 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         public void UpdateChartLineData()
         {
             _plotModel.Series.Clear();
-            LineSeries lineSeries = new LineSeries();
             UncertainPairedData function = GetCoordinatesFunction();
             if (function != null)
             {
-                for (int i = 0; i < function.Xvals.Length; i++)
-                {
-                    //todo: should we do uncertainty bounds around the y?
-                    double xVal = 1 - function.Xvals[i];
-                    double yVal = function.Yvals[i].InverseCDF(.5);
-                    lineSeries.Points.Add(new DataPoint(xVal, yVal));
-                }
-                _plotModel.Series.Add(lineSeries);
+                AddLineSeriesToPlot(function);
+                AddLineSeriesToPlot(function, 0.025, true);
+                AddLineSeriesToPlot(function, 0.975, true);
             }
             else
             {
@@ -234,6 +246,33 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             }
             _plotModel.InvalidatePlot(true);
         }
+
+        private void AddLineSeriesToPlot(UncertainPairedData function, double probability = 0.5, bool isConfidenceLimit = false)
+        {
+            LineSeries lineSeries = new LineSeries()
+            {
+                TrackerFormatString = "X: {Probability:0.####}, Y: {4:F2} "
+            };
+
+            NormalDataPoint[] points = new NormalDataPoint[function.Xvals.Length];
+
+            for (int i = 0; i < function.Xvals.Length; i++)
+            {
+                
+                double zScore = Normal.StandardNormalInverseCDF(function.Xvals[i]);
+                double flowValue = function.Yvals[i].InverseCDF(probability);
+                points[i] = new NormalDataPoint(function.Xvals[i], zScore, flowValue);
+            }
+            if (isConfidenceLimit) { lineSeries.Color = OxyColors.Blue; lineSeries.LineStyle = LineStyle.Dash; }
+            else { lineSeries.Color = OxyColors.Black; }
+
+            lineSeries.ItemsSource= points;
+            lineSeries.DataFieldX = nameof(NormalDataPoint.ZScore);
+            lineSeries.DataFieldY = nameof(NormalDataPoint.Value);
+            _plotModel.Series.Add(lineSeries);
+        }
+
+
 
         #endregion
 
@@ -286,18 +325,10 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         {
             UncertainPairedData upd = null;
             LogPearson3 lp3 = CreateLP3();
-            
             FdaValidationResult result = IsLP3Valid(lp3);
             if (result.IsValid)
             {
-
-                double[] probs = new double[] { .001, .01, .05, .25, .5, .75, .95, .99, .999 };
-                List<double> yVals = new List<double>();
-                foreach (double prob in probs)
-                {
-                    yVals.Add(lp3.InverseCDF(prob));
-                }
-                upd = UncertainPairedDataFactory.CreateDeterminateData(new List<double>(probs), yVals, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE, StringConstants.ANALYTICAL_FREQUENCY);
+                upd = lp3.BootstrapToUncertainPairedData(new RandomProvider(1234), LogPearson3._RequiredExceedanceProbabilitiesForBootstrapping);
                 if (!IsStandard)
                 {
                     //if we are on "fit to flows" then update the labels.
@@ -314,7 +345,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 FitToFlowStDev = ST_DEV + "N/A";
                 FitToFlowSkew = SKEW + "N/A";
                 FitToFlowRecordLength = RECORD_LENGTH + "N/A";
-
                 MessageBox.Show(result.ErrorMessage, "Unable to Create LP3", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             return upd;

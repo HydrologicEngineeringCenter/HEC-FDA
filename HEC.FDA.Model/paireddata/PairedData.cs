@@ -1,13 +1,8 @@
-using HEC.MVVMFramework.Base.Implementations;
-using HEC.MVVMFramework.Base.Interfaces;
-using HEC.MVVMFramework.Base.Events;
-using HEC.MVVMFramework.Base.Enumerations;
 using Statistics;
-using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using HEC.MVVMFramework.Model.Messaging;
+using HEC.FDA.Model.interfaces;
 
 namespace HEC.FDA.Model.paireddata
 {
@@ -61,7 +56,8 @@ namespace HEC.FDA.Model.paireddata
         }
         #endregion
 
-        #region Methods 
+        #region Methods
+
         private bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
         {
             if (arrayOfData == null) return false;
@@ -79,7 +75,6 @@ namespace HEC.FDA.Model.paireddata
         /// </summary>
         public double f(double x)
         {
-            //binary search.
             int index = Array.BinarySearch(Xvals, x);
             if (index >= 0)
             {

@@ -9,9 +9,11 @@ using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.compute;
 using System.Threading.Tasks;
 using HEC.FDA.Model.interfaces;
+using System.ComponentModel;
 
 namespace HEC.FDA.ModelTest.unittests
 {
+    [Collection("Serial")]
     [Trait("RunsOn", "Remote")]
     public class PerformanceTest
     {

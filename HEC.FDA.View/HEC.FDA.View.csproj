@@ -90,6 +90,7 @@
 	
   <ItemGroup>
     <ProjectReference Include="..\HEC.FDA.Importer\HEC.FDA.Importer.csproj" />
+    <ProjectReference Include="..\HEC.FDA.Statistics\HEC.FDA.Statistics.csproj" />
     <ProjectReference Include="..\HEC.FDA.UserControls\HEC.FDA.UserControls.vbproj" />
     <ProjectReference Include="..\HEC.FDA.ViewModel\HEC.FDA.ViewModel.csproj" />
     <ProjectReference Include="..\HEC.MVVMFramework.View\HEC.MVVMFramework.View.csproj" />
@@ -202,7 +203,7 @@
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="30.0.0" />
     <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
-    <PackageReference Include="OxyPlot.Wpf" Version="2.0.0" />
+    <PackageReference Include="OxyPlot.Wpf" Version="2.1.2" />
     <PackageReference Include="PlottingLibrary2D" Version="1.0.0-beta-gdc08aa8621" />
     <PackageReference Include="SciChart" Version="6.1.0.13075" />
     <PackageReference Include="WpfAnimatedGif" Version="2.0.0" />
