@@ -184,6 +184,8 @@
         public static readonly string HISTOGRAM_VALUE = "Value";
         public static readonly string HISTOGRAM_FREQUENCY = "Relative Frequency";
         public static readonly string HISTOGRAM_EXCEEDANCE_PROBABILITY = "Exceedance Probability";
+        public static readonly string EXPECTED_ANNUAL_DAMAGE = "Expected Annual Damage";
+        public static readonly string EAD_DISTRIBUTION = "EAD Distribution";
 
         #endregion
 
