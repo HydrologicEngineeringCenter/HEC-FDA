@@ -1,11 +1,12 @@
-﻿using HEC.Plotting.SciChart2D.DataModel;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
 using HEC.FDA.Model.metrics;
 using Statistics.Distributions;
 using OxyPlot;
 using OxyPlot.Series;
 using OxyPlot.Axes;
+using HEC.FDA.ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
@@ -18,8 +19,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         {
             ImpactAreaScenarioResults iasResult = scenarioResults.GetResults(impactAreaID);
             Mean = iasResult.MeanExpectedAnnualConsequences(impactAreaID: impactAreaID);
-
-            DefineHistogramSettings(iasResult);
+            Empirical empirical = iasResult.ConsequenceResults.GetAggregateEmpiricalDistribution(impactAreaID: iasResult.ImpactAreaID);
+            InitializePlotModel(empirical);
 
             List<double> qValues = new List<double>();
             qValues.Add(scenarioResults.ConsequencesExceededWithProbabilityQ(.75, impactAreaID));
@@ -29,24 +30,66 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             loadTableValues(qValues);
         }
 
-        private void DefineHistogramSettings(ImpactAreaScenarioResults iasResult)
+        #region OxyPlot
+        private void InitializePlotModel(Empirical empirical)
         {
-            Empirical empirical = iasResult.ConsequenceResults.GetAggregateEmpiricalDistribution(impactAreaID: iasResult.ImpactAreaID);
-            PlotModel model = new PlotModel();
-            model.Title = "EAD Distribution";
-            double MajorAxisTickInterval = (empirical.Max- empirical.Min)/5;
-            model.Axes.Add(new LinearAxis() { Title = "Expected Annual Damage ($)", Position = AxisPosition.Bottom, MajorStep = MajorAxisTickInterval });
-            model.Axes.Add(new LinearAxis() { Title = "Frequency", Position = AxisPosition.Left});
-            var lineSeries = new LineSeries();
-            for(int i =0; i < empirical.CumulativeProbabilities.Length; i++)
+            PlotModel MyPlot = new PlotModel();
+            MyPlot.Title = StringConstants.EAD_DISTRIBUTION;
+            AddAxes(empirical);
+            AddSeries(empirical);
+        }
+        private void AddSeries(Empirical empirical)
+        {
+            var lineSeries = new LineSeries()
             {
-                lineSeries.Points.Add(new DataPoint(empirical.ObservationValues[i], empirical.CumulativeProbabilities[i]));
+                DataFieldX = nameof(NormalDataPoint.ZScore),
+                DataFieldY = nameof(NormalDataPoint.Value),
+                TrackerFormatString = "X: {Probability:0.####}, Y: {Value:F2}",
+                Title = StringConstants.EAD_DISTRIBUTION,
+            };
+            var points = new NormalDataPoint[empirical.CumulativeProbabilities.Length];
+            for (int i = 0; i < points.Length; i++)
+            {
+                double exceedenceProbability = 1 - empirical.CumulativeProbabilities[i];
+                double zScore = Normal.StandardNormalInverseCDF(exceedenceProbability);
+                points[i] = new NormalDataPoint(exceedenceProbability, zScore, empirical.ObservationValues[i]);
             }
-            lineSeries.Title = "EAD Distribution";
-            model.Series.Add(lineSeries);
-            MyPlot = model;
+            lineSeries.ItemsSource = points;
+            MyPlot.Series.Add(lineSeries);
             MyPlot.InvalidatePlot(true);
         }
+        private void AddAxes(Empirical empirical)
+        {
+            LinearAxis y = new LinearAxis()
+            {
+                Position = AxisPosition.Bottom,
+                Title = StringConstants.EXCEEDANCE_PROBABILITY,
+                LabelFormatter = _probabilityFormatter,
+                Maximum = 3.719, //probability of .9999  
+            };
+            LinearAxis x = new LinearAxis()
+            {
+                Position = AxisPosition.Left,
+                Title = StringConstants.EXPECTED_ANNUAL_DAMAGE,
+                MinorTickSize = 0,
+                Unit = "$"
+            };
+            MyPlot.Axes.Add(x);
+            MyPlot.Axes.Add(y);
+        }
+        private static string _probabilityFormatter(double d)
+        {
+            Normal standardNormal = new Normal(0, 1);
+            double value = standardNormal.CDF(d);
+            string stringval = value.ToString("0.0000");
+            return stringval;
+        }
+        private static string _damageFormatter(double d)
+        {
+            return d.ToString("E2");
+        }
+        #endregion
+
 
         private void loadTableValues(List<double> qValues)
         {

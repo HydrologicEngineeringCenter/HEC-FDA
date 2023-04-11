@@ -1,4 +1,7 @@
-﻿using OxyPlot;
+﻿using HEC.FDA.Model.paireddata;
+using OxyPlot;
+using OxyPlot.Series;
+using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
