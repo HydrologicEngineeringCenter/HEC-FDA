@@ -60,19 +60,23 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         }
         private void AddAxes(Empirical empirical)
         {
-            LinearAxis y = new LinearAxis()
+            LinearAxis x = new LinearAxis()
             {
                 Position = AxisPosition.Bottom,
                 Title = StringConstants.EXCEEDANCE_PROBABILITY,
                 LabelFormatter = _probabilityFormatter,
-                Maximum = 3.719, //probability of .9999  
+                Maximum = 3.719, //probability of .9999
+                Minimum = -3.719, //probability of .0001
+                StartPosition = 1,
+                EndPosition = 0
             };
-            LinearAxis x = new LinearAxis()
+            LinearAxis y = new LinearAxis()
             {
                 Position = AxisPosition.Left,
                 Title = StringConstants.EXPECTED_ANNUAL_DAMAGE,
                 MinorTickSize = 0,
-                Unit = "$"
+                Unit = "$",
+
             };
             MyPlot.Axes.Add(x);
             MyPlot.Axes.Add(y);
@@ -83,10 +87,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             double value = standardNormal.CDF(d);
             string stringval = value.ToString("0.0000");
             return stringval;
-        }
-        private static string _damageFormatter(double d)
-        {
-            return d.ToString("E2");
         }
         #endregion
 

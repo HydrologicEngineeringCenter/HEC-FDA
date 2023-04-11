@@ -268,7 +268,9 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 Position = AxisPosition.Bottom,
                 Title = StringConstants.EXCEEDANCE_PROBABILITY,
                 LabelFormatter = NormalAxisFormatter,
-                MinorTickSize = 0
+                MinorTickSize = 0,
+                StartPosition = 1,
+                EndPosition= 0,
             };
             _plotModel.Axes.Add(x);
 
