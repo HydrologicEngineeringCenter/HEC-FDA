@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using HEC.FDA.ViewModel.Results;
 using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Utilities;
 
@@ -16,8 +17,13 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             addAlternativeAction.Header = StringConstants.CREATE_NEW_ALTERNATIVE_COMP_REPORTS_MENU;
             addAlternativeAction.Action = AddNewAlternative;
 
+            NamedAction viewSummaryMenu = new NamedAction();
+            viewSummaryMenu.Header = "View Alternatives Summary Results...";
+            viewSummaryMenu.Action = ComputeAlternatives;
+
             List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(addAlternativeAction);
+            localActions.Add(viewSummaryMenu);
 
             Actions = localActions;
 
@@ -48,6 +54,15 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             string header = StringConstants.CREATE_NEW_ALTERNATIVE_COMP_REPORTS_HEADER;
             DynamicTabVM tab = new DynamicTabVM(header, vm, header);
             Navigate(tab, false, true);
+        }
+
+        public void ComputeAlternatives(object arg1, EventArgs arg2)
+        {
+            ComputeChildSelectorVM vm = new ComputeChildSelectorVM(ComputeChildSelectorVM.ChildType.ALTERNATIVES);
+            vm.RequestNavigation += Navigate;
+            DynamicTabVM tab = new DynamicTabVM(StringConstants.CREATE_NEW_SCENARIO_HEADER, vm, StringConstants.CREATE_NEW_SCENARIO_HEADER);
+            Navigate(tab, false, false);
+
         }
 
     }

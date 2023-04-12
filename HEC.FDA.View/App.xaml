@@ -78,6 +78,9 @@
              xmlns:SteadyHydraulicsVM="clr-namespace:HEC.FDA.ViewModel.Hydraulics.SteadyHDF;assembly=HEC.FDA.ViewModel"
              xmlns:UnsteadyHydraulicsVM="clr-namespace:HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF;assembly=HEC.FDA.ViewModel"
              
+             xmlns:ResultsView="clr-namespace:HEC.FDA.View.Results"
+             xmlns:ResultsVM="clr-namespace:HEC.FDA.ViewModel.Results;assembly=HEC.FDA.ViewModel"
+             
              xmlns:frameworkControls="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=HEC.MVVMFramework.View"
              
              StartupUri="ViewWindow.xaml">
@@ -398,5 +401,13 @@
       <WaterSurfaceElevationsView:UnsteadyHydraulicsImporter/>
     </DataTemplate>
 
-  </Application.Resources>
+        <DataTemplate DataType="{x:Type ResultsVM:ComputeChildSelectorVM }" >
+            <ResultsView:ComputeChildSelector/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type ResultsVM:ScenarioDamageSummaryVM }" >
+            <ResultsView:ScenarioDamageSummary/>
+        </DataTemplate>
+
+    </Application.Resources>
 </Application>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Results;
 using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.Alternatives
@@ -16,8 +17,13 @@ namespace HEC.FDA.ViewModel.Alternatives
             addAlternative.Header = StringConstants.CREATE_NEW_ALTERNATIVE_MENU;
             addAlternative.Action = AddNewAlternative;
 
+            NamedAction viewSummaryMenu = new NamedAction();
+            viewSummaryMenu.Header = "View Scenario Summary Results...";
+            viewSummaryMenu.Action = ComputeAlternatives;
+
             List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(addAlternative);
+            localActions.Add(viewSummaryMenu);
 
             Actions = localActions;
 
@@ -48,6 +54,13 @@ namespace HEC.FDA.ViewModel.Alternatives
         private void RemoveAlternativeElement(object sender, Saving.ElementAddedEventArgs e)
         {
             RemoveElement(e.Element);
+        }
+        public void ComputeAlternatives(object arg1, EventArgs arg2)
+        {
+            ComputeChildSelectorVM vm = new ComputeChildSelectorVM(ComputeChildSelectorVM.ChildType.ALTERNATIVES);
+            vm.RequestNavigation += Navigate;
+            DynamicTabVM tab = new DynamicTabVM("View Alternative Results", vm, "ViewAlternativeResults");
+            Navigate(tab, false, false);
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.Results;
 using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario
@@ -22,8 +23,13 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             addCondition.Header = StringConstants.CREATE_NEW_SCENARIO_MENU;
             addCondition.Action = AddNewIASSet;
 
+            NamedAction computeAllMenu = new NamedAction();
+            computeAllMenu.Header = "Compute Scenarios...";
+            computeAllMenu.Action = ComputeScenarios;
+
             List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(addCondition);
+            localActions.Add(computeAllMenu);
 
             Actions = localActions;
             StudyCache.IASElementAdded += AddIASElementSet;
@@ -98,6 +104,16 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         private void RemoveConditionsElement(object sender, Saving.ElementAddedEventArgs e)
         {
             RemoveElement(e.Element);
+        }
+
+        public void ComputeScenarios(object arg1, EventArgs arg2)
+        {
+            ComputeChildSelectorVM vm = new ComputeChildSelectorVM(ComputeChildSelectorVM.ChildType.SCENARIOS);
+            vm.RequestNavigation += Navigate;
+            //todo: add to string constants
+            DynamicTabVM tab = new DynamicTabVM("Compute Scenarios", vm, "ComputeScenarios");
+            Navigate(tab, false, false);
+
         }
 
         public void AddNewIASSet(object arg1, EventArgs arg2)
