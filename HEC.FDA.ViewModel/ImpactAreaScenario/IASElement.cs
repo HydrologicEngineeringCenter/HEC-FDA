@@ -181,6 +181,24 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             }
         }
         
+        public FdaValidationResult CanCompute()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+
+            if (SpecificIASElements.Count > 0)
+            {
+                foreach (SpecificIAS ias in SpecificIASElements)
+                {
+                    FdaValidationResult canComputeScenario = ias.CanComputeScenario();
+                    if (!canComputeScenario.IsValid)
+                    {
+                        vr.AddErrorMessage(canComputeScenario.ErrorMessage);
+                    }
+                }
+            }
+            return vr;
+        }
+
         private void ComputeScenario(object arg1, EventArgs arg2)
         {
             ComputeScenarioVM vm = new ComputeScenarioVM(AnalysisYear, SpecificIASElements, ComputeCompleted);

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace HEC.FDA.ViewModel.Compute
 {
-    public class ComputeAlternativeVM : ComputeBase
+    public class ComputeAlternativeVM : ComputeWithProgressAndMessagesBase
     {
 
 

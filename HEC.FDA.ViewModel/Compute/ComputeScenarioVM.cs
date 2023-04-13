@@ -13,7 +13,7 @@ using System.Windows;
 
 namespace HEC.FDA.ViewModel.Compute
 {
-    public class ComputeScenarioVM:ComputeBase
+    public class ComputeScenarioVM:ComputeWithProgressAndMessagesBase
     {
         private int _TotalSims;
         private int _IterationsCompleted = 0;

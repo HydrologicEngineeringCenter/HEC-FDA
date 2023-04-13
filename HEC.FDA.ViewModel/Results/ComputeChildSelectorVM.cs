@@ -74,6 +74,7 @@ namespace HEC.FDA.ViewModel.Results
             List<ComputeChildRowItem> computeChildRowItems = GetSelectedRows();
             if(_ChildType == ChildType.SCENARIOS)
             {
+                ComputeScenarios(computeChildRowItems);
                 //ScenarioDamageSummaryVM vm = new ScenarioDamageSummaryVM();
                 ////todo: add to string constants
                 //DynamicTabVM tab = new DynamicTabVM("Summary Table", vm, "SummaryTable");
@@ -85,9 +86,18 @@ namespace HEC.FDA.ViewModel.Results
         private void ComputeScenarios(List<ComputeChildRowItem> scenarioRows)
         {
             List<Task> taskList = new List<Task>();
-            foreach(ComputeChildRowItem row in scenarioRows)
+            foreach (ComputeChildRowItem row in scenarioRows)
             {
-
+                IASElement elem = (IASElement)row.ChildElement;
+                FdaValidationResult canComputeVR = elem.CanCompute();
+                if (canComputeVR.IsValid)
+                {
+                    ComputeScenario(elem);
+                }
+                else
+                {
+                    row.MarkInError(canComputeVR.ErrorMessage);
+                }
             }
         }
 

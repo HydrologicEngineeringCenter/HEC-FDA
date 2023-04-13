@@ -7,11 +7,28 @@ using System.Threading.Tasks;
 
 namespace HEC.FDA.ViewModel.Results
 {
-    public class ComputeChildRowItem
+    public class ComputeChildRowItem:BaseViewModel
     {
+        private bool _HasError;
+        private string _ErrorMessage;
+        private bool _IsSelected;
         public ChildElement ChildElement { get; set; }
         public string Name { get; set; }
-        public bool IsSelected { get; set; }
+        public bool IsSelected
+        {
+            get { return _IsSelected; }
+            set { _IsSelected = value; NotifyPropertyChanged(); }
+        }
+        public bool HasError
+        {
+            get { return _HasError; }
+            set { _HasError = value; NotifyPropertyChanged(); }
+        }
+        public string ErrorMessage
+        {
+            get { return _ErrorMessage; }
+            set { _ErrorMessage = value; NotifyPropertyChanged(); }
+        }
         //{
         //    get { return _IsSelected; }
         //    set { _IsSelected = value; NotifyPropertyChanged(); }
@@ -23,9 +40,11 @@ namespace HEC.FDA.ViewModel.Results
             ChildElement = childElement;
         }
 
-        public void ValidateElement()
+        public void MarkInError(string errorMessage)
         {
-
+            HasError = true;
+            ErrorMessage = errorMessage;
+            IsSelected = false;
         }
     }
 }

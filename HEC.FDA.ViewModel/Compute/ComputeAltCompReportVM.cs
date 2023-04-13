@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace HEC.FDA.ViewModel.Compute
 {
-    public class ComputeAltCompReportVM:ComputeBase
+    public class ComputeAltCompReportVM:ComputeWithProgressAndMessagesBase
     {
         private readonly List<AlternativeResults> AllResults = new List<AlternativeResults>();
         private int _TotalProgressCount;

@@ -2,7 +2,7 @@
 
 namespace HEC.FDA.ViewModel.Compute
 {
-    public class ComputeBase : BaseViewModel
+    public class ComputeWithProgressAndMessagesBase : BaseViewModel
     {
 
         private int _Progress;
@@ -36,7 +36,7 @@ namespace HEC.FDA.ViewModel.Compute
         }
 
 
-        public ComputeBase()
+        public ComputeWithProgressAndMessagesBase()
         {
 
         }

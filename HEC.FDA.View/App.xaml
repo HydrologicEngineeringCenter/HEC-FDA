@@ -285,7 +285,7 @@
       <IASEditorView:IASEditor/>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type ComputeVM:ComputeBase }" >
+    <DataTemplate DataType="{x:Type ComputeVM:ComputeWithProgressAndMessagesBase }" >
       <IASEditorView:ComputeScenarioEditor/>
     </DataTemplate>
 

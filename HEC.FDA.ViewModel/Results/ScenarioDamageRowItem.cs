@@ -18,9 +18,9 @@ namespace HEC.FDA.ViewModel.Results
             int analysisYear = scenario.AnalysisYear;
             ScenarioResults results = scenario.Results;
             double mean = results.MeanExpectedAnnualConsequences();
-            double quarter1 = results.ConsequencesExceededWithProbabilityQ(.25);
+            double quarter1 = results.ConsequencesExceededWithProbabilityQ(.75);
             double quarter2 = results.ConsequencesExceededWithProbabilityQ(.5);
-            double quarter3 = results.ConsequencesExceededWithProbabilityQ(.75);
+            double quarter3 = results.ConsequencesExceededWithProbabilityQ(.25);
             List<string> damCats = results.GetDamageCategories();
             foreach (string damCat in damCats)
             {
