@@ -1,6 +1,7 @@
 ﻿using Xunit;
 using Statistics;
 using HEC.FDA.Model.structures;
+using HEC.MVVMFramework.Base.Implementations;
 
 namespace HEC.FDA.ModelTest.unittests.structures
 {
@@ -18,6 +19,20 @@ namespace HEC.FDA.ModelTest.unittests.structures
             FirstFloorElevationUncertainty firstFloorElevationUncertainty = new FirstFloorElevationUncertainty(distributionEnum, standardDeviationOrMinimum, maximum);
             double actual = firstFloorElevationUncertainty.Sample(inventoriedFirstFloorElevation, probability, computeIsDeterministic: false);
             Assert.Equal(expected, actual, 1);
+        }
+
+        [Fact]
+        public void ValidationShould()
+        {
+            IDistributionEnum distributionEnum = IDistributionEnum.LogPearsonIII;
+            double standardDeviation = -1;
+            FirstFloorElevationUncertainty firstFloorElevationUncertainty = new FirstFloorElevationUncertainty(distributionEnum, standardDeviation);
+            firstFloorElevationUncertainty.Validate();
+            foreach (PropertyRule rule in firstFloorElevationUncertainty.RuleMap.Values)
+            {
+                Assert.Single(rule.Errors);
+                Assert.Equal(HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal, rule.ErrorLevel);
+            }
         }
     }
 }

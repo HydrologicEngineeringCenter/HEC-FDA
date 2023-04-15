@@ -80,6 +80,7 @@ namespace HEC.FDA.Model.stageDamage
             _hydraulicDataset = hydraulicDataset;
             convergenceCriteria = convergence;
             SetMinAndMaxStage();
+            _StageFrequency = CreateStageFrequency();
             AddRules();
 
             ValidationGroup vg = new ValidationGroup("Impact area stage damage with impact area id '" + ImpactAreaID + "' has the following errors:");
@@ -93,6 +94,7 @@ namespace HEC.FDA.Model.stageDamage
         {
             AddSinglePropertyRule(nameof(_inventory), new Rule(() => { _inventory.Validate(); return !_inventory.HasErrors; }, $"The structure inventory has errors: " + _inventory.GetErrors().ToString(), _inventory.ErrorLevel));
             AddSinglePropertyRule(nameof(convergenceCriteria), new Rule(() => { convergenceCriteria.Validate(); return !convergenceCriteria.HasErrors; }, $"Convergence criteria has errors: " + convergenceCriteria.GetErrors().ToString(), convergenceCriteria.ErrorLevel));
+            AddSinglePropertyRule(nameof(_StageFrequency), new Rule(() => _StageFrequency != null, $"The software was unable to calculate stage-frequency for the impact area with ID {_ImpactAreaID}", ErrorLevel.Fatal));
             if (_AnalyticalFlowFrequency != null)
             {
                 AddSinglePropertyRule(nameof(_AnalyticalFlowFrequency), new Rule(() => { _AnalyticalFlowFrequency.Validate(); return !_AnalyticalFlowFrequency.HasErrors; }, $"The analytical flow-frequency function has errors: " + _AnalyticalFlowFrequency.GetErrors().ToString(), _AnalyticalFlowFrequency.ErrorLevel));
@@ -238,7 +240,13 @@ namespace HEC.FDA.Model.stageDamage
             }
             else
             {
-                _StageFrequency = CreateStageFrequency();
+                if (_StageFrequency == null)
+                {
+                    string message = "THe software was unable to compile the aggregation stages. Check input H&H summary relationships. Empty stage-damage functions have been returned";
+                    ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel);
+                    ReportMessage(this, new MessageEventArgs(errorMessage));
+                    return results;
+                }
                 List<string> damCats = _inventory.GetDamageCategories();
                 (List<double>, List<float[]>) wsesAtEachStructureByProfile = _hydraulicDataset.GetHydraulicDatasetInFloatsWithProbabilities(_inventory, _HydraulicParentDirectory);
 

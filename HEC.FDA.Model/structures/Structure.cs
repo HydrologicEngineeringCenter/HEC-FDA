@@ -55,13 +55,13 @@ namespace HEC.FDA.Model.structures
         #region Methods 
         private void AddRules()
         {
-            AddSinglePropertyRule(nameof(FirstFloorElevation), new Rule(() => FirstFloorElevation > -300, $"First floor elevation must be greater than -300, but is {FirstFloorElevation} for Structure {Fid}", ErrorLevel.Major));
-            AddSinglePropertyRule(nameof(InventoriedStructureValue), new Rule(() => InventoriedStructureValue >= 0, $"The inventoried structure value must be greater than or equal to 0, but is {InventoriedStructureValue} for Structure {Fid}", ErrorLevel.Major));
-            AddSinglePropertyRule(nameof(InventoriedContentValue), new Rule(() => InventoriedContentValue >= 0, $"The inventoried content value must be greater than or equal to 0, but is {InventoriedContentValue} for Structure {Fid}", ErrorLevel.Major));
-            AddSinglePropertyRule(nameof(InventoriedOtherValue), new Rule(() => InventoriedOtherValue >= 0, $"The inventoried other value must be greater than or equal to 0, but is {InventoriedOtherValue} for Structure {Fid}", ErrorLevel.Major));
-            AddSinglePropertyRule(nameof(InventoriedVehicleValue), new Rule(() => InventoriedVehicleValue >= 0, $"The inventoried vehicle value must be greater than or equal to 0, but is {InventoriedVehicleValue} for Structure {Fid}", ErrorLevel.Major));
-            AddSinglePropertyRule(nameof(DamageCatagory), new Rule(() => DamageCatagory != null, $"Damage category should not be null but appears null for Structure {Fid}", ErrorLevel.Major));
-            AddSinglePropertyRule(nameof(OccTypeName), new Rule(() => OccTypeName != null, $"The occupancy type should not be null but appears null for Structure {Fid}", ErrorLevel.Major));
+            AddSinglePropertyRule(nameof(FirstFloorElevation), new Rule(() => FirstFloorElevation > -300, $"First floor elevation must be greater than -300, but is {FirstFloorElevation} for Structure {Fid}", ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(InventoriedStructureValue), new Rule(() => InventoriedStructureValue >= 0, $"The inventoried structure value must be greater than or equal to 0, but is {InventoriedStructureValue} for Structure {Fid}", ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(InventoriedContentValue), new Rule(() => InventoriedContentValue >= 0, $"The inventoried content value must be greater than or equal to 0, but is {InventoriedContentValue} for Structure {Fid}", ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(InventoriedOtherValue), new Rule(() => InventoriedOtherValue >= 0, $"The inventoried other value must be greater than or equal to 0, but is {InventoriedOtherValue} for Structure {Fid}", ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(InventoriedVehicleValue), new Rule(() => InventoriedVehicleValue >= 0, $"The inventoried vehicle value must be greater than or equal to 0, but is {InventoriedVehicleValue} for Structure {Fid}", ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(DamageCatagory), new Rule(() => DamageCatagory != null && DamageCatagory != "", $"Damage category should not be null but appears null for Structure {Fid}", ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(OccTypeName), new Rule(() => OccTypeName != null && OccTypeName != "", $"The occupancy type should not be null but appears null for Structure {Fid}", ErrorLevel.Fatal));
         }
         public DeterministicStructure Sample(IProvideRandomNumbers randomProvider, OccupancyType occtype, bool computeIsDeterministic)
         {
