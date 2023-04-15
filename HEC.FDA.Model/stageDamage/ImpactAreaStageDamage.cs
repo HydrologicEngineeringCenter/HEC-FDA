@@ -240,13 +240,7 @@ namespace HEC.FDA.Model.stageDamage
             }
             else
             {
-                if (_StageFrequency == null)
-                {
-                    string message = "THe software was unable to compile the aggregation stages. Check input H&H summary relationships. Empty stage-damage functions have been returned";
-                    ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel);
-                    ReportMessage(this, new MessageEventArgs(errorMessage));
-                    return results;
-                }
+
                 List<string> damCats = _inventory.GetDamageCategories();
                 (List<double>, List<float[]>) wsesAtEachStructureByProfile = _hydraulicDataset.GetHydraulicDatasetInFloatsWithProbabilities(_inventory, _HydraulicParentDirectory);
 
