@@ -9,10 +9,13 @@ namespace HEC.FDA.ViewModel.Results
 {
     public class ScenarioDamageSummaryVM : BaseViewModel
     {
-
+        public List<ScenarioDamageRowItem> Rows { get; } = new List<ScenarioDamageRowItem>();
         public ScenarioDamageSummaryVM(List<IASElement> scenarioElems)
         {
-            //create row items
+            foreach(IASElement element in scenarioElems)
+            {
+                Rows.Add(new ScenarioDamageRowItem(element));
+            }
         }
 
     }

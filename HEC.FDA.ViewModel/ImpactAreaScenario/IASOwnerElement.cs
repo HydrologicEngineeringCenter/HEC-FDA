@@ -24,12 +24,17 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             addCondition.Action = AddNewIASSet;
 
             NamedAction computeAllMenu = new NamedAction();
-            computeAllMenu.Header = "Compute Scenarios...";
+            computeAllMenu.Header = StringConstants.COMPUTE_SCENARIOS_MENU;
             computeAllMenu.Action = ComputeScenarios;
+
+            NamedAction viewSummaryResultsMenu = new NamedAction();
+            viewSummaryResultsMenu.Header = StringConstants.VIEW_SUMMARY_RESULTS_MENU;
+            viewSummaryResultsMenu.Action = ViewSummaryResults;
 
             List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(addCondition);
             localActions.Add(computeAllMenu);
+            localActions.Add(viewSummaryResultsMenu);
 
             Actions = localActions;
             StudyCache.IASElementAdded += AddIASElementSet;
@@ -111,9 +116,25 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             ComputeChildSelectorVM vm = new ComputeChildSelectorVM(ComputeChildSelectorVM.ChildType.SCENARIOS);
             vm.RequestNavigation += Navigate;
             //todo: add to string constants
-            DynamicTabVM tab = new DynamicTabVM("Compute Scenarios", vm, "ComputeScenarios");
+            DynamicTabVM tab = new DynamicTabVM(StringConstants.COMPUTE_SCENARIOS_HEADER, vm, StringConstants.COMPUTE_SCENARIOS_HEADER);
             Navigate(tab, false, false);
+        }
 
+        public void ViewSummaryResults(object arg1, EventArgs arg2)
+        {
+            List<IASElement> elems = StudyCache.GetChildElementsOfType<IASElement>();
+            List<IASElement> elemsWithResults = new List<IASElement>();
+            foreach(IASElement elem in elems)
+            {
+                if(elem.Results != null)
+                {
+                    elemsWithResults.Add(elem);
+                }
+            }
+
+            ScenarioDamageSummaryVM vm = new ScenarioDamageSummaryVM(elemsWithResults);
+            DynamicTabVM tab = new DynamicTabVM(StringConstants.VIEW_SUMMARY_RESULTS_HEADER, vm, StringConstants.VIEW_SUMMARY_RESULTS_HEADER);
+            Navigate(tab, false, false);
         }
 
         public void AddNewIASSet(object arg1, EventArgs arg2)

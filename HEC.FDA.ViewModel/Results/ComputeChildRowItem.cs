@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.ImpactAreaScenario;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace HEC.FDA.ViewModel.Results
 {
-    public class ComputeChildRowItem:BaseViewModel
+    public class ComputeChildRowItem : BaseViewModel
     {
         private bool _HasError;
         private string _ErrorMessage;
@@ -29,15 +30,22 @@ namespace HEC.FDA.ViewModel.Results
             get { return _ErrorMessage; }
             set { _ErrorMessage = value; NotifyPropertyChanged(); }
         }
-        //{
-        //    get { return _IsSelected; }
-        //    set { _IsSelected = value; NotifyPropertyChanged(); }
-        //}
+        public bool HasResults{get;set;}
+        public string HasComputeMessage { get; set; }
 
         public ComputeChildRowItem(ChildElement childElement)
         {
             Name = childElement.Name;
             ChildElement = childElement;
+            if(childElement is IASElement)
+            {
+                IASElement elem = (IASElement)childElement;
+                HasResults = elem.Results != null;
+                if(HasResults)
+                {
+                    HasComputeMessage = "    * Contains compute results. Last edited " + elem.LastEditDate;
+                }
+            }
         }
 
         public void MarkInError(string errorMessage)

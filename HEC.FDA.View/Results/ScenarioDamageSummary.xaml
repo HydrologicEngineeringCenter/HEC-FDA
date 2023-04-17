@@ -49,30 +49,26 @@
                   VerticalAlignment="Top"  IsReadOnly="True" CanUserResizeColumns="True" CanUserReorderColumns="False"
                   CanUserSortColumns="false"  SelectionUnit="Cell">
                     <DataGrid.Columns>
-                        <DataGridTextColumn x:Name="Column1" Binding="{Binding WithoutProjAlternative}" Width="110">
-                            <DataGridTextColumn.Header>
-                                <TextBlock Text="Name" TextWrapping="Wrap" />
-                            </DataGridTextColumn.Header>
-                        </DataGridTextColumn>
-                        <DataGridTextColumn x:Name="Column2" Header="Analysis Year" Binding="{Binding WithoutProjEAD, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
-                        <DataGridTextColumn x:Name="Column3" Header="Mean" Binding="{Binding WithProjAlternative}" Width="110"/>
+                        <DataGridTextColumn x:Name="Column1" Header="Name" Binding="{Binding Name}" Width="110"/>
+                        <DataGridTextColumn x:Name="Column2" Header="Analysis Year" Binding="{Binding AnalysisYear}" Width="110"/>
+                        <DataGridTextColumn x:Name="Column3" Header="Mean" Binding="{Binding Mean, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
 
 
-                        <DataGridTextColumn x:Name="Column4" Binding="{Binding Point75, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
+                        <DataGridTextColumn x:Name="Column4" Binding="{Binding Q1, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
                             <DataGridTextColumn.Header>
                                 <TextBlock TextWrapping="Wrap">
                             <Run>Q</Run><Run Typography.Variants="Subscript">1</Run>
                                 </TextBlock>
                             </DataGridTextColumn.Header>
                         </DataGridTextColumn>
-                        <DataGridTextColumn x:Name="Column5" Binding="{Binding Point5, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
+                        <DataGridTextColumn x:Name="Column5" Binding="{Binding Q2, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
                             <DataGridTextColumn.Header>
                                 <TextBlock TextWrapping="Wrap">
                             <Run>Q</Run><Run Typography.Variants="Subscript">2</Run>
                                 </TextBlock>
                             </DataGridTextColumn.Header>
                         </DataGridTextColumn>
-                        <DataGridTextColumn x:Name="Column6" Binding="{Binding Point25, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
+                        <DataGridTextColumn x:Name="Column6" Binding="{Binding Q3, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
                             <DataGridTextColumn.Header>
                                 <TextBlock TextWrapping="Wrap">
                             <Run>Q</Run><Run Typography.Variants="Subscript">3</Run> 

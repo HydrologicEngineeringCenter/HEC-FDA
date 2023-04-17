@@ -8,6 +8,7 @@ using HEC.MVVMFramework.Base.Interfaces;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.interfaces;
 using HEC.FDA.Model.compute;
+using System.Threading;
 
 namespace HEC.FDA.Model.scenarios
 {
@@ -49,13 +50,14 @@ namespace HEC.FDA.Model.scenarios
         }
         #endregion
         #region Methods
-        public ScenarioResults Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false)
+        public ScenarioResults Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, CancellationToken cancellationToken,
+            bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false)
         {
             //probably instantiate a rng to seed each impact area differently
             ScenarioResults scenarioResults = new ScenarioResults(_year);
             foreach (ImpactAreaScenarioSimulation impactArea in _impactAreaSimulations)
             {
-                scenarioResults.AddResults(impactArea.Compute(randomProvider, convergenceCriteria));
+                scenarioResults.AddResults(impactArea.Compute(randomProvider, convergenceCriteria, cancellationToken));
             }
             return scenarioResults;
         }

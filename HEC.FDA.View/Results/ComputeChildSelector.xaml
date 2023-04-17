@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:Util="clr-namespace:HEC.FDA.View.Utilities"
+             xmlns:mvvmView="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=HEC.MVVMFramework.View"
              xmlns:local="clr-namespace:HEC.FDA.View.Results"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -14,16 +15,18 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="35"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="35"/>
             <RowDefinition Height="45"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width=".3*"/>
-            <ColumnDefinition Width=".7*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding SelectionLabel}" Margin="10,0,0,0" VerticalAlignment="Bottom"/>
-
-        <ListBox Grid.Row="1" Grid.Column="0" Name="lst_conditions" ItemsSource="{Binding Rows}"   SelectionMode="Multiple" Margin="5">
+        <CheckBox Grid.Row="1" Grid.Column="0" Content="Select All" IsChecked="{Binding SelectAll}" Margin="12,5,5,0"/>
+        <ListBox Grid.Row="2" Grid.Column="0" Name="lst_conditions" ItemsSource="{Binding Rows}"   SelectionMode="Multiple" Margin="5">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
                     <Setter Property="ToolTip" Value="{Binding Tooltip}"/>
@@ -34,12 +37,16 @@
                     <StackPanel>
                         <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected, Mode=TwoWay}" IsEnabled="{Binding HasError, Converter={StaticResource InverseBooleanConverter}}" />
                         <Label Content="{Binding ErrorMessage}" Foreground="Red" Visibility="{Binding Path=HasError, Converter={StaticResource BoolToVis}}"/>
+                        <Label Content="{Binding HasComputeMessage}" Visibility="{Binding Path=HasResults, Converter={StaticResource BoolToVis}}" />
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <StackPanel Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
-            <Button  Content="Compute" Width="100"  Margin="5" Click="Compute_Click"/>
+        <mvvmView:SubscriberMessageView DataContext="{Binding MessageVM}"  Grid.Row="2" Grid.Column="1"   Margin="5,5,5,5"/>
+        <ProgressBar Grid.Row="3" Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding Progress}"   HorizontalAlignment="Stretch"  Margin="0,5,0,5"/>
+
+        <StackPanel Grid.Row="4" Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button  Content="{Binding ComputeButtonLabel}" Width="100"  Margin="5" Click="Compute_Click"/>
             <Button  Content="Close" Width="100"  Margin="5"/>
 
         </StackPanel>

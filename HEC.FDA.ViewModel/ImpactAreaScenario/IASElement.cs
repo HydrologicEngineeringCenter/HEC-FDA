@@ -201,7 +201,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
         private void ComputeScenario(object arg1, EventArgs arg2)
         {
-            ComputeScenarioVM vm = new ComputeScenarioVM(AnalysisYear, SpecificIASElements, ComputeCompleted);
+            ComputeScenarioVM vm = new ComputeScenarioVM(this, ComputeCompleted);
             string header = "Compute Log For Scenario: " + Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "ComputeLog" + Name);
             Navigate(tab, false, false);

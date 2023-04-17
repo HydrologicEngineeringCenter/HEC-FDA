@@ -11,16 +11,23 @@ namespace HEC.FDA.ViewModel.Results
 {
     public class ScenarioDamageRowItem
     {
+        public string Name { get; set; }
+        public int AnalysisYear { get; set; }
+        public double Mean { get; set; }
+        public double Q1 { get; set; }
+        public double Q2 { get; set; }
+        public double Q3 { get; set; }
+
 
         public ScenarioDamageRowItem(IASElement scenario)
         {
-            string name = scenario.Name;
-            int analysisYear = scenario.AnalysisYear;
+            Name = scenario.Name;
+            AnalysisYear = scenario.AnalysisYear;
             ScenarioResults results = scenario.Results;
-            double mean = results.MeanExpectedAnnualConsequences();
-            double quarter1 = results.ConsequencesExceededWithProbabilityQ(.75);
-            double quarter2 = results.ConsequencesExceededWithProbabilityQ(.5);
-            double quarter3 = results.ConsequencesExceededWithProbabilityQ(.25);
+            Mean = results.MeanExpectedAnnualConsequences();
+            Q1 = results.ConsequencesExceededWithProbabilityQ(.75);
+            Q2 = results.ConsequencesExceededWithProbabilityQ(.5);
+            Q3 = results.ConsequencesExceededWithProbabilityQ(.25);
             List<string> damCats = results.GetDamageCategories();
             foreach (string damCat in damCats)
             {
