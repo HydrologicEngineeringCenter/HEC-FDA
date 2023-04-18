@@ -87,6 +87,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             }
 
             AddActions();
+            ValidateOutOfSync();
         }
 
         private void AddActions()
@@ -239,8 +240,30 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 XElement resultsElem = Results.WriteToXML();
                 setElement.Add(resultsElem);
             }
-
             return setElement;
+        }
+
+        //todo: is this method doing what i want?
+        public void ValidateOutOfSync()
+        {
+            //check that the elements that it is depending on still exist
+            FdaValidationResult vr = CanCompute();
+            //check that the last modified date is the same as the last compute date.
+            if (Results != null && Results.ComputeDate != null)
+            {
+                DateTime lastEditDate = DateTime.Parse(LastEditDate);
+                DateTime computeDate = DateTime.Parse(Results.ComputeDate);
+                //todo: im not sure this is possible. If the user saves the scenario the results get clobbard. 
+                if(lastEditDate>computeDate )
+                {
+                    //var seconds = (date1 - date2).TotalSeconds;
+                    vr.AddErrorMessage("Changes have been made since last compute.");
+                }
+            }
+            if (!vr.IsValid)
+            {
+                UpdateTreeViewHeader(Name + "*", Environment.NewLine + vr.ErrorMessage);
+            }
         }
 
     }

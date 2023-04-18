@@ -38,7 +38,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
             Actions = localActions;
             StudyCache.IASElementAdded += AddIASElementSet;
-            StudyCache.IASElementRemoved += RemoveConditionsElement;
+            StudyCache.IASElementRemoved += RemoveIASElementSet;
             StudyCache.IASElementUpdated += UpdateIASElementSet;
 
             //the child elements
@@ -106,7 +106,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         {
             AddElement(e.Element);
         }
-        private void RemoveConditionsElement(object sender, Saving.ElementAddedEventArgs e)
+        private void RemoveIASElementSet(object sender, Saving.ElementAddedEventArgs e)
         {
             RemoveElement(e.Element);
         }

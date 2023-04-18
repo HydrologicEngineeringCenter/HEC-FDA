@@ -5,11 +5,13 @@ using HEC.FDA.Model.scenarios;
 using HEC.FDA.ViewModel.Alternatives;
 using HEC.FDA.ViewModel.Compute;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
+using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -65,6 +67,41 @@ namespace HEC.FDA.ViewModel.Results
                 SelectionLabel = "Select Alternatives to View:";
                 LoadAlternatives();
             }
+
+            ListenToIASEvents();
+        }
+
+        private void ListenToIASEvents()
+        {
+            StudyCache.IASElementAdded += IASAdded;
+            StudyCache.IASElementRemoved += IASRemoved;
+            StudyCache.IASElementUpdated += IASUpdated;
+        }
+
+        private void IASAdded(object sender, ElementAddedEventArgs e)
+        {
+            ComputeChildRowItem newRow = new ComputeChildRowItem((IASElement)e.Element);
+            Rows.Add(newRow);
+            ValidateScenario(newRow);
+        }
+
+        private void IASRemoved(object sender, ElementAddedEventArgs e)
+        {
+            Rows.Remove(Rows.Where(row => row.ChildElement.ID == e.Element.ID).Single());
+        }
+
+        private void IASUpdated(object sender, ElementUpdatedEventArgs e)
+        {
+            IASElement newElement = (IASElement)e.NewElement;
+            int idToUpdate = newElement.ID;
+
+            //find the row with this id and update the row's values;
+            ComputeChildRowItem foundRow = Rows.Where(row => row.ChildElement.ID == idToUpdate).SingleOrDefault();
+            if (foundRow != null)
+            {
+                foundRow.Update(newElement);
+                ValidateScenario(foundRow);
+            }
         }
 
         private void LoadScenarios()
@@ -110,11 +147,14 @@ namespace HEC.FDA.ViewModel.Results
             else
             {
                 List<ComputeChildRowItem> computeChildRowItems = GetSelectedRows();
-                if (_ChildType == ChildType.SCENARIOS)
+                if (computeChildRowItems.Count > 0)
                 {
-                    ComputeScenarios(computeChildRowItems);
+                    if (_ChildType == ChildType.SCENARIOS)
+                    {
+                        ComputeScenarios(computeChildRowItems);
+                    }
+                    ComputeButtonLabel = CANCEL_COMPUTE;
                 }
-                ComputeButtonLabel = CANCEL_COMPUTE;
             }
             
         }
@@ -182,12 +222,21 @@ namespace HEC.FDA.ViewModel.Results
         {
             foreach (ComputeChildRowItem row in Rows)
             {
-                IASElement elem = (IASElement)row.ChildElement;
-                FdaValidationResult canComputeVR = elem.CanCompute();
-                if (!canComputeVR.IsValid)
-                {              
-                    row.MarkInError(canComputeVR.ErrorMessage);
-                }
+                ValidateScenario(row);
+            }
+        }
+
+        private void ValidateScenario(ComputeChildRowItem row)
+        {
+            IASElement elem = (IASElement)row.ChildElement;
+            FdaValidationResult canComputeVR = elem.CanCompute();
+            if (!canComputeVR.IsValid)
+            {
+                row.MarkInError(canComputeVR.ErrorMessage);
+            }
+            else
+            {
+                row.ClearErrorStatus();
             }
         }
 

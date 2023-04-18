@@ -59,6 +59,7 @@ namespace HEC.FDA.Model.scenarios
             {
                 scenarioResults.AddResults(impactArea.Compute(randomProvider, convergenceCriteria, cancellationToken));
             }
+            scenarioResults.ComputeDate = DateTime.Now.ToString("G");
             return scenarioResults;
         }
         public ImpactAreaScenarioSimulation GetImpactAreaScenarioSimulation(int impactAreaID)

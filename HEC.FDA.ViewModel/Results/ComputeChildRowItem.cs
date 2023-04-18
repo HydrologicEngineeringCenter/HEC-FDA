@@ -13,8 +13,18 @@ namespace HEC.FDA.ViewModel.Results
         private bool _HasError;
         private string _ErrorMessage;
         private bool _IsSelected;
-        public ChildElement ChildElement { get; set; }
-        public string Name { get; set; }
+        private string _Name;
+        private ChildElement _ChildElement;
+        public ChildElement ChildElement
+        {
+            get { return _ChildElement; }
+            set { _ChildElement = value; NotifyPropertyChanged(); }
+        }
+        public string Name
+        {
+            get { return _Name; }
+            set { _Name = value; NotifyPropertyChanged(); }
+        }
         public bool IsSelected
         {
             get { return _IsSelected; }
@@ -35,23 +45,53 @@ namespace HEC.FDA.ViewModel.Results
 
         public ComputeChildRowItem(ChildElement childElement)
         {
+            Load(childElement);
+        }
+
+        public void Update(ChildElement childElement)
+        {
+            Load(childElement);
+        }
+
+        public void Load(ChildElement childElement)
+        {
             Name = childElement.Name;
             ChildElement = childElement;
-            if(childElement is IASElement)
+            if (childElement is IASElement)
             {
                 IASElement elem = (IASElement)childElement;
                 HasResults = elem.Results != null;
-                if(HasResults)
+                if (HasResults)
                 {
-                    HasComputeMessage = "    * Contains compute results. Last edited " + elem.LastEditDate;
+                    HasComputeMessage = CreateHasResultsMessage(elem);
                 }
             }
+        }
+
+        public string CreateHasResultsMessage(IASElement elem)
+        {
+            string computeDate = elem.Results.ComputeDate;
+            if (computeDate == null)
+            {
+                computeDate = "NA";
+            }
+            StringBuilder sb = new StringBuilder("\t* Has Compute Results: " + elem.Results.ResultsList.Count + " Impact Areas.");
+            sb.AppendLine("\n\t* Last Computed: " + computeDate);
+            sb.AppendLine("\t* Last Edited: " + elem.LastEditDate);
+            return sb.ToString();
         }
 
         public void MarkInError(string errorMessage)
         {
             HasError = true;
             ErrorMessage = errorMessage;
+            IsSelected = false;
+        }
+
+        public void ClearErrorStatus()
+        {
+            HasError = false;
+            ErrorMessage = null;
             IsSelected = false;
         }
     }

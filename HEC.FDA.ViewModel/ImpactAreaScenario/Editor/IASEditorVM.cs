@@ -246,7 +246,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         public override void Save()
         {
-            bool isValid = ValidateIAS();
+            //todo: deal with this.
+            bool isValid = true;// ValidateIAS();
             if (isValid)
             {
                 //get the list of specific IAS elements.
@@ -264,8 +265,13 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 //todo: shouldn't this pass the save to base?
                 IASPersistenceManager iASPersistenceManager = PersistenceFactory.GetIASManager();
                 int id = GetElementID<IASElement>();
-
-                IASElement elemToSave = new IASElement(Name, Description, DateTime.Now.ToString("G"), Year.Value, SelectedStageDamageElement.ChildElement.ID, elementsToSave, id);
+                //todo: is this what I want?
+                int stageDamageId = -1;
+                if(SelectedStageDamageElement != null && SelectedStageDamageElement.ChildElement != null)
+                {
+                    stageDamageId = SelectedStageDamageElement.ChildElement.ID;
+                }
+                IASElement elemToSave = new IASElement(Name, Description, DateTime.Now.ToString("G"), Year.Value, stageDamageId, elementsToSave, id);
 
                 if (IsCreatingNewElement)
                 {
