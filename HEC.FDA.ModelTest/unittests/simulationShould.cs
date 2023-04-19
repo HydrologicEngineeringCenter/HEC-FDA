@@ -402,20 +402,20 @@ namespace HEC.FDA.ModelTest.unittests
         [InlineData(1234, 50000)]
         public void RandomnessShouldBeControlledWithSeed(int seed, int iterations)
         {
-            ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
+            ContinuousDistribution flow_frequency = new LogPearson3(mean: 3.6, standardDeviation: 0.45, skew: 0.075, sampleSize: 40);
             //create a stage distribution
             IDistribution[] stages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
             {
-                stages[i] = IDistributionFactory.FactoryUniform(0, 30 * i, 10);
+                stages[i] = new Triangular(0, 0.3*30*i, 30*i) ;
             }
             UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, metaData);
             //create a damage distribution
             IDistribution[] damages = new IDistribution[3]
             {
-                    new Uniform(0, 0, 10),
-                    new Uniform(0, 600000, 10),
-                    new Uniform(0, 600000, 10)
+                    new Normal(1000, 100),
+                    new Normal(34735984.75983, 1000),
+                    new Normal(549584098.509458, 10000)
             };
             UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, metaData);
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
@@ -426,11 +426,17 @@ namespace HEC.FDA.ModelTest.unittests
                 .withStageDamages(upd)
                 .build();
 
-            RandomProvider randomProvider = new RandomProvider(seed);
+            ImpactAreaScenarioSimulation simulation2 = ImpactAreaScenarioSimulation.builder(id)
+                .withFlowFrequency(flow_frequency)
+                .withFlowStage(flow_stage)
+                .withStageDamages(upd)
+                .build();
+
+            RandomProvider randomProvider = new RandomProvider();
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 10000, maxIterations: iterations);
 
             ImpactAreaScenarioResults results_one = simulation.Compute(randomProvider, convergenceCriteria);
-            ImpactAreaScenarioResults results_two = simulation.Compute(randomProvider, convergenceCriteria);
+            ImpactAreaScenarioResults results_two = simulation2.Compute(randomProvider, convergenceCriteria);
 
             //Mean EAD
             Assert.Equal(results_one.MeanExpectedAnnualConsequences(), results_two.MeanExpectedAnnualConsequences());
