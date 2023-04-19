@@ -396,6 +396,68 @@ namespace HEC.FDA.ModelTest.unittests
             //Assert
             Assert.True(relativeDifference < tolerance);
         }
+
+        [Theory]
+        [InlineData(1111, 50000)]
+        [InlineData(1234, 50000)]
+        public void RandomnessShouldBeControlledWithSeed(int seed, int iterations)
+        {
+            ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
+            //create a stage distribution
+            IDistribution[] stages = new IDistribution[2];
+            for (int i = 0; i < 2; i++)
+            {
+                stages[i] = IDistributionFactory.FactoryUniform(0, 30 * i, 10);
+            }
+            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, metaData);
+            //create a damage distribution
+            IDistribution[] damages = new IDistribution[3]
+            {
+                    new Uniform(0, 0, 10),
+                    new Uniform(0, 600000, 10),
+                    new Uniform(0, 600000, 10)
+            };
+            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, metaData);
+            List<UncertainPairedData> upd = new List<UncertainPairedData>();
+            upd.Add(stage_damage);
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
+                .withFlowFrequency(flow_frequency)
+                .withFlowStage(flow_stage)
+                .withStageDamages(upd)
+                .build();
+
+            RandomProvider randomProvider = new RandomProvider(seed);
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 10000, maxIterations: iterations);
+
+            ImpactAreaScenarioResults results_one = simulation.Compute(randomProvider, convergenceCriteria);
+            ImpactAreaScenarioResults results_two = simulation.Compute(randomProvider, convergenceCriteria);
+
+            //Mean EAD
+            Assert.Equal(results_one.MeanExpectedAnnualConsequences(), results_two.MeanExpectedAnnualConsequences());
+
+            //EAD Distribution
+            Assert.Equal(results_one.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.25), results_two.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.25));
+            Assert.Equal(results_one.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.50), results_two.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.5));
+            Assert.Equal(results_one.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.75), results_two.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.75));
+
+            //Mean and Median AEP
+            Assert.Equal(results_one.MeanAEP(thresholdID: 0), results_two.MeanAEP(thresholdID: 0));
+            Assert.Equal(results_one.MedianAEP(thresholdID: 0), results_two.MedianAEP(thresholdID: 0));
+
+            //AEP Distribution - Assurance of AEP
+            Assert.Equal(results_one.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.10), results_two.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.10));
+            Assert.Equal(results_one.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.04), results_two.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.04));
+            Assert.Equal(results_one.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.02), results_two.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.02));
+            Assert.Equal(results_one.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.004), results_two.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.004));
+            Assert.Equal(results_one.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.002), results_two.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.002));
+
+            //Assurance of Threshold 
+            Assert.Equal(results_one.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.90), results_two.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.90));
+            Assert.Equal(results_one.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.96), results_two.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.96));
+            Assert.Equal(results_one.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.98), results_two.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.98));
+            Assert.Equal(results_one.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.996), results_two.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.996));
+            Assert.Equal(results_one.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.998), results_two.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.998));
+        }
     }
 }
 ;
