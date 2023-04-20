@@ -1,11 +1,7 @@
 ﻿using HEC.FDA.Model.metrics;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
 using Statistics.Distributions;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HEC.FDA.ViewModel.Results
 {

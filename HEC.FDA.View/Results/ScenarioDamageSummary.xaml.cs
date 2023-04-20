@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HEC.FDA.ViewModel.Results;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,24 @@ namespace HEC.FDA.View.Results
         public ScenarioDamageSummary()
         {
             InitializeComponent();
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            //todo: this is an attempt to get the column headers correct on the middle table. It is not working.
+            //delete if this message is still here.
+            int i = 0;
+            foreach(DataGridColumn col in damCatGrid.Columns)
+            {
+                col.SetValue(FrameworkElement.NameProperty, "col" + i);
+                i++;
+            }
+
+        }
+
+        private void damCatGrid_Loaded(object sender, RoutedEventArgs e)
+        {
+            int i = 0;
         }
     }
 }
