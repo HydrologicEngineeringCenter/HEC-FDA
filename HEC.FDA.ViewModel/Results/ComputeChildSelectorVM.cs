@@ -195,7 +195,7 @@ namespace HEC.FDA.ViewModel.Results
             }
             MessageEventArgs finishedComputeMessageArgs = new MessageEventArgs(new Message("All Scenarios Computed"));
             ReportMessage(this, finishedComputeMessageArgs);
-
+            UpdateIASElementTooltips(elementList);
             var result = MessageBox.Show("Do you want to view summary results?", "Compute Finished", MessageBoxButton.YesNo, MessageBoxImage.Information);
             if (result == MessageBoxResult.Yes)
             {
@@ -206,6 +206,13 @@ namespace HEC.FDA.ViewModel.Results
             }
         }
 
+        private void UpdateIASElementTooltips(List<IASElement> elems)
+        {
+            foreach(IASElement elem in elems)
+            {
+                IASTooltipHelper.UpdateTooltip(elem);
+            }
+        }
 
         private void SelectAllRows()
         {

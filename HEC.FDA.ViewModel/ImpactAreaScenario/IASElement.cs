@@ -87,7 +87,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             }
 
             AddActions();
-            ValidateOutOfSync();
+            IASTooltipHelper.UpdateTooltip(this);
         }
 
         private void AddActions()
@@ -219,6 +219,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 {
                     ViewResults(this, new EventArgs());
                 }
+                IASTooltipHelper.UpdateTooltip(this);
             }));
         }
         #endregion

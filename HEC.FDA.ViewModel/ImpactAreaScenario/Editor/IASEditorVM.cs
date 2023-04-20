@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using HEC.CS.Collections;
+using HEC.FDA.Model.metrics;
 using HEC.FDA.ViewModel.AggregatedStageDamage;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.ImpactArea;
@@ -22,6 +23,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private SpecificIASEditorVM _SelectedEditorVM;
         private bool _HasImpactArea = true;
         private ChildElementComboItem _SelectedStageDamageElement;
+        private ScenarioResults _Results;
         #endregion
 
         #region Properties
@@ -81,7 +83,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             {
                 SelectedStageDamageElement = StageDamageElements[0];
             }
-
+            //store the results so that we can attach them on the element that we save.
+            _Results = elem.Results;
         }
 
         private void Initialize()
@@ -280,7 +283,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 }
                 else
                 {
+                    elemToSave.Results = _Results;
                     iASPersistenceManager.SaveExisting(elemToSave);
+                    IASTooltipHelper.UpdateTooltip(elemToSave);
                 }
 
                 SavingText = "Last Saved: " + elemToSave.LastEditDate;
