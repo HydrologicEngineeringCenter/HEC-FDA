@@ -125,10 +125,10 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             AddXAxis();
             AddYAxis();
         }
-        
+
         private void AddYAxis()
         {
-            Axis y; 
+            Axis y;
             if (_logYAxis)
             {
                 y = new LogarithmicAxis();
@@ -181,9 +181,9 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             var elements = ele.Descendants();
             XElement computeCompElement = elements.First();
             string componentType = computeCompElement.Name.ToString();
-            if(componentType == "GraphicalVM")
+            if (componentType == "GraphicalVM")
             {
-                    _curveComponentVM = new GraphicalVM(computeCompElement);
+                _curveComponentVM = new GraphicalVM(computeCompElement);
             }
         }
         public UncertainPairedData GetUncertainPairedData()
@@ -268,7 +268,18 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             {
                 lineSeries.LineStyle = LineStyle.Dash;
             }
-            lineSeries.DataFieldX = "X";
+            if (NormalXAxis)
+            {
+                lineSeries.DataFieldX = "ZScore";
+                lineSeries.TrackerFormatString = "X: {X:0.####}, Y: {4:F2} ";
+                lineSeries.CanTrackerInterpolatePoints = false;
+
+            }
+            else
+            {
+                lineSeries.DataFieldX = "X";
+            }
+
             lineSeries.DataFieldY = yPropertyName;
             lineSeries.ItemsSource = _curveComponentVM.SelectedItem.Data;
             _plotModel.Series.Add(lineSeries);

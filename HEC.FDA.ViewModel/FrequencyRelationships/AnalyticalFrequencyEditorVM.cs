@@ -291,7 +291,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         {
             LineSeries lineSeries = new LineSeries()
             {
-                TrackerFormatString = "X: {Probability:0.####}, Y: {4:F2} "
+                TrackerFormatString = "X: {Probability:0.####}, Y: {4:F2} ",
+                CanTrackerInterpolatePoints = false
             };
 
             NormalDataPoint[] points = new NormalDataPoint[function.Xvals.Length];
