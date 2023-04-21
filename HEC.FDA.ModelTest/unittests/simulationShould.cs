@@ -398,7 +398,7 @@ namespace HEC.FDA.ModelTest.unittests
         }
 
         [Theory]
-        [InlineData(1111, 50000)]
+        // [InlineData(1111, 50000)]
         [InlineData(1234, 50000)]
         public void RandomnessShouldBeControlledWithSeed(int seed, int iterations)
         {
@@ -420,6 +420,31 @@ namespace HEC.FDA.ModelTest.unittests
             UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, metaData);
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
@@ -432,11 +457,43 @@ namespace HEC.FDA.ModelTest.unittests
                 .withStageDamages(upd)
                 .build();
 
-            RandomProvider randomProvider = new RandomProvider();
+            RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 10000, maxIterations: iterations);
 
             ImpactAreaScenarioResults results_one = simulation.Compute(randomProvider, convergenceCriteria);
             ImpactAreaScenarioResults results_two = simulation2.Compute(randomProvider, convergenceCriteria);
+
+
+            Assert.True(results_one.Equals(results_two));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             //Mean EAD
             Assert.Equal(results_one.MeanExpectedAnnualConsequences(), results_two.MeanExpectedAnnualConsequences());

@@ -47,6 +47,7 @@ namespace HEC.MVVMFramework.Base.Implementations
         public static void Register(IReportMessage messanger)
         {
             messanger.MessageReport += Broadcast;
+            //MessageReport.AddHandler()
             _reporters.Add(messanger);
             ReporterAdded?.Invoke(null, new ReporterAddedEventArgs(messanger));
         }

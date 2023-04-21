@@ -207,6 +207,13 @@ namespace HEC.FDA.Model.structures
             public OccupancyType build()
             {
                 _occupancyType.Validate();
+                //unregister?
+                //unregister each of the objects that got built within the builder pattern 
+                //reflect on an instance of this, ask for any field that is a validation data error logger thingy
+                //on that thing, if not null, unregister 
+
+                //need something like IUnregisterFromMessageHub
+                //in computational method, at the very beginning, we call Validate()
                 return _occupancyType;
             }
             public OccupancyTypeBuilder withDamageCategory(string damageCategory)

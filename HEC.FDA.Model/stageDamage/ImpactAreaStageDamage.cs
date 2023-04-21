@@ -228,6 +228,8 @@ namespace HEC.FDA.Model.stageDamage
         public List<UncertainPairedData> Compute(IProvideRandomNumbers randomProvider)
         {
             Validate();
+            //Then Unregister 
+            //any class that inherits will have to look at all of the constituent fields and unregister if relevant
             List<UncertainPairedData> results = new List<UncertainPairedData>();
             if (ErrorLevel >= ErrorLevel.Major)
             {
