@@ -31,11 +31,11 @@ namespace HEC.FDA.View.AggregatedStageDamage
         /// <param name="e"></param>
         private void ImpactAreaFrequencyListView_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            double oneThird = .33;
+            double columnPercent = .25;
 
             ListView listView = sender as ListView;
-            List<double> columnPercents = new List<double>() { oneThird, oneThird, oneThird };
-            StretchListView(listView, 5, columnPercents);
+            List<double> columnPercents = new List<double>() { columnPercent, columnPercent, columnPercent, columnPercent };
+            StretchListView(listView, columnPercents);
         }
 
         /// <summary>
@@ -47,11 +47,11 @@ namespace HEC.FDA.View.AggregatedStageDamage
         {
             ListView listView = sender as ListView;
             List<double> columnPercents = new List<double>() { .1, .3, .3, .3 };
-            StretchListView(listView, 15, columnPercents);
+            StretchListView(listView, columnPercents);
         }
 
 
-        private void StretchListView(ListView listView, double scrollBarOffset, List<double> columnPercent)
+        private void StretchListView(ListView listView, List<double> columnPercent)
         {
             GridView gView = listView.View as GridView;
             var workingWidth = listView.ActualWidth - SystemParameters.VerticalScrollBarWidth - 15;
