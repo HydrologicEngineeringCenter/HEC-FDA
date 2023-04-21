@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.FrequencyRelationships;
+﻿using HEC.FDA.ViewModel.FlowTransforms;
+using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
@@ -15,18 +16,26 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public static string FREQUENCY_ELEMENT_ID = "FrequencyElementID";
         public static string IMPACT_AREA_ID = "ImpactAreaID";
         public static string STAGE_DISCHARGE_ELEMENT_ID = "StageDischargeElementID";
+        public static string REGULATED_UNREGULATED_ID = "RegulatedUnregulatedElementID";
 
         private StageDischargeElementWrapper _StageDischargeFunction;
         private FrequencyElementWrapper _FrequencyFunction;
+        private RegulatedUnregulatedElementWrapper _RegulatedUnregulatedFunction;
 
         public ImpactAreaRowItem ImpactArea { get; }
         
         public ObservableCollection<FrequencyElementWrapper> FrequencyFunctions { get;  }
+        public ObservableCollection<RegulatedUnregulatedElementWrapper> RegulatedUnregulatedFunctions { get; }
 
         public FrequencyElementWrapper FrequencyFunction
         {
             get { return _FrequencyFunction; }
             set { _FrequencyFunction = value; NotifyPropertyChanged(); }
+        }
+        public RegulatedUnregulatedElementWrapper RegulatedUnregulatedFunction
+        {
+            get { return _RegulatedUnregulatedFunction; }
+            set { _RegulatedUnregulatedFunction = value; NotifyPropertyChanged(); }
         }
 
         public ObservableCollection<StageDischargeElementWrapper> StageDischargeFunctions { get;  }
@@ -37,13 +46,17 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             set { _StageDischargeFunction = value; NotifyPropertyChanged(); }
         }
 
-        public ImpactAreaFrequencyFunctionRowItem( ImpactAreaRowItem selectedImpactArea, List<AnalyticalFrequencyElement> frequencyFunctions,  List<StageDischargeElement> stageDischargeFunctions)
+        public ImpactAreaFrequencyFunctionRowItem( ImpactAreaRowItem selectedImpactArea, List<AnalyticalFrequencyElement> frequencyFunctions,  
+            List<StageDischargeElement> stageDischargeFunctions, List<InflowOutflowElement> regulatedUnregulatedElements)
         {
             StageDischargeFunctions = CreateStageDischargeWrappers(stageDischargeFunctions);
             StageDischargeFunction = StageDischargeFunctions[0];
 
             FrequencyFunctions = CreateFrequencyWrappers(frequencyFunctions);
             FrequencyFunction = FrequencyFunctions[0];
+
+            //I am not selecting one because we default to the blank row.
+            RegulatedUnregulatedFunctions = CreateRegulatedUnregulatedWrappers(regulatedUnregulatedElements);
 
             ImpactArea = selectedImpactArea;          
         }
@@ -53,6 +66,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             int impID = Convert.ToInt32(rowXML.Attribute(IMPACT_AREA_ID)?.Value);
             int freqID = Convert.ToInt32(rowXML.Attribute(FREQUENCY_ELEMENT_ID)?.Value);
             int stageDischargeID = Convert.ToInt32(rowXML.Attribute(STAGE_DISCHARGE_ELEMENT_ID)?.Value);
+            int regUnregID = Convert.ToInt32(rowXML.Attribute(REGULATED_UNREGULATED_ID)?.Value);
 
             //now get the elements from the study cache and match them up
             if (StudyCache != null)
@@ -83,6 +97,17 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                     }
                 }
 
+                List<InflowOutflowElement> regulatedUnregulatedElements = StudyCache.GetChildElementsOfType<InflowOutflowElement>();
+                InflowOutflowElement selectedRegulatedUnregulatedFunction = null;
+                foreach (InflowOutflowElement elem in regulatedUnregulatedElements)
+                {
+                    if (elem.ID == regUnregID)
+                    {
+                        selectedRegulatedUnregulatedFunction = elem;
+                        break;
+                    }
+                }
+
                 List<StageDischargeElement> ratingCurveElements = StudyCache.GetChildElementsOfType<StageDischargeElement>();
                 StageDischargeElement selectedStageDischargeFunction = null;
                 foreach (StageDischargeElement elem in ratingCurveElements)
@@ -95,9 +120,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 }
                 FrequencyFunctions = CreateFrequencyWrappers(analyticalFrequencyElements);
                 StageDischargeFunctions = CreateStageDischargeWrappers(ratingCurveElements);
+                RegulatedUnregulatedFunctions = CreateRegulatedUnregulatedWrappers(regulatedUnregulatedElements);
 
                 SelectSelectedFrequencyFunction(selectedFrequencyFunction);
                 SelectSelectedStageDischargeFunction(selectedStageDischargeFunction);
+                SelectSelectedRegulatedUnregulatedFunction(selectedRegulatedUnregulatedFunction);
             }
         }
 
@@ -132,6 +159,21 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
         }
 
+        private void SelectSelectedRegulatedUnregulatedFunction(InflowOutflowElement selectedRegUnregFunction)
+        {
+            if (selectedRegUnregFunction != null)
+            {
+                foreach (RegulatedUnregulatedElementWrapper wrapper in RegulatedUnregulatedFunctions)
+                {
+                    if (wrapper.Element != null && wrapper.Element.ID == selectedRegUnregFunction.ID)
+                    {
+                        RegulatedUnregulatedFunction = wrapper;
+                        break;
+                    }
+                }
+            }
+        }
+
         private ObservableCollection<FrequencyElementWrapper> CreateFrequencyWrappers(List<AnalyticalFrequencyElement> frequencyFunctions)
         {
             ObservableCollection<FrequencyElementWrapper> frequencyWrappers = new ObservableCollection<FrequencyElementWrapper>();
@@ -142,6 +184,17 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 frequencyWrappers.Add(new FrequencyElementWrapper(elem));
             }
             return frequencyWrappers;
+        }
+        private ObservableCollection<RegulatedUnregulatedElementWrapper> CreateRegulatedUnregulatedWrappers(List<InflowOutflowElement> inflowOutflowElement)
+        {
+            ObservableCollection<RegulatedUnregulatedElementWrapper> regWrappers = new ObservableCollection<RegulatedUnregulatedElementWrapper>();
+            //add blank row
+            regWrappers.Add(new RegulatedUnregulatedElementWrapper());
+            foreach (InflowOutflowElement elem in inflowOutflowElement)
+            {
+                regWrappers.Add(new RegulatedUnregulatedElementWrapper(elem));
+            }
+            return regWrappers;
         }
 
         private ObservableCollection<StageDischargeElementWrapper> CreateStageDischargeWrappers(List<StageDischargeElement> stageDischargeFunctions)
@@ -206,6 +259,13 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 stageDischargeID = StageDischargeFunction.Element.ID;
             }
             impactAreaFrequencyRowElement.SetAttributeValue(STAGE_DISCHARGE_ELEMENT_ID, stageDischargeID);
+
+            int regulatedUnregulatedID = -1;
+            if (RegulatedUnregulatedFunction != null && RegulatedUnregulatedFunction.Element != null)
+            {
+                regulatedUnregulatedID = RegulatedUnregulatedFunction.Element.ID;
+            }
+            impactAreaFrequencyRowElement.SetAttributeValue(REGULATED_UNREGULATED_ID, regulatedUnregulatedID);
 
             return impactAreaFrequencyRowElement;
         }
