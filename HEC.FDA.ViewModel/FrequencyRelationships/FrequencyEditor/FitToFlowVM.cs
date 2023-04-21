@@ -4,7 +4,7 @@ using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
 {
-    internal class FitToFlowVM:ParameterEntryVM
+    public class FitToFlowVM:ParameterEntryVM
     {
         private readonly ObservableCollection<FlowDoubleWrapper> _AnalyticalFlows = new ObservableCollection<FlowDoubleWrapper>();
         public ObservableCollection<FlowDoubleWrapper> AnalyticalFlows

@@ -6,24 +6,24 @@
              xmlns:FEcontrols="clr-namespace:HEC.FDA.ViewTest.FrequencyEditor"
              xmlns:FEvm="clr-namespace:HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor;assembly=HEC.FDA.ViewModel"
              xmlns:TWPcontrols="clr-namespace:HEC.FDA.ViewTest.TableWithPlot"
-             xmlns:TWPvm ="clr-namespace:HEC.FDA.ViewModel.TableWithPlot;assembly=HEC.FDA.ViewModel"
+             xmlns:TWPvm ="clr-namespace:HEC.FDA.ViewModel.TableWithPlot;assembly=HEC.FDA.ViewModel" d:DataContext="{d:DesignInstance Type=FEvm:FrequencyEditorVM}"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="VisibleIfTrueConverter"/>
-    </UserControl.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="35"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" Grid.Row="0">
-            <Label Content="Analytical "/>
-            <RadioButton Margin="5" x:Name="AnalyticButton" GroupName="ffType" IsChecked="{Binding Path=IsAnalytic, Mode=OneWay}"/>
-            <Label Content="Graphical "/>
-            <RadioButton Margin="5" x:Name="GraphicalButton" GroupName="ffType" IsChecked="{Binding Path=IsGraphical, Mode=TwoWay}"/>
-        </StackPanel>
-        <FEcontrols:GraphicalControl Grid.Row="1" Visibility="{Binding ElementName=GraphicalButton, Path=IsChecked, Converter={StaticResource VisibleIfTrueConverter}}" DataContext="{Binding MyGraphicalVM}"/>
-        <FEcontrols:AnalyticalControl Grid.Row="1" Visibility="{Binding ElementName=AnalyticButton, Path=IsChecked, Converter={StaticResource VisibleIfTrueConverter}}" DataContext="{Binding MyLogPearson3VM}" />
-    </Grid>
+             d:DesignHeight="450" d:DesignWidth="800" d:Background="AliceBlue">
+  <UserControl.Resources>
+    <BooleanToVisibilityConverter x:Key="VisibleIfTrueConverter"/>
+  </UserControl.Resources>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="35"/>
+      <RowDefinition/>
+    </Grid.RowDefinitions>
+    <StackPanel Orientation="Horizontal" Grid.Row="0">
+      <Label Content="Analytical "/>
+      <RadioButton Margin="5" x:Name="AnalyticButton" GroupName="graphOrAnal" IsChecked="{Binding Path=IsAnalytic, Mode=OneWay}"/>
+      <Label Content="Graphical "/>
+      <RadioButton Margin="5" x:Name="GraphicalButton" GroupName="graphOrAnal" IsChecked="{Binding Path=IsGraphical, Mode=TwoWay}"/>
+    </StackPanel>
+    <FEcontrols:GraphicalControl Grid.Row="1" Visibility="{Binding ElementName=GraphicalButton, Path=IsChecked, Converter={StaticResource VisibleIfTrueConverter}}" DataContext="{Binding GraphicalVM}"/>
+    <FEcontrols:AnalyticalControl Grid.Row="1" Visibility="{Binding ElementName=AnalyticButton, Path=IsChecked, Converter={StaticResource VisibleIfTrueConverter}}" DataContext="{Binding AnalyticalVM}" />
+  </Grid>
 </UserControl>

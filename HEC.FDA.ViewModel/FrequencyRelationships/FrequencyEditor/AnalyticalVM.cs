@@ -3,7 +3,7 @@ using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
 {
-    internal class AnalyticalVM: BaseViewModel
+    public class AnalyticalVM: BaseViewModel
     {
         #region Fields
         private CurveComponentVM _fitToFlowVM;

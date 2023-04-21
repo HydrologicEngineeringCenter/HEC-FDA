@@ -1,13 +1,14 @@
 ﻿using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.TableWithPlot;
+using HEC.MVVMFramework.ViewModel.Implementations;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
 {
-	public class FrequencyEditorVM:BaseEditorVM
+	public class FrequencyEditorVM:ValidatingBaseViewModel
     {
         #region Fields
         private BaseViewModel _analyticalVM;
-        private CurveComponentVM _graphicalVM;
+        private TableWithPlotVM _graphicalVM;
         private bool _isGraphical = false; //new windows open with analytical vm open
         #endregion
         #region Properties
@@ -16,7 +17,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
 			get { return _analyticalVM; }
 			set { _analyticalVM = value; }
 		}
-		public CurveComponentVM GraphicalVM
+		public TableWithPlotVM GraphicalVM
 		{
 			get { return _graphicalVM; }
 			set { _graphicalVM = value; }
@@ -37,19 +38,12 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         }
         #endregion
         #region Constructors
-        public FrequencyEditorVM(EditorActionManager actionManager) : base(actionManager)
-		{
-
-		}
-		public FrequencyEditorVM(AnalyticalFrequencyElement elem, EditorActionManager actionManager) : base(elem, actionManager)
-		{
-
-		}
-
-        public override void Save()
+        public FrequencyEditorVM()
         {
-            throw new System.NotImplementedException();
+            AnalyticalVM = new AnalyticalVM();
+            GraphicalVM = new TableWithPlotVM(new GraphicalVM("name","x","y"));
         }
+
         #endregion
 
 

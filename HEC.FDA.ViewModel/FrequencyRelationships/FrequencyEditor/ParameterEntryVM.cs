@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
 {
-    internal class ParameterEntryVM: CurveComponentVM
+    public class ParameterEntryVM: CurveComponentVM
     {
         private LogPearson3 _lP3Distriution;
 
