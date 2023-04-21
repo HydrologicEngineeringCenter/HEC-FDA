@@ -1,6 +1,7 @@
 ﻿using HEC.FDA.Model.paireddata;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces;
+using HEC.FDA.ViewModel.TableWithPlot.Enumerables;
 using HEC.FDA.ViewModel.TableWithPlot.Rows;
 using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
 using HEC.FDA.ViewModel.Utilities;
@@ -10,6 +11,7 @@ using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Legends;
 using OxyPlot.Series;
+using Statistics.Distributions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,9 +32,19 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         private bool _tableExtended = true;
         public event UpdatePlotEventHandler UpdatePlotEvent;
         private bool _reverseXAxis;
+        private bool _normalXAxis = false;
+        private bool _logYAxis = false;
         #endregion
 
         #region Properties
+        public bool NormalXAxis
+        {
+            get { return _normalXAxis; }
+        }
+        public bool LogYAxis
+        {
+            get { return _logYAxis; }
+        }
         public bool ReverseXAxis
         {
             get { return _reverseXAxis; }
@@ -66,9 +78,11 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         #endregion
 
         #region Constructors
-        public TableWithPlotVM(CurveComponentVM curveComponentVM, bool reverseXAxis = false)
+        public TableWithPlotVM(CurveComponentVM curveComponentVM, bool reverseXAxis = false, bool normalXAxis = false, bool logYAxis = false)
         {
             _reverseXAxis = reverseXAxis;
+            _normalXAxis = normalXAxis;
+            _logYAxis = logYAxis;
             _curveComponentVM = curveComponentVM;
             Initialize();
         }
@@ -84,55 +98,92 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         private void Initialize()
         {
             _curveComponentVM.PropertyChanged += _curveComponentVM_PropertyChanged;
-            InitPlotModel(_plotModel);
-            SelectedItemToPlotModel();
-
+            InitPlotModel();
             AddHandlers();
         }
-
-        public void InitModel()
+        private void InitPlotModel()
         {
             _plotModel = new ViewResolvingPlotModel();
-            InitPlotModel(_plotModel);
+            _plotModel.Title = _curveComponentVM.Name;
+            AddLegend();
+            if (_reverseXAxis)
+            {
+                AddAxes();
+            }
             SelectedItemToPlotModel();
         }
 
-        private void InitPlotModel(PlotModel plotModel)
+        private void AddLegend()
         {
-            plotModel.Title = _curveComponentVM.Name;
-            
             Legend legend = new Legend();
-            legend.LegendPosition= LegendPosition.BottomRight;
-            plotModel.Legends.Add(legend);
+            legend.LegendPosition = LegendPosition.BottomRight;
+            _plotModel.Legends.Add(legend);
+        }
 
+        private void AddAxes()
+        {
+            AddXAxis();
+            AddYAxis();
+        }
+
+        private void AddYAxis()
+        {
+            Axis y;
+            if (_logYAxis)
+            {
+                y = new LogarithmicAxis();
+            }
+            else
+            {
+                y = new LinearAxis();
+            }
+            y.Position = AxisPosition.Left;
+        }
+
+        private void AddXAxis()
+        {
+            LinearAxis x = new LinearAxis();
+            x.Position = AxisPosition.Bottom;
             if (_reverseXAxis)
             {
-                LinearAxis x = new LinearAxis()
-                {
-                    Position = AxisPosition.Bottom,
-                    StartPosition = 1,
-                    EndPosition = 0
-                };
-                plotModel.Axes.Add(x);
+                x.StartPosition = 1;
+                x.EndPosition = 0;
             }
+            if (_normalXAxis)
+            {
+                x.LabelFormatter = _probabilityFormatter;
+            }
+            _plotModel.Axes.Add(x);
+        }
+
+        private static string _probabilityFormatter(double d)
+        {
+            Normal standardNormal = new Normal(0, 1);
+            double value = standardNormal.CDF(d);
+            string stringval = value.ToString("0.0000");
+            return stringval;
         }
 
         public XElement ToXML()
         {
             XElement ele = new XElement(this.GetType().Name);
             ele.SetAttributeValue(nameof(ReverseXAxis), ReverseXAxis);
+            ele.SetAttributeValue(nameof(LogYAxis), LogYAxis);
+            ele.SetAttributeValue(nameof(NormalXAxis), NormalXAxis);
             ele.Add(CurveComponentVM.ToXML());
             return ele;
         }
         private void LoadFromXML(XElement ele)
         {
             _reverseXAxis = bool.Parse(ele.Attribute(nameof(ReverseXAxis)).Value);
+            _logYAxis = bool.Parse(ele.Attribute(nameof(LogYAxis)).Value);
+            _normalXAxis = bool.Parse(ele.Attribute(nameof(NormalXAxis)).Value);
             var elements = ele.Descendants();
             XElement computeCompElement = elements.First();
             string componentType = computeCompElement.Name.ToString();
-            if(componentType == "GraphicalVM")
+            if (componentType == "GraphicalVM")
             {
-                    _curveComponentVM = new GraphicalVM(computeCompElement);
+                _curveComponentVM = new GraphicalVM(computeCompElement);
             }
         }
         public UncertainPairedData GetUncertainPairedData()
@@ -185,33 +236,53 @@ namespace HEC.FDA.ViewModel.TableWithPlot
                 DisplayAsLineAttribute dispAsLineAttribute = (DisplayAsLineAttribute)pi.GetCustomAttribute(typeof(DisplayAsLineAttribute));
                 if (dispAsLineAttribute != null)
                 {
-                    LineSeries lineSeries = new LineSeries();
-                    lineSeries.Title = dispAsLineAttribute.DisplayName;
-                    switch (dispAsLineAttribute.Color)
-                    {
-                        case Enumerables.ColorEnum.Black:
-                            lineSeries.Color = OxyColors.Black;//OxyColor.FromRgb(0, 0, 0);
-                            break;
-                        case Enumerables.ColorEnum.Blue:
-                            lineSeries.Color = OxyColors.Blue;// OxyColor.FromRgb(0, 0, 255);
-                            break;
-                        case Enumerables.ColorEnum.Red:
-                            lineSeries.Color = OxyColors.Red;//OxyColor.FromRgb(255, 0, 0);
-                            break;
-                        default:
-                            break;
-                    }
-                    if (dispAsLineAttribute.Dashed)
-                    {
-                        lineSeries.LineStyle = LineStyle.Dash;
-                    }
-                    lineSeries.DataFieldX = "X";
-                    lineSeries.DataFieldY = pi.Name;
-                    lineSeries.ItemsSource = _curveComponentVM.SelectedItem.Data;
-                    _plotModel.Series.Add(lineSeries);
+                    string yPropertyName = pi.Name;
+                    string displayName = dispAsLineAttribute.DisplayName;
+                    bool dashed = dispAsLineAttribute.Dashed;
+                    ColorEnum color = dispAsLineAttribute.Color;
+                    AddLineSeries(displayName, color, yPropertyName, dashed);
                 }
             }
             _plotModel.InvalidatePlot(true);
+        }
+
+        private void AddLineSeries(string displayName, ColorEnum color, string yPropertyName, bool dashed)
+        {
+            LineSeries lineSeries = new LineSeries();
+            lineSeries.Title = displayName;
+            switch (color)
+            {
+                case Enumerables.ColorEnum.Black:
+                    lineSeries.Color = OxyColors.Black;//OxyColor.FromRgb(0, 0, 0);
+                    break;
+                case Enumerables.ColorEnum.Blue:
+                    lineSeries.Color = OxyColors.Blue;// OxyColor.FromRgb(0, 0, 255);
+                    break;
+                case Enumerables.ColorEnum.Red:
+                    lineSeries.Color = OxyColors.Red;//OxyColor.FromRgb(255, 0, 0);
+                    break;
+                default:
+                    break;
+            }
+            if (dashed)
+            {
+                lineSeries.LineStyle = LineStyle.Dash;
+            }
+            if (NormalXAxis)
+            {
+                lineSeries.DataFieldX = "ZScore";
+                lineSeries.TrackerFormatString = "X: {X:0.####}, Y: {4:F2} ";
+                lineSeries.CanTrackerInterpolatePoints = false;
+
+            }
+            else
+            {
+                lineSeries.DataFieldX = "X";
+            }
+
+            lineSeries.DataFieldY = yPropertyName;
+            lineSeries.ItemsSource = _curveComponentVM.SelectedItem.Data;
+            _plotModel.Series.Add(lineSeries);
         }
 
         private void _curveComponentVM_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
