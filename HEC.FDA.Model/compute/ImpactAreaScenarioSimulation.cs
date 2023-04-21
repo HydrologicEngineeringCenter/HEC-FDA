@@ -85,6 +85,12 @@ namespace HEC.FDA.Model.compute
             _impactAreaID = impactAreaID;
             _impactAreaScenarioResults = new ImpactAreaScenarioResults(_impactAreaID);
         }
+
+        public ImpactAreaScenarioResults Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria)
+        {
+            return Compute(randomProvider, convergenceCriteria, new CancellationToken());
+        }
+
         /// <summary>
         /// A simulation must be built with a stage damage function for compute default threshold to be true.
         /// </summary>

@@ -50,6 +50,10 @@ namespace HEC.FDA.Model.scenarios
         }
         #endregion
         #region Methods
+        public ScenarioResults Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria)
+        {
+            return Compute(randomProvider, convergenceCriteria, new CancellationToken());
+        }
         public ScenarioResults Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, CancellationToken cancellationToken,
             bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false)
         {

@@ -4,27 +4,38 @@ using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.scenarios;
 using HEC.FDA.ViewModel.Compute;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
+using HEC.FDA.ViewModel.Results;
 using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace HEC.FDA.ViewModel.Results
+namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
 {
-    public class ComputeChildSelectorVM : ComputeWithProgressAndMessagesBase, IProgressReport
+    public class AlternativesSelectorVM : ComputeWithProgressAndMessagesBase, IProgressReport
     {
+
         private const string CANCEL_COMPUTE = "Cancel Compute";
         private const string COMPUTE = "Compute";
 
         private string _ComputeButtonLabel = COMPUTE;
         private CancellationTokenSource _CancellationToken;
         private bool _AllSelected;
+        public enum ChildType
+        {
+            SCENARIOS,
+            ALTERNATIVES
+        }
+
+        private ChildType _ChildType;
 
         public event ProgressReportedEventHandler ProgressReport;
         public event MessageReportedEventHandler MessageReport;
@@ -43,35 +54,36 @@ namespace HEC.FDA.ViewModel.Results
 
         public CustomObservableCollection<ComputeChildRowItem> Rows { get; } = new CustomObservableCollection<ComputeChildRowItem>();
 
-        public ComputeChildSelectorVM()
+        public AlternativesSelectorVM()
         {
-            //todo: is this register correct?
             MessageHub.Register(this);
-            LoadScenarios();
-            ValidateScenarios();
-            ListenToIASEvents();
+
+            LoadAlternatives();
+            //validate alts?
+
+            ListenToAlternativeEvents();
         }
 
-        private void ListenToIASEvents()
+        private void ListenToAlternativeEvents()
         {
-            StudyCache.IASElementAdded += IASAdded;
-            StudyCache.IASElementRemoved += IASRemoved;
-            StudyCache.IASElementUpdated += IASUpdated;
+            StudyCache.AlternativeAdded += AlternativeAdded;
+            StudyCache.AlternativeRemoved += AlternativeRemoved;
+            StudyCache.AlternativeUpdated += AlternativeUpdated;
         }
 
-        private void IASAdded(object sender, ElementAddedEventArgs e)
+        private void AlternativeAdded(object sender, ElementAddedEventArgs e)
         {
             ComputeChildRowItem newRow = new ComputeChildRowItem((IASElement)e.Element);
             Rows.Add(newRow);
             ValidateScenario(newRow);
         }
 
-        private void IASRemoved(object sender, ElementAddedEventArgs e)
+        private void AlternativeRemoved(object sender, ElementAddedEventArgs e)
         {
             Rows.Remove(Rows.Where(row => row.ChildElement.ID == e.Element.ID).Single());
         }
 
-        private void IASUpdated(object sender, ElementUpdatedEventArgs e)
+        private void AlternativeUpdated(object sender, ElementUpdatedEventArgs e)
         {
             IASElement newElement = (IASElement)e.NewElement;
             int idToUpdate = newElement.ID;
@@ -93,7 +105,17 @@ namespace HEC.FDA.ViewModel.Results
             {
                 Rows.Add(new ComputeChildRowItem(elem));
             }
-        }    
+        }
+
+        private void LoadAlternatives()
+        {
+            List<AlternativeElement> elems = StudyCache.GetChildElementsOfType<AlternativeElement>();
+
+            foreach (AlternativeElement elem in elems)
+            {
+                Rows.Add(new ComputeChildRowItem(elem));
+            }
+        }
 
         private List<ComputeChildRowItem> GetSelectedRows()
         {
@@ -107,7 +129,7 @@ namespace HEC.FDA.ViewModel.Results
             }
             return selectedRows;
         }
-        
+
         public void ComputeClicked()
         {
             if (ComputeButtonLabel.Equals(CANCEL_COMPUTE))
@@ -120,10 +142,14 @@ namespace HEC.FDA.ViewModel.Results
                 List<ComputeChildRowItem> computeChildRowItems = GetSelectedRows();
                 if (computeChildRowItems.Count > 0)
                 {
-                    ComputeScenarios(computeChildRowItems);
+                    if (_ChildType == ChildType.SCENARIOS)
+                    {
+                        ComputeScenarios(computeChildRowItems);
+                    }
                     ComputeButtonLabel = CANCEL_COMPUTE;
                 }
             }
+
         }
 
         private async void ComputeScenarios(List<ComputeChildRowItem> scenarioRows)
@@ -175,7 +201,7 @@ namespace HEC.FDA.ViewModel.Results
 
         private void UpdateIASElementTooltips(List<IASElement> elems)
         {
-            foreach(IASElement elem in elems)
+            foreach (IASElement elem in elems)
             {
                 IASTooltipHelper.UpdateTooltip(elem);
             }
@@ -183,7 +209,7 @@ namespace HEC.FDA.ViewModel.Results
 
         private void SelectAllRows()
         {
-            foreach( ComputeChildRowItem row in Rows)
+            foreach (ComputeChildRowItem row in Rows)
             {
                 if (!row.HasError)
                 {
@@ -248,5 +274,6 @@ namespace HEC.FDA.ViewModel.Results
                 _CancellationToken.Cancel();
             }
         }
+
     }
 }

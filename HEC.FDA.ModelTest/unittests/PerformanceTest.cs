@@ -10,6 +10,7 @@ using HEC.FDA.Model.compute;
 using System.Threading.Tasks;
 using HEC.FDA.Model.interfaces;
 using System.ComponentModel;
+using System.Threading;
 
 namespace HEC.FDA.ModelTest.unittests
 {
@@ -75,7 +76,7 @@ namespace HEC.FDA.ModelTest.unittests
                 .build();
 
             MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
-            ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, cc, false);
+            ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, cc,new CancellationToken(), false);
 
             double actualAEP = results.MeanAEP(thresholdID);
             double actualLTEP = results.LongTermExceedanceProbability(thresholdID, years);
@@ -127,7 +128,7 @@ namespace HEC.FDA.ModelTest.unittests
                 .build();
 
             MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
-            ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, cc, false);
+            ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, cc, new CancellationToken(),false);
             double actual = results.MeanAEP(thresholdID);
 
 
@@ -206,7 +207,7 @@ namespace HEC.FDA.ModelTest.unittests
 
 
             RandomProvider randomProvider = new RandomProvider(seed);
-            ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria, false);
+            ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria, new CancellationToken(), false);
             ImpactAreaScenarioResults resultsWithLevee = simulationWithLevee.Compute(randomProvider, convergenceCriteria);
 
             double actualAssuranceOfThreshold = results.AssuranceOfEvent(thresholdID, recurrenceInterval);
@@ -310,7 +311,7 @@ namespace HEC.FDA.ModelTest.unittests
                 .build();
 
             RandomProvider randomProvider = new RandomProvider(seed);
-            ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc, false);
+            ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc, new CancellationToken(), false);
             XElement xElement = results.PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.WriteToXML();
             SystemPerformanceResults projectPerformanceResults = SystemPerformanceResults.ReadFromXML(xElement);
             bool success = results.PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.Equals(projectPerformanceResults);

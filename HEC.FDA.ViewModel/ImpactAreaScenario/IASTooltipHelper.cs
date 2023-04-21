@@ -15,19 +15,17 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             StringBuilder sb = new StringBuilder();
             bool hasResults = elem.Results != null;
 
-                //check if the elements that the scenario points to still exists.
-                FdaValidationResult vr = elem.CanCompute();
+            //check if the elements that the scenario points to still exists.
+            FdaValidationResult vr = elem.CanCompute();
             if (!vr.IsValid)
             {
-                //put red exclamation point?
                 sb.AppendLine(vr.ErrorMessage);
                 sb.AppendLine("Last Edited: " + elem.LastEditDate);
                 if (hasResults)
                 {
                     sb.AppendLine("Last Computed: " + GetComputeDate(elem));
                 }
-                elem.CustomTreeViewHeader.Decoration = "!";
-
+                elem.CustomTreeViewHeader.Decoration = ImageSources.ERROR_IMAGE;
             }
             else
             {
@@ -43,20 +41,17 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
                         DateTime lastEditDate = DateTime.Parse(elem.LastEditDate);
                         DateTime computeDate = DateTime.Parse(lastCompute);
-                        elem.CustomTreeViewHeader.Decoration = "$";
+                        elem.CustomTreeViewHeader.Decoration = ImageSources.GREEN_CHECKMARK_IMAGE;
 
-                        //todo: im not sure this is possible. If the user saves the scenario the results get clobbard. 
                         if (lastEditDate > computeDate)
                         {
-                            //var seconds = (date1 - date2).TotalSeconds;
                             sb.AppendLine("Changes have been made since last compute.");
-                            elem.CustomTreeViewHeader.Decoration = "*";
-
+                            elem.CustomTreeViewHeader.Decoration = ImageSources.CAUTION_IMAGE;
                         }
 
                     }
                 }
-                
+
             }
             //remove last new line char
             string tooltipMsg = sb.ToString();

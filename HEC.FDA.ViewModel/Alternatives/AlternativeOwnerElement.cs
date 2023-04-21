@@ -57,7 +57,7 @@ namespace HEC.FDA.ViewModel.Alternatives
         }
         public void ComputeAlternatives(object arg1, EventArgs arg2)
         {
-            ComputeChildSelectorVM vm = new ComputeChildSelectorVM(ComputeChildSelectorVM.ChildType.ALTERNATIVES);
+            ComputeChildSelectorVM vm = new ComputeChildSelectorVM();
             vm.RequestNavigation += Navigate;
             DynamicTabVM tab = new DynamicTabVM("View Alternative Results", vm, "ViewAlternativeResults");
             Navigate(tab, false, false);

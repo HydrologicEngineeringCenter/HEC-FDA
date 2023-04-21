@@ -113,7 +113,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
         public void ComputeScenarios(object arg1, EventArgs arg2)
         {
-            ComputeChildSelectorVM vm = new ComputeChildSelectorVM(ComputeChildSelectorVM.ChildType.SCENARIOS);
+            ComputeChildSelectorVM vm = new ComputeChildSelectorVM();
             vm.RequestNavigation += Navigate;
             //todo: add to string constants
             DynamicTabVM tab = new DynamicTabVM(StringConstants.COMPUTE_SCENARIOS_HEADER, vm, StringConstants.COMPUTE_SCENARIOS_HEADER);
