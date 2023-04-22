@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Base.Implementations;
+using Statistics.Distributions;
 
 namespace HEC.FDA.ViewModel.TableWithPlot.Rows
 {
@@ -12,6 +13,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
         protected abstract List<string> YMaxProperties { get; }
         public abstract double X { get; set; }
         public IDistribution Y { get; set; }
+        public double ZScore { get{return Normal.StandardNormalInverseCDF(X);} }
         public SequentialRow PreviousRow { get; set; }
         public SequentialRow NextRow { get; set; }
         public bool IsStrictMonotonic { get; set; }

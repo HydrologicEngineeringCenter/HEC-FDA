@@ -1,5 +1,6 @@
 ﻿using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.stageDamage;
+using HEC.FDA.ViewModel.FlowTransforms;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.ImpactArea;
@@ -115,6 +116,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             StudyCache.FlowFrequencyAdded += AddFlowFreqElement;
             StudyCache.FlowFrequencyRemoved += RemoveFlowFreqElement;
             StudyCache.FlowFrequencyUpdated += UpdateFlowFreqElement;
+
+            StudyCache.InflowOutflowAdded += AddRegUnregElement;
+            StudyCache.InflowOutflowRemoved += RemoveRegUnregElement;
+            StudyCache.InflowOutflowUpdated += UpdateRegUnregElement;
 
             StudyCache.RatingAdded += AddRatingElement;
             StudyCache.RatingRemoved += RemoveRatingElement;
@@ -310,6 +315,48 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }        
         }
 
+        private void AddRegUnregElement(object sender, ElementAddedEventArgs e)
+        {
+            foreach (ImpactAreaFrequencyFunctionRowItem row in ImpactAreaFrequencyRows)
+            {
+                row.RegulatedUnregulatedFunctions.Add(new RegulatedUnregulatedElementWrapper((InflowOutflowElement)e.Element));
+            }
+        }
+
+        private void RemoveRegUnregElement(object sender, ElementAddedEventArgs e)
+        {
+            foreach (ImpactAreaFrequencyFunctionRowItem row in ImpactAreaFrequencyRows)
+            {
+                row.RegulatedUnregulatedFunctions.Remove(row.RegulatedUnregulatedFunctions.Single(s =>
+                {
+                    if (s.Element != null && s.Element.ID == e.Element.ID)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
+                }));
+            }
+        }
+
+        private void UpdateRegUnregElement(object sender, ElementUpdatedEventArgs e)
+        {
+
+            foreach (ImpactAreaFrequencyFunctionRowItem row in ImpactAreaFrequencyRows)
+            {
+                foreach (RegulatedUnregulatedElementWrapper freq in row.RegulatedUnregulatedFunctions)
+                {
+                    if (freq.Element != null && freq.Element.ID == e.NewElement.ID)
+                    {
+                        freq.Element = (InflowOutflowElement)e.NewElement;
+                    }
+                }
+            }
+        }
+
         #endregion
 
         private void LoadNewImpactAreaFrequencyRows()
@@ -320,10 +367,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 List<ImpactAreaRowItem> impactAreaRowsCollection = impAreaElems[0].ImpactAreaRows;
                 List<AnalyticalFrequencyElement> analyticalFrequencyElements = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();
                 List<StageDischargeElement> ratingCurveElements = StudyCache.GetChildElementsOfType<StageDischargeElement>();
+                List<InflowOutflowElement> inflowOutflowElements = StudyCache.GetChildElementsOfType<InflowOutflowElement>();
 
                 foreach (ImpactAreaRowItem impactAreaRow in impactAreaRowsCollection)
                 {
-                    ImpactAreaFrequencyFunctionRowItem newRow = new ImpactAreaFrequencyFunctionRowItem(impactAreaRow, analyticalFrequencyElements, ratingCurveElements);
+                    ImpactAreaFrequencyFunctionRowItem newRow = new ImpactAreaFrequencyFunctionRowItem(impactAreaRow, analyticalFrequencyElements, ratingCurveElements, inflowOutflowElements);
                     //register for "HasChanges"
                     RegisterChildViewModel(newRow);
                     ImpactAreaFrequencyRows.Add(newRow);
