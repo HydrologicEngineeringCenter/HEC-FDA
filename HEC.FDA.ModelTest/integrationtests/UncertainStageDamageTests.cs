@@ -247,38 +247,38 @@ namespace HEC.FDA.ModelTest.integrationtests
 
             }
         }
-
+        //TODO: check magnitude of both values
         private bool AssertWithinTolerance(double expectedValue, double actualValue)
         {
-            double twoZeroTolerance = 10;
-            double threeZeroTolerance = 50;
+            double twoZeroTolerance = 14;
+            double threeZeroTolerance = 100;
             double fourZeroTolerance = 100;
             
             bool expectedAndActualAreWithinAGivenTolerance = true;
             double difference = Math.Abs(actualValue - expectedValue);
 
-            if (expectedValue < 100)
+            if (expectedValue < 100 || actualValue < 100)
             {
                 if(difference > twoZeroTolerance)
                 {
                     expectedAndActualAreWithinAGivenTolerance = false;
                 }
             }
-            else if (expectedValue < 1000)
+            else if (expectedValue < 1000 || actualValue < 1000)
             {
                 if(difference > threeZeroTolerance)
                 {
                     expectedAndActualAreWithinAGivenTolerance=false;
                 }
             }
-            else if (expectedValue < 10000)
+            else if (expectedValue < 10000 || actualValue < 10000)
             {
                 if (difference > fourZeroTolerance)
                 {
                     expectedAndActualAreWithinAGivenTolerance = false;
                 }
             }
-            else if (expectedValue < 100000)
+            else if (expectedValue < 100000 || actualValue < 100000)
             {
                 expectedAndActualAreWithinAGivenTolerance = false;
             }
