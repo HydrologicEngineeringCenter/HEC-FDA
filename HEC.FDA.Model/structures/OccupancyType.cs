@@ -32,11 +32,15 @@ namespace HEC.FDA.Model.structures
         private UncertainPairedData _OtherDepthPercentDamageFunction;
 
         private FirstFloorElevationUncertainty _firstFloorElevationError;
+        private bool _firstFloorElevationIsLogNormal = false;
         private ValueUncertainty _structureValueError;
+        private bool _structureValueIsLogNormal = false;
         private ValueUncertainty _contentValueError;
+        private bool _contentValueIsLogNormal = false;
         private ValueUncertainty _vehicleValueError;
+        private bool _vehicleValueIsLogNormal = false;
         private ValueUncertainty _otherValueError;
-
+        private bool _otherValueIsLogNormal = false;
         private ValueRatioWithUncertainty _contentToStructureValueRatio;
         private ValueRatioWithUncertainty _otherToStructureValueRatio;
         #endregion
@@ -123,13 +127,13 @@ namespace HEC.FDA.Model.structures
         }
         #endregion
         #region Methods
-        public SampledStructureParameters Sample(IProvideRandomNumbers randomNumbers, double structureValue, double firstFloorElevation, double contentValue = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, double otherValue = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, double vehicleValue = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, bool computeIsDeterministic = false)
+        public DeterministicOccupancyType Sample(IProvideRandomNumbers randomNumbers, bool computeIsDeterministic = false)
         {
             if (ErrorLevel >= ErrorLevel.Major)
             {
                 Message message = new Message($"Occupancy type {Name} has at least one major error and cannot be sampled. An arbitrary set of sampled parameters is being returned");
                 ReportMessage(this, new MessageEventArgs(message));
-                return new SampledStructureParameters();
+                return new DeterministicOccupancyType();
             }
             //damage functions
             IPairedData structDamagePairedData = _structureDepthPercentDamageFunction.SamplePairedData(randomNumbers.NextRandom(), computeIsDeterministic);
@@ -140,54 +144,44 @@ namespace HEC.FDA.Model.structures
             IPairedData otherDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 });
 
             //parameters
-            double firstFloorElevationSampled = _firstFloorElevationError.Sample(firstFloorElevation, randomNumbers.NextRandom(), computeIsDeterministic);
-            double structureValueSampled = _structureValueError.Sample(structureValue, randomNumbers.NextRandom(), computeIsDeterministic);
-            double contentValueSampled = 0;
+            double firstFloorElevationOffsetSampled = _firstFloorElevationError.Sample(randomNumbers.NextRandom(), computeIsDeterministic);
+            double structureValueOffsetSampled = _structureValueError.Sample(randomNumbers.NextRandom(), computeIsDeterministic);
+            double contentValueOffsetSampled = 0;
+            double contentValueRatioSampled = 0;
             if (_computeContentDamage)
             {
                 if (_useContentToStructureValueRatio)
                 {
-                    contentValueSampled = structureValueSampled * (_contentToStructureValueRatio.Sample(randomNumbers.NextRandom(), computeIsDeterministic))/100;
+                    contentValueRatioSampled = (_contentToStructureValueRatio.Sample(randomNumbers.NextRandom(), computeIsDeterministic));
                 }
                 else
                 {
-                    contentValueSampled = _contentValueError.Sample(contentValue, randomNumbers.NextRandom(), computeIsDeterministic);
+                    contentValueOffsetSampled = _contentValueError.Sample(randomNumbers.NextRandom(), computeIsDeterministic);
                 }
                 contentDamagePairedData = _contentDepthPercentDamageFunction.SamplePairedData(randomNumbers.NextRandom(), computeIsDeterministic);
             }
-            else
-            {
-                contentValueSampled = contentValue;
-            }
-            double otherValueSampled = 0;
+            double otherValueOffsetSampled = 0;
+            double otherValueRatioSampled = 0;
             if (_computeOtherDamage)
             {
                 if (_useOtherToStructureValueRatio)
                 {
-                    otherValueSampled = structureValueSampled * (_otherToStructureValueRatio.Sample(randomNumbers.NextRandom(), computeIsDeterministic))/100;
+                    otherValueRatioSampled = (_otherToStructureValueRatio.Sample(randomNumbers.NextRandom(), computeIsDeterministic))/100;
                 }
                 else
                 {
-                    otherValueSampled = _otherValueError.Sample(otherValue, randomNumbers.NextRandom(), computeIsDeterministic);
+                    otherValueOffsetSampled = _otherValueError.Sample(randomNumbers.NextRandom(), computeIsDeterministic);
                 }
                 otherDamagePairedData = _OtherDepthPercentDamageFunction.SamplePairedData(randomNumbers.NextRandom(), computeIsDeterministic);
             }
-            else
-            {
-                otherValueSampled = otherValue;
-            }
-            double vehicleValueSampled = 0;
+
+            double vehicleValueOffsetSampled = 0;
             if (_computeVehicleDamage)
             {
-                vehicleValueSampled = _vehicleValueError.Sample(vehicleValue, randomNumbers.NextRandom(), computeIsDeterministic);
+                vehicleValueOffsetSampled = _vehicleValueError.Sample(randomNumbers.NextRandom(), computeIsDeterministic);
                 vehicleDamagePairedData = _vehicleDepthPercentDamageFunction.SamplePairedData(randomNumbers.NextRandom(), computeIsDeterministic);
             }
-            else
-            {
-                vehicleValueSampled = vehicleValue;
-            }
-
-            return new SampledStructureParameters(_OccupancyTypeName, _OccupancyTypeDamageCategory, structDamagePairedData, firstFloorElevationSampled, structureValueSampled, _computeContentDamage, _computeVehicleDamage, _computeOtherDamage, contentDamagePairedData, contentValueSampled, vehicleDamagePairedData, vehicleValueSampled, otherDamagePairedData, otherValueSampled);
+            return new DeterministicOccupancyType(_OccupancyTypeName, _OccupancyTypeDamageCategory, structDamagePairedData, firstFloorElevationOffsetSampled, structureValueOffsetSampled, _computeContentDamage, _computeVehicleDamage, _computeOtherDamage, contentDamagePairedData, contentValueOffsetSampled, _useContentToStructureValueRatio, contentValueRatioSampled, vehicleDamagePairedData, vehicleValueOffsetSampled, otherDamagePairedData, otherValueOffsetSampled, _useOtherToStructureValueRatio, otherValueRatioSampled, _structureValueIsLogNormal, _contentValueIsLogNormal, _otherValueIsLogNormal, _vehicleValueIsLogNormal, _firstFloorElevationIsLogNormal);
         }
 
 
@@ -254,6 +248,10 @@ namespace HEC.FDA.Model.structures
             public OccupancyTypeBuilder withStructureValueUncertainty(ValueUncertainty valueUncertainty)
             {
                 _occupancyType._structureValueError = valueUncertainty;
+                if(valueUncertainty.DistributionType == Statistics.IDistributionEnum.LogNormal)
+                {
+                    _occupancyType._structureValueIsLogNormal = true;
+                }
                 _occupancyType.AddSinglePropertyRule(nameof(valueUncertainty), new Rule(() => { valueUncertainty.Validate(); return !valueUncertainty.HasErrors; }, $"The uncertainty about structure value for occupancy type {_occupancyType.Name} has errors: " + valueUncertainty.GetErrors().ToString(), valueUncertainty.ErrorLevel));
                 return new OccupancyTypeBuilder(_occupancyType);
             }
@@ -261,18 +259,30 @@ namespace HEC.FDA.Model.structures
             public OccupancyTypeBuilder withContentValueUncertainty(ValueUncertainty valueUncertainty)
             {
                 _occupancyType._contentValueError = valueUncertainty;
+                if (valueUncertainty.DistributionType == Statistics.IDistributionEnum.LogNormal)
+                {
+                    _occupancyType._contentValueIsLogNormal = true;
+                }
                 _occupancyType.AddSinglePropertyRule(nameof(valueUncertainty), new Rule(() => { valueUncertainty.Validate(); return !valueUncertainty.HasErrors; }, $"The uncertainty about content value for occupancy type {_occupancyType.Name} has errors: " + valueUncertainty.GetErrors().ToString(), valueUncertainty.ErrorLevel));
                 return new OccupancyTypeBuilder(_occupancyType);
             }
             public OccupancyTypeBuilder withVehicleValueUncertainty(ValueUncertainty valueUncertainty)
             {
                 _occupancyType._vehicleValueError = valueUncertainty;
+                if (valueUncertainty.DistributionType == Statistics.IDistributionEnum.LogNormal)
+                {
+                    _occupancyType._vehicleValueIsLogNormal = true;
+                }
                 _occupancyType.AddSinglePropertyRule(nameof(valueUncertainty), new Rule(() => { valueUncertainty.Validate(); return !valueUncertainty.HasErrors; }, $"The uncertainty about vehicle value for occupancy type {_occupancyType.Name} has errors: " + valueUncertainty.GetErrors().ToString(), valueUncertainty.ErrorLevel));
                 return new OccupancyTypeBuilder(_occupancyType);
             }
             public OccupancyTypeBuilder withOtherValueUncertainty(ValueUncertainty valueUncertainty)
             {
                 _occupancyType._otherValueError = valueUncertainty;
+                if (valueUncertainty.DistributionType == Statistics.IDistributionEnum.LogNormal)
+                {
+                    _occupancyType._otherValueIsLogNormal = true;
+                }
                 _occupancyType.AddSinglePropertyRule(nameof(valueUncertainty), new Rule(() => { valueUncertainty.Validate(); return !valueUncertainty.HasErrors; }, $"The uncertainty about other value for occupancy type {_occupancyType.Name} has errors: " + valueUncertainty.GetErrors().ToString(), valueUncertainty.ErrorLevel));
                 return new OccupancyTypeBuilder(_occupancyType);
             }
@@ -293,6 +303,10 @@ namespace HEC.FDA.Model.structures
             public OccupancyTypeBuilder withFirstFloorElevationUncertainty(FirstFloorElevationUncertainty firstFloorElevationUncertainty)
             {
                 _occupancyType._firstFloorElevationError = firstFloorElevationUncertainty;
+                if (firstFloorElevationUncertainty.DistributionType == Statistics.IDistributionEnum.LogNormal)
+                {
+                    _occupancyType._firstFloorElevationIsLogNormal = true;
+                }
                 _occupancyType.AddSinglePropertyRule(nameof(firstFloorElevationUncertainty), new Rule(() => { firstFloorElevationUncertainty.Validate(); return !firstFloorElevationUncertainty.HasErrors; }, $"The uncertainty about the other to structure value ratio for occupancy type {_occupancyType.Name} has errors: " + firstFloorElevationUncertainty.GetErrors().ToString(), firstFloorElevationUncertainty.ErrorLevel));
 
                 return new OccupancyTypeBuilder(_occupancyType);

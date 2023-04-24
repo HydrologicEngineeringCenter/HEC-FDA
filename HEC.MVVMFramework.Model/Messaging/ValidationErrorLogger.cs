@@ -14,7 +14,7 @@ namespace HEC.MVVMFramework.Model.Messaging
 
         public ValidationErrorLogger()
         {
-            MessageHub.Register(this);
+            //MessageHub.Register(this);
         }
 
         public void LogErrors()
