@@ -29,13 +29,6 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
         private string _ComputeButtonLabel = COMPUTE;
         private CancellationTokenSource _CancellationToken;
         private bool _AllSelected;
-        public enum ChildType
-        {
-            SCENARIOS,
-            ALTERNATIVES
-        }
-
-        private ChildType _ChildType;
 
         public event ProgressReportedEventHandler ProgressReport;
         public event MessageReportedEventHandler MessageReport;
@@ -73,9 +66,9 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
 
         private void AlternativeAdded(object sender, ElementAddedEventArgs e)
         {
-            ComputeChildRowItem newRow = new ComputeChildRowItem((IASElement)e.Element);
+            ComputeChildRowItem newRow = new ComputeChildRowItem((AlternativeElement)e.Element);
             Rows.Add(newRow);
-            ValidateScenario(newRow);
+            //ValidateScenario(newRow);
         }
 
         private void AlternativeRemoved(object sender, ElementAddedEventArgs e)
@@ -85,7 +78,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
 
         private void AlternativeUpdated(object sender, ElementUpdatedEventArgs e)
         {
-            IASElement newElement = (IASElement)e.NewElement;
+            AlternativeElement newElement = (AlternativeElement)e.NewElement;
             int idToUpdate = newElement.ID;
 
             //find the row with this id and update the row's values;
@@ -93,15 +86,15 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
             if (foundRow != null)
             {
                 foundRow.Update(newElement);
-                ValidateScenario(foundRow);
+                //ValidateScenario(foundRow);
             }
         }
 
         private void LoadScenarios()
         {
-            List<IASElement> elems = StudyCache.GetChildElementsOfType<IASElement>();
+            List<AlternativeElement> elems = StudyCache.GetChildElementsOfType<AlternativeElement>();
 
-            foreach (IASElement elem in elems)
+            foreach (AlternativeElement elem in elems)
             {
                 Rows.Add(new ComputeChildRowItem(elem));
             }
@@ -142,37 +135,36 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
                 List<ComputeChildRowItem> computeChildRowItems = GetSelectedRows();
                 if (computeChildRowItems.Count > 0)
                 {
-                    if (_ChildType == ChildType.SCENARIOS)
-                    {
-                        ComputeScenarios(computeChildRowItems);
-                    }
+      
+                    ComputeAlternatives(computeChildRowItems);
                     ComputeButtonLabel = CANCEL_COMPUTE;
                 }
             }
 
         }
 
-        private async void ComputeScenarios(List<ComputeChildRowItem> scenarioRows)
+
+        //todo: look at the alt comp report validation and logic for how to do this. 
+        //look at AltCompReportElement DoAlternativesStillExist and getCanComputeResults
+        private async void ComputeAlternatives(List<ComputeChildRowItem> altRows)
         {
             MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message("Beginning Batch Compute"));
             ReportMessage(this, beginComputeMessageArgs);
+
             List<Task> taskList = new List<Task>();
-            List<IASElement> elementList = new List<IASElement>();
+            List<AlternativeElement> elementList = new List<AlternativeElement>();
             _CancellationToken = new CancellationTokenSource();
 
             try
             {
-                foreach (ComputeChildRowItem row in scenarioRows)
+                foreach (ComputeChildRowItem row in altRows)
                 {
-                    IASElement elem = (IASElement)row.ChildElement;
+                    AlternativeElement elem = (AlternativeElement)row.ChildElement;
                     elementList.Add(elem);
-                    FdaValidationResult canComputeVR = elem.CanCompute();
+                    FdaValidationResult canComputeVR = elem.RunPreComputeValidation();
                     if (canComputeVR.IsValid)
                     {
-                        List<ImpactAreaScenarioSimulation> sims = ComputeScenarioVM.CreateSimulations(elem.SpecificIASElements);
-                        RegisterProgressAndMessages(sims);
-                        Scenario scenario = new Scenario(elem.AnalysisYear, sims);
-                        taskList.Add(ComputeScenarioVM.ComputeScenario(scenario, ComputeCompleted, _CancellationToken.Token));
+                        taskList.Add(Task.Run(()=>new ComputeAlternativeVM(elem, ComputeCompleted)));
                     }
                     else
                     {
@@ -188,24 +180,27 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
             }
             MessageEventArgs finishedComputeMessageArgs = new MessageEventArgs(new Message("All Scenarios Computed"));
             ReportMessage(this, finishedComputeMessageArgs);
-            UpdateIASElementTooltips(elementList);
             var result = MessageBox.Show("Do you want to view summary results?", "Compute Finished", MessageBoxButton.YesNo, MessageBoxImage.Information);
             if (result == MessageBoxResult.Yes)
             {
-                ScenarioDamageSummaryVM vm = new ScenarioDamageSummaryVM(elementList);
-                //todo: add to string constants
-                DynamicTabVM tab = new DynamicTabVM(StringConstants.VIEW_SUMMARY_RESULTS_HEADER, vm, StringConstants.VIEW_SUMMARY_RESULTS_HEADER);
-                Navigate(tab, false, false);
+                //todo: show the summary results UI
+                AlternativeSummaryVM vm = new AlternativeSummaryVM(elementList);
+                //AltCompReportResultsVM vm = new AltCompReportResultsVM(CreateResults());
+                string header = "Alternative Summary Results";
+                DynamicTabVM tab = new DynamicTabVM(header, vm, header);
+                Navigate(tab, false, true);
             }
         }
 
-        private void UpdateIASElementTooltips(List<IASElement> elems)
-        {
-            foreach (IASElement elem in elems)
-            {
-                IASTooltipHelper.UpdateTooltip(elem);
-            }
-        }
+
+
+        //private void UpdateIASElementTooltips(List<IASElement> elems)
+        //{
+        //    foreach (IASElement elem in elems)
+        //    {
+        //        IASTooltipHelper.UpdateTooltip(elem);
+        //    }
+        //}
 
         private void SelectAllRows()
         {
@@ -218,29 +213,29 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
             }
         }
 
-        private void ValidateScenarios()
-        {
-            foreach (ComputeChildRowItem row in Rows)
-            {
-                ValidateScenario(row);
-            }
-        }
+        //private void ValidateScenarios()
+        //{
+        //    foreach (ComputeChildRowItem row in Rows)
+        //    {
+        //        ValidateScenario(row);
+        //    }
+        //}
 
-        private void ValidateScenario(ComputeChildRowItem row)
-        {
-            IASElement elem = (IASElement)row.ChildElement;
-            FdaValidationResult canComputeVR = elem.CanCompute();
-            if (!canComputeVR.IsValid)
-            {
-                row.MarkInError(canComputeVR.ErrorMessage);
-            }
-            else
-            {
-                row.ClearErrorStatus();
-            }
-        }
+        //private void ValidateScenario(ComputeChildRowItem row)
+        //{
+        //    IASElement elem = (IASElement)row.ChildElement;
+        //    FdaValidationResult canComputeVR = elem.CanCompute();
+        //    if (!canComputeVR.IsValid)
+        //    {
+        //        row.MarkInError(canComputeVR.ErrorMessage);
+        //    }
+        //    else
+        //    {
+        //        row.ClearErrorStatus();
+        //    }
+        //}
 
-        private void ComputeCompleted(ScenarioResults results)
+        private void ComputeCompleted(AlternativeResults results)
         {
             //todo: do something here? Save? update progress bar?
             int test = 0;

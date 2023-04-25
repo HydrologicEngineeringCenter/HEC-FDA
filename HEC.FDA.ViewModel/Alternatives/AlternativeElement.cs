@@ -75,7 +75,7 @@ namespace HEC.FDA.ViewModel.Alternatives
         /// If the element cannot be found then it will be null.
         /// </summary>
         /// <returns></returns>
-        private IASElement[] GetElementsFromID()
+        public IASElement[] GetElementsFromID()
         {
             IASElement[] iASElems = new IASElement[] { null, null };
 
@@ -213,7 +213,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             {
                 IASElement[] iASElems = GetElementsFromID();
 
-                ComputeAlternativeVM vm = new ComputeAlternativeVM(iASElems, ID, this, ComputeCompleted);
+                ComputeAlternativeVM vm = new ComputeAlternativeVM(this, ComputeCompleted);
                 string header = "Compute Log For Alternative: " + Name;
                 DynamicTabVM tab = new DynamicTabVM(header, vm, "ComputeLog" + Name);
                 Navigate(tab, false, false);

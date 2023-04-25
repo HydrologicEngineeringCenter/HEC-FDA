@@ -54,9 +54,6 @@
     <Resource Include="Resources\TrackPlot.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\warning.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
     <Resource Include="Resources\ZoomAll.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>

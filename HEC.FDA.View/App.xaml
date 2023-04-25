@@ -12,6 +12,9 @@
              xmlns:AlternativeResultsVM="clr-namespace:HEC.FDA.ViewModel.Alternatives.Results;assembly=HEC.FDA.ViewModel"
              xmlns:AlternativeResultsView ="clr-namespace:HEC.FDA.View.Alternatives.Results"
 
+             xmlns:AlternativeBatchResultsVM="clr-namespace:HEC.FDA.ViewModel.Alternatives.Results.BatchCompute;assembly=HEC.FDA.ViewModel"
+             xmlns:AlternativeBatchResultsView ="clr-namespace:HEC.FDA.View.Alternatives.Results.BatchCompute"
+
              xmlns:ScenarioResultsVM ="clr-namespace:HEC.FDA.ViewModel.ImpactAreaScenario.Results;assembly=HEC.FDA.ViewModel"
              xmlns:IASResultsView ="clr-namespace:HEC.FDA.View.ImpactAreaScenario.Results"
              
@@ -405,8 +408,8 @@
             <ResultsView:ComputeChildSelector/>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type ResultsVM:ScenarioDamageSummaryVM }" >
-            <ResultsView:ScenarioDamageSummary/>
+        <DataTemplate DataType="{x:Type AlternativeBatchResultsVM:AlternativesSelectorVM}" >
+            <AlternativeBatchResultsView:AlternativeSelector/>
         </DataTemplate>
 
     </Application.Resources>
