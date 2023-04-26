@@ -90,6 +90,7 @@
 	
   <ItemGroup>
     <ProjectReference Include="..\HEC.FDA.Importer\HEC.FDA.Importer.csproj" />
+    <ProjectReference Include="..\HEC.FDA.Statistics\HEC.FDA.Statistics.csproj" />
     <ProjectReference Include="..\HEC.FDA.UserControls\HEC.FDA.UserControls.vbproj" />
     <ProjectReference Include="..\HEC.FDA.ViewModel\HEC.FDA.ViewModel.csproj" />
     <ProjectReference Include="..\HEC.MVVMFramework.View\HEC.MVVMFramework.View.csproj" />
