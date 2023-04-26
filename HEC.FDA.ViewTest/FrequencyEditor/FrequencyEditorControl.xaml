@@ -5,9 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:FEcontrols="clr-namespace:HEC.FDA.ViewTest.FrequencyEditor"
              xmlns:FEvm="clr-namespace:HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor;assembly=HEC.FDA.ViewModel"
-             xmlns:TWPcontrols="clr-namespace:HEC.FDA.ViewTest.TableWithPlot"
-             xmlns:TWPvm ="clr-namespace:HEC.FDA.ViewModel.TableWithPlot;assembly=HEC.FDA.ViewModel" d:DataContext="{d:DesignInstance Type=FEvm:FrequencyEditorVM}"
              mc:Ignorable="d" 
+             xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=HEC.FDA.UserControls"
+             d:DataContext="{d:DesignInstance Type=FEvm:FrequencyEditorVM}"
              d:DesignHeight="450" d:DesignWidth="800" d:Background="AliceBlue">
   <UserControl.Resources>
     <BooleanToVisibilityConverter x:Key="VisibleIfTrueConverter"/>
@@ -15,15 +15,44 @@
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="35"/>
+      <RowDefinition  Height="35"/>
+      <RowDefinition  Height="35"/>
+      <RowDefinition  Height="35"/>
       <RowDefinition/>
     </Grid.RowDefinitions>
-    <StackPanel Orientation="Horizontal" Grid.Row="0">
+    
+    <Grid Grid.Row="0">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="120"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <Label Grid.Row="1" Grid.Column="0" Content="Name:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+      <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Name, ValidatesOnDataErrors=True}" Margin="5"/>
+    </Grid>
+    
+    <Grid Grid.Row="1">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="120"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <Label Content="Description:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+      <UserControls:TextBoxDescription Grid.Column="1" Text="{Binding Description}" Margin="5"/>
+    </Grid>
+    
+    <Grid Grid.Row="2">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="120"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+    </Grid>
+    
+    <StackPanel Orientation="Horizontal" Grid.Row="3">
       <Label Content="Analytical "/>
       <RadioButton Margin="5" x:Name="AnalyticButton" GroupName="graphOrAnal" IsChecked="{Binding Path=IsAnalytic, Mode=OneWay}"/>
       <Label Content="Graphical "/>
       <RadioButton Margin="5" x:Name="GraphicalButton" GroupName="graphOrAnal" IsChecked="{Binding Path=IsGraphical, Mode=TwoWay}"/>
     </StackPanel>
-    <FEcontrols:GraphicalControl Grid.Row="1" Visibility="{Binding ElementName=GraphicalButton, Path=IsChecked, Converter={StaticResource VisibleIfTrueConverter}}" DataContext="{Binding GraphicalVM}"/>
-    <FEcontrols:AnalyticalControl Grid.Row="1" Visibility="{Binding ElementName=AnalyticButton, Path=IsChecked, Converter={StaticResource VisibleIfTrueConverter}}" DataContext="{Binding AnalyticalVM}" />
+    <FEcontrols:GraphicalControl Grid.Row="4" Visibility="{Binding ElementName=GraphicalButton, Path=IsChecked, Converter={StaticResource VisibleIfTrueConverter}}" DataContext="{Binding GraphicalVM}"/>
+    <FEcontrols:AnalyticalControl Grid.Row="4" Visibility="{Binding ElementName=AnalyticButton, Path=IsChecked, Converter={StaticResource VisibleIfTrueConverter}}" DataContext="{Binding AnalyticalVM}" />
   </Grid>
 </UserControl>
