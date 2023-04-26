@@ -1,22 +1,21 @@
-﻿using HEC.FDA.ViewModel.TableWithPlot;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
 {
     public class AnalyticalVM: BaseViewModel
     {
         #region Fields
-        private CurveComponentVM _fitToFlowVM;
-        private CurveComponentVM _parameterEntryVM;
+        private FitToFlowVM _fitToFlowVM;
+        private ParameterEntryVM _parameterEntryVM;
         private bool _isFitToFlows = false; //new windows open with manual entry vm open
         #endregion
         #region Properties
-        public CurveComponentVM FitToFlowVM
+        public FitToFlowVM FitToFlowVM
         {
             get { return _fitToFlowVM; }
             set { _fitToFlowVM = value; }
         }
-        public CurveComponentVM ParameterEntryVM
+        public ParameterEntryVM ParameterEntryVM
         {
             get { return _parameterEntryVM; }
             set { _parameterEntryVM = value; }

@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.ViewModel.TableWithPlot;
+using Statistics.Distributions;
 using System.Collections.ObjectModel;
 using System.Xml.Linq;
 
@@ -12,13 +13,16 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
             get { return _AnalyticalFlows; }
         }
 
-        public FitToFlowVM()
+        public FitToFlowVM():base()
         {
-
+            LoadDefaultFlows();
         }
         public FitToFlowVM(XElement ele)
         {
-
+        }
+        private void FitToFlowsAction()
+        {
+            LP3Distribution.Fit(AnalyticalFlows)
         }
         private void LoadFlows(AnalyticalFrequencyElement elem)
         {
