@@ -28,7 +28,7 @@ namespace HEC.FDA.View.Results
 
         private void Compute_Click(object sender, RoutedEventArgs e)
         {
-            if (DataContext is ComputeChildSelectorVM vm)
+            if (DataContext is ScenarioSelectorVM vm)
             {
                 vm.ComputeClicked();
             }

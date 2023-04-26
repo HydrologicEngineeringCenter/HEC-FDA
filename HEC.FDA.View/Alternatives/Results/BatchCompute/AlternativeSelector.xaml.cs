@@ -28,7 +28,7 @@ namespace HEC.FDA.View.Alternatives.Results.BatchCompute
 
         private void Compute_Click(object sender, RoutedEventArgs e)
         {
-            if (DataContext is AlternativesSelectorVM vm)
+            if (DataContext is AlternativeSelectorVM vm)
             {
                 vm.ComputeClicked();
             }

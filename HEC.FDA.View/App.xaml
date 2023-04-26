@@ -404,11 +404,15 @@
       <WaterSurfaceElevationsView:UnsteadyHydraulicsImporter/>
     </DataTemplate>
 
-        <DataTemplate DataType="{x:Type ResultsVM:ComputeChildSelectorVM }" >
+        <DataTemplate DataType="{x:Type ResultsVM:ScenarioSelectorVM }" >
             <ResultsView:ComputeChildSelector/>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type AlternativeBatchResultsVM:AlternativesSelectorVM}" >
+        <DataTemplate DataType="{x:Type ResultsVM:ScenarioDamageSummaryVM }" >
+            <ResultsView:ScenarioDamageSummary/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type AlternativeBatchResultsVM:AlternativeSelectorVM}" >
             <AlternativeBatchResultsView:AlternativeSelector/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type AlternativeBatchResultsVM:AlternativeSummaryVM}" >

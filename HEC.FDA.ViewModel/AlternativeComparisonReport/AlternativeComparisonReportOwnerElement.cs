@@ -58,7 +58,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
 
         public void ComputeAlternatives(object arg1, EventArgs arg2)
         {
-            ComputeChildSelectorVM vm = new ComputeChildSelectorVM();
+            ScenarioSelectorVM vm = new ScenarioSelectorVM();
             vm.RequestNavigation += Navigate;
             DynamicTabVM tab = new DynamicTabVM(StringConstants.CREATE_NEW_SCENARIO_HEADER, vm, StringConstants.CREATE_NEW_SCENARIO_HEADER);
             Navigate(tab, false, false);

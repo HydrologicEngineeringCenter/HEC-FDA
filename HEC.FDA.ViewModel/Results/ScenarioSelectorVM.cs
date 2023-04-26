@@ -17,42 +17,16 @@ using System.Windows;
 
 namespace HEC.FDA.ViewModel.Results
 {
-    public class ComputeChildSelectorVM : ComputeWithProgressAndMessagesBase, IProgressReport
+    public class ScenarioSelectorVM : ChildSelectorVM
     {
-        private const string CANCEL_COMPUTE = "Cancel Compute";
-        private const string COMPUTE = "Compute";
-
-        private string _ComputeButtonLabel = COMPUTE;
-        private CancellationTokenSource _CancellationToken;
-        private bool _AllSelected;
-
-        public event ProgressReportedEventHandler ProgressReport;
-        public event MessageReportedEventHandler MessageReport;
-
-        public string ComputeButtonLabel
+        
+        public ScenarioSelectorVM():base()
         {
-            get { return _ComputeButtonLabel; }
-            set { _ComputeButtonLabel = value; NotifyPropertyChanged(); }
-        }
 
-        public bool SelectAll
-        {
-            get { return _AllSelected; }
-            set { _AllSelected = value; SelectAllRows(); }
-        }
-
-        public CustomObservableCollection<ComputeChildRowItem> Rows { get; } = new CustomObservableCollection<ComputeChildRowItem>();
-
-        public ComputeChildSelectorVM()
-        {
-            //todo: is this register correct?
-            MessageHub.Register(this);
-            LoadScenarios();
             ValidateScenarios();
-            ListenToIASEvents();
         }
 
-        private void ListenToIASEvents()
+        public override void ListenToChildElementUpdateEvents()
         {
             StudyCache.IASElementAdded += IASAdded;
             StudyCache.IASElementRemoved += IASRemoved;
@@ -85,7 +59,7 @@ namespace HEC.FDA.ViewModel.Results
             }
         }
 
-        private void LoadScenarios()
+        public override void LoadChildElements()
         {
             List<IASElement> elems = StudyCache.GetChildElementsOfType<IASElement>();
 
@@ -95,45 +69,14 @@ namespace HEC.FDA.ViewModel.Results
             }
         }    
 
-        private List<ComputeChildRowItem> GetSelectedRows()
-        {
-            List<ComputeChildRowItem> selectedRows = new List<ComputeChildRowItem>();
-            foreach (ComputeChildRowItem row in Rows)
-            {
-                if (row.IsSelected)
-                {
-                    selectedRows.Add(row);
-                }
-            }
-            return selectedRows;
-        }
-        
-        public void ComputeClicked()
-        {
-            if (ComputeButtonLabel.Equals(CANCEL_COMPUTE))
-            {
-                CancelCompute();
-                ComputeButtonLabel = COMPUTE;
-            }
-            else
-            {
-                List<ComputeChildRowItem> computeChildRowItems = GetSelectedRows();
-                if (computeChildRowItems.Count > 0)
-                {
-                    ComputeScenarios(computeChildRowItems);
-                    ComputeButtonLabel = CANCEL_COMPUTE;
-                }
-            }
-        }
+  
 
-        private async void ComputeScenarios(List<ComputeChildRowItem> scenarioRows)
+        public override async void Compute(List<ComputeChildRowItem> scenarioRows)
         {
             MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message("Beginning Batch Compute"));
             ReportMessage(this, beginComputeMessageArgs);
             List<Task> taskList = new List<Task>();
             List<IASElement> elementList = new List<IASElement>();
-            _CancellationToken = new CancellationTokenSource();
-
             try
             {
                 foreach (ComputeChildRowItem row in scenarioRows)
@@ -183,17 +126,6 @@ namespace HEC.FDA.ViewModel.Results
             }
         }
 
-        private void SelectAllRows()
-        {
-            foreach( ComputeChildRowItem row in Rows)
-            {
-                if (!row.HasError)
-                {
-                    row.IsSelected = _AllSelected;
-                }
-            }
-        }
-
         private void ValidateScenarios()
         {
             foreach (ComputeChildRowItem row in Rows)
@@ -233,22 +165,6 @@ namespace HEC.FDA.ViewModel.Results
             //}));
         }
 
-        public void ReportProgress(object sender, ProgressReportEventArgs e)
-        {
-            ProgressReport?.Invoke(sender, e);
-        }
-
-        public void ReportMessage(object sender, MessageEventArgs e)
-        {
-            MessageReport?.Invoke(sender, e);
-        }
-
-        public void CancelCompute()
-        {
-            if (_CancellationToken != null)
-            {
-                _CancellationToken.Cancel();
-            }
-        }
+       
     }
 }

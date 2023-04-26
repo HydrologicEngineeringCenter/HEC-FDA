@@ -21,44 +21,22 @@ using System.Windows;
 
 namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
 {
-    public class AlternativesSelectorVM : ComputeWithProgressAndMessagesBase, IProgressReport
+    public class AlternativeSelectorVM : ChildSelectorVM
     {
 
-        private const string CANCEL_COMPUTE = "Cancel Compute";
-        private const string COMPUTE = "Compute";
+ 
 
-        private string _ComputeButtonLabel = COMPUTE;
-        private CancellationTokenSource _CancellationToken;
-        private bool _AllSelected;
 
-        public event ProgressReportedEventHandler ProgressReport;
-        public event MessageReportedEventHandler MessageReport;
 
-        public string ComputeButtonLabel
+
+        public AlternativeSelectorVM():base()
         {
-            get { return _ComputeButtonLabel; }
-            set { _ComputeButtonLabel = value; NotifyPropertyChanged(); }
+
+            //todo: validate alternatives
+
         }
 
-        public bool SelectAll
-        {
-            get { return _AllSelected; }
-            set { _AllSelected = value; SelectAllRows(); }
-        }
-
-        public CustomObservableCollection<ComputeChildRowItem> Rows { get; } = new CustomObservableCollection<ComputeChildRowItem>();
-
-        public AlternativesSelectorVM()
-        {
-            MessageHub.Register(this);
-
-            LoadAlternatives();
-            //validate alts?
-
-            ListenToAlternativeEvents();
-        }
-
-        private void ListenToAlternativeEvents()
+        public override void ListenToChildElementUpdateEvents()
         {
             StudyCache.AlternativeAdded += AlternativeAdded;
             StudyCache.AlternativeRemoved += AlternativeRemoved;
@@ -91,7 +69,17 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
             }
         }
 
-        private void LoadScenarios()
+        //private void LoadScenarios()
+        //{
+        //    List<AlternativeElement> elems = StudyCache.GetChildElementsOfType<AlternativeElement>();
+
+        //    foreach (AlternativeElement elem in elems)
+        //    {
+        //        Rows.Add(new ComputeChildRowItem(elem));
+        //    }
+        //}
+
+        public override void LoadChildElements()
         {
             List<AlternativeElement> elems = StudyCache.GetChildElementsOfType<AlternativeElement>();
 
@@ -101,60 +89,20 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
             }
         }
 
-        private void LoadAlternatives()
-        {
-            List<AlternativeElement> elems = StudyCache.GetChildElementsOfType<AlternativeElement>();
+     
 
-            foreach (AlternativeElement elem in elems)
-            {
-                Rows.Add(new ComputeChildRowItem(elem));
-            }
-        }
-
-        private List<ComputeChildRowItem> GetSelectedRows()
-        {
-            List<ComputeChildRowItem> selectedRows = new List<ComputeChildRowItem>();
-            foreach (ComputeChildRowItem row in Rows)
-            {
-                if (row.IsSelected)
-                {
-                    selectedRows.Add(row);
-                }
-            }
-            return selectedRows;
-        }
-
-        public void ComputeClicked()
-        {
-            if (ComputeButtonLabel.Equals(CANCEL_COMPUTE))
-            {
-                CancelCompute();
-                ComputeButtonLabel = COMPUTE;
-            }
-            else
-            {
-                List<ComputeChildRowItem> computeChildRowItems = GetSelectedRows();
-                if (computeChildRowItems.Count > 0)
-                {
-      
-                    ComputeAlternatives(computeChildRowItems);
-                    ComputeButtonLabel = CANCEL_COMPUTE;
-                }
-            }
-
-        }
+       
 
 
         //todo: look at the alt comp report validation and logic for how to do this. 
         //look at AltCompReportElement DoAlternativesStillExist and getCanComputeResults
-        private async void ComputeAlternatives(List<ComputeChildRowItem> altRows)
+        public override async void Compute(List<ComputeChildRowItem> altRows)
         {
             MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message("Beginning Batch Compute"));
             ReportMessage(this, beginComputeMessageArgs);
 
             List<Task> taskList = new List<Task>();
             List<AlternativeElement> elementList = new List<AlternativeElement>();
-            _CancellationToken = new CancellationTokenSource();
 
             try
             {
@@ -207,16 +155,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
         //    }
         //}
 
-        private void SelectAllRows()
-        {
-            foreach (ComputeChildRowItem row in Rows)
-            {
-                if (!row.HasError)
-                {
-                    row.IsSelected = _AllSelected;
-                }
-            }
-        }
+        
 
         //private void ValidateScenarios()
         //{
@@ -267,23 +206,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
             //}));
         }
 
-        public void ReportProgress(object sender, ProgressReportEventArgs e)
-        {
-            ProgressReport?.Invoke(sender, e);
-        }
-
-        public void ReportMessage(object sender, MessageEventArgs e)
-        {
-            MessageReport?.Invoke(sender, e);
-        }
-
-        public void CancelCompute()
-        {
-            if (_CancellationToken != null)
-            {
-                _CancellationToken.Cancel();
-            }
-        }
+      
 
     }
 }
