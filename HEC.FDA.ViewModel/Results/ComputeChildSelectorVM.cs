@@ -158,8 +158,10 @@ namespace HEC.FDA.ViewModel.Results
             catch (TaskCanceledException ex)
             {
                 MessageBox.Show("Compute Canceled.", "Compute Canceled", MessageBoxButton.OK, MessageBoxImage.Information);
+                ComputeButtonLabel = COMPUTE;
                 return;
             }
+            ComputeButtonLabel = COMPUTE;
             MessageEventArgs finishedComputeMessageArgs = new MessageEventArgs(new Message("All Scenarios Computed"));
             ReportMessage(this, finishedComputeMessageArgs);
             UpdateIASElementTooltips(elementList);

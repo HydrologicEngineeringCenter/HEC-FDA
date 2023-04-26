@@ -411,6 +411,9 @@
         <DataTemplate DataType="{x:Type AlternativeBatchResultsVM:AlternativesSelectorVM}" >
             <AlternativeBatchResultsView:AlternativeSelector/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type AlternativeBatchResultsVM:AlternativeSummaryVM}" >
+            <AlternativeBatchResultsView:AlternativeSummaryTable/>
+        </DataTemplate>
 
     </Application.Resources>
 </Application>

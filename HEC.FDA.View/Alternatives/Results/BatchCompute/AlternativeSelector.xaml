@@ -24,7 +24,7 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="Select Scenarios to Compute:" Margin="10,0,0,0" VerticalAlignment="Bottom"/>
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Select Alternatives to Compute:" Margin="10,0,0,0" VerticalAlignment="Bottom"/>
         <CheckBox Grid.Row="1" Grid.Column="0" Content="Select All" IsChecked="{Binding SelectAll}" Margin="12,5,5,0"/>
         <ListBox Grid.Row="2" Grid.Column="0" Name="lst_conditions" ItemsSource="{Binding Rows}"   SelectionMode="Multiple" Margin="5">
             <ListBox.ItemContainerStyle>

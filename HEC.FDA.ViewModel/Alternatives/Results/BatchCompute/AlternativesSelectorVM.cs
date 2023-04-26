@@ -1,4 +1,5 @@
 ﻿using HEC.CS.Collections;
+using HEC.FDA.Model.alternatives;
 using HEC.FDA.Model.compute;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.scenarios;
@@ -164,7 +165,9 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
                     FdaValidationResult canComputeVR = elem.RunPreComputeValidation();
                     if (canComputeVR.IsValid)
                     {
-                        taskList.Add(Task.Run(()=>new ComputeAlternativeVM(elem, ComputeCompleted)));
+                        Alternative alt = new Alternative();
+                        ComputeAlternativeVM vm = new ComputeAlternativeVM(elem, ComputeCompleted);
+                        taskList.Add(Task.Run(()=> vm.RunAnnualizationCompute(alt, elem, ComputeCompleted)));
                     }
                     else
                     {
@@ -176,8 +179,10 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
             catch (TaskCanceledException ex)
             {
                 MessageBox.Show("Compute Canceled.", "Compute Canceled", MessageBoxButton.OK, MessageBoxImage.Information);
+                ComputeButtonLabel = COMPUTE;
                 return;
             }
+            ComputeButtonLabel = COMPUTE;
             MessageEventArgs finishedComputeMessageArgs = new MessageEventArgs(new Message("All Scenarios Computed"));
             ReportMessage(this, finishedComputeMessageArgs);
             var result = MessageBox.Show("Do you want to view summary results?", "Compute Finished", MessageBoxButton.YesNo, MessageBoxImage.Information);
@@ -237,6 +242,16 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
 
         private void ComputeCompleted(AlternativeResults results)
         {
+            //i have to assign the results back onto the alt.
+            
+            foreach(ComputeChildRowItem row in Rows)
+            {
+                if(row.ChildElement.ID == results.AlternativeID)
+                {
+                    ((AlternativeElement)row.ChildElement).Results = results;
+                }
+            }
+
             //todo: do something here? Save? update progress bar?
             int test = 0;
             //Results = results;
