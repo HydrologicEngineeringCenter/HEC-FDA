@@ -1,21 +1,13 @@
-﻿using HEC.CS.Collections;
-using HEC.FDA.Model.alternatives;
-using HEC.FDA.Model.compute;
+﻿using HEC.FDA.Model.alternatives;
 using HEC.FDA.Model.metrics;
-using HEC.FDA.Model.scenarios;
 using HEC.FDA.ViewModel.Compute;
-using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Results;
 using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
-using HEC.MVVMFramework.Base.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -24,16 +16,10 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
     public class AlternativeSelectorVM : ChildSelectorVM
     {
 
- 
-
-
-
-
         public AlternativeSelectorVM():base()
         {
 
             //todo: validate alternatives
-
         }
 
         public override void ListenToChildElementUpdateEvents()
@@ -69,15 +55,6 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
             }
         }
 
-        //private void LoadScenarios()
-        //{
-        //    List<AlternativeElement> elems = StudyCache.GetChildElementsOfType<AlternativeElement>();
-
-        //    foreach (AlternativeElement elem in elems)
-        //    {
-        //        Rows.Add(new ComputeChildRowItem(elem));
-        //    }
-        //}
 
         public override void LoadChildElements()
         {
@@ -88,10 +65,6 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
                 Rows.Add(new ComputeChildRowItem(elem));
             }
         }
-
-     
-
-       
 
 
         //todo: look at the alt comp report validation and logic for how to do this. 
@@ -136,48 +109,13 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
             var result = MessageBox.Show("Do you want to view summary results?", "Compute Finished", MessageBoxButton.YesNo, MessageBoxImage.Information);
             if (result == MessageBoxResult.Yes)
             {
-                //todo: show the summary results UI
                 AlternativeSummaryVM vm = new AlternativeSummaryVM(elementList);
-                //AltCompReportResultsVM vm = new AltCompReportResultsVM(CreateResults());
                 string header = "Alternative Summary Results";
                 DynamicTabVM tab = new DynamicTabVM(header, vm, header);
                 Navigate(tab, false, true);
             }
         }
 
-
-
-        //private void UpdateIASElementTooltips(List<IASElement> elems)
-        //{
-        //    foreach (IASElement elem in elems)
-        //    {
-        //        IASTooltipHelper.UpdateTooltip(elem);
-        //    }
-        //}
-
-        
-
-        //private void ValidateScenarios()
-        //{
-        //    foreach (ComputeChildRowItem row in Rows)
-        //    {
-        //        ValidateScenario(row);
-        //    }
-        //}
-
-        //private void ValidateScenario(ComputeChildRowItem row)
-        //{
-        //    IASElement elem = (IASElement)row.ChildElement;
-        //    FdaValidationResult canComputeVR = elem.CanCompute();
-        //    if (!canComputeVR.IsValid)
-        //    {
-        //        row.MarkInError(canComputeVR.ErrorMessage);
-        //    }
-        //    else
-        //    {
-        //        row.ClearErrorStatus();
-        //    }
-        //}
 
         private void ComputeCompleted(AlternativeResults results)
         {
@@ -192,21 +130,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
             }
 
             //todo: do something here? Save? update progress bar?
-            int test = 0;
-            //Results = results;
-            //Application.Current.Dispatcher.Invoke(
-            //(Action)(() =>
-            //{
-            //    PersistenceFactory.GetIASManager().SaveExisting(this);
-            //    MessageBoxResult messageBoxResult = MessageBox.Show("Compute completed. Would you like to view the results?", Name + " Compute Complete", MessageBoxButton.YesNo, MessageBoxImage.Information);
-            //    if (messageBoxResult == MessageBoxResult.Yes)
-            //    {
-            //        ViewResults(this, new EventArgs());
-            //    }
-            //}));
         }
-
-      
 
     }
 }

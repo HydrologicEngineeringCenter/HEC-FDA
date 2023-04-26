@@ -1,5 +1,4 @@
-﻿using HEC.CS.Collections;
-using HEC.FDA.Model.compute;
+﻿using HEC.FDA.Model.compute;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.scenarios;
 using HEC.FDA.ViewModel.Compute;
@@ -8,10 +7,8 @@ using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
-using HEC.MVVMFramework.Base.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -68,8 +65,6 @@ namespace HEC.FDA.ViewModel.Results
                 Rows.Add(new ComputeChildRowItem(elem));
             }
         }    
-
-  
 
         public override async void Compute(List<ComputeChildRowItem> scenarioRows)
         {
@@ -152,19 +147,7 @@ namespace HEC.FDA.ViewModel.Results
         {
             //todo: do something here? Save? update progress bar?
             int test = 0;
-            //Results = results;
-            //Application.Current.Dispatcher.Invoke(
-            //(Action)(() =>
-            //{
-            //    PersistenceFactory.GetIASManager().SaveExisting(this);
-            //    MessageBoxResult messageBoxResult = MessageBox.Show("Compute completed. Would you like to view the results?", Name + " Compute Complete", MessageBoxButton.YesNo, MessageBoxImage.Information);
-            //    if (messageBoxResult == MessageBoxResult.Yes)
-            //    {
-            //        ViewResults(this, new EventArgs());
-            //    }
-            //}));
         }
-
        
     }
 }
