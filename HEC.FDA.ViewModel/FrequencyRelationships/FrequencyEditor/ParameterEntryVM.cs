@@ -82,19 +82,18 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         #region Constructors
         public ParameterEntryVM(XElement xElement)
         {
+            InitializePlotModel();
             LoadFromXML(xElement);
             _dataProvider = new HistogramDataProvider();
-            InitializePlotModel();
             Validate();
             UpdateTable();
             UpdatePlot();
         }
         public ParameterEntryVM()
         {
-
+            InitializePlotModel();
             LP3Distribution = new LogPearson3(3.5, 0.22, 0.1, 60);
             _dataProvider = new HistogramDataProvider();
-            InitializePlotModel();
             Validate();
             UpdateTable();
             UpdatePlot();
@@ -117,10 +116,10 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         #endregion
 
         #region Table
-        private void UpdateTable()
+        protected void UpdateTable()
         {
             DataProvider.Data.Clear();
-            double[] exceedenceProbs = new double[8] { 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.04, 0.02 };
+            double[] exceedenceProbs = new double[16] { 0.999, 0.99, 0.95, 0.9, 0.8, 0.7, 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.004, 0.002, 0.001 };
             RandomProvider rp = new(1234);
             UncertainPairedData LP3asUPD = LP3Distribution.BootstrapToUncertainPairedData(rp, exceedenceProbs);
             DataProvider.UpdateFromUncertainPairedData(LP3asUPD);

@@ -27,7 +27,11 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Base
         public LogPearson3 LP3Distribution
         {
             get { return _lP3Distriution; }
-            set { _lP3Distriution = value; }
+            set 
+            { 
+                _lP3Distriution = value;
+                UpdatePlot();
+            }
         }
 
         #region OxyPlot
@@ -35,7 +39,6 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Base
         {
             PlotModel = new PlotModel();
             AddAxes();
-            UpdatePlot();
         }
         protected void UpdatePlot()
         {

@@ -5,49 +5,53 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HEC.FDA.ViewTest.FrequencyEditor"
              xmlns:vm="clr-namespace:HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor;assembly=HEC.FDA.ViewModel"
-             xmlns:controls="clr-namespace:UserControls.UserControls;assembly=HEC.FDA.UserControls"
+             xmlns:v="clr-namespace:HEC.MVVMFramework.View.NamedActionConverters;assembly=HEC.MVVMFramework.View"
+             xmlns:controls="clr-namespace:UserControls.UserControls;assembly=HEC.FDA.UserControls" xmlns:namedactionconverters="clr-namespace:HEC.MVVMFramework.View.NamedActionConverters;assembly=HEC.MVVMFramework.View" xmlns:fda_view="clr-namespace:HEC.FDA.ViewTest.TableWithPlot" xmlns:tablewithplot="clr-namespace:HEC.FDA.View.TableWithPlot" xmlns:oxy="http://oxyplot.org/wpf"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" d:DataContext="{d:DesignInstance Type= vm:FitToFlowVM}">
+             d:DesignHeight="450" d:DesignWidth="800" d:DataContext="{d:DesignInstance Type= vm:FitToFlowVM}" d:Background="AliceBlue">
   <Grid>
     <Grid>
       <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
         <ColumnDefinition Width="*" />
       </Grid.ColumnDefinitions>
       <Grid.RowDefinitions>
         <RowDefinition Height="*"/>
         <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
       </Grid.RowDefinitions>
 
-      <controls:CopyPasteDataGrid x:Name="dg_table" Grid.Row="0" Grid.Column="0" AutoGenerateColumns="False" ItemsSource="{Binding AnalyticalFlows}" 
-                   HorizontalAlignment="Left" Margin="5" BorderThickness="1" 
-                  HorizontalGridLinesBrush="#808080" VerticalGridLinesBrush="#808080"
-                  CanUserAddRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False"
-                  SelectionMode="Extended" SelectionUnit="Cell" >
-        <DataGrid.Columns>
-          <DataGridTextColumn Header="Flows" Binding="{Binding Flow}" Width="*" />
-        </DataGrid.Columns>
-      </controls:CopyPasteDataGrid>
+      <tablewithplot:FdaDataGridControl/>
 
       <Grid Grid.Row="1" Grid.Column="0">
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-          <RowDefinition Height="25"/>
-          <RowDefinition Height="25"/>
-          <RowDefinition Height="30"/>
+          <RowDefinition />
+          <RowDefinition />
+          <RowDefinition />
         </Grid.RowDefinitions>
-        <Button Content="Fit" Click="FitToFlows_Click" Grid.Row="0" Width="100" />
+
+        <v:NamedActionButton NamedAction="{Binding Compute}" Margin="5" Width="100"  Height="25" />
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
-          <Label Content="{Binding Mean}" Margin="0,0,0,0"/>
-          <Label Content="{Binding Standard_Deviation}" Margin="15,0,0,0" HorizontalAlignment="Right"/>
+          <Label Content="Mean"/>
+          <Label Content="{Binding Mean}" ContentStringFormat="{}{0:F2}" />
+          <Label Content="Standard Deviation"/>
+          <Label Content="{Binding Standard_Deviation}" ContentStringFormat="{}{0:F2}"/>
         </StackPanel>
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-          <Label Name="lbl_fitToFlow_skew" Content="{Binding Skew}" Margin="0,0,0,0"/>
-          <Label Name="lbl_fitToFlow_recordLength" Content="{Binding SampleSize}" Margin="15,0,0,0"/>
+          <Label Content="Skew"/>
+          <Label  Content="{Binding Skew}" ContentStringFormat="{}{0:F2}" />
+          <Label Content="Sample Size"/>
+          <Label  Content="{Binding SampleSize}" />
         </StackPanel>
 
       </Grid>
+
+      <tablewithplot:FdaDataGridControl DataContext="{Binding DataProvider}" Grid.Row="2"/>
+      <oxy:PlotView Model="{Binding PlotModel}" Grid.Column="1" Grid.RowSpan="3"/>
+
     </Grid>
   </Grid>
 </UserControl>
