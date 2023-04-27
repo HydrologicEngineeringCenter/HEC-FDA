@@ -7,6 +7,7 @@ using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.MVVMFramework.Base.Implementations;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace HEC.FDA.ViewModel.Compute
@@ -24,15 +25,10 @@ namespace HEC.FDA.ViewModel.Compute
             alt.ProgressReport += Alt_ProgressReport;
             MessageVM.InstanceHash.Add(alt.GetHashCode());
 
-            //Task.Run(() =>
-            //{
-            //    AlternativeResults results = alt.AnnualizationCompute(randomProvider, discountRate, periodOfAnalysis, altElem.ID, firstResults, secondResults);
-            //    callback?.Invoke(results);
-            //});
-            RunAnnualizationCompute(alt, altElem, callback);
+            RunAnnualizationCompute(alt, altElem, callback, new CancellationToken());
         }
 
-        public Task RunAnnualizationCompute(Alternative alt, AlternativeElement altElem, Action<AlternativeResults> callback)
+        public Task RunAnnualizationCompute(Alternative alt, AlternativeElement altElem, Action<AlternativeResults> callback, CancellationToken cancellationToken)
         {
             IASElement[] iASElems = altElem.GetElementsFromID();
             IASElement firstElem = iASElems[0];
@@ -49,7 +45,7 @@ namespace HEC.FDA.ViewModel.Compute
 
             return Task.Run(() =>
             {
-                AlternativeResults results = alt.AnnualizationCompute(randomProvider, discountRate, periodOfAnalysis, altElem.ID, firstResults, secondResults);
+                AlternativeResults results = alt.AnnualizationCompute(randomProvider, discountRate, periodOfAnalysis, altElem.ID, firstResults, secondResults, cancellationToken);
                 callback?.Invoke(results);
             });
         }

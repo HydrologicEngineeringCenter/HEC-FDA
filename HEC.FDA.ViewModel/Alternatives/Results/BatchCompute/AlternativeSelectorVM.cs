@@ -71,6 +71,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
         //look at AltCompReportElement DoAlternativesStillExist and getCanComputeResults
         public override async void Compute(List<ComputeChildRowItem> altRows)
         {
+            
             MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message("Beginning Batch Compute"));
             ReportMessage(this, beginComputeMessageArgs);
 
@@ -88,7 +89,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
                     {
                         Alternative alt = new Alternative();
                         ComputeAlternativeVM vm = new ComputeAlternativeVM(elem, ComputeCompleted);
-                        taskList.Add(Task.Run(()=> vm.RunAnnualizationCompute(alt, elem, ComputeCompleted)));
+                        taskList.Add( vm.RunAnnualizationCompute(alt, elem, ComputeCompleted, _CancellationToken.Token));
                     }
                     else
                     {

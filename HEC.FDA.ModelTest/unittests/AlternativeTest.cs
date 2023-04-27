@@ -8,6 +8,7 @@ using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.compute;
 using HEC.FDA.Model.scenarios;
 using HEC.FDA.Model.alternatives;
+using System.Threading;
 
 namespace HEC.FDA.ModelTest.unittests
 {
@@ -88,7 +89,8 @@ namespace HEC.FDA.ModelTest.unittests
             Scenario futureScenario = new Scenario(futureYear, impactAreaListFutureYear);
             ScenarioResults futureScenarioResults = futureScenario.Compute(meanRandomProvider, convergenceCriteria);
 
-            AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(meanRandomProvider, discountRate, poa, alternativeID, baseScenarioResults, futureScenarioResults);
+            AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(meanRandomProvider, discountRate, poa, alternativeID, 
+                baseScenarioResults, futureScenarioResults, new CancellationToken());
             double tolerance = 0.01;
 
             double actualAAEQExceededWithProb = alternativeResults.AAEQDamageExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damCat, assetCat);
@@ -190,7 +192,8 @@ namespace HEC.FDA.ModelTest.unittests
             ScenarioResults futureScenarioResults = futureScenario.Compute(meanRandomProvider, convergenceCriteria);
 
 
-            AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(meanRandomProvider, discountRate, poa, alternativeID, baseScenarioResults, futureScenarioResults);
+            AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(meanRandomProvider, discountRate, poa, alternativeID, 
+                baseScenarioResults, futureScenarioResults, new CancellationToken());
             List<string> damCats = alternativeResults.GetDamageCategories();
             List<string> expectedList = new List<string>() { "residential", "commercial" };
             bool testPasses = true;

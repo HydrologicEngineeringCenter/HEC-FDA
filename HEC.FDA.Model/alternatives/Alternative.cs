@@ -10,6 +10,8 @@ using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using System.Linq;
 using HEC.MVVMFramework.Model.Messaging;
+using System.Threading;
+using HEC.FDA.Model.interfaces;
 
 namespace HEC.FDA.Model.alternatives
 {
@@ -42,24 +44,32 @@ namespace HEC.FDA.Model.alternatives
         /// <param name="computedResultsFutureYear"<>/param> Previously computed Scenario results for the future year. Optionally, leave null and run scenario compute. 
         /// <returns></returns>
         /// 
-        public AlternativeResults AnnualizationCompute(interfaces.IProvideRandomNumbers randomProvider, double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear,
-            ScenarioResults computedResultsFutureYear)
+        public AlternativeResults AnnualizationCompute(IProvideRandomNumbers randomProvider, double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear,
+            ScenarioResults computedResultsFutureYear, CancellationToken cancellationToken)
         {
-            ReportMessage(this, new MessageEventArgs(new Message("Starting alternative compute" + Environment.NewLine)));
-
             int baseYear = computedResultsBaseYear.AnalysisYear;
             int futureYear = computedResultsFutureYear.AnalysisYear;
-            //validation on future year relative to base year 
-            List<int> analysisYears = new List<int>();
-            analysisYears.Add(baseYear);
-            analysisYears.Add(futureYear);
-            if (!CanCompute(baseYear, futureYear, periodOfAnalysis))
+            List<int> analysisYears = new List<int>() { baseYear, futureYear };
+
+            //start with a default null alternative results
+            AlternativeResults alternativeResults = new AlternativeResults(alternativeResultsID, analysisYears, periodOfAnalysis, false);
+            ReportMessage(this, new MessageEventArgs(new Message("Starting alternative compute" + Environment.NewLine)));
+
+            if (CanCompute(baseYear, futureYear, periodOfAnalysis))
             {
-                AlternativeResults nullAlternativeResults = new AlternativeResults(alternativeResultsID, analysisYears, periodOfAnalysis, false);
+                alternativeResults = RunAnnualizationCompute(randomProvider, analysisYears, futureYear, periodOfAnalysis, alternativeResultsID, computedResultsBaseYear, computedResultsFutureYear, cancellationToken);
+            }
+            else
+            {
                 MessageEventArgs messageArguments = new MessageEventArgs(new Message("The discounting parameters are not valid, discounting routine aborted. An arbitrary results object is being returned" + Environment.NewLine));
                 ReportMessage(this, messageArguments);
-                return nullAlternativeResults;
             }
+            return alternativeResults;
+        }
+
+        private AlternativeResults RunAnnualizationCompute(IProvideRandomNumbers randomProvider, List<int> analysisYears, double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear,
+            ScenarioResults computedResultsFutureYear, CancellationToken cancellationToken)
+        {
             AlternativeResults alternativeResults = new AlternativeResults(alternativeResultsID, analysisYears, periodOfAnalysis);
             MessageEventArgs messargs = new MessageEventArgs(new Message("Initiating discounting routine." + Environment.NewLine));
             alternativeResults.ReportMessage(this, messargs);
@@ -69,11 +79,7 @@ namespace HEC.FDA.Model.alternatives
 
             //To keep track of which results have yet to be processed
             //I think this allows us to handle situations where we have uneven numbers of results 
-            List<IContainImpactAreaScenarioResults> futureYearResultsList = new List<IContainImpactAreaScenarioResults>();
-            foreach (ImpactAreaScenarioResults futureYearImpactAreaScenarioResults in computedResultsFutureYear.ResultsList)
-            {
-                futureYearResultsList.Add(futureYearImpactAreaScenarioResults);
-            }
+            List<IContainImpactAreaScenarioResults> futureYearResultsList = new List<IContainImpactAreaScenarioResults>(computedResultsFutureYear.ResultsList);
 
             //this quantity assumes uniformity of dimensionality 
             int integerQuantityImpactAreas = computedResultsBaseYear.ResultsList.Count();
@@ -83,79 +89,8 @@ namespace HEC.FDA.Model.alternatives
             double quantityOFDamCatAssetCatImpactAreaCombos = quantityOfImpactAreas * quantityOfDamageCatAssetCatCombinations;
             double progressTicker = 0;
 
-            //Iterate through the base year and future year Scenario Results simultaneously  
-            //There will be one base year results for each impact area in the impact area set
-            foreach (ImpactAreaScenarioResults baseYearResults in computedResultsBaseYear.ResultsList)
-            {
-                //Try to get the most likely future result for the impact area to which baseYearResults corresponds 
-                //I must be able to handle null results in case there is damage in the base year but not in the most likely future year 
-                //such as with managed retreat 
-                ImpactAreaScenarioResults mlfYearResults = computedResultsFutureYear.GetResults(baseYearResults.ImpactAreaID);
-
-                //to keep track that this particular most likely future year result has been processed 
-                futureYearResultsList.Remove(mlfYearResults);
-
-                //This is again to be able to handle uneven results 
-                //In the case that there is not a matching ConsequenceDistributionResult between analysis years
-                //This is feasbile - you could have commercial damage in the base year but none in the future year 
-                List<ConsequenceDistributionResult> mlfYearDamageResultsList = new List<ConsequenceDistributionResult>();
-                foreach (ConsequenceDistributionResult mlfResult in mlfYearResults.ConsequenceResults.ConsequenceResultList)
-                {
-                    mlfYearDamageResultsList.Add(mlfResult);
-                }
-
-                //iterate through the base year consequence distribution results
-                //there will be one for each damage category asset category combination
-                foreach (ConsequenceDistributionResult baseYearDamageResult in baseYearResults.ConsequenceResults.ConsequenceResultList)
-                {
-                    //see if we can find a matching most likely future year result for the particular damage category asset category combination
-                    //we are iterating by impact area one level higher so the impact area ID should be guaranteed to match 
-                    ConsequenceDistributionResult mlfYearDamageResult = mlfYearResults.ConsequenceResults.GetConsequenceResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, baseYearDamageResult.RegionID);
-
-
-                    //Translate the base year EAD distribution and future year EAD distribution into an AAEQ distribution
-                    //I must be able to handle a null ConsequenceDistributionResult in this method to handle uneven results
-                    //such as there being base year results for a particular damage category asset category combination but none for the future year
-                    //that is unlikely but reasonable 
-                    SingleEmpiricalDistributionOfConsequences aaeqResult = IterateOnAAEQ(baseYearDamageResult, mlfYearDamageResult, baseYear, futureYear, periodOfAnalysis, discountRate, randomProvider, false);
-
-                    //to keep track of having processed most likely future year results 
-                    //because there could be more most likely future year results than base year results 
-                    mlfYearDamageResultsList.Remove(mlfYearDamageResult);
-
-                    //our aaeq result is complete 
-                    alternativeResults.AddConsequenceResults(aaeqResult);
-
-                    //at this level we are reporting progress at the impact area - damage category - asset category level 
-                    //this math is an estimate and depends on the dimensions
-                    progressTicker += 1.0;
-                    double progressRatio = progressTicker / quantityOFDamCatAssetCatImpactAreaCombos;
-                    double progressPercent = progressRatio * 100.00;
-
-                    ReportProgress(this, new ProgressReportEventArgs((int)progressPercent));
-                }
-
-                //in the event that there are more most likely future year results than base year results 
-                //or simply most likely future year results that were not matched to any base year results 
-                //so in this case there is damage for a particular damage category asset category in the future year that does not occur in the base year
-                //this situation is unlikey but reasonable 
-                if (mlfYearDamageResultsList.Count > 0)
-                {
-                    foreach (ConsequenceDistributionResult mlfYearDamageResult in mlfYearDamageResultsList)
-                    {
-                        //Try to get the base year result
-                        ConsequenceDistributionResult baseYearDamageResult = baseYearResults.ConsequenceResults.GetConsequenceResult(mlfYearDamageResult.DamageCategory, mlfYearDamageResult.AssetCategory, mlfYearDamageResult.RegionID);
-                        //I must be able to handle a null ConsequenceDistributionResult here. We are unlikely to have a baseYearDamageResult that matches the mlfYearDamageResult if we got to this point. 
-                        //The assumption must be zero damage in the base year 
-                        SingleEmpiricalDistributionOfConsequences aaeqResult = IterateOnAAEQ(baseYearDamageResult, mlfYearDamageResult, baseYear, futureYear, periodOfAnalysis, discountRate, randomProvider);
-
-                        //our aaeq result is complete 
-                        alternativeResults.AddConsequenceResults(aaeqResult);
-                    }
-                }
-
-
-            }
+            ProcessBaseAndFutureYearScenarioResults(randomProvider, analysisYears, discountRate, periodOfAnalysis, computedResultsBaseYear, computedResultsFutureYear, 
+                alternativeResults, futureYearResultsList, quantityOFDamCatAssetCatImpactAreaCombos, progressTicker, cancellationToken);
 
             //UNLIKELY TO HIT THIS CODE 
             //in case there future year impact area scenario results that did not match to any base year impact area scenario results
@@ -163,61 +98,158 @@ namespace HEC.FDA.Model.alternatives
             //or vice versa, such as with managed retreat 
             if (futureYearResultsList.Count > 0)
             {
-
-                foreach (ImpactAreaScenarioResults futureYearResults in futureYearResultsList)
-                {
-                    //get the baseYearResults for the same impact area as futureYearResults
-                    //this should be zero if we got to this point 
-                    //if that is guaranteed to be the case, then I don't think all of this computation is necessary 
-                    ImpactAreaScenarioResults baseYearResults = computedResultsBaseYear.GetResults(futureYearResults.ImpactAreaID);
-
-                    //keep track of baseYearResults in case we have any baseYearResults that are not matched to futureYearResults
-                    //seems unlikely if we expect baseYearResults to be zero 
-                    List<ConsequenceDistributionResult> baseYearDamageResultsList = new List<ConsequenceDistributionResult>();
-                    foreach (ConsequenceDistributionResult baseYearResult in baseYearResults.ConsequenceResults.ConsequenceResultList)
-                    {
-                        baseYearDamageResultsList.Add(baseYearResult);
-                    }
-
-                    foreach (ConsequenceDistributionResult futureYearDamageResult in futureYearResults.ConsequenceResults.ConsequenceResultList)
-                    {
-                        //we expect baseYearResults to be zero, so baseYearDamageResult should be zero, too
-                        ConsequenceDistributionResult baseYearDamageResult = baseYearResults.ConsequenceResults.GetConsequenceResult(futureYearDamageResult.DamageCategory, futureYearDamageResult.AssetCategory, futureYearDamageResult.RegionID);
-                        //I must be able to handle a consequence distribution result with zero damage in this method 
-                        //baseYearDamageResult is probably zero damage 
-                        SingleEmpiricalDistributionOfConsequences aaeqResult = IterateOnAAEQ(baseYearDamageResult, futureYearDamageResult, baseYear, futureYear, periodOfAnalysis, discountRate, randomProvider);
-
-                        //to keep track of base year damage results 
-                        //in case there is a base year damage result that does not match with a future year damage result
-                        //unlikely because we expect base year damage results to be zero 
-                        baseYearDamageResultsList.Remove(baseYearDamageResult);
-
-                        //the aaeq damage result is complete 
-                        alternativeResults.AddConsequenceResults(aaeqResult);
-                    }
-
-                    //in case there were base year damage results that did not match any future year damage results 
-                    //this is unlikely because we expect baseYearResults to be zero 
-                    if (baseYearDamageResultsList.Count > 0)
-                    {
-                        foreach (ConsequenceDistributionResult baseYearDamageResult in baseYearDamageResultsList)
-                        {
-                            //try to get the future year result
-                            //I think we will actually get the future year result here 
-                            ConsequenceDistributionResult futureYearDamageResult = futureYearResults.ConsequenceResults.GetConsequenceResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, baseYearDamageResult.RegionID);
-
-                            //so what happens here - we have null base year result but we have a future year result? 
-                            SingleEmpiricalDistributionOfConsequences aaeqResult = IterateOnAAEQ(baseYearDamageResult, futureYearDamageResult, baseYear, futureYear, periodOfAnalysis, discountRate, randomProvider, false);
-                            alternativeResults.AddConsequenceResults(aaeqResult);
-
-                            //I am concerned about our possibility of getting here. We need to wave a really big red flag if it happens. 
-                            throw new Exception("The alternative compute reached an illogical stream of combinations. The alternative compute was aborted");
-                        }
-                    }
-                }
+                ProcessUnmatchedFutureResults(randomProvider, analysisYears, discountRate, periodOfAnalysis, computedResultsBaseYear, alternativeResults, futureYearResultsList, cancellationToken);
             }
             ReportProgress(this, new ProgressReportEventArgs(100));
             return alternativeResults;
+            
+        }
+
+        private void ProcessUnmatchedFutureResults(IProvideRandomNumbers randomProvider, List<int> analysisYears, double discountRate, int periodOfAnalysis,  ScenarioResults computedResultsBaseYear, 
+            AlternativeResults alternativeResults, List<IContainImpactAreaScenarioResults> futureYearResultsList, CancellationToken cancellationToken)
+        {
+            foreach (ImpactAreaScenarioResults futureYearResults in futureYearResultsList)
+            {
+                //get the baseYearResults for the same impact area as futureYearResults
+                //this should be zero if we got to this point 
+                //if that is guaranteed to be the case, then I don't think all of this computation is necessary 
+                ImpactAreaScenarioResults baseYearResults = computedResultsBaseYear.GetResults(futureYearResults.ImpactAreaID);
+
+                //keep track of baseYearResults in case we have any baseYearResults that are not matched to futureYearResults
+                //seems unlikely if we expect baseYearResults to be zero 
+                List<ConsequenceDistributionResult> baseYearDamageResultsList = new List<ConsequenceDistributionResult>();
+                foreach (ConsequenceDistributionResult baseYearResult in baseYearResults.ConsequenceResults.ConsequenceResultList)
+                {
+                    baseYearDamageResultsList.Add(baseYearResult);
+                }
+
+                foreach (ConsequenceDistributionResult futureYearDamageResult in futureYearResults.ConsequenceResults.ConsequenceResultList)
+                {
+                    //we expect baseYearResults to be zero, so baseYearDamageResult should be zero, too
+                    ConsequenceDistributionResult baseYearDamageResult = baseYearResults.ConsequenceResults.GetConsequenceResult(futureYearDamageResult.DamageCategory, futureYearDamageResult.AssetCategory, futureYearDamageResult.RegionID);
+                    //I must be able to handle a consequence distribution result with zero damage in this method 
+                    //baseYearDamageResult is probably zero damage 
+                    SingleEmpiricalDistributionOfConsequences aaeqResult = IterateOnAAEQ(baseYearDamageResult, futureYearDamageResult, analysisYears[0], analysisYears[1], periodOfAnalysis, discountRate, randomProvider);
+
+                    //to keep track of base year damage results 
+                    //in case there is a base year damage result that does not match with a future year damage result
+                    //unlikely because we expect base year damage results to be zero 
+                    baseYearDamageResultsList.Remove(baseYearDamageResult);
+
+                    //the aaeq damage result is complete 
+                    alternativeResults.AddConsequenceResults(aaeqResult);
+                }
+
+                //in case there were base year damage results that did not match any future year damage results 
+                //this is unlikely because we expect baseYearResults to be zero 
+                if (baseYearDamageResultsList.Count > 0)
+                {
+                    foreach (ConsequenceDistributionResult baseYearDamageResult in baseYearDamageResultsList)
+                    {
+                        //try to get the future year result
+                        //I think we will actually get the future year result here 
+                        ConsequenceDistributionResult futureYearDamageResult = futureYearResults.ConsequenceResults.GetConsequenceResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, baseYearDamageResult.RegionID);
+
+                        //so what happens here - we have null base year result but we have a future year result? 
+                        SingleEmpiricalDistributionOfConsequences aaeqResult = IterateOnAAEQ(baseYearDamageResult, futureYearDamageResult, analysisYears[0], analysisYears[1], periodOfAnalysis, discountRate, randomProvider, false);
+                        alternativeResults.AddConsequenceResults(aaeqResult);
+
+                        //I am concerned about our possibility of getting here. We need to wave a really big red flag if it happens. 
+                        throw new Exception("The alternative compute reached an illogical stream of combinations. The alternative compute was aborted");
+                    }
+                }
+            }
+        }
+
+        private void ProcessBaseAndFutureYearScenarioResults(IProvideRandomNumbers randomProvider, List<int> analysisYears, double discountRate, 
+            int periodOfAnalysis, ScenarioResults computedResultsBaseYear, ScenarioResults computedResultsFutureYear, AlternativeResults alternativeResults, 
+            List<IContainImpactAreaScenarioResults> futureYearResultsList, double quantityOFDamCatAssetCatImpactAreaCombos, double progressTicker, CancellationToken cancellationToken)
+        {
+           
+                //Iterate through the base year and future year Scenario Results simultaneously  
+                //There will be one base year results for each impact area in the impact area set
+                foreach (ImpactAreaScenarioResults baseYearResults in computedResultsBaseYear.ResultsList)
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        throw new TaskCanceledException();
+                    }
+                    //Try to get the most likely future result for the impact area to which baseYearResults corresponds 
+                    //I must be able to handle null results in case there is damage in the base year but not in the most likely future year 
+                    //such as with managed retreat 
+                    ImpactAreaScenarioResults mlfYearResults = computedResultsFutureYear.GetResults(baseYearResults.ImpactAreaID);
+
+                    //to keep track that this particular most likely future year result has been processed 
+                    futureYearResultsList.Remove(mlfYearResults);
+
+                    //This is again to be able to handle uneven results 
+                    //In the case that there is not a matching ConsequenceDistributionResult between analysis years
+                    //This is feasbile - you could have commercial damage in the base year but none in the future year 
+                    List<ConsequenceDistributionResult> mlfYearDamageResultsList = new List<ConsequenceDistributionResult>(mlfYearResults.ConsequenceResults.ConsequenceResultList);
+
+                    //iterate through the base year consequence distribution results
+                    //there will be one for each damage category asset category combination
+                    foreach (ConsequenceDistributionResult baseYearDamageResult in baseYearResults.ConsequenceResults.ConsequenceResultList)
+                    {
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            throw new TaskCanceledException();
+                        }
+                        //see if we can find a matching most likely future year result for the particular damage category asset category combination
+                        //we are iterating by impact area one level higher so the impact area ID should be guaranteed to match 
+                        ConsequenceDistributionResult mlfYearDamageResult = mlfYearResults.ConsequenceResults.GetConsequenceResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, baseYearDamageResult.RegionID);
+
+
+                        //Translate the base year EAD distribution and future year EAD distribution into an AAEQ distribution
+                        //I must be able to handle a null ConsequenceDistributionResult in this method to handle uneven results
+                        //such as there being base year results for a particular damage category asset category combination but none for the future year
+                        //that is unlikely but reasonable 
+                        SingleEmpiricalDistributionOfConsequences aaeqResult = IterateOnAAEQ(baseYearDamageResult, mlfYearDamageResult, analysisYears[0], analysisYears[1], periodOfAnalysis, discountRate, randomProvider, false);
+
+                        //to keep track of having processed most likely future year results 
+                        //because there could be more most likely future year results than base year results 
+                        mlfYearDamageResultsList.Remove(mlfYearDamageResult);
+
+                        //our aaeq result is complete 
+                        alternativeResults.AddConsequenceResults(aaeqResult);
+
+                        //at this level we are reporting progress at the impact area - damage category - asset category level 
+                        //this math is an estimate and depends on the dimensions
+                        progressTicker += 1.0;
+                        double progressRatio = progressTicker / quantityOFDamCatAssetCatImpactAreaCombos;
+                        double progressPercent = progressRatio * 100.00;
+
+                        ReportProgress(this, new ProgressReportEventArgs((int)progressPercent));
+                    }
+
+                    //in the event that there are more most likely future year results than base year results 
+                    //or simply most likely future year results that were not matched to any base year results 
+                    //so in this case there is damage for a particular damage category asset category in the future year that does not occur in the base year
+                    //this situation is unlikey but reasonable 
+                    if (mlfYearDamageResultsList.Count > 0)
+                    {
+                        foreach (ConsequenceDistributionResult mlfYearDamageResult in mlfYearDamageResultsList)
+                        {
+                            if (cancellationToken.IsCancellationRequested)
+                            {
+                                throw new TaskCanceledException();
+                            }
+                            //Try to get the base year result
+                            ConsequenceDistributionResult baseYearDamageResult = baseYearResults.ConsequenceResults.GetConsequenceResult(mlfYearDamageResult.DamageCategory, mlfYearDamageResult.AssetCategory, mlfYearDamageResult.RegionID);
+                            //I must be able to handle a null ConsequenceDistributionResult here. We are unlikely to have a baseYearDamageResult that matches the mlfYearDamageResult if we got to this point. 
+                            //The assumption must be zero damage in the base year 
+                            SingleEmpiricalDistributionOfConsequences aaeqResult = IterateOnAAEQ(baseYearDamageResult, mlfYearDamageResult, analysisYears[0], analysisYears[1], periodOfAnalysis, discountRate, randomProvider);
+
+                            //our aaeq result is complete 
+                            alternativeResults.AddConsequenceResults(aaeqResult);
+                        }
+                    }
+
+
+                }
+            
+            
+
         }
 
         private static bool CanCompute(int baseYear, int futureYear, int periodOfAnalysis)
