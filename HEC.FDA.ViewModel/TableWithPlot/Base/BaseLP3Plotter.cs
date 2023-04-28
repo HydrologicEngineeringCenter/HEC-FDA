@@ -6,15 +6,22 @@ using HEC.FDA.ViewModel.Utilities;
 using HEC.MVVMFramework.ViewModel.Implementations;
 using OxyPlot;
 using OxyPlot.Axes;
+using OxyPlot.Legends;
 using OxyPlot.Series;
 using Statistics.Distributions;
+using System.Runtime.CompilerServices;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.TableWithPlot.Base
 {
-    public class BaseLP3Plotter: ValidatingBaseViewModel
+    public abstract class BaseLP3Plotter: ValidatingBaseViewModel
     {
+        #region Backing Fields
         private PlotModel _plotModel;
         private LogPearson3 _lP3Distriution;
+        #endregion
+
+        #region Properties
         public PlotModel PlotModel
         {
             get { return _plotModel; }
@@ -33,20 +40,32 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Base
                 UpdatePlot();
             }
         }
+        #endregion
 
         #region OxyPlot
         protected void InitializePlotModel()
         {
             PlotModel = new PlotModel();
+            _plotModel.Title = StringConstants.ANALYTICAL_FREQUENCY;
+            Legend legend = new Legend();
+            legend.LegendPosition = LegendPosition.BottomRight;
+            _plotModel.Legends.Add(legend);
             AddAxes();
+            PlotModel.InvalidatePlot(true);
         }
         protected void UpdatePlot()
         {
             PlotModel.Series.Clear();
-            UncertainPairedData LP3asUPD = LP3Distribution.BootstrapToUncertainPairedData(new RandomProvider(1234), LogPearson3._RequiredExceedanceProbabilitiesForBootstrapping);
-            AddLineSeriesToPlot(LP3asUPD);
-            AddLineSeriesToPlot(LP3asUPD, 0.975, true);
-            AddLineSeriesToPlot(LP3asUPD, 0.025, true);
+
+            LP3Distribution.Validate();
+            if (!LP3Distribution.HasErrors)
+            {
+                UncertainPairedData LP3asUPD = LP3Distribution.BootstrapToUncertainPairedData(new RandomProvider(1234), LogPearson3._RequiredExceedanceProbabilitiesForBootstrapping);
+                AddLineSeriesToPlot(LP3asUPD);
+                AddLineSeriesToPlot(LP3asUPD, 0.95, true);
+                AddLineSeriesToPlot(LP3asUPD, 0.05, true);
+            }
+           
             PlotModel.InvalidatePlot(true);
             NotifyPropertyChanged(nameof(PlotModel));
         }
@@ -103,6 +122,26 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Base
             double value = standardNormal.CDF(d);
             string stringval = value.ToString("0.0000");
             return stringval;
+        }
+        #endregion
+
+        #region Load and Save
+        public virtual XElement ToXML()
+        {
+            XElement ele = new XElement(this.GetType().Name);
+            ele.Add(LP3Distribution.ToXML());
+            return ele;
+        }
+        public virtual void FromXML(XElement ele)
+        {
+            foreach (XElement child in ele.Elements())
+            {
+                if(child.Name == typeof(LogPearson3).Name)
+                {
+                    LP3Distribution = LogPearson3.FromXML(child) as LogPearson3; 
+                    break;
+                }
+            }
         }
         #endregion
     }

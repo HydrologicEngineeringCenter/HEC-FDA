@@ -10,12 +10,19 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
 {
     public class FitToFlowVM:ParameterEntryVM
     {
-        private readonly ObservableCollection<FlowDoubleWrapper> _flows = new ObservableCollection<FlowDoubleWrapper>();
-        public ObservableCollection<FlowDoubleWrapper> Data
+        #region Backing Fields
+        private ObservableCollection<FlowDoubleWrapper> _flows = new ObservableCollection<FlowDoubleWrapper>();
+        #endregion
+
+        #region Properties
+        public ObservableCollection<FlowDoubleWrapper> Data //This is called data because FdaDataGridControl binds to a property called Data
         {
             get { return _flows; }
+            set { _flows = value; NotifyPropertyChanged(); }
         }
+        #endregion
 
+        #region Constructors
         public FitToFlowVM():base()
         {
             LoadDefaultFlows();
@@ -30,6 +37,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         public FitToFlowVM(XElement xElement) : base(xElement)
         {
         }
+        #endregion
+
         #region Named Actions
         //Named Actions always have a backing field, "Property" and a {PropertyName}Action method in the class that gets fired when the action is triggered. Also need to be instatiated in the constructor.
 
@@ -49,8 +58,10 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
             NotifyPropertyChanged(nameof(Standard_Deviation));
             UpdateTable();
         }
-        
+
         #endregion
+
+        #region Methods
         private void LoadDefaultFlows()
         {
             for (int i = 1; i < 11; i++)
@@ -59,6 +70,23 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
                 Data.Add(fdw);
             }
         }
+        #endregion
 
+        #region Save and Load
+        public XElement ToXML()
+        {
+            XElement ele = base.ToXML();
+            string flows = String.Join(",", Data.Select((x) => x.Flow).ToArray());
+            ele.SetAttributeValue(nameof(Data), flows);
+            return ele;
+        }
+        public void FromXML(XElement ele)
+        {
+            string flowsAsString = ele.Attribute(nameof(Data)).Value;
+            string [] splitFlows = flowsAsString.Split(',');
+            double [] doubleFlows = splitFlows.Select((x) => Double.Parse(x)).ToArray();
+            Data = new ObservableCollection<FlowDoubleWrapper>(doubleFlows.Select((x) => new FlowDoubleWrapper(x)).ToArray());
+        }
+        #endregion
     }
 }

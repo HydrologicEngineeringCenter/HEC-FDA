@@ -138,6 +138,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
                 y = new LinearAxis();
             }
             y.Position = AxisPosition.Left;
+            _plotModel.Axes.Add(y);
         }
 
         private void AddXAxis()

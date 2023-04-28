@@ -7,7 +7,7 @@ using HEC.FDA.ViewModel.TableWithPlot.Data;
 using Importer;
 using HEC.FDA.Model.paireddata;
 
-namespace HEC.FDA.ViewModel.FrequencyRelationships
+namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
 {
     public class FEGraphicalVM : CurveComponentVM
     {

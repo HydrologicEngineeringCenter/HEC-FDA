@@ -21,6 +21,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
     {
         #region Notes
         #endregion
+
         #region Fields     
         private readonly ObservableCollection<FlowDoubleWrapper> _AnalyticalFlows = new ObservableCollection<FlowDoubleWrapper>();
         private const string MEAN = "Mean: ";
@@ -41,6 +42,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         private ViewResolvingPlotModel _plotModel;
         private int _StandardPOR;
         #endregion
+
         #region Properties
         public ViewResolvingPlotModel PlotModel
         {
@@ -131,6 +133,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         public TableWithPlotVM GraphicalTableWithPlotVM { get; set; } 
 
         #endregion
+
         #region Constructors
         //This supports a fresh editor
         public AnalyticalFrequencyEditorVM(CurveComponentVM defaultCurve,  EditorActionManager actionManager) : base(defaultCurve, actionManager)
@@ -171,6 +174,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             GraphicalTableWithPlotVM.PlotModel.Legends.Add(legend);
         }
         #endregion
+
         #region Voids
         private void LoadFlows(AnalyticalFrequencyElement elem)
         {
@@ -218,7 +222,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 MessageBox.Show(result.ErrorMessage, "Unable to Create LP3", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
         public void AddRows(int startRow, int numRows)
         {
             for (int i = 0; i < numRows; i++)
@@ -254,6 +257,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
 
         #endregion
+
         #region OxyPlot
         public void InitializePlotModel()
         {
@@ -337,6 +341,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             }
         }
         #endregion
+
         #region Methods
         private LogPearson3 CreateLP3()
         {

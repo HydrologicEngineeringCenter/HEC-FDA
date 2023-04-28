@@ -26,6 +26,7 @@
         <RowDefinition Height="35"/>
         <RowDefinition Height="35"/>
         <RowDefinition Height="35"/>
+        <RowDefinition Height="25"/> <!--Table Header Row--> 
         <RowDefinition Height="*"/>
       </Grid.RowDefinitions>
 
@@ -39,7 +40,11 @@
       <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding SampleSize, ValidatesOnDataErrors=True}" IsEnabled="{Binding IsStandard}" Margin="5"/>
      
       <!--Tabulated Relationship Q3-->
-      <tablewithplot:FdaDataGridControl DataContext="{Binding Path=DataProvider }" Grid.Row="4" Grid.ColumnSpan="2"/>
+        <TextBlock Grid.Row="4" Margin="5" Grid.ColumnSpan="2">
+          <Run Text="Analytical Frequency " FontWeight="Bold"/>
+          <Run Text="(Exceedence Probability, Discharge)"/>
+        </TextBlock>
+      <tablewithplot:FdaDataGridControl DataContext="{Binding Path=DataProvider }" Grid.Row="5" Grid.ColumnSpan="2"  Margin="10"/>
     </Grid>
 
     <!--Plot Q1 and Q4-->

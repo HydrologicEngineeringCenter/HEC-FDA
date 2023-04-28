@@ -4,7 +4,6 @@ using HEC.FDA.Model.paireddata;
 using HEC.FDA.ViewModel.TableWithPlot.Base;
 using HEC.FDA.ViewModel.TableWithPlot.Data;
 using Statistics.Distributions;
-using System.Linq;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
@@ -83,7 +82,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         public ParameterEntryVM(XElement xElement)
         {
             InitializePlotModel();
-            LoadFromXML(xElement);
+            FromXML(xElement);
             _dataProvider = new HistogramDataProvider();
             Validate();
             UpdateTable();
@@ -97,21 +96,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
             Validate();
             UpdateTable();
             UpdatePlot();
-        }
-        #endregion
-
-        #region Save and Load
-        public void LoadFromXML(XElement ele)
-        {
-            var childs = ele.Descendants();
-            var distEle = childs.First();
-            LP3Distribution = (LogPearson3)Statistics.ContinuousDistribution.FromXML(distEle);
-        }
-        public XElement ToXML()
-        {
-            XElement ele = new XElement(GetType().Name);
-            ele.Add(LP3Distribution.ToXML());
-            return ele;
         }
         #endregion
 

@@ -8,50 +8,54 @@
              xmlns:v="clr-namespace:HEC.MVVMFramework.View.NamedActionConverters;assembly=HEC.MVVMFramework.View"
              xmlns:controls="clr-namespace:UserControls.UserControls;assembly=HEC.FDA.UserControls" xmlns:namedactionconverters="clr-namespace:HEC.MVVMFramework.View.NamedActionConverters;assembly=HEC.MVVMFramework.View" xmlns:fda_view="clr-namespace:HEC.FDA.ViewTest.TableWithPlot" xmlns:tablewithplot="clr-namespace:HEC.FDA.View.TableWithPlot" xmlns:oxy="http://oxyplot.org/wpf"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" d:DataContext="{d:DesignInstance Type= vm:FitToFlowVM}" d:Background="AliceBlue">
+             d:DesignHeight="450" d:DesignWidth="800" d:DataContext="{d:DesignInstance Type= vm:FitToFlowVM }" d:Background="AliceBlue">
   <Grid>
-    <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="35"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+
+    <!--Fit to Flows Flow Entry Q2-->
+    <tablewithplot:FdaDataGridControl Margin="10"/>
+    <Grid Grid.Row="1" Grid.Column="0">
       <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*" />
         <ColumnDefinition Width="*" />
       </Grid.ColumnDefinitions>
       <Grid.RowDefinitions>
-        <RowDefinition Height="*"/>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="*"/>
+        <RowDefinition />
+        <RowDefinition />
+        <RowDefinition />
       </Grid.RowDefinitions>
-
-      <tablewithplot:FdaDataGridControl/>
-
-      <Grid Grid.Row="1" Grid.Column="0">
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-          <RowDefinition />
-          <RowDefinition />
-          <RowDefinition />
-        </Grid.RowDefinitions>
-
-        <v:NamedActionButton NamedAction="{Binding Compute}" Margin="5" Width="100"  Height="25" />
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
-          <Label Content="Mean"/>
-          <Label Content="{Binding Mean}" ContentStringFormat="{}{0:F2}" />
-          <Label Content="Standard Deviation"/>
-          <Label Content="{Binding Standard_Deviation}" ContentStringFormat="{}{0:F2}"/>
-        </StackPanel>
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-          <Label Content="Skew"/>
-          <Label  Content="{Binding Skew}" ContentStringFormat="{}{0:F2}" />
-          <Label Content="Sample Size"/>
-          <Label  Content="{Binding SampleSize}" />
-        </StackPanel>
-
-      </Grid>
-
-      <tablewithplot:FdaDataGridControl DataContext="{Binding DataProvider}" Grid.Row="2"/>
-      <oxy:PlotView Model="{Binding PlotModel}" Grid.Column="1" Grid.RowSpan="3"/>
-
+      <v:NamedActionButton NamedAction="{Binding Compute}" Margin="5" Width="100"  Height="25" />
+      <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+        <Label Content="Mean"/>
+        <Label Content="{Binding Mean}" ContentStringFormat="{}{0:F2}" />
+        <Label Content="Standard Deviation"/>
+        <Label Content="{Binding Standard_Deviation}" ContentStringFormat="{}{0:F2}"/>
+      </StackPanel>
+      <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+        <Label Content="Skew"/>
+        <Label  Content="{Binding Skew}" ContentStringFormat="{}{0:F2}" />
+        <Label Content="Sample Size"/>
+        <Label  Content="{Binding SampleSize}" />
+      </StackPanel>
     </Grid>
+
+    <!--Tabular Data Q3-->
+    <TextBlock Grid.Row="2" Margin="10">
+        <Run Text="Analytical Frequency" FontWeight="Bold"/>
+        <Run Text="(Exceedence Probability, Discharge)"/>
+    </TextBlock>
+    <tablewithplot:FdaDataGridControl DataContext="{Binding DataProvider}" Grid.Row="3" Margin="10"/>
+
+
+    <!--Plot Q1 and Q4-->
+    <oxy:PlotView Model="{Binding PlotModel}" Grid.Column="1" Grid.RowSpan="4"/>
   </Grid>
 </UserControl>

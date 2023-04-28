@@ -1,4 +1,5 @@
 ﻿using System.Xml.Linq;
+using Utility.Extensions.Attributes;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
 {
@@ -9,6 +10,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         private ParameterEntryVM _parameterEntryVM;
         private bool _isFitToFlows = false; //new windows open with manual entry vm open
         #endregion
+
         #region Properties
         public FitToFlowVM FitToFlowVM
         {
@@ -35,6 +37,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
             get { return !IsFitToFlows; }
         }
         #endregion
+
         #region Constructors
         public AnalyticalVM()
         {
@@ -46,26 +49,27 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
             LoadFromXML(ele);
         }
         #endregion
-        #region Methods
+
+        #region Loading and Saving
         public XElement ToXML()
         {
             XElement ele = new XElement(this.GetType().Name);
+            ele.SetAttributeValue(nameof(IsFitToFlows), IsFitToFlows);
             ele.Add(FitToFlowVM.ToXML());
             ele.Add(ParameterEntryVM.ToXML());
             return ele;
         }
         private void LoadFromXML(XElement ele)
         {
-            var elements = ele.Descendants();
-            foreach (XElement element in elements)
+            IsFitToFlows = bool.Parse(ele.Attribute(nameof(IsFitToFlows)).Value);
+            foreach (XElement child in ele.Elements())
             {
-                string elementName = element.Name.ToString();
-                if (elementName.Equals("LogPearson3VM"))
-                {
-                    FitToFlowVM = new FitToFlowVM(element);
+                if (child.Name.Equals(typeof(ParameterEntryVM).Name)){
+                    ParameterEntryVM = new ParameterEntryVM(child);
                 }
-                else if (elementName.Equals("TableWithPlotVM"))
+                else if (child.Name.Equals(typeof(FitToFlowVM).Name))
                 {
+                    FitToFlowVM = new FitToFlowVM(child);
                 }
             }
         }

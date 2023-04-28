@@ -6,7 +6,8 @@
              xmlns:local="clr-namespace:HEC.FDA.View.TableWithPlot"
              mc:Ignorable="d" 
              xmlns:v="clr-namespace:HEC.MVVMFramework.View.NamedActionConverters;assembly=HEC.MVVMFramework.View"
-             d:DesignHeight="450" d:DesignWidth="800">
+             xmlns:vm ="clr-namespace:HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor;assembly=HEC.FDA.ViewModel"
+             d:DesignHeight="450" d:DesignWidth="800" d:DataContext="{d:DesignInstance Type=vm:FEGraphicalVM }" d:Background="AliceBlue">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="VisibleIfTrueConverter"/>
     </UserControl.Resources>

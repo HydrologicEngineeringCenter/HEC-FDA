@@ -7,7 +7,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
     public class HistogramRow : SequentialRow
     {
         private double _x;
-        [DisplayAsColumn("X")]
+        [DisplayAsColumn("X Value")]
         public override double X
         {
             get { return _x; }
