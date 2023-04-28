@@ -207,19 +207,20 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             DynamicTabVM tab = new DynamicTabVM(header, vm, "ComputeLog" + Name);
             Navigate(tab, false, false);
         }
-        private void ComputeCompleted(ScenarioResults results)
+        private void ComputeCompleted(IASElement elem, ScenarioResults results)
         {
             Results = results;
             Application.Current.Dispatcher.Invoke(
             (Action)(() => 
             {
                 PersistenceFactory.GetIASManager().SaveExisting(this);
+                IASTooltipHelper.UpdateTooltip(this);
                 MessageBoxResult messageBoxResult = MessageBox.Show("Compute completed. Would you like to view the results?", Name + " Compute Complete", MessageBoxButton.YesNo, MessageBoxImage.Information);
                 if (messageBoxResult == MessageBoxResult.Yes)
                 {
                     ViewResults(this, new EventArgs());
                 }
-                IASTooltipHelper.UpdateTooltip(this);
+                
             }));
         }
         #endregion

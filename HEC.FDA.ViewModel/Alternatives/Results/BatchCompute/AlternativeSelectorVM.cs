@@ -120,8 +120,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
 
         private void ComputeCompleted(AlternativeResults results)
         {
-            //i have to assign the results back onto the alt.
-            
+            //Assign the results back onto the alt.      
             foreach(ComputeChildRowItem row in Rows)
             {
                 if(row.ChildElement.ID == results.AlternativeID)
@@ -130,7 +129,6 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
                 }
             }
 
-            //todo: do something here? Save? update progress bar?
         }
 
     }

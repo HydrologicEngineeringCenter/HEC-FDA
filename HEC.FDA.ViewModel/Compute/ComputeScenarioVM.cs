@@ -15,7 +15,7 @@ namespace HEC.FDA.ViewModel.Compute
     public class ComputeScenarioVM:ComputeWithProgressAndMessagesBase
     {
 
-        public ComputeScenarioVM(IASElement elem, Action<ScenarioResults> callback):base()
+        public ComputeScenarioVM(IASElement elem, Action<IASElement, ScenarioResults> callback):base()
         {
             List<SpecificIAS> iasElems = elem.SpecificIASElements;
             int analysisYear = elem.AnalysisYear;
@@ -37,7 +37,7 @@ namespace HEC.FDA.ViewModel.Compute
 
                 //todo: add the cancelation token
                 CancellationTokenSource _CancellationToken = new CancellationTokenSource();
-                ComputeScenario(scenario, callback, _CancellationToken.Token);
+                ComputeScenario(elem, scenario, callback, _CancellationToken.Token);
                 //UnregisterMessages(sims);
             }
             else
@@ -48,7 +48,7 @@ namespace HEC.FDA.ViewModel.Compute
         }
 
         
-        public static Task ComputeScenario(Scenario scenario, Action<ScenarioResults> callback, CancellationToken cancellationToken)
+        public static Task ComputeScenario(IASElement elem, Scenario scenario, Action<IASElement, ScenarioResults> callback, CancellationToken cancellationToken)
         {
             return Task.Run(() =>
             {
@@ -57,7 +57,7 @@ namespace HEC.FDA.ViewModel.Compute
                 ConvergenceCriteria cc = StudyCache.GetStudyPropertiesElement().GetStudyConvergenceCriteria();              
                 ScenarioResults scenarioResults = scenario.Compute(randomProvider, cc, cancellationToken);       
                 //Event for when everything has been computed.
-                callback?.Invoke(scenarioResults);
+                callback?.Invoke(elem, scenarioResults);
             });
         }
 

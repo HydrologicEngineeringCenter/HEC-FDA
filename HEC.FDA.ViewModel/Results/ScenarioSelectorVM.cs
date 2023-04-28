@@ -7,6 +7,7 @@ using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -84,7 +85,7 @@ namespace HEC.FDA.ViewModel.Results
                         List<ImpactAreaScenarioSimulation> sims = ComputeScenarioVM.CreateSimulations(elem.SpecificIASElements);
                         RegisterProgressAndMessages(sims);
                         Scenario scenario = new Scenario(elem.AnalysisYear, sims);
-                        taskList.Add(ComputeScenarioVM.ComputeScenario(scenario, ComputeCompleted, _CancellationToken.Token));
+                        taskList.Add(ComputeScenarioVM.ComputeScenario(elem, scenario, ComputeCompleted, _CancellationToken.Token));
                     }
                     else
                     {
@@ -102,22 +103,14 @@ namespace HEC.FDA.ViewModel.Results
             ComputeButtonLabel = COMPUTE;
             MessageEventArgs finishedComputeMessageArgs = new MessageEventArgs(new Message("All Scenarios Computed"));
             ReportMessage(this, finishedComputeMessageArgs);
-            UpdateIASElementTooltips(elementList);
-            var result = MessageBox.Show("Do you want to view summary results?", "Compute Finished", MessageBoxButton.YesNo, MessageBoxImage.Information);
+
+            var result = MessageBox.Show("Do you want to view summary results?", "Compute Finished", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result == MessageBoxResult.Yes)
             {
                 ScenarioDamageSummaryVM vm = new ScenarioDamageSummaryVM(elementList);
                 //todo: add to string constants
                 DynamicTabVM tab = new DynamicTabVM(StringConstants.VIEW_SUMMARY_RESULTS_HEADER, vm, StringConstants.VIEW_SUMMARY_RESULTS_HEADER);
                 Navigate(tab, false, false);
-            }
-        }
-
-        private void UpdateIASElementTooltips(List<IASElement> elems)
-        {
-            foreach(IASElement elem in elems)
-            {
-                IASTooltipHelper.UpdateTooltip(elem);
             }
         }
 
@@ -143,10 +136,16 @@ namespace HEC.FDA.ViewModel.Results
             }
         }
 
-        private void ComputeCompleted(ScenarioResults results)
+        private void ComputeCompleted(IASElement elem, ScenarioResults results)
         {
-            //todo: do something here? Save? update progress bar?
-            int test = 0;
+            elem.Results = results;
+            //have to get back on the main thread to save.
+            Application.Current.Dispatcher.Invoke(
+            (Action)(() =>
+            {
+                PersistenceFactory.GetIASManager().SaveExisting(elem);
+                IASTooltipHelper.UpdateTooltip(elem);
+            }));
         }
        
     }
