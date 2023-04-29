@@ -3,6 +3,7 @@ using HEC.MVVMFramework.Base.Enumerations;
 using Statistics;
 using Statistics.Distributions;
 using HEC.MVVMFramework.Model.Messaging;
+using System;
 
 namespace HEC.FDA.Model.structures
 {
@@ -15,6 +16,7 @@ namespace HEC.FDA.Model.structures
         #endregion
 
         #region Properties 
+        public IDistributionEnum DistributionType { get { return _distributionType; } }
         #endregion 
         #region Constructor 
         public ValueUncertainty()
@@ -41,52 +43,52 @@ namespace HEC.FDA.Model.structures
             AddSinglePropertyRule(nameof(_percentOfInventoryValueMax), new Rule(() => _percentOfInventoryValueMax >= 100, "The max percent of the inventory value must be greater than or equal to 100", ErrorLevel.Fatal));
         }
 
-        public double Sample(double inventoryValue, double probability, bool computeIsDeterministic)
+        /// <summary>
+        /// The use of this method will depend on the type of distribution. 
+        /// If Normal, Triangular, or Uniform, the value returned is the percent of inventory value to add or subtract from the inventoried value
+        /// If log normal, then the return value will need to be multiplied by the inventoried value
+        /// </summary>
+        /// <param name="probability"></param>
+        /// <param name="computeIsDeterministic"></param>
+        /// <returns></returns>        
+        public double Sample(double probability, bool computeIsDeterministic)
         {
-            double sampledValue;
+            double centerOfDistribution = 100;
+            double sampledValueOffset;
             if (computeIsDeterministic)
             {
-                sampledValue = inventoryValue;
-
+                    sampledValueOffset = centerOfDistribution/100;
             } 
             else
             {
             switch (_distributionType)
             {
                 case IDistributionEnum.Normal:
-                    double standardDeviation = (_percentOfInventoryValueStandardDeviationOrMin/100) * inventoryValue;
-                    Normal normal = new Normal(inventoryValue, standardDeviation);
-                    sampledValue = normal.InverseCDF(probability);
+                    Normal normal = new Normal(centerOfDistribution/100, (_percentOfInventoryValueStandardDeviationOrMin/100));
+                    sampledValueOffset = normal.InverseCDF(probability);
                     break;
 
                 case IDistributionEnum.LogNormal:
-                    double logStandardDeviation = (_percentOfInventoryValueStandardDeviationOrMin/100) * inventoryValue;
-                    LogNormal logNormal = new LogNormal(inventoryValue, logStandardDeviation);
-                    sampledValue = logNormal.InverseCDF(probability);
+                    sampledValueOffset = Math.Exp(Normal.StandardNormalInverseCDF(probability)* (_percentOfInventoryValueStandardDeviationOrMin/100));
                     break;
                 case IDistributionEnum.Triangular:
-                    double min = (_percentOfInventoryValueStandardDeviationOrMin/100) * inventoryValue;
-                    double max = (_percentOfInventoryValueMax/100) * inventoryValue;
-                    Triangular triangular = new Triangular(min, inventoryValue, max);
-                    sampledValue = triangular.InverseCDF(probability);
+                    Triangular triangular = new Triangular(_percentOfInventoryValueStandardDeviationOrMin/100, centerOfDistribution/100, _percentOfInventoryValueMax/100);
+                    sampledValueOffset = triangular.InverseCDF(probability);
                     break;
                 case IDistributionEnum.Uniform:
-                    double minUniform = (_percentOfInventoryValueStandardDeviationOrMin/100) * inventoryValue;
-                    double maxUniform = (_percentOfInventoryValueMax/100) * inventoryValue;
-                    Uniform uniform = new Uniform(minUniform, maxUniform);
-                    sampledValue = uniform.InverseCDF(probability);
+                    Uniform uniform = new Uniform(_percentOfInventoryValueStandardDeviationOrMin/100, _percentOfInventoryValueMax/100);
+                    sampledValueOffset = uniform.InverseCDF(probability);
                     break;
                 default:
-                    sampledValue = inventoryValue;
+                    sampledValueOffset = centerOfDistribution/100;
                     break;
             }
             }
-            //do not allow negative inventory values 
-            if (sampledValue < 0)
+            if (sampledValueOffset < 0)
             {
-                sampledValue = 0;
+                sampledValueOffset = 0;
             }
-            return sampledValue;
+            return sampledValueOffset;
         }
         #endregion
 

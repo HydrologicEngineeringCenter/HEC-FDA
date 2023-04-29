@@ -37,6 +37,7 @@ namespace StatisticsTests.Distributions
         [InlineData(1.5,1.75,.607,7.208)]
         [InlineData(2.5,2.25,.278,3.231)]
         [InlineData(3.5,2.75,.269,6.098)]
+        [InlineData(5.2983, 2.9957, 0.8, 2487.5)]
         public void InverseCDF_Test(double mean, double standardDeviation, double probability, double expected)
         {
             LogNormal logNormal = new LogNormal(mean, standardDeviation);
@@ -59,5 +60,16 @@ namespace StatisticsTests.Distributions
             Assert.Equal(expectedPDF, actualPDF, 2);
             Assert.Equal(expectedCDF, actualCDF, 2);
         }
+
+        [Theory]
+        [InlineData(3.5, 2.75, .269, 6.098)]
+        public void MeanCanBeBackedOut_Test(double mean, double standardDeviation, double probability, double expected)
+        {
+            double offset = 3;
+            LogNormal logNormal = new LogNormal(mean + offset, standardDeviation);
+            double actual = logNormal.InverseCDF(probability) * Math.Exp(-offset);
+            Assert.Equal(expected, actual, 1);
+        }
+
     }
 }

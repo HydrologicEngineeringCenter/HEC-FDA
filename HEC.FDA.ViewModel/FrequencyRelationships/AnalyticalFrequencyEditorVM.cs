@@ -139,7 +139,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             _StDev = DefaultData.LP3StDev;
             _Skew = DefaultData.LP3Skew;
             _POR = DefaultData.PeriodOfRecord;
-            GraphicalTableWithPlotVM = new TableWithPlotVM(new GraphicalVM(StringConstants.GRAPHICAL_FREQUENCY,StringConstants.EXCEEDANCE_PROBABILITY,StringConstants.DISCHARGE), true);
+            GraphicalTableWithPlotVM = new TableWithPlotVM(new GraphicalVM(StringConstants.GRAPHICAL_FREQUENCY,StringConstants.EXCEEDANCE_PROBABILITY,StringConstants.DISCHARGE), true,true,true);
             AddLegendToPlot();
             LoadDefaultFlows();
             InitializePlotModel();
@@ -159,7 +159,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
             elem.MyGraphicalVM = new GraphicalVM(elem.MyGraphicalVM.ToXML());
 
-            GraphicalTableWithPlotVM = new TableWithPlotVM(elem.MyGraphicalVM, true);
+            GraphicalTableWithPlotVM = new TableWithPlotVM(elem.MyGraphicalVM, true, true, true);
             AddLegendToPlot();
         }
 
@@ -291,7 +291,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         {
             LineSeries lineSeries = new LineSeries()
             {
-                TrackerFormatString = "X: {Probability:0.####}, Y: {4:F2} "
+                TrackerFormatString = "X: {Probability:0.####}, Y: {4:F2} ",
+                CanTrackerInterpolatePoints = false
             };
 
             NormalDataPoint[] points = new NormalDataPoint[function.Xvals.Length];

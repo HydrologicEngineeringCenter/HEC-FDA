@@ -1,6 +1,7 @@
 ﻿using Xunit;
 using Statistics;
 using HEC.FDA.Model.structures;
+using HEC.MVVMFramework.Base.Implementations;
 
 namespace HEC.FDA.ModelTest.unittests.structures
 {
@@ -19,6 +20,24 @@ namespace HEC.FDA.ModelTest.unittests.structures
             ValueRatioWithUncertainty valueRatioWithUncertainty = new ValueRatioWithUncertainty(distributionEnum, standardDeviationOrMin, centralTendency, max);
             double actual = valueRatioWithUncertainty.Sample(probability, computeIsDeterministic: false);
             Assert.Equal(expected, actual, 1);
+        }
+
+
+        [Fact]
+        public void ValidationShould()
+        {
+            IDistributionEnum distributionEnum = IDistributionEnum.LogPearsonIII;
+            double min = -1;
+            double centralTendancy = 0;
+            double max = -2;
+            ValueRatioWithUncertainty valueRatioWithUncertainty = new ValueRatioWithUncertainty(distributionEnum, min, centralTendancy, max);
+            valueRatioWithUncertainty.Validate();
+            foreach (PropertyRule rule in valueRatioWithUncertainty.RuleMap.Values)
+            {
+                Assert.Single(rule.Errors);
+                Assert.Equal(HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal, rule.ErrorLevel);
+            }
+
         }
     }
 }
