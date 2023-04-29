@@ -33,8 +33,6 @@ namespace HEC.FDA.ModelTest.unittests
         private static string[] occupancyTypes = new string[] { residentialNormalDistOccupancyTypeName, residentialNormalDistOccupancyTypeName, residentialNormalDistOccupancyTypeName, residentialNormalDistOccupancyTypeName };
         private static int impactAreaID = 1;
         private static ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 20000, maxIterations: 50000);
-        private static string contentAssetCategory = "Content";
-        private static string structureAssetCategory = "Structure";
 
         #region Normally Distributed Occ Type Data
         //occupancy type data
@@ -237,6 +235,9 @@ namespace HEC.FDA.ModelTest.unittests
         new double[] { 0, 1, 2, 3, 4, 5, 6, 7 }, 50, new CurveMetaData("Probability", "Stage", "Graphical Stage Frequency"), true);
         #endregion
 
+     
+
+
         private static RandomProvider randomProvider = new RandomProvider(seed: 1234);
 
         private Inventory CreateInventory()
@@ -256,7 +257,26 @@ namespace HEC.FDA.ModelTest.unittests
             Inventory inventory = new Inventory(occupancyTypesList,structures);
             return inventory;
         }
- 
+
+
+        [Fact]
+        public void ErrorsShouldStopCompute()
+        {
+            //Arrange
+            Inventory inventory = CreateInventory();
+            ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, inventory, hydraulicDataset, convergenceCriteria, String.Empty, usingMockData: true);
+            List<ImpactAreaStageDamage> impactAreaStageDamageList = new List<ImpactAreaStageDamage>() { impactAreaStageDamage };
+            ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(impactAreaStageDamageList);
+
+            //Act
+            //This compute should return a list with count of 0 stage-damage functions - we didnt provide any H&H summary relationships 
+            //so cannot calculate stage frequency, and the compute should check for that 
+            List<UncertainPairedData> nullStageDamage = impactAreaStageDamage.Compute(randomProvider);
+
+            //Assert
+            Assert.Equal(0, nullStageDamage.Count);
+        }
+
         [Theory]
         [InlineData(5)]
         public void StructureDetailsShould(double expectedLength)

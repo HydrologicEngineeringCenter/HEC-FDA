@@ -27,14 +27,14 @@ namespace HEC.FDA.ModelTest.unittests.structures
         private static FirstFloorElevationUncertainty firstFloorElevationUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.Normal, 0.5);
         private static ValueUncertainty _structureValueUncertainty = new ValueUncertainty(IDistributionEnum.Normal, .1);
         private static ValueRatioWithUncertainty _contentToStructureValueRatio = new ValueRatioWithUncertainty(IDistributionEnum.Normal, 10, 90);
-        private double expectedCSVR = 0.9;
+        private double expectedCSVR = 90;
         private static MedianRandomProvider medianRandomProvider = new MedianRandomProvider();
         private static string name = "MyOccupancyType";
         private static string damageCategory = "DamageCategory";
 
         [Theory]
-        [InlineData(100, 10)]
-        public void OccupancyTypeShouldSampleCorrectly(double structureValue, double firstFloorElevation)
+        [InlineData(1,0)]
+        public void OccupancyTypeShouldSampleCorrectly(double structureValueOffset, double firstFloorElevationOffset)
         {
             OccupancyType occupancyType = OccupancyType.builder()
                 .withName(name)
@@ -46,16 +46,15 @@ namespace HEC.FDA.ModelTest.unittests.structures
                 .withContentToStructureValueRatio(_contentToStructureValueRatio)
                 .build();
 
-            SampledStructureParameters sampledStructureParameters = occupancyType.Sample(medianRandomProvider, structureValue, firstFloorElevation);
-            double expectedContentValue = expectedCSVR * sampledStructureParameters.StructureValueSampled;
+            DeterministicOccupancyType sampledStructureParameters = occupancyType.Sample(medianRandomProvider);
 
             Assert.Equal(name, sampledStructureParameters.OccupancyTypeName);
             Assert.Equal(damageCategory, sampledStructureParameters.OccupancyTypeDamageCategory);
             Assert.Equal(expectedPercentDamage, sampledStructureParameters.StructPercentDamagePairedData.Yvals);
-            Assert.Equal(structureValue, sampledStructureParameters.StructureValueSampled);
-            Assert.Equal(expectedContentValue, sampledStructureParameters.ContentValueSampled);
+            Assert.Equal(structureValueOffset, sampledStructureParameters.StructureValueOffset);
+            Assert.Equal(expectedCSVR, sampledStructureParameters.ContentToStructureValueRatio);
             Assert.Equal(expectedPercentDamage, sampledStructureParameters.ContentPercentDamagePairedData.Yvals);
-            Assert.Equal(firstFloorElevation, sampledStructureParameters.FirstFloorElevationSampled);
+            Assert.Equal(firstFloorElevationOffset, sampledStructureParameters.FirstFloorElevationOffset);
 
         }
 
