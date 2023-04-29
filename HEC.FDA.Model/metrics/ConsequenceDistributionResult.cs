@@ -20,7 +20,7 @@ namespace HEC.FDA.Model.metrics
         private int _regionID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE;
         private ConvergenceCriteria _convergenceCriteria;
         private bool _isNull;
-        private double _consequenceBinWidth = 1.0;
+        private double _consequenceBinWidth = .1;
         public event MessageReportedEventHandler MessageReport;
         public event ProgressReportedEventHandler ProgressReport;
         #endregion

@@ -444,32 +444,31 @@ namespace HEC.FDA.ModelTest.unittests
 
 
             //Assert 
-            int decimalPlacesToTest = 7;
-            //Mean EAD
-            Assert.Equal(results_one.MeanExpectedAnnualConsequences(), results_two.MeanExpectedAnnualConsequences(), decimalPlacesToTest);
+            ////Mean EAD
+            Assert.Equal(results_one.MeanExpectedAnnualConsequences(), results_two.MeanExpectedAnnualConsequences());
 
-            //EAD Distribution
-            Assert.Equal(results_one.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.25), results_two.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.25), decimalPlacesToTest);
-            Assert.Equal(results_one.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.50), results_two.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.5), decimalPlacesToTest);
-            Assert.Equal(results_one.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.75), results_two.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.75), decimalPlacesToTest);
+            ////EAD Distribution
+            Assert.Equal(results_one.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.25), results_two.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.25));
+            Assert.Equal(results_one.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.50), results_two.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.5));
+            Assert.Equal(results_one.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.75), results_two.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.75));
 
             //Mean and Median AEP
-            Assert.Equal(results_one.MeanAEP(thresholdID: 0), results_two.MeanAEP(thresholdID: 0), decimalPlacesToTest);
-            //Assert.Equal(results_one.MedianAEP(thresholdID: 0), results_two.MedianAEP(thresholdID: 0), decimalPlacesToTest);
+            Assert.Equal(results_one.MeanAEP(thresholdID: 0), results_two.MeanAEP(thresholdID: 0));
+            Assert.Equal(results_one.MedianAEP(thresholdID: 0), results_two.MedianAEP(thresholdID: 0));
 
             //AEP Distribution - Assurance of AEP
-            Assert.Equal(results_one.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.10), results_two.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.10), decimalPlacesToTest);
-            Assert.Equal(results_one.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.04), results_two.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.04), decimalPlacesToTest);
-            Assert.Equal(results_one.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.02), results_two.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.02), decimalPlacesToTest);
-            Assert.Equal(results_one.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.004), results_two.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.004), decimalPlacesToTest);
-            Assert.Equal(results_one.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.002), results_two.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.002), decimalPlacesToTest);
+            Assert.Equal(results_one.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.10), results_two.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.10));
+            Assert.Equal(results_one.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.04), results_two.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.04));
+            Assert.Equal(results_one.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.02), results_two.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.02));
+            Assert.Equal(results_one.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.004), results_two.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.004));
+            Assert.Equal(results_one.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.002), results_two.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.002));
 
             //Assurance of Threshold 
-            Assert.Equal(results_one.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.90), results_two.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.90), decimalPlacesToTest);
-            Assert.Equal(results_one.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.96), results_two.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.96), decimalPlacesToTest);
-            Assert.Equal(results_one.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.98), results_two.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.98), decimalPlacesToTest);
-            Assert.Equal(results_one.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.996), results_two.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.996), decimalPlacesToTest);
-            Assert.Equal(results_one.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.998), results_two.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.998), decimalPlacesToTest);
+            Assert.Equal(results_one.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.90), results_two.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.90));
+            Assert.Equal(results_one.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.96), results_two.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.96));
+            Assert.Equal(results_one.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.98), results_two.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.98));
+            Assert.Equal(results_one.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.996), results_two.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.996));
+            Assert.Equal(results_one.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.998), results_two.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.998));
         }
     }
 }
