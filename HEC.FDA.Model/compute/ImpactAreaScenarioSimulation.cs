@@ -294,7 +294,12 @@ namespace HEC.FDA.Model.compute
             {
                 seeds[i] = masterSeedList.Next();
             }
-            long iterations = convergenceCriteria.MinIterations;
+            //here, make iterations into smaller chunks - let's do miniter/20 or 1, whichever is greater. 
+            long iterations = convergenceCriteria.MinIterations/20;
+            if (iterations < 1)
+            {
+                iterations = 1;
+            }
             //_leveeIsValid = LeveeIsValid();///this should be integrated into more formal validation routines above./.
 
             while (!_impactAreaScenarioResults.IsConverged(computeWithDamage))

@@ -264,8 +264,13 @@ namespace HEC.FDA.ModelTest.unittests
                 performanceByThresholds.GetThreshold(thresholdID2).SystemPerformanceResults.AddStageForAssurance(keyForCNEP, messyObservation);
             }
             ImpactAreaScenarioResults results = new ImpactAreaScenarioResults(id);
+            
             results.PerformanceByThresholds = performanceByThresholds;
-
+            foreach(Threshold threshold  in results.PerformanceByThresholds.ListOfThresholds)
+            {
+                threshold.SystemPerformanceResults.PutDataIntoHistograms();
+            }
+            results.ConsequenceResults.PutDataIntoHistograms();
             bool isFirstThresholdConverged = performanceByThresholds.GetThreshold(thresholdID1).SystemPerformanceResults.AssuranceTestForConvergence(.05, .95);
             bool isSecondThresholdConverged = performanceByThresholds.GetThreshold(thresholdID2).SystemPerformanceResults.AssuranceTestForConvergence(.05, .95);
             bool isPerformanceConverged = results.IsPerformanceConverged();
@@ -357,7 +362,7 @@ namespace HEC.FDA.ModelTest.unittests
                 systemPerformanceResults.AddStageForAssurance(standardProbability, invCDF);
 
             });
-
+            systemPerformanceResults.PutDataIntoHistograms();
             double actual = systemPerformanceResults.AssuranceOfEvent(standardProbability);
             Assert.Equal(expected, actual, 3);
         }
