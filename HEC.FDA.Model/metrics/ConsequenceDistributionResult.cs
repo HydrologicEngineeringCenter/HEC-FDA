@@ -131,6 +131,7 @@ namespace HEC.FDA.Model.metrics
         #endregion
 
         #region Methods
+        //For the EAD compute, we need to put data in concurrent bag into a histogram 
         public void PutDataIntoHistogram()
         {
             List<double> listToSort = new List<double>();
@@ -143,9 +144,17 @@ namespace HEC.FDA.Model.metrics
             }
             _tempResults.Clear();
         }
+
+        //If computing stage damage, we'll plop the realization directly into the histogram
         internal void AddConsequenceRealization(double damageRealization)
         {
-            _tempResults.Add(damageRealization);
+            if (_consequenceHistogram is ThreadsafeInlineHistogram)
+            {
+                _tempResults.Add(damageRealization);
+            } else
+            {
+                _consequenceHistogram.AddObservationToHistogram(damageRealization, _consequenceHistogram.SampleSize + 1); ;
+            }
         }
 
         internal double MeanExpectedAnnualConsequences()

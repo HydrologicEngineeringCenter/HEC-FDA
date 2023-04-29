@@ -284,7 +284,11 @@ namespace HEC.FDA.Model.stageDamage
             //after the first pass, we take the data in the dictionaries, pass the data into a histogram within the consequence distribution results, and test for convergence 
             //if the histograms are not converged, then we proceed for additional passes, this time adding osbervations to the histograms directly 
             List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates = new List<Dictionary<string, List<double>>>();
-            int iterations = convergenceCriteria.MinIterations;
+            int iterations = convergenceCriteria.MinIterations/20;
+            if(iterations < 1)
+            {
+                iterations = 1;
+            }
             bool dictionariesAreNotConstructed = true;
             for (int i = 0; i < iterations; i++)
             {
