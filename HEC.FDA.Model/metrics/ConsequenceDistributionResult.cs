@@ -22,7 +22,6 @@ namespace HEC.FDA.Model.metrics
         private int _regionID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE;
         private ConvergenceCriteria _convergenceCriteria;
         private bool _isNull;
-        private double _consequenceBinWidth = .1;
         public event MessageReportedEventHandler MessageReport;
         public event ProgressReportedEventHandler ProgressReport;
         #endregion
@@ -96,7 +95,7 @@ namespace HEC.FDA.Model.metrics
             _damageCategory = damageCategory;
             _assetCategory = assetCategory;
             _convergenceCriteria = convergenceCriteria;
-            _consequenceHistogram = new ThreadsafeInlineHistogram(_consequenceBinWidth,_convergenceCriteria);
+            _consequenceHistogram = new ThreadsafeInlineHistogram(_convergenceCriteria);
             _isNull = false;
             _regionID = impactAreaID;
             MessageHub.Register(this);

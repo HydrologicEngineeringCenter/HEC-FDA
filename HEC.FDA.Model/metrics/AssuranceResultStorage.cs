@@ -12,7 +12,7 @@ namespace HEC.FDA.Model.metrics
     {
         #region Fields
         ConcurrentBag<double> _tempResultStorage = new ConcurrentBag<double>();
-        Histogram _assurance;
+        ThreadsafeInlineHistogram _assurance;
         string _type;
         double _standardNonExceedanceProbability;
 
@@ -26,7 +26,7 @@ namespace HEC.FDA.Model.metrics
                 return _type;
             }
         }
-        public Histogram AssuranceHistogram
+        public ThreadsafeInlineHistogram AssuranceHistogram
         {
             get
             {
@@ -46,7 +46,7 @@ namespace HEC.FDA.Model.metrics
         internal AssuranceResultStorage(string dummyAsuranceType, double standardNonExceedanceProbability)
         {
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
-            _assurance = new Histogram();
+            _assurance = new ThreadsafeInlineHistogram();
             _assurance.SetIterationSize(convergenceCriteria.MaxIterations);
             _type = dummyAsuranceType;
             _standardNonExceedanceProbability = standardNonExceedanceProbability;
@@ -54,7 +54,7 @@ namespace HEC.FDA.Model.metrics
         public AssuranceResultStorage(string assuranceType, ConvergenceCriteria convergenceCriteria, double standardNonExceedanceProbabilityForAssuranceOfTargetOrLevee = 0)
         {
             _standardNonExceedanceProbability = standardNonExceedanceProbabilityForAssuranceOfTargetOrLevee;
-            _assurance = new Histogram(convergenceCriteria);
+            _assurance = new ThreadsafeInlineHistogram(convergenceCriteria);
             _assurance.SetIterationSize(convergenceCriteria.MaxIterations);
             _type = assuranceType;
         }
