@@ -2,13 +2,17 @@
 using Statistics.Histograms;
 using Statistics;
 using System.Xml.Linq;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace HEC.FDA.Model.metrics
 {
     public class AssuranceResultStorage
     {
         #region Fields
-        ThreadsafeInlineHistogram _assurance;
+        ConcurrentBag<double> _tempResultStorage = new ConcurrentBag<double>();
+        Histogram _assurance;
         string _type;
         double _standardNonExceedanceProbability;
 
@@ -22,7 +26,7 @@ namespace HEC.FDA.Model.metrics
                 return _type;
             }
         }
-        public ThreadsafeInlineHistogram AssuranceHistogram
+        public Histogram AssuranceHistogram
         {
             get
             {
@@ -86,6 +90,20 @@ namespace HEC.FDA.Model.metrics
             return false;
         }
 
+        public void AddObservation(double result)
+        {
+            _tempResultStorage.Add(result);
+        }
+
+        public void PutDataIntoHistogram()
+        {
+            List<double> listToSort = new List<double>();
+            listToSort = _tempResultStorage.ToList();
+            listToSort.Sort();
+            _assurance.AddObservationsToHistogram(listToSort.ToArray());
+            _tempResultStorage.Clear();
+        }
+
         public XElement WriteToXML()
         {
             XElement masterElement = new XElement("Assurance");
@@ -105,7 +123,7 @@ namespace HEC.FDA.Model.metrics
             return new AssuranceResultStorage(type, probability, threadsafeInlineHistogram);
         }
 
-
+        
         #endregion
     }
 }

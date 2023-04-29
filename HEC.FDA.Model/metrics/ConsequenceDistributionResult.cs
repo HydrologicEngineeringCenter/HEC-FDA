@@ -8,12 +8,14 @@ using HEC.MVVMFramework.Base.Implementations;
 using System.Collections.Generic;
 using System.Linq;
 using Statistics.Distributions;
+using System.Collections.Concurrent;
 
 namespace HEC.FDA.Model.metrics
 { //TODO: I THINK SOME OR ALL OF THIS CLASS SHOULD BE INTERNAL 
     public class ConsequenceDistributionResult : IReportMessage, IProgressReport
     {
         #region Fields
+        private ConcurrentBag<double> _tempResults = new ConcurrentBag<double>();
         private IHistogram _consequenceHistogram;
         private string _damageCategory;
         private string _assetCategory;
@@ -130,9 +132,21 @@ namespace HEC.FDA.Model.metrics
         #endregion
 
         #region Methods
-        internal void AddConsequenceRealization(double damageRealization, long iteration)
+        public void PutDataIntoHistogram()
         {
-            _consequenceHistogram.AddObservationToHistogram(damageRealization, iteration);
+            List<double> listToSort = new List<double>();
+            listToSort = _tempResults.ToList();
+            listToSort.Sort();
+            int j = 0;
+            foreach(double item in listToSort) { 
+                _consequenceHistogram.AddObservationToHistogram(item, j);
+                j++;
+            }
+            _tempResults.Clear();
+        }
+        internal void AddConsequenceRealization(double damageRealization)
+        {
+            _tempResults.Add(damageRealization);
         }
 
         internal double MeanExpectedAnnualConsequences()

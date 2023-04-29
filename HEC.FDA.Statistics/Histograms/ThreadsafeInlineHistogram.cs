@@ -197,19 +197,6 @@ namespace Statistics.Histograms
             MessageHub.Register(this);
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
         public ThreadsafeInlineHistogram(ConvergenceCriteria c)
         {
             _observations = new System.Collections.Concurrent.ConcurrentQueue<double>();
@@ -223,7 +210,6 @@ namespace Statistics.Histograms
         public ThreadsafeInlineHistogram(double binWidth, ConvergenceCriteria c, int startqueueSize = 10000, int postqueueSize = 100)
         {
             _observations = new System.Collections.Concurrent.ConcurrentQueue<double>();
-            _Min = 0;
             _BinWidth = binWidth;
             _ConvergenceCriteria = c;
             _backgroundWorker = new System.ComponentModel.BackgroundWorker();
@@ -232,34 +218,6 @@ namespace Statistics.Histograms
             _postQueueCount = postqueueSize;
             MessageHub.Register(this);
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         private ThreadsafeInlineHistogram(double min, double max, double binWidth, Int64[] binCounts, ConvergenceCriteria convergenceCriteria)
         {

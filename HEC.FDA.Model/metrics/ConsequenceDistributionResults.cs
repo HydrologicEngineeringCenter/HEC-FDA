@@ -104,19 +104,27 @@ namespace HEC.FDA.Model.metrics
                 _consequenceResultList.Add(consequenceResultToAdd);
             }
         }
-        internal void AddConsequenceRealization(double dammageEstimate, string damageCategory, string assetCategory, int impactAreaID, long iteration)
+        internal void AddConsequenceRealization(double damageEstimate, string damageCategory, string assetCategory, int impactAreaID, long iteration)
         {
             ConsequenceDistributionResult damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
-            damageResult.AddConsequenceRealization(dammageEstimate, iteration);
+            damageResult.AddConsequenceRealization(damageEstimate);
 
         }
-        internal void AddConsequenceRealization(ConsequenceResult consequenceResult, string damageCategory, int impactAreaID, long iteration)
+        internal void AddConsequenceRealization(ConsequenceResult consequenceResult, string damageCategory, int impactAreaID)
         {
-            GetConsequenceResult(damageCategory, utilities.StringConstants.STRUCTURE_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.StructureDamage, iteration);
-            GetConsequenceResult(damageCategory, utilities.StringConstants.CONTENT_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.ContentDamage, iteration);
-            GetConsequenceResult(damageCategory, utilities.StringConstants.VEHICLE_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.VehicleDamage, iteration);
-            GetConsequenceResult(damageCategory, utilities.StringConstants.OTHER_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.OtherDamage, iteration);
+            GetConsequenceResult(damageCategory, utilities.StringConstants.STRUCTURE_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.StructureDamage);
+            GetConsequenceResult(damageCategory, utilities.StringConstants.CONTENT_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.ContentDamage);
+            GetConsequenceResult(damageCategory, utilities.StringConstants.VEHICLE_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.VehicleDamage);
+            GetConsequenceResult(damageCategory, utilities.StringConstants.OTHER_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.OtherDamage);
         }
+        public void PutDataIntoHistograms()
+        {
+            foreach(ConsequenceDistributionResult consequenceDistributionResult in _consequenceResultList)
+            {
+                consequenceDistributionResult.PutDataIntoHistogram();
+            }
+        }
+
         /// <summary>
         /// This method returns the mean of the consequences measure of the consequence result object for the given damage category, asset category, impact area combination 
         /// Damage measures could be EAD or other measures of consequences 

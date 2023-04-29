@@ -258,10 +258,10 @@ namespace HEC.FDA.ModelTest.unittests
                 double uniformObservation2 = random.NextDouble() + 2;
                 double messyObservation = normal.InverseCDF(random.NextDouble()) * random.NextDouble(); //+ random.NextDouble() * random.NextDouble() * random.NextDouble() * 1000;
                 double messyObservationLogged = Math.Log(Math.Abs(messyObservation));
-                performanceByThresholds.GetThreshold(thresholdID1).SystemPerformanceResults.AddStageForAssurance(keyForCNEP, uniformObservation1, i);
-                performanceByThresholds.GetThreshold(thresholdID1).SystemPerformanceResults.AddStageForAssurance(keyForCNEP, uniformObservation2, i);
-                performanceByThresholds.GetThreshold(thresholdID2).SystemPerformanceResults.AddStageForAssurance(keyForCNEP, messyObservationLogged, i);
-                performanceByThresholds.GetThreshold(thresholdID2).SystemPerformanceResults.AddStageForAssurance(keyForCNEP, messyObservation, i);
+                performanceByThresholds.GetThreshold(thresholdID1).SystemPerformanceResults.AddStageForAssurance(keyForCNEP, uniformObservation1);
+                performanceByThresholds.GetThreshold(thresholdID1).SystemPerformanceResults.AddStageForAssurance(keyForCNEP, uniformObservation2);
+                performanceByThresholds.GetThreshold(thresholdID2).SystemPerformanceResults.AddStageForAssurance(keyForCNEP, messyObservationLogged);
+                performanceByThresholds.GetThreshold(thresholdID2).SystemPerformanceResults.AddStageForAssurance(keyForCNEP, messyObservation);
             }
             ImpactAreaScenarioResults results = new ImpactAreaScenarioResults(id);
             results.PerformanceByThresholds = performanceByThresholds;
@@ -354,7 +354,7 @@ namespace HEC.FDA.ModelTest.unittests
                 IProvideRandomNumbers threadlocalRandomProvider;
                 threadlocalRandomProvider = new RandomProvider(seeds[i]);
                 double invCDF = standardNormal.InverseCDF(threadlocalRandomProvider.NextRandom());
-                systemPerformanceResults.AddStageForAssurance(standardProbability, invCDF, i);
+                systemPerformanceResults.AddStageForAssurance(standardProbability, invCDF);
 
             });
 

@@ -18,6 +18,7 @@ using System.IO;
 using System.Collections.Concurrent;
 using Statistics.Distributions;
 using HEC.FDA.Model.extensions;
+using Microsoft.VisualBasic;
 
 namespace HEC.FDA.Model.compute
 {
@@ -367,6 +368,11 @@ namespace HEC.FDA.Model.compute
                     }
 
                 });
+                _impactAreaScenarioResults.ConsequenceResults.PutDataIntoHistograms();
+                foreach (var thresholdEntry in _impactAreaScenarioResults.PerformanceByThresholds.ListOfThresholds)
+                {
+                    thresholdEntry.SystemPerformanceResults.PutDataIntoHistograms();
+                }
                 if (!_impactAreaScenarioResults.ResultsAreConverged(.95, .05, computeWithDamage))
                 {//TODO: there is a weird case here - if remaining iterations are small, we divide by zero
                     iterations = _impactAreaScenarioResults.RemainingIterations(.95, .05, computeWithDamage);
@@ -397,7 +403,7 @@ namespace HEC.FDA.Model.compute
                     {
                         ComputeDamagesFromStageFrequency(randomProvider, frequency_stage, giveMeADamageFrequency, iteration, computeIsDeterministic);
                     }
-                    ComputePerformance(frequency_stage, iteration);
+                    ComputePerformance(frequency_stage);
                 }
                 else
                 {
@@ -413,10 +419,10 @@ namespace HEC.FDA.Model.compute
                         //If the system response function is the default function 
                         if (systemResponse_sample.Xvals.Length <= 2)
                         {
-                            ComputePerformance(frequency_stage, iteration);
+                            ComputePerformance(frequency_stage);
                         } else
                         {
-                            ComputeLeveePerformance(frequency_stage, systemResponse_sample, iteration);
+                            ComputeLeveePerformance(frequency_stage, systemResponse_sample);
                         }
                     }
 
@@ -434,7 +440,7 @@ namespace HEC.FDA.Model.compute
                     {
                         ComputeDamagesFromStageFrequency(randomProvider, frequency_floodplainstage, giveMeADamageFrequency, iteration, computeIsDeterministic);
                     }
-                    ComputePerformance(frequency_floodplainstage, iteration);
+                    ComputePerformance(frequency_floodplainstage);
                 }
                 else
                 {
@@ -449,11 +455,11 @@ namespace HEC.FDA.Model.compute
                         //If the system response function is the default function
                         if (systemResponse_sample.Xvals.Length <= 2)
                         {
-                            ComputePerformance(frequency_stage, iteration);
+                            ComputePerformance(frequency_stage);
                         }
                         else
                         {
-                            ComputeLeveePerformance(frequency_stage, systemResponse_sample, iteration);
+                            ComputeLeveePerformance(frequency_stage, systemResponse_sample);
                         }
                     }
 
@@ -535,20 +541,20 @@ namespace HEC.FDA.Model.compute
             }
         }
         //TODO: Review access modifiers. I think most if not all of the performance methods should be private.
-        public void ComputePerformance(IPairedData frequency_stage, long iteration)
+        public void ComputePerformance(IPairedData frequency_stage)
         {
 
             foreach (var thresholdEntry in _impactAreaScenarioResults.PerformanceByThresholds.ListOfThresholds)
             {
                 double thresholdValue = thresholdEntry.ThresholdValue;
                 double aep = 1 - frequency_stage.f_inverse(thresholdValue);
-                thresholdEntry.SystemPerformanceResults.AddAEPForAssurance(aep, iteration);
-                GetStageForNonExceedanceProbability(frequency_stage, thresholdEntry, iteration);
+                thresholdEntry.SystemPerformanceResults.AddAEPForAssurance(aep);
+                GetStageForNonExceedanceProbability(frequency_stage, thresholdEntry);
             }
         }
         //this method assumes that the levee fragility function spans the entire probability domain 
         //TODO why is this here but levee CNP is in system performance results?
-        public void ComputeLeveePerformance(IPairedData frequency_stage, IPairedData levee_curve_sample, long iteration)
+        public void ComputeLeveePerformance(IPairedData frequency_stage, IPairedData levee_curve_sample)
         {
             IPairedData levee_frequency_stage = levee_curve_sample.compose(frequency_stage);
             double aep = 0;
@@ -572,19 +578,19 @@ namespace HEC.FDA.Model.compute
             aep += finalProbOfStageInRange * finalAvgProbFailure;
             foreach (var thresholdEntry in _impactAreaScenarioResults.PerformanceByThresholds.ListOfThresholds)
             {
-                thresholdEntry.SystemPerformanceResults.AddAEPForAssurance(aep, iteration);
-                GetStageForNonExceedanceProbability(frequency_stage, thresholdEntry, iteration);
+                thresholdEntry.SystemPerformanceResults.AddAEPForAssurance(aep);
+                GetStageForNonExceedanceProbability(frequency_stage, thresholdEntry);
             }
 
         }
 
-        public void GetStageForNonExceedanceProbability(IPairedData frequency_stage, Threshold threshold, long iteration)
+        public void GetStageForNonExceedanceProbability(IPairedData frequency_stage, Threshold threshold)
         {//TODO: Get rid of these hard coded doubles 
             double[] er101RequiredNonExceedanceProbabilities = new double[] { .9, .96, .98, .99, .996, .998 };
             foreach (double nonExceedanceProbability in er101RequiredNonExceedanceProbabilities)
             {
                 double stageOfEvent = frequency_stage.f(nonExceedanceProbability);
-                threshold.SystemPerformanceResults.AddStageForAssurance(nonExceedanceProbability, stageOfEvent, iteration);
+                threshold.SystemPerformanceResults.AddStageForAssurance(nonExceedanceProbability, stageOfEvent);
             }
         }
         public void CreateHistogramsForAssuranceOfThresholds()

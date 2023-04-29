@@ -363,7 +363,7 @@ namespace HEC.FDA.Model.stageDamage
                 }
                 else
                 {
-                    consequenceDistributionResults[i].AddConsequenceRealization(consequenceResult, damageCategory, _ImpactAreaID, i);
+                    consequenceDistributionResults[i].AddConsequenceRealization(consequenceResult, damageCategory, _ImpactAreaID);
                 }
 
             }
@@ -447,7 +447,7 @@ namespace HEC.FDA.Model.stageDamage
                 }
                 else
                 {
-                    consequenceDistributionResults[i + _numExtrapolatedStagesToCompute + profileCount*_numInterpolatedStagesToCompute - 1].AddConsequenceRealization(consequenceResult, damageCategory, _ImpactAreaID, i);
+                    consequenceDistributionResults[i + _numExtrapolatedStagesToCompute + profileCount*_numInterpolatedStagesToCompute - 1].AddConsequenceRealization(consequenceResult, damageCategory, _ImpactAreaID);
                 }
             }
         }
@@ -501,7 +501,7 @@ namespace HEC.FDA.Model.stageDamage
                 }
                 else
                 {
-                    consequenceDistributionResults[i + _numExtrapolatedStagesToCompute + _numInterpolatedStagesToCompute*(_hydraulicDataset.HydraulicProfiles.Count-1)].AddConsequenceRealization(consequenceResult, damageCategory, _ImpactAreaID, i);
+                    consequenceDistributionResults[i + _numExtrapolatedStagesToCompute + _numInterpolatedStagesToCompute*(_hydraulicDataset.HydraulicProfiles.Count-1)].AddConsequenceRealization(consequenceResult, damageCategory, _ImpactAreaID);
                 }
             }
         }

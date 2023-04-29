@@ -149,14 +149,14 @@ namespace HEC.FDA.Model.metrics
             return aepHistogram;
         }
 
-        public void AddAEPForAssurance(double aep, long iteration)
+        public void AddAEPForAssurance(double aep)
         {
-            GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram.AddObservationToHistogram(aep, iteration);
-            GetAssurance(AEP_ASSURANCE_FOR_PLOTTING).AssuranceHistogram.AddObservationToHistogram(aep, iteration);
+            GetAssurance(AEP_ASSURANCE_TYPE).AddObservation(aep);
+            GetAssurance(AEP_ASSURANCE_FOR_PLOTTING).AddObservation(aep);
         }
-        public void AddStageForAssurance(double standardNonExceedanceProbability, double stage, long iteration)
+        public void AddStageForAssurance(double standardNonExceedanceProbability, double stage)
         {
-            GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram.AddObservationToHistogram(stage, iteration);
+            GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AddObservation(stage);
         }
 
         public double MeanAEP()
@@ -301,6 +301,13 @@ namespace HEC.FDA.Model.metrics
             AssuranceResultStorage dummyAssurance = new AssuranceResultStorage(STAGE_ASSURANCE_TYPE, .98);
             return dummyAssurance;
 
+        }
+        public void PutDataIntoHistograms()
+        {
+            foreach (AssuranceResultStorage assuranceResultStorage in  _assuranceList)
+            {
+                assuranceResultStorage.PutDataIntoHistogram();
+            }
         }
         public XElement WriteToXML()
         {
