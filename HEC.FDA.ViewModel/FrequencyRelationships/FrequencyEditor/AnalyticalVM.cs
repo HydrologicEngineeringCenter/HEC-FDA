@@ -1,5 +1,4 @@
 ﻿using System.Xml.Linq;
-using Utility.Extensions.Attributes;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
 {
@@ -64,10 +63,10 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
             IsFitToFlows = bool.Parse(ele.Attribute(nameof(IsFitToFlows)).Value);
             foreach (XElement child in ele.Elements())
             {
-                if (child.Name.Equals(typeof(ParameterEntryVM).Name)){
+                if (child.Name.LocalName.Equals(typeof(ParameterEntryVM).Name)){
                     ParameterEntryVM = new ParameterEntryVM(child);
                 }
-                else if (child.Name.Equals(typeof(FitToFlowVM).Name))
+                else if (child.Name.LocalName.Equals(typeof(FitToFlowVM).Name))
                 {
                     FitToFlowVM = new FitToFlowVM(child);
                 }

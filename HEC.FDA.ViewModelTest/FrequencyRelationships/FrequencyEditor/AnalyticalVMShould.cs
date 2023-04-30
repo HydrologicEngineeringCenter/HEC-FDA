@@ -1,12 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor;
+using Xunit;
 
 namespace HEC.FDA.ViewModelTest.FrequencyRelationships.FrequencyEditor
 {
-    internal class AnalyticalVMShould
+    [Trait("RunsOn", "Remote")]
+    public class AnalyticalVMShould
     {
+        [Fact]
+        public void ReadAndWriteXML()
+        {
+            var ogVM = new AnalyticalVM();
+            ogVM.IsFitToFlows = true;
+
+            var newVM = new AnalyticalVM(ogVM.ToXML());
+
+            Assert.Equal(ogVM.IsFitToFlows, newVM.IsFitToFlows);
+        }
     }
 }

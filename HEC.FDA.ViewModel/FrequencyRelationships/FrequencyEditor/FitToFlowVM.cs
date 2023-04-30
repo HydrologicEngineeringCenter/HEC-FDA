@@ -11,7 +11,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
     public class FitToFlowVM:ParameterEntryVM
     {
         #region Backing Fields
-        private ObservableCollection<FlowDoubleWrapper> _flows = new ObservableCollection<FlowDoubleWrapper>();
+        private ObservableCollection<FlowDoubleWrapper> _flows = new();
         #endregion
 
         #region Properties
@@ -36,6 +36,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
 
         public FitToFlowVM(XElement xElement) : base(xElement)
         {
+            FromXML(xElement);
         }
         #endregion
 

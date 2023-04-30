@@ -46,6 +46,11 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
             AnalyticalVM = new AnalyticalVM();
             GraphicalVM = new TableWithPlotVM(new GraphicalVM(StringConstants.GRAPHICAL_FREQUENCY,StringConstants.EXCEEDANCE_PROBABILITY,StringConstants.DISCHARGE),true,true,true);
         }
+
+        public FrequencyEditorVM(XElement xElement)
+        {
+            FromXML(xElement);
+        }
         #endregion
 
         #region Save and Load
@@ -62,10 +67,12 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
             IsGraphical = bool.Parse(ele.Attribute(nameof(IsGraphical)).Value);
             foreach(XElement childs in ele.Elements())
             {
-                if (childs.Name.Equals(typeof(TableWithPlotVM).Name)){
+                string elementName = childs.Name.LocalName;
+                string checkName = typeof(TableWithPlotVM).Name;
+                if (childs.Name.LocalName.Equals(typeof(TableWithPlotVM).Name)){
                     GraphicalVM = new TableWithPlotVM(childs);
                 }
-                else if (childs.Name.Equals(typeof(AnalyticalVM).Name)) {
+                else if (childs.Name.LocalName.Equals(typeof(AnalyticalVM).Name)) {
                     AnalyticalVM = new AnalyticalVM(childs);
                 }
             }

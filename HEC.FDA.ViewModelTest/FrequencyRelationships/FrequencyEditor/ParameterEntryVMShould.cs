@@ -4,6 +4,7 @@ using Xunit;
 
 namespace HEC.FDA.ViewModelTest.FrequencyRelationships.FrequencyEditor
 {
+    [Trait("RunsOn", "Remote")]
     public class ParameterEntryVMShould
     {
         [Fact]
