@@ -1,5 +1,4 @@
-﻿using HEC.FDA.ViewModel.TableWithPlot;
-using HEC.FDA.ViewModel.TableWithPlot.Data;
+﻿
 using HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces;
 using HEC.MVVMFramework.ViewModel.Implementations;
 using Statistics.Distributions;
