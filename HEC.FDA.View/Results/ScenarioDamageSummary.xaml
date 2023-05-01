@@ -14,11 +14,31 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <GroupBox Header="Scenarios" Grid.Row="0" Margin="5">
+            <WrapPanel >
+                <ItemsControl ItemsSource="{Binding SelectableElements}" Margin="5">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox Content="{Binding Element.Name}" IsChecked="{Binding IsSelected}" Margin="0" ToolTip="{Binding Tooltip}" IsEnabled="{Binding IsEnabled}" ToolTipService.ShowOnDisabled="True" />
+                                <Image Grid.Column="2" Name="txt_Decoration" Source="{Binding Path=Decoration}" Margin="0,0,20,0"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </WrapPanel>
+        </GroupBox>
 
-        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" HorizontalAlignment="Left" Margin="5" >
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" HorizontalAlignment="Left" Margin="5" >
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
@@ -77,7 +97,7 @@
         </ScrollViewer>
         
         
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" HorizontalAlignment="Left" Margin="5" >
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" HorizontalAlignment="Left" Margin="5" >
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
@@ -117,7 +137,7 @@
 
         
 
-        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" HorizontalAlignment="Left" Margin="5" >
+        <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" HorizontalAlignment="Left" Margin="5" >
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
@@ -180,7 +200,7 @@
             </Grid>
         </ScrollViewer>
 
-        <Button Grid.Row="3" Content="OK" Width="40" Height="22" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5"/>
+        <Button Grid.Row="4" Content="OK" Width="40" Height="22" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5"/>
 
     </Grid>
 </UserControl>

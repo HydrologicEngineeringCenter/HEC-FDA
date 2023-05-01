@@ -1,4 +1,6 @@
-﻿using HEC.FDA.ViewModel.ImpactAreaScenario;
+﻿using HEC.CS.Collections;
+using HEC.FDA.ViewModel.ImpactAreaScenario;
+using HEC.FDA.ViewModel.Saving;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -7,16 +9,96 @@ namespace HEC.FDA.ViewModel.Results
 {
     public class ScenarioDamageSummaryVM : BaseViewModel
     {
-        public List<ScenarioDamageRowItem> Rows { get; } = new List<ScenarioDamageRowItem>();
-        public List<ScenarioPerformanceRowItem> PerformanceRows { get; } = new List<ScenarioPerformanceRowItem>();
+        private DataTable _DamCatTable;
 
-        public DataTable DamCatTable { get; set; } = new DataTable();
+        public CustomObservableCollection<SelectableChildElement> SelectableElements { get; } = new CustomObservableCollection<SelectableChildElement>();
+        public CustomObservableCollection<ScenarioDamageRowItem> Rows { get; } = new CustomObservableCollection<ScenarioDamageRowItem>();
+        public CustomObservableCollection<ScenarioPerformanceRowItem> PerformanceRows { get; } = new CustomObservableCollection<ScenarioPerformanceRowItem>();
 
-        public ScenarioDamageSummaryVM(List<IASElement> scenarioElems)
+        public DataTable DamCatTable
         {
-            List<ScenarioDamCatRowItem> damCatRows = new List<ScenarioDamCatRowItem>();
-            foreach(IASElement element in scenarioElems)
+            get { return _DamCatTable; }
+            set { _DamCatTable = value; NotifyPropertyChanged(); }
+        }
+
+        public ScenarioDamageSummaryVM(List<IASElement> selectedScenarioElems)
+        {
+            List<IASElement> allElements = StudyCache.GetChildElementsOfType<IASElement>();
+
+            foreach (IASElement element in allElements)
             {
+                SelectableChildElement selectElem = new SelectableChildElement(element);
+                SelectableElements.Add(selectElem);
+                //the selectable elements are selected by default. We want to toggle all the elements that 
+                //aren't in the passed in list off.
+                if(!selectedScenarioElems.Contains(element))
+                {
+                    selectElem.IsSelected = false;
+                }
+                selectElem.SelectionChanged += SelectElem_SelectionChanged;
+            }
+
+            LoadTables();
+            ListenToChildElementUpdateEvents();
+        }
+
+        public ScenarioDamageSummaryVM()
+        {
+            List<IASElement> allElements = StudyCache.GetChildElementsOfType<IASElement>();
+
+            foreach (IASElement element in allElements)
+            {
+                SelectableChildElement selectElem = new SelectableChildElement(element);
+                selectElem.SelectionChanged += SelectElem_SelectionChanged;
+                SelectableElements.Add(selectElem);
+            }
+
+            LoadTables();
+            ListenToChildElementUpdateEvents();
+        }
+
+        public void ListenToChildElementUpdateEvents()
+        {
+            StudyCache.IASElementAdded += IASAdded;
+            StudyCache.IASElementRemoved += IASRemoved;
+            StudyCache.IASElementUpdated += IASUpdated;
+        }
+
+        private void IASAdded(object sender, ElementAddedEventArgs e)
+        {
+            SelectableChildElement newRow = new SelectableChildElement((IASElement)e.Element);
+            SelectableElements.Add(newRow);
+        }
+
+        private void IASRemoved(object sender, ElementAddedEventArgs e)
+        {
+            SelectableElements.Remove(SelectableElements.Where(row => row.Element.ID == e.Element.ID).Single());
+        }
+
+        private void IASUpdated(object sender, ElementUpdatedEventArgs e)
+        {
+            IASElement newElement = (IASElement)e.NewElement;
+            int idToUpdate = newElement.ID;
+
+            //find the row with this id and update the row's values;
+            SelectableChildElement foundRow = SelectableElements.Where(row => row.Element.ID == idToUpdate).SingleOrDefault();
+            if (foundRow != null)
+            {
+                foundRow.Update(newElement);
+                //LoadTables();
+            }
+        }
+
+
+        private void LoadTables()
+        {
+            List<IASElement> elems = GetSelectedElements();
+            List<ScenarioDamCatRowItem> damCatRows = new List<ScenarioDamCatRowItem>();
+            Rows.Clear();
+            PerformanceRows.Clear();
+            foreach (IASElement element in elems)
+            {
+                
                 Rows.Add(new ScenarioDamageRowItem(element));
                 damCatRows.Add(new ScenarioDamCatRowItem(element));
                 PerformanceRows.Add(new ScenarioPerformanceRowItem(element));
@@ -24,27 +106,48 @@ namespace HEC.FDA.ViewModel.Results
             LoadDamCatDataTable(damCatRows);
         }
 
+        private void SelectElem_SelectionChanged(object sender, System.EventArgs e)
+        {
+            LoadTables();
+        }
+
+        private List<IASElement> GetSelectedElements()
+        {
+            List<IASElement> selectedElements = new List<IASElement>();
+            foreach(SelectableChildElement selectElem in SelectableElements)
+            {
+                if(selectElem.IsSelected)
+                {
+                    selectedElements.Add(selectElem.Element as IASElement);
+                }
+            }
+            return selectedElements;
+        }
+
         private void LoadDamCatDataTable(List<ScenarioDamCatRowItem> rows)
         {
+            
+            _DamCatTable = new DataTable();
             DataColumn nameCol = new DataColumn("Name", typeof(string));
-            DamCatTable.Columns.Add(nameCol);
+            _DamCatTable.Columns.Add(nameCol);
             DataColumn yearCol = new DataColumn("Analysis Year", typeof(int));
-            DamCatTable.Columns.Add(yearCol);
+            _DamCatTable.Columns.Add(yearCol);
             List<string> allUniqueDamCats = GetAllDamCats(rows);
             foreach (string damCat in allUniqueDamCats)
             {
-                DamCatTable.Columns.Add( new DataColumn(damCat, typeof(string)));
+                _DamCatTable.Columns.Add( new DataColumn(damCat, typeof(string)));
             }
 
             foreach(ScenarioDamCatRowItem row in rows)
             {
                 AddDamCatRowToTable(row, allUniqueDamCats);
             }
+            NotifyPropertyChanged(nameof(DamCatTable));
         }
 
         private void AddDamCatRowToTable(ScenarioDamCatRowItem row, List<string> allDamCats)
         {
-            DataRow myRow = DamCatTable.NewRow();
+            DataRow myRow = _DamCatTable.NewRow();
             myRow["Name"] = row.Name;
             myRow["Analysis Year"] = row.AnalysisYear;
             foreach(string damCat in allDamCats)
@@ -59,7 +162,7 @@ namespace HEC.FDA.ViewModel.Results
                     myRow[damCat] = 0;
                 }
             }
-            DamCatTable.Rows.Add(myRow);
+            _DamCatTable.Rows.Add(myRow);
         }
 
         private List<string> GetAllDamCats(List<ScenarioDamCatRowItem> rows)

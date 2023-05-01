@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.Results;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,6 +59,56 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
             elem.CustomTreeViewHeader.Tooltip = tooltipMsg.Trim();
 
+        }
+
+        public static void UpdateTooltip(SelectableChildElement selectableElement)
+        {
+            IASElement elem = selectableElement.Element;
+            StringBuilder sb = new StringBuilder();
+            bool hasResults = elem.Results != null;
+
+            //check if the elements that the scenario points to still exists.
+            FdaValidationResult vr = elem.CanCompute();
+            if (!vr.IsValid)
+            {
+                sb.AppendLine(vr.ErrorMessage);
+                sb.AppendLine("Last Edited: " + elem.LastEditDate);
+                if (hasResults)
+                {
+                    sb.AppendLine("Last Computed: " + GetComputeDate(elem));
+                }
+                selectableElement.Decoration = ImageSources.ERROR_IMAGE;
+            }
+            else
+            {
+                //todo: put decorator icons on these options?
+                sb.AppendLine("Last Edited: " + elem.LastEditDate);
+                if (hasResults)
+                {
+                    //is it up to date.
+                    if (hasResults)
+                    {
+                        string lastCompute = GetComputeDate(elem);
+                        sb.AppendLine("Last Computed: " + lastCompute);
+
+                        DateTime lastEditDate = DateTime.Parse(elem.LastEditDate);
+                        DateTime computeDate = DateTime.Parse(lastCompute);
+                        selectableElement.Decoration = ImageSources.GREEN_CHECKMARK_IMAGE;
+
+                        if (lastEditDate > computeDate)
+                        {
+                            sb.AppendLine("Changes have been made since last compute.");
+                            selectableElement.Decoration = ImageSources.CAUTION_IMAGE;
+                        }
+
+                    }
+                }
+
+            }
+            //remove last new line char
+            string tooltipMsg = sb.ToString();
+
+            selectableElement.Tooltip = tooltipMsg.Trim();
         }
 
         private static string GetComputeDate(IASElement elem)
