@@ -26,13 +26,13 @@ namespace HEC.FDA.View.TableWithPlot
 
         public void MyDataGrid_RowsDeleted(object sender, RowsDeletedEventArgs e)
         {
-            IDataProvider vm = (IDataProvider)DataContext;
+            IDisplayWithFDADataGrid vm = (IDisplayWithFDADataGrid)DataContext;
             vm.RemoveRows(e.RowIndices);
         }
 
         public void MyDataGrid_RowsAdded(object sender, RowsAddedEventArgs e)
         {
-            IDataProvider vm = (IDataProvider)DataContext;
+            IDisplayWithFDADataGrid vm = (IDisplayWithFDADataGrid)DataContext;
             for (int i = e.StartRow; i < e.StartRow + e.NumRows; i++)
             {
                 vm.AddRow(i);

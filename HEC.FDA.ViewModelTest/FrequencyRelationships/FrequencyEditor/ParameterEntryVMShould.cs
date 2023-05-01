@@ -11,8 +11,10 @@ namespace HEC.FDA.ViewModelTest.FrequencyRelationships.FrequencyEditor
         public void ReadAndWriteXML()
         {
             //Arrange
-            var ogVM = new ParameterEntryVM();
-            ogVM.Mean = 4;
+            var ogVM = new ParameterEntryVM
+            {
+                Mean = 4
+            };
 
             //Act
             var newVM = new ParameterEntryVM(ogVM.ToXML());

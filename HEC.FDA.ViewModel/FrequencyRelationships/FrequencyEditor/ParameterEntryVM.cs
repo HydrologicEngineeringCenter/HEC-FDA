@@ -11,13 +11,13 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
     public class ParameterEntryVM : BaseLP3Plotter
     {
         #region Backing Fields
-        private HistogramDataProvider _dataProvider;
+        private HistogramDataProvider _confidenceLimitsDataTable;
         #endregion
 
         #region Properties
-        public HistogramDataProvider DataProvider
+        public HistogramDataProvider ConfidenceLimitsDataTable
         {
-            get { return _dataProvider; }
+            get { return _confidenceLimitsDataTable; }
         } 
 
         public double Mean
@@ -83,7 +83,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         {
             InitializePlotModel();
             FromXML(xElement);
-            _dataProvider = new HistogramDataProvider();
+            _confidenceLimitsDataTable = new HistogramDataProvider();
             Validate();
             UpdateTable();
             UpdatePlot();
@@ -92,7 +92,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         {
             InitializePlotModel();
             LP3Distribution = new LogPearson3(3.5, 0.22, 0.1, 60);
-            _dataProvider = new HistogramDataProvider();
+            _confidenceLimitsDataTable = new HistogramDataProvider();
             Validate();
             UpdateTable();
             UpdatePlot();
@@ -102,12 +102,12 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         #region Table
         protected void UpdateTable()
         {
-            DataProvider.Data.Clear();
+            ConfidenceLimitsDataTable.Data.Clear();
             double[] exceedenceProbs = new double[16] { 0.999, 0.99, 0.95, 0.9, 0.8, 0.7, 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.004, 0.002, 0.001 };
             RandomProvider rp = new(1234);
             UncertainPairedData LP3asUPD = LP3Distribution.BootstrapToUncertainPairedData(rp, exceedenceProbs);
-            DataProvider.UpdateFromUncertainPairedData(LP3asUPD);
-            NotifyPropertyChanged(nameof(DataProvider));
+            ConfidenceLimitsDataTable.UpdateFromUncertainPairedData(LP3asUPD);
+            NotifyPropertyChanged(nameof(ConfidenceLimitsDataTable));
         }
         #endregion
 

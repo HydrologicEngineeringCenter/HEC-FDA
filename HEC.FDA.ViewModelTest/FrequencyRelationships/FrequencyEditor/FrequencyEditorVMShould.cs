@@ -29,8 +29,8 @@ namespace HEC.FDA.ViewModelTest.FrequencyRelationships.FrequencyEditor
 
             Assert.Equal(ogVM.IsGraphical, newVM.IsGraphical);
 
-            double expectedFlow = ogVM.AnalyticalVM.FitToFlowVM.Data.Last().Flow;
-            double actualFlow = newVM.AnalyticalVM.FitToFlowVM.Data.Last().Flow;
+            double expectedFlow = ((FlowDoubleWrapper)ogVM.AnalyticalVM.FitToFlowVM.Data.Last()).Flow;
+            double actualFlow = ((FlowDoubleWrapper)newVM.AnalyticalVM.FitToFlowVM.Data.Last()).Flow;
             Assert.Equal(expectedFlow,actualFlow);
 
             double expectedMean = ogVM.AnalyticalVM.ParameterEntryVM.Mean;

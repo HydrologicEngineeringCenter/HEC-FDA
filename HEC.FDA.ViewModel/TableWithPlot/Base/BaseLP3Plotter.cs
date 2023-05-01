@@ -9,6 +9,7 @@ using OxyPlot.Axes;
 using OxyPlot.Legends;
 using OxyPlot.Series;
 using Statistics.Distributions;
+using System;
 using System.Runtime.CompilerServices;
 using System.Xml.Linq;
 
@@ -126,13 +127,14 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Base
         #endregion
 
         #region Load and Save
-        public virtual XElement ToXML()
+        public XElement ToXML()
         {
             XElement ele = new XElement(this.GetType().Name);
             ele.Add(LP3Distribution.ToXML());
+            ele = ToXMLInternal(ele);
             return ele;
         }
-        public virtual void FromXML(XElement ele)
+        public void FromXML(XElement ele)
         {
             foreach (XElement child in ele.Elements())
             {
@@ -142,7 +144,11 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Base
                     break;
                 }
             }
+            FromXMLInternal(ele);
         }
+        public virtual void FromXMLInternal(XElement ele) {  }
+        public virtual XElement ToXMLInternal(XElement ele) { return ele; }
+
         #endregion
     }
 }

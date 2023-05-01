@@ -44,7 +44,7 @@
           <Run Text="Analytical Frequency " FontWeight="Bold"/>
           <Run Text="(Exceedence Probability, Discharge)"/>
         </TextBlock>
-      <tablewithplot:FdaDataGridControl DataContext="{Binding Path=DataProvider }" Grid.Row="5" Grid.ColumnSpan="2"  Margin="10"/>
+            <tablewithplot:FdaDataGridControl DataContext="{Binding Path=ConfidenceLimitsDataTable }" Grid.Row="5" Grid.ColumnSpan="2"  Margin="10"/>
     </Grid>
 
     <!--Plot Q1 and Q4-->
