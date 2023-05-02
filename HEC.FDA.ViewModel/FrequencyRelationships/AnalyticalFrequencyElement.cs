@@ -14,7 +14,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships;
 public class AnalyticalFrequencyElement : ChildElement
 {
     #region Fields
-    private readonly FrequencyEditorVM _frequencyEditorVM;
+    private FrequencyEditorVM _frequencyEditorVM;
     #endregion
 
     #region Properties  
@@ -40,7 +40,7 @@ public class AnalyticalFrequencyElement : ChildElement
             return null;
         }
     }
-    public UncertainPairedData LPIIIasUPD { get => LPIII.BootstrapToUncertainPairedData(new RandomProvider(1234), LogPearson3._RequiredExceedanceProbabilitiesForBootstrapping, 1000, 10); }
+    public UncertainPairedData LPIIIasUPD { get => LPIII.BootstrapToUncertainPairedData(new RandomProvider(1234), LogPearson3._RequiredExceedanceProbabilitiesForBootstrapping); }
     public GraphicalUncertainPairedData GraphicalUncertainPairedData
     {
         get
@@ -73,8 +73,11 @@ public class AnalyticalFrequencyElement : ChildElement
         {
             ConstructFromDeprecatedSave(flowFreqElem);
         }
-        XElement freqEditVMEle = flowFreqElem.Element(typeof(FrequencyEditorVM).Name);
-        _frequencyEditorVM = new FrequencyEditorVM(freqEditVMEle);
+        else
+        {
+            XElement freqEditVMEle = flowFreqElem.Element(typeof(FrequencyEditorVM).Name);
+            _frequencyEditorVM = new FrequencyEditorVM(freqEditVMEle);
+        }
         AddDefaultActions(EditFlowFreq, StringConstants.EDIT_FREQUENCY_FUNCTIONS_MENU);
     }
 
@@ -121,6 +124,7 @@ public class AnalyticalFrequencyElement : ChildElement
         {
             vm.GraphicalVM.CurveComponentVM = new GraphicalVM(graphiclVMele);
         }
+        _frequencyEditorVM = vm;
     }
     #endregion
 
