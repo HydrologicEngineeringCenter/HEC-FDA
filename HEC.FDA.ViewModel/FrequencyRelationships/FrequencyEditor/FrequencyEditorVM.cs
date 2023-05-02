@@ -52,7 +52,12 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         }
         public FrequencyEditorVM() : base(null)
         {
-            
+            AnalyticalVM = new AnalyticalVM();
+            GraphicalVM = new TableWithPlotVM(new GraphicalVM(StringConstants.GRAPHICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE), true, true, true);
+        }
+        public FrequencyEditorVM(XElement ele) : base(null)
+        {
+            FromXML(ele);
         }
         #endregion
 
