@@ -7,7 +7,7 @@ using HEC.FDA.ViewModel.TableWithPlot.Data;
 using Importer;
 using HEC.FDA.Model.paireddata;
 
-namespace HEC.FDA.ViewModel.FrequencyRelationships
+namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
 {
     public class GraphicalVM : CurveComponentVM
     {
@@ -40,7 +40,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 NotifyPropertyChanged();
             }
         }
-
         public bool UseFlow
         {
             get { return _useFlow; }
@@ -58,7 +57,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 NotifyPropertyChanged();
             }
         }
-
         public GraphicalVM(string name, string xlabel, string ylabel) : base(name, xlabel,ylabel)
         {
             Options.Clear();
@@ -99,7 +97,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         /// This loads a default GraphicalVM from a ProbabilityFunction Object which is the output of the FDA1.4Import Helper. 
         /// </summary>
         /// <param name="pf"></param>
-        private void LoadFromProbabilityFunction(ProbabilityFunction pf)
+        public void LoadFromProbabilityFunction(ProbabilityFunction pf)
         {
             Options.Clear();
             Options.Add(new GraphicalDataProvider(UseFlow));
@@ -149,11 +147,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 }
                 row.SetConfidenceLimits(Math.Round(lowerNonExceedence.f(probs[index]), 4), Math.Round(upperNonExceedence.f(probs[index]), 4));
             }
-        }
-        public GraphicalUncertainPairedData ToGraphicalUncertainPairedData()
-        {
-            CurveMetaData meta = new CurveMetaData(XLabel, YLabel,Name,"None",CurveTypesEnum.MonotonicallyIncreasing);
-           return new GraphicalUncertainPairedData(((GraphicalDataProvider)SelectedItem).Xs, ((GraphicalDataProvider)SelectedItem).Ys , EquivalentRecordLength, meta, !UseFlow);
         }
 
         public bool Equals(GraphicalVM elem)
