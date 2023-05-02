@@ -56,6 +56,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         public CurveComponentVM CurveComponentVM
         {
             get { return _curveComponentVM; }
+            set { _curveComponentVM = value; }
         }
         public bool PlotExtended
         {
