@@ -68,7 +68,8 @@ public class RetrieveGraphicalStageFrequencyVM : BaseViewModel
         {
             AvailableHydraulics.Add(hydraulic);
         }
-        SelectedHydraulics = AvailableHydraulics[0];
+        if(AvailableHydraulics.Count > 0){ SelectedHydraulics = AvailableHydraulics[0];}
+        
 
         AvailableIndexPointSets = new ObservableCollection<IndexPointsElement>();
         List<IndexPointsElement> indexptsElements = StudyCache.GetChildElementsOfType<IndexPointsElement>();
@@ -76,7 +77,7 @@ public class RetrieveGraphicalStageFrequencyVM : BaseViewModel
         {
             AvailableIndexPointSets.Add(indexpt);
         }
-        SelectedIndexPointSet = AvailableIndexPointSets[0];
+        if (AvailableIndexPointSets.Count > 0) { SelectedIndexPointSet = AvailableIndexPointSets[0]; }
     }
 
     private void GenerateFrequencyCurvesAction(object arg1, EventArgs arg2)
