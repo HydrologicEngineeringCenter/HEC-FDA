@@ -2,6 +2,7 @@
 using HEC.FDA.ViewModel.AggregatedStageDamage;
 using HEC.FDA.ViewModel.FlowTransforms;
 using HEC.FDA.ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor;
 using HEC.FDA.ViewModel.GeoTech;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
@@ -480,13 +481,12 @@ namespace HEC.FDA.ViewModel.Utilities
             bool isAnalytical = true;
             bool isStandard = true;//This boolean says whether it is "fit to params" or "fit to flows". True = "fit to params"
 
-            //there will be no analytical flows. We just need 
-            List<double> analyticalFlows = new List<double>();
-            GraphicalVM graphicalVM = new GraphicalVM(StringConstants.GRAPHICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
-            CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
+            FrequencyEditorVM vm = new();
+            vm.IsGraphical = !isAnalytical;
+            vm.AnalyticalVM.IsFitToFlows = !isStandard;
+            vm.AnalyticalVM.ParameterEntryVM.LP3Distribution = new LogPearson3(mean,stDev, skew, por);
 
-            return new AnalyticalFrequencyElement(pf.Name, editDate, CreatePYSRDescription(pf), por, isAnalytical, isStandard, mean, stDev, skew,
-                 analyticalFlows, graphicalVM, curveComponentVM, elemID);
+            return new AnalyticalFrequencyElement(pf.Name, editDate, CreatePYSRDescription(pf), elemID,vm);
 
         }
 
@@ -503,8 +503,10 @@ namespace HEC.FDA.ViewModel.Utilities
             }
             else if (pf.ProbabilityFunctionTypeId == FrequencyFunctionType.GRAPHICAL)
             {
-                GraphicalVM vm = new GraphicalVM(pf);
-                elem = new AnalyticalFrequencyElement(pf.Name, DateTime.Now.ToString(), pf.Description, pf.EquivalentLengthOfRecord, false, false, 5, .25, .1, new List<double>(), vm, curveComponentVM, elemID); //this sucks. Why am I making up a fake analytical curve to import a graphical one?
+                FrequencyEditorVM vm = new();
+                vm.IsGraphical = true;
+                ((GraphicalVM)vm.GraphicalVM.CurveComponentVM).LoadFromProbabilityFunction(pf);
+                elem = new AnalyticalFrequencyElement(pf.Name, DateTime.Now.ToString(), pf.Description, elemID,vm);
             }
             return elem;
         }
