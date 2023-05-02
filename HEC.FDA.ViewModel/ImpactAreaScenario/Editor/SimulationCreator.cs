@@ -86,14 +86,14 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             }
             else
             {
-                if(_FreqElem.MyGraphicalVM.UseFlow == true)
+                if(_FreqElem.GraphicalUsesFlow == true)
                 {
-                    _SimulationBuilder.withFlowFrequency(_FreqElem.MyGraphicalVM.ToGraphicalUncertainPairedData());
+                    _SimulationBuilder.withFlowFrequency(_FreqElem.GraphicalUncertainPairedData);
                     _SimulationBuilder.withFlowStage(_RatElem.CurveComponentVM.SelectedItemToPairedData());
                 }
                 else
                 {
-                    _SimulationBuilder.withFrequencyStage(_FreqElem.MyGraphicalVM.ToGraphicalUncertainPairedData());
+                    _SimulationBuilder.withFrequencyStage(_FreqElem.GraphicalUncertainPairedData);
                 }
             }
             if (_UseInOut)
@@ -119,7 +119,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private ContinuousDistribution GetFrequencyDistribution()
         {
-            return _FreqElem.CreateAnalyticalLP3Distribution();
+            return _FreqElem.LPIII;
         }
 
         private List<StageDamageCurve> GetStageDamageCurves()
