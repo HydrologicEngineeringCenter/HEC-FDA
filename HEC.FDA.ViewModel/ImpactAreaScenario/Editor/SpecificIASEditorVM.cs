@@ -346,7 +346,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             if (SelectedFrequencyElement != null && SelectedFrequencyElement.ChildElement is AnalyticalFrequencyElement elem)
             {
                 RatingRequired = false;
-                if (elem.IsAnalytical || elem.MyGraphicalVM.UseFlow)
+                if (elem.IsAnalytical || elem.GraphicalUsesFlow)
                 {
                     RatingRequired = true;
                 }
@@ -547,17 +547,23 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         }
 
         #region PlotCurves
-        private UncertainPairedData getFrequencyRelationshipFunction()
+        private IPairedDataProducer getFrequencyRelationshipFunction()
         {
-            UncertainPairedData retval = null;
+            IPairedDataProducer retval = null;
             if (SelectedFrequencyElement != null && SelectedFrequencyElement.ChildElement != null)
             {
                 if(SelectedFrequencyElement.ChildElement is AnalyticalFrequencyElement elem)
                 {
-                    retval = elem.CreatePairedData();
+                    if (elem.IsAnalytical)
+                    {
+                        retval = elem.LPIIIasUPD;
+                    }
+                    else
+                    {
+                        retval = elem.GraphicalUncertainPairedData;
+                    }
                 }
             }
-
             return retval;
         }
 
