@@ -42,7 +42,7 @@ namespace HEC.FDA.Model.structures
         private void AddRules()
         {
             AddSinglePropertyRule(nameof(_distributionType), new Rule(() => _distributionType.Equals(IDistributionEnum.Normal) || _distributionType.Equals(IDistributionEnum.Uniform) || _distributionType.Equals(IDistributionEnum.Deterministic) || _distributionType.Equals(IDistributionEnum.Triangular), "Only Deterministic, Normal, Triangular, and Uniform distributions can be used for value ratio uncertainty", ErrorLevel.Fatal));
-            AddSinglePropertyRule(nameof(_standardDeviationFromOrFeetBelowInventoryValue), new Rule(() => _standardDeviationFromOrFeetBelowInventoryValue >= 0 && _feetAboveInventoryValue >= 0, "First floor elevation uncertainty parameters must be positive", ErrorLevel.Info));
+            AddSinglePropertyRule(nameof(_standardDeviationFromOrFeetBelowInventoryValue), new Rule(() => _standardDeviationFromOrFeetBelowInventoryValue >= 0 && _feetAboveInventoryValue >= 0, "First floor elevation uncertainty parameters must be positive", ErrorLevel.Fatal));
 
         }
         /// <summary>

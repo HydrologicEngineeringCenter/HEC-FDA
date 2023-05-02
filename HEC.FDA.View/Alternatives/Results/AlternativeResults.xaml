@@ -5,47 +5,32 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HEC.FDA.View.Alternatives.Results"
              xmlns:utils="clr-namespace:HEC.FDA.View.Utilities"
+             xmlns:vm="clr-namespace:HEC.FDA.ViewModel.Alternatives.Results;assembly=HEC.FDA.ViewModel"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.Resources>
-        <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-    </UserControl.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+             d:DesignHeight="450" d:DesignWidth="800" d:DataContext="{d:DesignInstance Type=vm:AlternativeResultsVM}" d:Background="AliceBlue">
+  <UserControl.Resources>
+    <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+  </UserControl.Resources>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
 
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="*"/>
+    </Grid.ColumnDefinitions>
 
-        <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+      <Label Grid.Column="1" Content="Report:" Margin="5" />
+      <ComboBox Grid.Column="5" ItemsSource="{Binding Reports}"  SelectedItem="{Binding SelectedReport}"  Margin="5" />
+    </StackPanel>
 
-            </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" Content="Damage Measure: " Margin="5" />
-            <ComboBox Grid.Column="1" ItemsSource="{Binding DamageMeasure}" SelectedItem="{Binding SelectedDamageMeasure}"  Margin="5"/>
-
-            <Label Grid.Column="2" Content="Analysis Year:" Visibility="{Binding YearsVisible, Converter={StaticResource BoolToVisibilityConverter}}"  Margin="5" />
-            <ComboBox Grid.Column="3" ItemsSource="{Binding AlternativeResult.EADResult.YearResults}" SelectedItem="{Binding SelectedYear}" DisplayMemberPath="Year"  Visibility="{Binding YearsVisible, Converter={StaticResource BoolToVisibilityConverter}}"  Margin="5" />
-
-            <Label Grid.Column="4" Content="Report:" Margin="5" />
-            <ComboBox Grid.Column="5" ItemsSource="{Binding Reports}"  SelectedItem="{Binding SelectedReport}"  Margin="5" />
-
-        </Grid>
-
-        <ContentControl Grid.Row="1" Grid.ColumnSpan="2" Name="resultsControl" Content="{Binding CurrentResultVM, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"   HorizontalAlignment="Stretch"
+    <ContentControl Grid.Row="1" Grid.ColumnSpan="2" Name="resultsControl" Content="{Binding CurrentResultVM, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"   HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  />
 
-        <utils:OKCloseControl Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5" />
-    </Grid>
+    <utils:OKCloseControl Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5" />
+  </Grid>
 </UserControl>
