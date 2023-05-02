@@ -233,7 +233,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         public bool IsStageDischargeRequired()
         {
-            return (FrequencyFunction.Element.IsAnalytical || FrequencyFunction.Element.MyGraphicalVM.UseFlow);
+            return (FrequencyFunction.Element.IsAnalytical || FrequencyFunction.Element.GraphicalUsesFlow);
         }
 
         public XElement WriteToXML()
