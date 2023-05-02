@@ -444,10 +444,10 @@ namespace HEC.FDA.ViewModel.Utilities
         #endregion
 
         #region LP3
-        public static List<AnalyticalFrequencyElement> CreateFlowFrequencyElements(ProbabilityFunctionList probFuncs)
+        public static List<FrequencyElement> CreateFlowFrequencyElements(ProbabilityFunctionList probFuncs)
         {
-            List<AnalyticalFrequencyElement> elems = new List<AnalyticalFrequencyElement>();
-            int id = PersistenceFactory.GetElementManager<AnalyticalFrequencyElement>().GetNextAvailableId();
+            List<FrequencyElement> elems = new List<FrequencyElement>();
+            int id = PersistenceFactory.GetElementManager<FrequencyElement>().GetNextAvailableId();
             int i = 0;
             foreach (KeyValuePair<string, ProbabilityFunction> kvp in probFuncs.ProbabilityFunctions)
             {
@@ -456,7 +456,7 @@ namespace HEC.FDA.ViewModel.Utilities
                 FrequencyFunctionType typeID = pf.ProbabilityFunctionTypeId;
                 if (typeID == FrequencyFunctionType.ANALYTICAL || typeID == FrequencyFunctionType.GRAPHICAL)
                 {
-                    AnalyticalFrequencyElement freqElem = CreateFrequencyElement(pf, elemID);
+                    FrequencyElement freqElem = CreateFrequencyElement(pf, elemID);
                     if (freqElem != null)
                     {
                         elems.Add(freqElem);
@@ -469,7 +469,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
 
 
-        private static AnalyticalFrequencyElement CreateManualAnalyticalElement(ProbabilityFunction pf, int elemID)
+        private static FrequencyElement CreateManualAnalyticalElement(ProbabilityFunction pf, int elemID)
         {
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
             double mean = pf.MomentsLp3[0];
@@ -486,14 +486,14 @@ namespace HEC.FDA.ViewModel.Utilities
             vm.AnalyticalVM.IsFitToFlows = !isStandard;
             vm.AnalyticalVM.ParameterEntryVM.LP3Distribution = new LogPearson3(mean,stDev, skew, por);
 
-            return new AnalyticalFrequencyElement(pf.Name, editDate, CreatePYSRDescription(pf), elemID,vm);
+            return new FrequencyElement(pf.Name, editDate, CreatePYSRDescription(pf), elemID,vm);
 
         }
 
-        private static AnalyticalFrequencyElement CreateFrequencyElement(ProbabilityFunction pf, int elemID)
+        private static FrequencyElement CreateFrequencyElement(ProbabilityFunction pf, int elemID)
         {
             CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
-            AnalyticalFrequencyElement elem = null;
+            FrequencyElement elem = null;
             if (pf.ProbabilityFunctionTypeId == FrequencyFunctionType.ANALYTICAL)
             {
                 if (pf.SourceOfStatisticsId == SourceOfStatistics.ENTERED)
@@ -506,7 +506,7 @@ namespace HEC.FDA.ViewModel.Utilities
                 FrequencyEditorVM vm = new();
                 vm.IsGraphical = true;
                 ((GraphicalVM)vm.GraphicalVM.CurveComponentVM).LoadFromProbabilityFunction(pf);
-                elem = new AnalyticalFrequencyElement(pf.Name, DateTime.Now.ToString(), pf.Description, elemID,vm);
+                elem = new FrequencyElement(pf.Name, DateTime.Now.ToString(), pf.Description, elemID,vm);
             }
             return elem;
         }

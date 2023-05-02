@@ -171,7 +171,7 @@ public static class OverlappingRangeHelper
 
         IPairedDataProducer data;
 
-        if (elem is AnalyticalFrequencyElement freqElem)
+        if (elem is FrequencyElement freqElem)
         {
             if (freqElem.IsAnalytical)
             {

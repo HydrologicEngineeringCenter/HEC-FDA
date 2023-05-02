@@ -16,7 +16,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {
     public class SimulationCreator
     {
-        private readonly AnalyticalFrequencyElement _FreqElem;
+        private readonly FrequencyElement _FreqElem;
         private readonly InflowOutflowElement _InOutElem;
         private readonly StageDischargeElement _RatElem;
         private readonly ExteriorInteriorElement _ExtIntElem;
@@ -29,7 +29,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private SimulationBuilder _SimulationBuilder;
 
-        public SimulationCreator(AnalyticalFrequencyElement freqElem, InflowOutflowElement inOutElem, StageDischargeElement ratElem,
+        public SimulationCreator(FrequencyElement freqElem, InflowOutflowElement inOutElem, StageDischargeElement ratElem,
             ExteriorInteriorElement extIntElem, LateralStructureElement levElem, AggregatedStageDamageElement stageDamElem, int currentImpactAreaID)
         {
             _FreqElem = freqElem;

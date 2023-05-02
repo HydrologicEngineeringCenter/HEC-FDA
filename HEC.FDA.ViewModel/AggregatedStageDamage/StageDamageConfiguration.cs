@@ -165,7 +165,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 int impactAreaId = impactAreaRow.ImpactArea.ID;
 
                 //we want to know if it is flow or stage
-                AnalyticalFrequencyElement freqElement = impactAreaRow.FrequencyFunction.Element;
+                FrequencyElement freqElement = impactAreaRow.FrequencyFunction.Element;
                 bool isGraphical = !freqElement.IsAnalytical;
                 bool isFlow = true;
                 if (isGraphical)

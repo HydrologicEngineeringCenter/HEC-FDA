@@ -299,7 +299,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             //this means that when asking for the selected combo item, it should never be null.
             List<ChildElement> childElems = new List<ChildElement>();
 
-            List<AnalyticalFrequencyElement> analyticalFrequencyElements = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();
+            List<FrequencyElement> analyticalFrequencyElements = StudyCache.GetChildElementsOfType<FrequencyElement>();
             childElems.Clear();
             childElems.AddRange(analyticalFrequencyElements);
             FrequencyElements.AddRange(CreateComboItems(childElems));
@@ -343,7 +343,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private void UpdateRatingRequired()
         {
-            if (SelectedFrequencyElement != null && SelectedFrequencyElement.ChildElement is AnalyticalFrequencyElement elem)
+            if (SelectedFrequencyElement != null && SelectedFrequencyElement.ChildElement is FrequencyElement elem)
             {
                 RatingRequired = false;
                 if (elem.IsAnalytical || elem.GraphicalUsesFlow)
@@ -489,7 +489,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         {
             ChildElementComboItem selectedStageDamage = _SelectedStageDamage();
 
-            AnalyticalFrequencyElement freqElem = SelectedFrequencyElement.ChildElement as AnalyticalFrequencyElement;
+            FrequencyElement freqElem = SelectedFrequencyElement.ChildElement as FrequencyElement;
             InflowOutflowElement inOutElem = SelectedInflowOutflowElement.ChildElement as InflowOutflowElement;
             StageDischargeElement ratElem = SelectedRatingCurveElement.ChildElement as StageDischargeElement;
             ExteriorInteriorElement extIntElem = SelectedExteriorInteriorElement.ChildElement as ExteriorInteriorElement;
@@ -552,7 +552,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             IPairedDataProducer retval = null;
             if (SelectedFrequencyElement != null && SelectedFrequencyElement.ChildElement != null)
             {
-                if(SelectedFrequencyElement.ChildElement is AnalyticalFrequencyElement elem)
+                if(SelectedFrequencyElement.ChildElement is FrequencyElement elem)
                 {
                     if (elem.IsAnalytical)
                     {

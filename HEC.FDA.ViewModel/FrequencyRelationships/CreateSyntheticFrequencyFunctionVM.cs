@@ -57,7 +57,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
 
                 AsyncLogger logger = new AsyncLogger();
 
-                IElementManager freqPersistenceManager = Saving.PersistenceFactory.GetElementManager<AnalyticalFrequencyElement>();
+                IElementManager freqPersistenceManager = Saving.PersistenceFactory.GetElementManager<FrequencyElement>();
                 int id = freqPersistenceManager.GetNextAvailableId();
                 int numRows = dbr.NumberOfRows;
                 ImportLog += "Reading " + numRows + " rows:\n";
@@ -84,7 +84,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                 }
 
                 //check name conflicts
-                List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(AnalyticalFrequencyElement));
+                List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(FrequencyElement));
                 FdaValidationResult duplicateNamesResult = CheckForDuplicateNames(ElementsToImport, existingElems);
                 if (!duplicateNamesResult.IsValid)
                 {
@@ -112,7 +112,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             return isValid;
         }
 
-        private AnalyticalFrequencyElement CreateFrequencyElement(string name, string description, double mean, double stDev, double skew, int por, int id)
+        private FrequencyElement CreateFrequencyElement(string name, string description, double mean, double stDev, double skew, int por, int id)
         {
             string lastEditDate = DateTime.Now.ToString("G");
             FrequencyEditorVM vm = new();
@@ -120,7 +120,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             vm.AnalyticalVM.IsFitToFlows = false;
             vm.AnalyticalVM.ParameterEntryVM.LP3Distribution = new Statistics.Distributions.LogPearson3(mean, stDev, skew, por);
 
-            AnalyticalFrequencyElement newFreqElem = new AnalyticalFrequencyElement(name, lastEditDate, description, id, vm);
+            FrequencyElement newFreqElem = new FrequencyElement(name, lastEditDate, description, id, vm);
             return newFreqElem; 
         }
 

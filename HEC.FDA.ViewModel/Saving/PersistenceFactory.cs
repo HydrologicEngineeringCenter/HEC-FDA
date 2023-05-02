@@ -37,7 +37,7 @@ namespace HEC.FDA.ViewModel.Saving
             {typeof(AlternativeComparisonReportElement), "alternative_comparison_reports" },
             {typeof(AlternativeElement), "alternatives" },
             {typeof(ExteriorInteriorElement), "exterior_interior_relationships" },
-            {typeof(AnalyticalFrequencyElement), "analytical_frequency_relationships" },
+            {typeof(FrequencyElement), "analytical_frequency_relationships" },
             {typeof(HydraulicElement), "hydraulics" },
             {typeof(IASElement), "impact_area_scenarios" },
             {typeof(ImpactAreaElement), "impact_area_set" },

@@ -99,18 +99,18 @@ public class RetrieveGraphicalStageFrequencyVM : BaseViewModel
     private void AddFrequencyRelationship(UncertainPairedData upd, string name)
     {
         string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-        int id = PersistenceFactory.GetElementManager<AnalyticalFrequencyElement>().GetNextAvailableId();
+        int id = PersistenceFactory.GetElementManager<FrequencyElement>().GetNextAvailableId();
 
         FrequencyEditorVM vm = new();
         vm.IsGraphical = true;
         vm.GraphicalVM.CurveComponentVM.SelectedItem.UpdateFromUncertainPairedData(upd);
 
-        AnalyticalFrequencyElement element = new AnalyticalFrequencyElement(name, editDate, "Retrieved from Hydraulics", id,vm);
+        FrequencyElement element = new FrequencyElement(name, editDate, "Retrieved from Hydraulics", id,vm);
         IElementManager elementManager = PersistenceFactory.GetElementManager(element);
 
-        List<AnalyticalFrequencyElement> existingElements = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();
+        List<FrequencyElement> existingElements = StudyCache.GetChildElementsOfType<FrequencyElement>();
         bool newElementMatchesExisting = false;
-        foreach (AnalyticalFrequencyElement ele in existingElements)
+        foreach (FrequencyElement ele in existingElements)
         {
             if (ele.Name.Equals(name))
             {

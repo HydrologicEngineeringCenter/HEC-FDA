@@ -11,7 +11,7 @@ using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships;
 
-public class AnalyticalFrequencyElement : ChildElement
+public class FrequencyElement : ChildElement
 {
     #region Fields
     private FrequencyEditorVM _frequencyEditorVM;
@@ -60,14 +60,14 @@ public class AnalyticalFrequencyElement : ChildElement
 
     #region Constructors
     //fresh editor
-    public AnalyticalFrequencyElement(string name, string lastEditDate, string desc, int id, FrequencyEditorVM vm) 
+    public FrequencyElement(string name, string lastEditDate, string desc, int id, FrequencyEditorVM vm) 
         : base(name, lastEditDate, desc, id)
     {
         _frequencyEditorVM = new FrequencyEditorVM(vm.ToXML());
         AddDefaultActions(EditFlowFreq, StringConstants.EDIT_FREQUENCY_FUNCTIONS_MENU);
     }
     //load from database
-    public AnalyticalFrequencyElement(XElement flowFreqElem, int id) : base(flowFreqElem, id)
+    public FrequencyElement(XElement flowFreqElem, int id) : base(flowFreqElem, id)
     {
         if (flowFreqElem.Name.LocalName.Equals(typeof(ChildElement).Name))
         {

@@ -47,7 +47,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
             AnalyticalVM = new AnalyticalVM();
             GraphicalVM = new TableWithPlotVM(new GraphicalVM(StringConstants.GRAPHICAL_FREQUENCY,StringConstants.EXCEEDANCE_PROBABILITY,StringConstants.DISCHARGE),true,true,true);
         }
-        public FrequencyEditorVM(AnalyticalFrequencyElement elem, EditorActionManager actionManager) : base(elem, actionManager)
+        public FrequencyEditorVM(FrequencyElement elem, EditorActionManager actionManager) : base(elem, actionManager)
         {
             FromXML(elem.FrequencyEditorXML);
         }
@@ -86,9 +86,9 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         }
         public override void Save()
         {
-            int id = GetElementID<AnalyticalFrequencyElement>();
+            int id = GetElementID<FrequencyElement>();
             string lastEditDate = DateTime.Now.ToString("G");
-            AnalyticalFrequencyElement elem = new(Name, lastEditDate, Description,id,this);
+            FrequencyElement elem = new(Name, lastEditDate, Description,id,this);
             Save(elem);
         }
         #endregion
