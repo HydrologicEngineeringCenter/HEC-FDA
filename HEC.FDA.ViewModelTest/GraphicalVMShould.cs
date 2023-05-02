@@ -3,6 +3,7 @@ using Importer;
 using Xunit;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.TableWithPlot.Rows;
+using HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor;
 
 namespace HEC.FDA.ViewModelTest
 {
