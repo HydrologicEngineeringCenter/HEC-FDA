@@ -48,7 +48,7 @@ public class FitToFlowVM : ParameterEntryVM, IDisplayWithFDADataGrid
     //NA "Properties" for Binding
     public NamedAction Compute { get { return _compute; } set { _compute = value; NotifyPropertyChanged(); } }
     //NA Methods are titled with "Action" as convention
-    private void ComputeAction(object arg1, EventArgs arg2)
+    public void ComputeAction(object arg1, EventArgs arg2)
     {
         double[] flows = Data.Select(x => ((FlowDoubleWrapper)x).Flow).ToArray();
         var newLP3 = LP3Distribution.Fit(flows);
