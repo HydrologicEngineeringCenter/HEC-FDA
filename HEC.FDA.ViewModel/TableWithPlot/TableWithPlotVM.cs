@@ -1,5 +1,5 @@
 ﻿using HEC.FDA.Model.paireddata;
-using HEC.FDA.ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor;
 using HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces;
 using HEC.FDA.ViewModel.TableWithPlot.Enumerables;
 using HEC.FDA.ViewModel.TableWithPlot.Rows;
