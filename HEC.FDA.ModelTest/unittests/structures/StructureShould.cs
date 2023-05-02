@@ -5,6 +5,7 @@ using Xunit;
 using HEC.FDA.Model.structures;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.compute;
+using HEC.MVVMFramework.Base.Implementations;
 using System.Collections.Generic;
 using HEC.FDA.Model.metrics;
 
@@ -60,7 +61,18 @@ namespace HEC.FDA.ModelTest.unittests.structures
             Assert.Equal(expectedStructureDamage, consequenceResult.StructureDamage,0);
             Assert.Equal(expectedContentDamage, consequenceResult.ContentDamage,0);
         }
+        [Fact]
+        public void ValidationShould()
+        {
+            Structure badStructure = new Structure(fid: 1, pointM, firstFloorElevation: -304, val_struct: -10, st_damcat: "", occtype: "", impactAreaID, val_cont: -10, val_other: -10, val_vehic: -10);
+            badStructure.Validate();
+            foreach (PropertyRule rule in badStructure.RuleMap.Values)
+            {
+                Assert.Single(rule.Errors);
+                Assert.Equal(HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal, rule.ErrorLevel);
+            }
 
+        }
         //TODO: Replace tests in this class 
         //TODO: Replace deterministic tests into here
         //TODO: Rewrite the below test to make sure that we retrieve the correct occupancy type

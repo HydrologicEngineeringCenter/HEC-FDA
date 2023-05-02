@@ -1,6 +1,7 @@
 ﻿using Xunit;
 using Statistics;
 using HEC.FDA.Model.structures;
+using HEC.MVVMFramework.Base.Implementations;
 using System;
 
 namespace HEC.FDA.ModelTest.unittests.structures
@@ -31,6 +32,22 @@ namespace HEC.FDA.ModelTest.unittests.structures
                 actual = inventoryValue*valueOffset;
             }
             Assert.Equal(expected, actual, 1);
+        }
+
+        [Fact]
+        public void ValidationShould()
+        {
+            IDistributionEnum distributionEnum = IDistributionEnum.LogPearsonIII;
+            double minPercent = -10;
+            double maxPercent = 90;
+            ValueUncertainty valueUncertainty = new ValueUncertainty(distributionEnum, minPercent, maxPercent);
+            valueUncertainty.Validate();
+
+            foreach (PropertyRule rule in valueUncertainty.RuleMap.Values) 
+            {
+                Assert.Single(rule.Errors);
+                Assert.Equal(HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal, rule.ErrorLevel);
+            }
         }
     }
 }
