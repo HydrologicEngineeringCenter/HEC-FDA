@@ -1,6 +1,7 @@
 ﻿using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
+using System;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
@@ -48,7 +49,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         }
         public FrequencyEditorVM(AnalyticalFrequencyElement elem, EditorActionManager actionManager) : base(elem, actionManager)
         {
-            FromXML(elem.FrequencyEditorProperties);
+            FromXML(elem.FrequencyEditorXML);
         }
         public FrequencyEditorVM() : base(null)
         {
@@ -86,7 +87,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         public override void Save()
         {
             int id = GetElementID<AnalyticalFrequencyElement>();
-            AnalyticalFrequencyElement elem = new AnalyticalFrequencyElement(ToXML(),id);
+            string lastEditDate = DateTime.Now.ToString("G");
+            AnalyticalFrequencyElement elem = new(Name, lastEditDate, Description,id,this);
             Save(elem);
         }
         #endregion
