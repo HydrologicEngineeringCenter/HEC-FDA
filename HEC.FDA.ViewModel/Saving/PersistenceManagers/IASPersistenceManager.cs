@@ -40,6 +40,15 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             base.SaveExisting( element);
         }
 
+        public override void SaveNew(ChildElement element)
+        {
+            base.SaveNew( element);
+            if(element is IASElement)
+            {
+                IASTooltipHelper.UpdateTooltip(element as IASElement);
+            }
+        }
+
         private string WasAnalyticalFrequencyElementModified(IASElement iasElems,ChildElement elem, int elemID )
         {
             List<SpecificIAS> iasList = iasElems.SpecificIASElements.Where(ias => ias.FlowFreqID == elemID).ToList();
