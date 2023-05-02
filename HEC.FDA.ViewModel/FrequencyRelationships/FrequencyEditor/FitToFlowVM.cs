@@ -31,6 +31,12 @@ public class FitToFlowVM : ParameterEntryVM, IDisplayWithFDADataGrid
 
     public FitToFlowVM(XElement xElement) : base(xElement)
     {
+        Compute = new NamedAction
+        {
+            Name = "Fit LP3 to Flows",
+            Action = ComputeAction
+        };
+        ComputeAction(null, null);
     }
     #endregion
 
