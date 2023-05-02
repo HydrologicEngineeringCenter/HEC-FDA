@@ -1,11 +1,11 @@
-﻿using HEC.FDA.ViewModel.TableWithPlot;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
-using HEC.MVVMFramework.ViewModel.Implementations;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
 {
-	public class FrequencyEditorVM:ValidatingBaseViewModel
+	public class FrequencyEditorVM:BaseEditorVM
     {
         #region Fields
         private AnalyticalVM _analyticalVM;
@@ -41,22 +41,25 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         #endregion
 
         #region Constructors
-        public FrequencyEditorVM()
+        public FrequencyEditorVM(EditorActionManager actionManager) : base(actionManager)
         {
             AnalyticalVM = new AnalyticalVM();
             GraphicalVM = new TableWithPlotVM(new GraphicalVM(StringConstants.GRAPHICAL_FREQUENCY,StringConstants.EXCEEDANCE_PROBABILITY,StringConstants.DISCHARGE),true,true,true);
         }
-
-        public FrequencyEditorVM(XElement xElement)
+        public FrequencyEditorVM(AnalyticalFrequencyElement elem, EditorActionManager actionManager) : base(elem, actionManager)
         {
-            FromXML(xElement);
+            FromXML(elem.FrequencyEditorProperties);
+        }
+        public FrequencyEditorVM() : base(null)
+        {
+            
         }
         #endregion
 
         #region Save and Load
         public XElement ToXML()
         {
-            XElement ele = new XElement(GetType().Name);
+            XElement ele = new(GetType().Name);
             ele.SetAttributeValue(nameof(IsGraphical), IsGraphical);
             ele.Add(GraphicalVM.ToXML());
             ele.Add(AnalyticalVM.ToXML());
@@ -67,8 +70,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
             IsGraphical = bool.Parse(ele.Attribute(nameof(IsGraphical)).Value);
             foreach(XElement childs in ele.Elements())
             {
-                string elementName = childs.Name.LocalName;
-                string checkName = typeof(TableWithPlotVM).Name;
                 if (childs.Name.LocalName.Equals(typeof(TableWithPlotVM).Name)){
                     GraphicalVM = new TableWithPlotVM(childs);
                 }
@@ -76,6 +77,12 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
                     AnalyticalVM = new AnalyticalVM(childs);
                 }
             }
+        }
+        public override void Save()
+        {
+            int id = GetElementID<AnalyticalFrequencyElement>();
+            AnalyticalFrequencyElement elem = new AnalyticalFrequencyElement(ToXML(),id);
+            Save(elem);
         }
         #endregion
 
