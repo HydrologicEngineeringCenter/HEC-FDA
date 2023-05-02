@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using System;
@@ -9,7 +10,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
     public class FrequencyRelationshipsOwnerElement : ParentElement
     {
         #region Constructors
-        public FrequencyRelationshipsOwnerElement( ) : base()
+        public FrequencyRelationshipsOwnerElement() : base()
         {
             Name = StringConstants.FREQUENCY_FUNCTIONS;
             CustomTreeViewHeader = new CustomHeaderVM(Name);
@@ -85,9 +86,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             EditorActionManager actionManager = new EditorActionManager()
                .WithSiblingRules(this);
 
-            CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
-            ///AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(curveComponentVM, actionManager);
-            AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(curveComponentVM, actionManager);
+            FrequencyEditorVM vm = new(actionManager);
             string header = StringConstants.CREATE_FREQUENCY_HEADER;
             DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.CREATE_FREQUENCY_HEADER);
             Navigate(tab, false, false);
