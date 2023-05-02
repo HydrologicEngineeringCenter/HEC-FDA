@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:FEcontrols="clr-namespace:HEC.FDA.View.FrequencyRelationships.FrequencyEditor"
              xmlns:FEvm="clr-namespace:HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor;assembly=HEC.FDA.ViewModel"
+             xmlns:Utilities="clr-namespace:HEC.FDA.View.Utilities"
              mc:Ignorable="d" 
              xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=HEC.FDA.UserControls"
              d:DataContext="{d:DesignInstance Type=FEvm:FrequencyEditorVM}"
@@ -19,6 +20,7 @@
       <RowDefinition  Height="35"/>
       <RowDefinition  Height="35"/>
       <RowDefinition/>
+      <RowDefinition Height="35"/>
     </Grid.RowDefinitions>
     
     <Grid Grid.Row="0">
@@ -54,8 +56,12 @@
     </StackPanel>
     
     <!--This is our Graphical Control inside a table with plot. It seemed like a good idea at the time to force everything into TableWithPlot, but later decided it was unnecessarily confusing.
-    This control is a remnant of the old design.--> 
+    This control is a remnant of that design mistake.--> 
     <FEcontrols:GraphicalTableWithPlotControl Grid.Row="4" Visibility="{Binding ElementName=GraphicalButton, Path=IsChecked, Converter={StaticResource VisibleIfTrueConverter}}" DataContext="{Binding GraphicalVM}"/>
     <FEcontrols:AnalyticalControl Grid.Row="4" Visibility="{Binding ElementName=AnalyticButton, Path=IsChecked, Converter={StaticResource VisibleIfTrueConverter}}" DataContext="{Binding AnalyticalVM}" />
+
+    <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right">
+      <Utilities:SaveCloseControl Grid.Row="3" VerticalAlignment="Bottom"/>
+    </StackPanel>
   </Grid>
 </UserControl>
