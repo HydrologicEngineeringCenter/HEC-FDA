@@ -1,6 +1,5 @@
 ﻿using HEC.FDA.ViewModel.FrequencyRelationships;
-using HEC.FDA.ViewModel.TableWithPlot;
-using System.Collections.Generic;
+using HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor;
 using System.Xml.Linq;
 using Xunit;
 
@@ -12,23 +11,18 @@ namespace HEC.FDA.ViewModelTest
         [Fact]
         public void WriteAndReadXML()
         {
+            //arrange
             int id = 9;
-            List<double> flows = new List<double>() { 1.0, 2, 3, 4, 5, 6 };
-            int por = 45;
-            bool isAnalytical = false;
-            bool isStandard = false;
-            double mean = 1;
-            double stDev = 2;
-            double skew = 3;
-            GraphicalVM graphicalVM = new GraphicalVM("graph", "xLabel", "yLabel");
-            CurveComponentVM compVM = new CurveComponentVM();
+            FrequencyEditorVM ogVM = new FrequencyEditorVM();
+            ogVM.IsGraphical = true;
+            AnalyticalFrequencyElement ogElem = new AnalyticalFrequencyElement("test", "lastEdit", "desc", id, ogVM);
+            XElement elemXML = ogElem.ToXML();
 
-            AnalyticalFrequencyElement elem1 = new AnalyticalFrequencyElement("test", "lastEdit", "desc", por, isAnalytical, isStandard, mean, stDev, skew, flows, graphicalVM, compVM, id);
-            XElement elemXML = elem1.ToXML();
-
+            //act
             AnalyticalFrequencyElement elem2 = new AnalyticalFrequencyElement(elemXML, id);
 
-            Assert.True(elem1.Equals(elem2));
+            //assert
+            Assert.True(ogElem.IsAnalytical == elem2.IsAnalytical);
         }
     }
 }

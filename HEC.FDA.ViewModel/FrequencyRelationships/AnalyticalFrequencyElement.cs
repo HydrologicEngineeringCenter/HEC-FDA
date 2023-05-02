@@ -70,11 +70,9 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
         }
         //load from database
         public AnalyticalFrequencyElement(XElement flowFreqElem, int id) : base(flowFreqElem, id)
-        {            
-            ReadHeaderXElement(flowFreqElem.Element(HEADER_XML_TAG));
-            EditorActionManager actionManager = new EditorActionManager()
-                .WithSiblingRules(this);
-            _frequencyEditorVM = new FrequencyEditorVM(this, actionManager);
+        {
+            XElement freqEditVMEle = flowFreqElem.Element(typeof(FrequencyEditorVM).Name);
+            _frequencyEditorVM = new FrequencyEditorVM(freqEditVMEle);
             AddDefaultActions(EditFlowFreq, StringConstants.EDIT_FREQUENCY_FUNCTIONS_MENU);
         }
         #endregion
