@@ -1,4 +1,5 @@
 ﻿using HEC.CS.Collections;
+using HEC.FDA.Model.metrics;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Saving;
 using System.Collections.Generic;
@@ -100,7 +101,14 @@ namespace HEC.FDA.ViewModel.Results
                 
                 Rows.Add(new ScenarioDamageRowItem(element));
                 damCatRows.Add(new ScenarioDamCatRowItem(element));
-                PerformanceRows.Add(new ScenarioPerformanceRowItem(element));
+                List<IContainImpactAreaScenarioResults> resultsList = element.Results.ResultsList;
+                foreach (IContainImpactAreaScenarioResults impactAreaScenarioResults in resultsList)
+                {
+                    foreach (Threshold threshold in impactAreaScenarioResults.PerformanceByThresholds.ListOfThresholds)
+                    {
+                        PerformanceRows.Add(new ScenarioPerformanceRowItem(element, threshold));
+                    }
+                }
             }
             LoadDamCatDataTable(damCatRows);
         }

@@ -25,7 +25,7 @@ namespace HEC.FDA.ViewModel.Results
             foreach (string damCat in damCats)
             {
                 Empirical damCatValue = results.GetConsequencesDistribution(damageCategory: damCat);
-                DamCatMap.Add(damCat, damCatValue.Mean);
+                DamCatMap.Add(damCat, Math.Round(damCatValue.Mean,2));
             }
         }
 

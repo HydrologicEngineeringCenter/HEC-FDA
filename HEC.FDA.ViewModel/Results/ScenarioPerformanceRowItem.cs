@@ -1,5 +1,6 @@
 ﻿using HEC.FDA.Model.metrics;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
+using HEC.FDA.ViewModel.ImpactAreaScenario.Results;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,32 +32,33 @@ namespace HEC.FDA.ViewModel.Results
         public double Threshold004 { get; set; }
         public double Threshold002 { get; set; }
 
-        public ScenarioPerformanceRowItem(IASElement scenario)
+        public ScenarioPerformanceRowItem(IASElement scenario, Threshold threshold)
         {
             ScenarioResults results = scenario.Results;
 
             Name = scenario.Name;
             AnalysisYear = results.AnalysisYear;
 
-            ThresholdType = "test";
-            ThresholdValue = 123;
+            ThresholdType = threshold.ThresholdType.ToString();
+            ThresholdValue = threshold.ThresholdValue;
 
-            Mean = 1;
-            Median = 2;
+            Mean = results.MeanExpectedAnnualConsequences();
+            //todo: How do i get this one?
+            Median = 111;// results.MedianAEP() 
+            //look at PerformanceAssuranceOfThresholdVM class for this data.
+            Prob1 = results.AssuranceOfEvent(threshold.ThresholdID, .1);
+            Prob04 = results.AssuranceOfEvent(threshold.ThresholdID, .04);
+            Prob02 = results.AssuranceOfEvent(threshold.ThresholdID, .02);
+            Prob01 = results.AssuranceOfEvent(threshold.ThresholdID, .01);
+            Prob004 = results.AssuranceOfEvent(threshold.ThresholdID, .004);
+            Prob002 = results.AssuranceOfEvent(threshold.ThresholdID, .002);
 
-            Prob1 = 3;
-            Prob04 = 4;
-            Prob02 = 5;
-            Prob01 = 6;
-            Prob004 = 7;
-            Prob002 = 8;
-
-            Threshold1 = 3;
-            Threshold04 = 4;
-            Threshold02 = 5;
-            Threshold01 = 6;
-            Threshold004 = 7;
-            Threshold002 = 8;
+            Threshold1 = results.AssuranceOfEvent(threshold.ThresholdID, 1-.1);
+            Threshold04 = results.AssuranceOfEvent(threshold.ThresholdID, 1 - .04);
+            Threshold02 = results.AssuranceOfEvent(threshold.ThresholdID, 1 - .02);
+            Threshold01 = results.AssuranceOfEvent(threshold.ThresholdID, 1 - .01);
+            Threshold004 = results.AssuranceOfEvent(threshold.ThresholdID, 1 - .004);
+            Threshold002 = results.AssuranceOfEvent(threshold.ThresholdID, 1 - .002);
 
         }
 

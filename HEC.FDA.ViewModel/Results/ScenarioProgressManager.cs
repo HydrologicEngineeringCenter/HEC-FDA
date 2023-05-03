@@ -15,28 +15,20 @@ namespace HEC.FDA.ViewModel.Results
     //todo: i don't think i want to inherit this class, but maybe. 
     public class ScenarioProgressManager: ComputeWithProgressAndMessagesBase
     {
-        //public Dictionary<ImpactAreaScenarioSimulation, IASElement> SimToElementDictionary = new Dictionary<ImpactAreaScenarioSimulation, IASElement>();
-
         public Dictionary<IASElement, List<ImpactAreaScenarioSimulation>> ElemToSims = new Dictionary<IASElement, List<ImpactAreaScenarioSimulation>>();
         public CustomObservableCollection<ScenarioProgressVM> ProgressControls { get; } = new CustomObservableCollection<ScenarioProgressVM>();
         public Dictionary<IASElement, Scenario> Scenarios { get; } = new Dictionary<IASElement, Scenario>();
-        //public ScenarioProgressManager(Dictionary<IASElement, List<ImpactAreaScenarioSimulation>> elemToSims)
-        //{
-        //    foreach(KeyValuePair<IASElement, List<ImpactAreaScenarioSimulation>> keyValue in elemToSims)
-        //    {
-        //        ProgressControls.Add(new ScenarioProgressVM(keyValue.Key, keyValue.Value));
-        //    }
-
-        //}
 
         public ScenarioProgressManager()
         {
-         
-
         }
 
         public void Update(List<IASElement> elems)
         {
+            ElemToSims.Clear();
+            ProgressControls.Clear();
+            Scenarios.Clear();
+
             foreach (IASElement elem in elems)
             {
                 List<ImpactAreaScenarioSimulation> sims = ComputeScenarioVM.CreateSimulations(elem.SpecificIASElements);

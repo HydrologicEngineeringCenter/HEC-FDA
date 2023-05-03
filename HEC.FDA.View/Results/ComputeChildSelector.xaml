@@ -42,7 +42,9 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <ItemsControl Grid.Row="2" Grid.Column="1"  ItemsSource="{Binding ScenarioProgressManager.ProgressControls}"  Margin="5"/>
+        <ScrollViewer Grid.Row="2" Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <ItemsControl    ItemsSource="{Binding ScenarioProgressManager.ProgressControls}"  Margin="5"/>
+        </ScrollViewer>
 
         <StackPanel Grid.Row="4" Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
             <Button  Content="{Binding ComputeButtonLabel}" Width="100"  Margin="5" Click="Compute_Click"/>

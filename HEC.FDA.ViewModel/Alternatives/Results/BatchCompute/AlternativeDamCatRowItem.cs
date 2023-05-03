@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.Study;
+﻿using HEC.FDA.ViewModel.ImpactAreaScenario;
+using HEC.FDA.ViewModel.Study;
 using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
@@ -12,8 +13,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
     {
 
         public string Name { get; set; }
-        public int BaseYear { get; set; }
-        public int FutureYear { get; set; }
+        public IASElement BaseYearScenario { get; set; }
+        public IASElement FutureYearScenario { get; set; }
         public double DiscountRate { get; set; }
         public int PeriodOfAnalysis { get; set; }
         public double Mean { get; set; }
@@ -26,11 +27,14 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
         public AlternativeDamCatRowItem(AlternativeElement altElem)
         {
             Name = altElem.Name;
-            BaseYear = altElem.Results.AnalysisYears[0];
-            FutureYear = altElem.Results.AnalysisYears[1];
+            IASElement[] iASElements = altElem.GetElementsFromID();
+            BaseYearScenario = iASElements[0];
+            FutureYearScenario = iASElements[1];
+
             StudyPropertiesElement studyPropElem = StudyCache.GetStudyPropertiesElement();
             DiscountRate = studyPropElem.DiscountRate;
             PeriodOfAnalysis = altElem.Results.PeriodOfAnalysis;
+
             Mean = altElem.Results.MeanAAEQDamage();
             Q1 = altElem.Results.AAEQDamageExceededWithProbabilityQ(.75);
             Q2 = altElem.Results.AAEQDamageExceededWithProbabilityQ(.5);
