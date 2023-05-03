@@ -96,7 +96,7 @@ namespace HEC.FDA.ViewModel.Compute
                 MessageVM.InstanceHash.Add(sim.GetHashCode());
             }
         }
-        private void Sim_ProgressReport(object sender, MVVMFramework.Base.Events.ProgressReportEventArgs progress)
+        public virtual void Sim_ProgressReport(object sender, MVVMFramework.Base.Events.ProgressReportEventArgs progress)
         {
             if (sender is ImpactAreaScenarioSimulation sim)
             {

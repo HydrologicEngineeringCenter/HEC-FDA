@@ -3,28 +3,26 @@ using HEC.FDA.ViewModel.Compute;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace HEC.FDA.ViewModel.Results
 {
     public abstract class ChildSelectorVM : ComputeWithProgressAndMessagesBase, IProgressReport
     {
+
         public const string CANCEL_COMPUTE = "Cancel Compute";
         public const string COMPUTE = "Compute";
         private string _ComputeButtonLabel = COMPUTE;
         public CancellationTokenSource _CancellationToken;
         private bool _AllSelected;
+        public ScenarioProgressManager ScenarioProgressManager { get; } = new ScenarioProgressManager();
 
         public event ProgressReportedEventHandler ProgressReport;
         public event MessageReportedEventHandler MessageReport;
 
         public CustomObservableCollection<ComputeChildRowItem> Rows { get; } = new CustomObservableCollection<ComputeChildRowItem>();
-
+        public CustomObservableCollection<ProgressRowItem> ProgressRows { get; } = new CustomObservableCollection<ProgressRowItem>();
         public string ComputeButtonLabel
         {
             get { return _ComputeButtonLabel; }
@@ -71,6 +69,7 @@ namespace HEC.FDA.ViewModel.Results
             else
             {
                 List<ComputeChildRowItem> computeChildRowItems = GetSelectedRows();
+
                 if (computeChildRowItems.Count > 0)
                 {
                     _CancellationToken = new CancellationTokenSource();
@@ -78,7 +77,6 @@ namespace HEC.FDA.ViewModel.Results
                     ComputeButtonLabel = CANCEL_COMPUTE;
                 }
             }
-
         }
 
         public void SelectAllRows()

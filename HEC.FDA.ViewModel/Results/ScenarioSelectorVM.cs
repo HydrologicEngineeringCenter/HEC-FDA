@@ -1,5 +1,4 @@
-﻿using HEC.FDA.Model.compute;
-using HEC.FDA.Model.metrics;
+﻿using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.scenarios;
 using HEC.FDA.ViewModel.Compute;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
@@ -20,7 +19,6 @@ namespace HEC.FDA.ViewModel.Results
         
         public ScenarioSelectorVM():base()
         {
-
             ValidateScenarios();
         }
 
@@ -67,30 +65,34 @@ namespace HEC.FDA.ViewModel.Results
             }
         }    
 
+        private void LoadComputeManager(List<ComputeChildRowItem> scenarioRows)
+        {
+            List<IASElement> elems = new List<IASElement>();
+            foreach (ComputeChildRowItem row in scenarioRows)
+            {
+                IASElement elem = (IASElement)row.ChildElement;
+                FdaValidationResult canComputeVR = elem.CanCompute();
+                if (canComputeVR.IsValid)
+                {
+                    elems.Add(row.ChildElement as IASElement);
+                }
+                else
+                {
+                    row.MarkInError(canComputeVR.ErrorMessage);
+                }
+            }
+            ScenarioProgressManager.Update(elems);
+        }
+
         public override async void Compute(List<ComputeChildRowItem> scenarioRows)
         {
-            MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message("Beginning Batch Compute"));
-            ReportMessage(this, beginComputeMessageArgs);
+            LoadComputeManager(scenarioRows);
             List<Task> taskList = new List<Task>();
-            List<IASElement> elementList = new List<IASElement>();
             try
             {
-                foreach (ComputeChildRowItem row in scenarioRows)
+                foreach (KeyValuePair<IASElement, Scenario> keyValue in ScenarioProgressManager.Scenarios)
                 {
-                    IASElement elem = (IASElement)row.ChildElement;
-                    elementList.Add(elem);
-                    FdaValidationResult canComputeVR = elem.CanCompute();
-                    if (canComputeVR.IsValid)
-                    {
-                        List<ImpactAreaScenarioSimulation> sims = ComputeScenarioVM.CreateSimulations(elem.SpecificIASElements);
-                        RegisterProgressAndMessages(sims);
-                        Scenario scenario = new Scenario(elem.AnalysisYear, sims);
-                        taskList.Add(ComputeScenarioVM.ComputeScenario(elem, scenario, ComputeCompleted, _CancellationToken.Token));
-                    }
-                    else
-                    {
-                        row.MarkInError(canComputeVR.ErrorMessage);
-                    }
+                    taskList.Add(ComputeScenarioVM.ComputeScenario(keyValue.Key, keyValue.Value, ComputeCompleted, _CancellationToken.Token));
                 }
                 await Task.WhenAll(taskList.ToArray());
             }
@@ -107,12 +109,12 @@ namespace HEC.FDA.ViewModel.Results
             var result = MessageBox.Show("Do you want to view summary results?", "Compute Finished", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result == MessageBoxResult.Yes)
             {
-                ScenarioDamageSummaryVM vm = new ScenarioDamageSummaryVM(elementList);
-                //todo: add to string constants
+                ScenarioDamageSummaryVM vm = new ScenarioDamageSummaryVM(ScenarioProgressManager.Scenarios.Keys.ToList());
                 DynamicTabVM tab = new DynamicTabVM(StringConstants.VIEW_SUMMARY_RESULTS_HEADER, vm, StringConstants.VIEW_SUMMARY_RESULTS_HEADER);
                 Navigate(tab, false, false);
             }
         }
+
 
         private void ValidateScenarios()
         {

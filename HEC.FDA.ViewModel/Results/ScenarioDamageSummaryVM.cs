@@ -85,7 +85,6 @@ namespace HEC.FDA.ViewModel.Results
             if (foundRow != null)
             {
                 foundRow.Update(newElement);
-                //LoadTables();
             }
         }
 

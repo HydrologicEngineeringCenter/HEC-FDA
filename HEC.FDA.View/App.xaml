@@ -411,6 +411,9 @@
         <DataTemplate DataType="{x:Type ResultsVM:ScenarioDamageSummaryVM }" >
             <ResultsView:ScenarioDamageSummary/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type ResultsVM:ScenarioProgressVM }" >
+            <ResultsView:ScenarioProgressControl/>
+        </DataTemplate>
 
         <DataTemplate DataType="{x:Type AlternativeBatchResultsVM:AlternativeSelectorVM}" >
             <AlternativeBatchResultsView:AlternativeSelector/>

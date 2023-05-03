@@ -41,15 +41,17 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                         sb.AppendLine("Last Computed: " + lastCompute);
 
                         DateTime lastEditDate = DateTime.Parse(elem.LastEditDate);
-                        DateTime computeDate = DateTime.Parse(lastCompute);
-                        elem.CustomTreeViewHeader.Decoration = ImageSources.GREEN_CHECKMARK_IMAGE;
-
-                        if (lastEditDate > computeDate)
+                        if (lastCompute != "NA")
                         {
-                            sb.AppendLine("Changes have been made since last compute.");
-                            elem.CustomTreeViewHeader.Decoration = ImageSources.CAUTION_IMAGE;
-                        }
+                            DateTime computeDate = DateTime.Parse(lastCompute);
+                            elem.CustomTreeViewHeader.Decoration = ImageSources.GREEN_CHECKMARK_IMAGE;
 
+                            if (lastEditDate > computeDate)
+                            {
+                                sb.AppendLine("Changes have been made since last compute.");
+                                elem.CustomTreeViewHeader.Decoration = ImageSources.CAUTION_IMAGE;
+                            }
+                        }
                     }
                 }
 

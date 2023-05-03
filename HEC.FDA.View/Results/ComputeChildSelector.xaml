@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:Util="clr-namespace:HEC.FDA.View.Utilities"
-             xmlns:mvvmView="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=HEC.MVVMFramework.View"
              xmlns:local="clr-namespace:HEC.FDA.View.Results"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -42,8 +41,8 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <mvvmView:SubscriberMessageView DataContext="{Binding MessageVM}"  Grid.Row="2" Grid.Column="1"   Margin="5,5,5,5"/>
-        <ProgressBar Grid.Row="3" Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding Progress}"   HorizontalAlignment="Stretch"  Margin="0,5,0,5"/>
+
+        <ItemsControl Grid.Row="2" Grid.Column="1"  ItemsSource="{Binding ScenarioProgressManager.ProgressControls}"  Margin="5"/>
 
         <StackPanel Grid.Row="4" Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
             <Button  Content="{Binding ComputeButtonLabel}" Width="100"  Margin="5" Click="Compute_Click"/>
