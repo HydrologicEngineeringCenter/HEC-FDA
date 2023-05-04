@@ -317,13 +317,11 @@ namespace HEC.FDA.Model.compute
                         {
                             throw new TaskCanceledException();
                         }
-
                         //check if it is a mean random provider or not
                         IProvideRandomNumbers threadlocalRandomProvider;
                         if (randomProvider is MedianRandomProvider)
                         {
-                            //If threadlocalRandomProvider is medianRandomProvider then we get a quasi-deterministic result
-                            frequencyDischarge = _frequency_discharge.BootstrapToPairedData(threadlocalRandomProvider,_RequiredExceedanceProbabilities);//ordinates defines the number of values in the frequency curve, more would be a better approximation.                                                                                                                  
+                            threadlocalRandomProvider = new MedianRandomProvider();
                         }
                         else
                         {
@@ -343,7 +341,7 @@ namespace HEC.FDA.Model.compute
                             if (_frequency_discharge_graphical.CurveMetaData.IsNull)
                             {
                                 //If threadlocalRandomProvider is medianRandomProvider then we get a quasi-deterministic result
-                                frequencyDischarge = BootstrapToPairedData(threadlocalRandomProvider, _frequency_discharge, 200);//ordinates defines the number of values in the frequency curve, more would be a better approximation.
+                                frequencyDischarge = _frequency_discharge.BootstrapToPairedData(threadlocalRandomProvider, _RequiredExceedanceProbabilities);//ordinates defines the number of values in the frequency curve, more would be a better approximation.                                                                                                                  
                             }
                             else
                             {
