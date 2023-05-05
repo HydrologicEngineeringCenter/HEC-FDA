@@ -213,86 +213,49 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             return vr;
         }
 
-        /// <summary>
-        /// Validates that the data entered is sufficient to save the form
-        /// </summary>
-        /// <returns></returns>
-        private Boolean ValidateIAS()
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-
-            vr.AddErrorMessage( IsYearValid().ErrorMessage);
-
-            foreach (KeyValuePair<ImpactAreaRowItem, SpecificIASEditorVM>  entry in _ImpactAreaEditorDictionary)
-            {
-                SpecificIASEditorVM vm = entry.Value;
-                FdaValidationResult validationResult = vm.GetEditorValidationResult();
-                if (!validationResult.IsValid)
-                {
-                    vr.AddErrorMessage(validationResult.ErrorMessage + Environment.NewLine);
-                }
-            }
-
-            if (!vr.IsValid)
-            {
-                MessageBox.Show(vr.ErrorMessage.ToString(), "Insufficient Data", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                return false;
-            }
-            else
-            {
-                //if no msg's then we can save
-                return true;
-            }
-        }
-
         #endregion
 
         public override void Save()
         {
-            //todo: deal with this.
-            bool isValid = true;// ValidateIAS();
-            if (isValid)
+            //get the list of specific IAS elements.
+            List<SpecificIAS> elementsToSave = new List<SpecificIAS>();
+            foreach (KeyValuePair<ImpactAreaRowItem, SpecificIASEditorVM> entry in _ImpactAreaEditorDictionary)
             {
-                //get the list of specific IAS elements.
-                List<SpecificIAS> elementsToSave = new List<SpecificIAS>();
-                foreach (KeyValuePair<ImpactAreaRowItem, SpecificIASEditorVM> entry in _ImpactAreaEditorDictionary)
-                {
-                    SpecificIASEditorVM vm = entry.Value;
-                    elementsToSave.Add( vm.CreateSpecificIAS());
-                }
-
-                if(Description == null)
-                {
-                    Description = "";
-                }
-                //todo: shouldn't this pass the save to base?
-                IASPersistenceManager iASPersistenceManager = PersistenceFactory.GetIASManager();
-                int id = GetElementID<IASElement>();
-                //todo: is this what I want?
-                int stageDamageId = -1;
-                if(SelectedStageDamageElement != null && SelectedStageDamageElement.ChildElement != null)
-                {
-                    stageDamageId = SelectedStageDamageElement.ChildElement.ID;
-                }
-                IASElement elemToSave = new IASElement(Name, Description, DateTime.Now.ToString("G"), Year.Value, stageDamageId, elementsToSave, id);
-
-                if (IsCreatingNewElement)
-                {
-                    iASPersistenceManager.SaveNew(elemToSave);
-                    IsCreatingNewElement = false;
-                }
-                else
-                {
-                    elemToSave.Results = _Results;
-                    iASPersistenceManager.SaveExisting(elemToSave);
-                    IASTooltipHelper.UpdateTooltip(elemToSave);
-                }
-
-                SavingText = "Last Saved: " + elemToSave.LastEditDate;
-                HasChanges = false;
-                HasSaved = true;
-                OriginalElement = elemToSave;
+                SpecificIASEditorVM vm = entry.Value;
+                elementsToSave.Add(vm.CreateSpecificIAS());
             }
+
+            if (Description == null)
+            {
+                Description = "";
+            }
+            //todo: shouldn't this pass the save to base?
+            IASPersistenceManager iASPersistenceManager = PersistenceFactory.GetIASManager();
+            int id = GetElementID<IASElement>();
+            //todo: is this what I want?
+            int stageDamageId = -1;
+            if (SelectedStageDamageElement != null && SelectedStageDamageElement.ChildElement != null)
+            {
+                stageDamageId = SelectedStageDamageElement.ChildElement.ID;
+            }
+            IASElement elemToSave = new IASElement(Name, Description, DateTime.Now.ToString("G"), Year.Value, stageDamageId, elementsToSave, id);
+
+            if (IsCreatingNewElement)
+            {
+                iASPersistenceManager.SaveNew(elemToSave);
+                IsCreatingNewElement = false;
+            }
+            else
+            {
+                elemToSave.Results = _Results;
+                iASPersistenceManager.SaveExisting(elemToSave);
+                IASTooltipHelper.UpdateTooltip(elemToSave);
+            }
+
+            SavingText = "Last Saved: " + elemToSave.LastEditDate;
+            HasChanges = false;
+            HasSaved = true;
+            OriginalElement = elemToSave;
         }
 
         public ChildElementComboItem GetSelectedStageDamage()

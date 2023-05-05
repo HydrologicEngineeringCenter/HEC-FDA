@@ -8,7 +8,6 @@ using System.Collections.Generic;
 
 namespace HEC.FDA.ViewModel.Results
 {
-    //todo: i don't think i want to inherit this class, but maybe. 
     public class ScenarioProgressManager: ComputeWithProgressAndMessagesBase
     {
         public Dictionary<IASElement, List<ImpactAreaScenarioSimulation>> ElemToSims = new Dictionary<IASElement, List<ImpactAreaScenarioSimulation>>();

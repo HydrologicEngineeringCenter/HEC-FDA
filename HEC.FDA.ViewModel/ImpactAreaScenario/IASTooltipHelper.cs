@@ -30,11 +30,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             }
             else
             {
-                //todo: put decorator icons on these options?
                 sb.AppendLine("Last Edited: " + elem.LastEditDate);
                 if (hasResults)
                 {
-                    //is it up to date.
+                    //is it up to date?
                     if (hasResults)
                     {
                         string lastCompute = GetComputeDate(elem);
@@ -83,11 +82,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             }
             else
             {
-                //todo: put decorator icons on these options?
                 sb.AppendLine("Last Edited: " + elem.LastEditDate);
                 if (hasResults)
                 {
-                    //is it up to date.
+                    //is it up to date?
                     if (hasResults)
                     {
                         string lastCompute = GetComputeDate(elem);

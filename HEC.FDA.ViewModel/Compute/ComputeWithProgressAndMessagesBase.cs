@@ -94,7 +94,8 @@ namespace HEC.FDA.ViewModel.Compute
             foreach (ImpactAreaScenarioSimulation sim in sims)
             {
                 sim.ProgressReport += Sim_ProgressReport;
-                MessageVM.InstanceHash.Add(sim.GetHashCode());
+                //TODO: I am commenting this out until we figure out how to better handle messaging.-cody 5/5/23
+                //MessageVM.InstanceHash.Add(sim.GetHashCode());
             }
         }
         public virtual void Sim_ProgressReport(object sender, MVVMFramework.Base.Events.ProgressReportEventArgs progress)
