@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.ImpactAreaScenario;
+﻿using HEC.FDA.ViewModel.Alternatives;
+using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace HEC.FDA.ViewModel.Results
         private string _ErrorMessage;
         private bool _IsSelected;
         private string _Name;
+        private string _HasComputeMessage;
         private ChildElement _ChildElement;
         public ChildElement ChildElement
         {
@@ -41,7 +43,11 @@ namespace HEC.FDA.ViewModel.Results
             set { _ErrorMessage = value; NotifyPropertyChanged(); }
         }
         public bool HasResults{get;set;}
-        public string HasComputeMessage { get; set; }
+        public string HasComputeMessage
+        {
+            get { return _HasComputeMessage; }
+            set { _HasComputeMessage = value; NotifyPropertyChanged(); }
+        }
 
         public ComputeChildRowItem(ChildElement childElement)
         {
@@ -57,14 +63,18 @@ namespace HEC.FDA.ViewModel.Results
         {
             Name = childElement.Name;
             ChildElement = childElement;
-            if (childElement is IASElement)
+            if (childElement is IASElement elem)
             {
-                IASElement elem = (IASElement)childElement;
                 HasResults = elem.Results != null;
                 if (HasResults)
                 {
                     HasComputeMessage = CreateHasResultsMessage(elem);
                 }
+            }
+            else if(childElement is AlternativeElement altElem)
+            {
+                IASElement[] iASElements = altElem.GetElementsFromID();
+                HasComputeMessage = "\t* Base year scenario: " + iASElements[0].Name + "\n\t* Future year scenario: " + iASElements[1].Name;
             }
         }
 

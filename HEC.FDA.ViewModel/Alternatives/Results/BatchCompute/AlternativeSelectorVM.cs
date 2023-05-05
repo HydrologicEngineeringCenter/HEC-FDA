@@ -13,13 +13,38 @@ using System.Windows;
 
 namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
 {
+    /// <summary>
+    /// This class is used to select multiple alternatives to run a batch compute that is multi-threaded.
+    /// </summary>
     public class AlternativeSelectorVM : ChildSelectorVM
     {
 
         public AlternativeSelectorVM():base()
         {
+            ValidateAlternatives();
+            ListenToChildElementUpdateEvents();
+        }
 
-            //todo: validate alternatives
+        private void ValidateAlternatives()
+        {
+            foreach (ComputeChildRowItem row in Rows)
+            {
+                ValidateAlternatives(row);
+            }
+        }
+
+        private void ValidateAlternatives(ComputeChildRowItem row)
+        {
+            AlternativeElement elem = (AlternativeElement)row.ChildElement;
+            FdaValidationResult canComputeVR = elem.RunPreComputeValidation();
+            if (!canComputeVR.IsValid)
+            {
+                row.MarkInError(canComputeVR.ErrorMessage);
+            }
+            else
+            {
+                row.ClearErrorStatus();
+            }
         }
 
         public override void ListenToChildElementUpdateEvents()
@@ -33,7 +58,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
         {
             ComputeChildRowItem newRow = new ComputeChildRowItem((AlternativeElement)e.Element);
             Rows.Add(newRow);
-            //ValidateScenario(newRow);
+            ValidateAlternatives(newRow);
         }
 
         private void AlternativeRemoved(object sender, ElementAddedEventArgs e)
@@ -51,7 +76,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
             if (foundRow != null)
             {
                 foundRow.Update(newElement);
-                //ValidateScenario(foundRow);
+                ValidateAlternatives(foundRow);
             }
         }
 
@@ -66,9 +91,6 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
             }
         }
 
-
-        //todo: look at the alt comp report validation and logic for how to do this. 
-        //look at AltCompReportElement DoAlternativesStillExist and getCanComputeResults
         public override async void Compute(List<ComputeChildRowItem> altRows)
         {
             

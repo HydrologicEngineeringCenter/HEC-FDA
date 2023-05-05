@@ -35,7 +35,6 @@ namespace HEC.FDA.ViewModel.Compute
 
                 Scenario scenario = new Scenario(analysisYear, sims);
 
-                //todo: add the cancelation token
                 CancellationTokenSource _CancellationToken = new CancellationTokenSource();
                 ComputeScenario(elem, scenario, callback, _CancellationToken.Token);
                 //UnregisterMessages(sims);

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="HEC.FDA.View.Results.ComputeChildSelector"
+﻿<UserControl x:Class="HEC.FDA.View.Results.ScenarioChildSelector"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -13,11 +13,10 @@
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="35"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="35"/>
-            <RowDefinition Height="45"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -46,10 +45,9 @@
             <ItemsControl    ItemsSource="{Binding ScenarioProgressManager.ProgressControls}"  Margin="5"/>
         </ScrollViewer>
 
-        <StackPanel Grid.Row="4" Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
-            <Button  Content="{Binding ComputeButtonLabel}" Width="100"  Margin="5" Click="Compute_Click"/>
-            <Button  Content="Close" Width="100"  Margin="5"/>
-
+        <StackPanel Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button  Content="{Binding ComputeButtonLabel}" Width="100" Height="22" Margin="5" Click="Compute_Click"/>
+            <Button  Content="Close" Width="100" Height="22" Margin="5"/>
         </StackPanel>
     </Grid>
 </UserControl>

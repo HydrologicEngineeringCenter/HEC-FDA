@@ -96,7 +96,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             Navigate(tab, false, true);
         }
 
-        private FdaValidationResult GetValidationResult()
+        public FdaValidationResult GetValidationResult()
         {
             FdaValidationResult doAlternativesExistResult = DoAlternativesStillExistResult();
             if (!doAlternativesExistResult.IsValid)
@@ -254,7 +254,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             return aaeqSummaryRowItems;
         }
   
-        private List<AlternativeElement> GetWithProjectAlternatives()
+        public List<AlternativeElement> GetWithProjectAlternatives()
         {
             List<AlternativeElement> alts = new List<AlternativeElement>();
             foreach(int id in WithProjAltIDs )
@@ -268,7 +268,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             return alts;
         }
 
-        private AlternativeElement GetAlternativeElementFromID(int id)
+        public AlternativeElement GetAlternativeElementFromID(int id)
         {
             AlternativeElement alt = null;
             //get the current ias elements in the study

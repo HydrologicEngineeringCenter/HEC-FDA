@@ -19,9 +19,9 @@ namespace HEC.FDA.View.Results
     /// <summary>
     /// Interaction logic for ComputeChildSelector.xaml
     /// </summary>
-    public partial class ComputeChildSelector : UserControl
+    public partial class ScenarioChildSelector : UserControl
     {
-        public ComputeChildSelector()
+        public ScenarioChildSelector()
         {
             InitializeComponent();
         }

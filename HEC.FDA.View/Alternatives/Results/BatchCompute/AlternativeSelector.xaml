@@ -14,14 +14,12 @@
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="35"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="35"/>
-            <RowDefinition Height="45"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <TextBlock Grid.Row="0" Grid.Column="0" Text="Select Alternatives to Compute:" Margin="10,0,0,0" VerticalAlignment="Bottom"/>
@@ -37,18 +35,15 @@
                     <StackPanel>
                         <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected, Mode=TwoWay}" IsEnabled="{Binding HasError, Converter={StaticResource InverseBooleanConverter}}" />
                         <Label Content="{Binding ErrorMessage}" Foreground="Red" Visibility="{Binding Path=HasError, Converter={StaticResource BoolToVis}}"/>
-                        <Label Content="{Binding HasComputeMessage}" Visibility="{Binding Path=HasResults, Converter={StaticResource BoolToVis}}" />
+                        <Label Content="{Binding HasComputeMessage}"  />
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <mvvmView:SubscriberMessageView DataContext="{Binding MessageVM}"  Grid.Row="2" Grid.Column="1"   Margin="5,5,5,5"/>
-        <ProgressBar Grid.Row="3" Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding Progress}"   HorizontalAlignment="Stretch"  Margin="0,5,0,5"/>
-
-        <StackPanel Grid.Row="4" Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
-            <Button  Content="{Binding ComputeButtonLabel}" Width="100"  Margin="5" Click="Compute_Click"/>
-            <Button  Content="Close" Width="100"  Margin="5"/>
-
+       
+        <StackPanel Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button  Content="{Binding ComputeButtonLabel}" Width="100" Height="22"  Margin="5" Click="Compute_Click"/>
+            <Button  Content="Close" Width="100" Height="22" Margin="5"/>
         </StackPanel>
             
     </Grid>

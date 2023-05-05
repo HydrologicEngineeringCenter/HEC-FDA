@@ -1,14 +1,16 @@
 ﻿using HEC.CS.Collections;
 using HEC.FDA.ViewModel.Compute;
 using HEC.MVVMFramework.Base.Events;
-using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using System.Collections.Generic;
 using System.Threading;
 
 namespace HEC.FDA.ViewModel.Results
 {
-    public abstract class ChildSelectorVM : ComputeWithProgressAndMessagesBase, IProgressReport
+    /// <summary>
+    /// Base class for the selection of child elements for running batch computes. (Scenarios, Alternatives, Alt comp reports)
+    /// </summary>
+    public abstract class ChildSelectorVM : BaseViewModel, IProgressReport
     {
 
         public const string CANCEL_COMPUTE = "Cancel Compute";
@@ -37,9 +39,7 @@ namespace HEC.FDA.ViewModel.Results
 
         public ChildSelectorVM()
         {
-            MessageHub.Register(this);
             LoadChildElements();
-
         }
 
         public abstract void LoadChildElements();

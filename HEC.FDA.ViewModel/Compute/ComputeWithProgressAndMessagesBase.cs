@@ -8,6 +8,7 @@ using System.Collections.Generic;
 
 namespace HEC.FDA.ViewModel.Compute
 {
+    //TODO: i think that this class might go away once we switch the individual computes to use the new multi-progress bar control.
     public class ComputeWithProgressAndMessagesBase : BaseViewModel
     {
         public int _TotalSims;

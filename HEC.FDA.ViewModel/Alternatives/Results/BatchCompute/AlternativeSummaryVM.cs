@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using HEC.CS.Collections;
+using HEC.FDA.ViewModel.Results;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
@@ -8,7 +10,6 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
 
     public class AlternativeSummaryVM : BaseViewModel
     {
-
         public List<AlternativeDamageRowItem> Rows { get; } = new List<AlternativeDamageRowItem>();
 
         public DataTable DamCatTable { get; set; } = new DataTable();
@@ -52,7 +53,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
                 }
                 else
                 {
-                    //this scenario doesn't have a value for that dam cat. Assign 0.
+                    //this alternative doesn't have a value for that dam cat. Assign 0.
                     myRow[damCat] = 0;
                 }
             }

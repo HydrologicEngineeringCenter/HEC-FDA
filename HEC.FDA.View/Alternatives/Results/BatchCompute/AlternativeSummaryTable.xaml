@@ -13,8 +13,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-
-
+        
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" HorizontalAlignment="Left" Margin="5" >
             <Grid>
                 <Grid.RowDefinitions>
@@ -34,15 +33,12 @@
                         <ColumnDefinition Width="{Binding ElementName=q2Col, Path=ActualWidth}"/>
                         <ColumnDefinition Width="{Binding ElementName=q3Col, Path=ActualWidth}"/>
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Grid.ColumnSpan="6" BorderBrush="Gray" BorderThickness="1">
+                    <Border Grid.Column="0" Grid.ColumnSpan="5" BorderBrush="Gray" BorderThickness="1">
                         <Label  HorizontalContentAlignment='Center'>Alternative Information</Label>
                     </Border>
-                    <Border Grid.Column="6" Grid.ColumnSpan="3" BorderBrush="Gray"  BorderThickness="1">
+                    <Border Grid.Column="5" Grid.ColumnSpan="4" BorderBrush="Gray"  BorderThickness="1">
                         <Label HorizontalContentAlignment='Center'>Total Average Annual Equivalent Damage</Label>
                     </Border>
-                    <!--<Border Grid.Column="2" Grid.ColumnSpan="4" BorderBrush="Gray"  BorderThickness="1">
-                        <Label HorizontalContentAlignment='Center'>Total Equivalent Damage by Damage Category</Label>
-                    </Border>-->
                 </Grid>
 
 
@@ -51,10 +47,10 @@
                   CanUserSortColumns="false"  SelectionUnit="Cell">
                     <DataGrid.Columns>
                         <DataGridTextColumn x:Name="nameCol" Header="Name" Binding="{Binding Name}" Width="110"/>
-                        <DataGridTextColumn x:Name="baseYearCol" Header="Analysis Year" Binding="{Binding BaseYear}" Width="110"/>
-                        <DataGridTextColumn x:Name="futureYearCol" Header="Analysis Year" Binding="{Binding FutureYear}" Width="110"/>
-                        <DataGridTextColumn x:Name="discountRateCol" Header="Analysis Year" Binding="{Binding DiscountRate, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
-                        <DataGridTextColumn x:Name="periodOfAnalysisCol" Header="Analysis Year" Binding="{Binding PeriodOfAnalysis}" Width="110"/>
+                        <DataGridTextColumn x:Name="baseYearCol" Header="Base Year Scenario" Binding="{Binding BaseYear}" Width="110"/>
+                        <DataGridTextColumn x:Name="futureYearCol" Header="Future Year Scenario" Binding="{Binding FutureYear}" Width="110"/>
+                        <DataGridTextColumn x:Name="discountRateCol" Header="Discount Rate" Binding="{Binding DiscountRate, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
+                        <DataGridTextColumn x:Name="periodOfAnalysisCol" Header="Period of Analysis" Binding="{Binding PeriodOfAnalysis}" Width="110"/>
                         <DataGridTextColumn x:Name="meanCol" Header="Mean" Binding="{Binding Mean, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
 
                         <DataGridTextColumn x:Name="q1Col" Binding="{Binding Q1, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
@@ -92,39 +88,24 @@
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0" Width="{Binding Path=Width, ElementName=damCatGrid}" HorizontalAlignment="Left" Margin="0 0 0 0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="{Binding ElementName=col0, Path=ActualWidth}"/>
-                        <ColumnDefinition Width="{Binding ElementName=col1, Path=ActualWidth}"/>
+                        <ColumnDefinition Width="{Binding ElementName=damCatGrid, Path=ActualWidth}"/>
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="Gray" BorderThickness="1">
-                        <Label  HorizontalContentAlignment='Center'>Scenario Information</Label>
+                    <Border Grid.Row="0" BorderBrush="Gray" BorderThickness="1">
+                        <Label  HorizontalContentAlignment='Center'>Average Annual Equivalent Damage by Damage Category</Label>
                     </Border>
-                    <!--<Border Grid.Column="2" Grid.ColumnSpan="4" BorderBrush="Gray"  BorderThickness="1">
-                        <Label HorizontalContentAlignment='Center'>Mean Expected Annual Damage by Damage Category</Label>
-                    </Border>-->
                 </Grid>
 
 
-                <DataGrid  HeadersVisibility="Column" Grid.Row="1" Name="damCatGrid" ItemsSource="{Binding DamCatTable}" AutoGenerateColumns="True" HorizontalAlignment="Left"
+                <DataGrid   HeadersVisibility="Column" Grid.Row="1" Name="damCatGrid" ItemsSource="{Binding DamCatTable}" AutoGenerateColumns="True" HorizontalAlignment="Left"
                   VerticalAlignment="Top"  IsReadOnly="True" CanUserResizeColumns="True" CanUserReorderColumns="False"
                   CanUserSortColumns="false"  SelectionUnit="Cell" >
-                    <!--<DataGrid.Columns>
-                        <DataGridTextColumn x:Name="dcNameCol" Header="Name" Binding="{Binding Name}" Width="110"/>
-                        <DataGridTextColumn x:Name="dcYearCol" Header="Analysis Year" Binding="{Binding AnalysisYear}" Width="110"/>
-
-                        <DataGridTextColumn x:Name="Column7" Header="Dam Cat 1" Binding="{Binding WithProjAlternative}" Width="110"/>
-                        <DataGridTextColumn x:Name="Column8" Header="Dam Cat 2" Binding="{Binding WithProjAlternative}" Width="110"/>
-                        <DataGridTextColumn x:Name="Column9" Header="Dam Cat 3" Binding="{Binding WithProjAlternative}" Width="110"/>
-                        <DataGridTextColumn x:Name="Column10" Header="Dam Cat 4" Binding="{Binding WithProjAlternative}" Width="110"/>
-
-
-                    </DataGrid.Columns>-->
                 </DataGrid>
             </Grid>
         </ScrollViewer>
 
 
 
-        <Button Grid.Row="2" Content="OK" Width="40" Height="22" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5"/>
+        <Button Grid.Row="2" Content="Close" Width="40" Height="22" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5"/>
 
     </Grid>
 </UserControl>

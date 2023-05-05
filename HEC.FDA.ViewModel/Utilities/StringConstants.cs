@@ -167,6 +167,8 @@
         public const string ALTERNATIVE_COMP_REPORTS = "Alternative Comparison Reports";
         public const string CREATE_NEW_ALTERNATIVE_COMP_REPORTS_MENU = "Create New Alternative Comparison Report...";
         public const string EDIT_ALTERNATIVE_COMP_REPORTS_MENU = "Edit Alternative Comparison Report...";
+        public const string ALTERNATIVE_COMP_REPORTS_SUMMARY = "View Alternatives Summary Results...";
+        public const string ALTERNATIVE_COMP_REPORTS_SUMMARY_HEADER = "View Alternatives Summary Results";
 
         public const string CREATE_NEW_ALTERNATIVE_COMP_REPORTS_HEADER = "Create New Alternative Comparison Report";
 
