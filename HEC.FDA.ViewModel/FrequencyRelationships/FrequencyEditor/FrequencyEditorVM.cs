@@ -35,10 +35,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
                 NotifyPropertyChanged(nameof(IsAnalytic));
             }
         }
-        public bool IsAnalytic
-        {
-            get { return !IsGraphical; }
-        }
+        public bool IsAnalytic => !IsGraphical;
         #endregion
 
         #region Constructors
@@ -73,6 +70,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         }
         public void FromXML(XElement ele)
         {
+            //Add try parse because people can edit this on disk and be diks. 
             IsGraphical = bool.Parse(ele.Attribute(nameof(IsGraphical)).Value);
             foreach(XElement childs in ele.Elements())
             {
