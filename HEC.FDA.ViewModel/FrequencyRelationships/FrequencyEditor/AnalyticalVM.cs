@@ -5,22 +5,12 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
     public class AnalyticalVM: BaseViewModel
     {
         #region Fields
-        private FitToFlowVM _fitToFlowVM;
-        private ParameterEntryVM _parameterEntryVM;
         private bool _isFitToFlows = false; //new windows open with manual entry vm open
         #endregion
 
         #region Properties
-        public FitToFlowVM FitToFlowVM
-        {
-            get { return _fitToFlowVM; }
-            set { _fitToFlowVM = value; }
-        }
-        public ParameterEntryVM ParameterEntryVM
-        {
-            get { return _parameterEntryVM; }
-            set { _parameterEntryVM = value; }
-        }
+        public FitToFlowVM FitToFlowVM {get;set;}
+        public ParameterEntryVM ParameterEntryVM { get; set; }
         public bool IsFitToFlows
         {
             get { return _isFitToFlows; }
@@ -52,7 +42,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         #region Loading and Saving
         public XElement ToXML()
         {
-            XElement ele = new XElement(this.GetType().Name);
+            XElement ele = new(GetType().Name);
             ele.SetAttributeValue(nameof(IsFitToFlows), IsFitToFlows);
             ele.Add(FitToFlowVM.ToXML());
             ele.Add(ParameterEntryVM.ToXML());
