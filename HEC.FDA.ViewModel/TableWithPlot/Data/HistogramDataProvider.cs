@@ -6,7 +6,7 @@ using Statistics.Histograms;
 
 namespace HEC.FDA.ViewModel.TableWithPlot.Data
 {
-    internal class HistogramDataProvider : BaseDataProvider
+    public class HistogramDataProvider : BaseDataProvider
     {
         /// <summary>
         /// Only used by the activator. Don't use this ctor.

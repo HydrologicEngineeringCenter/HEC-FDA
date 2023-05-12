@@ -1,4 +1,6 @@
-﻿using HEC.FDA.ViewModel.Utilities;
+﻿
+using HEC.FDA.Model.paireddata;
+using HEC.FDA.ViewModel.Utilities;
 using HEC.Plotting.Core.DataModel;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor.ChartControls
@@ -17,7 +19,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor.ChartControls
         {
             if (Function != null)
             {
-                UpdateYAxisLabel(Function.CurveMetaData.YLabel);
+                PairedData pd = Function.SamplePairedData(0.5, true);
+                UpdateYAxisLabel(pd.MetaData.YLabel);
             }
         }
 

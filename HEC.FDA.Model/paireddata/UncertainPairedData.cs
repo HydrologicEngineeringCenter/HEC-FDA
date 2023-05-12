@@ -146,7 +146,7 @@ namespace HEC.FDA.Model.paireddata
             }
             return true;
         }
-        public IPairedData SamplePairedData(double probability, bool retrieveDeterministicRepresentation = false)
+        public PairedData SamplePairedData(double probability, bool retrieveDeterministicRepresentation = false)
         {
             double[] y = new double[_yvals.Length];
             if (retrieveDeterministicRepresentation)

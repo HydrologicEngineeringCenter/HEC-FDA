@@ -4,9 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HEC.FDA.View.TableWithPlot"
+             xmlns:vm="clr-namespace:HEC.FDA.ViewModel.TableWithPlot.Data;assembly=HEC.FDA.ViewModel"
              xmlns:fda_view="clr-namespace:HEC.FDA.View.TableWithPlot"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800" d:DataContext="{d:DesignInstance Type=vm:HistogramDataProvider}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />

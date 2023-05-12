@@ -351,7 +351,7 @@ namespace HEC.FDA.ViewModel.Study
             PersistenceFactory.GetElementManager<ImpactAreaElement>().Load(); 
             PersistenceFactory.GetElementManager<IndexPointsElement>().Load(); 
             PersistenceFactory.GetElementManager<HydraulicElement>().Load(); 
-            PersistenceFactory.GetElementManager<AnalyticalFrequencyElement>().Load(); 
+            PersistenceFactory.GetElementManager<FrequencyElement>().Load(); 
             PersistenceFactory.GetElementManager<InflowOutflowElement>().Load(); 
             PersistenceFactory.GetElementManager<ExteriorInteriorElement>().Load(); 
             PersistenceFactory.GetElementManager<LateralStructureElement>().Load(); 

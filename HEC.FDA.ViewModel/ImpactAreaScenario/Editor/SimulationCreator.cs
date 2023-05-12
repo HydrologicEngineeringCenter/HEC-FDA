@@ -16,7 +16,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {
     public class SimulationCreator
     {
-        private readonly AnalyticalFrequencyElement _FreqElem;
+        private readonly FrequencyElement _FreqElem;
         private readonly InflowOutflowElement _InOutElem;
         private readonly StageDischargeElement _RatElem;
         private readonly ExteriorInteriorElement _ExtIntElem;
@@ -29,7 +29,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private SimulationBuilder _SimulationBuilder;
 
-        public SimulationCreator(AnalyticalFrequencyElement freqElem, InflowOutflowElement inOutElem, StageDischargeElement ratElem,
+        public SimulationCreator(FrequencyElement freqElem, InflowOutflowElement inOutElem, StageDischargeElement ratElem,
             ExteriorInteriorElement extIntElem, LateralStructureElement levElem, AggregatedStageDamageElement stageDamElem, int currentImpactAreaID)
         {
             _FreqElem = freqElem;
@@ -86,14 +86,14 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             }
             else
             {
-                if(_FreqElem.MyGraphicalVM.UseFlow == true)
+                if(_FreqElem.GraphicalUsesFlow == true)
                 {
-                    _SimulationBuilder.withFlowFrequency(_FreqElem.MyGraphicalVM.ToGraphicalUncertainPairedData());
+                    _SimulationBuilder.withFlowFrequency(_FreqElem.GraphicalUncertainPairedData);
                     _SimulationBuilder.withFlowStage(_RatElem.CurveComponentVM.SelectedItemToPairedData());
                 }
                 else
                 {
-                    _SimulationBuilder.withFrequencyStage(_FreqElem.MyGraphicalVM.ToGraphicalUncertainPairedData());
+                    _SimulationBuilder.withFrequencyStage(_FreqElem.GraphicalUncertainPairedData);
                 }
             }
             if (_UseInOut)
@@ -119,7 +119,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private ContinuousDistribution GetFrequencyDistribution()
         {
-            return _FreqElem.CreateAnalyticalLP3Distribution();
+            return _FreqElem.LPIII;
         }
 
         private List<StageDamageCurve> GetStageDamageCurves()

@@ -7,8 +7,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
     /// </summary>
     public class FrequencyElementWrapper : BaseViewModel
     {
-        private AnalyticalFrequencyElement _Element;
-        public AnalyticalFrequencyElement Element
+        private FrequencyElement _Element;
+        public FrequencyElement Element
         {
             get { return _Element; }
             set { _Element = value; NotifyPropertyChanged(nameof(Name)); }
@@ -33,7 +33,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         }
 
-        public FrequencyElementWrapper(AnalyticalFrequencyElement elem)
+        public FrequencyElementWrapper(FrequencyElement elem)
         {
             Element = elem;
         }
