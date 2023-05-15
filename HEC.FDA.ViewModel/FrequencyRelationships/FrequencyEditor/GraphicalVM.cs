@@ -6,6 +6,7 @@ using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.TableWithPlot.Data;
 using Importer;
 using HEC.FDA.Model.paireddata;
+using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
 {
@@ -13,8 +14,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
     {
         private int _equivalentRecordLength = Utilities.DefaultData.PeriodOfRecord;
         private bool _useFlow = true;
-        private NamedAction _confidenceLimits;
-        public NamedAction ConfidenceLimits 
+        private MVVMFramework.ViewModel.Implementations.NamedAction _confidenceLimits;
+        public MVVMFramework.ViewModel.Implementations.NamedAction ConfidenceLimits 
         { 
             get 
             { 
@@ -28,7 +29,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         }
         public GraphicalUncertainPairedData GraphicalUncertainPairedData
         { 
-            get{return new GraphicalUncertainPairedData(((GraphicalDataProvider)SelectedItem).Xs, ((GraphicalDataProvider)SelectedItem).Ys, EquivalentRecordLength,new CurveMetaData(), !UseFlow);}
+            get{return new GraphicalUncertainPairedData(((GraphicalDataProvider)SelectedItem).Xs, ((GraphicalDataProvider)SelectedItem).Ys, EquivalentRecordLength,new CurveMetaData(XLabel,YLabel, Name), !UseFlow);}
            
         }
         public int EquivalentRecordLength
@@ -76,9 +77,11 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         }
         private void Initialize()
         {
-            ConfidenceLimits = new NamedAction();
-            ConfidenceLimits.Name = "Compute Confidence Limits";
-            ConfidenceLimits.Action = ConfidenceLimitsAction;
+            ConfidenceLimits = new MVVMFramework.ViewModel.Implementations.NamedAction
+            {
+                Name = "Compute Confidence Limits",
+                Action = ConfidenceLimitsAction
+            };
         }
         override public XElement ToXML()
         {
