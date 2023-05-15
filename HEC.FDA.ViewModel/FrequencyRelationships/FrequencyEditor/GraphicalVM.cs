@@ -6,7 +6,6 @@ using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.TableWithPlot.Data;
 using Importer;
 using HEC.FDA.Model.paireddata;
-using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
 {
@@ -14,8 +13,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
     {
         private int _equivalentRecordLength = Utilities.DefaultData.PeriodOfRecord;
         private bool _useFlow = true;
-        private MVVMFramework.ViewModel.Implementations.NamedAction _confidenceLimits;
-        public MVVMFramework.ViewModel.Implementations.NamedAction ConfidenceLimits 
+        private NamedAction _confidenceLimits;
+        public NamedAction ConfidenceLimits 
         { 
             get 
             { 
