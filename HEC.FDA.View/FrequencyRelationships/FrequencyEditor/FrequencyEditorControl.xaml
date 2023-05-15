@@ -47,12 +47,10 @@
         <ColumnDefinition Width="*"/>
       </Grid.ColumnDefinitions>
     </Grid>
-    
+
     <StackPanel Orientation="Horizontal" Grid.Row="3">
-      <Label Content="Analytical "/>
-      <RadioButton Margin="5" x:Name="AnalyticButton" GroupName="graphOrAnal" IsChecked="{Binding Path=IsAnalytic, Mode=OneWay}"/>
-      <Label Content="Graphical "/>
-      <RadioButton Margin="5" x:Name="GraphicalButton" GroupName="graphOrAnal" IsChecked="{Binding Path=IsGraphical, Mode=TwoWay}"/>
+      <RadioButton Margin="5" x:Name="AnalyticButton"  Content="Analytical" GroupName="graphOrAnal" IsChecked="{Binding Path=IsAnalytic, Mode=OneWay}"/>
+      <RadioButton Margin="5" x:Name="GraphicalButton" Content="Graphical"  GroupName="graphOrAnal" IsChecked="{Binding Path=IsGraphical, Mode=TwoWay}"/>
     </StackPanel>
     
     <!--This is our Graphical Control inside a table with plot. It seemed like a good idea at the time to force everything into TableWithPlot, but later decided it was unnecessarily confusing.

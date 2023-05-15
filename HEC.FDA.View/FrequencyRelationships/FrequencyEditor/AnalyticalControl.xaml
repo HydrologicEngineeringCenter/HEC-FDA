@@ -16,10 +16,8 @@
       <RowDefinition/>
     </Grid.RowDefinitions>
     <StackPanel Orientation="Horizontal" Grid.Row="0">
-      <Label Content="Parameter Entry"/>
-      <RadioButton Margin="5" x:Name="ParameterEntryButton" GroupName="paramsOrFlows" IsChecked="{Binding Path=IsParameterEntry, Mode=OneWay}"/>
-      <Label Content="Fit to Flows"/>
-      <RadioButton Margin="5" x:Name="FitToFlowsButton" GroupName="paramsOrFlows" IsChecked="{Binding Path=IsFitToFlows, Mode=TwoWay}"/>
+      <RadioButton Margin="5" x:Name="ParameterEntryButton" Content="Parameter Entry" GroupName="paramsOrFlows" IsChecked="{Binding Path=IsParameterEntry, Mode=OneWay}"/>
+      <RadioButton Margin="5" x:Name="FitToFlowsButton"     Content="Fit to Flows"    GroupName="paramsOrFlows" IsChecked="{Binding Path=IsFitToFlows, Mode=TwoWay}"/>
     </StackPanel>
     <FEcontrols:ParameterEntryControl Grid.Row="1" Visibility="{Binding ElementName=ParameterEntryButton, Path=IsChecked, Converter={StaticResource VisibleIfTrueConverter}}" DataContext="{Binding ParameterEntryVM}"/>
     <FEcontrols:FitToFlowsControl Grid.Row="1" Visibility="{Binding ElementName=FitToFlowsButton, Path=IsChecked, Converter={StaticResource VisibleIfTrueConverter}}" DataContext="{Binding FitToFlowVM}" />
