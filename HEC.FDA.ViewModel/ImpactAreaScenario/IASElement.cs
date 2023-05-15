@@ -30,6 +30,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         #endregion
 
         #region Properties
+        public bool UpdateComputeDate { get; set; }
         public ScenarioResults Results{get; set;}
         public string Description
         {
@@ -213,7 +214,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             Application.Current.Dispatcher.Invoke(
             (Action)(() => 
             {
+                this.UpdateComputeDate = true;
                 PersistenceFactory.GetIASManager().SaveExisting(this);
+                this.UpdateComputeDate = false;
                 IASTooltipHelper.UpdateTooltip(this);
                 MessageBoxResult messageBoxResult = MessageBox.Show("Compute completed. Would you like to view the results?", Name + " Compute Complete", MessageBoxButton.YesNo, MessageBoxImage.Information);
                 if (messageBoxResult == MessageBoxResult.Yes)
@@ -243,29 +246,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 setElement.Add(resultsElem);
             }
             return setElement;
-        }
-
-        //todo: is this method doing what i want?
-        public void ValidateOutOfSync()
-        {
-            //check that the elements that it is depending on still exist
-            FdaValidationResult vr = CanCompute();
-            //check that the last modified date is the same as the last compute date.
-            if (Results != null && Results.ComputeDate != null)
-            {
-                DateTime lastEditDate = DateTime.Parse(LastEditDate);
-                DateTime computeDate = DateTime.Parse(Results.ComputeDate);
-                //todo: im not sure this is possible. If the user saves the scenario the results get clobbard. 
-                if(lastEditDate>computeDate )
-                {
-                    //var seconds = (date1 - date2).TotalSeconds;
-                    vr.AddErrorMessage("Changes have been made since last compute.");
-                }
-            }
-            if (!vr.IsValid)
-            {
-                UpdateTreeViewHeader(Name + "*", Environment.NewLine + vr.ErrorMessage);
-            }
         }
 
     }

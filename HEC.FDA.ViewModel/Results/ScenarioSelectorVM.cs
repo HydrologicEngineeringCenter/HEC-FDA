@@ -145,7 +145,9 @@ namespace HEC.FDA.ViewModel.Results
             Application.Current.Dispatcher.Invoke(
             (Action)(() =>
             {
+                elem.UpdateComputeDate = true;
                 PersistenceFactory.GetIASManager().SaveExisting(elem);
+                elem.UpdateComputeDate = false;
                 IASTooltipHelper.UpdateTooltip(elem);
             }));
         }

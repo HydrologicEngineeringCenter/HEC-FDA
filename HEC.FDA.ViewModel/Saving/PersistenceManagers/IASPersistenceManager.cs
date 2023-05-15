@@ -34,7 +34,13 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         /// <param name="element"></param>
         public override void SaveExisting( ChildElement element)
         {
-            string tooltip = StringConstants.CreateLastEditTooltip(DateTime.Now.ToString("G"));
+            IASElement elem = element as IASElement;
+            string currentDate = DateTime.Now.ToString("G");
+            string tooltip = StringConstants.CreateLastEditTooltip(currentDate);
+            if(elem.UpdateComputeDate && elem.Results != null)
+            {
+                elem.Results.ComputeDate = currentDate;
+            }
             element.UpdateTreeViewHeader(element.Name);
             element.CustomTreeViewHeader.Tooltip = tooltip;
             base.SaveExisting( element);
