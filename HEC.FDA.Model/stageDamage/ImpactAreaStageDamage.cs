@@ -25,22 +25,22 @@ namespace HEC.FDA.Model.stageDamage
 
         #region Fields 
 
-        private ContinuousDistribution _AnalyticalFlowFrequency;
-        private GraphicalUncertainPairedData _GraphicalFrequency;
-        private UncertainPairedData _DischargeStage;
-        private UncertainPairedData _UnregulatedRegulated;
-        private int _AnalysisYear;
-        private HydraulicDataset _hydraulicDataset;
+        private readonly ContinuousDistribution _AnalyticalFlowFrequency;
+        private readonly GraphicalUncertainPairedData _GraphicalFrequency;
+        private readonly UncertainPairedData _DischargeStage;
+        private readonly UncertainPairedData _UnregulatedRegulated;
+        private readonly int _AnalysisYear;
+        private readonly HydraulicDataset _hydraulicDataset;
 
         private double _minStageForArea;
         private double _maxStageForArea;
-        private ConvergenceCriteria convergenceCriteria;
+        private readonly ConvergenceCriteria convergenceCriteria;
 
-        private int _numExtrapolatedStagesToCompute = 7;
-        private int _numInterpolatedStagesToCompute = 2;
+        private readonly int _numExtrapolatedStagesToCompute = 7;
+        private readonly int _numInterpolatedStagesToCompute = 2;
 
-        private string _HydraulicParentDirectory;
-        private PairedData _StageFrequency;
+        private readonly string _HydraulicParentDirectory;
+        private readonly PairedData _StageFrequency;
         #endregion
 
         #region Properties 
@@ -53,7 +53,7 @@ namespace HEC.FDA.Model.stageDamage
         #region Constructor
         public ImpactAreaStageDamage(int impactAreaID, Inventory inventory, HydraulicDataset hydraulicDataset, ConvergenceCriteria convergence, string hydroParentDirectory, int analysisYear = 9999,
             ContinuousDistribution analyticalFlowFrequency = null, GraphicalUncertainPairedData graphicalFrequency = null, UncertainPairedData dischargeStage = null, UncertainPairedData unregulatedRegulated = null,
-            bool usingMockData = false, string projectionFile = "")
+            bool usingMockData = false)
         {
             //TODO: Validate provided functions here
             _HydraulicParentDirectory = hydroParentDirectory;
@@ -196,14 +196,14 @@ namespace HEC.FDA.Model.stageDamage
                     {
                         flowFrequencyPairedData = _UnregulatedRegulated.SamplePairedData(0.5, true).compose(flowFrequencyPairedData) as PairedData;
                     }
-                    return stageFrequency = _DischargeStage.SamplePairedData(0.5, true).compose(flowFrequencyPairedData) as PairedData;
+                    return  _DischargeStage.SamplePairedData(0.5, true).compose(flowFrequencyPairedData) as PairedData;
                 }
             }
             else if (_GraphicalFrequency != null)
             {
                 if (_GraphicalFrequency.UsesStagesNotFlows)
                 {
-                    return stageFrequency = _GraphicalFrequency.SamplePairedData(0.5, true) as PairedData;
+                    return _GraphicalFrequency.SamplePairedData(0.5, true) as PairedData;
                 }
                 else
                 {
@@ -214,7 +214,7 @@ namespace HEC.FDA.Model.stageDamage
                         {
                             flowFrequencyPairedData = _UnregulatedRegulated.SamplePairedData(0.5, true).compose(flowFrequencyPairedData) as PairedData;
                         }
-                        return stageFrequency = _DischargeStage.SamplePairedData(0.5, true).compose(flowFrequencyPairedData) as PairedData;
+                        return _DischargeStage.SamplePairedData(0.5, true).compose(flowFrequencyPairedData) as PairedData;
                     }
                 }
             }
@@ -310,7 +310,7 @@ namespace HEC.FDA.Model.stageDamage
             assetCatDamagesAllCoordinates.Clear();
         }
 
-        private bool IsTheFunctionNotConverged(List<ConsequenceDistributionResults> consequenceDistributionResults)
+        private static bool IsTheFunctionNotConverged(List<ConsequenceDistributionResults> consequenceDistributionResults)
         {
             double lowerProb = 0.025;
             double upperProb = 0.975;
@@ -364,7 +364,7 @@ namespace HEC.FDA.Model.stageDamage
             }
         }
 
-        private void AggregateResultsByDictionary(ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, ConsequenceResult consequenceResult, int i)
+        private static void AggregateResultsByDictionary(ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, ConsequenceResult consequenceResult, int i)
         {
             assetCatDamagesAllCoordinates[i][StringConstants.STRUCTURE_ASSET_CATEGORY].Add(consequenceResult.StructureDamage);
             assetCatDamagesAllCoordinates[i][StringConstants.CONTENT_ASSET_CATEGORY].Add(consequenceResult.ContentDamage);
@@ -381,15 +381,17 @@ namespace HEC.FDA.Model.stageDamage
             }
             return extrapolatedStages;
         }
-        private Dictionary<string, List<double>> ConvertConsequenceResultToDictionary(ConsequenceResult consequenceResult)
+        private static Dictionary<string, List<double>> ConvertConsequenceResultToDictionary(ConsequenceResult consequenceResult)
         {
             //there will be four dictionary entries for each stage
             //one dictionary entry for each asset category 
-            Dictionary<string, List<double>> damages = new();
-            damages.Add(StringConstants.STRUCTURE_ASSET_CATEGORY, new List<double>() { consequenceResult.StructureDamage });
-            damages.Add(StringConstants.CONTENT_ASSET_CATEGORY, new List<double>() { consequenceResult.ContentDamage });
-            damages.Add(StringConstants.VEHICLE_ASSET_CATEGORY, new List<double>() { consequenceResult.VehicleDamage });
-            damages.Add(StringConstants.OTHER_ASSET_CATEGORY, new List<double>() { consequenceResult.OtherDamage });
+            Dictionary<string, List<double>> damages = new()
+            {
+                { StringConstants.STRUCTURE_ASSET_CATEGORY, new List<double>() { consequenceResult.StructureDamage } },
+                { StringConstants.CONTENT_ASSET_CATEGORY, new List<double>() { consequenceResult.ContentDamage } },
+                { StringConstants.VEHICLE_ASSET_CATEGORY, new List<double>() { consequenceResult.VehicleDamage } },
+                { StringConstants.OTHER_ASSET_CATEGORY, new List<double>() { consequenceResult.OtherDamage } }
+            };
             return damages;
         }
         /// <summary>
@@ -407,11 +409,11 @@ namespace HEC.FDA.Model.stageDamage
                     nextProfile = inventoryAndWaterCoupled.Item2[i + 1];
                     nextProbability = profileProbabilities[i + 1];
                 }
-                InterpolateBetweenProfiles(deterministicOccTypes, randomProvider, inventoryAndWaterCoupled.Item2[i - 1], profileProbabilities[i - 1], inventoryAndWaterCoupled.Item2[i], profileProbabilities[i], nextProfile, nextProbability, damageCategory, ref allStagesAtIndexLocation, ref assetCatDamagesAllCoordinates, isFirstPass, ref consequenceDistributionResults, dictionariesAreNotConstructed, i, inventoryAndWaterCoupled.Item1);
+                InterpolateBetweenProfiles(deterministicOccTypes, inventoryAndWaterCoupled.Item2[i - 1], profileProbabilities[i - 1], inventoryAndWaterCoupled.Item2[i], profileProbabilities[i], nextProfile, nextProbability, damageCategory, ref allStagesAtIndexLocation, ref assetCatDamagesAllCoordinates, isFirstPass, ref consequenceDistributionResults, dictionariesAreNotConstructed, i, inventoryAndWaterCoupled.Item1);
             }
         }
         //TODO: Why are there arguments here that appear to go unused? 
-        private void InterpolateBetweenProfiles(List<DeterministicOccupancyType> occTypes, IProvideRandomNumbers randomProvider, float[] previousHydraulicProfile, double previousProbability, float[] currentHydraulicProfile, double currentProbability, float[] nextHydraulicProfile, double nextProbability, string damageCategory, ref List<double> allStagesAtIndexLocation, ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, bool isFirstPass, ref List<ConsequenceDistributionResults> consequenceDistributionResults, bool dictionariesAreNotConstructed, int profileCount, Inventory inventory)
+        private void InterpolateBetweenProfiles(List<DeterministicOccupancyType> occTypes,  float[] previousHydraulicProfile, double previousProbability, float[] currentHydraulicProfile, double currentProbability, float[] nextHydraulicProfile, double nextProbability, string damageCategory, ref List<double> allStagesAtIndexLocation, ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, bool isFirstPass, ref List<ConsequenceDistributionResults> consequenceDistributionResults, bool dictionariesAreNotConstructed, int profileCount, Inventory inventory)
         {
             double previousStageAtIndexLocation = _StageFrequency.f(1 - previousProbability);
             double currentStageAtIndexLocation = _StageFrequency.f(1 - currentProbability);
@@ -448,7 +450,7 @@ namespace HEC.FDA.Model.stageDamage
             }
         }
 
-        private float[] CalculateIncrementOfStages(float[] previousStagesAtStructures, float[] intervalsAtStructures, int i)
+        private static float[] CalculateIncrementOfStages(float[] previousStagesAtStructures, float[] intervalsAtStructures, int i)
         {
             float[] stages = new float[intervalsAtStructures.Length];
             for (int m = 0; m < stages.Length; m++)
