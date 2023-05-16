@@ -185,7 +185,6 @@ namespace HEC.FDA.Model.stageDamage
         /// </summary>
         private PairedData CreateStageFrequency()
         {
-            PairedData stageFrequency;
             if (_AnalyticalFlowFrequency != null)
             {
                 if (_DischargeStage != null)
@@ -281,9 +280,9 @@ namespace HEC.FDA.Model.stageDamage
             for (int i = 0; i < iterations; i++)
             {
                 List<DeterministicOccupancyType> deterministicOccTypes = Inventory.SampleOccupancyTypes(randomProvider);
-                ComputeLowerStageDamage(ref assetCatDamagesAllCoordinates, ref allStagesAtIndexLocation, ref consequenceDistributionResults, damageCategory, randomProvider, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, isFirstPass, dictionariesAreNotConstructed);
-                ComputeMiddleStageDamage(ref assetCatDamagesAllCoordinates, ref allStagesAtIndexLocation, ref consequenceDistributionResults, damageCategory, randomProvider, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, isFirstPass, dictionariesAreNotConstructed);
-                ComputeUpperStageDamage(ref assetCatDamagesAllCoordinates, ref allStagesAtIndexLocation, ref consequenceDistributionResults, damageCategory, randomProvider, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, isFirstPass, dictionariesAreNotConstructed);
+                ComputeLowerStageDamage(ref assetCatDamagesAllCoordinates, ref allStagesAtIndexLocation, ref consequenceDistributionResults, damageCategory,  deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, isFirstPass, dictionariesAreNotConstructed);
+                ComputeMiddleStageDamage(ref assetCatDamagesAllCoordinates, ref allStagesAtIndexLocation, ref consequenceDistributionResults, damageCategory,  deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, isFirstPass, dictionariesAreNotConstructed);
+                ComputeUpperStageDamage(ref assetCatDamagesAllCoordinates, ref allStagesAtIndexLocation, ref consequenceDistributionResults, damageCategory,  deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, isFirstPass, dictionariesAreNotConstructed);
                 dictionariesAreNotConstructed = false;
             }
             if (isFirstPass)
@@ -328,7 +327,10 @@ namespace HEC.FDA.Model.stageDamage
         /// <summary>
         /// This method computes damage at stages lower than the most frequent profile 
         /// </summary>
-        private void ComputeLowerStageDamage(ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, ref List<double> allStagesAtIndexLocation, ref List<ConsequenceDistributionResults> consequenceDistributionResults, string damageCategory, IProvideRandomNumbers randomProvider, List<DeterministicOccupancyType> deterministicOccTypes, (Inventory, List<float[]>) inventoryAndWaterCoupled, List<double> profileProbabilities, bool isFirstPass, bool dictionariesAreNotConstructed)
+        private void ComputeLowerStageDamage(ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, ref List<double> allStagesAtIndexLocation,
+            ref List<ConsequenceDistributionResults> consequenceDistributionResults, string damageCategory,
+            List<DeterministicOccupancyType> deterministicOccTypes, (Inventory, List<float[]>) inventoryAndWaterCoupled, List<double> profileProbabilities,
+            bool isFirstPass, bool dictionariesAreNotConstructed)
         {
             //the probability of a profile is an EXCEEDANCE probability but in the model we use NONEXCEEDANCE PROBABILITY
             double stageAtProbabilityOfLowestProfile = _StageFrequency.f(1 - profileProbabilities.Max());
@@ -397,23 +399,21 @@ namespace HEC.FDA.Model.stageDamage
         /// <summary>
         /// This method calculates a stage damage function within the hydraulic profiles 
         /// </summary>
-        private void ComputeMiddleStageDamage(ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, ref List<double> allStagesAtIndexLocation, ref List<ConsequenceDistributionResults> consequenceDistributionResults, string damageCategory, IProvideRandomNumbers randomProvider, List<DeterministicOccupancyType> deterministicOccTypes, (Inventory, List<float[]>) inventoryAndWaterCoupled, List<double> profileProbabilities, bool isFirstPass, bool dictionariesAreNotConstructed)
+        private void ComputeMiddleStageDamage(ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, ref List<double> allStagesAtIndexLocation,
+            ref List<ConsequenceDistributionResults> consequenceDistributionResults, string damageCategory, List<DeterministicOccupancyType> deterministicOccTypes,
+            (Inventory, List<float[]>) inventoryAndWaterCoupled, List<double> profileProbabilities, bool isFirstPass, bool dictionariesAreNotConstructed)
         {
             int numProfiles = profileProbabilities.Count;
             for (int i = 1; i < numProfiles; i++)
             {
-                float[] nextProfile = new float[inventoryAndWaterCoupled.Item2[i].Length];
-                double nextProbability = 0;
-                if (i < numProfiles - 1) //if we're not yet at the least frequent profile 
-                {
-                    nextProfile = inventoryAndWaterCoupled.Item2[i + 1];
-                    nextProbability = profileProbabilities[i + 1];
-                }
-                InterpolateBetweenProfiles(deterministicOccTypes, inventoryAndWaterCoupled.Item2[i - 1], profileProbabilities[i - 1], inventoryAndWaterCoupled.Item2[i], profileProbabilities[i], nextProfile, nextProbability, damageCategory, ref allStagesAtIndexLocation, ref assetCatDamagesAllCoordinates, isFirstPass, ref consequenceDistributionResults, dictionariesAreNotConstructed, i, inventoryAndWaterCoupled.Item1);
+                InterpolateBetweenProfiles(deterministicOccTypes, inventoryAndWaterCoupled.Item2[i - 1], profileProbabilities[i - 1], inventoryAndWaterCoupled.Item2[i], profileProbabilities[i], damageCategory, ref allStagesAtIndexLocation, ref assetCatDamagesAllCoordinates, isFirstPass, ref consequenceDistributionResults, dictionariesAreNotConstructed, i, inventoryAndWaterCoupled.Item1);
             }
         }
         //TODO: Why are there arguments here that appear to go unused? 
-        private void InterpolateBetweenProfiles(List<DeterministicOccupancyType> occTypes,  float[] previousHydraulicProfile, double previousProbability, float[] currentHydraulicProfile, double currentProbability, float[] nextHydraulicProfile, double nextProbability, string damageCategory, ref List<double> allStagesAtIndexLocation, ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, bool isFirstPass, ref List<ConsequenceDistributionResults> consequenceDistributionResults, bool dictionariesAreNotConstructed, int profileCount, Inventory inventory)
+        private void InterpolateBetweenProfiles(List<DeterministicOccupancyType> occTypes,  float[] previousHydraulicProfile, double previousProbability, float[] currentHydraulicProfile, 
+            double currentProbability, string damageCategory, ref List<double> allStagesAtIndexLocation, ref List<Dictionary<string,
+                List<double>>> assetCatDamagesAllCoordinates, bool isFirstPass, ref List<ConsequenceDistributionResults> consequenceDistributionResults, bool dictionariesAreNotConstructed,
+            int profileCount, Inventory inventory)
         {
             double previousStageAtIndexLocation = _StageFrequency.f(1 - previousProbability);
             double currentStageAtIndexLocation = _StageFrequency.f(1 - currentProbability);
@@ -472,7 +472,9 @@ namespace HEC.FDA.Model.stageDamage
         /// <summary>
         /// this method calculates the stage damage function for stages higher than the least frequent profile 
         /// </summary>
-        private void ComputeUpperStageDamage(ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, ref List<double> allStagesAtIndexLocation, ref List<ConsequenceDistributionResults> consequenceDistributionResults, string damageCategory, IProvideRandomNumbers randomProvider, List<DeterministicOccupancyType> deterministicOccTypes, (Inventory, List<float[]>) inventoryAndWaterCoupled, List<double> profileProbabilities, bool isFirstPass, bool dictionariesAreNotConstructed)
+        private void ComputeUpperStageDamage(ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, ref List<double> allStagesAtIndexLocation, 
+            ref List<ConsequenceDistributionResults> consequenceDistributionResults, string damageCategory, List<DeterministicOccupancyType> deterministicOccTypes, 
+            (Inventory, List<float[]>) inventoryAndWaterCoupled, List<double> profileProbabilities, bool isFirstPass, bool dictionariesAreNotConstructed)
         {
             //the probability of a profile is an EXCEEDANCE probability but in the model we use NONEXCEEDANCE PROBABILITY
             double stageAtProbabilityOfHighestProfile = _StageFrequency.f(1 - profileProbabilities.Min());
