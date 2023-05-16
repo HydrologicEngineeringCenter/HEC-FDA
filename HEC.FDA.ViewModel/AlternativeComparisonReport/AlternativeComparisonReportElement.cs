@@ -164,10 +164,11 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             foreach (int altID in WithProjAltIDs)
             {
                 SpecificAltCompReportResultsVM specificAltCompReportResultsVM = CreateAlternativeComparisonResult(altID, GetAlternativeElementFromID(altID).Name, eADBaseSummaryRowItems, eADFutureSummaryRowItems, aAEQSummaryRowItems);
-
                 results.Add(specificAltCompReportResultsVM);
             }
-
+            //create summary option
+            SpecificAltCompReportResultsVM summaryOption = new SummaryVM(eADBaseSummaryRowItems, eADFutureSummaryRowItems, aAEQSummaryRowItems, _Results.Years);
+            results.Add(summaryOption);
             return results;
         }
 
