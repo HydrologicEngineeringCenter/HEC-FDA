@@ -16,6 +16,11 @@ namespace HEC.FDA.ViewModel.Results
         public int AnalysisYear { get; set; }
         public string ThresholdType { get; set; }
         public double ThresholdValue { get; set; }
+
+        public double LongTerm10 { get; set; }
+        public double LongTerm20 { get; set; }
+        public double LongTerm30 { get; set; }
+
         public double Mean { get; set; }
         public double Median { get; set; }
         public double Prob1 { get; set; }
@@ -41,6 +46,10 @@ namespace HEC.FDA.ViewModel.Results
 
             ThresholdType = threshold.ThresholdType.ToString();
             ThresholdValue = threshold.ThresholdValue;
+
+            LongTerm10 = results.LongTermExceedanceProbability(threshold.ThresholdID, 10);
+            LongTerm20 = results.LongTermExceedanceProbability(threshold.ThresholdID, 20);
+            LongTerm30 = results.LongTermExceedanceProbability(threshold.ThresholdID, 30);
 
             Mean = results.MeanExpectedAnnualConsequences();
             //todo: How do i get this one?

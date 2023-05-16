@@ -16,7 +16,7 @@
         </Grid.RowDefinitions>
         <ScrollViewer Grid.Row="0">
 
-            <Grid>
+        <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -51,7 +51,7 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Grid Grid.Row="0" Width="{Binding Path=Width, ElementName=eadGrid}" HorizontalAlignment="Left" Margin="0 0 0 0">
+                <Grid Grid.Row="0" HorizontalAlignment="Left" Margin="0 0 0 0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="{Binding ElementName=nameCol, Path=ActualWidth}"/>
                         <ColumnDefinition Width="{Binding ElementName=yearCol, Path=ActualWidth}"/>
@@ -108,7 +108,7 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
-                    <!--<RowDefinition Height="*"/>-->
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                         <Grid Grid.Row="0" Width="{Binding Path=Width, ElementName=damCatGrid}" HorizontalAlignment="Left" Margin="0 0 0 0">
                             <Grid.ColumnDefinitions>
@@ -135,8 +135,14 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="{Binding ElementName=perfNameCol, Path=ActualWidth}"/>
                         <ColumnDefinition Width="{Binding ElementName=perfYearCol, Path=ActualWidth}"/>
+                        
                         <ColumnDefinition Width="{Binding ElementName=perfThresholdType, Path=ActualWidth}"/>
                         <ColumnDefinition Width="{Binding ElementName=perfThresholdValue, Path=ActualWidth}"/>
+                        
+                        <ColumnDefinition Width="{Binding ElementName=perf10, Path=ActualWidth}"/>
+                        <ColumnDefinition Width="{Binding ElementName=perf20, Path=ActualWidth}"/>
+                        <ColumnDefinition Width="{Binding ElementName=perf30, Path=ActualWidth}"/>
+
                         <ColumnDefinition Width="{Binding ElementName=perfMean, Path=ActualWidth}"/>
                         <ColumnDefinition Width="{Binding ElementName=perfMedian, Path=ActualWidth}"/>
                         
@@ -155,10 +161,13 @@
                     <Border Grid.Column="2" Grid.ColumnSpan="2" BorderBrush="Gray"  BorderThickness="1">
                         <Label HorizontalContentAlignment='Center'>Performance Parameters</Label>
                     </Border>
-                    <Border Grid.Column="4" Grid.ColumnSpan="2" BorderBrush="Gray"  BorderThickness="1">
+                    <Border Grid.Column="4" Grid.ColumnSpan="3" BorderBrush="Gray"  BorderThickness="1">
+                        <Label HorizontalContentAlignment='Center'>Long Term</Label>
+                    </Border>
+                    <Border Grid.Column="7" Grid.ColumnSpan="2" BorderBrush="Gray"  BorderThickness="1">
                         <Label HorizontalContentAlignment='Center'>Annual Exceedance Probability</Label>
                     </Border>
-                    <Border Grid.Column="6" Grid.ColumnSpan="6" BorderBrush="Gray"  BorderThickness="1">
+                    <Border Grid.Column="9" Grid.ColumnSpan="6" BorderBrush="Gray"  BorderThickness="1">
                         <Label HorizontalContentAlignment='Center'>Assurance of Threshold</Label>
                     </Border>
                 </Grid>
@@ -172,6 +181,11 @@
                         <DataGridTextColumn x:Name="perfYearCol" Header="Analysis Year" Binding="{Binding AnalysisYear}" Width="110"/>
                         <DataGridTextColumn x:Name="perfThresholdType" Header="Threshold Type" Binding="{Binding ThresholdType, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
                         <DataGridTextColumn x:Name="perfThresholdValue" Header="Threshold Value" Binding="{Binding ThresholdValue, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
+
+                        <DataGridTextColumn x:Name="perf10" Header="10 Years" Binding="{Binding LongTerm10, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
+                        <DataGridTextColumn x:Name="perf20" Header="20 Years" Binding="{Binding LongTerm20, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
+                        <DataGridTextColumn x:Name="perf30" Header="30 Years" Binding="{Binding LongTerm30, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
+
                         <DataGridTextColumn x:Name="perfMean" Header="Mean" Binding="{Binding Mean, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
                         <DataGridTextColumn x:Name="perfMedian" Header="Median" Binding="{Binding Median, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
 
