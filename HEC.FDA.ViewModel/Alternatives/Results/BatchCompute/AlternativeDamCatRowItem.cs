@@ -45,7 +45,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
             foreach (string damCat in damCats)
             {
                 Empirical damCatValue = altElem.Results.GetAAEQDamageDistribution(damageCategory: damCat);
-                DamCatMap.Add(damCat, damCatValue.Mean);
+                DamCatMap.Add(damCat, Math.Round(damCatValue.Mean, 2));
             }
         }
 
