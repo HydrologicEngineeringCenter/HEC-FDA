@@ -18,16 +18,18 @@ namespace HEC.FDA.Model.stageDamage
 {
     public class ImpactAreaStageDamage : ValidationErrorLogger, IContainValidationGroups
     {
-        #region Fields 
+        #region Hard Coded Compute Settings
         private const double MIN_PROBABILITY = 0.0001;
         private const double MAX_PROBABILITY = 0.9999;
+        #endregion
+
+        #region Fields 
+
         private ContinuousDistribution _AnalyticalFlowFrequency;
         private GraphicalUncertainPairedData _GraphicalFrequency;
         private UncertainPairedData _DischargeStage;
         private UncertainPairedData _UnregulatedRegulated;
-        private int _ImpactAreaID;
         private int _AnalysisYear;
-        private bool _usingMockData;
         private HydraulicDataset _hydraulicDataset;
 
         private double _minStageForArea;
@@ -42,21 +44,16 @@ namespace HEC.FDA.Model.stageDamage
         #endregion
 
         #region Properties 
-        public Inventory Inventory { get; private set; }
-
-        public int ImpactAreaID
-        {
-            get { return _ImpactAreaID; }
-        }
-
+        public Inventory Inventory { get; }
+        public int ImpactAreaID { get; }
         public List<ValidationGroup> ValidationGroups { get; } = new List<ValidationGroup>();
-
         public event ProgressReportedEventHandler ProgressReport;
         #endregion
 
         #region Constructor
         public ImpactAreaStageDamage(int impactAreaID, Inventory inventory, HydraulicDataset hydraulicDataset, ConvergenceCriteria convergence, string hydroParentDirectory, int analysisYear = 9999,
-            ContinuousDistribution analyticalFlowFrequency = null, GraphicalUncertainPairedData graphicalFrequency = null, UncertainPairedData dischargeStage = null, UncertainPairedData unregulatedRegulated = null, bool usingMockData = false, string projectionFile = "")
+            ContinuousDistribution analyticalFlowFrequency = null, GraphicalUncertainPairedData graphicalFrequency = null, UncertainPairedData dischargeStage = null, UncertainPairedData unregulatedRegulated = null,
+            bool usingMockData = false, string projectionFile = "")
         {
             //TODO: Validate provided functions here
             _HydraulicParentDirectory = hydroParentDirectory;
@@ -64,10 +61,9 @@ namespace HEC.FDA.Model.stageDamage
             _GraphicalFrequency = graphicalFrequency;
             _DischargeStage = dischargeStage;
             _UnregulatedRegulated = unregulatedRegulated;
-            _ImpactAreaID = impactAreaID;
+            ImpactAreaID = impactAreaID;
             _AnalysisYear = analysisYear;
-            _usingMockData = usingMockData;
-            if (_usingMockData)
+            if (usingMockData)
             {
                 Inventory = inventory;
             }
@@ -92,7 +88,7 @@ namespace HEC.FDA.Model.stageDamage
         {
             AddSinglePropertyRule(nameof(Inventory), new Rule(() => { Inventory.Validate(); return !Inventory.HasErrors; }, $"The structure inventory has errors: " + Inventory.GetErrors().ToString(), Inventory.ErrorLevel));
             AddSinglePropertyRule(nameof(convergenceCriteria), new Rule(() => { convergenceCriteria.Validate(); return !convergenceCriteria.HasErrors; }, $"Convergence criteria has errors: " + convergenceCriteria.GetErrors().ToString(), convergenceCriteria.ErrorLevel));
-            AddSinglePropertyRule(nameof(_StageFrequency), new Rule(() => _StageFrequency != null, $"The software was unable to calculate stage-frequency for the impact area with ID {_ImpactAreaID}", ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(_StageFrequency), new Rule(() => _StageFrequency != null, $"The software was unable to calculate stage-frequency for the impact area with ID {ImpactAreaID}", ErrorLevel.Fatal));
             if (_AnalyticalFlowFrequency != null)
             {
                 AddSinglePropertyRule(nameof(_AnalyticalFlowFrequency), new Rule(() => { _AnalyticalFlowFrequency.Validate(); return !_AnalyticalFlowFrequency.HasErrors; }, $"The analytical flow-frequency function has errors: " + _AnalyticalFlowFrequency.GetErrors().ToString(), _AnalyticalFlowFrequency.ErrorLevel));
@@ -267,7 +263,7 @@ namespace HEC.FDA.Model.stageDamage
                         functionIsNotConverged = IsTheFunctionNotConverged(consequenceDistributionResults);
                     }
                     //there should be four UncertainPairedData objects - one for each asset cat of the given dam cat level compute 
-                    List<UncertainPairedData> tempResultsList = ConsequenceDistributionResults.ToUncertainPairedData(allStagesAtIndexLocation, consequenceDistributionResults, _ImpactAreaID);
+                    List<UncertainPairedData> tempResultsList = ConsequenceDistributionResults.ToUncertainPairedData(allStagesAtIndexLocation, consequenceDistributionResults, ImpactAreaID);
                     results.AddRange(tempResultsList);
                 }
                 return results;
@@ -303,10 +299,10 @@ namespace HEC.FDA.Model.stageDamage
         {
             foreach (Dictionary<string, List<double>> dictionaryOfDamagesByAssetCategory in assetCatDamagesAllCoordinates)
             {
-                ConsequenceDistributionResult structureConsequenceDistributionResult = new(damageCategory, StringConstants.STRUCTURE_ASSET_CATEGORY, convergenceCriteria, dictionaryOfDamagesByAssetCategory[StringConstants.STRUCTURE_ASSET_CATEGORY], _ImpactAreaID);
-                ConsequenceDistributionResult contentConsequenceDistributionResult = new(damageCategory, StringConstants.CONTENT_ASSET_CATEGORY, convergenceCriteria, dictionaryOfDamagesByAssetCategory[StringConstants.CONTENT_ASSET_CATEGORY], _ImpactAreaID);
-                ConsequenceDistributionResult vehicleConsequenceDistributionResult = new(damageCategory, StringConstants.VEHICLE_ASSET_CATEGORY, convergenceCriteria, dictionaryOfDamagesByAssetCategory[StringConstants.VEHICLE_ASSET_CATEGORY], _ImpactAreaID);
-                ConsequenceDistributionResult otherConsequenceDistributionResult = new(damageCategory, StringConstants.OTHER_ASSET_CATEGORY, convergenceCriteria, dictionaryOfDamagesByAssetCategory[StringConstants.OTHER_ASSET_CATEGORY], _ImpactAreaID);
+                ConsequenceDistributionResult structureConsequenceDistributionResult = new(damageCategory, StringConstants.STRUCTURE_ASSET_CATEGORY, convergenceCriteria, dictionaryOfDamagesByAssetCategory[StringConstants.STRUCTURE_ASSET_CATEGORY], ImpactAreaID);
+                ConsequenceDistributionResult contentConsequenceDistributionResult = new(damageCategory, StringConstants.CONTENT_ASSET_CATEGORY, convergenceCriteria, dictionaryOfDamagesByAssetCategory[StringConstants.CONTENT_ASSET_CATEGORY], ImpactAreaID);
+                ConsequenceDistributionResult vehicleConsequenceDistributionResult = new(damageCategory, StringConstants.VEHICLE_ASSET_CATEGORY, convergenceCriteria, dictionaryOfDamagesByAssetCategory[StringConstants.VEHICLE_ASSET_CATEGORY], ImpactAreaID);
+                ConsequenceDistributionResult otherConsequenceDistributionResult = new(damageCategory, StringConstants.OTHER_ASSET_CATEGORY, convergenceCriteria, dictionaryOfDamagesByAssetCategory[StringConstants.OTHER_ASSET_CATEGORY], ImpactAreaID);
                 List<ConsequenceDistributionResult> consequenceDistributionResultList = new() { structureConsequenceDistributionResult, contentConsequenceDistributionResult, vehicleConsequenceDistributionResult, otherConsequenceDistributionResult };
                 ConsequenceDistributionResults consequenceDistResultsAtThisStage = new(consequenceDistributionResultList);
                 consequenceDistributionResults.Add(consequenceDistResultsAtThisStage);
@@ -362,7 +358,7 @@ namespace HEC.FDA.Model.stageDamage
                 }
                 else
                 {
-                    consequenceDistributionResults[i].AddConsequenceRealization(consequenceResult, damageCategory, _ImpactAreaID, i);
+                    consequenceDistributionResults[i].AddConsequenceRealization(consequenceResult, damageCategory, ImpactAreaID, i);
                 }
 
             }
@@ -447,7 +443,7 @@ namespace HEC.FDA.Model.stageDamage
                 }
                 else
                 {
-                    consequenceDistributionResults[i + _numExtrapolatedStagesToCompute + profileCount*_numInterpolatedStagesToCompute - 1].AddConsequenceRealization(consequenceResult, damageCategory, _ImpactAreaID, i);
+                    consequenceDistributionResults[i + _numExtrapolatedStagesToCompute + profileCount*_numInterpolatedStagesToCompute - 1].AddConsequenceRealization(consequenceResult, damageCategory, ImpactAreaID, i);
                 }
             }
         }
@@ -501,7 +497,7 @@ namespace HEC.FDA.Model.stageDamage
                 }
                 else
                 {
-                    consequenceDistributionResults[i + _numExtrapolatedStagesToCompute + _numInterpolatedStagesToCompute*(_hydraulicDataset.HydraulicProfiles.Count-1)].AddConsequenceRealization(consequenceResult, damageCategory, _ImpactAreaID, i);
+                    consequenceDistributionResults[i + _numExtrapolatedStagesToCompute + _numInterpolatedStagesToCompute*(_hydraulicDataset.HydraulicProfiles.Count-1)].AddConsequenceRealization(consequenceResult, damageCategory, ImpactAreaID, i);
                 }
             }
         }
