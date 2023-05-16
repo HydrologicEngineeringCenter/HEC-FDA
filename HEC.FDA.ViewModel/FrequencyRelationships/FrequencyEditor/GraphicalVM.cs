@@ -28,7 +28,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         }
         public GraphicalUncertainPairedData GraphicalUncertainPairedData
         { 
-            get{return new GraphicalUncertainPairedData(((GraphicalDataProvider)SelectedItem).Xs, ((GraphicalDataProvider)SelectedItem).Ys, EquivalentRecordLength,new CurveMetaData(), !UseFlow);}
+            get{return new GraphicalUncertainPairedData(((GraphicalDataProvider)SelectedItem).Xs, ((GraphicalDataProvider)SelectedItem).Ys, EquivalentRecordLength,new CurveMetaData(XLabel,YLabel, Name), !UseFlow);}
            
         }
         public int EquivalentRecordLength
@@ -76,9 +76,11 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         }
         private void Initialize()
         {
-            ConfidenceLimits = new NamedAction();
-            ConfidenceLimits.Name = "Compute Confidence Limits";
-            ConfidenceLimits.Action = ConfidenceLimitsAction;
+            ConfidenceLimits = new MVVMFramework.ViewModel.Implementations.NamedAction
+            {
+                Name = "Compute Confidence Limits",
+                Action = ConfidenceLimitsAction
+            };
         }
         override public XElement ToXML()
         {

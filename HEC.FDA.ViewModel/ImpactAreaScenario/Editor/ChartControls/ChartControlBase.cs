@@ -172,8 +172,13 @@ public abstract class ChartControlBase : BaseViewModel
     }
     private double[] getYValues()
     {
-        PairedData pd = Function.SamplePairedData(.5, true);
-        return pd.Yvals;
+        double[] yVals = Array.Empty<double>();
+        if (Function != null)
+        {
+            PairedData pd = Function.SamplePairedData(.5, true);
+            yVals = pd.Yvals;
+        }
+        return yVals;
 
     }
 }
