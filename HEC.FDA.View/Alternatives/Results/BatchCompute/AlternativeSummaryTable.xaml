@@ -98,7 +98,7 @@
 
                 <DataGrid   HeadersVisibility="Column" Grid.Row="1" Name="damCatGrid" ItemsSource="{Binding DamCatTable}" AutoGenerateColumns="True" HorizontalAlignment="Left"
                   VerticalAlignment="Top"  IsReadOnly="True" CanUserResizeColumns="True" CanUserReorderColumns="False"
-                  CanUserSortColumns="false"  SelectionUnit="Cell" >
+                  CanUserSortColumns="false"  SelectionUnit="Cell" MinWidth="330" >
                 </DataGrid>
             </Grid>
         </ScrollViewer>
