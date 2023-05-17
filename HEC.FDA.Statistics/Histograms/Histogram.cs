@@ -648,8 +648,8 @@ namespace Statistics.Histograms
             int convergedIterations = Convert.ToInt32(convergedIterationsString);
             string convergedOnMaxString = element.Attribute("Converged_On_Max").Value;
             bool convergedOnMax = Convert.ToBoolean(convergedOnMaxString);
-            string minNotSetString = element.Attribute("Min_Not_Set").Value;
-            bool minNotSet = Convert.ToBoolean(minNotSetString);
+            //as long as we have a min, the min is set
+            bool minNotSet = false;
             Histogram histogram = new Histogram(min, max, binWidth, sampleSize, binCounts, convergenceCriteria);
             histogram._SampleMean = sampleMean;
             histogram._SampleVariance = sampleVariance;
