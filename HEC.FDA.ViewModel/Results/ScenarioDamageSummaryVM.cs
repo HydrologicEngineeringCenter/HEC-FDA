@@ -15,6 +15,7 @@ namespace HEC.FDA.ViewModel.Results
         public CustomObservableCollection<SelectableChildElement> SelectableElements { get; } = new CustomObservableCollection<SelectableChildElement>();
         public CustomObservableCollection<ScenarioDamageRowItem> Rows { get; } = new CustomObservableCollection<ScenarioDamageRowItem>();
         public CustomObservableCollection<ScenarioPerformanceRowItem> PerformanceRows { get; } = new CustomObservableCollection<ScenarioPerformanceRowItem>();
+        public CustomObservableCollection<AssuranceOfAEPRowItem> AssuranceOfAEPRows { get; } = new CustomObservableCollection<AssuranceOfAEPRowItem>();
 
         public DataTable DamCatTable
         {
@@ -89,24 +90,27 @@ namespace HEC.FDA.ViewModel.Results
             }
         }
 
-
         private void LoadTables()
         {
             List<IASElement> elems = GetSelectedElements();
             List<ScenarioDamCatRowItem> damCatRows = new List<ScenarioDamCatRowItem>();
             Rows.Clear();
             PerformanceRows.Clear();
+            AssuranceOfAEPRows.Clear();
             foreach (IASElement element in elems)
             {
-                
                 Rows.Add(new ScenarioDamageRowItem(element));
                 damCatRows.Add(new ScenarioDamCatRowItem(element));
                 List<IContainImpactAreaScenarioResults> resultsList = element.Results.ResultsList;
                 foreach (IContainImpactAreaScenarioResults impactAreaScenarioResults in resultsList)
-                {
+                { 
+                    int iasID = impactAreaScenarioResults.ImpactAreaID;
+                    SpecificIAS ias = element.SpecificIASElements.Where(ias => ias.ImpactAreaID == iasID).First();
+
                     foreach (Threshold threshold in impactAreaScenarioResults.PerformanceByThresholds.ListOfThresholds)
                     {
-                        PerformanceRows.Add(new ScenarioPerformanceRowItem(element, threshold));
+                        PerformanceRows.Add(new ScenarioPerformanceRowItem(element, ias, threshold));
+                        AssuranceOfAEPRows.Add(new AssuranceOfAEPRowItem(element, ias, threshold));
                     }
                 }
             }

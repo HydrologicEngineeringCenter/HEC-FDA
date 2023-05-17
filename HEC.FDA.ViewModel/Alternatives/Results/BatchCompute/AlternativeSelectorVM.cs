@@ -8,6 +8,7 @@ using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -21,6 +22,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
 
         public AlternativeSelectorVM():base()
         {
+            ComputeButtonLabel = "View";
             ValidateAlternatives();
             ListenToChildElementUpdateEvents();
         }
@@ -91,9 +93,19 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
             }
         }
 
+        public override void ComputeClicked()
+        {
+            List<ComputeChildRowItem> computeChildRowItems = GetSelectedRows();
+
+            if (computeChildRowItems.Count > 0)
+            {
+                _CancellationToken = new CancellationTokenSource();
+                Compute(computeChildRowItems);
+            }
+        }
+
         public override async void Compute(List<ComputeChildRowItem> altRows)
         {
-            
             MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message("Beginning Batch Compute"));
             ReportMessage(this, beginComputeMessageArgs);
 
@@ -111,7 +123,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
                     {
                         Alternative alt = new Alternative();
                         ComputeAlternativeVM vm = new ComputeAlternativeVM(elem, ComputeCompleted);
-                        taskList.Add( vm.RunAnnualizationCompute(alt, elem, ComputeCompleted, _CancellationToken.Token));
+                        taskList.Add(vm.RunAnnualizationCompute(alt, elem, ComputeCompleted, _CancellationToken.Token));
                     }
                     else
                     {
@@ -123,20 +135,15 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
             catch (TaskCanceledException ex)
             {
                 MessageBox.Show("Compute Canceled.", "Compute Canceled", MessageBoxButton.OK, MessageBoxImage.Information);
-                ComputeButtonLabel = COMPUTE;
                 return;
             }
-            ComputeButtonLabel = COMPUTE;
             MessageEventArgs finishedComputeMessageArgs = new MessageEventArgs(new Message("All Scenarios Computed"));
             ReportMessage(this, finishedComputeMessageArgs);
-            var result = MessageBox.Show("Do you want to view summary results?", "Compute Finished", MessageBoxButton.YesNo, MessageBoxImage.Information);
-            if (result == MessageBoxResult.Yes)
-            {
-                AlternativeSummaryVM vm = new AlternativeSummaryVM(elementList);
-                string header = "Alternative Summary Results";
-                DynamicTabVM tab = new DynamicTabVM(header, vm, header);
-                Navigate(tab, false, true);
-            }
+
+            AlternativeSummaryVM altVm = new AlternativeSummaryVM(elementList);
+            string header = "Alternative Summary Results";
+            DynamicTabVM tab = new DynamicTabVM(header, altVm, header);
+            Navigate(tab, false, true);
         }
 
 

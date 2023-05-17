@@ -3,12 +3,11 @@ using HEC.FDA.ViewModel.ImpactAreaScenario;
 
 namespace HEC.FDA.ViewModel.Results
 {
-    public class ScenarioPerformanceRowItem
+    public class AssuranceOfAEPRowItem
     {
         public string Name { get; set; }
         public int AnalysisYear { get; set; }
         public string ImpactArea { get; set; }
-
         public string ThresholdType { get; set; }
         public double ThresholdValue { get; set; }
 
@@ -26,7 +25,7 @@ namespace HEC.FDA.ViewModel.Results
         public double Threshold004 { get; set; }
         public double Threshold002 { get; set; }
 
-        public ScenarioPerformanceRowItem(IASElement scenario, SpecificIAS ias, Threshold threshold)
+        public AssuranceOfAEPRowItem(IASElement scenario, SpecificIAS ias, Threshold threshold)
         {
             ScenarioResults results = scenario.Results;
 
@@ -34,28 +33,22 @@ namespace HEC.FDA.ViewModel.Results
             AnalysisYear = results.AnalysisYear;
             ImpactArea = ias.GetSpecificImpactAreaName();
 
-
             ThresholdType = threshold.ThresholdType.ToString();
             ThresholdValue = threshold.ThresholdValue;
             int thresholdID = threshold.ThresholdID;
             int iasID = ias.ImpactAreaID;
 
-            LongTerm10 = results.LongTermExceedanceProbability(iasID, 10, thresholdID);
-            LongTerm20 = results.LongTermExceedanceProbability(iasID, 20, thresholdID);
-            LongTerm30 = results.LongTermExceedanceProbability(iasID, 30, thresholdID);
-
             Mean = results.MeanAEP(iasID, thresholdID);
-            Median = results.MedianAEP(iasID, thresholdID); 
+            Median = results.MedianAEP(iasID, thresholdID);
 
-            Threshold1 = results.AssuranceOfEvent(iasID, 1 - .1, thresholdID);
-            Threshold04 = results.AssuranceOfEvent(iasID, 1 - .04, thresholdID);
-            Threshold02 = results.AssuranceOfEvent(iasID, 1 - .02, thresholdID);
-            Threshold01 = results.AssuranceOfEvent(iasID, 1 - .01, thresholdID);
-            Threshold004 = results.AssuranceOfEvent(iasID, 1 - .004, thresholdID);
-            Threshold002 = results.AssuranceOfEvent(iasID, 1 - .002, thresholdID);
+            Threshold1 = results.AssuranceOfAEP(ias.ImpactAreaID, .1, threshold.ThresholdID);
+            Threshold04 = results.AssuranceOfAEP(ias.ImpactAreaID, .04, threshold.ThresholdID);
+            Threshold02 = results.AssuranceOfAEP(ias.ImpactAreaID, .02, threshold.ThresholdID);
+            Threshold01 = results.AssuranceOfAEP(ias.ImpactAreaID, .01, threshold.ThresholdID);
+            Threshold004 = results.AssuranceOfAEP(ias.ImpactAreaID, .004, threshold.ThresholdID);
+            Threshold002 = results.AssuranceOfAEP(ias.ImpactAreaID, .002, threshold.ThresholdID);
 
         }
-
 
 
     }

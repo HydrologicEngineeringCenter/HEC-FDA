@@ -14,6 +14,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
 
         public string BaseYearLabel { get; }
         public string FutureYearLabel { get; }
+        public string AAEQLabel { get; }
 
         public SummaryVM(List<EADSummaryRowItem> baseYearSummary, List<EADSummaryRowItem> futureYearSummary, List<AAEQSummaryRowItem> aaeqSummary, List<int> years) :base()
         {
@@ -22,8 +23,9 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
             BaseEADSummaryVM = new EADSummaryVM(baseYearSummary, studyPropElem.DiscountRate, studyPropElem.PeriodOfAnalysis);
             FutureEADSummaryVM = new EADSummaryVM(futureYearSummary, studyPropElem.DiscountRate, studyPropElem.PeriodOfAnalysis);
 
-            BaseYearLabel = "Base Year: " + years[0] + ":";
-            FutureYearLabel = "Future Year: " + years[1] + ":";
+            BaseYearLabel = "Base Year EAD" + years[0] + ":";
+            FutureYearLabel = "Future Year EAD " + years[1] + ":";
+            AAEQLabel = "Period of Analysis AAEQ Damage:";
 
         }
 

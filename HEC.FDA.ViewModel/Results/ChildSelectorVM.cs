@@ -59,7 +59,7 @@ namespace HEC.FDA.ViewModel.Results
             return selectedRows;
         }
 
-        public void ComputeClicked()
+        public virtual void ComputeClicked()
         {
             if (ComputeButtonLabel.Equals(CANCEL_COMPUTE))
             {

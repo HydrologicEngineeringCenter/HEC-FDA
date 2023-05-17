@@ -17,6 +17,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -130,7 +131,9 @@
             </DataGrid.Columns>
         </twp:FdaDataGrid>
 
-        <twp:FdaDataGrid Grid.Row="4" ItemsSource="{Binding AAEQSummaryVM.Rows}" AutoGenerateColumns="False" HorizontalAlignment="Left"
+        <Label Grid.Row="4" Content="{Binding AAEQLabel}"/>
+
+        <twp:FdaDataGrid Grid.Row="5" ItemsSource="{Binding AAEQSummaryVM.Rows}" AutoGenerateColumns="False" HorizontalAlignment="Left"
                   VerticalAlignment="Top"  IsReadOnly="True" CanUserResizeColumns="True" CanUserReorderColumns="False"
                   CanUserSortColumns="false" Margin="5" SelectionUnit="Cell">
             <DataGrid.Columns>
@@ -183,6 +186,6 @@
             </DataGrid.Columns>
         </twp:FdaDataGrid>
 
-        <utils:OKCloseControl Grid.Row="5" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5" />
+        <utils:OKCloseControl Grid.Row="6" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5" />
     </Grid>
 </UserControl>
