@@ -184,6 +184,7 @@ namespace HEC.FDA.Model.metrics
                         if (consequenceDistributionResult.ConsequenceHistogram.IsHistogramConverged(upperConfidenceLimitProb, lowerConfidenceLimitProb) == false)
                         {
                             eadIsConverged = false;
+                            break;
                         }
                     }
                 }
@@ -207,6 +208,7 @@ namespace HEC.FDA.Model.metrics
                 else
                 {
                     cnepIsConverged = false;
+                    break;
                 }
             }
             return eadIsConverged && cnepIsConverged;
@@ -272,12 +274,6 @@ namespace HEC.FDA.Model.metrics
             ConsequenceDistributionResults expectedAnnualDamageResults = ConsequenceDistributionResults.ReadFromXML(xElement.Element("Expected_Annual_Damage_Results"));
             int impactAreaID = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
             return new ImpactAreaScenarioResults(performanceByThresholds, expectedAnnualDamageResults, impactAreaID);
-        }
-
-        internal void ForceDeQueue()
-        {
-            PerformanceByThresholds.ForceDeQueue();
-            ConsequenceResults.ForceDeQueue();
         }
         #endregion
     }

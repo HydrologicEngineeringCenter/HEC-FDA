@@ -390,6 +390,11 @@ namespace HEC.FDA.Model.compute
                     //recalculate compute chunks 
                     expectedIterations = _ImpactAreaScenarioResults.RemainingIterations(.95, .05, computeWithDamage);
                     computeChunks = Convert.ToInt64(expectedIterations / convergenceCriteria.IterationCount);
+                    if (computeChunks == 0)
+                    {
+                        computeChunks = 1;
+                    }
+                    j = 0;
                 }
                 else
                 {
@@ -399,7 +404,6 @@ namespace HEC.FDA.Model.compute
 
             }
             ReportProgress(this, new ProgressReportEventArgs(IMPACT_AREA_SIM_COMPLETED));
-            _ImpactAreaScenarioResults.ForceDeQueue();
         }
         private void ComputeFromStageFrequency(IProvideRandomNumbers randomProvider, IPairedData frequency_stage, long iteration, bool computeWithDamage, bool computeIsDeterministic)
         {

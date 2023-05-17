@@ -156,7 +156,7 @@ namespace HEC.FDA.Model.metrics
 
             } else
             {
-                _consequenceHistogram.AddObservationToHistogram(damageRealization, iteration); ;
+                _consequenceHistogram.AddObservationToHistogram(damageRealization, iteration);
             }
         }
 

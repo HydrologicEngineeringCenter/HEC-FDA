@@ -298,14 +298,6 @@ namespace HEC.FDA.Model.metrics
             return dummyResult;
         }
 
-        internal void ForceDeQueue()
-        {
-            foreach (ConsequenceDistributionResult consequenceResult in ConsequenceResultList)
-            {
-                consequenceResult.ConsequenceHistogram.ForceDeQueue();
-            }
-        }
-
         public bool Equals(ConsequenceDistributionResults inputDamageResults)
         {
             foreach (ConsequenceDistributionResult damageResult in _consequenceResultList)

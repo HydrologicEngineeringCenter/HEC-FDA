@@ -115,16 +115,6 @@ namespace HEC.FDA.Model.metrics
             return new PerformanceByThresholds(thresholdList);
         }
 
-        internal void ForceDeQueue()
-        {
-            foreach (Threshold threshold in ListOfThresholds)
-            {
-                foreach (AssuranceResultStorage assuranceResultStorage in threshold.SystemPerformanceResults.Assurances)
-                {
-                    assuranceResultStorage.AssuranceHistogram.ForceDeQueue();
-                }
-            }
-        }
         #endregion
     }
 }
