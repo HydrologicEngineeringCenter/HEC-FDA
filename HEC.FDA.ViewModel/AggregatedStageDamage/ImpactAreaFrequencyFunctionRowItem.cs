@@ -46,7 +46,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             set { _StageDischargeFunction = value; NotifyPropertyChanged(); }
         }
 
-        public ImpactAreaFrequencyFunctionRowItem( ImpactAreaRowItem selectedImpactArea, List<AnalyticalFrequencyElement> frequencyFunctions,  
+        public ImpactAreaFrequencyFunctionRowItem( ImpactAreaRowItem selectedImpactArea, List<FrequencyElement> frequencyFunctions,  
             List<StageDischargeElement> stageDischargeFunctions, List<InflowOutflowElement> regulatedUnregulatedElements)
         {
             StageDischargeFunctions = CreateStageDischargeWrappers(stageDischargeFunctions);
@@ -86,9 +86,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                     //we should always be able to find the impact area. We delete the stage damages if the user deletes the impact areas.
                 }
 
-                List<AnalyticalFrequencyElement> analyticalFrequencyElements = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();
-                AnalyticalFrequencyElement selectedFrequencyFunction = null;
-                foreach (AnalyticalFrequencyElement elem in analyticalFrequencyElements)
+                List<FrequencyElement> analyticalFrequencyElements = StudyCache.GetChildElementsOfType<FrequencyElement>();
+                FrequencyElement selectedFrequencyFunction = null;
+                foreach (FrequencyElement elem in analyticalFrequencyElements)
                 {
                     if (elem.ID == freqID)
                     {
@@ -144,7 +144,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
         }
 
-        private void SelectSelectedFrequencyFunction(AnalyticalFrequencyElement selectedFrequencyFunction)
+        private void SelectSelectedFrequencyFunction(FrequencyElement selectedFrequencyFunction)
         {
             if (selectedFrequencyFunction != null)
             {
@@ -174,12 +174,12 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
         }
 
-        private ObservableCollection<FrequencyElementWrapper> CreateFrequencyWrappers(List<AnalyticalFrequencyElement> frequencyFunctions)
+        private ObservableCollection<FrequencyElementWrapper> CreateFrequencyWrappers(List<FrequencyElement> frequencyFunctions)
         {
             ObservableCollection<FrequencyElementWrapper> frequencyWrappers = new ObservableCollection<FrequencyElementWrapper>();
             //add blank row
             frequencyWrappers.Add(new FrequencyElementWrapper());
-            foreach (AnalyticalFrequencyElement elem in frequencyFunctions)
+            foreach (FrequencyElement elem in frequencyFunctions)
             {
                 frequencyWrappers.Add(new FrequencyElementWrapper(elem));
             }
@@ -233,7 +233,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         public bool IsStageDischargeRequired()
         {
-            return (FrequencyFunction.Element.IsAnalytical || FrequencyFunction.Element.MyGraphicalVM.UseFlow);
+            return (FrequencyFunction.Element.IsAnalytical || FrequencyFunction.Element.GraphicalUsesFlow);
         }
 
         public XElement WriteToXML()

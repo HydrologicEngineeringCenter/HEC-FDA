@@ -1,5 +1,5 @@
 ﻿using HEC.FDA.Model.paireddata;
-using HEC.FDA.ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor;
 using HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces;
 using HEC.FDA.ViewModel.TableWithPlot.Enumerables;
 using HEC.FDA.ViewModel.TableWithPlot.Rows;
@@ -56,6 +56,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
         public CurveComponentVM CurveComponentVM
         {
             get { return _curveComponentVM; }
+            set { _curveComponentVM = value; }
         }
         public bool PlotExtended
         {
@@ -138,6 +139,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot
                 y = new LinearAxis();
             }
             y.Position = AxisPosition.Left;
+            _plotModel.Axes.Add(y);
         }
 
         private void AddXAxis()

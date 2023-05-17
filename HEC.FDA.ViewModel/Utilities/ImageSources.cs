@@ -28,7 +28,7 @@ namespace HEC.FDA.ViewModel.Utilities
             {typeof(AlternativeComparisonReportElement), IMAGE_PREFIX + "AlternativeComparisonReport_20x20.png" },
             {typeof(AlternativeElement), IMAGE_PREFIX + "Alternatives_20x20.png" },
             {typeof(ExteriorInteriorElement), IMAGE_PREFIX + "ExteriorInteriorStage.png" },
-            {typeof(AnalyticalFrequencyElement), IMAGE_PREFIX + "FrequencyCurve.png" },
+            {typeof(FrequencyElement), IMAGE_PREFIX + "FrequencyCurve.png" },
             {typeof(HydraulicElement), IMAGE_PREFIX + "WaterSurfaceElevation.png" },
             {typeof(IASElement), IMAGE_PREFIX + "ImpactAreaScenario_20x20.png" },
             {typeof(ImpactAreaElement), IMAGE_PREFIX + "ImpactAreas.png" },

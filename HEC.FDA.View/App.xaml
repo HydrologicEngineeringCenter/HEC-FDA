@@ -31,6 +31,9 @@
              xmlns:FrequencyRelationshipsVM ="clr-namespace:HEC.FDA.ViewModel.FrequencyRelationships;assembly=HEC.FDA.ViewModel"
              xmlns:FrequencyRelationshipsView ="clr-namespace:HEC.FDA.View.FrequencyRelationships"
              
+             xmlns:FrequencyEditorVMs ="clr-namespace:HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor;assembly=HEC.FDA.ViewModel"
+             xmlns:FrequencyEditorViews ="clr-namespace:HEC.FDA.View.FrequencyRelationships.FrequencyEditor"
+             
              xmlns:GeoTechVM="clr-namespace:HEC.FDA.ViewModel.GeoTech;assembly=HEC.FDA.ViewModel"
              xmlns:GeoTechView="clr-namespace:HEC.FDA.View.GeoTech"
              
@@ -128,13 +131,6 @@
     </DataTemplate>
 
     <!--FrequencyRelationships Region-->
-    <DataTemplate DataType="{x:Type FrequencyRelationshipsVM:AnalyticalFrequencyEditorVM }" >
-      <FrequencyRelationshipsView:AnalyticalFrequencyEditor/>
-    </DataTemplate>
-
-    <DataTemplate DataType="{x:Type FrequencyRelationshipsVM:GraphicalVM }" >
-      <FrequencyRelationshipsView:GraphicalControl/>
-    </DataTemplate>
 
     <DataTemplate DataType="{x:Type FrequencyRelationshipsVM:ImportFrequencyFromFDA1VM }" >
       <UtilitiesView:ImportFromFDA1/>
@@ -146,6 +142,27 @@
 
     <DataTemplate DataType="{x:Type FrequencyRelationshipsVM:RetrieveGraphicalStageFrequencyVM}">
       <FrequencyRelationshipsView:RetrieveGraphicalFrequencyControl/>
+    </DataTemplate>
+
+    <!--Frequency Editor Region-->
+    <DataTemplate DataType="{x:Type FrequencyEditorVMs:FrequencyEditorVM }" >
+      <FrequencyEditorViews:FrequencyEditorControl/>
+    </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type FrequencyEditorVMs:AnalyticalVM }" >
+      <FrequencyEditorViews:AnalyticalControl/>
+    </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type FrequencyEditorVMs:GraphicalVM }" >
+      <FrequencyEditorViews:GraphicalControl/>
+    </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type FrequencyEditorVMs:FitToFlowVM }" >
+      <FrequencyEditorViews:FitToFlowsControl/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type FrequencyEditorVMs:ParameterEntryVM }" >
+      <FrequencyEditorViews:ParameterEntryControl/>
     </DataTemplate>
 
     <!--GeoTech Region-->

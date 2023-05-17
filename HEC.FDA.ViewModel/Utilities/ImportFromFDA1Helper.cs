@@ -2,6 +2,7 @@
 using HEC.FDA.ViewModel.AggregatedStageDamage;
 using HEC.FDA.ViewModel.FlowTransforms;
 using HEC.FDA.ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor;
 using HEC.FDA.ViewModel.GeoTech;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
@@ -443,10 +444,10 @@ namespace HEC.FDA.ViewModel.Utilities
         #endregion
 
         #region LP3
-        public static List<AnalyticalFrequencyElement> CreateFlowFrequencyElements(ProbabilityFunctionList probFuncs)
+        public static List<FrequencyElement> CreateFlowFrequencyElements(ProbabilityFunctionList probFuncs)
         {
-            List<AnalyticalFrequencyElement> elems = new List<AnalyticalFrequencyElement>();
-            int id = PersistenceFactory.GetElementManager<AnalyticalFrequencyElement>().GetNextAvailableId();
+            List<FrequencyElement> elems = new List<FrequencyElement>();
+            int id = PersistenceFactory.GetElementManager<FrequencyElement>().GetNextAvailableId();
             int i = 0;
             foreach (KeyValuePair<string, ProbabilityFunction> kvp in probFuncs.ProbabilityFunctions)
             {
@@ -455,7 +456,7 @@ namespace HEC.FDA.ViewModel.Utilities
                 FrequencyFunctionType typeID = pf.ProbabilityFunctionTypeId;
                 if (typeID == FrequencyFunctionType.ANALYTICAL || typeID == FrequencyFunctionType.GRAPHICAL)
                 {
-                    AnalyticalFrequencyElement freqElem = CreateFrequencyElement(pf, elemID);
+                    FrequencyElement freqElem = CreateFrequencyElement(pf, elemID);
                     if (freqElem != null)
                     {
                         elems.Add(freqElem);
@@ -468,7 +469,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
 
 
-        private static AnalyticalFrequencyElement CreateManualAnalyticalElement(ProbabilityFunction pf, int elemID)
+        private static FrequencyElement CreateManualAnalyticalElement(ProbabilityFunction pf, int elemID)
         {
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
             double mean = pf.MomentsLp3[0];
@@ -480,20 +481,19 @@ namespace HEC.FDA.ViewModel.Utilities
             bool isAnalytical = true;
             bool isStandard = true;//This boolean says whether it is "fit to params" or "fit to flows". True = "fit to params"
 
-            //there will be no analytical flows. We just need 
-            List<double> analyticalFlows = new List<double>();
-            GraphicalVM graphicalVM = new GraphicalVM(StringConstants.GRAPHICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
-            CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
+            FrequencyEditorVM vm = new();
+            vm.IsGraphical = !isAnalytical;
+            vm.AnalyticalVM.IsFitToFlows = !isStandard;
+            vm.AnalyticalVM.ParameterEntryVM.LP3Distribution = new LogPearson3(mean,stDev, skew, por);
 
-            return new AnalyticalFrequencyElement(pf.Name, editDate, CreatePYSRDescription(pf), por, isAnalytical, isStandard, mean, stDev, skew,
-                 analyticalFlows, graphicalVM, curveComponentVM, elemID);
+            return new FrequencyElement(pf.Name, editDate, CreatePYSRDescription(pf), elemID,vm);
 
         }
 
-        private static AnalyticalFrequencyElement CreateFrequencyElement(ProbabilityFunction pf, int elemID)
+        private static FrequencyElement CreateFrequencyElement(ProbabilityFunction pf, int elemID)
         {
             CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.ANALYTICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
-            AnalyticalFrequencyElement elem = null;
+            FrequencyElement elem = null;
             if (pf.ProbabilityFunctionTypeId == FrequencyFunctionType.ANALYTICAL)
             {
                 if (pf.SourceOfStatisticsId == SourceOfStatistics.ENTERED)
@@ -503,8 +503,10 @@ namespace HEC.FDA.ViewModel.Utilities
             }
             else if (pf.ProbabilityFunctionTypeId == FrequencyFunctionType.GRAPHICAL)
             {
-                GraphicalVM vm = new GraphicalVM(pf);
-                elem = new AnalyticalFrequencyElement(pf.Name, DateTime.Now.ToString(), pf.Description, pf.EquivalentLengthOfRecord, false, false, 5, .25, .1, new List<double>(), vm, curveComponentVM, elemID); //this sucks. Why am I making up a fake analytical curve to import a graphical one?
+                FrequencyEditorVM vm = new();
+                vm.IsGraphical = true;
+                ((GraphicalVM)vm.GraphicalVM.CurveComponentVM).LoadFromProbabilityFunction(pf);
+                elem = new FrequencyElement(pf.Name, DateTime.Now.ToString(), pf.Description, elemID,vm);
             }
             return elem;
         }

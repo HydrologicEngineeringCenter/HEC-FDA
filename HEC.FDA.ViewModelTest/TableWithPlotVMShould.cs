@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor;
 using HEC.FDA.ViewModel.TableWithPlot;
 using System.Xml.Linq;
 using Xunit;
