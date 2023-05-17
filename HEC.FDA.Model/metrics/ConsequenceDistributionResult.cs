@@ -95,7 +95,7 @@ namespace HEC.FDA.Model.metrics
             _damageCategory = damageCategory;
             _assetCategory = assetCategory;
             _convergenceCriteria = convergenceCriteria;
-            _consequenceHistogram = new ThreadsafeInlineHistogram(_convergenceCriteria);
+            _consequenceHistogram = new Histogram(binWidth);
             _isNull = false;
             _regionID = impactAreaID;
             MessageHub.Register(this);
