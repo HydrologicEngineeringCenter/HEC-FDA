@@ -21,7 +21,7 @@ namespace StatisticsTests.Histograms
         public void HistogramStatistics_Minimum(double binWidth, double expected)
         {
             double[] data = new double[5] { 1, 2, 3, 4, 5 };
-            Histogram histogram = new Histogram(binWidth);
+            Histogram histogram = new Histogram(binWidth, new ConvergenceCriteria());
             histogram.AddObservationsToHistogram(data);
             double actual = histogram.Min;
             Assert.Equal(expected, actual);
@@ -32,7 +32,7 @@ namespace StatisticsTests.Histograms
         public void HistogramStatistics_AddedData_Minimum(double binWidth, double expected)
         {
             double[] data = new double[5] { 1, 2, 3, 4, 5 };
-            Histogram histogram = new Histogram(binWidth);
+            Histogram histogram = new Histogram(binWidth, new ConvergenceCriteria());
             histogram.AddObservationsToHistogram(data);
             histogram.AddObservationToHistogram(0);
             double actual = histogram.Min;
@@ -44,7 +44,7 @@ namespace StatisticsTests.Histograms
         public void HistogramStatistics_Maximum(double binWidth, double expected)
         {
             double[] data = new double[5] { 1, 2, 3, 4, 5 };
-            Histogram histogram = new Histogram(binWidth);
+            Histogram histogram = new Histogram(binWidth, new ConvergenceCriteria());
             histogram.AddObservationsToHistogram(data);
             double actual = histogram.Max;
             Assert.Equal(expected, actual);
@@ -55,7 +55,7 @@ namespace StatisticsTests.Histograms
         public void HistogramStatistics_AddedData_Maximum(double binWidth, double expected)
         {
             double[] data = new double[5] { 1, 2, 3, 4, 5 };
-            Histogram histogram = new Histogram(binWidth);
+            Histogram histogram = new Histogram(binWidth, new ConvergenceCriteria());
             histogram.AddObservationsToHistogram(data);
             histogram.AddObservationToHistogram(6);
             double actual = histogram.Max;
@@ -68,7 +68,7 @@ namespace StatisticsTests.Histograms
         public void HistogramStatistics_Mean(double binWidth, double expected)
         {
             double[] data = new double[5] { 1, 2, 3, 4, 5 };
-            Histogram histogram = new Histogram(binWidth);
+            Histogram histogram = new Histogram(binWidth, new ConvergenceCriteria());
             histogram.AddObservationsToHistogram(data);
             double actual = histogram.HistogramMean();
             Assert.Equal(expected, actual);
@@ -80,7 +80,7 @@ namespace StatisticsTests.Histograms
         public void HistogramStatistics_HistogramStandardDeviation(double binWidth, double expected)
         {
             double[] data = new double[5] { 1, 2, 3, 4, 5 };
-            Histogram histogram = new Histogram(binWidth);
+            Histogram histogram = new Histogram(binWidth, new ConvergenceCriteria());
             histogram.AddObservationsToHistogram(data);
             double actual = histogram.HistogramStandardDeviation();
             //double err = Math.Abs((expected - actual) / expected);
@@ -93,7 +93,7 @@ namespace StatisticsTests.Histograms
         public void HistogramStatistics_StandardDeviation(double binWidth, double expected)
         {
             double[] data = new double[5] { 1, 2, 3, 4, 5 };
-            Histogram histogram = new Histogram(binWidth);
+            Histogram histogram = new Histogram(binWidth, new ConvergenceCriteria());
             histogram.AddObservationsToHistogram(data);
             double actual = histogram.StandardDeviation;
             Assert.Equal(expected,actual,5);//this gives much more meaningful error reporting
@@ -103,7 +103,7 @@ namespace StatisticsTests.Histograms
         public void Histogram_InvCDF(double binWidth, double prob, double expected)
         {
             double[] data = new double[14] {0,0,1,1,1,2,2,2,2,3,3,3,4,4};
-            Histogram histogram = new Histogram(binWidth);
+            Histogram histogram = new Histogram(binWidth, new ConvergenceCriteria());
             histogram.AddObservationsToHistogram(data);
             double actual = histogram.InverseCDF(prob);
             double err = Math.Abs((expected - actual) / expected);
@@ -116,7 +116,7 @@ namespace StatisticsTests.Histograms
         public void Histogram_CDF(double binWidth, double val, double expected)
         {
             double[] data = new double[5] { 1, 2, 3, 4, 5 };
-            Histogram histogram = new Histogram(binWidth);
+            Histogram histogram = new Histogram(binWidth, new ConvergenceCriteria());
             histogram.AddObservationsToHistogram(data);
             double actual = histogram.CDF(val);
             double err = Math.Abs((expected - actual) / expected);
@@ -130,7 +130,7 @@ namespace StatisticsTests.Histograms
         public void Histogram_PDF(double binWidth, double val, double expected)
         {
             double[] data = new double[5] { 1, 2, 3, 4, 5 };
-            Histogram histogram = new Histogram(binWidth);
+            Histogram histogram = new Histogram(binWidth, new ConvergenceCriteria());
             histogram.AddObservationsToHistogram(data);
             double actual = histogram.PDF(val);
             double err = Math.Abs((expected - actual) / expected);
@@ -143,7 +143,7 @@ namespace StatisticsTests.Histograms
         public void Fit_ExpandsHistogram_WithDataOutOfRange(double binWidth)
         {
             double[] data = new double[5] { 1, 2, 3, 4, 5 };
-            Histogram histogram = new Histogram(binWidth);
+            Histogram histogram = new Histogram(binWidth, new ConvergenceCriteria());
             histogram.AddObservationsToHistogram(data);
             double[] newData = new double[2] { 7, 9 };
             histogram.AddObservationsToHistogram(newData);

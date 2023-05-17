@@ -190,6 +190,8 @@ namespace HEC.FDA.ModelTest.integrationtests
         private static int futureYear = 2050;
         #endregion
 
+
+
         [Theory]
         [InlineData(310937.1, 295506.53)]
         public void WithoutAnalytical_ScenarioResults(double expectedCommercialMeanEAD, double expectedResidentialMeanEAD)

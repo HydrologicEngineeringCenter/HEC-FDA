@@ -31,7 +31,7 @@ namespace HEC.FDA.Model.extensions
             Histogram[] ys = new Histogram[ExceedanceProbabilities.Length];
             for (int iterator = 0; iterator < ys.Length; iterator++)
             {
-                ys[iterator] = new Histogram(histogramBinWidth);
+                ys[iterator] = new Histogram(histogramBinWidth, new ConvergenceCriteria());
             }
 
             for(int i=0; i<realizations; i++)

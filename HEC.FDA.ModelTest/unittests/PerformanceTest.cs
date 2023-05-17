@@ -252,16 +252,17 @@ namespace HEC.FDA.ModelTest.unittests
             Random random = new Random(seed);
             Normal normal = new Normal();
 
+
             for (int i = 0; i < convergenceCriteria.MinIterations / 2; i++)
             {
                 double uniformObservation1 = random.NextDouble() + 1;
                 double uniformObservation2 = random.NextDouble() + 2;
                 double messyObservation = normal.InverseCDF(random.NextDouble()) * random.NextDouble(); //+ random.NextDouble() * random.NextDouble() * random.NextDouble() * 1000;
                 double messyObservationLogged = Math.Log(Math.Abs(messyObservation));
-                performanceByThresholds.GetThreshold(thresholdID1).SystemPerformanceResults.AddStageForAssurance(keyForCNEP, uniformObservation1);
-                performanceByThresholds.GetThreshold(thresholdID1).SystemPerformanceResults.AddStageForAssurance(keyForCNEP, uniformObservation2);
-                performanceByThresholds.GetThreshold(thresholdID2).SystemPerformanceResults.AddStageForAssurance(keyForCNEP, messyObservationLogged);
-                performanceByThresholds.GetThreshold(thresholdID2).SystemPerformanceResults.AddStageForAssurance(keyForCNEP, messyObservation);
+                performanceByThresholds.GetThreshold(thresholdID1).SystemPerformanceResults.AddStageForAssurance(keyForCNEP, uniformObservation1, i);
+                performanceByThresholds.GetThreshold(thresholdID1).SystemPerformanceResults.AddStageForAssurance(keyForCNEP, uniformObservation2, i);
+                performanceByThresholds.GetThreshold(thresholdID2).SystemPerformanceResults.AddStageForAssurance(keyForCNEP, messyObservationLogged, i);
+                performanceByThresholds.GetThreshold(thresholdID2).SystemPerformanceResults.AddStageForAssurance(keyForCNEP, messyObservation, i);
             }
             ImpactAreaScenarioResults results = new ImpactAreaScenarioResults(id);
             
@@ -359,7 +360,7 @@ namespace HEC.FDA.ModelTest.unittests
                 IProvideRandomNumbers threadlocalRandomProvider;
                 threadlocalRandomProvider = new RandomProvider(seeds[i]);
                 double invCDF = standardNormal.InverseCDF(threadlocalRandomProvider.NextRandom());
-                systemPerformanceResults.AddStageForAssurance(standardProbability, invCDF);
+                systemPerformanceResults.AddStageForAssurance(standardProbability, invCDF, Convert.ToInt32(i));
 
             });
             systemPerformanceResults.PutDataIntoHistograms();

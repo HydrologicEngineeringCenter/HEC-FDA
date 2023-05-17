@@ -181,23 +181,6 @@ namespace Statistics.Histograms
             }
             MessageHub.Register(this);
         }
-        public Histogram(double min, double binWidth)
-        {
-            _BinWidth = binWidth;
-            Min = min;
-            Max = Min + _BinWidth;
-            int numberOfBins = 1;
-            _BinCounts = new Int64[numberOfBins];
-            _ConvergenceCriteria = new ConvergenceCriteria();
-            MessageHub.Register(this);
-        }
-        public Histogram(double binWidth)
-        {
-            _BinWidth = binWidth;
-            _minHasNotBeenSet = true;
-            _ConvergenceCriteria = new ConvergenceCriteria();
-            MessageHub.Register(this);
-        }
         public Histogram(double min, double binWidth, ConvergenceCriteria convergenceCriteria)
         {
             _BinWidth = binWidth;
@@ -205,6 +188,13 @@ namespace Statistics.Histograms
             Max = Min + _BinWidth;
             int numberOfBins = 1;
             _BinCounts = new Int64[numberOfBins];
+            _ConvergenceCriteria = convergenceCriteria;
+            MessageHub.Register(this);
+        }
+        public Histogram(double binWidth, ConvergenceCriteria convergenceCriteria)
+        {
+            _BinWidth = binWidth;
+            _minHasNotBeenSet = true;
             _ConvergenceCriteria = convergenceCriteria;
             MessageHub.Register(this);
         }

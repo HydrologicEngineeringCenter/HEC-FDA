@@ -11,17 +11,19 @@ using Statistics.Distributions;
 using System.Collections.Concurrent;
 
 namespace HEC.FDA.Model.metrics
-{ //TODO: I THINK SOME OR ALL OF THIS CLASS SHOULD BE INTERNAL 
+{ //TODO: I THINK SOME OR ALL OF THIS CLASS SHOULD BE INTERNAL  
     public class ConsequenceDistributionResult : IReportMessage, IProgressReport
     {
         #region Fields
-        private ConcurrentBag<double> _tempResults = new ConcurrentBag<double>();
+        //this will change to an array of a size the function of the convergenceCriteria 
+  
         private IHistogram _consequenceHistogram;
         private string _damageCategory;
         private string _assetCategory;
         private int _regionID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE;
         private ConvergenceCriteria _convergenceCriteria;
         private bool _isNull;
+        private double[] _tempResults;
         public event MessageReportedEventHandler MessageReport;
         public event ProgressReportedEventHandler ProgressReport;
         #endregion
@@ -83,6 +85,7 @@ namespace HEC.FDA.Model.metrics
             _convergenceCriteria = new ConvergenceCriteria();
             _consequenceHistogram = new ThreadsafeInlineHistogram();
             _isNull = true;
+            _tempResults = new double[_convergenceCriteria.IterationCount];
             MessageHub.Register(this);
 
         }
@@ -90,14 +93,15 @@ namespace HEC.FDA.Model.metrics
         /// This constructor builds a ThreadsafeInlineHistogram. Only use for parallel computes. 
         /// This constructor is used only for simulation compute and does not track impact area ID
         /// </summary>
-        public ConsequenceDistributionResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID)
+        public ConsequenceDistributionResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, double binWidth, int impactAreaID)
         {
             _damageCategory = damageCategory;
             _assetCategory = assetCategory;
             _convergenceCriteria = convergenceCriteria;
-            _consequenceHistogram = new Histogram(binWidth);
+            _consequenceHistogram = new Histogram(binWidth, convergenceCriteria);
             _isNull = false;
             _regionID = impactAreaID;
+            _tempResults = new double[_convergenceCriteria.IterationCount];
             MessageHub.Register(this);
 
         }
@@ -108,6 +112,7 @@ namespace HEC.FDA.Model.metrics
             _convergenceCriteria = convergenceCriteria;
             _consequenceHistogram = new Histogram(consequences, convergenceCriteria);
             _regionID = impactAreaID;
+            _tempResults = new double[_convergenceCriteria.IterationCount];
 
         }
         /// <summary>
@@ -127,33 +132,31 @@ namespace HEC.FDA.Model.metrics
             _regionID = impactAreaID;
             _isNull = false;
             MessageHub.Register(this);
+            _tempResults = new double[_convergenceCriteria.IterationCount];
         }
         #endregion
 
         #region Methods
-        //For the EAD compute, we need to put data in concurrent bag into a histogram 
         public void PutDataIntoHistogram()
         {
-            List<double> listToSort = new List<double>();
-            listToSort = _tempResults.ToList();
-            listToSort.Sort();
             int j = 0;
-            foreach(double item in listToSort) { 
+            foreach(double item in _tempResults) { 
                 _consequenceHistogram.AddObservationToHistogram(item, j);
                 j++;
             }
-            _tempResults.Clear();
+            Array.Clear(_tempResults);
         }
 
         //If computing stage damage, we'll plop the realization directly into the histogram
-        internal void AddConsequenceRealization(double damageRealization)
+        internal void AddConsequenceRealization(double damageRealization, long iteration = 1, bool parallelCompute = false)
         {
-            if (_consequenceHistogram is ThreadsafeInlineHistogram)
+            if (parallelCompute)
             {
-                _tempResults.Add(damageRealization);
+                _tempResults[iteration] = (damageRealization);
+
             } else
             {
-                _consequenceHistogram.AddObservationToHistogram(damageRealization, _consequenceHistogram.SampleSize + 1); ;
+                _consequenceHistogram.AddObservationToHistogram(damageRealization, iteration); ;
             }
         }
 

@@ -5,6 +5,8 @@ namespace HEC.FDA.Model.compute
     public class FrequencyDamageMessage : MVVMFramework.Base.Interfaces.IMessage
     {
         private PairedData _frequencyDamage;
+        private string _damageCategory;
+        private string _assetCategory;
 
         public string Message
         {
@@ -20,9 +22,25 @@ namespace HEC.FDA.Model.compute
                 return _frequencyDamage;
             }
         }
-        public FrequencyDamageMessage(PairedData frequencyDamage)
+        public string DamageCategory
+        {
+            get
+            {
+                return _damageCategory;
+            }
+        }
+        public string AssetCategory
+        {
+            get
+            {
+                return _assetCategory;
+            }
+        }
+        public FrequencyDamageMessage(PairedData frequencyDamage, string damageCategory, string assetCategory)
         {
             _frequencyDamage = frequencyDamage;
+            _damageCategory = damageCategory;
+            _assetCategory = assetCategory;
         }
     }
 }

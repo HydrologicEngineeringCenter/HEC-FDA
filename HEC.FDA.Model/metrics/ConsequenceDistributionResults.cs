@@ -55,6 +55,8 @@ namespace HEC.FDA.Model.metrics
             ConsequenceDistributionResult dummyConsequenceDistributionResult = new ConsequenceDistributionResult();
             _consequenceResultList.Add(dummyConsequenceDistributionResult);
             _isNull = true;
+
+            //create an array to collect data the side of the convergence criteria iteration count 
         }
         internal ConsequenceDistributionResults(bool isNull)
         {
@@ -86,12 +88,12 @@ namespace HEC.FDA.Model.metrics
 
         #region Methods 
         //This constructor is used in the simulation parallel compute and creates a threadsafe inline histogram inside consequence distribution result 
-        internal void AddNewConsequenceResultObject(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID, bool histogramIsZeroValued = false)
+        internal void AddNewConsequenceResultObject(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, double binWidth, int impactAreaID, bool histogramIsZeroValued = false)
         {
             ConsequenceDistributionResult damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
             if (damageResult.IsNull)
             {
-                ConsequenceDistributionResult newDamageResult = new ConsequenceDistributionResult(damageCategory, assetCategory, convergenceCriteria, impactAreaID);
+                ConsequenceDistributionResult newDamageResult = new ConsequenceDistributionResult(damageCategory, assetCategory, convergenceCriteria, binWidth, impactAreaID);
                 _consequenceResultList.Add(newDamageResult);
             }
         }
@@ -104,10 +106,10 @@ namespace HEC.FDA.Model.metrics
                 _consequenceResultList.Add(consequenceResultToAdd);
             }
         }
-        internal void AddConsequenceRealization(double damageEstimate, string damageCategory, string assetCategory, int impactAreaID, long iteration)
+        internal void AddConsequenceRealization(double damageEstimate, string damageCategory, string assetCategory, int impactAreaID, long iteration, bool parallelCompute)
         {
             ConsequenceDistributionResult damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
-            damageResult.AddConsequenceRealization(damageEstimate);
+            damageResult.AddConsequenceRealization(damageEstimate, iteration, parallelCompute);
 
         }
         internal void AddConsequenceRealization(ConsequenceResult consequenceResult, string damageCategory, int impactAreaID)
