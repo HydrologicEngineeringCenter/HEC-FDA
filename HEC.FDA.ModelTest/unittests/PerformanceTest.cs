@@ -233,7 +233,7 @@ namespace HEC.FDA.ModelTest.unittests
             Normal normal = new Normal();
 
             int iterationCount = convergenceCriteria.IterationCount;
-            int computeChunks = convergenceCriteria.MinIterations / convergenceCriteria.IterationCount;
+            int computeChunks = 1000; ;
             for (int j = 0; j < computeChunks; j++)
             {
                 Parallel.For(0, iterationCount, i =>
