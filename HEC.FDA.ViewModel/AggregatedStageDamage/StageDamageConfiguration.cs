@@ -165,19 +165,19 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 int impactAreaId = impactAreaRow.ImpactArea.ID;
 
                 //we want to know if it is flow or stage
-                AnalyticalFrequencyElement freqElement = impactAreaRow.FrequencyFunction.Element;
+                FrequencyElement freqElement = impactAreaRow.FrequencyFunction.Element;
                 bool isGraphical = !freqElement.IsAnalytical;
                 bool isFlow = true;
                 if (isGraphical)
                 {
-                    isFlow = freqElement.MyGraphicalVM.UseFlow;
+                    isFlow = freqElement.GraphicalUsesFlow;
                 }
                 UncertainPairedData regulatedUnregulatedFunction = null;
                 if(impactAreaRow.RegulatedUnregulatedFunction != null && impactAreaRow.RegulatedUnregulatedFunction.Element != null)
                 {
                     regulatedUnregulatedFunction = impactAreaRow.RegulatedUnregulatedFunction.Element.CurveComponentVM.SelectedItemToPairedData();
                 }
-                GraphicalUncertainPairedData graphicaluncertPairedData = freqElement.MyGraphicalVM.GraphicalUncertainPairedData;
+                GraphicalUncertainPairedData graphicaluncertPairedData = freqElement.GraphicalUncertainPairedData;
 
                 if (isGraphical)
                 {
@@ -196,7 +196,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 }
                 else
                 {
-                    Statistics.Distributions.LogPearson3 logPearson3 = freqElement.CreateAnalyticalLP3Distribution();
+                    Statistics.Distributions.LogPearson3 logPearson3 = freqElement.LPIII;
                     UncertainPairedData stageDischargePairedData = impactAreaRow.StageDischargeFunction.Element.CurveComponentVM.SelectedItemToPairedData();
                     stageDamages.Add(new ImpactAreaStageDamage(impactAreaId, inv, SelectedHydraulics.DataSet, convergenceCriteria, hydroParentDirectory,
                         analyticalFlowFrequency: logPearson3, dischargeStage:stageDischargePairedData, unregulatedRegulated: regulatedUnregulatedFunction));

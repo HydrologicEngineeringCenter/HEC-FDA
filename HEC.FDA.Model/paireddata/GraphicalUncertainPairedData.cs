@@ -160,7 +160,7 @@ namespace HEC.FDA.Model.paireddata
             return nonExceedanceProbabilities;
         }
         //compute with deterministic is an unused argument because graphical returns deterministically for the median random provider 
-        public IPairedData SamplePairedData(double probability, bool computeIsDeterministic = false)
+        public PairedData SamplePairedData(double probability, bool computeIsDeterministic = false)
         {
             double[] y = new double[_StageOrLogFlowDistributions.Length];
             for (int i = 0; i < _NonExceedanceProbabilities.Length; i++)
