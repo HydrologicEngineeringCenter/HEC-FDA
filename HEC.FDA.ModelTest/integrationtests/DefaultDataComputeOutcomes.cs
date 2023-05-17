@@ -157,32 +157,32 @@ namespace HEC.FDA.ModelTest.integrationtests
         }
         private static UncertainPairedData stageDischarge = new UncertainPairedData(_StageDischargeXValues, _StageDischargeYValues, stageDischargeMetaData);
 
-        //set up levee
-        private static double[] _FailureXValues = new double[] { 930, 935, 936, 936.5, 936.9, 937, 948 };
-        private static IDistribution[] _FailureYValues = FailureYValues();
+        //set up levee has been commented out because the 1.4.3 tests have not been migrated to here yet 
+        //private static double[] _FailureXValues = new double[] { 930, 935, 936, 936.5, 936.9, 937, 948 };
+        //private static IDistribution[] _FailureYValues = FailureYValues();
 
-        private static IDistribution[] FailureYValues()
-        {
-            double[] failureProbabilities = new double[] { 0, 0.01, 0.1, 0.5, 0.9, 1, 1 };
-            IDistribution[] failureProbArray = new IDistribution[failureProbabilities.Length];
-            for (int i = 0; i < failureProbabilities.Length; i++)
-            {
-                failureProbArray[i] = new Deterministic(failureProbabilities[i]);
-            }
-            return failureProbArray;
-        }
+        //private static IDistribution[] FailureYValues()
+        //{
+        //    double[] failureProbabilities = new double[] { 0, 0.01, 0.1, 0.5, 0.9, 1, 1 };
+        //    IDistribution[] failureProbArray = new IDistribution[failureProbabilities.Length];
+        //    for (int i = 0; i < failureProbabilities.Length; i++)
+        //    {
+        //        failureProbArray[i] = new Deterministic(failureProbabilities[i]);
+        //    }
+        //    return failureProbArray;
+        //}
 
-        private static UncertainPairedData systemResponse = new UncertainPairedData(_FailureXValues, _FailureYValues, failureLeveeMetaData);
-        private static double defaultLeveeElevation = 937;
-        private static double[] defaultFailureStages = new double[] { 920, 936.999, 937, 948 };
-        private static IDistribution[] defaultFailureProbs = new IDistribution[]
-        {
-            new Deterministic(0),
-            new Deterministic(0),
-            new Deterministic(1),
-            new Deterministic(1),
-        };
-        private static UncertainPairedData defaultSystemResponse = new UncertainPairedData(defaultFailureStages, defaultFailureProbs, defaultLeveeMetaData);
+        //private static UncertainPairedData systemResponse = new UncertainPairedData(_FailureXValues, _FailureYValues, failureLeveeMetaData);
+        //private static double defaultLeveeElevation = 937;
+        //private static double[] defaultFailureStages = new double[] { 920, 936.999, 937, 948 };
+        //private static IDistribution[] defaultFailureProbs = new IDistribution[]
+        //{
+        //    new Deterministic(0),
+        //    new Deterministic(0),
+        //    new Deterministic(1),
+        //    new Deterministic(1),
+        //};
+        //private static UncertainPairedData defaultSystemResponse = new UncertainPairedData(defaultFailureStages, defaultFailureProbs, defaultLeveeMetaData);
 
         private static int impactAreaID1 = 1;
         private static int impactAreaID2 = 2;
