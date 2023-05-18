@@ -13,8 +13,8 @@ namespace HEC.FDA.ViewModel.Results
         public double ThresholdValue { get; set; }
 
         public double LongTerm10 { get; set; }
-        public double LongTerm20 { get; set; }
         public double LongTerm30 { get; set; }
+        public double LongTerm50 { get; set; }
 
         public double Mean { get; set; }
         public double Median { get; set; }
@@ -41,8 +41,8 @@ namespace HEC.FDA.ViewModel.Results
             int thresholdID = threshold.ThresholdID;
 
             LongTerm10 = results.LongTermExceedanceProbability(thresholdID, 10);
-            LongTerm20 = results.LongTermExceedanceProbability( thresholdID, 20);
             LongTerm30 = results.LongTermExceedanceProbability( thresholdID, 30);
+            LongTerm50 = results.LongTermExceedanceProbability( thresholdID, 50);
 
             Mean = results.MeanAEP( thresholdID);
             Median = results.MedianAEP( thresholdID); 

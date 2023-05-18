@@ -144,8 +144,8 @@
                         <ColumnDefinition Width="{Binding ElementName=perfMedian, Path=ActualWidth}"/>
 
                         <ColumnDefinition Width="{Binding ElementName=perf10, Path=ActualWidth}"/>
-                        <ColumnDefinition Width="{Binding ElementName=perf20, Path=ActualWidth}"/>
                         <ColumnDefinition Width="{Binding ElementName=perf30, Path=ActualWidth}"/>
+                        <ColumnDefinition Width="{Binding ElementName=perf50, Path=ActualWidth}"/>
 
                         <ColumnDefinition Width="{Binding ElementName=perfProb1, Path=ActualWidth}"/>
                         <ColumnDefinition Width="{Binding ElementName=perfProb04, Path=ActualWidth}"/>
@@ -185,19 +185,19 @@
                         <DataGridTextColumn x:Name="perfThresholdType" Header="Threshold Type" Binding="{Binding ThresholdType, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
                         <DataGridTextColumn x:Name="perfThresholdValue" Header="Threshold Value" Binding="{Binding ThresholdValue, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
 
-                        <DataGridTextColumn x:Name="perfMean" Header="Mean" Binding="{Binding Mean, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
-                        <DataGridTextColumn x:Name="perfMedian" Header="Median" Binding="{Binding Median, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
-                                
-                        <DataGridTextColumn x:Name="perf10" Header="10 Years" Binding="{Binding LongTerm10, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
-                        <DataGridTextColumn x:Name="perf20" Header="20 Years" Binding="{Binding LongTerm20, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
-                        <DataGridTextColumn x:Name="perf30" Header="30 Years" Binding="{Binding LongTerm30, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
+                                <DataGridTextColumn x:Name="perfMean" Header="Mean" Binding="{Binding Mean, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" Width="110"/>
+                                <DataGridTextColumn x:Name="perfMedian" Header="Median" Binding="{Binding Median, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" Width="110"/>
 
-                                <DataGridTextColumn x:Name="perfProb1" Header="0.1" Binding="{Binding Threshold1, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
-                                <DataGridTextColumn x:Name="perfProb04" Header="0.04" Binding="{Binding Threshold04, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
-                                <DataGridTextColumn x:Name="perfProb02" Header="0.02" Binding="{Binding Threshold02, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
-                                <DataGridTextColumn x:Name="perfProb01" Header="0.01" Binding="{Binding Threshold01, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
-                                <DataGridTextColumn x:Name="perfProb004" Header="0.004" Binding="{Binding Threshold004, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
-                                <DataGridTextColumn x:Name="perfProb002" Header="0.002" Binding="{Binding Threshold002, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
+                                <DataGridTextColumn x:Name="perf10" Header="10 Years" Binding="{Binding LongTerm10, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" Width="110"/>
+                                <DataGridTextColumn x:Name="perf30" Header="30 Years" Binding="{Binding LongTerm30, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" Width="110"/>
+                                <DataGridTextColumn x:Name="perf50" Header="50 Years" Binding="{Binding LongTerm50, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" Width="110"/>
+
+                                <DataGridTextColumn x:Name="perfProb1" Header="0.1" Binding="{Binding Threshold1, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" Width="110"/>
+                                <DataGridTextColumn x:Name="perfProb04" Header="0.04" Binding="{Binding Threshold04, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" Width="110"/>
+                                <DataGridTextColumn x:Name="perfProb02" Header="0.02" Binding="{Binding Threshold02, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" Width="110"/>
+                                <DataGridTextColumn x:Name="perfProb01" Header="0.01" Binding="{Binding Threshold01, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" Width="110"/>
+                                <DataGridTextColumn x:Name="perfProb004" Header="0.004" Binding="{Binding Threshold004, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" Width="110"/>
+                                <DataGridTextColumn x:Name="perfProb002" Header="0.002" Binding="{Binding Threshold002, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" Width="110"/>
 
                     </DataGrid.Columns>
                 </twp:FdaDataGrid>
@@ -252,12 +252,12 @@
                                 <DataGridTextColumn x:Name="aepThresholdType" Header="Threshold Type" Binding="{Binding ThresholdType, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
                                 <DataGridTextColumn x:Name="aepThresholdValue" Header="Threshold Value" Binding="{Binding ThresholdValue, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
 
-                                <DataGridTextColumn x:Name="aepProb1" Header="0.1" Binding="{Binding AEP1, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
-                                <DataGridTextColumn x:Name="aepProb04" Header="0.04" Binding="{Binding AEP04, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
-                                <DataGridTextColumn x:Name="aepProb02" Header="0.02" Binding="{Binding AEP02, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
-                                <DataGridTextColumn x:Name="aepProb01" Header="0.01" Binding="{Binding AEP01, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
-                                <DataGridTextColumn x:Name="aepProb004" Header="0.004" Binding="{Binding AEP004, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
-                                <DataGridTextColumn x:Name="aepProb002" Header="0.002" Binding="{Binding AEP002, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
+                                <DataGridTextColumn x:Name="aepProb1" Header="0.1" Binding="{Binding AEP1, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" Width="110"/>
+                                <DataGridTextColumn x:Name="aepProb04" Header="0.04" Binding="{Binding AEP04, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" Width="110"/>
+                                <DataGridTextColumn x:Name="aepProb02" Header="0.02" Binding="{Binding AEP02, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" Width="110"/>
+                                <DataGridTextColumn x:Name="aepProb01" Header="0.01" Binding="{Binding AEP01, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" Width="110"/>
+                                <DataGridTextColumn x:Name="aepProb004" Header="0.004" Binding="{Binding AEP004, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" Width="110"/>
+                                <DataGridTextColumn x:Name="aepProb002" Header="0.002" Binding="{Binding AEP002, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" Width="110"/>
 
                             </DataGrid.Columns>
                         </twp:FdaDataGrid>
