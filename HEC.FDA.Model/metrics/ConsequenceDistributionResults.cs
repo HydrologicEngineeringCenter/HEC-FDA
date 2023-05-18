@@ -17,7 +17,6 @@ namespace HEC.FDA.Model.metrics
     {
         #region Fields
         private int _alternativeID;
-        private ConvergenceCriteria _ConvergenceCriteria;
         private List<ConsequenceDistributionResult> _consequenceResultList;
         //impact area to be string?
         private bool _isNull;
@@ -112,12 +111,12 @@ namespace HEC.FDA.Model.metrics
             damageResult.AddConsequenceRealization(damageEstimate, iteration, parallelCompute);
 
         }
-        internal void AddConsequenceRealization(ConsequenceResult consequenceResult, string damageCategory, int impactAreaID)
+        internal void AddConsequenceRealization(ConsequenceResult consequenceResult, string damageCategory, int impactAreaID, int iteration)
         {
-            GetConsequenceResult(damageCategory, utilities.StringConstants.STRUCTURE_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.StructureDamage);
-            GetConsequenceResult(damageCategory, utilities.StringConstants.CONTENT_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.ContentDamage);
-            GetConsequenceResult(damageCategory, utilities.StringConstants.VEHICLE_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.VehicleDamage);
-            GetConsequenceResult(damageCategory, utilities.StringConstants.OTHER_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.OtherDamage);
+            GetConsequenceResult(damageCategory, utilities.StringConstants.STRUCTURE_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.StructureDamage, iteration, true);
+            GetConsequenceResult(damageCategory, utilities.StringConstants.CONTENT_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.ContentDamage, iteration, true);
+            GetConsequenceResult(damageCategory, utilities.StringConstants.VEHICLE_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.VehicleDamage, iteration, true);
+            GetConsequenceResult(damageCategory, utilities.StringConstants.OTHER_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.OtherDamage, iteration, true);
         }
         public void PutDataIntoHistograms()
         {
