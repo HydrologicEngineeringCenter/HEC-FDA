@@ -288,7 +288,8 @@ namespace HEC.FDA.Model.compute
             {
                 computeChunks = 1;
             }
-            while (!_ImpactAreaScenarioResults.IsConverged(computeWithDamage))
+            bool computeIsNotConverged = false;
+            while (computeIsNotConverged)
             {
                 int j = 0;
                 while (j < computeChunks)
@@ -376,6 +377,7 @@ namespace HEC.FDA.Model.compute
                 else
                 {
                     ReportMessage(this, new MessageEventArgs(new ComputeCompleteMessage(completedIterations, _ImpactAreaID)));
+                    computeIsNotConverged = false;
                     break;
                 }
 
