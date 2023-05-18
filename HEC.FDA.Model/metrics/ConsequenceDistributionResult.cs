@@ -147,7 +147,6 @@ namespace HEC.FDA.Model.metrics
             Array.Clear(_tempResults);
         }
 
-        //If computing stage damage, we'll plop the realization directly into the histogram
         internal void AddConsequenceRealization(double damageRealization, long iteration = 1, bool parallelCompute = false)
         {
             if (parallelCompute)

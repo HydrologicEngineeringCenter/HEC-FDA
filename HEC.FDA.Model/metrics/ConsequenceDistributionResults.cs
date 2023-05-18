@@ -18,6 +18,7 @@ namespace HEC.FDA.Model.metrics
         #region Fields
         private int _alternativeID;
         private List<ConsequenceDistributionResult> _consequenceResultList;
+        private ConvergenceCriteria _ConvergenceCriteria;
         //impact area to be string?
         private bool _isNull;
 

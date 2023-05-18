@@ -326,6 +326,7 @@ namespace HEC.FDA.Model.stageDamage
                 consequenceDistributionResults.AddNewConsequenceResultObject(damageCategory, utilities.StringConstants.CONTENT_ASSET_CATEGORY, _ConvergenceCriteria, _StageBinWidth, ImpactAreaID);
                 consequenceDistributionResults.AddNewConsequenceResultObject(damageCategory, utilities.StringConstants.OTHER_ASSET_CATEGORY, _ConvergenceCriteria, _StageBinWidth, ImpactAreaID);
                 consequenceDistributionResults.AddNewConsequenceResultObject(damageCategory, utilities.StringConstants.VEHICLE_ASSET_CATEGORY, _ConvergenceCriteria, _StageBinWidth, ImpactAreaID);
+                consequenceDistributionResultsList.Add(consequenceDistributionResults);
             }
             return consequenceDistributionResultsList;
         }
@@ -333,7 +334,7 @@ namespace HEC.FDA.Model.stageDamage
         private double[] ComputeStagesAtIndexLocation(List<double> profileProbabilities)
         {
             //extrapolate lower stages
-            int quantityStages = _numExtrapolatedStagesToCompute * 2 + profileProbabilities.Count + profileProbabilities.Count * _numInterpolatedStagesToCompute;
+            int quantityStages = _numExtrapolatedStagesToCompute * 2 + (profileProbabilities.Count - 1) * _numInterpolatedStagesToCompute;
             double[] stages = new double[quantityStages];
             double stageAtProbabilityOfLowestProfile = _StageFrequency.f(1 - profileProbabilities.Max());
             float indexStationLowerStageDelta = (float)(stageAtProbabilityOfLowestProfile - _minStageForArea);
@@ -483,7 +484,7 @@ namespace HEC.FDA.Model.stageDamage
         private void ComputeUpperStageDamage(ref List<ConsequenceDistributionResults> parallelConsequenceResultCollection, string damageCategory, List<DeterministicOccupancyType> deterministicOccTypes, (Inventory, List<float[]>) inventoryAndWaterCoupled, List<double> profileProbabilities, int iterationIndex)
         {
             //the probability of a profile is an EXCEEDANCE probability but in the model we use NONEXCEEDANCE PROBABILITY
-            int stageIndex = _numExtrapolatedStagesToCompute + _numInterpolatedStagesToCompute * profileProbabilities.Count;
+            int stageIndex = _numExtrapolatedStagesToCompute + _numInterpolatedStagesToCompute * profileProbabilities.Count - 2;
             double stageAtProbabilityOfHighestProfile = _StageFrequency.f(1 - profileProbabilities.Min());
             float indexStationUpperStageDelta = (float)(_maxStageForArea - stageAtProbabilityOfHighestProfile);
             float upperInterval = indexStationUpperStageDelta / _numExtrapolatedStagesToCompute;
