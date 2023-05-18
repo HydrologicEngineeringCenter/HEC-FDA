@@ -288,7 +288,7 @@ namespace HEC.FDA.Model.compute
             {
                 computeChunks = 1;
             }
-            bool computeIsNotConverged = false;
+            bool computeIsNotConverged = true;
             while (computeIsNotConverged)
             {
                 int j = 0;

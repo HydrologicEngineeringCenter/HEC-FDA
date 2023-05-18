@@ -147,6 +147,10 @@ namespace HEC.FDA.Model.metrics
                 List<double> list = _tempResults.ToList();
                 double max = _tempResults.Max();
                 double binWidth = max / 1000;
+                if (binWidth == 0)
+                {
+                    binWidth = 1;
+                }
                 _consequenceHistogram = new Histogram(binWidth, _convergenceCriteria);
                 _HistogramNotConstructed = false;
             }
@@ -159,14 +163,7 @@ namespace HEC.FDA.Model.metrics
 
         internal void AddConsequenceRealization(double damageRealization, long iteration = 1, bool parallelCompute = false)
         {
-            if (parallelCompute)
-            {
-                _tempResults[iteration] = (damageRealization);
-
-            } else
-            {
-                _consequenceHistogram.AddObservationToHistogram(damageRealization, iteration);
-            }
+             _tempResults[iteration] = (damageRealization);
         }
 
         internal double MeanExpectedAnnualConsequences()
