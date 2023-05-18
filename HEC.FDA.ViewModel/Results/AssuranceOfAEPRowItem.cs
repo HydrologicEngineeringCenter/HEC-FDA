@@ -18,12 +18,12 @@ namespace HEC.FDA.ViewModel.Results
         public double Mean { get; set; }
         public double Median { get; set; }
 
-        public double Threshold1 { get; set; }
-        public double Threshold04 { get; set; }
-        public double Threshold02 { get; set; }
-        public double Threshold01 { get; set; }
-        public double Threshold004 { get; set; }
-        public double Threshold002 { get; set; }
+        public double AEP1 { get; set; }
+        public double AEP04 { get; set; }
+        public double AEP02 { get; set; }
+        public double AEP01 { get; set; }
+        public double AEP004 { get; set; }
+        public double AEP002 { get; set; }
 
         public AssuranceOfAEPRowItem(IASElement scenario, SpecificIAS ias, Threshold threshold)
         {
@@ -41,12 +41,12 @@ namespace HEC.FDA.ViewModel.Results
             Mean = results.MeanAEP(iasID, thresholdID);
             Median = results.MedianAEP(iasID, thresholdID);
 
-            Threshold1 = results.AssuranceOfAEP(ias.ImpactAreaID, .1, threshold.ThresholdID);
-            Threshold04 = results.AssuranceOfAEP(ias.ImpactAreaID, .04, threshold.ThresholdID);
-            Threshold02 = results.AssuranceOfAEP(ias.ImpactAreaID, .02, threshold.ThresholdID);
-            Threshold01 = results.AssuranceOfAEP(ias.ImpactAreaID, .01, threshold.ThresholdID);
-            Threshold004 = results.AssuranceOfAEP(ias.ImpactAreaID, .004, threshold.ThresholdID);
-            Threshold002 = results.AssuranceOfAEP(ias.ImpactAreaID, .002, threshold.ThresholdID);
+            AEP1 = results.AssuranceOfAEP(iasID, .1, thresholdID);
+            AEP04 = results.AssuranceOfAEP(iasID, .04, thresholdID);
+            AEP02 = results.AssuranceOfAEP(iasID, .02, thresholdID);
+            AEP01 = results.AssuranceOfAEP(iasID, .01, thresholdID);
+            AEP004 = results.AssuranceOfAEP(iasID, .004, thresholdID);
+            AEP002 = results.AssuranceOfAEP(iasID, .002, thresholdID);
 
         }
 
