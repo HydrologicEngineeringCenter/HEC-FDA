@@ -13,13 +13,13 @@ namespace HEC.MVVMFramework.Base.Implementations
     {
         public static void Register(object obj)
         {
-            RegRecursively(obj, MessageHub.Register);
+            ChangeRegistrationSelfAndPropsRecursively(obj, MessageHub.Register);
         }
         public static void UnRegister(object obj)
         {
-            RegRecursively(obj, MessageHub.Unregister);
+            ChangeRegistrationSelfAndPropsRecursively(obj, MessageHub.Unregister);
         }
-        private static void RegRecursively(object obj, Action<IReportMessage> unRegOrReg)
+        private static void ChangeRegistrationSelfAndPropsRecursively(object obj, Action<IReportMessage> unRegOrReg)
         {
             if (obj == null)
             {
@@ -42,12 +42,12 @@ namespace HEC.MVVMFramework.Base.Implementations
                 {
                     foreach (object ob in (IEnumerable)propertyValue)
                     {
-                        RegRecursively(ob, unRegOrReg);
+                        ChangeRegistrationSelfAndPropsRecursively(ob, unRegOrReg);
                     }
                 }
                 else
                 {
-                    RegRecursively(property.GetValue(obj), unRegOrReg);
+                    ChangeRegistrationSelfAndPropsRecursively(property.GetValue(obj), unRegOrReg);
                 }
             }
         }
