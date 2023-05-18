@@ -573,7 +573,7 @@ namespace HEC.FDA.Model.compute
             {
                 for (int i = 0; i < er101RequiredNonExceedanceProbabilities.Length; i++)
                 {
-                    thresholdEntry.SystemPerformanceResults.AddAssuranceHistogram(er101RequiredNonExceedanceProbabilities[i]);
+                    thresholdEntry.SystemPerformanceResults.AddStageAssuranceHistogram(er101RequiredNonExceedanceProbabilities[i]);
                 }
             }
         }
