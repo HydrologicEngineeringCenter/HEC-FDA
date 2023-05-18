@@ -21,8 +21,8 @@ namespace HEC.MVVMFramework.Base.Implementations
         }
         private static void RegRecursively(object obj, Action<IReportMessage> unRegOrReg)
         {
-            if (obj == null) 
-            { 
+            if (obj == null)
+            {
                 return;
             }
             if (obj is IReportMessage reporter)
@@ -33,13 +33,13 @@ namespace HEC.MVVMFramework.Base.Implementations
             PropertyInfo[] properties = objectType.GetProperties();
             foreach (PropertyInfo property in properties)
             {
+                object propertyValue = property.GetValue(obj);
+                if (propertyValue == null)
+                {
+                    continue;
+                }
                 if (property.PropertyType.GetInterfaces().Contains(typeof(IEnumerable)))
                 {
-                    object propertyValue = property.GetValue(obj);
-                    if (propertyValue == null)
-                    {
-                        continue;
-                    }
                     foreach (object ob in (IEnumerable)propertyValue)
                     {
                         RegRecursively(ob, unRegOrReg);
