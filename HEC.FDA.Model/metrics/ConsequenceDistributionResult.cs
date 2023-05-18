@@ -142,6 +142,7 @@ namespace HEC.FDA.Model.metrics
         public void PutDataIntoHistogram()
         {
             int j = 0;
+
             if(_HistogramNotConstructed)
             {
                 List<double> list = _tempResults.ToList();
@@ -154,10 +155,7 @@ namespace HEC.FDA.Model.metrics
                 _consequenceHistogram = new Histogram(binWidth, _convergenceCriteria);
                 _HistogramNotConstructed = false;
             }
-            foreach (double item in _tempResults) { 
-                _consequenceHistogram.AddObservationToHistogram(item, j);
-                j++;
-            }
+            _consequenceHistogram.AddObservationsToHistogram(_tempResults);
             Array.Clear(_tempResults);
         }
 
