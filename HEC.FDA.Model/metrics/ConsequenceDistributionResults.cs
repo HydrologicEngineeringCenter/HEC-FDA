@@ -88,12 +88,12 @@ namespace HEC.FDA.Model.metrics
 
         #region Methods 
         //This constructor is used in the simulation parallel compute and creates a threadsafe inline histogram inside consequence distribution result 
-        internal void AddNewConsequenceResultObject(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, double binWidth, int impactAreaID, bool histogramIsZeroValued = false)
+        internal void AddNewConsequenceResultObject(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID, bool histogramIsZeroValued = false)
         {
             ConsequenceDistributionResult damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
             if (damageResult.IsNull)
             {
-                ConsequenceDistributionResult newDamageResult = new ConsequenceDistributionResult(damageCategory, assetCategory, convergenceCriteria, binWidth, impactAreaID);
+                ConsequenceDistributionResult newDamageResult = new ConsequenceDistributionResult(damageCategory, assetCategory, convergenceCriteria, impactAreaID);
                 _consequenceResultList.Add(newDamageResult);
             }
         }

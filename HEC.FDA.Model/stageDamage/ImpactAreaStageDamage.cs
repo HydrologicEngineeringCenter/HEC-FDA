@@ -14,6 +14,7 @@ using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace HEC.FDA.Model.stageDamage
 {
@@ -31,7 +32,8 @@ namespace HEC.FDA.Model.stageDamage
         private bool _usingMockData;
         private Inventory _inventory;
         private HydraulicDataset _hydraulicDataset;
-        private int _StageBinWidth = 1;
+        //TODO - don't do a hard coded bin width
+        private int _DollarBinWidth = 1;
 
         private double _minStageForArea;
         private double _maxStageForArea;
@@ -286,13 +288,15 @@ namespace HEC.FDA.Model.stageDamage
                 //InitializeParallelArrays(ref parallelConsequenceResultCollection);
                 for (int j = 0; j < computeChunks; j++)
                 {
-                    for (int i = 0; i < iterations; i++)
-                    {
+                    //Parallel.For(0, iterations, i =>
+                    //{
+                     for (int i = 0; i < iterations; i++) { 
                         List<DeterministicOccupancyType> deterministicOccTypes = _inventory.SampleOccupancyTypes(randomProvider);
                         ComputeLowerStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, i);
                         ComputeMiddleStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, i);
                         ComputeUpperStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, i);
                     }
+                    //);
 
                     DumpDataIntoDistributions(ref consequenceDistributionResults);
                 }
@@ -322,10 +326,10 @@ namespace HEC.FDA.Model.stageDamage
             for (int i = 0; i < _StagesAtIndexLocation.Length; i++)
             {
                 ConsequenceDistributionResults consequenceDistributionResults = new ConsequenceDistributionResults(_ConvergenceCriteria);
-                consequenceDistributionResults.AddNewConsequenceResultObject(damageCategory, utilities.StringConstants.STRUCTURE_ASSET_CATEGORY, _ConvergenceCriteria, _StageBinWidth, ImpactAreaID);
-                consequenceDistributionResults.AddNewConsequenceResultObject(damageCategory, utilities.StringConstants.CONTENT_ASSET_CATEGORY, _ConvergenceCriteria, _StageBinWidth, ImpactAreaID);
-                consequenceDistributionResults.AddNewConsequenceResultObject(damageCategory, utilities.StringConstants.OTHER_ASSET_CATEGORY, _ConvergenceCriteria, _StageBinWidth, ImpactAreaID);
-                consequenceDistributionResults.AddNewConsequenceResultObject(damageCategory, utilities.StringConstants.VEHICLE_ASSET_CATEGORY, _ConvergenceCriteria, _StageBinWidth, ImpactAreaID);
+                consequenceDistributionResults.AddNewConsequenceResultObject(damageCategory, utilities.StringConstants.STRUCTURE_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID);
+                consequenceDistributionResults.AddNewConsequenceResultObject(damageCategory, utilities.StringConstants.CONTENT_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID);
+                consequenceDistributionResults.AddNewConsequenceResultObject(damageCategory, utilities.StringConstants.OTHER_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID);
+                consequenceDistributionResults.AddNewConsequenceResultObject(damageCategory, utilities.StringConstants.VEHICLE_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID);
                 consequenceDistributionResultsList.Add(consequenceDistributionResults);
             }
             return consequenceDistributionResultsList;

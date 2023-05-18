@@ -24,6 +24,8 @@ namespace HEC.FDA.Model.metrics
         private ConvergenceCriteria _convergenceCriteria;
         private bool _isNull;
         private double[] _tempResults;
+        private bool _HistogramNotConstructed = false;
+
         public event MessageReportedEventHandler MessageReport;
         public event ProgressReportedEventHandler ProgressReport;
         #endregion
@@ -93,15 +95,15 @@ namespace HEC.FDA.Model.metrics
         /// This constructor builds a ThreadsafeInlineHistogram. Only use for parallel computes. 
         /// This constructor is used only for simulation compute and does not track impact area ID
         /// </summary>
-        public ConsequenceDistributionResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, double binWidth, int impactAreaID)
+        public ConsequenceDistributionResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID)
         {
             _damageCategory = damageCategory;
             _assetCategory = assetCategory;
             _convergenceCriteria = convergenceCriteria;
-            _consequenceHistogram = new Histogram(binWidth, convergenceCriteria);
             _isNull = false;
             _regionID = impactAreaID;
             _tempResults = new double[_convergenceCriteria.IterationCount];
+            _HistogramNotConstructed = true;
             MessageHub.Register(this);
 
         }
@@ -140,7 +142,15 @@ namespace HEC.FDA.Model.metrics
         public void PutDataIntoHistogram()
         {
             int j = 0;
-            foreach(double item in _tempResults) { 
+            if(_HistogramNotConstructed)
+            {
+                List<double> list = _tempResults.ToList();
+                double max = _tempResults.Max();
+                double binWidth = max / 1000;
+                _consequenceHistogram = new Histogram(binWidth, _convergenceCriteria);
+                _HistogramNotConstructed = false;
+            }
+            foreach (double item in _tempResults) { 
                 _consequenceHistogram.AddObservationToHistogram(item, j);
                 j++;
             }

@@ -152,26 +152,12 @@ namespace HEC.FDA.Model.compute
                 {
                     if (stageDamage.CurveMetaData.Equals(metaData.Item1))
                     {
-                        //computeBinWidth based on scale of EAD
-                        double binWidth = ComputeBinWidth(metaData.Item2, convergenceCriteria);
-                        _ImpactAreaScenarioResults.ConsequenceResults.AddNewConsequenceResultObject(metaData.Item1.DamageCategory, metaData.Item1.AssetCategory, convergenceCriteria, binWidth, _ImpactAreaID, histogramIsZeroValued);
+                        _ImpactAreaScenarioResults.ConsequenceResults.AddNewConsequenceResultObject(metaData.Item1.DamageCategory, metaData.Item1.AssetCategory, convergenceCriteria, _ImpactAreaID, histogramIsZeroValued);
                     }
                 }
 
 
             }
-        }
-
-        private double ComputeBinWidth(PairedData damageFrequency, ConvergenceCriteria convergenceCriteria)
-        {
-            double binWidth = 1;
-            double ead = damageFrequency.integrate();
-            double eadBinQuantity = 250;
-            if(ead > 250)
-            {
-                binWidth = ead / eadBinQuantity;
-            }
-            return binWidth;
         }
 
         private void LogSimulationErrors()
