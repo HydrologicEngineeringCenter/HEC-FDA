@@ -14,7 +14,6 @@ namespace HEC.MVVMFramework.Model.Messaging
 
         public ValidationErrorLogger()
         {
-            //MessageHub.Register(this);
         }
 
         public void LogErrors()
@@ -60,7 +59,9 @@ namespace HEC.MVVMFramework.Model.Messaging
 
         public void ReportMessage(object sender, MessageEventArgs e)
         {
+            MessageHub.Register(this);
             MessageReport?.Invoke(sender, e);
+            MessageHub.Unregister(this);
         }
 
     }
