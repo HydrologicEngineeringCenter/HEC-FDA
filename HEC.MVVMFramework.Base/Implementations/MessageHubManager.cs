@@ -11,11 +11,11 @@ namespace HEC.MVVMFramework.Base.Implementations
     /// </summary>
     public static class MessageHubManager
     {
-        public static void Register(object obj)
+        public static void RegisterSelfAndProps(object obj)
         {
             ChangeRegistrationSelfAndPropsRecursively(obj, MessageHub.Register);
         }
-        public static void UnRegister(object obj)
+        public static void UnRegisterSelfAndProps(object obj)
         {
             ChangeRegistrationSelfAndPropsRecursively(obj, MessageHub.Unregister);
         }

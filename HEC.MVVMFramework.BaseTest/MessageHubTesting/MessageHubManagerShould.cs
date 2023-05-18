@@ -20,7 +20,7 @@ namespace HEC.MVVMFramework.BaseTest.MessageHubTesting
             mock.IReportMessageSavedUnderDifferentInterfaceType = new MockTieredRegisteredClass();
 
             //Act
-            MessageHubManager.Register(mock);
+            MessageHubManager.RegisterSelfAndProps(mock);
 
             //Assert
             Assert.Contains(mock, MessageHub.Reporters);
@@ -31,7 +31,7 @@ namespace HEC.MVVMFramework.BaseTest.MessageHubTesting
             Assert.Equal(6,MessageHub.Reporters.Count);
 
             //Act
-            MessageHubManager.UnRegister(mock);
+            MessageHubManager.UnRegisterSelfAndProps(mock);
 
             //Assert
             Assert.Empty(MessageHub.Reporters);
