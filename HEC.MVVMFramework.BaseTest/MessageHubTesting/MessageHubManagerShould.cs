@@ -17,6 +17,7 @@ namespace HEC.MVVMFramework.BaseTest.MessageHubTesting
             mock.ArrayOfMessageReporterProperty = listOfReporter;
             mock.ObjectProperty = new Message("poop");
             mock.MessageReporterProperty = new MockTieredRegisteredClass();
+            mock.IReportMessageSavedUnderDifferentInterfaceType = new MockTieredRegisteredClass();
 
             //Act
             MessageHubManager.Register(mock);
@@ -26,7 +27,8 @@ namespace HEC.MVVMFramework.BaseTest.MessageHubTesting
             Assert.Contains(mock.MessageReporterProperty, MessageHub.Reporters);
             Assert.Contains(mock.ArrayOfMessageReporterProperty[0], MessageHub.Reporters);
             Assert.DoesNotContain((object)mock.ObjectProperty, MessageHub.Reporters);
-            MessageHub.Reporters.Contains(mock);
+            Assert.Contains((object)mock.IReportMessageSavedUnderDifferentInterfaceType, MessageHub.Reporters);
+            Assert.Equal(6,MessageHub.Reporters.Count);
 
             //Act
             MessageHubManager.UnRegister(mock);

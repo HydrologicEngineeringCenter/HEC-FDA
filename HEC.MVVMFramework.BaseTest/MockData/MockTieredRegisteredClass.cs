@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace HEC.MVVMFramework.BaseTest.MockData
 {
-    internal class MockTieredRegisteredClass : IReportMessage
+    internal class MockTieredRegisteredClass : IReportMessage,INamed
     {
         public event MessageReportedEventHandler MessageReport;
 
@@ -15,6 +15,9 @@ namespace HEC.MVVMFramework.BaseTest.MockData
         public List<IReportMessage> ListOfMessageReporterProperty { get; set; }
         public int StructProperty { get; set; }
         public Message ObjectProperty { get; set; }
+        public INamed IReportMessageSavedUnderDifferentInterfaceType { get; set; }
+
+        public string Name { get; set; }
 
         public MockTieredRegisteredClass()
         {
