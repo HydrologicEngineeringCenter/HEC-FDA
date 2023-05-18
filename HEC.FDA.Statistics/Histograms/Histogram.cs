@@ -25,6 +25,8 @@ namespace Statistics.Histograms
         private bool _Converged = false;
         private Int64 _ConvergedIterations = int.MinValue;
         private bool _ConvergedOnMax = false;
+        private bool _HistogramIsZeroValued;
+        private bool _HistogramIsSingleValued;
         private ConvergenceCriteria _ConvergenceCriteria;
         private bool _minHasNotBeenSet = false;
         private const string _type = "Histogram";
@@ -38,10 +40,6 @@ namespace Statistics.Histograms
             {
                 return IsZeroValued();
             }
-            internal set 
-            { 
-                HistogramIsZeroValued = value; 
-            }
         }
 
 
@@ -50,10 +48,6 @@ namespace Statistics.Histograms
             get
             {
                 return IsSingleValued();
-            }
-            internal set 
-            { 
-                HistogramIsSingleValued = value; 
             }
         }
         internal double SampleMax
@@ -434,11 +428,11 @@ namespace Statistics.Histograms
         }
         public void AddObservationsToHistogram(double[] data)
         {
-            if (_SampleSize > 10000)
+            if (_SampleSize > 1000)
             {
                 if(Mean == 0 && Variance == 0)
                 {
-                    ShutHistogramdown();
+                    ShutHistogramDown();
                 }
             }
             else
@@ -450,7 +444,7 @@ namespace Statistics.Histograms
             }
         }
 
-        private void ShutHistogramdown()
+        private void ShutHistogramDown()
         {
             _HistogramShutDown = true;
             _BinCounts = new long[] { 1 };
@@ -463,8 +457,8 @@ namespace Statistics.Histograms
             _SampleSize = 1;
             _Converged = true;
             _ConvergedOnMax = false;
-            HistogramIsSingleValued = true;
-            HistogramIsZeroValued = true;
+            _HistogramIsSingleValued = true;
+            _HistogramIsZeroValued = true;
     }
 
         public Int64 FindBinCount(double x, bool cumulative = true)
@@ -914,6 +908,7 @@ namespace Statistics.Histograms
             if (meanIsZero && standardDeviationIsZero)
             {
                 isZeroValued = true;
+                _HistogramIsZeroValued = true;
             }
             return isZeroValued;
 
@@ -925,6 +920,7 @@ namespace Statistics.Histograms
             if (_BinCounts[0] == SampleSize)
             {
                 isSingleValued = true;
+                _HistogramIsZeroValued = true;
             }
             return isSingleValued;
         }
