@@ -225,8 +225,8 @@ namespace HEC.FDA.ModelTest.unittests
             performanceByThresholds.AddThreshold(threshold2);
 
             double keyForCNEP = .98;
-            performanceByThresholds.GetThreshold(thresholdID1).SystemPerformanceResults.AddAssuranceHistogram(keyForCNEP);
-            performanceByThresholds.GetThreshold(thresholdID2).SystemPerformanceResults.AddAssuranceHistogram(keyForCNEP);
+            performanceByThresholds.GetThreshold(thresholdID1).SystemPerformanceResults.AddStageAssuranceHistogram(keyForCNEP);
+            performanceByThresholds.GetThreshold(thresholdID2).SystemPerformanceResults.AddStageAssuranceHistogram(keyForCNEP);
 
             int seed = 1234;
             Random random = new Random(seed);
@@ -329,7 +329,7 @@ namespace HEC.FDA.ModelTest.unittests
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
             SystemPerformanceResults systemPerformanceResults = new SystemPerformanceResults(thresholdEnum, thresholdValue, convergenceCriteria);
             double standardProbability = 0.998;
-            systemPerformanceResults.AddAssuranceHistogram(standardProbability);
+            systemPerformanceResults.AddStageAssuranceHistogram(standardProbability);
             RandomProvider randomProvider = new RandomProvider(1234);
             int masterseed = 1234;
             Random masterSeedList = new Random(masterseed);//must be seeded.
