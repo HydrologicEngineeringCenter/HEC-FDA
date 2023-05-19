@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 
 namespace HEC.FDA.ViewModel.Inventory
 {
@@ -6,6 +7,9 @@ namespace HEC.FDA.ViewModel.Inventory
     {
         private bool _UsingFirstFloorElevation;
         private bool _ElevsFromTerrainFile;
+
+        public DataTable MissingDataTable { get; }
+
         public List<StructureMissingDataRowItem> Rows { get; } = new List<StructureMissingDataRowItem>();
         public bool UsingFirstFloorElevation
         {
@@ -20,19 +24,27 @@ namespace HEC.FDA.ViewModel.Inventory
 
         public bool FromStructureFile { get; set; }
 
-        public StructureMissingElevationEditorVM(List<StructureMissingDataRowItem> rows, bool usingFirstFloorElevation, bool elevsFromTerrainFile)
+        public StructureMissingElevationEditorVM(List<StructureMissingDataRowItem> rows,  InventoryColumnSelectionsVM inventoryColumnSelectionsVM)
         {
-            Rows = rows;
-            UsingFirstFloorElevation = usingFirstFloorElevation;
-            if (usingFirstFloorElevation)
+            
+            MissingDataTable = new DataTable();
+            CS.Collections.CustomObservableCollection<InventoryColumnSelectionsRowItem> requiredRows = inventoryColumnSelectionsVM.RequiredRows;
+
+            foreach(InventoryColumnSelectionsRowItem item in requiredRows)
             {
-                ElevsFromTerrainFile = false;
+                MissingDataTable.Columns.Add(item.MissingValueColumnHeader);
             }
-            else
+            foreach (StructureMissingDataRowItem item in rows)
             {
-                ElevsFromTerrainFile = elevsFromTerrainFile;
+                object[] rowVals = inventoryColumnSelectionsVM.GetRequiredRowValues(item.ID);
+                DataRow myRow = MissingDataTable.NewRow();
+                for(int i = 0;i<requiredRows.Count;i++)
+                {
+                    myRow[i] = rowVals[i];
+                }
+                MissingDataTable.Rows.Add(myRow);
             }
-            FromStructureFile = !usingFirstFloorElevation && !elevsFromTerrainFile;      
+    
         }
     }
 }

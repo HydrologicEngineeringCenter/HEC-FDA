@@ -8,8 +8,6 @@ using System.Linq;
 using HEC.FDA.ViewModel.Watershed;
 using HEC.FDA.Model.structures;
 using RasMapperLib;
-using System.Data.SQLite;
-using HEC.FDA.ViewModel.Storage;
 using Geospatial.GDALAssist;
 
 namespace HEC.FDA.ViewModel.Inventory
@@ -23,12 +21,12 @@ namespace HEC.FDA.ViewModel.Inventory
         private readonly List<float> _StructureElevations = new List<float>();
 
         //required rows
-        private InventoryColumnSelectionsRowItem _StructureIDRow = new InventoryColumnSelectionsRowItem("Structure ID:");
-        private InventoryColumnSelectionsRowItem _OccupancyTypeRow = new InventoryColumnSelectionsRowItem("Occupancy Type:");
-        private InventoryColumnSelectionsRowItem _FirstFloorElevRow = new InventoryColumnSelectionsRowItem("First Floor Elevation Value:");
-        private InventoryColumnSelectionsRowItem _StructureValueRow = new InventoryColumnSelectionsRowItem("Structure Value:");
-        private InventoryColumnSelectionsRowItem _FoundationHeightRow = new InventoryColumnSelectionsRowItem("Foundation Height:");
-        private InventoryColumnSelectionsRowItem _GroundElevRow = new InventoryColumnSelectionsRowItem("Ground Elevation Value:");
+        private InventoryColumnSelectionsRowItem _StructureIDRow = new InventoryColumnSelectionsRowItem("Structure ID:", "Structure ID");
+        private InventoryColumnSelectionsRowItem _OccupancyTypeRow = new InventoryColumnSelectionsRowItem("Occupancy Type:", "Occupancy Type");
+        private InventoryColumnSelectionsRowItem _FirstFloorElevRow = new InventoryColumnSelectionsRowItem("First Floor Elevation Value:", "First Floor Elevation Value");
+        private InventoryColumnSelectionsRowItem _StructureValueRow = new InventoryColumnSelectionsRowItem("Structure Value:", "Structure Value");
+        private InventoryColumnSelectionsRowItem _FoundationHeightRow = new InventoryColumnSelectionsRowItem("Foundation Height:", "Foundation Height");
+        private InventoryColumnSelectionsRowItem _GroundElevRow = new InventoryColumnSelectionsRowItem("Ground Elevation Value:", "Ground Elevation Value");
 
         //optional rows
         private InventoryColumnSelectionsRowItem _ContentValueRow = new InventoryColumnSelectionsRowItem("Content Value:");
@@ -281,7 +279,7 @@ namespace HEC.FDA.ViewModel.Inventory
             foreach (int i in idsWithNoElevation)
             {
                 string uniqueName = structureNames[i].ToString();
-                StructureMissingDataRowItem missingRow = new StructureMissingDataRowItem(uniqueName, MissingDataType.TerrainElevation);
+                StructureMissingDataRowItem missingRow = new StructureMissingDataRowItem(uniqueName,GetRequiredRowValues(uniqueName), MissingDataType.TerrainElevation);
                 missingDataRows.Add(missingRow);
             }
             return missingDataRows;
@@ -388,7 +386,7 @@ namespace HEC.FDA.ViewModel.Inventory
                     if (rows[i] == DBNull.Value || rows[i].ToString() == "")
                     {
                         string structId = dtv.GetCell(_StructureIDRow.SelectedItem, i).ToString();
-                        StructureMissingDataRowItem missingDataRow = new StructureMissingDataRowItem(structId, missingType);
+                        StructureMissingDataRowItem missingDataRow = new StructureMissingDataRowItem(structId, GetRequiredRowValues(structId), missingType);
                         missingDataRows.Add(missingDataRow);
                     }
                 }
@@ -458,6 +456,42 @@ namespace HEC.FDA.ViewModel.Inventory
                 _ContentValueRow.SelectedItem, _OtherValueRow.SelectedItem, _VehicleValueRow.SelectedItem,
                 _BegDamDepthRow.SelectedItem, _YearInConstructionRow.SelectedItem, _NotesRow.SelectedItem,
                 _DescriptionRow.SelectedItem, _NumberOfStructuresRow.SelectedItem);
+        }
+
+        public object[] GetRequiredRowValues(string rowKey)
+        {
+            object[] rowValues = new object[0];
+            List<string> selectedColumns = new List<string>();
+            foreach(InventoryColumnSelectionsRowItem selection in RequiredRows)
+            {
+                selectedColumns.Add(selection.SelectedItem);
+            }
+            int keyIndex = GetKeyRowIndex(rowKey);
+            if (keyIndex != -1)
+            {
+                DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(_Path, ".dbf"));
+                dbf.Open();
+                DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
+                rowValues = dtv.GetRow(keyIndex, selectedColumns.ToArray());
+            }
+            return rowValues;
+        }
+
+        private int GetKeyRowIndex(string keyName)
+        {
+            int index = -1;
+            DataTableView dtv = GetStructureInventoryTable();
+            object[] keyColumn = dtv.GetColumn(_StructureIDRow.SelectedItem);
+            for(int i = 0; i < keyColumn.Length; i++)
+            {
+                
+                if(keyColumn[i].ToString().Equals(keyName))
+                {
+                    index = i;
+                    break;
+                }
+            }
+            return index;
         }
 
     }
