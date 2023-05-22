@@ -367,7 +367,11 @@
       <UtilitiesView:TabHeaderControl/>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type StageTransformsVM:ImportRatingsFromFDA1VM }" >
+        <DataTemplate DataType="{x:Type UtilitiesVM:SplashScreenVM }" >
+            <UtilitiesView:SplashScreen/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type StageTransformsVM:ImportRatingsFromFDA1VM }" >
       <UtilitiesView:ImportFromFDA1/>
     </DataTemplate>
 
