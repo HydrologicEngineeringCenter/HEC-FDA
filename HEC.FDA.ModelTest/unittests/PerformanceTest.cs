@@ -213,7 +213,7 @@ namespace HEC.FDA.ModelTest.unittests
         [Fact]
         public void ConvergenceTest()
         {
-            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1000, maxIterations: 100000);
             ThresholdEnum thresholdType = ThresholdEnum.DefaultExteriorStage;
             double thresholdValue = 4.1;
             int thresholdID1 = 1;
@@ -326,7 +326,7 @@ namespace HEC.FDA.ModelTest.unittests
         [InlineData(ThresholdEnum.DefaultExteriorStage, 2.88)]
         public void AssuranceResultStorageShould(ThresholdEnum thresholdEnum, double thresholdValue)
         {
-            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1000, maxIterations: 10000);
             SystemPerformanceResults systemPerformanceResults = new SystemPerformanceResults(thresholdEnum, thresholdValue, convergenceCriteria);
             double standardProbability = 0.998;
             systemPerformanceResults.AddStageAssuranceHistogram(standardProbability);

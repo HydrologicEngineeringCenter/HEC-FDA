@@ -288,7 +288,7 @@ namespace HEC.FDA.ModelTest.unittests
                 .withFrequencyStage(graphicalUncertain)
                 .withStageDamages(stageDamageList)
                 .build();
-            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(randomProvider, new ConvergenceCriteria());
+            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(randomProvider, new ConvergenceCriteria(minIterations: 101, maxIterations: 110));
             double actualMeanEAD = impactAreaScenarioResults.MeanExpectedAnnualConsequences();
             Assert.Equal(expectedEAD, actualMeanEAD);
             bool actualHistogramZeroValued = impactAreaScenarioResults.GetSpecificHistogram(impactAreaID, damCat, assetCat).HistogramIsZeroValued;
@@ -398,7 +398,6 @@ namespace HEC.FDA.ModelTest.unittests
         }
 
         [Theory]
-        // [InlineData(1111, 50000)]
         [InlineData(1234, 50000)]
         public void RandomnessShouldBeControlledWithSeed(int seed, int iterations)
         {
