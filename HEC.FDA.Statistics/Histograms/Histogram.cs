@@ -670,7 +670,7 @@ namespace Statistics.Histograms
 
         public static Histogram ReadFromXML(XElement element)
         {
-            string minString = element.Attribute("Min").Value;
+            string minString = element.Attribute("Min")?.Value;
             double min = Convert.ToDouble(minString);
             string maxString = element.Attribute("Max").Value;
             double max = Convert.ToDouble(maxString);

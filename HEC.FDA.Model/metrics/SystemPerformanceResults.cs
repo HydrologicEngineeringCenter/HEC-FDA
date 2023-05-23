@@ -155,7 +155,7 @@ namespace HEC.FDA.Model.metrics
         public void AddAEPForAssurance(double aep, int iteration)
         {
             GetAssurance(AEP_ASSURANCE_TYPE).AddObservation(aep, iteration);
-            GetAssurance(AEP_ASSURANCE_FOR_PLOTTING).AssuranceHistogram.AddObservationToHistogram(aep, iteration);
+            GetAssurance(AEP_ASSURANCE_FOR_PLOTTING).AddObservation(aep, iteration);
         }
         public void AddStageForAssurance(double standardNonExceedanceProbability, double stage, int iteration)
         {
