@@ -194,7 +194,6 @@ namespace Statistics.Histograms
             {
                 AddObservationToHistogram(0,i);
             }
-            MessageHub.Register(this);
         }
 
         public ThreadsafeInlineHistogram(ConvergenceCriteria c)
@@ -204,7 +203,6 @@ namespace Statistics.Histograms
             _maxQueueCount = c.MinIterations;
             _backgroundWorker = new System.ComponentModel.BackgroundWorker();
             _backgroundWorker.DoWork += _bw_DoWork;
-            MessageHub.Register(this);
         }
 
         public ThreadsafeInlineHistogram(double binWidth, ConvergenceCriteria c, int startqueueSize = 10000, int postqueueSize = 100)
@@ -216,7 +214,6 @@ namespace Statistics.Histograms
             _backgroundWorker.DoWork += _bw_DoWork;
             _maxQueueCount = startqueueSize;
             _postQueueCount = postqueueSize;
-            MessageHub.Register(this);
         }
 
         private ThreadsafeInlineHistogram(double min, double max, double binWidth, Int64[] binCounts, ConvergenceCriteria convergenceCriteria)
@@ -235,7 +232,6 @@ namespace Statistics.Histograms
             _ConvergenceCriteria = convergenceCriteria;
             _backgroundWorker = new System.ComponentModel.BackgroundWorker();
             _backgroundWorker.DoWork += _bw_DoWork;
-            MessageHub.Register(this);
         }
         #endregion
 

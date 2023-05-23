@@ -3,7 +3,7 @@ using System.Xml.Linq;
 using HEC.MVVMFramework.Base.Interfaces;
 namespace Statistics.Histograms
 {
-    public interface IHistogram: IReportMessage, IDistribution 
+    public interface IHistogram:  IDistribution 
     {
         #region Properties 
         bool IsConverged { get; }
