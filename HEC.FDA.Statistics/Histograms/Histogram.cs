@@ -10,7 +10,7 @@ using Statistics.Distributions;
 
 namespace Statistics.Histograms
 {
-    public class Histogram : IHistogram, IReportMessage
+    public class Histogram: IHistogram
     {
         #region Fields
         private Int64[] _BinCounts = new Int64[] { };
@@ -202,7 +202,6 @@ namespace Statistics.Histograms
             {
                 AddObservationToHistogram(0);
             }
-            MessageHub.Register(this);
         }
         public Histogram(double min, double binWidth, ConvergenceCriteria convergenceCriteria)
         {
@@ -211,15 +210,13 @@ namespace Statistics.Histograms
             Max = Min + _BinWidth;
             int numberOfBins = 1;
             _BinCounts = new Int64[numberOfBins];
-            _ConvergenceCriteria = convergenceCriteria;
-            MessageHub.Register(this);
+            _ConvergenceCriteria = new ConvergenceCriteria();
         }
         public Histogram(double binWidth, ConvergenceCriteria convergenceCriteria)
         {
             _BinWidth = binWidth;
             _minHasNotBeenSet = true;
             _ConvergenceCriteria = convergenceCriteria;
-            MessageHub.Register(this);
         }
         public Histogram(List<double> dataList, ConvergenceCriteria convergenceCriteria)
         {
@@ -240,7 +237,6 @@ namespace Statistics.Histograms
             }
             _BinCounts = new long[quantityOfBins];
             AddObservationsToHistogram(data);
-            MessageHub.Register(this);
         }
         private Histogram(double min, double max, double binWidth, Int64 sampleSize, Int64[] binCounts, ConvergenceCriteria convergenceCriteria)
         {
@@ -250,14 +246,9 @@ namespace Statistics.Histograms
             _BinCounts = binCounts;
             _ConvergenceCriteria = convergenceCriteria;
             _SampleSize = sampleSize;
-            MessageHub.Register(this);
         }
         #endregion
         #region Functions
-        public void ReportMessage(object sender, MessageEventArgs e)
-        {
-            MessageReport?.Invoke(sender, e);
-        }
         public double Skewness()
         {
             double deviation = 0, deviation2 = 0, deviation3 = 0;
