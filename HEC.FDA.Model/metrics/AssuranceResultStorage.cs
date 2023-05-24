@@ -12,64 +12,35 @@ namespace HEC.FDA.Model.metrics
     {
         #region Fields
         private double[] _TempResults;
-        Histogram _Assurance;
-        string _Type;
-        double _StandardNonExceedanceProbability;
-
         #endregion
 
         #region Properties
-        public string AssuranceType
-        {
-            get
-            {
-                return _Type;
-            }
-        }
-        public Histogram AssuranceHistogram
-        {
-            get
-            {
-                return _Assurance;
-            }
-        }
-        public double StandardNonExceedanceProbability
-        {
-            get
-            {
-                return _StandardNonExceedanceProbability;
-            }
-        }
+        public string AssuranceType { get; }
+        public Histogram AssuranceHistogram { get; }
+        public double StandardNonExceedanceProbability { get; }
         #endregion
 
         #region Constructors
         internal AssuranceResultStorage(string dummyAsuranceType, double standardNonExceedanceProbability)
         {
-            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
+            ConvergenceCriteria convergenceCriteria = new();
             _TempResults = new double[0];
-            _Assurance = new Histogram();
-            _Type = dummyAsuranceType;
-            _StandardNonExceedanceProbability = standardNonExceedanceProbability;
-        }
-        public AssuranceResultStorage(string assuranceType, ConvergenceCriteria convergenceCriteria, double min, double binWidth, double standardNonExceedanceProbabilityForAssuranceOfTargetOrLevee = 0)
-        {
-            _StandardNonExceedanceProbability = standardNonExceedanceProbabilityForAssuranceOfTargetOrLevee;
-            _TempResults = new double[convergenceCriteria.IterationCount];
-            _Assurance = new Histogram(min, binWidth, convergenceCriteria);
-            _Type = assuranceType;
+            AssuranceHistogram = new Histogram();
+            AssuranceType = dummyAsuranceType;
+            StandardNonExceedanceProbability = standardNonExceedanceProbability;
         }
         public AssuranceResultStorage(string assuranceType, double binWidth, ConvergenceCriteria convergenceCriteria, double standardNonExceedanceProbabilityForAssuranceOfTargetOrLevee = 0)
         {
-            _StandardNonExceedanceProbability = standardNonExceedanceProbabilityForAssuranceOfTargetOrLevee;
+            StandardNonExceedanceProbability = standardNonExceedanceProbabilityForAssuranceOfTargetOrLevee;
             _TempResults = new double[convergenceCriteria.IterationCount];
-            _Assurance = new Histogram(binWidth, convergenceCriteria);
-            _Type = assuranceType;
+            AssuranceHistogram = new Histogram(binWidth, convergenceCriteria);
+            AssuranceType = assuranceType;
         }
         private AssuranceResultStorage(string assuranceType, double standardNonExceedanceProbabilityForAssuranceOfTargetOrLevee, Histogram assuranceHistogram)
         {
-            _Type = assuranceType;
-            _StandardNonExceedanceProbability = standardNonExceedanceProbabilityForAssuranceOfTargetOrLevee;
-            _Assurance = assuranceHistogram;
+            AssuranceType = assuranceType;
+            StandardNonExceedanceProbability = standardNonExceedanceProbabilityForAssuranceOfTargetOrLevee;
+            AssuranceHistogram = assuranceHistogram;
             _TempResults = new double[assuranceHistogram.ConvergenceCriteria.IterationCount];
         }
         #endregion
@@ -78,11 +49,11 @@ namespace HEC.FDA.Model.metrics
 
         public bool Equals(AssuranceResultStorage incomingAssuranceResultStorage)
         {
-            if (_Type == incomingAssuranceResultStorage.AssuranceType)
+            if (AssuranceType == incomingAssuranceResultStorage.AssuranceType)
             {
-                if (_StandardNonExceedanceProbability == incomingAssuranceResultStorage.StandardNonExceedanceProbability)
+                if (StandardNonExceedanceProbability == incomingAssuranceResultStorage.StandardNonExceedanceProbability)
                 {
-                    if (_Assurance.Equals(incomingAssuranceResultStorage.AssuranceHistogram))
+                    if (AssuranceHistogram.Equals(incomingAssuranceResultStorage.AssuranceHistogram))
                     {
                         return true;
                     }
@@ -98,27 +69,27 @@ namespace HEC.FDA.Model.metrics
 
         public void PutDataIntoHistogram()
         {
-            _Assurance.AddObservationsToHistogram(_TempResults);
+            AssuranceHistogram.AddObservationsToHistogram(_TempResults);
             Array.Clear(_TempResults);
         }
 
         public XElement WriteToXML()
         {
             XElement masterElement = new XElement("Assurance");
-            XElement histogramElement = _Assurance.ToXML();
+            XElement histogramElement = AssuranceHistogram.ToXML();
             histogramElement.Name = "Histogram";
             masterElement.Add(histogramElement);
-            masterElement.SetAttributeValue("Type", _Type);
-            masterElement.SetAttributeValue("ExceedanceProbability", _StandardNonExceedanceProbability);
+            masterElement.SetAttributeValue("Type", AssuranceType);
+            masterElement.SetAttributeValue("ExceedanceProbability", StandardNonExceedanceProbability);
             return masterElement;
         }
 
         public static AssuranceResultStorage ReadFromXML(XElement xElement)
         {
-            string type = xElement.Attribute("Type").Value;
-            double probability = Convert.ToDouble(xElement.Attribute("ExceedanceProbability").Value);
-            Histogram inlineHistogram = Histogram.ReadFromXML(xElement.Element("Histogram"));
-            return new AssuranceResultStorage(type, probability, inlineHistogram);
+                string type = xElement.Attribute("Type")?.Value;
+                double probability = Convert.ToDouble(xElement.Attribute("ExceedanceProbability").Value);
+                Histogram inlineHistogram = Histogram.ReadFromXML(xElement.Element("Histogram"));
+                return new AssuranceResultStorage(type, probability, inlineHistogram);
         }
 
         
