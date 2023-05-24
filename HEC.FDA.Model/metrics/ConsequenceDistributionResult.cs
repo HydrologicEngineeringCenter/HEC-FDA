@@ -11,19 +11,19 @@ using Statistics.Distributions;
 using System.Collections.Concurrent;
 
 namespace HEC.FDA.Model.metrics
-{ //TODO: I THINK SOME OR ALL OF THIS CLASS SHOULD BE INTERNAL  
+{ 
     public class ConsequenceDistributionResult : IReportMessage, IProgressReport
     {
         #region Fields
         //this will change to an array of a size the function of the convergenceCriteria 
   
         private IHistogram _consequenceHistogram;
-        private string _damageCategory;
-        private string _assetCategory;
-        private int _regionID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE;
-        private ConvergenceCriteria _convergenceCriteria;
-        private bool _isNull;
-        private double[] _tempResults;
+        private readonly string _damageCategory;
+        private readonly string _assetCategory;
+        private readonly int _regionID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE;
+        private readonly ConvergenceCriteria _convergenceCriteria;
+        private readonly bool _isNull;
+        private readonly double[] _tempResults;
         private bool _HistogramNotConstructed = false;
 
         public event MessageReportedEventHandler MessageReport;
@@ -141,11 +141,8 @@ namespace HEC.FDA.Model.metrics
         #region Methods
         public void PutDataIntoHistogram()
         {
-            int j = 0;
-
             if(_HistogramNotConstructed)
             {
-                List<double> list = _tempResults.ToList();
                 double max = _tempResults.Max();
                 double binWidth = max / 1000;
                 if (binWidth == 0)
@@ -159,7 +156,7 @@ namespace HEC.FDA.Model.metrics
             Array.Clear(_tempResults);
         }
 
-        internal void AddConsequenceRealization(double damageRealization, long iteration = 1, bool parallelCompute = false)
+        internal void AddConsequenceRealization(double damageRealization, long iteration = 1)
         {
              _tempResults[iteration] = (damageRealization);
         }
@@ -192,7 +189,7 @@ namespace HEC.FDA.Model.metrics
         }
         public XElement WriteToXML()
         {
-            XElement masterElement = new XElement("ConsequenceResult");
+            XElement masterElement = new("ConsequenceResult");
             masterElement.SetAttributeValue("Type", _consequenceHistogram.TypeOfIHistogram);
             XElement histogramElement = _consequenceHistogram.ToXML();
             histogramElement.Name = "DamageHistogram";
