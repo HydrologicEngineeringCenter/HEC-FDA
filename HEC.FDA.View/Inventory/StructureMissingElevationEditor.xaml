@@ -4,17 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HEC.FDA.View.Inventory"
-             xmlns:utils="clr-namespace:HEC.FDA.View.Utilities"
-             xmlns:con="clr-namespace:HEC.FDA.View.Utilities"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.Resources>
-        <con:InverseBooleanConverter x:Key="InverseBooleanConverter" />
-        <con:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-        <con:BoolToInverseVisibilityConverter x:Key="BoolToInverseVisConverter"/>
-        <con:BoolToMissingConverter x:Key="BoolToMissing"/>
-        <con:BoolToUnidentifiableConverter x:Key="BoolToUnidentifiable"/>
-    </UserControl.Resources>
     <Grid>
         <Grid.Resources>
             <DataTemplate x:Key="DateTemplate" >
@@ -45,22 +36,12 @@
 
         <FrameworkElement x:Name="dummyElement" Visibility="Collapsed"/>
         
-        <DataGrid Grid.Row="1" ItemsSource="{Binding Rows}" AutoGenerateColumns="False" Margin="5">
-            <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding ID}" Header="Name" IsReadOnly="True" Width="*"/>
-                <DataGridTextColumn Binding="{Binding IsMissingOcctype, Converter={StaticResource BoolToMissing}}" Header="Occtype"  Width="*"/>
-
-                <DataGridTextColumn Binding="{Binding IsMissingFoundationHt, Converter={StaticResource BoolToMissing}}" Header="Foundation Height"  Width="*" Visibility="{Binding DataContext.UsingFirstFloorElevation, Converter={StaticResource BoolToInverseVisConverter}, Source={x:Reference dummyElement}}"/>
-                <DataGridTextColumn Binding="{Binding IsMissingGroundElevation, Converter={StaticResource BoolToMissing}}" Visibility="{Binding DataContext.FromStructureFile, Converter={StaticResource BoolToVisibilityConverter}, Source={x:Reference dummyElement}}" Header="Ground Elevation"  Width="*"/>
-                
-                <DataGridTextColumn Binding="{Binding IsMissingFirstFloorElevation, Converter={StaticResource BoolToMissing}}" Header="First Floor Elevation"  Width="*" Visibility="{Binding DataContext.UsingFirstFloorElevation, Converter={StaticResource BoolToVisibilityConverter}, Source={x:Reference dummyElement}}"/>
-                <DataGridTextColumn Binding="{Binding IsMissingStructureValue, Converter={StaticResource BoolToMissing}}" Header="Structure Value"  Width="*"/>
-                <DataGridTextColumn Binding="{Binding IsMissingTerrainElevation, Converter={StaticResource BoolToUnidentifiable}}" Header="Terrain Elevation"  Width="*" Visibility="{Binding DataContext.ElevsFromTerrainFile, Converter={StaticResource BoolToVisibilityConverter}, Source={x:Reference dummyElement}}" />
-
-            </DataGrid.Columns>
+        <DataGrid HeadersVisibility="Column" Grid.Row="1" Name="damCatGrid" ItemsSource="{Binding MissingDataTable}" AutoGenerateColumns="True" HorizontalAlignment="Left"
+                  VerticalAlignment="Top"  IsReadOnly="True" CanUserResizeColumns="True" CanUserReorderColumns="False"
+                  CanUserSortColumns="false"  SelectionUnit="Cell" Margin="5" >
         </DataGrid>
-        
-        <Button Content="Close" Grid.Row="2" Margin="0,0,5,0" Width="60" HorizontalAlignment="Right" Click="Button_Click"/>
+
+        <Button Content="Close" Grid.Row="2" Margin="5" Width="60" HorizontalAlignment="Right" Click="Button_Click"/>
 
     </Grid>
 </UserControl>
