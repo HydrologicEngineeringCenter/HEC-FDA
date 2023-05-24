@@ -1,0 +1,191 @@
+﻿<UserControl x:Class="HEC.FDA.View.AlternativeComparisonReport.Results.SummaryResults"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HEC.FDA.View.AlternativeComparisonReport.Results"
+             xmlns:twp="clr-namespace:HEC.FDA.View.TableWithPlot"
+             xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
+             mc:Ignorable="d" 
+             xmlns:utils="clr-namespace:HEC.FDA.View.Utilities"
+
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Label Grid.Row="0" Content="{Binding BaseYearLabel}"/>
+        
+        <twp:FdaDataGrid Grid.Row="1" ItemsSource="{Binding BaseEADSummaryVM.Rows}" AutoGenerateColumns="False" HorizontalAlignment="Left"
+                  VerticalAlignment="Top"  IsReadOnly="True" CanUserResizeColumns="True" CanUserReorderColumns="False"
+                  CanUserSortColumns="false" Margin="5" SelectionUnit="Cell">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding WithoutProjAlternative}" Width="110">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Without-Project Alternative" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding WithoutProjEAD, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Without-Project EAD" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding WithProjAlternative}" Width="110">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="With-Project Alternative" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding WithProjEAD, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="With-Project EAD" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding EADDamageReduced, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Mean EAD Reduced" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Point75, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
+                    <DataGridTextColumn.Header>
+                        <TextBlock TextWrapping="Wrap">
+                            <Run>Q</Run><Run Typography.Variants="Subscript">1</Run> <Run>EAD Reduced</Run>
+                        </TextBlock>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Point5, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
+                    <DataGridTextColumn.Header>
+                        <TextBlock TextWrapping="Wrap">
+                            <Run>Q</Run><Run Typography.Variants="Subscript">2</Run> <Run>EAD Reduced</Run>
+                        </TextBlock>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Point25, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
+                    <DataGridTextColumn.Header>
+                        <TextBlock TextWrapping="Wrap">
+                            <Run>Q</Run><Run Typography.Variants="Subscript">3</Run> <Run>EAD Reduced</Run>
+                        </TextBlock>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+        </twp:FdaDataGrid>
+
+        <Label Grid.Row="2" Content="{Binding FutureYearLabel}"/>
+
+        <twp:FdaDataGrid Grid.Row="3" ItemsSource="{Binding FutureEADSummaryVM.Rows}" AutoGenerateColumns="False" HorizontalAlignment="Left"
+                  VerticalAlignment="Top"  IsReadOnly="True" CanUserResizeColumns="True" CanUserReorderColumns="False"
+                  CanUserSortColumns="false" Margin="5" SelectionUnit="Cell">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding WithoutProjAlternative}" Width="110">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Without-Project Alternative" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding WithoutProjEAD, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Without-Project EAD" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding WithProjAlternative}" Width="110">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="With-Project Alternative" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding WithProjEAD, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="With-Project EAD" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding EADDamageReduced, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Mean EAD Reduced" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Point75, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
+                    <DataGridTextColumn.Header>
+                        <TextBlock TextWrapping="Wrap">
+                            <Run>Q</Run><Run Typography.Variants="Subscript">1</Run> <Run>EAD Reduced</Run>
+                        </TextBlock>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Point5, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
+                    <DataGridTextColumn.Header>
+                        <TextBlock TextWrapping="Wrap">
+                            <Run>Q</Run><Run Typography.Variants="Subscript">2</Run> <Run>EAD Reduced</Run>
+                        </TextBlock>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Point25, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
+                    <DataGridTextColumn.Header>
+                        <TextBlock TextWrapping="Wrap">
+                            <Run>Q</Run><Run Typography.Variants="Subscript">3</Run> <Run>EAD Reduced</Run>
+                        </TextBlock>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+        </twp:FdaDataGrid>
+
+        <Label Grid.Row="4" Content="{Binding AAEQLabel}"/>
+
+        <twp:FdaDataGrid Grid.Row="5" ItemsSource="{Binding AAEQSummaryVM.Rows}" AutoGenerateColumns="False" HorizontalAlignment="Left"
+                  VerticalAlignment="Top"  IsReadOnly="True" CanUserResizeColumns="True" CanUserReorderColumns="False"
+                  CanUserSortColumns="false" Margin="5" SelectionUnit="Cell">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding WithoutProjAlternative}" Width="110">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Without-Project Alternative" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding WithoutProjAAEQ, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Without-Project AAEQ Damage" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding WithProjAlternative}" Width="110">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="With-Project Alternative" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding WithProjAAEQ, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="With-Project AAEQ Damage" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding AAEQDamageReduced, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Mean AAEQ Damage Reduced" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Point75, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
+                    <DataGridTextColumn.Header>
+                        <TextBlock TextWrapping="Wrap">
+                            <Run>Q</Run><Run Typography.Variants="Subscript">1</Run> <Run>AAEQ Damage Reduced</Run>
+                        </TextBlock>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Point5, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
+                    <DataGridTextColumn.Header>
+                        <TextBlock TextWrapping="Wrap">
+                            <Run>Q</Run><Run Typography.Variants="Subscript">2</Run> <Run>AAEQ Damage Reduced</Run>
+                        </TextBlock>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Point25, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110">
+                    <DataGridTextColumn.Header>
+                        <TextBlock TextWrapping="Wrap">
+                            <Run>Q</Run><Run Typography.Variants="Subscript">3</Run> <Run>AAEQ Damage Reduced</Run>
+                        </TextBlock>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+        </twp:FdaDataGrid>
+
+        <utils:OKCloseControl Grid.Row="6" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5" />
+    </Grid>
+</UserControl>

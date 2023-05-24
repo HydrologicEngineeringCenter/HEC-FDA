@@ -1,0 +1,50 @@
+﻿<UserControl x:Class="HEC.FDA.View.Alternatives.Results.BatchCompute.AlternativeSelector"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Util="clr-namespace:HEC.FDA.View.Utilities"
+             xmlns:mvvmView="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=HEC.MVVMFramework.View"
+             xmlns:local="clr-namespace:HEC.FDA.View.Alternatives.Results.BatchCompute"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <Util:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Select Alternatives to Compute:" Margin="10,0,0,0" VerticalAlignment="Bottom"/>
+        <CheckBox Grid.Row="1" Grid.Column="0" Content="Select All" IsChecked="{Binding SelectAll}" Margin="12,5,5,0"/>
+        <ListBox Grid.Row="2" Grid.Column="0" Name="lst_conditions" ItemsSource="{Binding Rows}"   SelectionMode="Multiple" Margin="5">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="ToolTip" Value="{Binding Tooltip}"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected, Mode=TwoWay}" IsEnabled="{Binding HasError, Converter={StaticResource InverseBooleanConverter}}" />
+                        <Label Content="{Binding ErrorMessage}" Foreground="Red" Visibility="{Binding Path=HasError, Converter={StaticResource BoolToVis}}"/>
+                        <Label Content="{Binding HasComputeMessage}"  />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+       
+        <StackPanel Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button  Content="{Binding ComputeButtonLabel}" Width="100" Height="22"  Margin="5" Click="Compute_Click"/>
+            <Button  Content="Close" Width="100" Height="22" Margin="5"/>
+        </StackPanel>
+            
+    </Grid>
+</UserControl>

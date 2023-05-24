@@ -34,10 +34,25 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         /// <param name="element"></param>
         public override void SaveExisting( ChildElement element)
         {
-            string tooltip = StringConstants.CreateLastEditTooltip(DateTime.Now.ToString("G"));
+            IASElement elem = element as IASElement;
+            string currentDate = DateTime.Now.ToString("G");
+            string tooltip = StringConstants.CreateLastEditTooltip(currentDate);
+            if(elem.UpdateComputeDate && elem.Results != null)
+            {
+                elem.Results.ComputeDate = currentDate;
+            }
             element.UpdateTreeViewHeader(element.Name);
             element.CustomTreeViewHeader.Tooltip = tooltip;
             base.SaveExisting( element);
+        }
+
+        public override void SaveNew(ChildElement element)
+        {
+            base.SaveNew( element);
+            if(element is IASElement)
+            {
+                IASTooltipHelper.UpdateTooltip(element as IASElement);
+            }
         }
 
         private string WasAnalyticalFrequencyElementModified(IASElement iasElems,ChildElement elem, int elemID )
@@ -122,10 +137,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         }
 
         /// <summary>
-        /// This will update the condition element in the database. This will trigger
+        /// This will update the IAS element in the database. This will trigger
         /// an update to the study cache and the study tree as well.
         /// </summary>
-        /// <param name="elem">The child element that has been removed</param>
+        /// <param name="elem">The child element that has been removed or updated</param>
         /// <param name="originalID">The original id </param>
         public void UpdateIASTooltipsChildElementModified(ChildElement elem, int originalID)
         {

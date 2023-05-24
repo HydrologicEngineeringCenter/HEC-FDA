@@ -151,6 +151,10 @@
 
         public const string SCENARIOS = "Scenarios";
         public const string CREATE_NEW_SCENARIO_MENU = "Create New Scenario...";
+        public const string COMPUTE_SCENARIOS_MENU = "Compute Scenarios...";
+        public const string COMPUTE_SCENARIOS_HEADER = "Compute Scenarios";
+        public const string VIEW_SUMMARY_RESULTS_MENU = "View Summary Results...";
+        public const string VIEW_SUMMARY_RESULTS_HEADER = "Summary Results";
         public const string EDIT_SCENARIO_MENU = "Edit Scenario...";
         public const string COMPUTE_SCENARIO_MENU = "Compute Scenario...";
         public const string CREATE_NEW_SCENARIO_HEADER = "Create New Scenario";
@@ -163,6 +167,8 @@
         public const string ALTERNATIVE_COMP_REPORTS = "Alternative Comparison Reports";
         public const string CREATE_NEW_ALTERNATIVE_COMP_REPORTS_MENU = "Create New Alternative Comparison Report...";
         public const string EDIT_ALTERNATIVE_COMP_REPORTS_MENU = "Edit Alternative Comparison Report...";
+        public const string ALTERNATIVE_COMP_REPORTS_SUMMARY = "View Alternatives Summary Results...";
+        public const string ALTERNATIVE_COMP_REPORTS_SUMMARY_HEADER = "View Alternatives Summary Results";
 
         public const string CREATE_NEW_ALTERNATIVE_COMP_REPORTS_HEADER = "Create New Alternative Comparison Report";
 
