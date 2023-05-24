@@ -23,7 +23,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
             BaseEADSummaryVM = new EADSummaryVM(baseYearSummary, studyPropElem.DiscountRate, studyPropElem.PeriodOfAnalysis);
             FutureEADSummaryVM = new EADSummaryVM(futureYearSummary, studyPropElem.DiscountRate, studyPropElem.PeriodOfAnalysis);
 
-            BaseYearLabel = "Base Year EAD" + years[0] + ":";
+            BaseYearLabel = "Base Year EAD " + years[0] + ":";
             FutureYearLabel = "Future Year EAD " + years[1] + ":";
             AAEQLabel = "Period of Analysis AAEQ Damage:";
 
