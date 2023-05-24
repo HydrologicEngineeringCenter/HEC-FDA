@@ -18,6 +18,8 @@ namespace HEC.FDA.Model.metrics
         #endregion
 
         #region Properties 
+        public string ComputeDate { get; set; }
+        
         public List<IContainImpactAreaScenarioResults> ResultsList
         {
             get
@@ -37,6 +39,7 @@ namespace HEC.FDA.Model.metrics
             ImpactAreaScenarioResults dummyImpactAreaScenarioResults = new ImpactAreaScenarioResults(dummyImpactAreaID, true);
             _resultsList.Add(dummyImpactAreaScenarioResults);
             AnalysisYear = 1900;
+            
         }
         public ScenarioResults(int year)
         {
@@ -408,6 +411,7 @@ namespace HEC.FDA.Model.metrics
         {
             XElement mainElement = new XElement("ScenarioResults");
             mainElement.SetAttributeValue("Year", AnalysisYear);
+            mainElement.SetAttributeValue("ComputeDate", ComputeDate);
             foreach (ImpactAreaScenarioResults impactAreaScenarioResults in _resultsList)
             {
                 XElement impactAreaScenarioResultsElement = impactAreaScenarioResults.WriteToXml();
@@ -419,12 +423,21 @@ namespace HEC.FDA.Model.metrics
         public static ScenarioResults ReadFromXML(XElement xElement)
         {
             int year = Convert.ToInt32(xElement.Attribute("Year").Value);
+
             ScenarioResults scenarioResults = new ScenarioResults(year);
+            
             foreach (XElement element in xElement.Elements())
             {
                 IContainImpactAreaScenarioResults impactAreaScenarioResults = ImpactAreaScenarioResults.ReadFromXML(element);
                 scenarioResults.AddResults(impactAreaScenarioResults);
             }
+
+            if(xElement.Attribute("ComputeDate") != null)
+            {
+                string computeDate = xElement.Attribute("ComputeDate").Value;
+                scenarioResults.ComputeDate = computeDate;
+            }
+
             return scenarioResults;
         }
         #endregion

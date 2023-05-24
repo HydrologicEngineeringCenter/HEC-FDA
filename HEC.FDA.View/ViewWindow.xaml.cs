@@ -93,6 +93,10 @@ namespace HEC.FDA.View
             else
             {
                 TextFileMessageSubscriber.Instance.Dispose();
+                if (!ViewModel.Storage.Connection.Instance.IsConnectionNull)
+                {
+                    ViewModel.Storage.Connection.Instance.Close();
+                }
                 Environment.Exit(0);
             }
         }

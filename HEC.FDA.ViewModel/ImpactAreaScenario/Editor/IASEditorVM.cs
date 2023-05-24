@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using HEC.CS.Collections;
+using HEC.FDA.Model.metrics;
 using HEC.FDA.ViewModel.AggregatedStageDamage;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.ImpactArea;
@@ -22,6 +23,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private SpecificIASEditorVM _SelectedEditorVM;
         private bool _HasImpactArea = true;
         private ChildElementComboItem _SelectedStageDamageElement;
+        private ScenarioResults _Results;
         #endregion
 
         #region Properties
@@ -81,7 +83,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             {
                 SelectedStageDamageElement = StageDamageElements[0];
             }
-
+            //store the results so that we can attach them on the element that we save.
+            _Results = elem.Results;
         }
 
         private void Initialize()
@@ -210,78 +213,49 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             return vr;
         }
 
-        /// <summary>
-        /// Validates that the data entered is sufficient to save the form
-        /// </summary>
-        /// <returns></returns>
-        private Boolean ValidateIAS()
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-
-            vr.AddErrorMessage( IsYearValid().ErrorMessage);
-
-            foreach (KeyValuePair<ImpactAreaRowItem, SpecificIASEditorVM>  entry in _ImpactAreaEditorDictionary)
-            {
-                SpecificIASEditorVM vm = entry.Value;
-                FdaValidationResult validationResult = vm.GetEditorValidationResult();
-                if (!validationResult.IsValid)
-                {
-                    vr.AddErrorMessage(validationResult.ErrorMessage + Environment.NewLine);
-                }
-            }
-
-            if (!vr.IsValid)
-            {
-                MessageBox.Show(vr.ErrorMessage.ToString(), "Insufficient Data", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                return false;
-            }
-            else
-            {
-                //if no msg's then we can save
-                return true;
-            }
-        }
-
         #endregion
 
         public override void Save()
         {
-            bool isValid = ValidateIAS();
-            if (isValid)
+            //get the list of specific IAS elements.
+            List<SpecificIAS> elementsToSave = new List<SpecificIAS>();
+            foreach (KeyValuePair<ImpactAreaRowItem, SpecificIASEditorVM> entry in _ImpactAreaEditorDictionary)
             {
-                //get the list of specific IAS elements.
-                List<SpecificIAS> elementsToSave = new List<SpecificIAS>();
-                foreach (KeyValuePair<ImpactAreaRowItem, SpecificIASEditorVM> entry in _ImpactAreaEditorDictionary)
-                {
-                    SpecificIASEditorVM vm = entry.Value;
-                    elementsToSave.Add( vm.CreateSpecificIAS());
-                }
-
-                if(Description == null)
-                {
-                    Description = "";
-                }
-                //todo: shouldn't this pass the save to base?
-                IASPersistenceManager iASPersistenceManager = PersistenceFactory.GetIASManager();
-                int id = GetElementID<IASElement>();
-
-                IASElement elemToSave = new IASElement(Name, Description, DateTime.Now.ToString("G"), Year.Value, SelectedStageDamageElement.ChildElement.ID, elementsToSave, id);
-
-                if (IsCreatingNewElement)
-                {
-                    iASPersistenceManager.SaveNew(elemToSave);
-                    IsCreatingNewElement = false;
-                }
-                else
-                {
-                    iASPersistenceManager.SaveExisting(elemToSave);
-                }
-
-                SavingText = "Last Saved: " + elemToSave.LastEditDate;
-                HasChanges = false;
-                HasSaved = true;
-                OriginalElement = elemToSave;
+                SpecificIASEditorVM vm = entry.Value;
+                elementsToSave.Add(vm.CreateSpecificIAS());
             }
+
+            if (Description == null)
+            {
+                Description = "";
+            }
+            //todo: shouldn't this pass the save to base?
+            IASPersistenceManager iASPersistenceManager = PersistenceFactory.GetIASManager();
+            int id = GetElementID<IASElement>();
+            //todo: is this what I want?
+            int stageDamageId = -1;
+            if (SelectedStageDamageElement != null && SelectedStageDamageElement.ChildElement != null)
+            {
+                stageDamageId = SelectedStageDamageElement.ChildElement.ID;
+            }
+            IASElement elemToSave = new IASElement(Name, Description, DateTime.Now.ToString("G"), Year.Value, stageDamageId, elementsToSave, id);
+
+            if (IsCreatingNewElement)
+            {
+                iASPersistenceManager.SaveNew(elemToSave);
+                IsCreatingNewElement = false;
+            }
+            else
+            {
+                elemToSave.Results = _Results;
+                iASPersistenceManager.SaveExisting(elemToSave);
+                IASTooltipHelper.UpdateTooltip(elemToSave);
+            }
+
+            SavingText = "Last Saved: " + elemToSave.LastEditDate;
+            HasChanges = false;
+            HasSaved = true;
+            OriginalElement = elemToSave;
         }
 
         public ChildElementComboItem GetSelectedStageDamage()

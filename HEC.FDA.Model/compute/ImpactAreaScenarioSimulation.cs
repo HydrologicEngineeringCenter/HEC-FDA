@@ -76,6 +76,12 @@ namespace HEC.FDA.Model.compute
             _ImpactAreaID = impactAreaID;
             _ImpactAreaScenarioResults = new ImpactAreaScenarioResults(_ImpactAreaID);
         }
+
+        public ImpactAreaScenarioResults Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria)
+        {
+            return Compute(randomProvider, convergenceCriteria, new CancellationToken());
+        }
+
         /// <summary>
         /// A simulation must be built with a stage damage function for compute default threshold to be true.
         /// </summary>
@@ -83,7 +89,8 @@ namespace HEC.FDA.Model.compute
         /// <param name="iterations"></param>
         /// <param name="computeDefaultThreshold"></param>
         /// <returns></returns>
-        public ImpactAreaScenarioResults Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false, bool computeIsDeterministic = false)
+        public ImpactAreaScenarioResults Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, CancellationToken cancellationToken,
+            bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false, bool computeIsDeterministic = false)
         {
             //Validate();
             if (!CanCompute(convergenceCriteria, randomProvider))
@@ -126,9 +133,9 @@ namespace HEC.FDA.Model.compute
             CreateHistogramsForAssuranceOfThresholds();
             MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message($"EAD and performance compute for the impact area with ID {_ImpactAreaID} has been initiated" + Environment.NewLine));
             ReportMessage(this, beginComputeMessageArgs);
-            ComputeIterations(convergenceCriteria, randomProvider, masterseed, computeWithDamage, computeIsDeterministic);
-            _ImpactAreaScenarioResults.ParallelResultsAreConverged(.95, .05);
-            MessageEventArgs endComputeMessageArgs = new MessageEventArgs(new Message($"EAD and performance compute for the impact area with ID {_ImpactAreaID} has completed successfully" + Environment.NewLine));
+            ComputeIterations(convergenceCriteria, randomProvider, masterseed, computeWithDamage, giveMeADamageFrequency, computeIsDeterministic, cancellationToken);
+            _impactAreaScenarioResults.ParallelResultsAreConverged(.95, .05);
+            MessageEventArgs endComputeMessageArgs = new MessageEventArgs(new Message($"EAD and performance compute for the impact area with ID {_impactAreaID} has completed successfully" + Environment.NewLine));
             ReportMessage(this, endComputeMessageArgs);
             return _ImpactAreaScenarioResults;
         }
@@ -365,14 +372,14 @@ namespace HEC.FDA.Model.compute
                 }
                 if (!_ImpactAreaScenarioResults.ResultsAreConverged(.95, .05, computeWithDamage))
                 {
-                    //recalculate compute chunks 
-                    expectedIterations = _ImpactAreaScenarioResults.RemainingIterations(.95, .05, computeWithDamage);
-                    computeChunks = Convert.ToInt64(expectedIterations / convergenceCriteria.IterationCount);
-                    if (computeChunks == 0)
-                    {
-                        computeChunks = 1;
                     }
-                    j = 0;
+
+                });
+                if (!_impactAreaScenarioResults.ResultsAreConverged(.95, .05, computeWithDamage))
+                {//TODO: there is a weird case here - if remaining iterations are small, we divide by zero
+                    iterations = _impactAreaScenarioResults.RemainingIterations(.95, .05, computeWithDamage);
+                    _ExpectedIterations = _completedIterations + iterations;
+                    progressChunks = _ExpectedIterations / 100;
                 }
                 else
                 {
@@ -751,7 +758,7 @@ namespace HEC.FDA.Model.compute
 
             MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
-            ImpactAreaScenarioResults results = Compute(meanRandomProvider, convergenceCriteria, false, true, computeIsDeterministic: true);
+            ImpactAreaScenarioResults results = Compute(meanRandomProvider, convergenceCriteria, new CancellationTokenSource().Token, false, true, computeIsDeterministic: true);
             return results;
         }
         public static SimulationBuilder builder(int impactAreaID)

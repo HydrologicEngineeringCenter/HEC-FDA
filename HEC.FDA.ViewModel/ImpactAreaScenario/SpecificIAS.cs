@@ -125,7 +125,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             return "The selected " + elemName + " no longer exists.";
         }
 
-        private string GetSpecificImpactAreaName()
+        public string GetSpecificImpactAreaName()
         {
             string name = "";
             ImpactAreaElement impactAreaElem = (ImpactAreaElement)StudyCache.GetChildElementsOfType(typeof(ImpactAreaElement))[0];

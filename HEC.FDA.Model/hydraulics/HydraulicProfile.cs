@@ -143,8 +143,7 @@ namespace HEC.FDA.Model.hydraulics
         {
             if (obj == null) return 1;
 
-            IHydraulicProfile otherProfile = obj as IHydraulicProfile;
-            if (otherProfile != null)
+            if (obj is IHydraulicProfile otherProfile)
                 return Probability.CompareTo(otherProfile.Probability);
             else
                 throw new ArgumentException("Object is not a HydraulicProfile");

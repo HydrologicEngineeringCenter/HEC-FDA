@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.Results;
 using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario
@@ -22,12 +23,22 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             addCondition.Header = StringConstants.CREATE_NEW_SCENARIO_MENU;
             addCondition.Action = AddNewIASSet;
 
+            NamedAction computeAllMenu = new NamedAction();
+            computeAllMenu.Header = StringConstants.COMPUTE_SCENARIOS_MENU;
+            computeAllMenu.Action = ComputeScenarios;
+
+            NamedAction viewSummaryResultsMenu = new NamedAction();
+            viewSummaryResultsMenu.Header = StringConstants.VIEW_SUMMARY_RESULTS_MENU;
+            viewSummaryResultsMenu.Action = ViewSummaryResults;
+
             List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(addCondition);
+            localActions.Add(computeAllMenu);
+            localActions.Add(viewSummaryResultsMenu);
 
             Actions = localActions;
             StudyCache.IASElementAdded += AddIASElementSet;
-            StudyCache.IASElementRemoved += RemoveConditionsElement;
+            StudyCache.IASElementRemoved += RemoveIASElementSet;
             StudyCache.IASElementUpdated += UpdateIASElementSet;
 
             //the child elements
@@ -95,9 +106,35 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         {
             AddElement(e.Element);
         }
-        private void RemoveConditionsElement(object sender, Saving.ElementAddedEventArgs e)
+        private void RemoveIASElementSet(object sender, Saving.ElementAddedEventArgs e)
         {
             RemoveElement(e.Element);
+        }
+
+        public void ComputeScenarios(object arg1, EventArgs arg2)
+        {
+            ScenarioSelectorVM vm = new ScenarioSelectorVM();
+            vm.RequestNavigation += Navigate;
+            //todo: add to string constants
+            DynamicTabVM tab = new DynamicTabVM(StringConstants.COMPUTE_SCENARIOS_HEADER, vm, StringConstants.COMPUTE_SCENARIOS_HEADER);
+            Navigate(tab, false, false);
+        }
+
+        public void ViewSummaryResults(object arg1, EventArgs arg2)
+        {
+            List<IASElement> elems = StudyCache.GetChildElementsOfType<IASElement>();
+            List<IASElement> elemsWithResults = new List<IASElement>();
+            foreach(IASElement elem in elems)
+            {
+                if(elem.Results != null)
+                {
+                    elemsWithResults.Add(elem);
+                }
+            }
+
+            ScenarioDamageSummaryVM vm = new ScenarioDamageSummaryVM(elemsWithResults);
+            DynamicTabVM tab = new DynamicTabVM(StringConstants.VIEW_SUMMARY_RESULTS_HEADER, vm, StringConstants.VIEW_SUMMARY_RESULTS_HEADER);
+            Navigate(tab, false, false);
         }
 
         public void AddNewIASSet(object arg1, EventArgs arg2)

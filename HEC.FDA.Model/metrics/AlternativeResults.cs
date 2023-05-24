@@ -59,7 +59,6 @@ namespace HEC.FDA.Model.metrics
         }
 
 
-
         public AlternativeResults(int id, List<int> analysisYears, int periodOfAnalysis)
         {
             _alternativeID = id;

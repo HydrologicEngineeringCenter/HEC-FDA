@@ -43,6 +43,10 @@ namespace HEC.FDA.ViewModel.Utilities
         };
 
         public static readonly string FAILURE_IMAGE = IMAGE_PREFIX + "FailureFunction.png";
+        //<a target="_blank" href="https://icons8.com/icon/PE5vY419cmPT/caution">Caution</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+        public static readonly string GREEN_CHECKMARK_IMAGE = IMAGE_PREFIX + "greenCheckmark.png";
+        public static readonly string ERROR_IMAGE = IMAGE_PREFIX + "errorMark.png"; 
+        public static readonly string CAUTION_IMAGE = IMAGE_PREFIX + "cautionMark.png"; 
 
         public static string GetImage(Type childElementType)
         {
@@ -54,5 +58,6 @@ namespace HEC.FDA.ViewModel.Utilities
             return image;
         }
 
+  
     }
 }

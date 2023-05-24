@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using HEC.FDA.Model.alternatives;
 using HEC.FDA.Model.compute;
 using HEC.FDA.Model.metrics;
@@ -209,7 +210,7 @@ namespace HEC.FDA.ModelTest.integrationtests
             ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
             Scenario scenario2 = new Scenario(futureYear, impactAreaScenarioSimulations);
             ScenarioResults scenarioResults2 = scenario2.Compute(randomProvider, convergenceCriteria);
-            AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(randomProvider, .025, 50, 1, scenarioResults, scenarioResults2);
+            AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(randomProvider, .025, 50, 1, scenarioResults, scenarioResults2, new CancellationToken());
             Empirical empiricalEADDistribution = alternativeResults.GetBaseYearEADDistribution(impactAreaID1, commercialDamageCategory);
 
             //Act
