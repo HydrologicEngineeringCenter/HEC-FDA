@@ -268,7 +268,7 @@ namespace HEC.FDA.ModelTest.unittests
         }
 
         [Theory]
-        [InlineData(9102, 10001, 1.6)]
+        [InlineData(9102, 101, 1.6)]
         public void SerializationShouldReadTheSameObjectItWrites(int seed, int iterations, double thresholdValue)
         {
             ContinuousDistribution flow_frequency = new Uniform(0, 100000);

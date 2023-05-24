@@ -10,7 +10,7 @@ using Statistics.Distributions;
 
 namespace Statistics.Histograms
 {
-    public class Histogram: IHistogram
+    public class Histogram : IHistogram
     {
         #region Fields
         private Int64[] _BinCounts = new Int64[] { };
@@ -419,12 +419,10 @@ namespace Statistics.Histograms
         }
         public void AddObservationsToHistogram(double[] data)
         {
-            if (_SampleSize > 1000)
+            bool sampleSizeIsBigEnough = _SampleSize > 1000;
+            if (sampleSizeIsBigEnough && HistogramIsZeroValued)
             {
-                if(Mean == 0 && Variance == 0)
-                {
                     ShutHistogramDown();
-                }
             }
             else
             {
@@ -450,7 +448,7 @@ namespace Statistics.Histograms
             _ConvergedOnMax = false;
             _HistogramIsSingleValued = true;
             _HistogramIsZeroValued = true;
-    }
+        }
 
         public Int64 FindBinCount(double x, bool cumulative = true)
         {
@@ -893,15 +891,22 @@ namespace Statistics.Histograms
 
         private bool IsZeroValued()
         {
-            bool isZeroValued = false;
-            bool meanIsZero = Mean == 0;
-            bool standardDeviationIsZero = StandardDeviation == 0;
-            if (meanIsZero && standardDeviationIsZero)
+            if (_HistogramIsZeroValued == true)
             {
-                isZeroValued = true;
-                _HistogramIsZeroValued = true;
+                return true;
             }
-            return isZeroValued;
+            else
+            {
+                bool isZeroValued = false;
+                bool meanIsZero = Mean == 0;
+                bool standardDeviationIsZero = StandardDeviation == 0;
+                if (meanIsZero && standardDeviationIsZero)
+                {
+                    isZeroValued = true;
+                    _HistogramIsZeroValued = true;
+                }
+                return isZeroValued;
+            }
 
         }
 
