@@ -265,11 +265,9 @@ namespace HEC.FDA.Model.alternatives
 
                 //get base year EAD and frequency at probability step
                 double eadSampledBaseYear = baseYearDamageResult.ConsequenceHistogram.InverseCDF(probabilityStep);
-                Int64 sampledBaseYearEADBinCount = baseYearDamageResult.ConsequenceHistogram.FindBinCount(eadSampledBaseYear, false);
 
                 //get future year EAD and frequency at probability step
                 double eadSampledFutureYear = mlfYearDamageResult.ConsequenceHistogram.InverseCDF(probabilityStep);
-                Int64 sampledFutureYearEADBinCount = baseYearDamageResult.ConsequenceHistogram.FindBinCount(eadSampledFutureYear, false);
 
                 //calculate AAEQ at probability step
                 double aaeqDamage = ComputeEEAD(eadSampledBaseYear, baseYear, eadSampledFutureYear, futureYear, periodOfAnalysis, discountRate);

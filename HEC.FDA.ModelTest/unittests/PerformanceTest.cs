@@ -213,7 +213,7 @@ namespace HEC.FDA.ModelTest.unittests
         [Fact]
         public void ConvergenceTest()
         {
-            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1000, maxIterations: 100000);
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1000, maxIterations: 100010);
             ThresholdEnum thresholdType = ThresholdEnum.DefaultExteriorStage;
             double thresholdValue = 4.1;
             int thresholdID1 = 1;

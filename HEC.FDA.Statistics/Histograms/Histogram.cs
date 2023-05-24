@@ -25,8 +25,8 @@ namespace Statistics.Histograms
         private bool _Converged = false;
         private Int64 _ConvergedIterations = int.MinValue;
         private bool _ConvergedOnMax = false;
-        private bool _HistogramIsZeroValued;
-        private bool _HistogramIsSingleValued;
+        private bool _HistogramIsZeroValued = false;
+        private bool _HistogramIsSingleValued = false;
         private ConvergenceCriteria _ConvergenceCriteria;
         private bool _minHasNotBeenSet = false;
         private const string _type = "Histogram";
@@ -891,12 +891,6 @@ namespace Statistics.Histograms
 
         private bool IsZeroValued()
         {
-            if (_HistogramIsZeroValued == true)
-            {
-                return true;
-            }
-            else
-            {
                 bool isZeroValued = false;
                 bool meanIsZero = Mean == 0;
                 bool standardDeviationIsZero = StandardDeviation == 0;
@@ -906,7 +900,6 @@ namespace Statistics.Histograms
                     _HistogramIsZeroValued = true;
                 }
                 return isZeroValued;
-            }
 
         }
 
