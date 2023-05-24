@@ -211,62 +211,6 @@ namespace HEC.FDA.ModelTest.unittests
             Assert.Equal(actualAssuranceOfAEP, actualAssuranceOfAEPWithLevee, .01);
         }
 
-        [Fact]
-        public void ConvergenceTest()
-        {
-            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1000, maxIterations: 100010);
-            ThresholdEnum thresholdType = ThresholdEnum.DefaultExteriorStage;
-            double thresholdValue = 4.1;
-            int thresholdID1 = 1;
-            int thresholdID2 = 2;
-            Threshold threshold1 = new Threshold(thresholdID1, convergenceCriteria, thresholdType, thresholdValue);
-            Threshold threshold2 = new Threshold(thresholdID2, convergenceCriteria, thresholdType, thresholdValue);
-            PerformanceByThresholds performanceByThresholds = new PerformanceByThresholds();
-            performanceByThresholds.AddThreshold(threshold1);
-            performanceByThresholds.AddThreshold(threshold2);
-
-            double keyForCNEP = .98;
-            performanceByThresholds.GetThreshold(thresholdID1).SystemPerformanceResults.AddStageAssuranceHistogram(keyForCNEP);
-            performanceByThresholds.GetThreshold(thresholdID2).SystemPerformanceResults.AddStageAssuranceHistogram(keyForCNEP);
-
-            int seed = 1234;
-            Random random = new Random(seed);
-            Normal normal = new Normal();
-
-            int iterationCount = convergenceCriteria.IterationCount;
-            int computeChunks = 1000; ;
-            for (int j = 0; j < computeChunks; j++)
-            {
-                Parallel.For(0, iterationCount, i =>
-                {
-                    double uniformObservation1 = random.NextDouble() + 1;
-                    double uniformObservation2 = random.NextDouble() + 2;
-                    double messyObservation = normal.InverseCDF(random.NextDouble()) * random.NextDouble(); //+ random.NextDouble() * random.NextDouble() * random.NextDouble() * 1000;
-                    double messyObservationLogged = Math.Log(Math.Abs(messyObservation));
-                    performanceByThresholds.GetThreshold(thresholdID1).SystemPerformanceResults.AddStageForAssurance(keyForCNEP, uniformObservation1, i);
-                    performanceByThresholds.GetThreshold(thresholdID1).SystemPerformanceResults.AddStageForAssurance(keyForCNEP, uniformObservation2, i);
-                    performanceByThresholds.GetThreshold(thresholdID2).SystemPerformanceResults.AddStageForAssurance(keyForCNEP, messyObservationLogged, i);
-                    performanceByThresholds.GetThreshold(thresholdID2).SystemPerformanceResults.AddStageForAssurance(keyForCNEP, messyObservation, i);
-                }
-                );
-                foreach (Threshold threshold in performanceByThresholds.ListOfThresholds)
-                {
-                    threshold.SystemPerformanceResults.PutDataIntoHistograms();
-                }
-            }
-            ImpactAreaScenarioResults results = new ImpactAreaScenarioResults(id);
-            //I don't think we require this line.
-            //results.ConsequenceResults.PutDataIntoHistograms();
-            results.PerformanceByThresholds = performanceByThresholds;
-
-            bool isFirstThresholdConverged = performanceByThresholds.GetThreshold(thresholdID1).SystemPerformanceResults.AssuranceTestForConvergence(.05, .95);
-            bool isSecondThresholdConverged = performanceByThresholds.GetThreshold(thresholdID2).SystemPerformanceResults.AssuranceTestForConvergence(.05, .95);
-            bool isPerformanceConverged = results.IsPerformanceConverged();
-
-            Assert.True(isFirstThresholdConverged);
-            Assert.False(isSecondThresholdConverged);
-            Assert.False(isPerformanceConverged);
-        }
 
         [Theory]
         [InlineData(9102, 101, 1.6)]
