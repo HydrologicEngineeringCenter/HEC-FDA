@@ -4,6 +4,10 @@ namespace HEC.FDA.ViewModel.Inventory
 {
     public class InventoryColumnSelectionsRowItem
     {
+        private string _DisplayName;
+        /// <summary>
+        /// This is the label in the Structures import UI
+        /// </summary>
         public string Name { get; set; }
 
         /// <summary>
@@ -15,9 +19,15 @@ namespace HEC.FDA.ViewModel.Inventory
         /// </summary>
         public string SelectedItem { get; set; } = "";
 
-        public InventoryColumnSelectionsRowItem(string name)
+        public string MissingValueColumnHeader
+        {
+            get { return _DisplayName + " (" + SelectedItem + ")"; }
+        }
+
+        public InventoryColumnSelectionsRowItem(string name, string displayName = "")
         {
             Name = name;
+            _DisplayName = displayName;
         }
 
         public bool IsValid()

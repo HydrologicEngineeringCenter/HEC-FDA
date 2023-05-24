@@ -127,7 +127,7 @@ namespace HEC.FDA.ViewModel.Study
         /// <param name="xml"></param>
         public StudyPropertiesElement(XElement studyProperty, int id):base(studyProperty, id)
         {
-            StudyPath = studyProperty.Attribute(PATH).Value;
+            StudyPath = Storage.Connection.Instance.ProjectFile;
             CreatedBy = studyProperty.Attribute(CREATED_BY).Value;
             CreatedDate = studyProperty.Attribute(CREATED_DATE).Value;
             StudyNotes = studyProperty.Attribute(STUDY_NOTES).Value;
@@ -174,7 +174,6 @@ namespace HEC.FDA.ViewModel.Study
 
             studyPropsElem.Add(CreateHeaderElement());
 
-            studyPropsElem.SetAttributeValue(PATH, StudyPath);
             studyPropsElem.SetAttributeValue(CREATED_BY, CreatedBy);
             studyPropsElem.SetAttributeValue(CREATED_DATE, CreatedDate);
             studyPropsElem.SetAttributeValue(STUDY_NOTES, StudyNotes);

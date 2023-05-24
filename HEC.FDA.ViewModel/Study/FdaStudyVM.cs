@@ -1,5 +1,6 @@
 ﻿using Geospatial.GDALAssist;
 using HEC.FDA.ViewModel.Tabs;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.IO;
 
@@ -70,7 +71,15 @@ namespace HEC.FDA.ViewModel.Study
         private void UpdateSaveStatus(object sender, EventArgs e)
         {
             SaveStatus = (string)sender;
-        }        
+        }
+
+        public void LaunchSplashScreen()
+        {
+            SplashScreenVM vm = new SplashScreenVM();
+            string header = "Terms and Conditions";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "splashscreen",true,false);
+            Navigate(tab, true, true);
+        }
 
     }
 }
