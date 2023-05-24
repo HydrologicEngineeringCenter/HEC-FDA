@@ -210,7 +210,7 @@ namespace Statistics.Histograms
             Max = Min + _BinWidth;
             int numberOfBins = 1;
             _BinCounts = new Int64[numberOfBins];
-            _ConvergenceCriteria = new ConvergenceCriteria();
+            _ConvergenceCriteria = convergenceCriteria;
         }
         public Histogram(double binWidth, ConvergenceCriteria convergenceCriteria)
         {
