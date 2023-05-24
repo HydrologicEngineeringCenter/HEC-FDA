@@ -174,7 +174,6 @@ namespace HEC.FDA.ViewModel.Study
 
             studyPropsElem.Add(CreateHeaderElement());
 
-            studyPropsElem.SetAttributeValue(PATH, StudyPath);
             studyPropsElem.SetAttributeValue(CREATED_BY, CreatedBy);
             studyPropsElem.SetAttributeValue(CREATED_DATE, CreatedDate);
             studyPropsElem.SetAttributeValue(STUDY_NOTES, StudyNotes);
