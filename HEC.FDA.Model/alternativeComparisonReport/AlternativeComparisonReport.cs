@@ -17,9 +17,9 @@ namespace HEC.FDA.Model.alternativeComparisonReport
     public class AlternativeComparisonReport: ValidationErrorLogger, IProgressReport
     {
         #region Fields
-        private List<ManyEmpiricalDistributionsOfConsequences> _aaeqResults;
-        private List<ManyEmpiricalDistributionsOfConsequences> _baseYearEADResults;
-        private List<ManyEmpiricalDistributionsOfConsequences> _futureYearEADResults;
+        private List<ManyEmpiricalDistributionsOfConsequences> _AAEqResults;
+        private List<ManyEmpiricalDistributionsOfConsequences> _BaseYearEADResults;
+        private List<ManyEmpiricalDistributionsOfConsequences> _FutureYearEADResults;
         #endregion
 
         #region Properties
@@ -45,7 +45,7 @@ namespace HEC.FDA.Model.alternativeComparisonReport
 
             //TODO: Fix the hacked in progress reporting 
             ReportProgress(this, new ProgressReportEventArgs(100));
-            return new AlternativeComparisonReportResults(withProjectAlternativesResults, withoutProjectAlternativeResults, _aaeqResults, _baseYearEADResults , _futureYearEADResults);
+            return new AlternativeComparisonReportResults(withProjectAlternativesResults, withoutProjectAlternativeResults, _AAEqResults, _BaseYearEADResults , _FutureYearEADResults);
         }
         private  void ComputeDistributionOfAAEQDamageReduced(AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
         {
@@ -85,7 +85,7 @@ namespace HEC.FDA.Model.alternativeComparisonReport
                 }
                 damagesReducedAllAlternatives.Add(damageReducedOneAlternative);
             }
-            _aaeqResults = damagesReducedAllAlternatives;
+            _AAEqResults = damagesReducedAllAlternatives;
         }
 
         private SingleEmpiricalDistributionOfConsequences IterateOnConsequenceDistributionResult(SingleEmpiricalDistributionOfConsequences withProjectDamageResult, SingleEmpiricalDistributionOfConsequences withoutProjectDamageResult, bool iterateOnWithProject = true)
@@ -168,7 +168,7 @@ namespace HEC.FDA.Model.alternativeComparisonReport
                 }
                 damageReducedAllAlternatives.Add(damageReducedAlternative);
             }
-            _baseYearEADResults = damageReducedAllAlternatives;
+            _BaseYearEADResults = damageReducedAllAlternatives;
 
         }
 
@@ -216,7 +216,7 @@ namespace HEC.FDA.Model.alternativeComparisonReport
                 }
                 damageReducedAlternatives.Add(damageReducedAlternative);
             }
-            _futureYearEADResults = damageReducedAlternatives;
+            _FutureYearEADResults = damageReducedAlternatives;
 
         }
 
