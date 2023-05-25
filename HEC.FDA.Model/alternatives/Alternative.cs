@@ -72,7 +72,7 @@ namespace HEC.FDA.Model.alternatives
             CancellationToken cancellationToken)
         {
             AlternativeResults alternativeResults = new(alternativeResultsID, analysisYears, periodOfAnalysis);
-            MessageEventArgs messargs = new MessageEventArgs(new Message("Initiating discounting routine." + Environment.NewLine));
+            MessageEventArgs messargs = new(new Message("Initiating discounting routine." + Environment.NewLine));
             alternativeResults.ReportMessage(this, messargs);
 
             alternativeResults.BaseYearScenarioResults = computedResultsBaseYear;
@@ -313,18 +313,18 @@ namespace HEC.FDA.Model.alternatives
 
         private SingleEmpiricalDistributionOfConsequences IterateOnAAEQ(ConsequenceDistributionResult baseYearDamageResult, ConsequenceDistributionResult mlfYearDamageResult, int baseYear, int futureYear, int periodOfAnalysis, double discountRate, bool iterateOnFutureYear = true)
         {
-            SingleEmpiricalDistributionOfConsequences aaeqResult = new SingleEmpiricalDistributionOfConsequences();
+            SingleEmpiricalDistributionOfConsequences aaeqResult = new();
             ConvergenceCriteria convergenceCriteria;
             if (iterateOnFutureYear)
             {
                 convergenceCriteria = mlfYearDamageResult.ConvergenceCriteria;
-                MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message($"Average annual equivalent damage compute for damage category {mlfYearDamageResult.DamageCategory}, asset category {mlfYearDamageResult.AssetCategory}, and impact area ID {mlfYearDamageResult.RegionID} has been initiated." + Environment.NewLine));
+                MessageEventArgs beginComputeMessageArgs = new(new Message($"Average annual equivalent damage compute for damage category {mlfYearDamageResult.DamageCategory}, asset category {mlfYearDamageResult.AssetCategory}, and impact area ID {mlfYearDamageResult.RegionID} has been initiated." + Environment.NewLine));
                 ReportMessage(this, beginComputeMessageArgs);
             }
             else
             {
                 convergenceCriteria = baseYearDamageResult.ConvergenceCriteria;
-                MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message($"Average annual equivalent damage compute for damage category {baseYearDamageResult.DamageCategory}, asset category {baseYearDamageResult.AssetCategory}, and impact area ID {baseYearDamageResult.RegionID} has been initiated." + Environment.NewLine));
+                MessageEventArgs beginComputeMessageArgs = new(new Message($"Average annual equivalent damage compute for damage category {baseYearDamageResult.DamageCategory}, asset category {baseYearDamageResult.AssetCategory}, and impact area ID {baseYearDamageResult.RegionID} has been initiated." + Environment.NewLine));
                 ReportMessage(this, beginComputeMessageArgs);
             }
             var resultCollection = new ConcurrentBag<double>();
@@ -357,7 +357,7 @@ namespace HEC.FDA.Model.alternatives
             {
                 aaeqResult = new SingleEmpiricalDistributionOfConsequences(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, resultCollection.ToList(), baseYearDamageResult.RegionID);
             }
-            MessageEventArgs endComputeMessageArgs = new MessageEventArgs(new Message($"Average annual equivalent damage compute for damage category {aaeqResult.DamageCategory}, asset category {aaeqResult.AssetCategory}, and impact area ID {aaeqResult.RegionID} has completed." + Environment.NewLine));
+            MessageEventArgs endComputeMessageArgs = new(new Message($"Average annual equivalent damage compute for damage category {aaeqResult.DamageCategory}, asset category {aaeqResult.AssetCategory}, and impact area ID {aaeqResult.RegionID} has completed." + Environment.NewLine));
             ReportMessage(this, endComputeMessageArgs);
             return aaeqResult;
         }
