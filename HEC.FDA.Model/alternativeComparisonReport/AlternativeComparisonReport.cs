@@ -31,7 +31,7 @@ namespace HEC.FDA.Model.alternativeComparisonReport
         }
         #endregion 
 
-        public AlternativeComparisonReportResults ComputeAlternativeComparisonReport(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
+        public AlternativeComparisonReportResults ComputeAlternativeComparisonReport(AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
         {
             ReportMessage(this, new MessageEventArgs(new ErrorMessage("Starting alternative comparison report compute", ErrorLevel.Info)));
             ReportProgress(this, new ProgressReportEventArgs(10));

@@ -57,9 +57,9 @@ namespace Statistics.Distributions
             CumulativeProbabilities = probabilities;
             ObservationValues = observationValues;
             Min = ObservationValues[0];
-            Max = ObservationValues[ObservationValues.Length - 1];
+            Max = ObservationValues[^1];
             BuildFromProperties();
-            addRules();
+            AddRules();
         }
         public Empirical(double[] probabilities, double[] observationValues, double min, double max)
         {
@@ -69,7 +69,7 @@ namespace Statistics.Distributions
             Max = max;
             Truncated = true;
             BuildFromProperties();
-            addRules();
+            AddRules();
         }
         public void BuildFromProperties()
         {
@@ -84,7 +84,7 @@ namespace Statistics.Distributions
             _Constructed = true;
 
         }
-        private void addRules()
+        private void AddRules()
         {
             AddSinglePropertyRule(nameof(SampleSize),
                 new Rule(() => {
@@ -98,36 +98,6 @@ namespace Statistics.Distributions
         #endregion
 
         #region EmpiricalFunctions
-        //TODO: Is there anything we need this for? 
-        private IRange<double> FiniteRange(double min = double.NegativeInfinity, double max = double.PositiveInfinity)
-        {
-            double pmin = 0, epsilon = 1 / 1000000000d;
-            double pmax = 1 - pmin;
-            if (min.IsFinite() || max.IsFinite())//we are not entirely sure how inclusive or works with one sided truncation and the while loop below.
-            {
-                pmin = CDF(min);
-                pmax = CDF(max);
-            }
-            else
-            {
-                pmin = .0000001;
-                pmax = 1 - pmin;
-                min = InverseCDF(pmin);
-                max = InverseCDF(pmax);
-            }
-            while (!(min.IsFinite() && max.IsFinite()))
-            {
-                pmin += epsilon;
-                pmax -= epsilon;
-                if (!min.IsFinite()) min = InverseCDF(pmin);
-                if (!max.IsFinite()) max = InverseCDF(pmax);
-                if (pmin > 0.25)
-                    throw new InvalidConstructorArgumentsException($"The Empirical object is not constructable because 50% or more of its distribution returns {double.NegativeInfinity} and {double.PositiveInfinity}.");
-            }
-            return IRangeFactory.Factory(pmin, pmax);
-
-        }
-
         private double ComputeMean()
         {
             if (SampleSize == 0)
@@ -260,7 +230,7 @@ namespace Statistics.Distributions
             }
         }
 
-        public bool IsMonotonicallyIncreasing(double[] arrayOfData)
+        public static bool IsMonotonicallyIncreasing(double[] arrayOfData)
         {
 
             for (int i = 0; i < arrayOfData.Length - 1; i++)
@@ -471,9 +441,9 @@ namespace Statistics.Distributions
 
         public override string Requirements(bool printNotes)
         {
-            return RequiredParameterization(printNotes);
+            return RequiredParameterization();
         }
-        public static string RequiredParameterization(bool printNotes = false)
+        public static string RequiredParameterization()
         {
             return $"The empirical distribution requires the following parameterization: {Parameterization()}.";
         }
@@ -484,14 +454,14 @@ namespace Statistics.Distributions
 
         public XElement WriteToXML()
         {
-            XElement masterElem = new XElement("Empirical Distribution");
+            XElement masterElem = new("Empirical Distribution");
             masterElem.SetAttributeValue("Ordinate_Count", SampleSize);
             for (int i = 0; i < SampleSize; i++)
             {
-                XElement rowElement = new XElement("Coordinate");
-                XElement xRowElement = new XElement("X");
+                XElement rowElement = new("Coordinate");
+                XElement xRowElement = new("X");
                 xRowElement.SetAttributeValue("Value", ObservationValues[i]);
-                XElement yRowElement = new XElement("Y");
+                XElement yRowElement = new("Y");
                 yRowElement.SetAttributeValue("Cumulative Probability", CumulativeProbabilities[i]);
                 rowElement.Add(xRowElement);
                 rowElement.Add(yRowElement);
@@ -531,7 +501,7 @@ namespace Statistics.Distributions
             double max = Double.MinValue;
             sample.Sort();//check if ascending or decending
             double[] sampleArray = new double[sample.Count];
-            for (int i = 0; i < sample.Count(); i++)
+            for (int i = 0; i < sample.Count; i++)
             {
                 if (sample[i] > max) max = sample[i];
                 if (sample[i] < min) min = sample[i];
@@ -549,7 +519,7 @@ namespace Statistics.Distributions
             double min = Double.MaxValue;
             double max = Double.MinValue;
             Array.Sort(sample);//check if ascending or decending
-            for (int i = 0; i < sample.Count(); i++)
+            for (int i = 0; i < sample.Length; i++)
             {
                 if (sample[i] > max) max = sample[i];
                 if (sample[i] < min) min = sample[i];

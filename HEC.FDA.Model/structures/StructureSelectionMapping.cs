@@ -109,9 +109,9 @@ namespace HEC.FDA.Model.structures
 
         public XElement ToXML()
         {
-            XElement mappingsElem = new XElement(INVENTORY_MAPPINGS);
+            XElement mappingsElem = new(INVENTORY_MAPPINGS);
 
-            XElement columnSelectionsElem = new XElement(INVENTORY_COLUMN_SELECTIONS);
+            XElement columnSelectionsElem = new(INVENTORY_COLUMN_SELECTIONS);
             columnSelectionsElem.SetAttributeValue(FIRST_FLOOR_ELEV_SELECTED, IsUsingFirstFloorElevation);
             columnSelectionsElem.SetAttributeValue(FROM_TERRAIN_FILE, IsUsingTerrainFile);
 
@@ -134,9 +134,9 @@ namespace HEC.FDA.Model.structures
             return mappingsElem;
         }
 
-        private XElement CreateColumnMappingXElement(string elemName, string value)
+        private static XElement CreateColumnMappingXElement(string elemName, string value)
         {
-            XElement rowElem = new XElement(elemName);
+            XElement rowElem = new(elemName);
             rowElem.SetAttributeValue(VALUE, value);
             return rowElem;
         }  

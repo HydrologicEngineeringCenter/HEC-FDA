@@ -10,27 +10,27 @@ namespace HEC.FDA.Model.structures
     public class ValueUncertainty : ValidationErrorLogger
     {
         #region Fields
-        private double _percentOfInventoryValueStandardDeviationOrMin;
-        private double _percentOfInventoryValueMax;
-        private IDistributionEnum _distributionType;
+        private readonly double _PercentOfInventoryValueStandardDeviationOrMin;
+        private readonly double _PercentOfInventoryValueMax;
+        private readonly IDistributionEnum _DistributionType;
         #endregion
 
         #region Properties 
-        public IDistributionEnum DistributionType { get { return _distributionType; } }
+        public IDistributionEnum DistributionType { get { return _DistributionType; } }
         #endregion 
         #region Constructor 
         public ValueUncertainty()
         {
-            _percentOfInventoryValueMax = 100;
-            _percentOfInventoryValueStandardDeviationOrMin = 0;
-            _distributionType = IDistributionEnum.Deterministic;
+            _PercentOfInventoryValueMax = 100;
+            _PercentOfInventoryValueStandardDeviationOrMin = 0;
+            _DistributionType = IDistributionEnum.Deterministic;
             AddRules();
         }
         public ValueUncertainty(IDistributionEnum distributionType, double percentOfInventoryValueStandardDeviationOrMin, double percentOfInventoryMax = 100)
         {
-            _distributionType = distributionType;
-            _percentOfInventoryValueStandardDeviationOrMin = percentOfInventoryValueStandardDeviationOrMin;
-            _percentOfInventoryValueMax = percentOfInventoryMax;
+            _DistributionType = distributionType;
+            _PercentOfInventoryValueStandardDeviationOrMin = percentOfInventoryValueStandardDeviationOrMin;
+            _PercentOfInventoryValueMax = percentOfInventoryMax;
             AddRules();
         }
         #endregion
@@ -38,9 +38,9 @@ namespace HEC.FDA.Model.structures
         #region Methods
         private void AddRules()
         {
-            AddSinglePropertyRule(nameof(_distributionType), new Rule(() => _distributionType.Equals(IDistributionEnum.Normal) || _distributionType.Equals(IDistributionEnum.Uniform) || _distributionType.Equals(IDistributionEnum.Deterministic) || _distributionType.Equals(IDistributionEnum.Triangular), "Only Deterministic, Normal, Triangular, and Uniform distributions can be used for value uncertainty", ErrorLevel.Fatal));
-            AddSinglePropertyRule(nameof(_percentOfInventoryValueStandardDeviationOrMin), new Rule(() => _percentOfInventoryValueStandardDeviationOrMin >= 0, "The percent of inventory value must be greaeter than or equal to zero.", ErrorLevel.Fatal));
-            AddSinglePropertyRule(nameof(_percentOfInventoryValueMax), new Rule(() => _percentOfInventoryValueMax >= 100, "The max percent of the inventory value must be greater than or equal to 100", ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(_DistributionType), new Rule(() => _DistributionType.Equals(IDistributionEnum.Normal) || _DistributionType.Equals(IDistributionEnum.Uniform) || _DistributionType.Equals(IDistributionEnum.Deterministic) || _DistributionType.Equals(IDistributionEnum.Triangular), "Only Deterministic, Normal, Triangular, and Uniform distributions can be used for value uncertainty", ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(_PercentOfInventoryValueStandardDeviationOrMin), new Rule(() => _PercentOfInventoryValueStandardDeviationOrMin >= 0, "The percent of inventory value must be greaeter than or equal to zero.", ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(_PercentOfInventoryValueMax), new Rule(() => _PercentOfInventoryValueMax >= 100, "The max percent of the inventory value must be greater than or equal to 100", ErrorLevel.Fatal));
         }
 
         /// <summary>
@@ -61,22 +61,22 @@ namespace HEC.FDA.Model.structures
             } 
             else
             {
-            switch (_distributionType)
+            switch (_DistributionType)
             {
                 case IDistributionEnum.Normal:
-                    Normal normal = new Normal(centerOfDistribution/100, (_percentOfInventoryValueStandardDeviationOrMin/100));
+                    Normal normal = new(centerOfDistribution/100, (_PercentOfInventoryValueStandardDeviationOrMin/100));
                     sampledValueOffset = normal.InverseCDF(probability);
                     break;
 
                 case IDistributionEnum.LogNormal:
-                    sampledValueOffset = Math.Exp(Normal.StandardNormalInverseCDF(probability)* (_percentOfInventoryValueStandardDeviationOrMin/100));
+                    sampledValueOffset = Math.Exp(Normal.StandardNormalInverseCDF(probability)* (_PercentOfInventoryValueStandardDeviationOrMin/100));
                     break;
                 case IDistributionEnum.Triangular:
-                    Triangular triangular = new Triangular(_percentOfInventoryValueStandardDeviationOrMin/100, centerOfDistribution/100, _percentOfInventoryValueMax/100);
+                    Triangular triangular = new(_PercentOfInventoryValueStandardDeviationOrMin/100, centerOfDistribution/100, _PercentOfInventoryValueMax/100);
                     sampledValueOffset = triangular.InverseCDF(probability);
                     break;
                 case IDistributionEnum.Uniform:
-                    Uniform uniform = new Uniform(_percentOfInventoryValueStandardDeviationOrMin/100, _percentOfInventoryValueMax/100);
+                    Uniform uniform = new(_PercentOfInventoryValueStandardDeviationOrMin/100, _PercentOfInventoryValueMax/100);
                     sampledValueOffset = uniform.InverseCDF(probability);
                     break;
                 default:

@@ -164,9 +164,10 @@ namespace HEC.FDA.Model.compute
             //get the highest error level. This is so that we can log the intro message at that error level so that the filter will either
             //show the intro message and an actual error message or it won't show either.
             List<string> validationIntroMessages = new();
-            List<ValidationErrorLogger> validationObjects = new();
-
-            validationObjects.Add(_FrequencyDischarge);
+            List<ValidationErrorLogger> validationObjects = new()
+            {
+                _FrequencyDischarge
+            };
             validationIntroMessages.Add(nameof(_FrequencyDischarge) + $" has the following messages for the impact area with ID {_ImpactAreaID}:");
 
             validationObjects.Add(_FrequencyDischargeGraphical);

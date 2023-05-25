@@ -36,15 +36,15 @@ namespace HEC.FDA.ModelTest.unittests.structures
         [InlineData(1,0)]
         public void OccupancyTypeShouldSampleCorrectly(double structureValueOffset, double firstFloorElevationOffset)
         {
-            OccupancyType occupancyType = OccupancyType.builder()
-                .withName(name)
-                .withDamageCategory(damageCategory)
-                .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-                .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-                .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-                .withStructureValueUncertainty(_structureValueUncertainty)
-                .withContentToStructureValueRatio(_contentToStructureValueRatio)
-                .build();
+            OccupancyType occupancyType = OccupancyType.Builder()
+                .WithName(name)
+                .WithDamageCategory(damageCategory)
+                .WithStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
+                .WithContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
+                .WithFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
+                .WithStructureValueUncertainty(_structureValueUncertainty)
+                .WithContentToStructureValueRatio(_contentToStructureValueRatio)
+                .Build();
 
             DeterministicOccupancyType sampledStructureParameters = occupancyType.Sample(medianRandomProvider);
 

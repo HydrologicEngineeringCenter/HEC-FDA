@@ -45,7 +45,7 @@ namespace HEC.FDA.ViewModel.Compute
 
             return Task.Run(() =>
             {
-                AlternativeResults results = alt.AnnualizationCompute(randomProvider, discountRate, periodOfAnalysis, altElem.ID, firstResults, secondResults, cancellationToken);
+                AlternativeResults results = alt.AnnualizationCompute(discountRate, periodOfAnalysis, altElem.ID, firstResults, secondResults, cancellationToken);
                 callback?.Invoke(results);
             });
         }

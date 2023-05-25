@@ -21,24 +21,24 @@ namespace HEC.FDA.ModelTest.unittests
             string structureAssetCategory = "Structure";
             string contentAssetCategory = "Content";
             double mean = 2;
-            int impactAreaID_1 = 1;            ConvergenceCriteria criteria = new ConvergenceCriteria();
-            ConsequenceDistributionResults consequenceDistributionResults = new ConsequenceDistributionResults(criteria);
+            int impactAreaID_1 = 1;           
+            ConsequenceDistributionResults consequenceDistributionResults = new();
             Histogram histogram = FillHistogram(mean);
 
             //Impact Area 1
-            ConsequenceDistributionResult residentialStructure_1 = new ConsequenceDistributionResult(residentialDamageCategory, structureAssetCategory, histogram, impactAreaID_1);
+            ConsequenceDistributionResult residentialStructure_1 = new(residentialDamageCategory, structureAssetCategory, histogram, impactAreaID_1);
             consequenceDistributionResults.AddExistingConsequenceResultObject(residentialStructure_1);
-            ConsequenceDistributionResult residentialContent_1 = new ConsequenceDistributionResult(residentialDamageCategory, contentAssetCategory, histogram, impactAreaID_1);
+            ConsequenceDistributionResult residentialContent_1 = new(residentialDamageCategory, contentAssetCategory, histogram, impactAreaID_1);
             consequenceDistributionResults.AddExistingConsequenceResultObject(residentialContent_1);
-            ConsequenceDistributionResult commercialStructure_1 = new ConsequenceDistributionResult(commercialDamageCategory, structureAssetCategory, histogram, impactAreaID_1);
+            ConsequenceDistributionResult commercialStructure_1 = new(commercialDamageCategory, structureAssetCategory, histogram, impactAreaID_1);
             consequenceDistributionResults.AddExistingConsequenceResultObject(commercialStructure_1);
-            ConsequenceDistributionResult commercialContent_1 = new ConsequenceDistributionResult(commercialDamageCategory, contentAssetCategory, histogram, impactAreaID_1);
+            ConsequenceDistributionResult commercialContent_1 = new(commercialDamageCategory, contentAssetCategory, histogram, impactAreaID_1);
             consequenceDistributionResults.AddExistingConsequenceResultObject(commercialContent_1);
 
 
 
-            List<double> stages = new List<double>();
-            List<ConsequenceDistributionResults> consequenceDistributionResultsList = new List<ConsequenceDistributionResults>();
+            List<double> stages = new();
+            List<ConsequenceDistributionResults> consequenceDistributionResultsList = new();
             for (int i = 0; i < 20; i++)
             {
                 stages.Add(i);
@@ -65,20 +65,20 @@ namespace HEC.FDA.ModelTest.unittests
 
 
 
-        private Histogram FillHistogram(double mean)
+        private static Histogram FillHistogram(double mean)
         {
-            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
+            ConvergenceCriteria convergenceCriteria = new();
             int seed = 1234;
             int iterations = 1000;
-            List<double> data = new List<double>();
-            Normal normal = new Normal(mean + .5, mean / 2);
-            Random random = new Random(seed);
+            List<double> data = new();
+            Normal normal = new(mean + .5, mean / 2);
+            Random random = new(seed);
             for (int i = 0; i < iterations; i++)
             {
                 double sampledValue = normal.InverseCDF(random.NextDouble());
                 data.Add(sampledValue);
             }
-            Histogram histogram = new Histogram(data, convergenceCriteria);
+            Histogram histogram = new(data, convergenceCriteria);
             return histogram;
         }
     }
