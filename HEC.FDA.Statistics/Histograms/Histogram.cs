@@ -13,11 +13,10 @@ namespace Statistics.Histograms
     public class Histogram : IHistogram
     {
         #region Fields
-        private Int64[] _BinCounts = new Int64[] { };
+        private Int64[] _BinCounts = Array.Empty<long>();
         private double _SampleMean = 10;
         private double _SampleVariance;
         private double _Min;
-        private double _Max;
         private double _SampleMin;
         private double _SampleMax;
         private Int64 _SampleSize;
@@ -25,9 +24,7 @@ namespace Statistics.Histograms
         private bool _Converged = false;
         private Int64 _ConvergedIterations = int.MinValue;
         private bool _ConvergedOnMax = false;
-        private bool _HistogramIsZeroValued = false;
-        private bool _HistogramIsSingleValued = false;
-        private ConvergenceCriteria _ConvergenceCriteria;
+        private readonly ConvergenceCriteria _ConvergenceCriteria;
         private bool _minHasNotBeenSet = false;
         private const string _type = "Histogram";
         private bool _HistogramShutDown = false;
@@ -125,17 +122,7 @@ namespace Statistics.Histograms
                 _Min = value;
             }
         }
-        public double Max
-        {
-            get
-            {
-                return _Max;
-            }
-            set
-            {
-                _Max = value;
-            }
-        }
+        public double Max { get; set; }
         public double Mean
         {
             get
@@ -256,7 +243,7 @@ namespace Statistics.Histograms
             {
                 return double.NaN;
             }
-            if (_Min == (_Max - _BinWidth))
+            if (_Min == (Max - _BinWidth))
             {
                 return 0.0;
             }
@@ -285,9 +272,9 @@ namespace Statistics.Histograms
             {
                 return double.NaN;
             }
-            if (_Min == (_Max - _BinWidth))
+            if (_Min == (Max - _BinWidth))
             {
-                return _Max + (.5 * _BinWidth);
+                return Max + (.5 * _BinWidth);
             }
             double sum = 0;
             for (int i = 0; i < BinCounts.Length; i++)
@@ -306,16 +293,17 @@ namespace Statistics.Histograms
             {
                 return 0.0;
             }
-            if (_Min == (_Max - _BinWidth))
+            if (_Min == (Max - _BinWidth))
             {
                 return 0.0;
             }
-            double deviation = 0, deviation2 = 0;
+
+            double deviation2 = 0;
             for (int i = 0; i < BinCounts.Length; i++)
             {
                 double midpoint = _Min + (i * _BinWidth) + (0.5 * _BinWidth);
 
-                deviation = midpoint - _SampleMean;
+                double deviation = midpoint - _SampleMean;
                 deviation2 += deviation * deviation;
 
             }
@@ -365,7 +353,7 @@ namespace Statistics.Histograms
                     _SampleVariance = ((((double)(_SampleSize - 2) / (double)(_SampleSize - 1)) * _SampleVariance) + (Math.Pow(observation - _SampleMean, 2)) / (double)_SampleSize);
                     _SampleMean = tmpMean;
                 }
-                int quantityAdditionalBins = 0;
+                int quantityAdditionalBins;
                 if (observation < _Min)
                 {
                     quantityAdditionalBins = Convert.ToInt32(Math.Ceiling((_Min - observation) / _BinWidth));
@@ -378,12 +366,11 @@ namespace Statistics.Histograms
                     _BinCounts = newBinCounts;
                     _BinCounts[0] += 1;
                     double newMin = _Min - (quantityAdditionalBins * _BinWidth);
-                    double max = _Max;
                     Min = newMin;
                 }
-                else if (observation > _Max)
+                else if (observation > Max)
                 {
-                    quantityAdditionalBins = Convert.ToInt32(Math.Ceiling((observation - _Max + _BinWidth) / _BinWidth));
+                    quantityAdditionalBins = Convert.ToInt32(Math.Ceiling((observation - Max + _BinWidth) / _BinWidth));
                     Int64[] newBinCounts = new Int64[quantityAdditionalBins + _BinCounts.Length];
                     for (int i = 0; i < _BinCounts.Length; i++)
                     {
@@ -401,7 +388,7 @@ namespace Statistics.Histograms
                     {
                         newObsIndex = Convert.ToInt64(Math.Floor((observation - _Min) / _BinWidth));
                     }
-                    if (observation == _Max)
+                    if (observation == Max)
                     {
                         quantityAdditionalBins = 1;
                         Int64[] newBinCounts = new Int64[quantityAdditionalBins + _BinCounts.Length];
@@ -446,8 +433,6 @@ namespace Statistics.Histograms
             _SampleSize = 1;
             _Converged = true;
             _ConvergedOnMax = false;
-            _HistogramIsSingleValued = true;
-            _HistogramIsZeroValued = true;
         }
 
         public Int64 FindBinCount(double x, bool cumulative = true)
@@ -493,11 +478,11 @@ namespace Statistics.Histograms
             {
                 return double.NaN;
             }
-            if (_Min == (_Max - _BinWidth))
+            if (_Min == (Max - _BinWidth))
             {
                 if (x > _Min)
                 {
-                    if (x <= _Max)
+                    if (x <= Max)
                     {
                         return 1.0;
                     }
@@ -514,13 +499,13 @@ namespace Statistics.Histograms
             {
                 return double.NaN;
             }
-            if (_Min == (_Max - _BinWidth))
+            if (_Min == (Max - _BinWidth))
             {
                 if (x > _Min)
                 {
-                    if (x <= _Max)
+                    if (x <= Max)
                     {
-                        return (_Max - x) / (_Max - _Min);
+                        return (Max - x) / (Max - _Min);
                     }
                     else
                     {
@@ -550,7 +535,7 @@ namespace Statistics.Histograms
                 {
                     return double.NaN;
                 }
-                if (_Min == (_Max - _BinWidth))
+                if (_Min == (Max - _BinWidth))
                 {
                     return _Min + (_BinWidth * p);
                 }
@@ -575,7 +560,7 @@ namespace Statistics.Histograms
                         cobs += obs;
 
                     }
-                    double fraction = 0.0;
+                    double fraction;
                     if (obs == 0)
                     {
                         fraction = .5;
@@ -598,7 +583,7 @@ namespace Statistics.Histograms
                         obs = _BinCounts[index];
                         cobs -= obs;
                     }
-                    double fraction = 0.0;
+                    double fraction;
                     if (obs == 0)
                     {
                         fraction = .5;
@@ -631,9 +616,9 @@ namespace Statistics.Histograms
 
         public XElement ToXML()
         {
-            XElement masterElem = new XElement("Histogram");
+            XElement masterElem = new("Histogram");
             masterElem.SetAttributeValue("Min", _Min);
-            masterElem.SetAttributeValue("Max", _Max);
+            masterElem.SetAttributeValue("Max", Max);
             masterElem.SetAttributeValue("Bin_Width", _BinWidth);
             masterElem.SetAttributeValue("Sample_Size", SampleSize);
             masterElem.SetAttributeValue("Sample_Mean", _SampleMean);
@@ -647,7 +632,7 @@ namespace Statistics.Histograms
             masterElem.SetAttributeValue("Min_Not_Set", _minHasNotBeenSet);
 
             string binCounts = string.Join(",", _BinCounts.Select(n => n.ToString()).ToArray());
-            XElement binElem = new XElement("Bin_Counts");
+            XElement binElem = new("Bin_Counts");
             binElem.SetAttributeValue("Bin_Count", binCounts);
             masterElem.Add(binElem);
 
@@ -705,15 +690,17 @@ namespace Statistics.Histograms
             bool convergedOnMax = Convert.ToBoolean(convergedOnMaxString);
             //as long as we have a min, the min is set
             bool minNotSet = false;
-            Histogram histogram = new Histogram(min, max, binWidth, sampleSize, binCounts, convergenceCriteria);
-            histogram._SampleMean = sampleMean;
-            histogram._SampleVariance = sampleVariance;
-            histogram._SampleMin = sampleMin;
-            histogram._SampleMax = sampleMax;
-            histogram._Converged = converged;
-            histogram._ConvergedIterations = convergedIterations;
-            histogram._ConvergedOnMax = convergedOnMax;
-            histogram._minHasNotBeenSet = minNotSet;
+            Histogram histogram = new(min, max, binWidth, sampleSize, binCounts, convergenceCriteria)
+            {
+                _SampleMean = sampleMean,
+                _SampleVariance = sampleVariance,
+                _SampleMin = sampleMin,
+                _SampleMax = sampleMax,
+                _Converged = converged,
+                _ConvergedIterations = convergedIterations,
+                _ConvergedOnMax = convergedOnMax,
+                _minHasNotBeenSet = minNotSet
+            };
             return histogram;
         }
         public bool IsHistogramConverged(double upperq, double lowerq)
@@ -795,7 +782,7 @@ namespace Statistics.Histograms
             {
                 return false;
             }
-            bool maxesAreEqual = _Max.Equals(histogramToCompare.Max);
+            bool maxesAreEqual = Max.Equals(histogramToCompare.Max);
             if (!maxesAreEqual)
             {
                 return false;
@@ -897,7 +884,6 @@ namespace Statistics.Histograms
                 if (meanIsZero && standardDeviationIsZero)
                 {
                     isZeroValued = true;
-                    _HistogramIsZeroValued = true;
                 }
                 return isZeroValued;
 
@@ -909,7 +895,6 @@ namespace Statistics.Histograms
             if (_BinCounts[0] == SampleSize)
             {
                 isSingleValued = true;
-                _HistogramIsZeroValued = true;
             }
             return isSingleValued;
         }

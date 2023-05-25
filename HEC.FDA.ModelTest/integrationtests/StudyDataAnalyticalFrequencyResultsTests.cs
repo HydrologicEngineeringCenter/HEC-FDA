@@ -93,11 +93,11 @@ namespace HEC.FDA.ModelTest.integrationtests
             UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, metaData);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stageDamage);
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
-                .withFlowFrequency(flowFrequency)
-                .withFlowStage(flowStage)
-                .withStageDamages(stageDamageList)
-                .build();
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
+                .WithFlowFrequency(flowFrequency)
+                .WithFlowStage(flowStage)
+                .WithStageDamages(stageDamageList)
+                .Build();
             ImpactAreaScenarioResults results = simulation.PreviewCompute();
             double difference = expected - results.ConsequenceResults.MeanDamage(damCat, assetCat, impactAreaID);
             double relativeDifference = difference / expected;
@@ -118,11 +118,11 @@ namespace HEC.FDA.ModelTest.integrationtests
             UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, metaData);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stageDamage);
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
-                .withFlowFrequency(flowFrequency)
-                .withFlowStage(flowStage)
-                .withStageDamages(stageDamageList)
-                .build();
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
+                .WithFlowFrequency(flowFrequency)
+                .WithFlowStage(flowStage)
+                .WithStageDamages(stageDamageList)
+                .Build();
 
             RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations);
@@ -159,12 +159,12 @@ namespace HEC.FDA.ModelTest.integrationtests
             leveefailprobs[2] = new Deterministic(1);
             UncertainPairedData leveeFragilityFunction = new UncertainPairedData(leveestages, leveefailprobs, metaData);
 
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
-                .withFlowFrequency(flowFrequency)
-                .withFlowStage(flowStage)
-                .withStageDamages(stageDamageList)
-                .withLevee(leveeFragilityFunction, topOfLeveeElevation)
-                .build();
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
+                .WithFlowFrequency(flowFrequency)
+                .WithFlowStage(flowStage)
+                .WithStageDamages(stageDamageList)
+                .WithLevee(leveeFragilityFunction, topOfLeveeElevation)
+                .Build();
             RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1000, maxIterations: iterations);
             ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
@@ -194,12 +194,12 @@ namespace HEC.FDA.ModelTest.integrationtests
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stageDamage);
             UncertainPairedData fragilityCurve = new UncertainPairedData(FragilityStages, FragilityProbabilities, xLabel, yLabel, name);
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
-                .withFlowFrequency(flowFrequency)
-                .withFlowStage(flowStage)
-                .withStageDamages(stageDamageList)
-                .withLevee(fragilityCurve, topOfLeveeElevation)
-                .build();
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
+                .WithFlowFrequency(flowFrequency)
+                .WithFlowStage(flowStage)
+                .WithStageDamages(stageDamageList)
+                .WithLevee(fragilityCurve, topOfLeveeElevation)
+                .Build();
             RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations);
             ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);

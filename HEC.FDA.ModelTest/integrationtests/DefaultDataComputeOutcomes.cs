@@ -198,11 +198,11 @@ namespace HEC.FDA.ModelTest.integrationtests
         public void WithoutAnalytical_ScenarioResults(double expectedCommercialMeanEAD, double expectedResidentialMeanEAD)
         {
             //Arrange 
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
-                .withFlowFrequency(lp3)
-                .withFlowStage(stageDischarge)
-                .withStageDamages(stageDamageList)
-                .build();
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID1)
+                .WithFlowFrequency(lp3)
+                .WithFlowStage(stageDischarge)
+                .WithStageDamages(stageDamageList)
+                .Build();
             List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
             impactAreaScenarioSimulations.Add(simulation);
 
@@ -247,18 +247,18 @@ namespace HEC.FDA.ModelTest.integrationtests
         public void AnalyticalWithRegUnreg_ScenarioResults(double expectedResidentialMeanEAD, double expectedCommericialMeanEAD)
         {
             //Arrange
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
-                .withFlowFrequency(lp3)
-                .withInflowOutflow(regulatedUnregulated)
-                .withFlowStage(stageDischarge)
-                .withStageDamages(stageDamageList)
-                .build();
-            ImpactAreaScenarioSimulation simulation2 = ImpactAreaScenarioSimulation.builder(impactAreaID2)
-                .withFlowFrequency(lp3)
-                .withInflowOutflow(regulatedUnregulated)
-                .withFlowStage(stageDischarge)
-                .withStageDamages(stageDamageList)
-                .build();
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID1)
+                .WithFlowFrequency(lp3)
+                .WithInflowOutflow(regulatedUnregulated)
+                .WithFlowStage(stageDischarge)
+                .WithStageDamages(stageDamageList)
+                .Build();
+            ImpactAreaScenarioSimulation simulation2 = ImpactAreaScenarioSimulation.Builder(impactAreaID2)
+                .WithFlowFrequency(lp3)
+                .WithInflowOutflow(regulatedUnregulated)
+                .WithFlowStage(stageDischarge)
+                .WithStageDamages(stageDamageList)
+                .Build();
             List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
             impactAreaScenarioSimulations.Add(simulation);
             impactAreaScenarioSimulations.Add(simulation2);

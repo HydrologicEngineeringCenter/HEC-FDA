@@ -68,12 +68,12 @@ namespace HEC.FDA.ModelTest.unittests
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
             Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.DefaultExteriorStage, thresholdValue);
 
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withStageDamages(uncertainPairedDataList)
-                .withAdditionalThreshold(threshold)
-                .build();
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(id)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithStageDamages(uncertainPairedDataList)
+                .WithAdditionalThreshold(threshold)
+                .Build();
 
             MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, cc,new CancellationToken(), false);
@@ -120,12 +120,12 @@ namespace HEC.FDA.ModelTest.unittests
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
             Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.DefaultExteriorStage, thresholdValue);
 
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withAdditionalThreshold(threshold)
-                .withLevee(leveeCurve, thresholdValue)
-                .build();
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(id)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithAdditionalThreshold(threshold)
+                .WithLevee(leveeCurve, thresholdValue)
+                .Build();
 
             MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, cc, new CancellationToken(),false);
@@ -171,21 +171,21 @@ namespace HEC.FDA.ModelTest.unittests
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 101, maxIterations: iterations, tolerance: .001);
             Threshold threshold = new Threshold(thresholdID, convergenceCriteria, ThresholdEnum.DefaultExteriorStage, thresholdValue);
 
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withStageDamages(uncertainPairedDataList)
-                .withAdditionalThreshold(threshold)
-                .build();
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(id)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithStageDamages(uncertainPairedDataList)
+                .WithAdditionalThreshold(threshold)
+                .Build();
 
             UncertainPairedData systemResponse = CreateDefaultCurve(thresholdValue);
 
-            ImpactAreaScenarioSimulation simulationWithLevee = ImpactAreaScenarioSimulation.builder(id)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withStageDamages(uncertainPairedDataList)
-                .withLevee(systemResponse, thresholdValue)
-                .build();
+            ImpactAreaScenarioSimulation simulationWithLevee = ImpactAreaScenarioSimulation.Builder(id)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithStageDamages(uncertainPairedDataList)
+                .WithLevee(systemResponse, thresholdValue)
+                .Build();
 
 
             RandomProvider randomProvider = new RandomProvider(seed);
@@ -239,12 +239,12 @@ namespace HEC.FDA.ModelTest.unittests
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations, tolerance: .001);
             Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.DefaultExteriorStage, thresholdValue);
 
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withStageDamages(uncertainPairedDataList)
-                .withAdditionalThreshold(threshold)
-                .build();
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(id)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithStageDamages(uncertainPairedDataList)
+                .WithAdditionalThreshold(threshold)
+                .Build();
 
             RandomProvider randomProvider = new RandomProvider(seed);
             ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc, new CancellationToken(), false);

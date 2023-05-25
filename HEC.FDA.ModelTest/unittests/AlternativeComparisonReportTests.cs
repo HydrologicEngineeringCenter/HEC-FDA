@@ -89,17 +89,17 @@ namespace HEC.FDA.ModelTest.unittests
             UncertainPairedData levee = new UncertainPairedData(leveestages, leveefailprobs, metaData1);
 
             //Build without project alternative results 
-            ImpactAreaScenarioSimulation withoutProjectSimulationBase = ImpactAreaScenarioSimulation.builder(impactAreaIdentifier)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withStageDamages(updBaseWithoutProject)
-                .build();
+            ImpactAreaScenarioSimulation withoutProjectSimulationBase = ImpactAreaScenarioSimulation.Builder(impactAreaIdentifier)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithStageDamages(updBaseWithoutProject)
+                .Build();
 
-            ImpactAreaScenarioSimulation withoutProjectSimulationFuture = ImpactAreaScenarioSimulation.builder(impactAreaIdentifier)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withStageDamages(updFutureWithoutProject)
-                .build();
+            ImpactAreaScenarioSimulation withoutProjectSimulationFuture = ImpactAreaScenarioSimulation.Builder(impactAreaIdentifier)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithStageDamages(updFutureWithoutProject)
+                .Build();
 
             IList<ImpactAreaScenarioSimulation> impactAreaListBaseYear = new List<ImpactAreaScenarioSimulation>();
             impactAreaListBaseYear.Add(withoutProjectSimulationBase);
@@ -114,19 +114,19 @@ namespace HEC.FDA.ModelTest.unittests
                 baseWithoutProjectScenarioResults, futureWithoutProjectScenarioResults, new CancellationToken());
 
             //build with project alternative results 
-            ImpactAreaScenarioSimulation withProjectSimulationBase = ImpactAreaScenarioSimulation.builder(impactAreaIdentifier)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withLevee(levee, topOfLeveeElevation)
-                .withStageDamages(updBaseWithProject)
-                .build();
+            ImpactAreaScenarioSimulation withProjectSimulationBase = ImpactAreaScenarioSimulation.Builder(impactAreaIdentifier)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithLevee(levee, topOfLeveeElevation)
+                .WithStageDamages(updBaseWithProject)
+                .Build();
 
-            ImpactAreaScenarioSimulation withProjectSimulationFuture = ImpactAreaScenarioSimulation.builder(impactAreaIdentifier)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withLevee(levee, topOfLeveeElevation)
-                .withStageDamages(updFutureWithProject)
-                .build();
+            ImpactAreaScenarioSimulation withProjectSimulationFuture = ImpactAreaScenarioSimulation.Builder(impactAreaIdentifier)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithLevee(levee, topOfLeveeElevation)
+                .WithStageDamages(updFutureWithProject)
+                .Build();
 
             IList<ImpactAreaScenarioSimulation> impactAreaListWithProjectBaseYear = new List<ImpactAreaScenarioSimulation>();
             impactAreaListWithProjectBaseYear.Add(withProjectSimulationBase);
@@ -241,17 +241,17 @@ namespace HEC.FDA.ModelTest.unittests
             UncertainPairedData levee = new UncertainPairedData(leveestages, leveefailprobs, metaData);
 
             //Build without project alternative results 
-            ImpactAreaScenarioSimulation withoutProjectSimulationBase = ImpactAreaScenarioSimulation.builder(impactAreaIdentifier)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withStageDamages(updBase)
-                .build();
+            ImpactAreaScenarioSimulation withoutProjectSimulationBase = ImpactAreaScenarioSimulation.Builder(impactAreaIdentifier)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithStageDamages(updBase)
+                .Build();
 
-            ImpactAreaScenarioSimulation withoutProjectSimulationFuture = ImpactAreaScenarioSimulation.builder(impactAreaIdentifier)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withStageDamages(updFuture)
-                .build();
+            ImpactAreaScenarioSimulation withoutProjectSimulationFuture = ImpactAreaScenarioSimulation.Builder(impactAreaIdentifier)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithStageDamages(updFuture)
+                .Build();
 
             IList<ImpactAreaScenarioSimulation> impactAreaListBaseYear = new List<ImpactAreaScenarioSimulation>();
             impactAreaListBaseYear.Add(withoutProjectSimulationBase);
@@ -266,19 +266,19 @@ namespace HEC.FDA.ModelTest.unittests
                 baseWithoutProjectScenarioResults, futureWithoutProjectScenarioResults, new CancellationToken());
 
             //build with project alternative results 
-            ImpactAreaScenarioSimulation withProjectSimulationBase = ImpactAreaScenarioSimulation.builder(impactAreaIdentifier)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withLevee(levee, topOfLeveeElevation)
-                .withStageDamages(updBase)
-                .build();
+            ImpactAreaScenarioSimulation withProjectSimulationBase = ImpactAreaScenarioSimulation.Builder(impactAreaIdentifier)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithLevee(levee, topOfLeveeElevation)
+                .WithStageDamages(updBase)
+                .Build();
 
-            ImpactAreaScenarioSimulation withProjectSimulationFuture = ImpactAreaScenarioSimulation.builder(impactAreaIdentifier)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withLevee(levee, topOfLeveeElevation)
-                .withStageDamages(updFuture)
-                .build();
+            ImpactAreaScenarioSimulation withProjectSimulationFuture = ImpactAreaScenarioSimulation.Builder(impactAreaIdentifier)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithLevee(levee, topOfLeveeElevation)
+                .WithStageDamages(updFuture)
+                .Build();
 
             IList<ImpactAreaScenarioSimulation> impactAreaListWithProjectBaseYear = new List<ImpactAreaScenarioSimulation>();
             impactAreaListWithProjectBaseYear.Add(withProjectSimulationBase);
@@ -378,17 +378,17 @@ namespace HEC.FDA.ModelTest.unittests
             UncertainPairedData levee = new UncertainPairedData(leveestages, leveefailprobs, metaData);
 
             //Build without project alternative results 
-            ImpactAreaScenarioSimulation withoutProjectSimulationBase = ImpactAreaScenarioSimulation.builder(impactAreaIdentifier)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withStageDamages(updBase)
-                .build();
+            ImpactAreaScenarioSimulation withoutProjectSimulationBase = ImpactAreaScenarioSimulation.Builder(impactAreaIdentifier)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithStageDamages(updBase)
+                .Build();
 
-            ImpactAreaScenarioSimulation withoutProjectSimulationFuture = ImpactAreaScenarioSimulation.builder(impactAreaIdentifier)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withStageDamages(updFuture)
-                .build();
+            ImpactAreaScenarioSimulation withoutProjectSimulationFuture = ImpactAreaScenarioSimulation.Builder(impactAreaIdentifier)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithStageDamages(updFuture)
+                .Build();
 
             IList<ImpactAreaScenarioSimulation> impactAreaListBaseYear = new List<ImpactAreaScenarioSimulation>();
             impactAreaListBaseYear.Add(withoutProjectSimulationBase);
@@ -403,19 +403,19 @@ namespace HEC.FDA.ModelTest.unittests
                 withoutAlternativeIdentifier, baseWithoutProjectScenarioResults, futureWithoutProjectScenarioResults, new CancellationToken());
 
             //build with project alternative results 
-            ImpactAreaScenarioSimulation withProjectSimulationBase = ImpactAreaScenarioSimulation.builder(impactAreaIdentifier)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withLevee(levee, topOfLeveeElevation)
-                .withStageDamages(updBase)
-                .build();
+            ImpactAreaScenarioSimulation withProjectSimulationBase = ImpactAreaScenarioSimulation.Builder(impactAreaIdentifier)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithLevee(levee, topOfLeveeElevation)
+                .WithStageDamages(updBase)
+                .Build();
 
-            ImpactAreaScenarioSimulation withProjectSimulationFuture = ImpactAreaScenarioSimulation.builder(impactAreaIdentifier)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withLevee(levee, topOfLeveeElevation)
-                .withStageDamages(updFuture)
-                .build();
+            ImpactAreaScenarioSimulation withProjectSimulationFuture = ImpactAreaScenarioSimulation.Builder(impactAreaIdentifier)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithLevee(levee, topOfLeveeElevation)
+                .WithStageDamages(updFuture)
+                .Build();
 
             IList<ImpactAreaScenarioSimulation> impactAreaListWithProjectBaseYear = new List<ImpactAreaScenarioSimulation>();
             impactAreaListWithProjectBaseYear.Add(withProjectSimulationBase);

@@ -302,7 +302,7 @@ namespace HEC.FDA.Model.stageDamage
             return consequenceDistributionResults;
         }
 
-        private void DumpDataIntoDistributions(ref List<ConsequenceDistributionResults> consequenceDistributionResultsList)
+        private static void DumpDataIntoDistributions(ref List<ConsequenceDistributionResults> consequenceDistributionResultsList)
         {
             foreach (ConsequenceDistributionResults consequenceDistributionResults in consequenceDistributionResultsList)
             {
@@ -312,15 +312,18 @@ namespace HEC.FDA.Model.stageDamage
 
         private List<ConsequenceDistributionResults> CreateConsequenceDistributionResults(string damageCategory)
         {
-            List<ConsequenceDistributionResults> consequenceDistributionResultsList = new List<ConsequenceDistributionResults>();
+            List<ConsequenceDistributionResults> consequenceDistributionResultsList = new();
 
             for (int i = 0; i < _StagesAtIndexLocation.Length; i++)
             {
-                ConsequenceDistributionResults consequenceDistributionResults = new ConsequenceDistributionResults(_ConvergenceCriteria);
-                consequenceDistributionResults.AddNewConsequenceResultObject(damageCategory, utilities.StringConstants.STRUCTURE_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID);
-                consequenceDistributionResults.AddNewConsequenceResultObject(damageCategory, utilities.StringConstants.CONTENT_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID);
-                consequenceDistributionResults.AddNewConsequenceResultObject(damageCategory, utilities.StringConstants.OTHER_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID);
-                consequenceDistributionResults.AddNewConsequenceResultObject(damageCategory, utilities.StringConstants.VEHICLE_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID);
+                List<ConsequenceDistributionResult> consequenceDistributionResultList = new()
+                {
+                    new(damageCategory, utilities.StringConstants.STRUCTURE_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID),
+                    new(damageCategory, utilities.StringConstants.CONTENT_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID),
+                    new(damageCategory, utilities.StringConstants.OTHER_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID),
+                    new(damageCategory, utilities.StringConstants.VEHICLE_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID)
+                };
+                ConsequenceDistributionResults consequenceDistributionResults = new(consequenceDistributionResultList);
                 consequenceDistributionResultsList.Add(consequenceDistributionResults);
             }
             return consequenceDistributionResultsList;
@@ -438,11 +441,11 @@ namespace HEC.FDA.Model.stageDamage
             int stageIndex = _NumExtrapolatedStagesToCompute + 1;
             for (int profileIndex = 1; profileIndex < numProfiles; profileIndex++)
             {
-                InterpolateBetweenProfiles(ref parallelConsequenceResultCollection, deterministicOccTypes, inventoryAndWaterCoupled.Item2[profileIndex - 1], profileProbabilities[profileIndex - 1], inventoryAndWaterCoupled.Item2[profileIndex], profileProbabilities[profileIndex], damageCategory, profileIndex, inventoryAndWaterCoupled.Item1, stageIndex, iterationIndex);
+                InterpolateBetweenProfiles(ref parallelConsequenceResultCollection, deterministicOccTypes, inventoryAndWaterCoupled.Item2[profileIndex - 1], inventoryAndWaterCoupled.Item2[profileIndex], damageCategory, inventoryAndWaterCoupled.Item1, stageIndex, iterationIndex);
                 stageIndex += _NumInterpolatedStagesToCompute;
             }
         }
-        private void InterpolateBetweenProfiles(ref List<ConsequenceDistributionResults> parallelConsequenceResultCollection, List<DeterministicOccupancyType> occTypes, float[] previousHydraulicProfile, double previousProbability, float[] currentHydraulicProfile, double currentProbability, string damageCategory, int profileCount, Inventory inventory, int stageIndex, int iterationIndex)
+        private void InterpolateBetweenProfiles(ref List<ConsequenceDistributionResults> parallelConsequenceResultCollection, List<DeterministicOccupancyType> occTypes, float[] previousHydraulicProfile, float[] currentHydraulicProfile, string damageCategory, Inventory inventory, int stageIndex, int iterationIndex)
         {
             float[] intervalsAtStructures = CalculateIntervals(previousHydraulicProfile, currentHydraulicProfile);
             for (int interpolatorIndex = 0; interpolatorIndex < _NumInterpolatedStagesToCompute; interpolatorIndex++)
@@ -453,7 +456,7 @@ namespace HEC.FDA.Model.stageDamage
             }
         }
 
-        private float[] CalculateIncrementOfStages(float[] previousStagesAtStructures, float[] intervalsAtStructures, int interpolatorIndex)
+        private static float[] CalculateIncrementOfStages(float[] previousStagesAtStructures, float[] intervalsAtStructures, int interpolatorIndex)
         {
             float[] stages = new float[intervalsAtStructures.Length];
             for (int m = 0; m < stages.Length; m++)
@@ -484,7 +487,7 @@ namespace HEC.FDA.Model.stageDamage
             float upperInterval = indexStationUpperStageDelta / _NumExtrapolatedStagesToCompute;
             for (int extrapolatorIndex = 1; extrapolatorIndex < _NumExtrapolatedStagesToCompute; extrapolatorIndex++)
             {
-                float[] WSEsParallelToIndexLocation = ExtrapolateFromAboveAtIndexLocation(inventoryAndWaterCoupled.Item2[inventoryAndWaterCoupled.Item2.Count - 1], upperInterval, extrapolatorIndex);
+                float[] WSEsParallelToIndexLocation = ExtrapolateFromAboveAtIndexLocation(inventoryAndWaterCoupled.Item2[^1], upperInterval, extrapolatorIndex);
                 ConsequenceResult consequenceResult = inventoryAndWaterCoupled.Item1.ComputeDamages(WSEsParallelToIndexLocation, _AnalysisYear, damageCategory, deterministicOccTypes);
                 parallelConsequenceResultCollection[stageIndex + extrapolatorIndex].AddConsequenceRealization(consequenceResult, damageCategory, ImpactAreaID, iterationIndex);
             }
