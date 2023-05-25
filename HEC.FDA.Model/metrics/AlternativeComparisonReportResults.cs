@@ -11,28 +11,22 @@ namespace HEC.FDA.Model.metrics
     public class AlternativeComparisonReportResults : ValidationErrorLogger
     {   //TODO: save a year 
         #region Fields
-        private List<ManyEmpiricalDistributionsOfConsequences> _aaeqReducedResultsList;
-        private List<ManyEmpiricalDistributionsOfConsequences> _baseYearEADReducedResultsList;
-        private List<ManyEmpiricalDistributionsOfConsequences> _futureYearEADReducedResultsList;
-        private List<AlternativeResults> _withProjectAlternativeResults;
-        private AlternativeResults _withoutProjectAlternativeResults;
-        private bool _isNull;
+
+        private readonly List<ManyEmpiricalDistributionsOfConsequences> _AaeqReducedResultsList;
+        private readonly List<ManyEmpiricalDistributionsOfConsequences> _BaseYearEADReducedResultsList;
+        private readonly List<ManyEmpiricalDistributionsOfConsequences> _FutureYearEADReducedResultsList;
+        private readonly List<AlternativeResults> _WithProjectAlternativeResults;
+        private readonly AlternativeResults _WithoutProjectAlternativeResults;
 
         #endregion
 
         #region Properties 
-        internal bool IsNull
-        {
-            get
-            {
-                return _isNull;
-            }
-        }
+        internal bool IsNull { get; }
         public List<int> Years
         {
             get
             {
-                return _withoutProjectAlternativeResults.AnalysisYears;
+                return _WithoutProjectAlternativeResults.AnalysisYears;
             }
         }
 
@@ -41,24 +35,24 @@ namespace HEC.FDA.Model.metrics
         #region Constructor
         public AlternativeComparisonReportResults()
         {
-            _isNull = true;
-            _aaeqReducedResultsList = new List<ManyEmpiricalDistributionsOfConsequences>();
-            ManyEmpiricalDistributionsOfConsequences dummyAaeqResults = new ManyEmpiricalDistributionsOfConsequences();
-            _aaeqReducedResultsList.Add(dummyAaeqResults);
-            _baseYearEADReducedResultsList = new List<ManyEmpiricalDistributionsOfConsequences>();
-            ManyEmpiricalDistributionsOfConsequences dummyBaseYearResults = new ManyEmpiricalDistributionsOfConsequences();
-            _baseYearEADReducedResultsList.Add(dummyBaseYearResults);
-            _futureYearEADReducedResultsList = new List<ManyEmpiricalDistributionsOfConsequences>();
-            ManyEmpiricalDistributionsOfConsequences dummyFutureYearResults = new ManyEmpiricalDistributionsOfConsequences();
-            _futureYearEADReducedResultsList.Add(dummyFutureYearResults);
+            IsNull = true;
+            _AaeqReducedResultsList = new List<ManyEmpiricalDistributionsOfConsequences>();
+            ManyEmpiricalDistributionsOfConsequences dummyAaeqResults = new();
+            _AaeqReducedResultsList.Add(dummyAaeqResults);
+            _BaseYearEADReducedResultsList = new List<ManyEmpiricalDistributionsOfConsequences>();
+            ManyEmpiricalDistributionsOfConsequences dummyBaseYearResults = new();
+            _BaseYearEADReducedResultsList.Add(dummyBaseYearResults);
+            _FutureYearEADReducedResultsList = new List<ManyEmpiricalDistributionsOfConsequences>();
+            ManyEmpiricalDistributionsOfConsequences dummyFutureYearResults = new();
+            _FutureYearEADReducedResultsList.Add(dummyFutureYearResults);
         }
         internal AlternativeComparisonReportResults(List<AlternativeResults> withProjectAlternativeResults, AlternativeResults withoutProjectAlternativeResults, List<ManyEmpiricalDistributionsOfConsequences> aaeqResults, List<ManyEmpiricalDistributionsOfConsequences> baseYearEADResults, List<ManyEmpiricalDistributionsOfConsequences> futureYearEADResults)
         {
-            _withProjectAlternativeResults = withProjectAlternativeResults;
-            _withoutProjectAlternativeResults = withoutProjectAlternativeResults;
-            _aaeqReducedResultsList = aaeqResults;
-            _baseYearEADReducedResultsList = baseYearEADResults;
-            _futureYearEADReducedResultsList = futureYearEADResults;
+            _WithProjectAlternativeResults = withProjectAlternativeResults;
+            _WithoutProjectAlternativeResults = withoutProjectAlternativeResults;
+            _AaeqReducedResultsList = aaeqResults;
+            _BaseYearEADReducedResultsList = baseYearEADResults;
+            _FutureYearEADReducedResultsList = futureYearEADResults;
         }
         #endregion
 
@@ -68,8 +62,8 @@ namespace HEC.FDA.Model.metrics
         //We could cycle through each of the three lists, but that seems unnecessary 
         public List<int> GetImpactAreaIDs()
         {
-            List<int> impactAreaIDs = new List<int>();
-            foreach (ManyEmpiricalDistributionsOfConsequences consequenceReducedResults in _aaeqReducedResultsList)
+            List<int> impactAreaIDs = new();
+            foreach (ManyEmpiricalDistributionsOfConsequences consequenceReducedResults in _AaeqReducedResultsList)
             {
                 foreach (SingleEmpiricalDistributionOfConsequences consequenceResult in consequenceReducedResults.ConsequenceResultList)
                 {
@@ -84,8 +78,8 @@ namespace HEC.FDA.Model.metrics
         }
         public List<string> GetAssetCategories()
         {
-            List<string> assetCats = new List<string>();
-            foreach (ManyEmpiricalDistributionsOfConsequences consequenceReducedResults in _aaeqReducedResultsList)
+            List<string> assetCats = new();
+            foreach (ManyEmpiricalDistributionsOfConsequences consequenceReducedResults in _AaeqReducedResultsList)
             {
                 foreach (SingleEmpiricalDistributionOfConsequences consequenceResult in consequenceReducedResults.ConsequenceResultList)
                 {
@@ -100,8 +94,8 @@ namespace HEC.FDA.Model.metrics
         }
         public List<string> GetDamageCategories()
         {
-            List<string> damCats = new List<string>();
-            foreach (ManyEmpiricalDistributionsOfConsequences consequenceReducedResults in _aaeqReducedResultsList)
+            List<string> damCats = new();
+            foreach (ManyEmpiricalDistributionsOfConsequences consequenceReducedResults in _AaeqReducedResultsList)
             {
                 foreach (SingleEmpiricalDistributionOfConsequences consequenceResult in consequenceReducedResults.ConsequenceResultList)
                 {
@@ -162,11 +156,11 @@ namespace HEC.FDA.Model.metrics
 
         public double MeanWithoutProjectBaseYearEAD(int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
-            return _withoutProjectAlternativeResults.MeanBaseYearEAD(impactAreaID, damageCategory, assetCategory);
+            return _WithoutProjectAlternativeResults.MeanBaseYearEAD(impactAreaID, damageCategory, assetCategory);
         }
         public double MeanWithoutProjectFutureYearEAD(int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
-            return _withoutProjectAlternativeResults.MeanFutureYearEAD(impactAreaID, damageCategory, assetCategory);
+            return _WithoutProjectAlternativeResults.MeanFutureYearEAD(impactAreaID, damageCategory, assetCategory);
         }
         public double MeanWithProjectBaseYearEAD(int alternativeID, int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
@@ -185,7 +179,7 @@ namespace HEC.FDA.Model.metrics
         }
         public double MeanWithoutProjectAAEQDamage(int impactArea = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
-            return _withoutProjectAlternativeResults.MeanAAEQDamage(impactArea, damageCategory, assetCategory);
+            return _WithoutProjectAlternativeResults.MeanAAEQDamage(impactArea, damageCategory, assetCategory);
         }
 
         /// <summary>
@@ -289,15 +283,15 @@ namespace HEC.FDA.Model.metrics
             ManyEmpiricalDistributionsOfConsequences consequenceResults = GetConsequencesReducedResultsForGivenAlternative(consequenceDistributionResults.AlternativeID, isEADResults, isBaseYearResults);
             if (consequenceResults.IsNull)
             {
-                _aaeqReducedResultsList.Add(consequenceDistributionResults);
+                _AaeqReducedResultsList.Add(consequenceDistributionResults);
             }
         }
         internal ManyEmpiricalDistributionsOfConsequences GetConsequencesReducedResultsForGivenAlternative(int alternativeID, bool getEADResults = false, bool getBaseYearResults = false)
         {
-            List<ManyEmpiricalDistributionsOfConsequences> listToSearch = new List<ManyEmpiricalDistributionsOfConsequences>();
-            if (!getEADResults) { listToSearch = _aaeqReducedResultsList; }
-            else if (getEADResults && getBaseYearResults) { listToSearch = _baseYearEADReducedResultsList; }
-            else if (getEADResults && !getBaseYearResults) { listToSearch = _futureYearEADReducedResultsList; }
+            List<ManyEmpiricalDistributionsOfConsequences> listToSearch;
+            if (!getEADResults) { listToSearch = _AaeqReducedResultsList; }
+            else if (getEADResults && getBaseYearResults) { listToSearch = _BaseYearEADReducedResultsList; }
+            else if (getEADResults && !getBaseYearResults) { listToSearch = _FutureYearEADReducedResultsList; }
             else { throw new System.ArgumentException("An illogical combination of arguments was provided"); }
             foreach (ManyEmpiricalDistributionsOfConsequences consequenceDistResults in listToSearch)
             {
@@ -306,21 +300,21 @@ namespace HEC.FDA.Model.metrics
                     return consequenceDistResults;
                 }
             }
-            ManyEmpiricalDistributionsOfConsequences dummyConsequenceDistributionResults = new ManyEmpiricalDistributionsOfConsequences();
+            ManyEmpiricalDistributionsOfConsequences dummyConsequenceDistributionResults = new();
             ReportMessage(this, new MessageEventArgs(new Message("The requested alternative could not be found. An arbitrary object is being returned.")));
             return dummyConsequenceDistributionResults;
         }
 
         private AlternativeResults GetAlternativeResults(int alternativeID)
         {
-            foreach (AlternativeResults alternativeResults in _withProjectAlternativeResults)
+            foreach (AlternativeResults alternativeResults in _WithProjectAlternativeResults)
             {
                 if (alternativeResults.AlternativeID.Equals(alternativeID))
                 {
                     return alternativeResults;
                 }
             }
-            AlternativeResults dummyAlternativeResults = new AlternativeResults();
+            AlternativeResults dummyAlternativeResults = new();
             ReportMessage(this, new MessageEventArgs(new Message("The requested alternative could not be found. An artibtrary object is being returned.")));
             return dummyAlternativeResults;
         }

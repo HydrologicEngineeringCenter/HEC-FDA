@@ -8,30 +8,9 @@ namespace HEC.FDA.Model.metrics
 {
     public class PerformanceByThresholds : ValidationErrorLogger
     {
-        #region Fields
-        private List<Threshold> _Thresholds;
-        private bool _IsNull;
-        #endregion
-
         #region Properties 
-        internal bool IsNull
-        {
-            get
-            {
-                return _IsNull;
-            }
-        }
-        public List<Threshold> ListOfThresholds
-        {
-            get
-            {
-                return _Thresholds;
-            }
-            set
-            {
-                _Thresholds = value;
-            }
-        }
+        internal bool IsNull { get; }
+        public List<Threshold> ListOfThresholds { get; set; }
 
         #endregion
 
@@ -39,24 +18,24 @@ namespace HEC.FDA.Model.metrics
 
         public PerformanceByThresholds()
         {
-            _Thresholds = new List<Threshold>();
+            ListOfThresholds = new List<Threshold>();
         }
         public PerformanceByThresholds(bool isNull)
         {
-            _Thresholds = new List<Threshold>();
-            Threshold dummyThreshold = new Threshold();
-            _Thresholds.Add(dummyThreshold);
-            _IsNull = isNull;
+            ListOfThresholds = new List<Threshold>();
+            Threshold dummyThreshold = new();
+            ListOfThresholds.Add(dummyThreshold);
+            IsNull = isNull;
         }
         private PerformanceByThresholds(List<Threshold> thresholds)
         {
-            _Thresholds = thresholds;
+            ListOfThresholds = thresholds;
         }
         #endregion
         #region Methods 
         public void AddThreshold(Threshold threshold)
         {
-            _Thresholds.Add(threshold);
+            ListOfThresholds.Add(threshold);
         }
         public bool Equals(PerformanceByThresholds incomingPerformanceByThresholds)
         {
@@ -79,22 +58,22 @@ namespace HEC.FDA.Model.metrics
         }
         public Threshold GetThreshold(int thresholdID)
         {
-            foreach (Threshold threshold in _Thresholds)
+            foreach (Threshold threshold in ListOfThresholds)
             {
                 if (threshold.ThresholdID.Equals(thresholdID))
                 {
                     return threshold;
                 }
             }
-            Threshold dummyThreshold = new Threshold();
+            Threshold dummyThreshold = new();
             string message = "The requested threshold could not be found so a dummy threshold is being returned";
-            ErrorMessage errorMessage = new ErrorMessage(message, MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+            ErrorMessage errorMessage = new(message, MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
             ReportMessage(this, new MessageEventArgs(errorMessage));
             return dummyThreshold;
         }
         public XElement WriteToXML()
         {
-            XElement masterElement = new XElement("Performance_By_Thresholds");
+            XElement masterElement = new("Performance_By_Thresholds");
             foreach (Threshold threshold in ListOfThresholds)
             {
                 XElement thresholdElement = threshold.WriteToXML();
@@ -106,7 +85,7 @@ namespace HEC.FDA.Model.metrics
 
         public static PerformanceByThresholds ReadFromXML(XElement xElement)
         {
-            List<Threshold> thresholdList = new List<Threshold>();
+            List<Threshold> thresholdList = new();
             foreach (XElement thresholdElement in xElement.Elements())
             {
                 Threshold threshold = Threshold.ReadFromXML(thresholdElement);

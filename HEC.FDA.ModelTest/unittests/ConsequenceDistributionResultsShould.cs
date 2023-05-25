@@ -22,7 +22,7 @@ namespace HEC.FDA.ModelTest.unittests
             string contentAssetCategory = "Content";
             double mean = 2;
             int impactAreaID_1 = 1;           
-            ConsequenceDistributionResults consequenceDistributionResults = new();
+            ConsequenceDistributionResults consequenceDistributionResults = new(false);
             Histogram histogram = FillHistogram(mean);
 
             //Impact Area 1

@@ -3,95 +3,65 @@
     public class ConsequenceResult
     {
         #region Fields
-        private string _damageCategory;
-        private double _otherDamage = 0;
-        private double _structureDamage = 0;
-        private double _contentDamage = 0;
-        private double _vehicleDamage = 0;
-        private bool _isNull;
         #endregion
 
         #region Properties
-        public string DamageCategory
-        {
-            get
-            {
-                return _damageCategory;
-            }
-        }
-        public double OtherDamage
-        {
-            get { return _otherDamage; }
-        }
-        public double StructureDamage
-        {
-            get { return _structureDamage; }
-        }
-        public double ContentDamage
-        {
-            get { return _contentDamage; }
-        }
-        public double VehicleDamage
-        {
-            get { return _vehicleDamage; }
-        }
-        public bool IsNull
-        {
-            get
-            {
-                return _isNull;
-            }
-        }
+        public string DamageCategory { get; }
+        public double OtherDamage { get; private set; } = 0;
+        public double StructureDamage { get; private set; } = 0;
+        public double ContentDamage { get; private set; } = 0;
+        public double VehicleDamage { get; private set; } = 0;
+        public bool IsNull { get; }
         #endregion
 
         #region Constructors
 
         public ConsequenceResult()
         {
-            _damageCategory = "unassigned";
-            _isNull = true;
+            DamageCategory = "unassigned";
+            IsNull = true;
 
         }
 
         public ConsequenceResult(string damageCategory)
         {
-            _damageCategory = damageCategory;
-            _isNull = false;
+            DamageCategory = damageCategory;
+            IsNull = false;
         }
         #endregion
 
         #region Methods
         public void IncrementConsequence(double structureDamage, double contentDamage = 0, double vehicleDamage = 0, double otherDamage = 0)
         {
-            _structureDamage += structureDamage;
-            _contentDamage += contentDamage;
-            _otherDamage += otherDamage;
-            _vehicleDamage += vehicleDamage;
+            StructureDamage += structureDamage;
+            ContentDamage += contentDamage;
+            OtherDamage += otherDamage;
+            VehicleDamage += vehicleDamage;
         }
 
         internal bool Equals(ConsequenceResult damageResult)
         {
-            bool structureDamageMatches = _structureDamage.Equals(damageResult.StructureDamage);
+            bool structureDamageMatches = StructureDamage.Equals(damageResult.StructureDamage);
             if (!structureDamageMatches)
             {
                 return false;
             }
-            bool contentDamageMatches = _contentDamage.Equals(damageResult.ContentDamage);
+            bool contentDamageMatches = ContentDamage.Equals(damageResult.ContentDamage);
             if (!contentDamageMatches)
             {
                 return false;
             }
-            bool otherDamageMatches = _otherDamage.Equals(damageResult.OtherDamage);
+            bool otherDamageMatches = OtherDamage.Equals(damageResult.OtherDamage);
             if (!otherDamageMatches)
             {
                 return false;
             }
-            bool vehicleDamageMatches = _vehicleDamage.Equals(damageResult.VehicleDamage);
+            bool vehicleDamageMatches = VehicleDamage.Equals(damageResult.VehicleDamage);
             if (!vehicleDamageMatches)
             {
                 return false;
             }
-            bool damageCategoriesMatch = _damageCategory.Equals(damageResult.DamageCategory);
+            bool damageCategoriesMatch = DamageCategory.Equals(damageResult.DamageCategory);
             if (!damageCategoriesMatch)
             {
                 return false;

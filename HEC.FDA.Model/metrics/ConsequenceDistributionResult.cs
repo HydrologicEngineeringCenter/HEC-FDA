@@ -15,64 +15,19 @@ namespace HEC.FDA.Model.metrics
     public class ConsequenceDistributionResult : IReportMessage, IProgressReport
     {
         #region Fields
-        //this will change to an array of a size the function of the convergenceCriteria 
-  
-        private IHistogram _consequenceHistogram;
-        private readonly string _damageCategory;
-        private readonly string _assetCategory;
-        private readonly int _regionID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE;
-        private readonly ConvergenceCriteria _convergenceCriteria;
-        private readonly bool _isNull;
-        private readonly double[] _tempResults;
+        private readonly double[] _TempResults;
         private bool _HistogramNotConstructed = false;
-
-        public event MessageReportedEventHandler MessageReport;
-        public event ProgressReportedEventHandler ProgressReport;
         #endregion
 
         #region Properties
-        public IHistogram ConsequenceHistogram
-        {
-            get
-            {
-                return _consequenceHistogram;
-            }
-        }
-        public string DamageCategory
-        {
-            get
-            {
-                return _damageCategory;
-            }
-        }
-        public string AssetCategory
-        {
-            get
-            {
-                return _assetCategory;
-            }
-        }
-        public int RegionID
-        {
-            get
-            {
-                return _regionID;
-            }
-        }
-        public bool IsNull
-        {
-            get
-            {
-                return _isNull;
-            }
-        }
-        public ConvergenceCriteria ConvergenceCriteria
-        {
-            get
-            {
-                return _convergenceCriteria;
-            }
-        }
+        public event MessageReportedEventHandler MessageReport;
+        public event ProgressReportedEventHandler ProgressReport;
+        public IHistogram ConsequenceHistogram { get; private set; }
+        public string DamageCategory { get; }
+        public string AssetCategory { get; }
+        public int RegionID { get; } = utilities.IntegerConstants.DEFAULT_MISSING_VALUE;
+        public bool IsNull { get; }
+        public ConvergenceCriteria ConvergenceCriteria { get; }
         #endregion 
 
         #region Constructors
@@ -81,13 +36,13 @@ namespace HEC.FDA.Model.metrics
         /// </summary>
         public ConsequenceDistributionResult()
         {
-            _damageCategory = "unassigned";
-            _assetCategory = "unassigned";
-            _regionID = 0;
-            _convergenceCriteria = new ConvergenceCriteria();
-            _consequenceHistogram = new ThreadsafeInlineHistogram();
-            _isNull = true;
-            _tempResults = new double[_convergenceCriteria.IterationCount];
+            DamageCategory = "unassigned";
+            AssetCategory = "unassigned";
+            RegionID = 0;
+            ConvergenceCriteria = new ConvergenceCriteria();
+            ConsequenceHistogram = new ThreadsafeInlineHistogram();
+            IsNull = true;
+            _TempResults = new double[ConvergenceCriteria.IterationCount];
             MessageHub.Register(this);
 
         }
@@ -97,24 +52,24 @@ namespace HEC.FDA.Model.metrics
         /// </summary>
         public ConsequenceDistributionResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID)
         {
-            _damageCategory = damageCategory;
-            _assetCategory = assetCategory;
-            _convergenceCriteria = convergenceCriteria;
-            _isNull = false;
-            _regionID = impactAreaID;
-            _tempResults = new double[_convergenceCriteria.IterationCount];
+            DamageCategory = damageCategory;
+            AssetCategory = assetCategory;
+            ConvergenceCriteria = convergenceCriteria;
+            IsNull = false;
+            RegionID = impactAreaID;
+            _TempResults = new double[ConvergenceCriteria.IterationCount];
             _HistogramNotConstructed = true;
             MessageHub.Register(this);
 
         }
         public ConsequenceDistributionResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, List<double> consequences, int impactAreaID)
         {
-            _damageCategory = damageCategory;
-            _assetCategory = assetCategory;
-            _convergenceCriteria = convergenceCriteria;
-            _consequenceHistogram = new Histogram(consequences, convergenceCriteria);
-            _regionID = impactAreaID;
-            _tempResults = new double[_convergenceCriteria.IterationCount];
+            DamageCategory = damageCategory;
+            AssetCategory = assetCategory;
+            ConvergenceCriteria = convergenceCriteria;
+            ConsequenceHistogram = new Histogram(consequences, convergenceCriteria);
+            RegionID = impactAreaID;
+            _TempResults = new double[ConvergenceCriteria.IterationCount];
 
         }
         /// <summary>
@@ -127,14 +82,14 @@ namespace HEC.FDA.Model.metrics
         /// <param name="impactAreaID"></param>
         public ConsequenceDistributionResult(string damageCategory, string assetCategory, IHistogram histogram, int impactAreaID)
         {
-            _damageCategory = damageCategory;
-            _assetCategory = assetCategory;
-            _consequenceHistogram = histogram;
-            _convergenceCriteria = _consequenceHistogram.ConvergenceCriteria;
-            _regionID = impactAreaID;
-            _isNull = false;
+            DamageCategory = damageCategory;
+            AssetCategory = assetCategory;
+            ConsequenceHistogram = histogram;
+            ConvergenceCriteria = ConsequenceHistogram.ConvergenceCriteria;
+            RegionID = impactAreaID;
+            IsNull = false;
             MessageHub.Register(this);
-            _tempResults = new double[_convergenceCriteria.IterationCount];
+            _TempResults = new double[ConvergenceCriteria.IterationCount];
         }
         #endregion
 
@@ -143,39 +98,39 @@ namespace HEC.FDA.Model.metrics
         {
             if(_HistogramNotConstructed)
             {
-                double max = _tempResults.Max();
+                double max = _TempResults.Max();
                 double binWidth = max / 1000;
                 if (binWidth == 0)
                 {
                     binWidth = 1;
                 }
-                _consequenceHistogram = new Histogram(binWidth, _convergenceCriteria);
+                ConsequenceHistogram = new Histogram(binWidth, ConvergenceCriteria);
                 _HistogramNotConstructed = false;
             }
-            _consequenceHistogram.AddObservationsToHistogram(_tempResults);
-            Array.Clear(_tempResults);
+            ConsequenceHistogram.AddObservationsToHistogram(_TempResults);
+            Array.Clear(_TempResults);
         }
 
         internal void AddConsequenceRealization(double damageRealization, long iteration = 1)
         {
-             _tempResults[iteration] = (damageRealization);
+             _TempResults[iteration] = (damageRealization);
         }
 
         internal double MeanExpectedAnnualConsequences()
         {
-            return _consequenceHistogram.Mean;
+            return ConsequenceHistogram.Mean;
         }
 
         internal double ConsequenceExceededWithProbabilityQ(double exceedanceProbability)
         {
             double nonExceedanceProbability = 1 - exceedanceProbability;
-            double quartile = _consequenceHistogram.InverseCDF(nonExceedanceProbability);
+            double quartile = ConsequenceHistogram.InverseCDF(nonExceedanceProbability);
             return quartile;
         }
 
         public bool Equals(ConsequenceDistributionResult damageResult)
         {
-            bool histogramsMatch = _consequenceHistogram.Equals(damageResult.ConsequenceHistogram);
+            bool histogramsMatch = ConsequenceHistogram.Equals(damageResult.ConsequenceHistogram);
             if (!histogramsMatch)
             {
                 return false;
@@ -190,29 +145,18 @@ namespace HEC.FDA.Model.metrics
         public XElement WriteToXML()
         {
             XElement masterElement = new("ConsequenceResult");
-            masterElement.SetAttributeValue("Type", _consequenceHistogram.TypeOfIHistogram);
-            XElement histogramElement = _consequenceHistogram.ToXML();
+            XElement histogramElement = ConsequenceHistogram.ToXML();
             histogramElement.Name = "DamageHistogram";
             masterElement.Add(histogramElement);
-            masterElement.SetAttributeValue("DamageCategory", _damageCategory);
-            masterElement.SetAttributeValue("AssetCategory", _assetCategory);
-            masterElement.SetAttributeValue("ImpactAreaID", _regionID);
+            masterElement.SetAttributeValue("DamageCategory", DamageCategory);
+            masterElement.SetAttributeValue("AssetCategory", AssetCategory);
+            masterElement.SetAttributeValue("ImpactAreaID", RegionID);
             return masterElement;
         }
 
         public static ConsequenceDistributionResult ReadFromXML(XElement xElement)
         {
-            string type = xElement.Attribute("Type").Value;
-            IHistogram damageHistogram;
-            if (type.Equals("Histogram"))
-            {
-                damageHistogram = Histogram.ReadFromXML(xElement.Element("DamageHistogram"));
-            }
-            else
-            {
-                damageHistogram = ThreadsafeInlineHistogram.ReadFromXML(xElement.Element("DamageHistogram"));
-
-            }
+            IHistogram damageHistogram = Histogram.ReadFromXML(xElement.Element("DamageHistogram"));
             string damageCategory = xElement.Attribute("DamageCategory").Value;
             string assetCategory = xElement.Attribute("AssetCategory").Value;
             int id = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);

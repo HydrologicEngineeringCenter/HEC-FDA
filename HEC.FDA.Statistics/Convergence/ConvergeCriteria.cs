@@ -60,7 +60,7 @@ namespace Statistics
         }
         public XElement WriteToXML()
         {
-            XElement masterElement = new XElement("Convergence_Criteria");
+            XElement masterElement = new("Convergence_Criteria");
             masterElement.SetAttributeValue("Minimum_Iterations", MinIterations);
             masterElement.SetAttributeValue("Maximum_Iterations", MaxIterations);
             masterElement.SetAttributeValue("ZAlpha", ZAlpha);

@@ -18,9 +18,6 @@ namespace Statistics.Histograms
         double Variance { get; }
         double StandardDeviation { get; }
         ConvergenceCriteria ConvergenceCriteria { get; }
-        string TypeOfIHistogram { get; }
-
-
         #endregion
 
         #region Methods

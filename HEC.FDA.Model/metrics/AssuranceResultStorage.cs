@@ -23,8 +23,7 @@ namespace HEC.FDA.Model.metrics
         #region Constructors
         internal AssuranceResultStorage(string dummyAsuranceType, double standardNonExceedanceProbability)
         {
-            ConvergenceCriteria convergenceCriteria = new();
-            _TempResults = new double[0];
+            _TempResults = Array.Empty<double>();
             AssuranceHistogram = new Histogram();
             AssuranceType = dummyAsuranceType;
             StandardNonExceedanceProbability = standardNonExceedanceProbability;
@@ -75,7 +74,7 @@ namespace HEC.FDA.Model.metrics
 
         public XElement WriteToXML()
         {
-            XElement masterElement = new XElement("Assurance");
+            XElement masterElement = new("Assurance");
             XElement histogramElement = AssuranceHistogram.ToXML();
             histogramElement.Name = "Histogram";
             masterElement.Add(histogramElement);

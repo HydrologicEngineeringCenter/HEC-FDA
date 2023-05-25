@@ -14,53 +14,14 @@ namespace HEC.FDA.Model.metrics
     public class SingleEmpiricalDistributionOfConsequences: IReportMessage, IProgressReport
     {
 
-        #region Fields
-        private Empirical _consequenceDistribution;
-        private string _damageCategory;
-        private string _assetCategory;
-        private int _regionID = -999;
-        private bool _isNull;
-
+        #region Properties
         public event MessageReportedEventHandler MessageReport;
         public event ProgressReportedEventHandler ProgressReport;
-        #endregion
-
-        #region Properties
-        public Empirical ConsequenceDistribution
-        {
-            get
-            {
-                return _consequenceDistribution;
-            }
-        }
-        public string DamageCategory
-        {
-            get
-            {
-                return _damageCategory;
-            }
-        }
-        public string AssetCategory
-        {
-            get
-            {
-                return _assetCategory;
-            }
-        }
-        public int RegionID
-        {
-            get
-            {
-                return _regionID;
-            }
-        }
-        public bool IsNull
-        {
-            get
-            {
-                return _isNull;
-            }
-        }
+        public Empirical ConsequenceDistribution { get; }
+        public string DamageCategory { get; }
+        public string AssetCategory { get; }
+        public int RegionID { get; } = -999;
+        public bool IsNull { get; }
         #endregion 
 
         #region Constructors
@@ -69,11 +30,11 @@ namespace HEC.FDA.Model.metrics
         /// </summary>
         public SingleEmpiricalDistributionOfConsequences()
         {
-            _damageCategory = "unassigned";
-            _assetCategory = "unassigned";
-            _regionID = 0;
-            _consequenceDistribution = new Empirical();
-            _isNull = true;
+            DamageCategory = "unassigned";
+            AssetCategory = "unassigned";
+            RegionID = 0;
+            ConsequenceDistribution = new Empirical();
+            IsNull = true;
             MessageHub.Register(this);
 
         }
@@ -87,10 +48,10 @@ namespace HEC.FDA.Model.metrics
         /// <param name="impactAreaID"></param>
         public SingleEmpiricalDistributionOfConsequences(string damageCategory, string assetCategory, List<double> consequences, int impactAreaID)
         {
-            _damageCategory = damageCategory;
-            _assetCategory = assetCategory;
-            _consequenceDistribution = Empirical.FitToSample(consequences);
-            _regionID = impactAreaID;
+            DamageCategory = damageCategory;
+            AssetCategory = assetCategory;
+            ConsequenceDistribution = Empirical.FitToSample(consequences);
+            RegionID = impactAreaID;
 
         }
         /// <summary>
@@ -102,11 +63,11 @@ namespace HEC.FDA.Model.metrics
         /// <param name="impactAreaID"></param>
         public SingleEmpiricalDistributionOfConsequences(string damageCategory, string assetCategory, Empirical empirical, int impactAreaID)
         {
-            _damageCategory = damageCategory;
-            _assetCategory = assetCategory;
-            _consequenceDistribution = empirical;
-            _regionID = impactAreaID;
-            _isNull = false;
+            DamageCategory = damageCategory;
+            AssetCategory = assetCategory;
+            ConsequenceDistribution = empirical;
+            RegionID = impactAreaID;
+            IsNull = false;
             MessageHub.Register(this);
         }
         #endregion
@@ -115,25 +76,25 @@ namespace HEC.FDA.Model.metrics
         
         internal double MeanExpectedAnnualConsequences()
         {
-            return _consequenceDistribution.Mean;
+            return ConsequenceDistribution.Mean;
         }
 
         internal double ConsequenceExceededWithProbabilityQ(double exceedanceProbability)
         {
             double nonExceedanceProbability = 1 - exceedanceProbability;
-            double quartile = _consequenceDistribution.InverseCDF(nonExceedanceProbability);
+            double quartile = ConsequenceDistribution.InverseCDF(nonExceedanceProbability);
             return quartile;
         }
 
         public XElement WriteToXML()
         {
-            XElement masterElement = new XElement("ConsequenceResult");
-            XElement histogramElement = _consequenceDistribution.ToXML();
+            XElement masterElement = new("ConsequenceResult");
+            XElement histogramElement = ConsequenceDistribution.ToXML();
             histogramElement.Name = "DamageDistribution";
             masterElement.Add(histogramElement);
-            masterElement.SetAttributeValue("DamageCategory", _damageCategory);
-            masterElement.SetAttributeValue("AssetCategory", _assetCategory);
-            masterElement.SetAttributeValue("ImpactAreaID", _regionID);
+            masterElement.SetAttributeValue("DamageCategory", DamageCategory);
+            masterElement.SetAttributeValue("AssetCategory", AssetCategory);
+            masterElement.SetAttributeValue("ImpactAreaID", RegionID);
             return masterElement;
         }
 
