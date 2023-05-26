@@ -21,16 +21,16 @@ namespace HEC.FDA.ModelTest.integrationtests
 
 
 
-        private static double[] probabilities = new double[] {.5, .2, .1, .04, .02, .01, .004, .002 };
-        private static double[] graphicalStages = new double[] {12, 13, 14, 15, 16, 17, 18, 19 };
+        private static readonly double[] probabilities = new double[] {.5, .2, .1, .04, .02, .01, .004, .002 };
+        private static readonly double[] graphicalStages = new double[] {12, 13, 14, 15, 16, 17, 18, 19 };
 
-        private static int equivalentRecordLength = 50;
-        private static GraphicalUncertainPairedData stageFrequency = new GraphicalUncertainPairedData(probabilities, graphicalStages, equivalentRecordLength, new CurveMetaData("probability", "stages", "graphical stage frequency"), true);
+        private static readonly int equivalentRecordLength = 50;
+        private static readonly GraphicalUncertainPairedData stageFrequency = new(probabilities, graphicalStages, equivalentRecordLength, new CurveMetaData("probability", "stages", "graphical stage frequency"), true);
 
-        private static double[] inflows = new double[] { 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900 };
-        private static GraphicalUncertainPairedData flowFrequency = new GraphicalUncertainPairedData(probabilities, inflows, equivalentRecordLength, new CurveMetaData("probability", "discharge", "graphical flow frequency"), false);
+        private static readonly double[] inflows = new double[] { 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900 };
+        private static readonly GraphicalUncertainPairedData flowFrequency = new(probabilities, inflows, equivalentRecordLength, new CurveMetaData("probability", "discharge", "graphical flow frequency"), false);
 
-        private static IDistribution[] outflows = new IDistribution[]
+        private static readonly IDistribution[] outflows = new IDistribution[]
         {
             new Deterministic(120),
             new Deterministic(130),
@@ -41,10 +41,10 @@ namespace HEC.FDA.ModelTest.integrationtests
             new Deterministic(180),
             new Deterministic(190),
         };
-        private static UncertainPairedData unregReg = new UncertainPairedData(inflows, outflows, new CurveMetaData("unregulated", "regulated", "reg unreg function"));
+        private static readonly UncertainPairedData unregReg = new(inflows, outflows, new CurveMetaData("unregulated", "regulated", "reg unreg function"));
 
-        private static double[] flows = new double[] { 120, 130, 140, 150, 160, 170, 180, 190 };
-        private static IDistribution[] stages = new IDistribution[]
+        private static readonly double[] flows = new double[] { 120, 130, 140, 150, 160, 170, 180, 190 };
+        private static readonly IDistribution[] stages = new IDistribution[]
         {
             new Deterministic(12),
             new Deterministic(13),
@@ -55,13 +55,13 @@ namespace HEC.FDA.ModelTest.integrationtests
             new Deterministic(18),
             new Deterministic(19)
         };
-        private static UncertainPairedData dischargeStage = new UncertainPairedData(flows, stages, new CurveMetaData("discharge", "stage", "stage discharge function"));
+        private static readonly UncertainPairedData dischargeStage = new(flows, stages, new CurveMetaData("discharge", "stage", "stage discharge function"));
 
 
 
         private static List<float[]> ComputeStagesAtStructures(float stage1, float stage2)
         {
-            List<float[]> stages = new List<float[]>();
+            List<float[]> stages = new();
             float[] stagesFirstProfile = new float[] { stage1, stage2 };
             stages.Add(stagesFirstProfile);
 
@@ -79,16 +79,16 @@ namespace HEC.FDA.ModelTest.integrationtests
 
         private static HydraulicDataset ComputeHydraulicDataset(float stage1, float stage2)
         {
-            List<IHydraulicProfile> dummyHydraulicProfiles = new List<IHydraulicProfile>();
+            List<IHydraulicProfile> dummyHydraulicProfiles = new();
             List<float[]> stages = ComputeStagesAtStructures(stage1, stage2);
             int i = 0;
             foreach (float[] stage in stages)
             {
-                DummyHydraulicProfile dummyHydraulicProfile = new DummyHydraulicProfile(stage, probabilities[i]);
+                DummyHydraulicProfile dummyHydraulicProfile = new(stage, probabilities[i]);
                 dummyHydraulicProfiles.Add(dummyHydraulicProfile);
                 i++;
             }
-            HydraulicDataset hydraulicDataset = new HydraulicDataset(dummyHydraulicProfiles, Model.hydraulics.enums.HydraulicDataSource.WSEGrid);
+            HydraulicDataset hydraulicDataset = new(dummyHydraulicProfiles, Model.hydraulics.enums.HydraulicDataSource.WSEGrid);
             return hydraulicDataset;
         }
 
@@ -96,43 +96,43 @@ namespace HEC.FDA.ModelTest.integrationtests
         #endregion
 
         #region Occupancy Type Data
-        static double[] depths = new double[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-        static IDistribution[] residentialStructureDamage = new IDistribution[] { new Deterministic(0), new Deterministic(10), new Deterministic(20), new Deterministic(30), new Deterministic(40), new Deterministic(50), new Deterministic(60), new Deterministic(70), new Deterministic(80), new Deterministic(90), new Deterministic(100) };
-        static IDistribution[] residentialContentAndCommercialStructureDamage = new IDistribution[] { new Deterministic(0), new Deterministic(5), new Deterministic(15), new Deterministic(25), new Deterministic(35), new Deterministic(45), new Deterministic(55), new Deterministic(65), new Deterministic(75), new Deterministic(85), new Deterministic(95) };
-        static IDistribution[] commericalContentDamage = new IDistribution[] { new Deterministic(0), new Deterministic(0), new Deterministic(10), new Deterministic(20), new Deterministic(30), new Deterministic(40), new Deterministic(50), new Deterministic(60), new Deterministic(70), new Deterministic(80), new Deterministic(90) };
-        static ValueRatioWithUncertainty residentialCSVR = new ValueRatioWithUncertainty(50);
-        static ValueRatioWithUncertainty commercialCSVR = new ValueRatioWithUncertainty(120);
-        static string residentialDamAndOccType = "Residential";
-        static string commercialDamAndOccType = "Commercial";
-        static string contentAssetType = "Content";
-        static string structureAssetType = "Structure";
-        static CurveMetaData residentialStructure = new CurveMetaData(residentialDamAndOccType, structureAssetType);
-        static CurveMetaData residentialContent = new CurveMetaData(residentialDamAndOccType, contentAssetType);
-        static CurveMetaData commercialStructure  = new CurveMetaData(commercialDamAndOccType, structureAssetType);
-        static CurveMetaData commercialContent = new CurveMetaData(commercialDamAndOccType, contentAssetType);
+        static readonly double[] depths = new double[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        static readonly IDistribution[] residentialStructureDamage = new IDistribution[] { new Deterministic(0), new Deterministic(10), new Deterministic(20), new Deterministic(30), new Deterministic(40), new Deterministic(50), new Deterministic(60), new Deterministic(70), new Deterministic(80), new Deterministic(90), new Deterministic(100) };
+        static readonly IDistribution[] residentialContentAndCommercialStructureDamage = new IDistribution[] { new Deterministic(0), new Deterministic(5), new Deterministic(15), new Deterministic(25), new Deterministic(35), new Deterministic(45), new Deterministic(55), new Deterministic(65), new Deterministic(75), new Deterministic(85), new Deterministic(95) };
+        static readonly IDistribution[] commericalContentDamage = new IDistribution[] { new Deterministic(0), new Deterministic(0), new Deterministic(10), new Deterministic(20), new Deterministic(30), new Deterministic(40), new Deterministic(50), new Deterministic(60), new Deterministic(70), new Deterministic(80), new Deterministic(90) };
+        static readonly ValueRatioWithUncertainty residentialCSVR = new(50);
+        static readonly ValueRatioWithUncertainty commercialCSVR = new(120);
+        static readonly string residentialDamAndOccType = "Residential";
+        static readonly string commercialDamAndOccType = "Commercial";
+        static readonly string contentAssetType = "Content";
+        static readonly string structureAssetType = "Structure";
+        static readonly CurveMetaData residentialStructure = new(residentialDamAndOccType, structureAssetType);
+        static readonly CurveMetaData residentialContent = new(residentialDamAndOccType, contentAssetType);
+        static readonly CurveMetaData commercialStructure  = new(commercialDamAndOccType, structureAssetType);
+        static readonly CurveMetaData commercialContent = new(commercialDamAndOccType, contentAssetType);
 
-        static UncertainPairedData residentialStructureDepthPercent = new UncertainPairedData(depths, residentialStructureDamage, residentialStructure);
-        static UncertainPairedData residentialContentDepthPercent = new UncertainPairedData(depths, residentialContentAndCommercialStructureDamage, residentialContent);
-        static UncertainPairedData commercialStructureDepthPercent = new UncertainPairedData(depths, residentialContentAndCommercialStructureDamage, commercialStructure);
-        static UncertainPairedData commercialContentDepthPercent = new UncertainPairedData(depths, commericalContentDamage, commercialContent);
+        static readonly UncertainPairedData residentialStructureDepthPercent = new(depths, residentialStructureDamage, residentialStructure);
+        static readonly UncertainPairedData residentialContentDepthPercent = new(depths, residentialContentAndCommercialStructureDamage, residentialContent);
+        static readonly UncertainPairedData commercialStructureDepthPercent = new(depths, residentialContentAndCommercialStructureDamage, commercialStructure);
+        static readonly UncertainPairedData commercialContentDepthPercent = new(depths, commericalContentDamage, commercialContent);
         
-        static OccupancyType residentialOccType = OccupancyType.builder()
-            .withName(residentialDamAndOccType)
-            .withDamageCategory(residentialDamAndOccType)
-            .withStructureDepthPercentDamage(residentialStructureDepthPercent)
-            .withContentDepthPercentDamage(residentialContentDepthPercent)
-            .withContentToStructureValueRatio(residentialCSVR)
-            .build();
+        static readonly OccupancyType residentialOccType = OccupancyType.Builder()
+            .WithName(residentialDamAndOccType)
+            .WithDamageCategory(residentialDamAndOccType)
+            .WithStructureDepthPercentDamage(residentialStructureDepthPercent)
+            .WithContentDepthPercentDamage(residentialContentDepthPercent)
+            .WithContentToStructureValueRatio(residentialCSVR)
+            .Build();
 
-        static OccupancyType commercialOccType = OccupancyType.builder()
-            .withName(commercialDamAndOccType)
-            .withDamageCategory(commercialDamAndOccType)
-            .withStructureDepthPercentDamage(commercialStructureDepthPercent)
-            .withContentDepthPercentDamage(commercialContentDepthPercent)
-            .withContentToStructureValueRatio(commercialCSVR)
-            .build();
+        static readonly OccupancyType commercialOccType = OccupancyType.Builder()
+            .WithName(commercialDamAndOccType)
+            .WithDamageCategory(commercialDamAndOccType)
+            .WithStructureDepthPercentDamage(commercialStructureDepthPercent)
+            .WithContentDepthPercentDamage(commercialContentDepthPercent)
+            .WithContentToStructureValueRatio(commercialCSVR)
+            .Build();
 
-        static Dictionary<string, OccupancyType> occupancyTypes = new Dictionary<string, OccupancyType>() 
+        static readonly Dictionary<string, OccupancyType> occupancyTypes = new() 
         { 
             { residentialDamAndOccType, residentialOccType },
             { commercialDamAndOccType, commercialOccType}
@@ -141,23 +141,22 @@ namespace HEC.FDA.ModelTest.integrationtests
         #endregion
 
         #region Structure Data
-        private static PointM pointM = new PointM();
-        private static int impactAreaID = 34;
-        private static double groundElevation = 12;
-        private static Structure structure1 = new Structure(fid: 1, point: pointM, firstFloorElevation: 14, val_struct: 100, st_damcat: residentialDamAndOccType, occtype: residentialDamAndOccType, impactAreaID: impactAreaID, groundElevation: groundElevation);
-        private static Structure structure2 = new Structure(fid: 2, point: pointM, firstFloorElevation: 15, val_struct: 200, st_damcat: residentialDamAndOccType, occtype: residentialDamAndOccType, impactAreaID: impactAreaID, groundElevation: groundElevation);
-        private static Structure structure3 = new Structure(fid: 3, point: pointM, firstFloorElevation: 17, val_struct: 300, st_damcat: commercialDamAndOccType, occtype: commercialDamAndOccType, impactAreaID: impactAreaID, groundElevation: groundElevation);
-        private static Structure structure4 = new Structure(fid: 4, point: pointM, firstFloorElevation: 18, val_struct: 400, st_damcat: commercialDamAndOccType, occtype: commercialDamAndOccType, impactAreaID: impactAreaID, groundElevation: groundElevation);
-        private static List<Structure> residentialStructureList = new List<Structure>() { structure1, structure2 };
-        private static List<Structure> commercialStructureList = new List<Structure>() { structure3, structure4 };
-        private static StructureSelectionMapping map = new StructureSelectionMapping(false, false, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-        private static Inventory residentialStructureInventory = new Inventory( occupancyTypes, residentialStructureList);
-        private static Inventory commercialStructureInventory = new Inventory (occupancyTypes, commercialStructureList);
+        private static readonly PointM pointM = new();
+        private static readonly int impactAreaID = 34;
+        private static readonly double groundElevation = 12;
+        private static readonly Structure structure1 = new(fid: 1, point: pointM, firstFloorElevation: 14, val_struct: 100, st_damcat: residentialDamAndOccType, occtype: residentialDamAndOccType, impactAreaID: impactAreaID, groundElevation: groundElevation);
+        private static readonly Structure structure2 = new(fid: 2, point: pointM, firstFloorElevation: 15, val_struct: 200, st_damcat: residentialDamAndOccType, occtype: residentialDamAndOccType, impactAreaID: impactAreaID, groundElevation: groundElevation);
+        private static readonly Structure structure3 = new(fid: 3, point: pointM, firstFloorElevation: 17, val_struct: 300, st_damcat: commercialDamAndOccType, occtype: commercialDamAndOccType, impactAreaID: impactAreaID, groundElevation: groundElevation);
+        private static readonly Structure structure4 = new(fid: 4, point: pointM, firstFloorElevation: 18, val_struct: 400, st_damcat: commercialDamAndOccType, occtype: commercialDamAndOccType, impactAreaID: impactAreaID, groundElevation: groundElevation);
+        private static readonly List<Structure> residentialStructureList = new() { structure1, structure2 };
+        private static readonly List<Structure> commercialStructureList = new() { structure3, structure4 };
+        private static readonly Inventory residentialStructureInventory = new( occupancyTypes, residentialStructureList);
+        private static readonly Inventory commercialStructureInventory = new(occupancyTypes, commercialStructureList);
 
         #endregion
 
         #region Other objects 
-        private static ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: 200);
+        private static readonly ConvergenceCriteria convergenceCriteria = new(minIterations: 100, maxIterations: 200);
         #endregion
 
         /// <summary>
@@ -171,18 +170,18 @@ namespace HEC.FDA.ModelTest.integrationtests
         public void TrackStageDamageTest(double[] expectedResDamage, double[] expectedComDamage, string damageCategory, float stage1, float stage2, bool useRegUnreg)
         {
             HydraulicDataset hydraulicDataset = ComputeHydraulicDataset(stage1, stage2);
-            List<UncertainPairedData> stageDamageFunctions = new List<UncertainPairedData>();
+            List<UncertainPairedData> stageDamageFunctions;
 
             if (useRegUnreg)
             {
                 if (damageCategory == residentialDamAndOccType)
                 {
-                    ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, residentialStructureInventory, hydraulicDataset, convergenceCriteria, "fakeHydroDir", graphicalFrequency: flowFrequency, dischargeStage: dischargeStage, unregulatedRegulated: unregReg, usingMockData: true);
+                    ImpactAreaStageDamage impactAreaStageDamage = new(impactAreaID, residentialStructureInventory, hydraulicDataset, convergenceCriteria, "fakeHydroDir", graphicalFrequency: flowFrequency, dischargeStage: dischargeStage, unregulatedRegulated: unregReg, usingMockData: true);
                     stageDamageFunctions = impactAreaStageDamage.Compute(new MedianRandomProvider());
                 }
                 else
                 {
-                    ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, commercialStructureInventory, hydraulicDataset, convergenceCriteria, "fakeHydroDir", graphicalFrequency: flowFrequency, dischargeStage: dischargeStage, unregulatedRegulated: unregReg, usingMockData: true);
+                    ImpactAreaStageDamage impactAreaStageDamage = new(impactAreaID, commercialStructureInventory, hydraulicDataset, convergenceCriteria, "fakeHydroDir", graphicalFrequency: flowFrequency, dischargeStage: dischargeStage, unregulatedRegulated: unregReg, usingMockData: true);
                     stageDamageFunctions = impactAreaStageDamage.Compute(new MedianRandomProvider());
                 }
             } 
@@ -190,12 +189,12 @@ namespace HEC.FDA.ModelTest.integrationtests
             {
                 if (damageCategory == residentialDamAndOccType)
                 {
-                    ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, residentialStructureInventory, hydraulicDataset, convergenceCriteria, "fakeHydroDir", graphicalFrequency: stageFrequency, usingMockData: true);
+                    ImpactAreaStageDamage impactAreaStageDamage = new(impactAreaID, residentialStructureInventory, hydraulicDataset, convergenceCriteria, "fakeHydroDir", graphicalFrequency: stageFrequency, usingMockData: true);
                     stageDamageFunctions = impactAreaStageDamage.Compute(new MedianRandomProvider());
                 }
                 else
                 {
-                    ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, commercialStructureInventory, hydraulicDataset, convergenceCriteria, "fakeHydroDir", graphicalFrequency: stageFrequency, usingMockData: true);
+                    ImpactAreaStageDamage impactAreaStageDamage = new(impactAreaID, commercialStructureInventory, hydraulicDataset, convergenceCriteria, "fakeHydroDir", graphicalFrequency: stageFrequency, usingMockData: true);
                     stageDamageFunctions = impactAreaStageDamage.Compute(new MedianRandomProvider());
                 }
             }

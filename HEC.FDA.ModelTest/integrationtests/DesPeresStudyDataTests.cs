@@ -52,10 +52,10 @@ namespace HEC.FDA.ModelTest.integrationtests
         public void ComputeShould()
         {
             stageDamageList.Add(zeroStageDamage);
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
-                .withFrequencyStage(graphicalUncertain)
-                .withStageDamages(stageDamageList)
-                .build();
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
+                .WithFrequencyStage(graphicalUncertain)
+                .WithStageDamages(stageDamageList)
+                .Build();
 
             ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(randomProvider, new ConvergenceCriteria());
 

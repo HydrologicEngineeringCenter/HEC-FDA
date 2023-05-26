@@ -7,10 +7,6 @@ namespace HEC.FDA.Model.metrics
 {
     public class Threshold
     {
-        #region Fields
-        private bool _isNull;
-        #endregion
-
         #region Properties
         public ThresholdEnum ThresholdType { get; set; }
         public double ThresholdValue { get; set; }
@@ -20,13 +16,7 @@ namespace HEC.FDA.Model.metrics
         /// The threshold ID = 0 is reserved for the default threshold.
         /// </summary>
         public int ThresholdID { get; }
-        public bool IsNull
-        {
-            get
-            {
-                return _isNull;
-            }
-        }
+        public bool IsNull { get; }
         #endregion
 
         #region Constructors 
@@ -34,9 +24,8 @@ namespace HEC.FDA.Model.metrics
         {
             ThresholdType = ThresholdEnum.DefaultExteriorStage;
             ThresholdID = 9999;
-            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
             SystemPerformanceResults = new SystemPerformanceResults();
-            _isNull = true;
+            IsNull = true;
         }
         public Threshold(int thresholdID, ConvergenceCriteria c, ThresholdEnum thresholdType = 0, double thresholdValue = 0)
         {
@@ -44,7 +33,7 @@ namespace HEC.FDA.Model.metrics
             ThresholdValue = thresholdValue;
             SystemPerformanceResults = new SystemPerformanceResults(thresholdType, thresholdValue, c);
             ThresholdID = thresholdID;
-            _isNull = false;
+            IsNull = false;
         }
 
         public Threshold(int thresholdID, UncertainPairedData systemResponseCurve, ConvergenceCriteria c, ThresholdEnum thresholdType = 0, double thresholdValue = 0)
@@ -53,7 +42,7 @@ namespace HEC.FDA.Model.metrics
             ThresholdValue = thresholdValue;
             SystemPerformanceResults = new SystemPerformanceResults(thresholdType, thresholdValue, systemResponseCurve, c);
             ThresholdID = thresholdID;
-            _isNull = false;
+            IsNull = false;
 
         }
 
@@ -63,7 +52,7 @@ namespace HEC.FDA.Model.metrics
             ThresholdValue = thresholdValue;
             ThresholdID = thresholdID;
             SystemPerformanceResults = projectPerformanceResults;
-            _isNull = false;
+            IsNull = false;
 
         }
         #endregion
@@ -74,7 +63,7 @@ namespace HEC.FDA.Model.metrics
             bool thresholdValueIsTheSame = ThresholdValue.Equals(incomingThreshold.ThresholdValue);
             bool thresholdIDIsTheSame = ThresholdID.Equals(incomingThreshold.ThresholdID);
             bool projectPerformanceIsTheSame = SystemPerformanceResults.Equals(incomingThreshold.SystemPerformanceResults);
-            if (!thresholdIDIsTheSame || !thresholdValueIsTheSame || !thresholdIDIsTheSame || !projectPerformanceIsTheSame)
+            if (!thresholdTypeIsTheSame || !thresholdIDIsTheSame || !thresholdValueIsTheSame || !thresholdIDIsTheSame || !projectPerformanceIsTheSame)
             {
                 return false;
             }
@@ -83,7 +72,7 @@ namespace HEC.FDA.Model.metrics
 
         public XElement WriteToXML()
         {
-            XElement masterElement = new XElement("Threshold");
+            XElement masterElement = new("Threshold");
             masterElement.SetAttributeValue("Threshold_Type", Convert.ToString(ThresholdType));
             masterElement.SetAttributeValue("Threshold_Value", ThresholdValue);
             masterElement.SetAttributeValue("Threshold_ID", ThresholdID);

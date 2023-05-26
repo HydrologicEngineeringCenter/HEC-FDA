@@ -158,32 +158,32 @@ namespace HEC.FDA.ModelTest.integrationtests
         }
         private static UncertainPairedData stageDischarge = new UncertainPairedData(_StageDischargeXValues, _StageDischargeYValues, stageDischargeMetaData);
 
-        //set up levee
-        private static double[] _FailureXValues = new double[] { 930, 935, 936, 936.5, 936.9, 937, 948 };
-        private static IDistribution[] _FailureYValues = FailureYValues();
+        //set up levee has been commented out because the 1.4.3 tests have not been migrated to here yet 
+        //private static double[] _FailureXValues = new double[] { 930, 935, 936, 936.5, 936.9, 937, 948 };
+        //private static IDistribution[] _FailureYValues = FailureYValues();
 
-        private static IDistribution[] FailureYValues()
-        {
-            double[] failureProbabilities = new double[] { 0, 0.01, 0.1, 0.5, 0.9, 1, 1 };
-            IDistribution[] failureProbArray = new IDistribution[failureProbabilities.Length];
-            for (int i = 0; i < failureProbabilities.Length; i++)
-            {
-                failureProbArray[i] = new Deterministic(failureProbabilities[i]);
-            }
-            return failureProbArray;
-        }
+        //private static IDistribution[] FailureYValues()
+        //{
+        //    double[] failureProbabilities = new double[] { 0, 0.01, 0.1, 0.5, 0.9, 1, 1 };
+        //    IDistribution[] failureProbArray = new IDistribution[failureProbabilities.Length];
+        //    for (int i = 0; i < failureProbabilities.Length; i++)
+        //    {
+        //        failureProbArray[i] = new Deterministic(failureProbabilities[i]);
+        //    }
+        //    return failureProbArray;
+        //}
 
-        private static UncertainPairedData systemResponse = new UncertainPairedData(_FailureXValues, _FailureYValues, failureLeveeMetaData);
-        private static double defaultLeveeElevation = 937;
-        private static double[] defaultFailureStages = new double[] { 920, 936.999, 937, 948 };
-        private static IDistribution[] defaultFailureProbs = new IDistribution[]
-        {
-            new Deterministic(0),
-            new Deterministic(0),
-            new Deterministic(1),
-            new Deterministic(1),
-        };
-        private static UncertainPairedData defaultSystemResponse = new UncertainPairedData(defaultFailureStages, defaultFailureProbs, defaultLeveeMetaData);
+        //private static UncertainPairedData systemResponse = new UncertainPairedData(_FailureXValues, _FailureYValues, failureLeveeMetaData);
+        //private static double defaultLeveeElevation = 937;
+        //private static double[] defaultFailureStages = new double[] { 920, 936.999, 937, 948 };
+        //private static IDistribution[] defaultFailureProbs = new IDistribution[]
+        //{
+        //    new Deterministic(0),
+        //    new Deterministic(0),
+        //    new Deterministic(1),
+        //    new Deterministic(1),
+        //};
+        //private static UncertainPairedData defaultSystemResponse = new UncertainPairedData(defaultFailureStages, defaultFailureProbs, defaultLeveeMetaData);
 
         private static int impactAreaID1 = 1;
         private static int impactAreaID2 = 2;
@@ -191,16 +191,18 @@ namespace HEC.FDA.ModelTest.integrationtests
         private static int futureYear = 2050;
         #endregion
 
+
+
         [Theory]
         [InlineData(310937.1, 295506.53)]
         public void WithoutAnalytical_ScenarioResults(double expectedCommercialMeanEAD, double expectedResidentialMeanEAD)
         {
             //Arrange 
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
-                .withFlowFrequency(lp3)
-                .withFlowStage(stageDischarge)
-                .withStageDamages(stageDamageList)
-                .build();
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID1)
+                .WithFlowFrequency(lp3)
+                .WithFlowStage(stageDischarge)
+                .WithStageDamages(stageDamageList)
+                .Build();
             List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
             impactAreaScenarioSimulations.Add(simulation);
 
@@ -208,7 +210,7 @@ namespace HEC.FDA.ModelTest.integrationtests
             ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
             Scenario scenario2 = new Scenario(futureYear, impactAreaScenarioSimulations);
             ScenarioResults scenarioResults2 = scenario2.Compute(randomProvider, convergenceCriteria);
-            AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(randomProvider, .025, 50, 1, scenarioResults, scenarioResults2, new CancellationToken());
+            AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(.025, 50, 1, scenarioResults, scenarioResults2, new CancellationToken());
             Empirical empiricalEADDistribution = alternativeResults.GetBaseYearEADDistribution(impactAreaID1, commercialDamageCategory);
 
             //Act
@@ -245,18 +247,18 @@ namespace HEC.FDA.ModelTest.integrationtests
         public void AnalyticalWithRegUnreg_ScenarioResults(double expectedResidentialMeanEAD, double expectedCommericialMeanEAD)
         {
             //Arrange
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID1)
-                .withFlowFrequency(lp3)
-                .withInflowOutflow(regulatedUnregulated)
-                .withFlowStage(stageDischarge)
-                .withStageDamages(stageDamageList)
-                .build();
-            ImpactAreaScenarioSimulation simulation2 = ImpactAreaScenarioSimulation.builder(impactAreaID2)
-                .withFlowFrequency(lp3)
-                .withInflowOutflow(regulatedUnregulated)
-                .withFlowStage(stageDischarge)
-                .withStageDamages(stageDamageList)
-                .build();
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID1)
+                .WithFlowFrequency(lp3)
+                .WithInflowOutflow(regulatedUnregulated)
+                .WithFlowStage(stageDischarge)
+                .WithStageDamages(stageDamageList)
+                .Build();
+            ImpactAreaScenarioSimulation simulation2 = ImpactAreaScenarioSimulation.Builder(impactAreaID2)
+                .WithFlowFrequency(lp3)
+                .WithInflowOutflow(regulatedUnregulated)
+                .WithFlowStage(stageDischarge)
+                .WithStageDamages(stageDamageList)
+                .Build();
             List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
             impactAreaScenarioSimulations.Add(simulation);
             impactAreaScenarioSimulations.Add(simulation2);

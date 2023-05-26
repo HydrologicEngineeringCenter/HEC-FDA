@@ -38,13 +38,19 @@ namespace Statistics
                     throw new NotImplementedException();
             }
         }
-
+        /// <summary>
+        /// we have to keep this because of IDistribution
+        /// </summary>
+        /// <param name="sample"></param>
+        /// <param name="nBins"></param>
+        /// <returns></returns>
         internal static Statistics.Histograms.Histogram Fit(IEnumerable<double> sample, int nBins)
         {
             double min = sample.Min();
             double max = sample.Max();
             double binWidth = (min - max) / nBins;
-            Statistics.Histograms.Histogram histogram = new Statistics.Histograms.Histogram(binWidth);
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
+            Statistics.Histograms.Histogram histogram = new Statistics.Histograms.Histogram(binWidth, convergenceCriteria);
             histogram.AddObservationsToHistogram(sample.ToArray());
             return histogram;
         }

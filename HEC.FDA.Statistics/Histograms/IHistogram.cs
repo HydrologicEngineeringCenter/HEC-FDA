@@ -18,13 +18,11 @@ namespace Statistics.Histograms
         double Variance { get; }
         double StandardDeviation { get; }
         ConvergenceCriteria ConvergenceCriteria { get; }
-        string TypeOfIHistogram { get; }
-
-
         #endregion
 
         #region Methods
         void AddObservationToHistogram(double observation, Int64 iterationIndex);
+        void AddObservationsToHistogram(double[] observations);
         void ForceDeQueue();
         bool IsHistogramConverged(double upperq, double lowerq);
         Int64 EstimateIterationsRemaining(double upperq, double lowerq);

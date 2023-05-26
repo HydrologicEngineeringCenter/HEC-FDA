@@ -12,35 +12,14 @@ namespace HEC.FDA.Model.metrics
 {
     public class AlternativeResults : ValidationErrorLogger, IProgressReport
     {
-        #region Fields
-        private int _alternativeID;
-        private ManyEmpiricalDistributionsOfConsequences _aaeqResults;
-        private bool _isNull;
-        #endregion
-
         #region Properties
-        public int AlternativeID
-        {
-            get { return _alternativeID; }
-        }
-        public ManyEmpiricalDistributionsOfConsequences AAEQDamageResults
-        {
-            get
-            {
-                return _aaeqResults;
-            }
-        }
+        public int AlternativeID {get;}
+        public ManyEmpiricalDistributionsOfConsequences AAEQDamageResults { get; }
         public List<int> AnalysisYears { get; }
         public int PeriodOfAnalysis { get; }
         public event ProgressReportedEventHandler ProgressReport;
 
-        public bool IsNull
-        {
-            get
-            {
-                return _isNull;
-            }
-        }
+        public bool IsNull { get; }
         internal ScenarioResults BaseYearScenarioResults { get; set; }
         internal ScenarioResults FutureYearScenarioResults { get; set; }
         #endregion
@@ -48,9 +27,9 @@ namespace HEC.FDA.Model.metrics
         #region Constructor
         public AlternativeResults()
         {
-            _isNull = true;
-            _alternativeID = 0;
-            _aaeqResults = new ManyEmpiricalDistributionsOfConsequences(_alternativeID);
+            IsNull = true;
+            AlternativeID = 0;
+            AAEQDamageResults = new ManyEmpiricalDistributionsOfConsequences(AlternativeID);
             BaseYearScenarioResults = new ScenarioResults();
             FutureYearScenarioResults = new ScenarioResults();
             AnalysisYears = new List<int>() { 2030, 2049 };
@@ -61,29 +40,20 @@ namespace HEC.FDA.Model.metrics
 
         public AlternativeResults(int id, List<int> analysisYears, int periodOfAnalysis)
         {
-            _alternativeID = id;
+            AlternativeID = id;
             PeriodOfAnalysis = periodOfAnalysis;
-            _aaeqResults = new ManyEmpiricalDistributionsOfConsequences(id);
-            _isNull = false;
+            AAEQDamageResults = new ManyEmpiricalDistributionsOfConsequences(id);
+            IsNull = false;
             AnalysisYears = analysisYears;
             AddRules();
         }
         internal AlternativeResults(int id, List<int> analysisYears, int periodOfAnalysis, bool isNull)
         {
-            _alternativeID = id;
-            _aaeqResults = new ManyEmpiricalDistributionsOfConsequences(id);
-            _isNull = isNull;
+            AlternativeID = id;
+            AAEQDamageResults = new ManyEmpiricalDistributionsOfConsequences(id);
+            IsNull = isNull;
             AnalysisYears = analysisYears;
             PeriodOfAnalysis = periodOfAnalysis;
-            AddRules();
-        }
-        private AlternativeResults(int id, ManyEmpiricalDistributionsOfConsequences consequenceResults, List<int> analysisYears, int periodOfAnalysis)
-        {
-            _alternativeID = id;
-            _aaeqResults = consequenceResults;
-            PeriodOfAnalysis = periodOfAnalysis;
-            _isNull = false;
-            AnalysisYears = analysisYears;
             AddRules();
         }
         #endregion
@@ -95,10 +65,10 @@ namespace HEC.FDA.Model.metrics
         }
         public List<int> GetImpactAreaIDs()
         {
-            List<int> impactAreaIDs = new List<int>();
-            if (_aaeqResults.ConsequenceResultList.Count != 0)
+            List<int> impactAreaIDs = new();
+            if (AAEQDamageResults.ConsequenceResultList.Count != 0)
             {
-                foreach (SingleEmpiricalDistributionOfConsequences consequence in _aaeqResults.ConsequenceResultList)
+                foreach (SingleEmpiricalDistributionOfConsequences consequence in AAEQDamageResults.ConsequenceResultList)
                 {
                     if (!impactAreaIDs.Contains(consequence.RegionID))
                     {
@@ -110,10 +80,10 @@ namespace HEC.FDA.Model.metrics
         }
         public List<string> GetAssetCategories()
         {
-            List<string> assetCats = new List<string>();
-            if (_aaeqResults.ConsequenceResultList.Count != 0)
+            List<string> assetCats = new();
+            if (AAEQDamageResults.ConsequenceResultList.Count != 0)
             {
-                foreach (SingleEmpiricalDistributionOfConsequences consequence in _aaeqResults.ConsequenceResultList)
+                foreach (SingleEmpiricalDistributionOfConsequences consequence in AAEQDamageResults.ConsequenceResultList)
                 {
                     if (!assetCats.Contains(consequence.AssetCategory))
                     {
@@ -125,10 +95,10 @@ namespace HEC.FDA.Model.metrics
         }
         public List<string> GetDamageCategories()
         {
-            List<string> damageCats = new List<string>();
-            if (_aaeqResults.ConsequenceResultList.Count != 0)
+            List<string> damageCats = new();
+            if (AAEQDamageResults.ConsequenceResultList.Count != 0)
             {
-                foreach (SingleEmpiricalDistributionOfConsequences consequence in _aaeqResults.ConsequenceResultList)
+                foreach (SingleEmpiricalDistributionOfConsequences consequence in AAEQDamageResults.ConsequenceResultList)
                 {
                     if (!damageCats.Contains(consequence.DamageCategory))
                     {
@@ -150,7 +120,7 @@ namespace HEC.FDA.Model.metrics
         /// <returns></returns>The mean of aaeq damage
         public double MeanAAEQDamage(int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
-            return _aaeqResults.MeanDamage(damageCategory, assetCategory, impactAreaID);
+            return AAEQDamageResults.MeanDamage(damageCategory, assetCategory, impactAreaID);
         }
         /// <summary>
         /// This method returns the mean of base year expected annual damage for the given damage category, asset category, impact area combination 
@@ -193,7 +163,7 @@ namespace HEC.FDA.Model.metrics
         /// <returns></returns>the level of AAEQ damage exceeded by the specified probability 
         public double AAEQDamageExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
-            return _aaeqResults.ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
+            return AAEQDamageResults.ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
         }
         /// <summary>
         /// This method calls the inverse CDF of the base year EAD damage histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
@@ -237,7 +207,7 @@ namespace HEC.FDA.Model.metrics
         /// <returns></returns>
         public Empirical GetAAEQDamageDistribution(int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
-            return _aaeqResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID);
+            return AAEQDamageResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID);
         }
         /// <summary>
         /// This method gets the histogram (distribution) of base year ead for the given damage category(ies), asset category(ies), and impact area(s)
@@ -272,7 +242,7 @@ namespace HEC.FDA.Model.metrics
             SingleEmpiricalDistributionOfConsequences consequenceResults = AAEQDamageResults.GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
             if (consequenceResults.IsNull)
             {
-                _aaeqResults.ConsequenceResultList.Add(consequenceResultToAdd);
+                AAEQDamageResults.ConsequenceResultList.Add(consequenceResultToAdd);
             }
         }
 

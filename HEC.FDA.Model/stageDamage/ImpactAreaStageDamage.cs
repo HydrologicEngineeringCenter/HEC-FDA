@@ -1,4 +1,5 @@
-﻿using HEC.FDA.Model.hydraulics;
+﻿using HEC.FDA.Model.compute;
+using HEC.FDA.Model.hydraulics;
 using HEC.FDA.Model.hydraulics.Interfaces;
 using HEC.FDA.Model.interfaces;
 using HEC.FDA.Model.metrics;
@@ -13,6 +14,7 @@ using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace HEC.FDA.Model.stageDamage
 {
@@ -30,17 +32,18 @@ namespace HEC.FDA.Model.stageDamage
         private readonly UncertainPairedData _DischargeStage;
         private readonly UncertainPairedData _UnregulatedRegulated;
         private readonly int _AnalysisYear;
-        private readonly HydraulicDataset _hydraulicDataset;
+        private readonly HydraulicDataset _HydraulicDataset;
 
-        private double _minStageForArea;
-        private double _maxStageForArea;
-        private readonly ConvergenceCriteria convergenceCriteria;
+        private double _MinStageForArea;
+        private double _MaxStageForArea;
+        private readonly ConvergenceCriteria _ConvergenceCriteria;
 
-        private readonly int _numExtrapolatedStagesToCompute = 7;
-        private readonly int _numInterpolatedStagesToCompute = 2;
+        private readonly int _NumExtrapolatedStagesToCompute = 7;
+        private readonly int _NumInterpolatedStagesToCompute = 2;
 
         private readonly string _HydraulicParentDirectory;
         private readonly PairedData _StageFrequency;
+        private double[] _StagesAtIndexLocation;
         #endregion
 
         #region Properties 
@@ -71,8 +74,8 @@ namespace HEC.FDA.Model.stageDamage
             {
                 Inventory = inventory.GetInventoryTrimmedToImpactArea(impactAreaID);
             }
-            _hydraulicDataset = hydraulicDataset;
-            convergenceCriteria = convergence;
+            _HydraulicDataset = hydraulicDataset;
+            _ConvergenceCriteria = convergence;
             SetMinAndMaxStage();
             _StageFrequency = CreateStageFrequency();
             AddRules();
@@ -87,7 +90,7 @@ namespace HEC.FDA.Model.stageDamage
         private void AddRules()
         {
             AddSinglePropertyRule(nameof(Inventory), new Rule(() => { Inventory.Validate(); return !Inventory.HasErrors; }, $"The structure inventory has errors: " + Inventory.GetErrors().ToString(), Inventory.ErrorLevel));
-            AddSinglePropertyRule(nameof(convergenceCriteria), new Rule(() => { convergenceCriteria.Validate(); return !convergenceCriteria.HasErrors; }, $"Convergence criteria has errors: " + convergenceCriteria.GetErrors().ToString(), convergenceCriteria.ErrorLevel));
+            AddSinglePropertyRule(nameof(_ConvergenceCriteria), new Rule(() => { _ConvergenceCriteria.Validate(); return !_ConvergenceCriteria.HasErrors; }, $"Convergence criteria has errors: " + _ConvergenceCriteria.GetErrors().ToString(), _ConvergenceCriteria.ErrorLevel));
             AddSinglePropertyRule(nameof(_StageFrequency), new Rule(() => _StageFrequency != null, $"The software was unable to calculate stage-frequency for the impact area with ID {ImpactAreaID}", ErrorLevel.Fatal));
             if (_AnalyticalFlowFrequency != null)
             {
@@ -123,8 +126,8 @@ namespace HEC.FDA.Model.stageDamage
                         maxFLow = _UnregulatedRegulated.SamplePairedData(MAX_PROBABILITY).f(maxFLow);
                     }
 
-                    _minStageForArea = minStagesOnRating.f(minFLow);
-                    _maxStageForArea = maxStagesOnRating.f(maxFLow);
+                    _MinStageForArea = minStagesOnRating.f(minFLow);
+                    _MaxStageForArea = maxStagesOnRating.f(maxFLow);
                 }
                 else
                 {
@@ -138,9 +141,9 @@ namespace HEC.FDA.Model.stageDamage
                 if (_GraphicalFrequency.UsesStagesNotFlows)
                 {
                     IPairedData minStages = _GraphicalFrequency.SamplePairedData(MIN_PROBABILITY);
-                    _minStageForArea = minStages.Yvals[0];
+                    _MinStageForArea = minStages.Yvals[0];
                     IPairedData maxStages = _GraphicalFrequency.SamplePairedData(MAX_PROBABILITY);
-                    _maxStageForArea = maxStages.Yvals[^1];
+                    _MaxStageForArea = maxStages.Yvals[^1];
                 }
                 else
                 {
@@ -159,9 +162,9 @@ namespace HEC.FDA.Model.stageDamage
 
                         IPairedData minStages = _DischargeStage.SamplePairedData(MIN_PROBABILITY);
                         IPairedData maxStages = _DischargeStage.SamplePairedData(MAX_PROBABILITY);
-                        
-                        _minStageForArea = minStages.f(minFlow);
-                        _maxStageForArea = maxStages.f(maxFlow);
+
+                        _MinStageForArea = minStages.f(minFlow);
+                        _MaxStageForArea = maxStages.f(maxFlow);
                     }
                     else
                     {
@@ -235,78 +238,144 @@ namespace HEC.FDA.Model.stageDamage
             {
 
                 List<string> damCats = Inventory.GetDamageCategories();
-                (List<double>, List<float[]>) wsesAtEachStructureByProfile = _hydraulicDataset.GetHydraulicDatasetInFloatsWithProbabilities(Inventory, _HydraulicParentDirectory);
-
+                (List<double>, List<float[]>) wsesAtEachStructureByProfile = _HydraulicDataset.GetHydraulicDatasetInFloatsWithProbabilities(Inventory, _HydraulicParentDirectory);
+                _StagesAtIndexLocation = ComputeStagesAtIndexLocation(wsesAtEachStructureByProfile.Item1);
                 //Run the compute by dam cat to simplify data collection 
                 foreach (string damageCategory in damCats)
                 {
-                    //These are the stages of the stage-damage function - the aggregation stages 
-                    List<double> allStagesAtIndexLocation = new();
-
-                    //There will be one ConsequenceDistributionResults object for each stage in the stage-damage function
-                    //Each ConsequenceDistributionResults object holds a ConsequenceDistributionResult for each asset cat
-                    List<ConsequenceDistributionResults> consequenceDistributionResults = new();
 
                     (Inventory, List<float[]>) inventoryAndWaterTupled = Inventory.GetInventoryAndWaterTrimmedToDamageCategory(damageCategory, wsesAtEachStructureByProfile.Item2);
 
-                    //Run a first pass to generate sufficient sample size to generate good histograms
-                    bool isFirstPass = true;
-                    ComputeDamageWithUncertaintyAllCoordinates(ref consequenceDistributionResults, ref allStagesAtIndexLocation, damageCategory, randomProvider, inventoryAndWaterTupled, wsesAtEachStructureByProfile.Item1, isFirstPass);
-                    bool functionIsNotConverged = IsTheFunctionNotConverged(consequenceDistributionResults);
 
-                    isFirstPass = false;
+                    //There will be one ConsequenceDistributionResults object for each stage in the stage-damage function
+                    //Each ConsequenceDistributionResults object holds a ConsequenceDistributionResult for each asset cat
+                    List<ConsequenceDistributionResults> consequenceDistributionResults = ComputeDamageWithUncertaintyAllCoordinates(damageCategory, randomProvider, inventoryAndWaterTupled, wsesAtEachStructureByProfile.Item1);
 
-                    while (functionIsNotConverged)
-                    {
-                        ComputeDamageWithUncertaintyAllCoordinates(ref consequenceDistributionResults, ref allStagesAtIndexLocation, damageCategory, randomProvider, inventoryAndWaterTupled, wsesAtEachStructureByProfile.Item1, isFirstPass);
-                        functionIsNotConverged = IsTheFunctionNotConverged(consequenceDistributionResults);
-                    }
                     //there should be four UncertainPairedData objects - one for each asset cat of the given dam cat level compute 
-                    List<UncertainPairedData> tempResultsList = ConsequenceDistributionResults.ToUncertainPairedData(allStagesAtIndexLocation, consequenceDistributionResults, ImpactAreaID);
+                    List<UncertainPairedData> tempResultsList = ConsequenceDistributionResults.ToUncertainPairedData(_StagesAtIndexLocation.ToList(), consequenceDistributionResults, ImpactAreaID);
                     results.AddRange(tempResultsList);
+                    //clear data
                 }
                 return results;
             }
         }
 
-        private void ComputeDamageWithUncertaintyAllCoordinates(ref List<ConsequenceDistributionResults> consequenceDistributionResults, ref List<double> allStagesAtIndexLocation, string damageCategory, IProvideRandomNumbers randomProvider, (Inventory, List<float[]>) inventoryAndWaterTupled, List<double> profileProbabilities, bool isFirstPass)
+        private List<ConsequenceDistributionResults> ComputeDamageWithUncertaintyAllCoordinates(string damageCategory, IProvideRandomNumbers randomProvider, (Inventory, List<float[]>) inventoryAndWaterTupled, List<double> profileProbabilities)
         {
-            //For the first pass, we collect the results in dictionaries where the key is the string asset category 
-            //after the first pass, we take the data in the dictionaries, pass the data into a histogram within the consequence distribution results, and test for convergence 
-            //if the histograms are not converged, then we proceed for additional passes, this time adding osbervations to the histograms directly 
-            List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates = new();
-            int iterations = convergenceCriteria.MinIterations;
-            bool dictionariesAreNotConstructed = true;
-            for (int i = 0; i < iterations; i++)
+
+            //damage for each stage
+            List<ConsequenceDistributionResults> consequenceDistributionResults = CreateConsequenceDistributionResults(damageCategory);
+
+            int iterations = 1;
+            if (_ConvergenceCriteria.MinIterations >= 100)
             {
-                List<DeterministicOccupancyType> deterministicOccTypes = Inventory.SampleOccupancyTypes(randomProvider);
-                ComputeLowerStageDamage(ref assetCatDamagesAllCoordinates, ref allStagesAtIndexLocation, ref consequenceDistributionResults, damageCategory,  deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, isFirstPass, dictionariesAreNotConstructed);
-                ComputeMiddleStageDamage(ref assetCatDamagesAllCoordinates, ref allStagesAtIndexLocation, ref consequenceDistributionResults, damageCategory,  deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, isFirstPass, dictionariesAreNotConstructed);
-                ComputeUpperStageDamage(ref assetCatDamagesAllCoordinates, ref allStagesAtIndexLocation, ref consequenceDistributionResults, damageCategory,  deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, isFirstPass, dictionariesAreNotConstructed);
-                dictionariesAreNotConstructed = false;
+                iterations = 100;
             }
-            if (isFirstPass)
+            int computeChunks = Convert.ToInt32(_ConvergenceCriteria.MinIterations / iterations);
+            bool stageDamageFunctionsAreNotConverged = true;
+            while (stageDamageFunctionsAreNotConverged)
             {
-                TransformDictionaryIntoConsequenceDistributionResults(ref consequenceDistributionResults, ref assetCatDamagesAllCoordinates, damageCategory);
+
+                //InitializeParallelArrays(ref parallelConsequenceResultCollection);
+                for (int j = 0; j < computeChunks; j++)
+                {
+                    //Parallel.For(0, iterations, i =>
+                    //{
+                     for (int i = 0; i < iterations; i++) { 
+                        List<DeterministicOccupancyType> deterministicOccTypes = Inventory.SampleOccupancyTypes(randomProvider);
+                        ComputeLowerStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, i);
+                        ComputeMiddleStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, i);
+                        ComputeUpperStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, i);
+                    }
+                    //);
+
+                    DumpDataIntoDistributions(ref consequenceDistributionResults);
+                }
+                stageDamageFunctionsAreNotConverged = IsTheFunctionNotConverged(consequenceDistributionResults);
+                if (stageDamageFunctionsAreNotConverged)
+                {
+                    //TODO: I am going to hard-wire in an additional 10000 iterations for now. 
+                    //At some point we can estimate iterations remaining - but that is computationally expensive 
+                    computeChunks = 100;
+                }
+            }
+            return consequenceDistributionResults;
+        }
+
+        private static void DumpDataIntoDistributions(ref List<ConsequenceDistributionResults> consequenceDistributionResultsList)
+        {
+            foreach (ConsequenceDistributionResults consequenceDistributionResults in consequenceDistributionResultsList)
+            {
+                consequenceDistributionResults.PutDataIntoHistograms();
             }
         }
-        /// <summary>
-        /// This method is used to transform the data found within the first pass data collection dictionaries into consequence distribution results
-        /// the dictionaries are cleared out after the transformation takes place 
-        /// </summary>
-        private void TransformDictionaryIntoConsequenceDistributionResults(ref List<ConsequenceDistributionResults> consequenceDistributionResults, ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, string damageCategory)
+
+        private List<ConsequenceDistributionResults> CreateConsequenceDistributionResults(string damageCategory)
         {
-            foreach (Dictionary<string, List<double>> dictionaryOfDamagesByAssetCategory in assetCatDamagesAllCoordinates)
+            List<ConsequenceDistributionResults> consequenceDistributionResultsList = new();
+
+            for (int i = 0; i < _StagesAtIndexLocation.Length; i++)
             {
-                ConsequenceDistributionResult structureConsequenceDistributionResult = new(damageCategory, StringConstants.STRUCTURE_ASSET_CATEGORY, convergenceCriteria, dictionaryOfDamagesByAssetCategory[StringConstants.STRUCTURE_ASSET_CATEGORY], ImpactAreaID);
-                ConsequenceDistributionResult contentConsequenceDistributionResult = new(damageCategory, StringConstants.CONTENT_ASSET_CATEGORY, convergenceCriteria, dictionaryOfDamagesByAssetCategory[StringConstants.CONTENT_ASSET_CATEGORY], ImpactAreaID);
-                ConsequenceDistributionResult vehicleConsequenceDistributionResult = new(damageCategory, StringConstants.VEHICLE_ASSET_CATEGORY, convergenceCriteria, dictionaryOfDamagesByAssetCategory[StringConstants.VEHICLE_ASSET_CATEGORY], ImpactAreaID);
-                ConsequenceDistributionResult otherConsequenceDistributionResult = new(damageCategory, StringConstants.OTHER_ASSET_CATEGORY, convergenceCriteria, dictionaryOfDamagesByAssetCategory[StringConstants.OTHER_ASSET_CATEGORY], ImpactAreaID);
-                List<ConsequenceDistributionResult> consequenceDistributionResultList = new() { structureConsequenceDistributionResult, contentConsequenceDistributionResult, vehicleConsequenceDistributionResult, otherConsequenceDistributionResult };
-                ConsequenceDistributionResults consequenceDistResultsAtThisStage = new(consequenceDistributionResultList);
-                consequenceDistributionResults.Add(consequenceDistResultsAtThisStage);
+                List<ConsequenceDistributionResult> consequenceDistributionResultList = new()
+                {
+                    new(damageCategory, utilities.StringConstants.STRUCTURE_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID),
+                    new(damageCategory, utilities.StringConstants.CONTENT_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID),
+                    new(damageCategory, utilities.StringConstants.OTHER_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID),
+                    new(damageCategory, utilities.StringConstants.VEHICLE_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID)
+                };
+                ConsequenceDistributionResults consequenceDistributionResults = new(consequenceDistributionResultList);
+                consequenceDistributionResultsList.Add(consequenceDistributionResults);
             }
-            assetCatDamagesAllCoordinates.Clear();
+            return consequenceDistributionResultsList;
+        }
+
+        private double[] ComputeStagesAtIndexLocation(List<double> profileProbabilities)
+        {
+            //extrapolate lower stages
+            int quantityStages = _NumExtrapolatedStagesToCompute * 2 + (profileProbabilities.Count - 1) * _NumInterpolatedStagesToCompute;
+            double[] stages = new double[quantityStages];
+            double stageAtProbabilityOfLowestProfile = _StageFrequency.f(1 - profileProbabilities.Max());
+            float indexStationLowerStageDelta = (float)(stageAtProbabilityOfLowestProfile - _MinStageForArea);
+            float interval = indexStationLowerStageDelta / _NumExtrapolatedStagesToCompute;
+            int stageIndex = 0;
+            for (int i = 0; i < _NumExtrapolatedStagesToCompute + 1; i++)
+            {
+                stages[i] = (_MinStageForArea + i * interval);
+                stageIndex++;
+            }
+
+            //interpolate intermediate stages
+            int numProfiles = profileProbabilities.Count;
+            for (int i = 1; i < numProfiles; i++)
+            {
+                double previousProbability = profileProbabilities[i - 1];
+                double currentProbability = profileProbabilities[i];
+
+                for (int j = 0; j < _NumInterpolatedStagesToCompute; j++)
+                {
+                    double previousStageAtIndexLocation = _StageFrequency.f(1 - previousProbability);
+                    double currentStageAtIndexLocation = _StageFrequency.f(1 - currentProbability);
+                    double stageDeltaAtIndexLocation = currentStageAtIndexLocation - previousStageAtIndexLocation;
+                    double intervalAtIndexLocation = stageDeltaAtIndexLocation / _NumInterpolatedStagesToCompute;
+                    double stageAtIndexLocation = previousStageAtIndexLocation + intervalAtIndexLocation * (j + 1);
+                    stages[stageIndex] = stageAtIndexLocation;
+                    stageIndex++;
+                }
+            }
+
+            //extrapolate upper stages
+            double stageAtProbabilityOfHighestProfile = _StageFrequency.f(1 - profileProbabilities.Min());
+            float indexStationUpperStageDelta = (float)(_MaxStageForArea - stageAtProbabilityOfHighestProfile);
+            float upperInterval = indexStationUpperStageDelta / _NumExtrapolatedStagesToCompute;
+            for (int i = 1; i < _NumExtrapolatedStagesToCompute; i++)
+            {
+
+                stages[stageIndex] = (_MaxStageForArea - upperInterval * (_NumExtrapolatedStagesToCompute - i));
+                stageIndex++;
+            }
+
+            return stages;
+
         }
 
         private static bool IsTheFunctionNotConverged(List<ConsequenceDistributionResults> consequenceDistributionResults)
@@ -327,51 +396,30 @@ namespace HEC.FDA.Model.stageDamage
         /// <summary>
         /// This method computes damage at stages lower than the most frequent profile 
         /// </summary>
-        private void ComputeLowerStageDamage(ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, ref List<double> allStagesAtIndexLocation,
-            ref List<ConsequenceDistributionResults> consequenceDistributionResults, string damageCategory,
-            List<DeterministicOccupancyType> deterministicOccTypes, (Inventory, List<float[]>) inventoryAndWaterCoupled, List<double> profileProbabilities,
-            bool isFirstPass, bool dictionariesAreNotConstructed)
+        private void ComputeLowerStageDamage(ref List<ConsequenceDistributionResults> parallelConsequenceResultCollection, string damageCategory, List<DeterministicOccupancyType> deterministicOccTypes, (Inventory, List<float[]>) inventoryAndWaterCoupled, List<double> profileProbabilities, int iterationIndex)
+        {
+
+            float interval = CalculateLowerIncrementOfStages(profileProbabilities);
+            for (int stageIndex = 0; stageIndex < _NumExtrapolatedStagesToCompute + 1; stageIndex++)
+            {
+                //for each stage, add the consequenceResult to the consequenceResultArray in the correct place
+                float[] WSEsParallelToIndexLocation = ExtrapolateFromBelowStagesAtIndexLocation(inventoryAndWaterCoupled.Item2[0], interval, stageIndex, _NumExtrapolatedStagesToCompute);
+                //this inventory is not trimmed 
+                ConsequenceResult consequenceResult = inventoryAndWaterCoupled.Item1.ComputeDamages(WSEsParallelToIndexLocation, _AnalysisYear, damageCategory, deterministicOccTypes);
+                parallelConsequenceResultCollection[stageIndex].AddConsequenceRealization(consequenceResult, damageCategory, ImpactAreaID, iterationIndex);
+            }
+        }
+
+        private float CalculateLowerIncrementOfStages(List<double> profileProbabilities)
         {
             //the probability of a profile is an EXCEEDANCE probability but in the model we use NONEXCEEDANCE PROBABILITY
             double stageAtProbabilityOfLowestProfile = _StageFrequency.f(1 - profileProbabilities.Max());
             //the delta is the difference between the min stage at the index location and the stage at the index location for the lowest profile 
-            float indexStationLowerStageDelta = (float)(stageAtProbabilityOfLowestProfile - _minStageForArea);
+            float indexStationLowerStageDelta = (float)(stageAtProbabilityOfLowestProfile - _MinStageForArea);
             //this interval defines the interval in stages by which we'll compute damage 
-            float interval = indexStationLowerStageDelta / _numExtrapolatedStagesToCompute;
+            float interval = indexStationLowerStageDelta / _NumExtrapolatedStagesToCompute;
             //Collect damage for first part of function up to and including the stages at the lowest profile 
-            
-            for (int i = 0; i < _numExtrapolatedStagesToCompute + 1; i++)
-            {
-                float[] WSEsParallelToIndexLocation = ExtrapolateFromBelowStagesAtIndexLocation(inventoryAndWaterCoupled.Item2[0], interval, i, _numExtrapolatedStagesToCompute);
-                //this inventory is not trimmed 
-                ConsequenceResult consequenceResult = inventoryAndWaterCoupled.Item1.ComputeDamages(WSEsParallelToIndexLocation, _AnalysisYear, damageCategory, deterministicOccTypes);
-                if (isFirstPass)
-                {
-                    if (dictionariesAreNotConstructed)
-                    {
-                        Dictionary<string, List<double>> damages = ConvertConsequenceResultToDictionary(consequenceResult);
-                        assetCatDamagesAllCoordinates.Add(damages);
-                        allStagesAtIndexLocation.Add(_minStageForArea + i * interval);
-                    }
-                    else
-                    {
-                        AggregateResultsByDictionary(ref assetCatDamagesAllCoordinates, consequenceResult, i);
-                    }
-                }
-                else
-                {
-                    consequenceDistributionResults[i].AddConsequenceRealization(consequenceResult, damageCategory, ImpactAreaID, i);
-                }
-
-            }
-        }
-
-        private static void AggregateResultsByDictionary(ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, ConsequenceResult consequenceResult, int i)
-        {
-            assetCatDamagesAllCoordinates[i][StringConstants.STRUCTURE_ASSET_CATEGORY].Add(consequenceResult.StructureDamage);
-            assetCatDamagesAllCoordinates[i][StringConstants.CONTENT_ASSET_CATEGORY].Add(consequenceResult.ContentDamage);
-            assetCatDamagesAllCoordinates[i][StringConstants.VEHICLE_ASSET_CATEGORY].Add(consequenceResult.VehicleDamage);
-            assetCatDamagesAllCoordinates[i][StringConstants.OTHER_ASSET_CATEGORY].Add(consequenceResult.OtherDamage);
+            return interval;
         }
 
         public static float[] ExtrapolateFromBelowStagesAtIndexLocation(float[] WSEsAtLowest, float interval, int i, int numExtrapolatedStagesToCompute)
@@ -383,79 +431,37 @@ namespace HEC.FDA.Model.stageDamage
             }
             return extrapolatedStages;
         }
-        private static Dictionary<string, List<double>> ConvertConsequenceResultToDictionary(ConsequenceResult consequenceResult)
-        {
-            //there will be four dictionary entries for each stage
-            //one dictionary entry for each asset category 
-            Dictionary<string, List<double>> damages = new()
-            {
-                { StringConstants.STRUCTURE_ASSET_CATEGORY, new List<double>() { consequenceResult.StructureDamage } },
-                { StringConstants.CONTENT_ASSET_CATEGORY, new List<double>() { consequenceResult.ContentDamage } },
-                { StringConstants.VEHICLE_ASSET_CATEGORY, new List<double>() { consequenceResult.VehicleDamage } },
-                { StringConstants.OTHER_ASSET_CATEGORY, new List<double>() { consequenceResult.OtherDamage } }
-            };
-            return damages;
-        }
+
         /// <summary>
         /// This method calculates a stage damage function within the hydraulic profiles 
         /// </summary>
-        private void ComputeMiddleStageDamage(ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, ref List<double> allStagesAtIndexLocation,
-            ref List<ConsequenceDistributionResults> consequenceDistributionResults, string damageCategory, List<DeterministicOccupancyType> deterministicOccTypes,
-            (Inventory, List<float[]>) inventoryAndWaterCoupled, List<double> profileProbabilities, bool isFirstPass, bool dictionariesAreNotConstructed)
+        private void ComputeMiddleStageDamage(ref List<ConsequenceDistributionResults> parallelConsequenceResultCollection, string damageCategory, List<DeterministicOccupancyType> deterministicOccTypes, (Inventory, List<float[]>) inventoryAndWaterCoupled, List<double> profileProbabilities, int iterationIndex)
         {
             int numProfiles = profileProbabilities.Count;
-            for (int i = 1; i < numProfiles; i++)
+            int stageIndex = _NumExtrapolatedStagesToCompute + 1;
+            for (int profileIndex = 1; profileIndex < numProfiles; profileIndex++)
             {
-                InterpolateBetweenProfiles(deterministicOccTypes, inventoryAndWaterCoupled.Item2[i - 1], profileProbabilities[i - 1], inventoryAndWaterCoupled.Item2[i], profileProbabilities[i], damageCategory, ref allStagesAtIndexLocation, ref assetCatDamagesAllCoordinates, isFirstPass, ref consequenceDistributionResults, dictionariesAreNotConstructed, i, inventoryAndWaterCoupled.Item1);
+                InterpolateBetweenProfiles(ref parallelConsequenceResultCollection, deterministicOccTypes, inventoryAndWaterCoupled.Item2[profileIndex - 1], inventoryAndWaterCoupled.Item2[profileIndex], damageCategory, inventoryAndWaterCoupled.Item1, stageIndex, iterationIndex);
+                stageIndex += _NumInterpolatedStagesToCompute;
             }
         }
-        //TODO: Why are there arguments here that appear to go unused? 
-        private void InterpolateBetweenProfiles(List<DeterministicOccupancyType> occTypes,  float[] previousHydraulicProfile, double previousProbability, float[] currentHydraulicProfile, 
-            double currentProbability, string damageCategory, ref List<double> allStagesAtIndexLocation, ref List<Dictionary<string,
-                List<double>>> assetCatDamagesAllCoordinates, bool isFirstPass, ref List<ConsequenceDistributionResults> consequenceDistributionResults, bool dictionariesAreNotConstructed,
-            int profileCount, Inventory inventory)
+        private void InterpolateBetweenProfiles(ref List<ConsequenceDistributionResults> parallelConsequenceResultCollection, List<DeterministicOccupancyType> occTypes, float[] previousHydraulicProfile, float[] currentHydraulicProfile, string damageCategory, Inventory inventory, int stageIndex, int iterationIndex)
         {
-            double previousStageAtIndexLocation = _StageFrequency.f(1 - previousProbability);
-            double currentStageAtIndexLocation = _StageFrequency.f(1 - currentProbability);
-            double stageDeltaAtIndexLocation = currentStageAtIndexLocation - previousStageAtIndexLocation;
-            double intervalAtIndexLocation = stageDeltaAtIndexLocation / _numInterpolatedStagesToCompute;
-
             float[] intervalsAtStructures = CalculateIntervals(previousHydraulicProfile, currentHydraulicProfile);
-
-            for (int i = 0; i < _numInterpolatedStagesToCompute; i++)
+            for (int interpolatorIndex = 0; interpolatorIndex < _NumInterpolatedStagesToCompute; interpolatorIndex++)
             {
-                float[] stages = CalculateIncrementOfStages(previousHydraulicProfile, intervalsAtStructures, i+1);
-                //what are the stages here for the first coordinate?
+                float[] stages = CalculateIncrementOfStages(previousHydraulicProfile, intervalsAtStructures, interpolatorIndex + 1);
                 ConsequenceResult consequenceResult = inventory.ComputeDamages(stages, _AnalysisYear, damageCategory, occTypes);
-                if (isFirstPass)
-                {
-                    if (dictionariesAreNotConstructed)
-                    {
-                        double stageAtIndexLocation = previousStageAtIndexLocation + intervalAtIndexLocation * (i + 1);
-                        Dictionary<string, List<double>> damages = ConvertConsequenceResultToDictionary(consequenceResult);
-                        assetCatDamagesAllCoordinates.Add(damages);
-                        allStagesAtIndexLocation.Add(stageAtIndexLocation);
-                    }
-                    else
-                    {
-                        AggregateResultsByDictionary(ref assetCatDamagesAllCoordinates, consequenceResult, i + _numExtrapolatedStagesToCompute + profileCount*_numInterpolatedStagesToCompute - 1);
-
-                    }
-
-                }
-                else
-                {
-                    consequenceDistributionResults[i + _numExtrapolatedStagesToCompute + profileCount*_numInterpolatedStagesToCompute - 1].AddConsequenceRealization(consequenceResult, damageCategory, ImpactAreaID, i);
-                }
+                parallelConsequenceResultCollection[stageIndex + interpolatorIndex].AddConsequenceRealization(consequenceResult,damageCategory, ImpactAreaID, iterationIndex);
             }
         }
 
-        private static float[] CalculateIncrementOfStages(float[] previousStagesAtStructures, float[] intervalsAtStructures, int i)
+        private static float[] CalculateIncrementOfStages(float[] previousStagesAtStructures, float[] intervalsAtStructures, int interpolatorIndex)
         {
             float[] stages = new float[intervalsAtStructures.Length];
             for (int m = 0; m < stages.Length; m++)
             {
-                stages[m] = previousStagesAtStructures[m] + intervalsAtStructures[m] * i;
+                stages[m] = previousStagesAtStructures[m] + intervalsAtStructures[m] * interpolatorIndex;
             }
             return stages;
         }
@@ -465,44 +471,25 @@ namespace HEC.FDA.Model.stageDamage
             float[] intervals = new float[previousStagesAtStructures.Length];
             for (int j = 0; j < previousStagesAtStructures.Length; j++)
             {
-                intervals[j] = (currentStagesAtStructures[j] - previousStagesAtStructures[j]) / _numInterpolatedStagesToCompute;
+                intervals[j] = (currentStagesAtStructures[j] - previousStagesAtStructures[j]) / _NumInterpolatedStagesToCompute;
             }
             return intervals;
         }
         /// <summary>
         /// this method calculates the stage damage function for stages higher than the least frequent profile 
         /// </summary>
-        private void ComputeUpperStageDamage(ref List<Dictionary<string, List<double>>> assetCatDamagesAllCoordinates, ref List<double> allStagesAtIndexLocation, 
-            ref List<ConsequenceDistributionResults> consequenceDistributionResults, string damageCategory, List<DeterministicOccupancyType> deterministicOccTypes, 
-            (Inventory, List<float[]>) inventoryAndWaterCoupled, List<double> profileProbabilities, bool isFirstPass, bool dictionariesAreNotConstructed)
+        private void ComputeUpperStageDamage(ref List<ConsequenceDistributionResults> parallelConsequenceResultCollection, string damageCategory, List<DeterministicOccupancyType> deterministicOccTypes, (Inventory, List<float[]>) inventoryAndWaterCoupled, List<double> profileProbabilities, int iterationIndex)
         {
             //the probability of a profile is an EXCEEDANCE probability but in the model we use NONEXCEEDANCE PROBABILITY
+            int stageIndex = _NumExtrapolatedStagesToCompute + _NumInterpolatedStagesToCompute * profileProbabilities.Count - 2;
             double stageAtProbabilityOfHighestProfile = _StageFrequency.f(1 - profileProbabilities.Min());
-            float indexStationUpperStageDelta = (float)(_maxStageForArea - stageAtProbabilityOfHighestProfile);
-            float upperInterval = indexStationUpperStageDelta / _numExtrapolatedStagesToCompute;
-            for (int i = 1; i < _numExtrapolatedStagesToCompute; i++)
+            float indexStationUpperStageDelta = (float)(_MaxStageForArea - stageAtProbabilityOfHighestProfile);
+            float upperInterval = indexStationUpperStageDelta / _NumExtrapolatedStagesToCompute;
+            for (int extrapolatorIndex = 1; extrapolatorIndex < _NumExtrapolatedStagesToCompute; extrapolatorIndex++)
             {
-                float[] WSEsParallelToIndexLocation = ExtrapolateFromAboveAtIndexLocation(inventoryAndWaterCoupled.Item2[^1], upperInterval, i);
+                float[] WSEsParallelToIndexLocation = ExtrapolateFromAboveAtIndexLocation(inventoryAndWaterCoupled.Item2[^1], upperInterval, extrapolatorIndex);
                 ConsequenceResult consequenceResult = inventoryAndWaterCoupled.Item1.ComputeDamages(WSEsParallelToIndexLocation, _AnalysisYear, damageCategory, deterministicOccTypes);
-                if (isFirstPass)
-                {
-                    if (dictionariesAreNotConstructed)
-                    {
-                        Dictionary<string, List<double>> damages = ConvertConsequenceResultToDictionary(consequenceResult);
-                        assetCatDamagesAllCoordinates.Add(damages);
-                        allStagesAtIndexLocation.Add(_maxStageForArea - upperInterval * (_numExtrapolatedStagesToCompute - i));
-                    }
-                    else
-                    {
-                        AggregateResultsByDictionary(ref assetCatDamagesAllCoordinates, consequenceResult, i + _numExtrapolatedStagesToCompute + _numInterpolatedStagesToCompute * (_hydraulicDataset.HydraulicProfiles.Count-1));
-
-                    }
-
-                }
-                else
-                {
-                    consequenceDistributionResults[i + _numExtrapolatedStagesToCompute + _numInterpolatedStagesToCompute*(_hydraulicDataset.HydraulicProfiles.Count-1)].AddConsequenceRealization(consequenceResult, damageCategory, ImpactAreaID, i);
-                }
+                parallelConsequenceResultCollection[stageIndex + extrapolatorIndex].AddConsequenceRealization(consequenceResult, damageCategory, ImpactAreaID, iterationIndex);
             }
         }
 
@@ -538,9 +525,9 @@ namespace HEC.FDA.Model.stageDamage
 
         private void DamagesToStrings(string assetType, List<DeterministicOccupancyType> deterministicOccupancyType, ref List<string> structureDetails)
         {
-            foreach (IHydraulicProfile hydraulicProfile in _hydraulicDataset.HydraulicProfiles)
+            foreach (IHydraulicProfile hydraulicProfile in _HydraulicDataset.HydraulicProfiles)
             {
-                float[] stagesAtStructures = hydraulicProfile.GetWSE(Inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
+                float[] stagesAtStructures = hydraulicProfile.GetWSE(Inventory.GetPointMs(), _HydraulicDataset.DataSource, _HydraulicParentDirectory);
                 //first, create the header with the probability information on the hydraulic profile 
                 //that will go in structureDetails[0]
 
@@ -594,9 +581,9 @@ namespace HEC.FDA.Model.stageDamage
 
         private void DepthsToStrings(ref List<string> structureDetails)
         {
-            foreach (IHydraulicProfile hydraulicProfile in _hydraulicDataset.HydraulicProfiles)
+            foreach (IHydraulicProfile hydraulicProfile in _HydraulicDataset.HydraulicProfiles)
             {
-                float[] stagesAtStructures = hydraulicProfile.GetWSE(Inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
+                float[] stagesAtStructures = hydraulicProfile.GetWSE(Inventory.GetPointMs(), _HydraulicDataset.DataSource, _HydraulicParentDirectory);
                 //first, create the header with the probability information on the hydraulic profile 
                 //that will go in structureDetails[0]
                 structureDetails[0] += $"DepthAboveFirstFloorOf{hydraulicProfile.Probability}AEP,";
@@ -609,9 +596,9 @@ namespace HEC.FDA.Model.stageDamage
 
         private void StagesToStrings(ref List<string> structureDetails)
         {
-            foreach (IHydraulicProfile hydraulicProfile in _hydraulicDataset.HydraulicProfiles)
+            foreach (IHydraulicProfile hydraulicProfile in _HydraulicDataset.HydraulicProfiles)
             {
-                float[] stagesAtStructures = hydraulicProfile.GetWSE(Inventory.GetPointMs(), _hydraulicDataset.DataSource, _HydraulicParentDirectory);
+                float[] stagesAtStructures = hydraulicProfile.GetWSE(Inventory.GetPointMs(), _HydraulicDataset.DataSource, _HydraulicParentDirectory);
                 //first, create the header with the probability information on the hydraulic profile 
                 //that will go in structureDetails[0]
                 structureDetails[0] += $"StageOf{hydraulicProfile.Probability}AEP,";

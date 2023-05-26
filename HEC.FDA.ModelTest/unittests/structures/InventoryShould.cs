@@ -59,7 +59,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
             StructureSelectionMapping map = new StructureSelectionMapping(false, useTerrainFile, StructureIDCol,OccTypeCol,FirstFloorElevCol,StructureValueCol,FoundationHeightCol,
                 GroundElevCol,ContentValueCol,OtherValueCol,VehicleValueCol,BeginningDamageDepthCol,YearInConstructionCol,NotesCol,DescriptionCol,NumberOfStructuresCol);
             //Empty (default) occupancy types
-            OccupancyType occupancyType = OccupancyType.builder().build();
+            OccupancyType occupancyType = OccupancyType.Builder().Build();
             Dictionary<string, OccupancyType> occupancyTypes = new Dictionary<string, OccupancyType>() { { "occtype", occupancyType } };
             return new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, useTerrainFile, pathToTerrainHDF);
         }

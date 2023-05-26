@@ -58,12 +58,12 @@ namespace HEC.FDA.ModelTest.unittests
             stageDamageList.Add(stage_damage);
 
             Threshold threshold = new Threshold(1, convergenceCriteria, ThresholdEnum.DefaultExteriorStage, 150000);//do we want to access this through _results?
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withStageDamages(stageDamageList)
-                .withAdditionalThreshold(threshold)
-                .build();
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(id)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithStageDamages(stageDamageList)
+                .WithAdditionalThreshold(threshold)
+                .Build();
             RandomProvider randomProvider = new RandomProvider();
             ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria); //here we test compute, below we test preview compute 
             Assert.True(results.IsNull);
@@ -91,12 +91,12 @@ namespace HEC.FDA.ModelTest.unittests
             stageDamageList.Add(stage_damage);
 
             Threshold threshold = new Threshold(1, convergenceCriteria, ThresholdEnum.DefaultExteriorStage, 150000);//do we want to access this through _results?
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(0)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withStageDamages(stageDamageList)
-                .withAdditionalThreshold(threshold)
-                .build();
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(0)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithStageDamages(stageDamageList)
+                .WithAdditionalThreshold(threshold)
+                .Build();
             return simulation;
         }
 

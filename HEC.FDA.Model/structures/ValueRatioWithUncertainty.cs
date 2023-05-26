@@ -8,35 +8,35 @@ namespace HEC.FDA.Model.structures
     public class ValueRatioWithUncertainty: Validation 
     {
         #region Fields
-        private double _standardDeviationOrMin;
-        private double _centralTendency;
-        private double _max;
-        private IDistributionEnum _distributionType;
+        private readonly double _StandardDeviationOrMin;
+        private readonly double _CentralTendency;
+        private readonly double _Max;
+        private readonly IDistributionEnum _DistributionType;
         #endregion
 
         #region Constructor 
         public ValueRatioWithUncertainty()
         {
-            _standardDeviationOrMin = 0;
-            _centralTendency = 0;
-            _max = double.MaxValue;
-            _distributionType = IDistributionEnum.Deterministic;
+            _StandardDeviationOrMin = 0;
+            _CentralTendency = 0;
+            _Max = double.MaxValue;
+            _DistributionType = IDistributionEnum.Deterministic;
             AddRules();
         }
         public ValueRatioWithUncertainty(IDistributionEnum distributionEnum, double standardDeviationOrMin, double centralTendency, double max = double.MaxValue)
         {
-            _distributionType = distributionEnum;
-            _standardDeviationOrMin = standardDeviationOrMin;
-            _centralTendency = centralTendency;
-            _max = max;
+            _DistributionType = distributionEnum;
+            _StandardDeviationOrMin = standardDeviationOrMin;
+            _CentralTendency = centralTendency;
+            _Max = max;
             AddRules();
         }
         public ValueRatioWithUncertainty(double deterministicValueRatio)
         {
-            _centralTendency = deterministicValueRatio;
-            _standardDeviationOrMin = 0;
-            _max = 0;
-            _distributionType = IDistributionEnum.Deterministic;
+            _CentralTendency = deterministicValueRatio;
+            _StandardDeviationOrMin = 0;
+            _Max = 0;
+            _DistributionType = IDistributionEnum.Deterministic;
             AddRules();
         }
         #endregion
@@ -44,54 +44,54 @@ namespace HEC.FDA.Model.structures
         #region Methods
         private void AddRules()
         {
-            AddSinglePropertyRule(nameof(_distributionType), new Rule(() => _distributionType.Equals(IDistributionEnum.Normal) || _distributionType.Equals(IDistributionEnum.Uniform) || _distributionType.Equals(IDistributionEnum.Deterministic) || _distributionType.Equals(IDistributionEnum.Triangular), "Only Deterministic, Normal, Triangular, and Uniform distributions can be used for value ratio uncertainty", ErrorLevel.Fatal));
-            AddSinglePropertyRule(nameof(_standardDeviationOrMin), new Rule(() => _standardDeviationOrMin >= 0 && _max >= 0 && _centralTendency >= 0, "Value ratio parameter values must be non-negative", ErrorLevel.Fatal));
-            AddSinglePropertyRule(nameof(_max), new Rule(() => _max >= _standardDeviationOrMin, "The max must be larger than the minimum", ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(_DistributionType), new Rule(() => _DistributionType.Equals(IDistributionEnum.Normal) || _DistributionType.Equals(IDistributionEnum.Uniform) || _DistributionType.Equals(IDistributionEnum.Deterministic) || _DistributionType.Equals(IDistributionEnum.Triangular), "Only Deterministic, Normal, Triangular, and Uniform distributions can be used for value ratio uncertainty", ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(_StandardDeviationOrMin), new Rule(() => _StandardDeviationOrMin >= 0 && _Max >= 0 && _CentralTendency >= 0, "Value ratio parameter values must be non-negative", ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(_Max), new Rule(() => _Max >= _StandardDeviationOrMin, "The max must be larger than the minimum", ErrorLevel.Fatal));
         }
         public double Sample(double probability, bool computeIsDeterministic)
         {
             double sampledValueRatio;
             if (computeIsDeterministic)
             {
-                switch (_distributionType)
+                switch (_DistributionType)
                 {
                     case IDistributionEnum.LogNormal:
-                        LogNormal logNormal = new LogNormal(_centralTendency, _standardDeviationOrMin);
+                        LogNormal logNormal = new(_CentralTendency, _StandardDeviationOrMin);
                         Deterministic deterministicLogNormal = UncertainToDeterministicDistributionConverter.ConvertDistributionToDeterministic(logNormal);
                         sampledValueRatio = deterministicLogNormal.InverseCDF(probability);
                         break;
                     case IDistributionEnum.Uniform:
-                        Uniform uniform = new Uniform(_standardDeviationOrMin, _max);
+                        Uniform uniform = new(_StandardDeviationOrMin, _Max);
                         Deterministic deterministicUniform = UncertainToDeterministicDistributionConverter.ConvertDistributionToDeterministic(uniform);
                         sampledValueRatio = deterministicUniform.InverseCDF(probability);
                         break;
                     default:
-                        sampledValueRatio = _centralTendency;
+                        sampledValueRatio = _CentralTendency;
                         break;
                 }
 
             } else
             {
-                switch (_distributionType)
+                switch (_DistributionType)
                 {
                     case IDistributionEnum.Normal:
-                        Normal normal = new Normal(_centralTendency, _standardDeviationOrMin);
+                        Normal normal = new(_CentralTendency, _StandardDeviationOrMin);
                         sampledValueRatio = normal.InverseCDF(probability);
                         break;
                     case IDistributionEnum.LogNormal:
-                        LogNormal logNormal = new LogNormal(_centralTendency, _standardDeviationOrMin);
+                        LogNormal logNormal = new(_CentralTendency, _StandardDeviationOrMin);
                         sampledValueRatio = logNormal.InverseCDF(probability);
                         break;
                     case IDistributionEnum.Triangular:
-                        Triangular triangular = new Triangular(_standardDeviationOrMin, _centralTendency, _max);
+                        Triangular triangular = new(_StandardDeviationOrMin, _CentralTendency, _Max);
                         sampledValueRatio = triangular.InverseCDF(probability);
                         break;
                     case IDistributionEnum.Uniform:
-                        Uniform uniform = new Uniform(_standardDeviationOrMin, _max);
+                        Uniform uniform = new(_StandardDeviationOrMin, _Max);
                         sampledValueRatio = uniform.InverseCDF(probability);
                         break;
                     default:
-                        sampledValueRatio = _centralTendency;
+                        sampledValueRatio = _CentralTendency;
                         break;
                 }
             }

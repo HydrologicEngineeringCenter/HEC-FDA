@@ -76,43 +76,43 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private void LoadSimulationBuilder()
         {
-            _SimulationBuilder = ImpactAreaScenarioSimulation.builder(_ImpactAreaID)
-            .withStageDamages(GetStageDamagesAsPairedData());
+            _SimulationBuilder = ImpactAreaScenarioSimulation.Builder(_ImpactAreaID)
+            .WithStageDamages(GetStageDamagesAsPairedData());
              
             if (_FreqElem.IsAnalytical)
             {
-                _SimulationBuilder.withFlowFrequency(GetFrequencyDistribution());
-                _SimulationBuilder.withFlowStage(_RatElem.CurveComponentVM.SelectedItemToPairedData());
+                _SimulationBuilder.WithFlowFrequency(GetFrequencyDistribution());
+                _SimulationBuilder.WithFlowStage(_RatElem.CurveComponentVM.SelectedItemToPairedData());
             }
             else
             {
                 if(_FreqElem.GraphicalUsesFlow == true)
                 {
-                    _SimulationBuilder.withFlowFrequency(_FreqElem.GraphicalUncertainPairedData);
-                    _SimulationBuilder.withFlowStage(_RatElem.CurveComponentVM.SelectedItemToPairedData());
+                    _SimulationBuilder.WithFlowFrequency(_FreqElem.GraphicalUncertainPairedData);
+                    _SimulationBuilder.WithFlowStage(_RatElem.CurveComponentVM.SelectedItemToPairedData());
                 }
                 else
                 {
-                    _SimulationBuilder.withFrequencyStage(_FreqElem.GraphicalUncertainPairedData);
+                    _SimulationBuilder.WithFrequencyStage(_FreqElem.GraphicalUncertainPairedData);
                 }
             }
             if (_UseInOut)
             {
-                _SimulationBuilder.withInflowOutflow(_InOutElem.CurveComponentVM.SelectedItemToPairedData());
+                _SimulationBuilder.WithInflowOutflow(_InOutElem.CurveComponentVM.SelectedItemToPairedData());
             }
             if (_UseExtInt)
             {
-                _SimulationBuilder.withInteriorExterior(_ExtIntElem.CurveComponentVM.SelectedItemToPairedData());
+                _SimulationBuilder.WithInteriorExterior(_ExtIntElem.CurveComponentVM.SelectedItemToPairedData());
             }
             if (_UseLevee)
             {
                 if(_LeveeElem.IsDefaultCurveUsed)
                 {
-                    _SimulationBuilder.withLevee(_LeveeElem.CreateDefaultCurve(), _LeveeElem.Elevation);
+                    _SimulationBuilder.WithLevee(_LeveeElem.CreateDefaultCurve(), _LeveeElem.Elevation);
                 }
                 else
                 {
-                    _SimulationBuilder.withLevee(_LeveeElem.CurveComponentVM.SelectedItemToPairedData(), _LeveeElem.Elevation);
+                    _SimulationBuilder.WithLevee(_LeveeElem.CurveComponentVM.SelectedItemToPairedData(), _LeveeElem.Elevation);
                 }
             }
         }
@@ -172,19 +172,19 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         public ImpactAreaScenarioSimulation BuildSimulation()
         {
-            return _SimulationBuilder.build();
+            return _SimulationBuilder.Build();
         }
 
         public void WithAdditionalThresholds(List<Threshold> additionalThresholds)
         {
             foreach (Threshold threshold in additionalThresholds)
             {
-                _SimulationBuilder.withAdditionalThreshold(threshold);
+                _SimulationBuilder.WithAdditionalThreshold(threshold);
             }
         }
         public void WithAdditionalThreshold(Threshold additionalThreshold)
         {
-            _SimulationBuilder.withAdditionalThreshold(additionalThreshold);
+            _SimulationBuilder.WithAdditionalThreshold(additionalThreshold);
         }
 
     }
