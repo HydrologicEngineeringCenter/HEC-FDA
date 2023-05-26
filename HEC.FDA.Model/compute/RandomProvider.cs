@@ -37,5 +37,14 @@ namespace HEC.FDA.Model.compute
             return randomNumbers;
 
         }
+        public double[][] NextRandomSequenceSet(long numArrays, long numMembersInArray)
+        {
+            double[][] sample = new double[numArrays][];
+            for(int i = 0; i < numArrays; i++)
+            {
+                sample[i] = NextRandomSequence(numMembersInArray);
+            }
+            return sample;
+        }
     }
 }
