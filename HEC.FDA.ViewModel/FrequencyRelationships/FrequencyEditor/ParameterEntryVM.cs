@@ -1,8 +1,4 @@
-﻿using HEC.FDA.Model.compute;
-using HEC.FDA.Model.extensions;
-using HEC.FDA.Model.paireddata;
-using HEC.FDA.ViewModel.TableWithPlot.Base;
-using HEC.FDA.ViewModel.TableWithPlot.Data;
+﻿using HEC.FDA.ViewModel.TableWithPlot.Base;
 using Statistics.Distributions;
 using System.Xml.Linq;
 
