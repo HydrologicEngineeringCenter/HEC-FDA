@@ -57,7 +57,6 @@ public class FitToFlowVM : ParameterEntryVM, IDisplayWithFDADataGrid
         NotifyPropertyChanged(nameof(SampleSize));
         NotifyPropertyChanged(nameof(Skew));
         NotifyPropertyChanged(nameof(Standard_Deviation));
-        UpdateTable();
     }
 
     #endregion
@@ -67,7 +66,7 @@ public class FitToFlowVM : ParameterEntryVM, IDisplayWithFDADataGrid
     {
         for (int i = 1; i < 11; i++)
         {
-            FlowDoubleWrapper fdw = new FlowDoubleWrapper(i * 1000);
+            FlowDoubleWrapper fdw = new(i * 1000);
             Data.Add(fdw);
         }
     }
@@ -92,7 +91,7 @@ public class FitToFlowVM : ParameterEntryVM, IDisplayWithFDADataGrid
     #region Data Grid
     public void RemoveRows(List<int> rowIndices)
     {
-        for (int i = rowIndices.Count() - 1; i >= 0; i--)
+        for (int i = rowIndices.Count - 1; i >= 0; i--)
         {
             Data.RemoveAt(rowIndices[i]);
         }
