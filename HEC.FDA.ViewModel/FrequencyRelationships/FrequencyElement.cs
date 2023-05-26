@@ -40,7 +40,7 @@ public class FrequencyElement : ChildElement
             return null;
         }
     }
-    public UncertainPairedData LPIIIasUPD { get => LPIII.BootstrapToUncertainPairedData(new RandomProvider(1234), LogPearson3._RequiredExceedanceProbabilitiesForBootstrapping); }
+    public UncertainPairedData LPIIIasUPD { get => LPIII.BootstrapToUncertainPairedData(new RandomProvider(1234).NextRandomSequenceSet(1000, LPIII.SampleSize), LogPearson3._RequiredExceedanceProbabilitiesForBootstrapping); }
     public GraphicalUncertainPairedData GraphicalUncertainPairedData
     {
         get

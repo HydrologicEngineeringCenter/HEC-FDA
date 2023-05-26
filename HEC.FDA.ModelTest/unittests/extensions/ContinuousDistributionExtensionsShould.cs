@@ -25,7 +25,7 @@ namespace HEC.FDA.ModelTest.unittests.extensions
             RandomProvider rp = new();
 
             //Act
-            PairedData pd = lp3.BootstrapToPairedData(rp, _RequiredExceedanceProbabilities);
+            PairedData pd = lp3.BootstrapToPairedData(rp.NextRandomSequence(lp3.SampleSize), _RequiredExceedanceProbabilities);
 
             //Assert
             Assert.True(pd.Xvals[0] < pd.Xvals[1]); //probs increase
@@ -39,7 +39,7 @@ namespace HEC.FDA.ModelTest.unittests.extensions
             RandomProvider rp = new();
 
             //Act
-            UncertainPairedData upd = lp3.BootstrapToUncertainPairedData(rp, _RequiredExceedanceProbabilities);
+            UncertainPairedData upd = lp3.BootstrapToUncertainPairedData(rp.NextRandomSequenceSet(10,lp3.SampleSize), _RequiredExceedanceProbabilities);
 
             //Assert
             Assert.NotEqual(upd.Yvals[0].InverseCDF(.5), upd.Yvals[50].InverseCDF(.5));

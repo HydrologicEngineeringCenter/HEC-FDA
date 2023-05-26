@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
 {
-    public class ParameterEntryVM : BaseLP3Plotter
+    public class ParameterEntryVM : BaseLP3TableWithPlot
     {
         #region Properties
         public double Mean

@@ -2,15 +2,14 @@
 using HEC.FDA.Model.paireddata;
 using Statistics;
 using Statistics.Histograms;
-using System;
+using System.Threading.Tasks;
 
 namespace HEC.FDA.Model.extensions
 {
     public static class ContinuousDistributionExtensions
     {
-        public static PairedData BootstrapToPairedData(this ContinuousDistribution continuousDistribution, IProvideRandomNumbers randomProvider, double[] ExceedanceProbabilities)
+        public static PairedData BootstrapToPairedData(this ContinuousDistribution continuousDistribution, double[] ExceedanceProbabilities, double[] samples)
         {
-            double[] samples = randomProvider.NextRandomSequence(continuousDistribution.SampleSize);
             IDistribution bootstrap = continuousDistribution.Sample(samples);
             double[] x = new double[ExceedanceProbabilities.Length];
             double[] y = new double[ExceedanceProbabilities.Length];
@@ -26,22 +25,24 @@ namespace HEC.FDA.Model.extensions
             return new PairedData(x, y);
         }
 
-        public static UncertainPairedData BootstrapToUncertainPairedData(this ContinuousDistribution continuousDistribution, IProvideRandomNumbers randomProvider, double[] ExceedanceProbabilities,int realizations = 1000 , double histogramBinWidth = 10 )
+        public static UncertainPairedData BootstrapToUncertainPairedData(this ContinuousDistribution continuousDistribution, double[][] samples,
+    double[] ExceedanceProbabilities, double histogramBinWidth = 100)
         {
-            Histogram[] ys = new Histogram[ExceedanceProbabilities.Length];
+            int realizations = samples.GetLength(0);
+            ThreadsafeInlineHistogram[] ys = new ThreadsafeInlineHistogram[ExceedanceProbabilities.Length];
             for (int iterator = 0; iterator < ys.Length; iterator++)
             {
-                ys[iterator] = new Histogram(histogramBinWidth);
+                ys[iterator] = new ThreadsafeInlineHistogram(histogramBinWidth,new ConvergenceCriteria());
             }
-
-            for(int i=0; i<realizations; i++)
+            Parallel.For(0, realizations, i =>
             {
-                PairedData pd = continuousDistribution.BootstrapToPairedData( randomProvider, ExceedanceProbabilities);
-                for(int j=0;j<ExceedanceProbabilities.Length;j++)
+                PairedData pd = continuousDistribution.BootstrapToPairedData(ExceedanceProbabilities, samples[i]);
+                for (int j = 0; j < ExceedanceProbabilities.Length; j++)
                 {
-                    ys[j].AddObservationToHistogram(pd.Yvals[j]) ;
+                    double y = pd.Yvals[j];
+                        ys[j].AddObservationToHistogram(y,i);
                 }
-            }
+            });
             return new UncertainPairedData(ExceedanceProbabilities, ys, new CurveMetaData("Exceedance Probs", "Flow Histograms"));
         }
     }
