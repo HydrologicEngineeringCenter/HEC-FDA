@@ -13,13 +13,17 @@ namespace Statistics
         public int MaxIterations { get; }
         public double ZAlpha { get; }
         public double Tolerance { get; }
-
+        public int IterationCount { get; } = 100;
         public ConvergenceCriteria(int minIterations = 50000, int maxIterations = 500000, double zAlpha = 1.96039491692543, double tolerance = .01)
         {
             MinIterations = minIterations;
             MaxIterations = maxIterations;
             ZAlpha = zAlpha;
             Tolerance = tolerance;
+            if (MaxIterations < 100)
+            {
+                IterationCount = 1;
+            }
             AddRules();
         }
 
@@ -56,7 +60,7 @@ namespace Statistics
         }
         public XElement WriteToXML()
         {
-            XElement masterElement = new XElement("Convergence_Criteria");
+            XElement masterElement = new("Convergence_Criteria");
             masterElement.SetAttributeValue("Minimum_Iterations", MinIterations);
             masterElement.SetAttributeValue("Maximum_Iterations", MaxIterations);
             masterElement.SetAttributeValue("ZAlpha", ZAlpha);

@@ -124,8 +124,6 @@ namespace HEC.FDA.ViewModel.Storage
             get { return _ProjectDirectory + "\\" + STRUCTURE_STAGE_DAMAGE_DETAILS; }
         }
 
-
-
         public bool IsOpen { get { return _SqliteReader.DataBaseOpen; } }
 
         public bool IsConnectionNull
@@ -184,24 +182,7 @@ namespace HEC.FDA.ViewModel.Storage
             SQLiteCommand command = _SqliteReader.DbConnection.CreateCommand();
             command.CommandText = InsertIntoTableText(rowData, tablename, colnames);
             command.ExecuteNonQuery();
-        }
-
-        //public void AddNewColumnWithValues(string tableName, string colName, string colType, object defaultValue = null)
-        //{
-        //    string cmdText = "";
-        //    if (defaultValue == null)
-        //    {
-        //        cmdText = "ALTER TABLE " + tableName + " ADD " + colName + " " + colType;
-
-        //    }
-        //    else
-        //    {
-        //        cmdText = "ALTER TABLE " + tableName + " ADD " + colName + " " + colType + " DEFAULT '" + defaultValue + "'";
-        //    }
-        //    SQLiteCommand command = _SqliteReader.DbConnection.CreateCommand();
-        //    command.CommandText = cmdText;
-        //    command.ExecuteNonQuery();
-        //}
+        }      
 
         private string EscapeSingleQuotes(object value)
         {

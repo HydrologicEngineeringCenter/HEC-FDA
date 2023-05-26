@@ -11,6 +11,7 @@ using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Xml.Linq;
 
@@ -75,7 +76,7 @@ namespace HEC.FDA.ViewModel.Alternatives
         /// If the element cannot be found then it will be null.
         /// </summary>
         /// <returns></returns>
-        private IASElement[] GetElementsFromID()
+        public IASElement[] GetElementsFromID()
         {
             IASElement[] iASElems = new IASElement[] { null, null };
 
@@ -213,7 +214,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             {
                 IASElement[] iASElems = GetElementsFromID();
 
-                ComputeAlternativeVM vm = new ComputeAlternativeVM(iASElems, ID, this, ComputeCompleted);
+                ComputeAlternativeVM vm = new ComputeAlternativeVM(this, ComputeCompleted);
                 string header = "Compute Log For Alternative: " + Name;
                 DynamicTabVM tab = new DynamicTabVM(header, vm, "ComputeLog" + Name);
                 Navigate(tab, false, false);
@@ -242,7 +243,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             int periodOfAnalysis = studyProperties.PeriodOfAnalysis;
 
             //todo: register somthing with the message hub?
-            AlternativeResults results = new Alternative().AnnualizationCompute(randomProvider, discountRate, periodOfAnalysis, ID, firstResults, secondResults);
+            AlternativeResults results = new Alternative().AnnualizationCompute(discountRate, periodOfAnalysis, ID, firstResults, secondResults, new CancellationToken());
             callback?.Invoke(results);
         }
 

@@ -89,12 +89,12 @@ for (int i = 0; i < 2; i++)
 leveefailprobs[2] = new Statistics.Distributions.Deterministic(1);
 UncertainPairedData leveeFragilityFunction = new UncertainPairedData(leveestages, leveefailprobs, "stages", "failure probabilities", "default function");
 
-ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
-    .withFlowFrequency(flowFrequency)
-    .withFlowStage(flowStage)
-    .withStageDamages(stageDamageList)
-    .withLevee(leveeFragilityFunction, topOfLeveeElevation)
-    .build();
+ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
+    .WithFlowFrequency(flowFrequency)
+    .WithFlowStage(flowStage)
+    .WithStageDamages(stageDamageList)
+    .WithLevee(leveeFragilityFunction, topOfLeveeElevation)
+    .Build();
 RandomProvider randomProvider = new RandomProvider(seed);
 ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1000, maxIterations: iterations);
 simulation.ProgressReport += WriteProgress;

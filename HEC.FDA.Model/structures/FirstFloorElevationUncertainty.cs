@@ -9,13 +9,13 @@ namespace HEC.FDA.Model.structures
     public class FirstFloorElevationUncertainty: Validation 
     {
         #region Fields
-        private double _feetAboveInventoryValue;
-        private double _standardDeviationFromOrFeetBelowInventoryValue;
-        private IDistributionEnum _distributionType;
+        private readonly double _FeetAboveInventoryValue;
+        private readonly double _StandardDeviationFromOrFeetBelowInventoryValue;
+        private readonly IDistributionEnum _DistributionType;
         #endregion
 
         #region Properties 
-        public IDistributionEnum DistributionType { get { return _distributionType; } }
+        public IDistributionEnum DistributionType { get { return _DistributionType; } }
         #endregion
 
         #region Contructor 
@@ -24,16 +24,16 @@ namespace HEC.FDA.Model.structures
         /// </summary>
         public FirstFloorElevationUncertainty()
         {
-            _feetAboveInventoryValue = 0;
-            _standardDeviationFromOrFeetBelowInventoryValue = 0;
-            _distributionType = IDistributionEnum.Deterministic;
+            _FeetAboveInventoryValue = 0;
+            _StandardDeviationFromOrFeetBelowInventoryValue = 0;
+            _DistributionType = IDistributionEnum.Deterministic;
             AddRules();
         }
         public FirstFloorElevationUncertainty(IDistributionEnum distributionEnum, double standardDeviationOrMinimum, double maximum = double.MaxValue)
         {
-            _distributionType = distributionEnum;
-            _standardDeviationFromOrFeetBelowInventoryValue = standardDeviationOrMinimum;
-            _feetAboveInventoryValue = maximum;
+            _DistributionType = distributionEnum;
+            _StandardDeviationFromOrFeetBelowInventoryValue = standardDeviationOrMinimum;
+            _FeetAboveInventoryValue = maximum;
             AddRules();
         }
         #endregion
@@ -41,8 +41,8 @@ namespace HEC.FDA.Model.structures
         #region Methods 
         private void AddRules()
         {
-            AddSinglePropertyRule(nameof(_distributionType), new Rule(() => _distributionType.Equals(IDistributionEnum.Normal) || _distributionType.Equals(IDistributionEnum.Uniform) || _distributionType.Equals(IDistributionEnum.Deterministic) || _distributionType.Equals(IDistributionEnum.Triangular), "Only Deterministic, Normal, Triangular, and Uniform distributions can be used for value ratio uncertainty", ErrorLevel.Fatal));
-            AddSinglePropertyRule(nameof(_standardDeviationFromOrFeetBelowInventoryValue), new Rule(() => _standardDeviationFromOrFeetBelowInventoryValue >= 0 && _feetAboveInventoryValue >= 0, "First floor elevation uncertainty parameters must be positive", ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(_DistributionType), new Rule(() => _DistributionType.Equals(IDistributionEnum.Normal) || _DistributionType.Equals(IDistributionEnum.Uniform) || _DistributionType.Equals(IDistributionEnum.Deterministic) || _DistributionType.Equals(IDistributionEnum.Triangular), "Only Deterministic, Normal, Triangular, and Uniform distributions can be used for value ratio uncertainty", ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(_StandardDeviationFromOrFeetBelowInventoryValue), new Rule(() => _StandardDeviationFromOrFeetBelowInventoryValue >= 0 && _FeetAboveInventoryValue >= 0, "First floor elevation uncertainty parameters must be positive", ErrorLevel.Fatal));
 
         }
         /// <summary>
@@ -59,7 +59,7 @@ namespace HEC.FDA.Model.structures
             double sampledFirstFloorElevationOffset;
             if (computeIsDeterministic)
             {
-                if (_distributionType == IDistributionEnum.LogNormal)
+                if (_DistributionType == IDistributionEnum.LogNormal)
                 {
                     sampledFirstFloorElevationOffset = 1;
                 }
@@ -71,21 +71,21 @@ namespace HEC.FDA.Model.structures
             }
             else
             {
-                switch (_distributionType)
+                switch (_DistributionType)
                 {
                     case IDistributionEnum.Normal:
-                        Normal normal = new Normal(centerOfDistribution, _standardDeviationFromOrFeetBelowInventoryValue);
+                        Normal normal = new(centerOfDistribution, _StandardDeviationFromOrFeetBelowInventoryValue);
                         sampledFirstFloorElevationOffset = normal.InverseCDF(probability);
                         break;
                     case IDistributionEnum.LogNormal:
-                        sampledFirstFloorElevationOffset = Math.Exp(Normal.StandardNormalInverseCDF(probability) * _standardDeviationFromOrFeetBelowInventoryValue);
+                        sampledFirstFloorElevationOffset = Math.Exp(Normal.StandardNormalInverseCDF(probability) * _StandardDeviationFromOrFeetBelowInventoryValue);
                         break;
                     case IDistributionEnum.Triangular:
-                        Triangular triangular = new Triangular(-_standardDeviationFromOrFeetBelowInventoryValue, centerOfDistribution, _feetAboveInventoryValue);
+                        Triangular triangular = new(-_StandardDeviationFromOrFeetBelowInventoryValue, centerOfDistribution, _FeetAboveInventoryValue);
                         sampledFirstFloorElevationOffset = triangular.InverseCDF(probability);
                         break;
                     case IDistributionEnum.Uniform:
-                        Uniform uniform = new Uniform(-_standardDeviationFromOrFeetBelowInventoryValue, _feetAboveInventoryValue);
+                        Uniform uniform = new(-_StandardDeviationFromOrFeetBelowInventoryValue, _FeetAboveInventoryValue);
                         sampledFirstFloorElevationOffset = uniform.InverseCDF(probability);
                         break;
                     default:

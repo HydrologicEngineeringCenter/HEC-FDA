@@ -63,21 +63,21 @@ namespace HEC.FDA.ModelTest.unittests.MessagingTests
         static CurveMetaData curveMetaData = new CurveMetaData(xLabel, yLabel, name, damCat, curveType, assetCat);
 
         [Theory]
-        [InlineData(1234, 0.96)]
-        public void ReportErrorsAndWarningsMessages(int seed, double expected)
+        [InlineData(1234)]
+        public void ReportErrorsAndWarningsMessages(int seed)
         {
             GraphicalUncertainPairedData dischargeFrequency = new GraphicalUncertainPairedData(exceedanceProbabilities, dischargeFrequencyDischarges, equivalentRecordLength, curveMetaData, usingStagesNotFlows: false);
             UncertainPairedData stageDischarge = new UncertainPairedData(stageDischargeFunctionDischarges, stageDischargeFunctionStageDistributions, curveMetaData);
             UncertainPairedData stageDamage = new UncertainPairedData(stageDamageStages, stageDamageDamageDistributions, curveMetaData);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stageDamage);
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
-                .withFlowFrequency(dischargeFrequency)
-                .withFlowStage(stageDischarge)
-                .withStageDamages(stageDamageList)
-                .build();
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
+                .WithFlowFrequency(dischargeFrequency)
+                .WithFlowStage(stageDischarge)
+                .WithStageDamages(stageDamageList)
+                .Build();
             RandomProvider randomProvider = new RandomProvider(seed);
-            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 101, maxIterations: 300);
 
 
             Listener listener = new Listener();

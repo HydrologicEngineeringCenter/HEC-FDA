@@ -46,11 +46,11 @@ namespace HEC.FDA.ModelTest.unittests
             UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, curveMetaDataWithCategory);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stage_damage);
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withStageDamages(stageDamageList)
-                .build();
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(id)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithStageDamages(stageDamageList)
+                .Build();
             RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
             ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria);

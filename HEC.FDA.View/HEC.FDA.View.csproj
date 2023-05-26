@@ -25,11 +25,24 @@
 		<PublishReadyToRun>false</PublishReadyToRun>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <None Remove="Resources\cautionMark.png" />
+	  <None Remove="Resources\errorMark.png" />
+	  <None Remove="Resources\greenCheckmark.png" />
+	  <None Remove="Resources\warning.png" />
+	</ItemGroup>
+
   <ItemGroup>
     <Resource Include="Resources\AlternativeComparisonReport_20x20.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Alternatives_20x20.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\cautionMark.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\greenCheckmark.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\ImpactAreaScenario_20x20.png">
@@ -85,6 +98,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <AppDesigner Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\errorMark.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 	
 	

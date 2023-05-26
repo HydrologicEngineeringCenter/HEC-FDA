@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using HEC.FDA.Model.metrics;
 using HEC.FDA.ViewModel.Alternatives.Results;
 using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
 using HEC.FDA.ViewModel.Study;
@@ -10,7 +11,6 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
         private const string DAMAGE_WITH_UNCERTAINTY = "Damage with Uncertainty";
         private const string DAMAGE_BY_IMPACT_AREA = "Damage by Impact Area";
         private const string DAMAGE_BY_DAMAGE_CATEGORY = "Damage by Damage Category";
-        private const string SUMMARY = "Summary";
         private const string EAD = "EAD";
         private const string AAEQ = "AAEQ";
 
@@ -20,8 +20,6 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
         private bool _YearsVisible;
         private YearResult _SelectedYear;
 
-        private EADSummaryVM _EADSummaryVM;
-        private AAEQSummaryVM _AAEQSummaryVM;
 
         public string Name { get;}
         public bool YearsVisible
@@ -50,7 +48,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
             set { _SelectedDamageMeasure = value; SelectedDamageMeasureChanged(); NotifyPropertyChanged(); }
         }
 
-        public List<string> Reports { get; } = new List<string>() { DAMAGE_WITH_UNCERTAINTY, DAMAGE_BY_IMPACT_AREA, DAMAGE_BY_DAMAGE_CATEGORY, SUMMARY };
+        public List<string> Reports { get; } = new List<string>() { DAMAGE_WITH_UNCERTAINTY, DAMAGE_BY_IMPACT_AREA, DAMAGE_BY_DAMAGE_CATEGORY };
 
         public string SelectedReport
         {
@@ -62,11 +60,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
 
         public SpecificAltCompReportResultsVM(AlternativeResult altResult, List<EADSummaryRowItem> baseYearSummary, List<EADSummaryRowItem> futureYearSummary, List<AAEQSummaryRowItem> aaeqSummary)
         {
-            Name = altResult.Name;
-            StudyPropertiesElement studyPropElem = StudyCache.GetStudyPropertiesElement();
-           
-            _AAEQSummaryVM = new AAEQSummaryVM(aaeqSummary, studyPropElem.DiscountRate, studyPropElem.PeriodOfAnalysis);
-            _EADSummaryVM = new EADSummaryVM(baseYearSummary, altResult, studyPropElem.DiscountRate, studyPropElem.PeriodOfAnalysis);
+            Name = altResult.Name;       
             AlternativeResult = altResult;
             YearsVisible = true;
 
@@ -79,6 +73,11 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
             _SelectedDamageMeasure = EAD;
             SelectedYear = altResult.EADResult.YearResults[0];
             _SelectedReport = DAMAGE_WITH_UNCERTAINTY;
+        }
+
+        public SpecificAltCompReportResultsVM()
+        {
+            Name = "Summary";
         }
 
         private void SelectedYearChanged()
@@ -99,11 +98,6 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
             {
                 CurrentResultVM = SelectedYear.DamageByImpactAreaVM;
                 SelectedReport = DAMAGE_BY_IMPACT_AREA;
-            }
-            else if(CurrentResultVM is EADSummaryVM)
-            {
-                CurrentResultVM = _EADSummaryVM;
-                SelectedReport = SUMMARY;
             }
         }
 
@@ -154,16 +148,6 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
                     else if (AAEQ.Equals(_SelectedDamageMeasure))
                     {
                         CurrentResultVM = AlternativeResult.AAEQResult.DamageByDamCatVM;
-                    }
-                    break;
-                case SUMMARY:
-                    if (EAD.Equals(_SelectedDamageMeasure))
-                    {
-                        CurrentResultVM = _EADSummaryVM;
-                    }
-                    else if (AAEQ.Equals(_SelectedDamageMeasure))
-                    {
-                        CurrentResultVM = _AAEQSummaryVM;
                     }
                     break;
             }

@@ -8,46 +8,34 @@ using Statistics.Distributions;
 namespace HEC.FDA.Model.metrics
 {
     public class ImpactAreaScenarioResults : IContainImpactAreaScenarioResults
-    {//TODO: I want to make this class internal. We should access this logic through ScenarioResults. 
-        #region Fields
-        //TODO: this is not working quite like I expect. 
-        //if blank results are returned from a compute, isNull is false
-        bool _isNull;
-        #endregion
-
+    {
         #region Properties 
         public PerformanceByThresholds PerformanceByThresholds { get; set; } //exposed publicly for testing
         public ConsequenceDistributionResults ConsequenceResults { get; }
         public int ImpactAreaID { get; }
+        public bool IsNull { get; }
         #endregion
-        public bool IsNull
-        {
-            get
-            {
-                return _isNull;
-            }
-        }
         #region Constructors 
         public ImpactAreaScenarioResults(int impactAreaID, bool isNull)
         {
             PerformanceByThresholds = new PerformanceByThresholds(true);
             ConsequenceResults = new ConsequenceDistributionResults();
             ImpactAreaID = impactAreaID;
-            _isNull = isNull;
+            IsNull = isNull;
         }
         public ImpactAreaScenarioResults(int impactAreaID)
         {
             PerformanceByThresholds = new PerformanceByThresholds();
             ConsequenceResults = new ConsequenceDistributionResults(false);
             ImpactAreaID = impactAreaID;
-            _isNull = false;
+            IsNull = false;
         }
         private ImpactAreaScenarioResults(PerformanceByThresholds performanceByThresholds, ConsequenceDistributionResults expectedAnnualDamageResults, int impactAreaID)
         {
             PerformanceByThresholds = performanceByThresholds;
             ConsequenceResults = expectedAnnualDamageResults;
             ImpactAreaID = impactAreaID;
-            _isNull = false;
+            IsNull = false;
         }
         #endregion
 
@@ -64,7 +52,7 @@ namespace HEC.FDA.Model.metrics
         {
             return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.AssuranceOfAEP(exceedanceProbability);
         }
-        public ThreadsafeInlineHistogram GetAEPHistogram(int thresholdID)
+        public Histogram GetAEPHistogram(int thresholdID)
         {
             return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.GetAEPHistogramForMetrics();
         }
@@ -145,7 +133,7 @@ namespace HEC.FDA.Model.metrics
         public bool IsPerformanceConverged() //exposed publicly for testing cnep convergence logic
         {
 
-            List<bool> convergedList = new List<bool>();
+            List<bool> convergedList = new();
             //dont like this
             foreach (var threshold in PerformanceByThresholds.ListOfThresholds)
             {
@@ -184,12 +172,13 @@ namespace HEC.FDA.Model.metrics
                         if (consequenceDistributionResult.ConsequenceHistogram.IsHistogramConverged(upperConfidenceLimitProb, lowerConfidenceLimitProb) == false)
                         {
                             eadIsConverged = false;
+                            break;
                         }
                     }
                 }
             }
             bool cnepIsConverged = true;
-            List<bool> convergedList = new List<bool>();
+            List<bool> convergedList = new();
 
             //dont like this.
             foreach (var threshold in PerformanceByThresholds.ListOfThresholds)
@@ -207,13 +196,14 @@ namespace HEC.FDA.Model.metrics
                 else
                 {
                     cnepIsConverged = false;
+                    break;
                 }
             }
             return eadIsConverged && cnepIsConverged;
         }
         public long RemainingIterations(double upperConfidenceLimitProb, double lowerConfidenceLimitProb, bool computeWithDamage)
         {
-            List<long> eadIterationsRemaining = new List<long>();
+            List<long> eadIterationsRemaining = new();
             if (computeWithDamage == true)
             {
                 foreach (ConsequenceDistributionResult consequenceDistributionResult in ConsequenceResults.ConsequenceResultList)
@@ -229,7 +219,7 @@ namespace HEC.FDA.Model.metrics
                 }
             }
 
-            List<long> performanceIterationsRemaining = new List<long>();
+            List<long> performanceIterationsRemaining = new();
             foreach (var threshold in PerformanceByThresholds.ListOfThresholds)
             {
                 performanceIterationsRemaining.Add(threshold.SystemPerformanceResults.AssuranceRemainingIterations(upperConfidenceLimitProb, lowerConfidenceLimitProb));
@@ -255,7 +245,7 @@ namespace HEC.FDA.Model.metrics
         }
         public XElement WriteToXml()
         {
-            XElement masterElement = new XElement("Results");
+            XElement masterElement = new("Results");
             XElement performanceByThresholdsElement = PerformanceByThresholds.WriteToXML();
             performanceByThresholdsElement.Name = "Performance_By_Thresholds";
             masterElement.Add(performanceByThresholdsElement);
@@ -272,12 +262,6 @@ namespace HEC.FDA.Model.metrics
             ConsequenceDistributionResults expectedAnnualDamageResults = ConsequenceDistributionResults.ReadFromXML(xElement.Element("Expected_Annual_Damage_Results"));
             int impactAreaID = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
             return new ImpactAreaScenarioResults(performanceByThresholds, expectedAnnualDamageResults, impactAreaID);
-        }
-
-        internal void ForceDeQueue()
-        {
-            PerformanceByThresholds.ForceDeQueue();
-            ConsequenceResults.ForceDeQueue();
         }
         #endregion
     }

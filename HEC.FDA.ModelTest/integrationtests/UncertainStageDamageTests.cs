@@ -89,23 +89,23 @@ namespace HEC.FDA.ModelTest.integrationtests
         private static UncertainPairedData res2StructureDepthPercent = new UncertainPairedData(depths, res1cont_res2StructDamage, residentialStructure);
         private static UncertainPairedData res2ContentDepthPercent = new UncertainPairedData(depths, res2ContentDamage, residentialStructure);
 
-        private static OccupancyType res1 = OccupancyType.builder()
-            .withName(res1OccType)
-            .withDamageCategory(residentialDamCat)
-            .withStructureDepthPercentDamage(res1StructureDepthPercent)
-            .withContentDepthPercentDamage(res1ContentDepthPercent)
-            .withContentToStructureValueRatio(res1CSVR)
-            .withFirstFloorElevationUncertainty(elevationUncertainty)
-            .build();
+        private static OccupancyType res1 = OccupancyType.Builder()
+            .WithName(res1OccType)
+            .WithDamageCategory(residentialDamCat)
+            .WithStructureDepthPercentDamage(res1StructureDepthPercent)
+            .WithContentDepthPercentDamage(res1ContentDepthPercent)
+            .WithContentToStructureValueRatio(res1CSVR)
+            .WithFirstFloorElevationUncertainty(elevationUncertainty)
+            .Build();
 
-        private static OccupancyType res2 = OccupancyType.builder()
-            .withName(res2OccType)
-            .withDamageCategory(residentialDamCat)
-            .withStructureDepthPercentDamage(res2StructureDepthPercent)
-            .withContentDepthPercentDamage(res2ContentDepthPercent)
-            .withContentToStructureValueRatio(res2CSVR)
-            .withFirstFloorElevationUncertainty(elevationUncertainty)
-            .build();
+        private static OccupancyType res2 = OccupancyType.Builder()
+            .WithName(res2OccType)
+            .WithDamageCategory(residentialDamCat)
+            .WithStructureDepthPercentDamage(res2StructureDepthPercent)
+            .WithContentDepthPercentDamage(res2ContentDepthPercent)
+            .WithContentToStructureValueRatio(res2CSVR)
+            .WithFirstFloorElevationUncertainty(elevationUncertainty)
+            .Build();
 
         private static Dictionary<string, OccupancyType> occupancyTypes = new Dictionary<string, OccupancyType>()
         {

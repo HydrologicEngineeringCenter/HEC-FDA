@@ -2,6 +2,7 @@
 using HEC.FDA.ViewModel.TableWithPlot.Data.Abstract;
 using HEC.FDA.ViewModel.TableWithPlot.Data.ExtensionMethods;
 using HEC.FDA.ViewModel.TableWithPlot.Rows;
+using Statistics;
 using Statistics.Histograms;
 
 namespace HEC.FDA.ViewModel.TableWithPlot.Data
@@ -30,10 +31,10 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
         {
             IsStrictMonotonic = isStrictMonotonic;
             Name = "Empirical";
-            Data.Add(new HistogramRow(0.0d, new Histogram(0), IsStrictMonotonic));
-            Data.Add(new HistogramRow(1.0d, new Histogram(1), IsStrictMonotonic));
-            Data.Add(new HistogramRow(2.0d, new Histogram(2), IsStrictMonotonic));
-            Data.Add(new HistogramRow(3.0d, new Histogram(3), IsStrictMonotonic));
+            Data.Add(new HistogramRow(0.0d, new Histogram(0, new ConvergenceCriteria()), IsStrictMonotonic));
+            Data.Add(new HistogramRow(1.0d, new Histogram(1, new ConvergenceCriteria()), IsStrictMonotonic));
+            Data.Add(new HistogramRow(2.0d, new Histogram(2, new ConvergenceCriteria()), IsStrictMonotonic));
+            Data.Add(new HistogramRow(3.0d, new Histogram(3, new ConvergenceCriteria()), IsStrictMonotonic));
             LinkList();
         }
 

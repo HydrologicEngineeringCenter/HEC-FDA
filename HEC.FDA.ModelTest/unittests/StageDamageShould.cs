@@ -77,25 +77,25 @@ namespace HEC.FDA.ModelTest.unittests
         private static ValueRatioWithUncertainty _contentToStructureValueRatioNormallyDist = new ValueRatioWithUncertainty(IDistributionEnum.Normal, 10, 90);
         private static MedianRandomProvider medianRandomProvider = new MedianRandomProvider();
 
-        public static OccupancyType residentialOccupancyTypeNormalDists = OccupancyType.builder()
-            .withName(residentialNormalDistOccupancyTypeName)
-            .withDamageCategory(residentialDamageCategory)
-            .withStructureDepthPercentDamage(_ResidentialNormallyDistDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ResidentialNormallyDistDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationNormallyDistUncertainty)
-            .withStructureValueUncertainty(_structureValueNormallyDistUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatioNormallyDist)
-            .build();
+        public static OccupancyType residentialOccupancyTypeNormalDists = OccupancyType.Builder()
+            .WithName(residentialNormalDistOccupancyTypeName)
+            .WithDamageCategory(residentialDamageCategory)
+            .WithStructureDepthPercentDamage(_ResidentialNormallyDistDepthPercentDamageFunction)
+            .WithContentDepthPercentDamage(_ResidentialNormallyDistDepthPercentDamageFunction)
+            .WithFirstFloorElevationUncertainty(firstFloorElevationNormallyDistUncertainty)
+            .WithStructureValueUncertainty(_structureValueNormallyDistUncertainty)
+            .WithContentToStructureValueRatio(_contentToStructureValueRatioNormallyDist)
+            .Build();
 
-        private static OccupancyType commercialOccupancyTypeNormalDists = OccupancyType.builder()
-            .withName(commercialOccupancyTypeName)
-            .withDamageCategory(commercialDamageCategory)
-            .withStructureDepthPercentDamage(_CommercialNormallyDistDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_CommercialNormallyDistDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationNormallyDistUncertainty)
-            .withStructureValueUncertainty(_structureValueNormallyDistUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatioNormallyDist)
-            .build();
+        private static OccupancyType commercialOccupancyTypeNormalDists = OccupancyType.Builder()
+            .WithName(commercialOccupancyTypeName)
+            .WithDamageCategory(commercialDamageCategory)
+            .WithStructureDepthPercentDamage(_CommercialNormallyDistDepthPercentDamageFunction)
+            .WithContentDepthPercentDamage(_CommercialNormallyDistDepthPercentDamageFunction)
+            .WithFirstFloorElevationUncertainty(firstFloorElevationNormallyDistUncertainty)
+            .WithStructureValueUncertainty(_structureValueNormallyDistUncertainty)
+            .WithContentToStructureValueRatio(_contentToStructureValueRatioNormallyDist)
+            .Build();
         #endregion
 
         #region Triangular Skewed-Left Occupancy Type Data
@@ -122,15 +122,15 @@ namespace HEC.FDA.ModelTest.unittests
         private static ValueUncertainty TriDistSkewLeftStValUncertainty = new ValueUncertainty(IDistributionEnum.Triangular, 60, 110);
         private static ValueRatioWithUncertainty TriDistSkewLeftCSVR = new ValueRatioWithUncertainty(IDistributionEnum.Triangular, 40, 90, 100);
 
-        private static OccupancyType triangularLeftSkewOccType = OccupancyType.builder()
-            .withName(residentialTriLeftDistOccupancyTypeName)
-            .withDamageCategory(residentialDamageCategory)
-            .withStructureDepthPercentDamage(TriDistSkewLeftercentDamageFunction)
-            .withContentDepthPercentDamage(TriDistSkewLeftercentDamageFunction)
-            .withFirstFloorElevationUncertainty(TriDistSkewLeftFFE)
-            .withStructureValueUncertainty(TriDistSkewLeftStValUncertainty)
-            .withContentToStructureValueRatio(TriDistSkewLeftCSVR)
-            .build();
+        private static OccupancyType triangularLeftSkewOccType = OccupancyType.Builder()
+            .WithName(residentialTriLeftDistOccupancyTypeName)
+            .WithDamageCategory(residentialDamageCategory)
+            .WithStructureDepthPercentDamage(TriDistSkewLeftercentDamageFunction)
+            .WithContentDepthPercentDamage(TriDistSkewLeftercentDamageFunction)
+            .WithFirstFloorElevationUncertainty(TriDistSkewLeftFFE)
+            .WithStructureValueUncertainty(TriDistSkewLeftStValUncertainty)
+            .WithContentToStructureValueRatio(TriDistSkewLeftCSVR)
+            .Build();
 
         #endregion
 
@@ -159,15 +159,15 @@ namespace HEC.FDA.ModelTest.unittests
         private static ValueUncertainty TriDistSkewRightStValUncertainty = new ValueUncertainty(IDistributionEnum.Triangular, 90, 140);
         private static ValueRatioWithUncertainty TriDistSkewRightCSVR = new ValueRatioWithUncertainty(IDistributionEnum.Triangular, 60, 70, 100);
 
-        private static OccupancyType triangularRightSkewOccType = OccupancyType.builder()
-            .withName(residentialTriRightDistOccupancyTypeName)
-            .withDamageCategory(residentialDamageCategory)
-            .withStructureDepthPercentDamage(TriDistSkewRightPercentDamageFunction)
-            .withContentDepthPercentDamage(TriDistSkewRightPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(TriDistSkewRightFFE)
-            .withStructureValueUncertainty(TriDistSkewRightStValUncertainty)
-            .withContentToStructureValueRatio(TriDistSkewRightCSVR)
-            .build();
+        private static OccupancyType triangularRightSkewOccType = OccupancyType.Builder()
+            .WithName(residentialTriRightDistOccupancyTypeName)
+            .WithDamageCategory(residentialDamageCategory)
+            .WithStructureDepthPercentDamage(TriDistSkewRightPercentDamageFunction)
+            .WithContentDepthPercentDamage(TriDistSkewRightPercentDamageFunction)
+            .WithFirstFloorElevationUncertainty(TriDistSkewRightFFE)
+            .WithStructureValueUncertainty(TriDistSkewRightStValUncertainty)
+            .WithContentToStructureValueRatio(TriDistSkewRightCSVR)
+            .Build();
 
         #endregion
 
@@ -196,15 +196,15 @@ namespace HEC.FDA.ModelTest.unittests
         private static ValueUncertainty UniformStValUncertainty = new ValueUncertainty(IDistributionEnum.Uniform, 90, 140);
         private static ValueRatioWithUncertainty UniformCSVR = new ValueRatioWithUncertainty(IDistributionEnum.Uniform, 60, 500, 100);
 
-        private static OccupancyType UniformOccType = OccupancyType.builder()
-            .withName(residentialUniformDistOccupancyTypeName)
-            .withDamageCategory(residentialDamageCategory)
-            .withStructureDepthPercentDamage(UniformPercentDamageFunction)
-            .withContentDepthPercentDamage(UniformPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(UniformFFE)
-            .withStructureValueUncertainty(UniformStValUncertainty)
-            .withContentToStructureValueRatio(UniformCSVR)
-            .build();
+        private static OccupancyType UniformOccType = OccupancyType.Builder()
+            .WithName(residentialUniformDistOccupancyTypeName)
+            .WithDamageCategory(residentialDamageCategory)
+            .WithStructureDepthPercentDamage(UniformPercentDamageFunction)
+            .WithContentDepthPercentDamage(UniformPercentDamageFunction)
+            .WithFirstFloorElevationUncertainty(UniformFFE)
+            .WithStructureValueUncertainty(UniformStValUncertainty)
+            .WithContentToStructureValueRatio(UniformCSVR)
+            .Build();
         #endregion 
 
         #region Water Data

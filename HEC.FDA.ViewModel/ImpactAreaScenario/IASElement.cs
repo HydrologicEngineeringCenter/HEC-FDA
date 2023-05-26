@@ -30,6 +30,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         #endregion
 
         #region Properties
+        public bool UpdateComputeDate { get; set; }
         public ScenarioResults Results{get; set;}
         public string Description
         {
@@ -87,6 +88,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             }
 
             AddActions();
+            IASTooltipHelper.UpdateTooltip(this);
         }
 
         private void AddActions()
@@ -181,25 +183,47 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             }
         }
         
+        public FdaValidationResult CanCompute()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+
+            if (SpecificIASElements.Count > 0)
+            {
+                foreach (SpecificIAS ias in SpecificIASElements)
+                {
+                    FdaValidationResult canComputeScenario = ias.CanComputeScenario();
+                    if (!canComputeScenario.IsValid)
+                    {
+                        vr.AddErrorMessage(canComputeScenario.ErrorMessage);
+                    }
+                }
+            }
+            return vr;
+        }
+
         private void ComputeScenario(object arg1, EventArgs arg2)
         {
-            ComputeScenarioVM vm = new ComputeScenarioVM(AnalysisYear, SpecificIASElements, ComputeCompleted);
+            ComputeScenarioVM vm = new ComputeScenarioVM(this, ComputeCompleted);
             string header = "Compute Log For Scenario: " + Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "ComputeLog" + Name);
             Navigate(tab, false, false);
         }
-        private void ComputeCompleted(ScenarioResults results)
+        private void ComputeCompleted(IASElement elem, ScenarioResults results)
         {
             Results = results;
             Application.Current.Dispatcher.Invoke(
             (Action)(() => 
             {
+                this.UpdateComputeDate = true;
                 PersistenceFactory.GetIASManager().SaveExisting(this);
+                this.UpdateComputeDate = false;
+                IASTooltipHelper.UpdateTooltip(this);
                 MessageBoxResult messageBoxResult = MessageBox.Show("Compute completed. Would you like to view the results?", Name + " Compute Complete", MessageBoxButton.YesNo, MessageBoxImage.Information);
                 if (messageBoxResult == MessageBoxResult.Yes)
                 {
                     ViewResults(this, new EventArgs());
                 }
+                
             }));
         }
         #endregion
@@ -221,7 +245,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 XElement resultsElem = Results.WriteToXML();
                 setElement.Add(resultsElem);
             }
-
             return setElement;
         }
 

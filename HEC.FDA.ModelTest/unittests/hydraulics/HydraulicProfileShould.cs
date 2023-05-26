@@ -38,7 +38,7 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
         {
             StructureSelectionMapping map = new StructureSelectionMapping(false, false, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
             HydraulicProfile profile = new HydraulicProfile(.01, fileName, profileName);
-            OccupancyType occupancyType = OccupancyType.builder().build();
+            OccupancyType occupancyType = OccupancyType.Builder().Build();
             Dictionary<string, OccupancyType> occupancyTypes = new Dictionary<string, OccupancyType>() { { "occtype", occupancyType } };
 
 

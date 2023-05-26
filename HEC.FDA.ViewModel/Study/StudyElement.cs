@@ -250,7 +250,7 @@ namespace HEC.FDA.ViewModel.Study
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Unable to open the study. This might be because another instance of FDA 2.0 has the study open.\n" + ex.Message, "Failed to Open Study", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Unable to open the study. This might be because another instance of FDA 2.0 has the study open.\n" + ex.Message + "\n" + ex.StackTrace + "\n" + ex.InnerException.Message + "\n" + ex.InnerException.StackTrace, "Failed to Open Study", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             else

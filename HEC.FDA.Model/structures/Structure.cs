@@ -86,11 +86,11 @@ namespace HEC.FDA.Model.structures
             {
                 deterministicOccupancyType = new DeterministicOccupancyType();
             }
-            ConsequenceResult consequenceResult = new ConsequenceResult(DamageCatagory);
+            ConsequenceResult consequenceResult = new(DamageCatagory);
 
             //TODO: We need a way to make sure that the sampled first floor elevation is reasonable 
             //that is hard when we throw away the foundation height 
-            double sampledFFE = 0;
+            double sampledFFE;
             if (deterministicOccupancyType.IsFirstFloorElevationLogNormal)
             {
                 sampledFFE = FirstFloorElevation * (deterministicOccupancyType.FirstFloorElevationOffset);

@@ -17,98 +17,94 @@ namespace HEC.FDA.Model.metrics
     {
         #region Fields
         private const string AEP_ASSURANCE_TYPE = "AEP";
-        private const string AEP_ASSURANCE_FOR_PLOTTING = "AEP_PLOT";
         private const string STAGE_ASSURANCE_TYPE = "STAGE";
+        private const string AEP_ASSURANCE_FOR_PLOTTING = "AEP_PLOT";
         private const double AEP_BIN_WIDTH = 0.0002;
         private const double STAGE_BIN_WIDTH = 0.001;
-        private bool _calculatePerformanceForLevee;
-        private ThresholdEnum _thresholdType;
-        private double _thresholdValue;
-        private List<AssuranceResultStorage> _assuranceList;
-        private UncertainPairedData _systemResponseFunction;
-        private ConvergenceCriteria _ConvergenceCriteria;
+        private const double AEP_FOR_PLOTTING_BIN_WIDTH = 0.02;
+        private readonly bool _CalculatePerformanceForLevee;
+        private readonly ThresholdEnum _ThresholdType;
+        private readonly double _ThresholdValue;
+        private readonly UncertainPairedData _SystemResponseFunction;
+        private readonly ConvergenceCriteria _ConvergenceCriteria;
 
         #endregion
         #region Properties
-        public List<AssuranceResultStorage> Assurances
-        {
-            get
-            {
-                return _assuranceList;
-            }
-        }
+        public List<AssuranceResultStorage> Assurances { get; }
         #endregion
         #region Constructors 
         ///
         public SystemPerformanceResults()
         {
-            _thresholdType = ThresholdEnum.DefaultExteriorStage;
-            _thresholdValue = 0;
+            _ThresholdType = ThresholdEnum.DefaultExteriorStage;
+            _ThresholdValue = 0;
             _ConvergenceCriteria = new ConvergenceCriteria();
-            _assuranceList = new List<AssuranceResultStorage>();
-            AssuranceResultStorage dummyAEP = new AssuranceResultStorage(AEP_ASSURANCE_TYPE, 0);
-            AssuranceResultStorage dummyPlottingAEP = new AssuranceResultStorage(AEP_ASSURANCE_FOR_PLOTTING, 0);
-            _assuranceList.Add(dummyAEP);
-            _assuranceList.Add(dummyPlottingAEP);
+            Assurances = new List<AssuranceResultStorage>();
+            AssuranceResultStorage dummyAEP = new(AEP_ASSURANCE_TYPE, 0);
+            Assurances.Add(dummyAEP);
+            AssuranceResultStorage dummyPlottingAEP = new(AEP_ASSURANCE_FOR_PLOTTING, 0);
+            Assurances.Add(dummyPlottingAEP);
             double[] standardNonExceedanceProbabilities = new double[] { .9, .96, .98, .99, .996, .998 };
             foreach (double probability in standardNonExceedanceProbabilities)
             {
-                AssuranceResultStorage dummyAssurance = new AssuranceResultStorage(STAGE_ASSURANCE_TYPE, probability);
-                _assuranceList.Add(dummyAssurance);
+                AssuranceResultStorage dummyAssurance = new(STAGE_ASSURANCE_TYPE, probability);
+                Assurances.Add(dummyAssurance);
             }
         }
         public SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, ConvergenceCriteria convergenceCriteria)
         {
-            _thresholdType = thresholdType;
-            _thresholdValue = thresholdValue;
+            _ThresholdType = thresholdType;
+            _ThresholdValue = thresholdValue;
             _ConvergenceCriteria = convergenceCriteria;
-            _assuranceList = new List<AssuranceResultStorage>();
-            AssuranceResultStorage aepAssurance = new AssuranceResultStorage(AEP_ASSURANCE_TYPE, AEP_BIN_WIDTH, convergenceCriteria);
-            _assuranceList.Add(aepAssurance);
-            AssuranceResultStorage aepAssuranceForPlotting = new AssuranceResultStorage(AEP_ASSURANCE_FOR_PLOTTING, convergenceCriteria);
-            _assuranceList.Add(aepAssuranceForPlotting);
+            Assurances = new List<AssuranceResultStorage>();
+            AssuranceResultStorage aepAssurance = new(AEP_ASSURANCE_TYPE, AEP_BIN_WIDTH, convergenceCriteria);
+            Assurances.Add(aepAssurance);
+            AssuranceResultStorage aepAssuranceForPlotting = new(AEP_ASSURANCE_FOR_PLOTTING, AEP_FOR_PLOTTING_BIN_WIDTH, convergenceCriteria);
+            Assurances.Add(aepAssuranceForPlotting);
         }
         public SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData systemResponseFunction, ConvergenceCriteria convergenceCriteria)
         {
-            _systemResponseFunction = systemResponseFunction;
+            _SystemResponseFunction = systemResponseFunction;
             //If the system response function is the default function
-            if (_systemResponseFunction.Xvals.Length <= 2)
+            if (_SystemResponseFunction.Xvals.Length <= 2)
             {
-                _calculatePerformanceForLevee = false;
+                _CalculatePerformanceForLevee = false;
             } else
             {
-                _calculatePerformanceForLevee = true;
+                _CalculatePerformanceForLevee = true;
             }
-            _thresholdType = thresholdType;
-            _thresholdValue = thresholdValue;
-            _assuranceList = new List<AssuranceResultStorage>();
-            AssuranceResultStorage aepAssurance = new AssuranceResultStorage(AEP_ASSURANCE_TYPE, AEP_BIN_WIDTH, convergenceCriteria);
-            _assuranceList.Add(aepAssurance);
-            AssuranceResultStorage aepAssuranceForPlotting = new AssuranceResultStorage(AEP_ASSURANCE_FOR_PLOTTING, convergenceCriteria);
-            _assuranceList.Add(aepAssuranceForPlotting);
+            _ThresholdType = thresholdType;
+            _ThresholdValue = thresholdValue;
+            Assurances = new List<AssuranceResultStorage>();
+            AssuranceResultStorage aepAssurance = new(AEP_ASSURANCE_TYPE, AEP_BIN_WIDTH, convergenceCriteria);
+            Assurances.Add(aepAssurance);
+            AssuranceResultStorage aepAssuranceForPlotting = new(AEP_ASSURANCE_FOR_PLOTTING, AEP_FOR_PLOTTING_BIN_WIDTH, convergenceCriteria);
+            Assurances.Add(aepAssuranceForPlotting);
             _ConvergenceCriteria = convergenceCriteria;
         }
+
+        //TODO: these two constructors don't seem that useful - delete?
         private SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, ConvergenceCriteria convergenceCriteria, List<AssuranceResultStorage> assurances)
         {
-            _thresholdType = thresholdType;
-            _thresholdValue = thresholdValue;
-            _assuranceList = assurances;
+            _ThresholdType = thresholdType;
+            _ThresholdValue = thresholdValue;
+            Assurances = assurances;
             _ConvergenceCriteria = convergenceCriteria;
         }
         private SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData systemResponseFunction, ConvergenceCriteria convergenceCriteria, List<AssuranceResultStorage> assurances)
         {
-            _systemResponseFunction = systemResponseFunction;
-            if (_systemResponseFunction.Xvals.Length <= 2)
+            _SystemResponseFunction = systemResponseFunction;
+            if (_SystemResponseFunction.Xvals.Length <= 2)
             {
-                _calculatePerformanceForLevee = false;
+                _CalculatePerformanceForLevee = false;
             }
             else
             {
-                _calculatePerformanceForLevee = true;
+                _CalculatePerformanceForLevee = true;
             }
-            _thresholdType = thresholdType;
-            _thresholdValue = thresholdValue;
-            _assuranceList = assurances;
+            _ThresholdType = thresholdType;
+            _ThresholdValue = thresholdValue;
+            Assurances = assurances;
             _ConvergenceCriteria = convergenceCriteria;
         }
 
@@ -120,12 +116,12 @@ namespace HEC.FDA.Model.metrics
         /// For now, bin width for histograms of stages will be 0.001 - so 1/1000 of a foot
         /// </summary>
         /// <param name="standardNonExceedanceProbability"></param>
-        public void AddAssuranceHistogram(double standardNonExceedanceProbability, double binWidth = STAGE_BIN_WIDTH)
+        public void AddStageAssuranceHistogram(double standardNonExceedanceProbability, double binWidth = STAGE_BIN_WIDTH)
         {
-            AssuranceResultStorage assurance = new AssuranceResultStorage(STAGE_ASSURANCE_TYPE, binWidth, _ConvergenceCriteria, standardNonExceedanceProbability);
-            if (!_assuranceList.Contains(assurance))
+            AssuranceResultStorage assurance = new(STAGE_ASSURANCE_TYPE, binWidth, _ConvergenceCriteria, standardNonExceedanceProbability);
+            if (!Assurances.Contains(assurance))
             {
-                _assuranceList.Add(assurance);
+                Assurances.Add(assurance);
             }
         }
         /// <summary>
@@ -133,30 +129,30 @@ namespace HEC.FDA.Model.metrics
         /// This method is only used to get the histogram for plotting purposes. 
         /// </summary>
         /// <returns></returns>
-        public ThreadsafeInlineHistogram GetAEPHistogram()
+        public Histogram GetAEPHistogram()
         {
-            ThreadsafeInlineHistogram aepHistogram = GetAssurance(AEP_ASSURANCE_FOR_PLOTTING).AssuranceHistogram;
+            Histogram aepHistogram = GetAssurance(AEP_ASSURANCE_FOR_PLOTTING).AssuranceHistogram;
             return aepHistogram;
         }
-        public ThreadsafeInlineHistogram GetAssuranceOfThresholdHistogram(double standardNonExceedanceProbability)
+        public Histogram GetAssuranceOfThresholdHistogram(double standardNonExceedanceProbability)
         {
-            ThreadsafeInlineHistogram stageHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
+            Histogram stageHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
             return stageHistogram;
         }
-        internal ThreadsafeInlineHistogram GetAEPHistogramForMetrics()
+        internal Histogram GetAEPHistogramForMetrics()
         {
-            ThreadsafeInlineHistogram aepHistogram = GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram;
+            Histogram aepHistogram = GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram;
             return aepHistogram;
         }
 
-        public void AddAEPForAssurance(double aep, long iteration)
+        public void AddAEPForAssurance(double aep, int iteration)
         {
-            GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram.AddObservationToHistogram(aep, iteration);
-            GetAssurance(AEP_ASSURANCE_FOR_PLOTTING).AssuranceHistogram.AddObservationToHistogram(aep, iteration);
+            GetAssurance(AEP_ASSURANCE_TYPE).AddObservation(aep, iteration);
+            GetAssurance(AEP_ASSURANCE_FOR_PLOTTING).AddObservation(aep, iteration);
         }
-        public void AddStageForAssurance(double standardNonExceedanceProbability, double stage, long iteration)
+        public void AddStageForAssurance(double standardNonExceedanceProbability, double stage, int iteration)
         {
-            GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram.AddObservationToHistogram(stage, iteration);
+            GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AddObservation(stage, iteration);
         }
 
         public double MeanAEP()
@@ -177,34 +173,34 @@ namespace HEC.FDA.Model.metrics
         public bool AssuranceIsConverged()
         {
             double standardNonExceedanceProbability = 0.98;
-            ThreadsafeInlineHistogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
+            Histogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
             return assuranceHistogram.IsConverged;
         }
         public bool AssuranceTestForConvergence(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
         {
             double standardNonExceedanceProbability = 0.98;
-            ThreadsafeInlineHistogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
+            Histogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
             bool assuranceIsConverged = assuranceHistogram.IsHistogramConverged(upperConfidenceLimitProb, lowerConfidenceLimitProb);
             return assuranceIsConverged;
         }
         public long AssuranceRemainingIterations(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
         {
             double standardNonExceedanceProbability = 0.98;
-            ThreadsafeInlineHistogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
+            Histogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
             long iterationsRemaining = assuranceHistogram.EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb);
             return iterationsRemaining;
         }
         public double AssuranceOfEvent(double standardNonExceedanceProbability)
         {
-            if (_calculatePerformanceForLevee)
+            if (_CalculatePerformanceForLevee)
             {
                 return CalculateAssuranceForLevee(standardNonExceedanceProbability);
             }
             else
             {
                 GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram.ForceDeQueue();
-                ThreadsafeInlineHistogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
-                double assurance = assuranceHistogram.CDF(_thresholdValue);
+                Histogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
+                double assurance = assuranceHistogram.CDF(_ThresholdValue);
                 return assurance;
             }
 
@@ -212,20 +208,15 @@ namespace HEC.FDA.Model.metrics
 
         private double CalculateAssuranceForLevee(double standardNonExceedanceProbability)
         {
-            ThreadsafeInlineHistogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
-            IPairedData medianLeveeCurve = _systemResponseFunction.SamplePairedData(0.5);
+            Histogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
+            IPairedData medianLeveeCurve = _SystemResponseFunction.SamplePairedData(0.5);
             assuranceHistogram.ForceDeQueue();
             double stageStep = assuranceHistogram.BinWidth;
-            int stageStepQuantity = assuranceHistogram.BinCounts.Length;
-            double[] stages = _systemResponseFunction.Xvals;
+            double[] stages = _SystemResponseFunction.Xvals;
             double firstStage = stages[0];
-
             double currentStage;
             double nextStage;
             double currentCumulativeExceedanceProbability = 0;
-            double nextCumulativeExceedanceProbability = 0;
-            double incrementalProbability = 0;
-            double averageStage = 0;
             double geotechnicalFailureAtAverageStage = 0;
             double incrementalProbabilityWithFailure = 0;
             double exceedanceProbabilityWithFailure = 0;
@@ -237,9 +228,9 @@ namespace HEC.FDA.Model.metrics
                 currentStage = firstStage + i * stageStep;
                 nextStage = currentStage + stageStep;
                 currentCumulativeExceedanceProbability = 1 - assuranceHistogram.CDF(currentStage);
-                nextCumulativeExceedanceProbability = 1 - assuranceHistogram.CDF(nextStage);
-                incrementalProbability = currentCumulativeExceedanceProbability - nextCumulativeExceedanceProbability;
-                averageStage = (currentStage + nextStage) / 2;
+                double nextCumulativeExceedanceProbability = 1 - assuranceHistogram.CDF(nextStage);
+                double incrementalProbability = currentCumulativeExceedanceProbability - nextCumulativeExceedanceProbability;
+                double averageStage = (currentStage + nextStage) / 2;
                 geotechnicalFailureAtAverageStage = medianLeveeCurve.f(averageStage);
                 incrementalProbabilityWithFailure = incrementalProbability * geotechnicalFailureAtAverageStage;
                 exceedanceProbabilityWithFailure += incrementalProbabilityWithFailure;
@@ -265,15 +256,15 @@ namespace HEC.FDA.Model.metrics
         /// <param name="lowerQuantile"></param>
         public void ParallelResultsAreConverged(double upperQuantile, double lowerQuantile)
         {
-            double[] assuranceQuantity = new double[_assuranceList.Count];
+            double[] assuranceQuantity = new double[Assurances.Count];
             Parallel.For(0, assuranceQuantity.Length, i =>
             {
-                _assuranceList.ElementAt(i).AssuranceHistogram.IsHistogramConverged(upperQuantile, lowerQuantile);
+                Assurances.ElementAt(i).AssuranceHistogram.IsHistogramConverged(upperQuantile, lowerQuantile);
             });
         }
         public bool Equals(SystemPerformanceResults projectPerformanceResults)
         {
-            foreach (AssuranceResultStorage assuranceResultStorage in _assuranceList)
+            foreach (AssuranceResultStorage assuranceResultStorage in Assurances)
             {
                 bool areEqual = assuranceResultStorage.Equals(projectPerformanceResults.GetAssurance(assuranceResultStorage.AssuranceType, assuranceResultStorage.StandardNonExceedanceProbability));
                 if (!areEqual)
@@ -285,7 +276,7 @@ namespace HEC.FDA.Model.metrics
         }
         internal AssuranceResultStorage GetAssurance(string type, double standardNonExceedanceProbabilityForAssuranceOfTargetOrLevee = 0)
         {
-            foreach (AssuranceResultStorage assurance in _assuranceList)
+            foreach (AssuranceResultStorage assurance in Assurances)
             {
                 if (assurance.AssuranceType == type)
                 {
@@ -296,25 +287,32 @@ namespace HEC.FDA.Model.metrics
                 }
             }
             string message = $"The requested type and standardNonExceedanceProbability were not found. a dummy assurance object is being returned";
-            ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
+            ErrorMessage errorMessage = new(message, ErrorLevel.Fatal);
             ReportMessage(this, new MessageEventArgs(errorMessage));
-            AssuranceResultStorage dummyAssurance = new AssuranceResultStorage(STAGE_ASSURANCE_TYPE, .98);
+            AssuranceResultStorage dummyAssurance = new(STAGE_ASSURANCE_TYPE, .98);
             return dummyAssurance;
 
         }
+        public void PutDataIntoHistograms()
+        {
+            foreach (AssuranceResultStorage assuranceResultStorage in  Assurances)
+            {
+                assuranceResultStorage.PutDataIntoHistogram();
+            }
+        }
         public XElement WriteToXML()
         {
-            XElement masterElement = new XElement("Project_Performance_Results");
-            masterElement.SetAttributeValue("Calculates_Performance_For_Levee", _calculatePerformanceForLevee);
-            masterElement.SetAttributeValue("Threshold_Type", Convert.ToString(_thresholdType));
-            masterElement.SetAttributeValue("Threshold_Value", _thresholdValue);
-            if (_calculatePerformanceForLevee)
+            XElement masterElement = new("Project_Performance_Results");
+            masterElement.SetAttributeValue("Calculates_Performance_For_Levee", _CalculatePerformanceForLevee);
+            masterElement.SetAttributeValue("Threshold_Type", Convert.ToString(_ThresholdType));
+            masterElement.SetAttributeValue("Threshold_Value", _ThresholdValue);
+            if (_CalculatePerformanceForLevee)
             {
-                XElement systemResponseCurveElement = _systemResponseFunction.WriteToXML();
+                XElement systemResponseCurveElement = _SystemResponseFunction.WriteToXML();
                 systemResponseCurveElement.Name = "System_Response_Curve";
                 masterElement.Add(systemResponseCurveElement);
             }
-            foreach (AssuranceResultStorage assuranceResultStorage in _assuranceList)
+            foreach (AssuranceResultStorage assuranceResultStorage in Assurances)
             {
                 XElement assuranceElement = assuranceResultStorage.WriteToXML();
                 assuranceElement.Name = "AssuranceResultStorage";
@@ -328,7 +326,7 @@ namespace HEC.FDA.Model.metrics
 
         public static SystemPerformanceResults ReadFromXML(XElement xElement)
         {
-            List<AssuranceResultStorage> histogramList = new List<AssuranceResultStorage>();
+            List<AssuranceResultStorage> histogramList = new();
             foreach (XElement element in xElement.Elements())
             {
                 if (element.Name == "AssuranceResultStorage")
@@ -339,7 +337,7 @@ namespace HEC.FDA.Model.metrics
             }
             ConvergenceCriteria convergenceCriteria = ConvergenceCriteria.ReadFromXML(xElement.Element("Convergence_Criteria"));
             bool calculatePerformanceForLevee = Convert.ToBoolean(xElement.Attribute("Calculates_Performance_For_Levee").Value);
-            UncertainPairedData systemResponseCurve = new UncertainPairedData();
+            UncertainPairedData systemResponseCurve = new();
             if (calculatePerformanceForLevee)
             {
                 systemResponseCurve = UncertainPairedData.ReadFromXML(xElement.Element("System_Response_Curve"));

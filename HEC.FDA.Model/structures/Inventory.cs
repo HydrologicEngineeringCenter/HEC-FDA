@@ -34,9 +34,9 @@ namespace HEC.FDA.Model.structures
             PriceIndex = priceIndex;
             //Projection.FromFile returns Null if the path is bad. We'll check for null before we reproject. 
             Projection studyProjection = Projection.FromFile(projectionFilePath);
-            TerrainLayer terrainLayer = new TerrainLayer("ThisNameIsNotUsed", terrainPath);
-            PointFeatureLayer structureFeatureLayer = new PointFeatureLayer("ThisNameIsNotUsed", pointShapefilePath);
-            PolygonFeatureLayer impactAreaFeatureLayer = new PolygonFeatureLayer("ThisNameIsNotUsed", impactAreaShapefilePath);
+            TerrainLayer terrainLayer = new("ThisNameIsNotUsed", terrainPath);
+            PointFeatureLayer structureFeatureLayer = new("ThisNameIsNotUsed", pointShapefilePath);
+            PolygonFeatureLayer impactAreaFeatureLayer = new("ThisNameIsNotUsed", impactAreaShapefilePath);
 
             LoadStructuresFromSourceFiles(structureFeatureLayer, map, terrainLayer, updateGroundElevFromTerrain, impactAreaFeatureLayer, studyProjection);
             AddRules();
@@ -52,17 +52,6 @@ namespace HEC.FDA.Model.structures
         #endregion
 
         #region Methods
-
-        private void AddValidationGroup()
-        {
-            ValidationGroup vg = new ValidationGroup("This inventory has the following errors:");
-            foreach (OccupancyType ot in OccTypes.Values)
-            {
-                vg.ChildGroups.AddRange(ot.ValidationGroups);
-            }
-            ValidationGroups.Add(vg);
-        }
-
         public float[] GetGroundElevations()
         {
             float[] result = new float[Structures.Count];
@@ -74,7 +63,7 @@ namespace HEC.FDA.Model.structures
         }
         internal List<string> GetDamageCategories()
         {
-            List<string> uniqueDamageCategories = new List<string>();
+            List<string> uniqueDamageCategories = new();
             foreach (Structure structure in Structures)
             {
                 if (!uniqueDamageCategories.Contains(structure.DamageCatagory))
@@ -85,7 +74,7 @@ namespace HEC.FDA.Model.structures
             return uniqueDamageCategories;
         }
 
-        private List<Polygon> LoadImpactAreasFromSourceFiles(PolygonFeatureLayer impactAreaSet, Projection studyProjection)
+        private static List<Polygon> LoadImpactAreasFromSourceFiles(PolygonFeatureLayer impactAreaSet, Projection studyProjection)
         {
             List<Polygon> polygons = impactAreaSet.Polygons().ToList();
             Projection impactAreaPrj = GetVectorProjection(impactAreaSet);
@@ -105,7 +94,7 @@ namespace HEC.FDA.Model.structures
 
         private static List<Polygon> ReprojectPolygons(Projection studyProjection, List<Polygon> polygons, Projection impactAreaPrj)
         {
-            List<Polygon> ImpactAreas = new List<Polygon>();
+            List<Polygon> ImpactAreas = new();
             foreach (Polygon poly in polygons)
             {
                 Polygon newPoly = ReprojectPolygon(poly, impactAreaPrj, studyProjection);
@@ -125,7 +114,7 @@ namespace HEC.FDA.Model.structures
             }
             AddSinglePropertyRule(nameof(PriceIndex), new Rule(() => PriceIndex >= 1, $"The price index must be greater than or equal to 1 but was entered as {PriceIndex}", ErrorLevel.Major));
         }
-        private T GetRowValueForColumn<T>(System.Data.DataRow row, string mappingColumnName, T defaultValue) where T : struct
+        private static T GetRowValueForColumn<T>(System.Data.DataRow row, string mappingColumnName, T defaultValue) where T : struct
         {
             T retval = defaultValue;
             if (mappingColumnName != null && row.Table.Columns.Contains(mappingColumnName))
@@ -135,7 +124,7 @@ namespace HEC.FDA.Model.structures
             }
             return retval;
         }
-        private string GetRowValueForColumn(System.Data.DataRow row, string mappingColumnName, string defaultValue)
+        private static string GetRowValueForColumn(System.Data.DataRow row, string mappingColumnName, string defaultValue)
         {
             string retval = defaultValue;
             if (mappingColumnName != null && row.Table.Columns.Contains(mappingColumnName))
@@ -152,7 +141,7 @@ namespace HEC.FDA.Model.structures
             List<Polygon> impactAreas = LoadImpactAreasFromSourceFiles(ImpactAreaShapefilePath, studyProjection);
             float[] groundelevs = Array.Empty<float>();
             int defaultMissingValue = utilities.IntegerConstants.DEFAULT_MISSING_VALUE;
-            PointMs pointMs = new PointMs(structureFeatureLayer.Points().Select(p => p.PointM()));
+            PointMs pointMs = new(structureFeatureLayer.Points().Select(p => p.PointM()));
 
             if (updateGroundElevFromTerrain)
             {
@@ -164,7 +153,7 @@ namespace HEC.FDA.Model.structures
                 //required parameters
                 PointM point = pointMs[i];
                 System.Data.DataRow row = structureFeatureLayer.FeatureRow(i);
-                int fid = GetRowValueForColumn<int>(row, map.StructureIDCol, defaultMissingValue);
+                int fid = GetRowValueForColumn(row, map.StructureIDCol, defaultMissingValue);
                 double val_struct = GetRowValueForColumn<double>(row, map.StructureValueCol, defaultMissingValue);
                 string occtype = GetRowValueForColumn(row, map.OccTypeCol, "NA");
                 string st_damcat = "NA";
@@ -194,8 +183,8 @@ namespace HEC.FDA.Model.structures
                 double val_other = GetRowValueForColumn<double>(row, map.OtherValueCol, 0);
                 string cbfips = GetRowValueForColumn(row, map.CBFips, "NA");
                 double beginningDamage = GetRowValueForColumn<double>(row, map.BeginningDamageDepthCol, 0);
-                int numStructures = GetRowValueForColumn<int>(row, map.NumberOfStructuresCol, 1);
-                int yearInService = GetRowValueForColumn<int>(row, map.YearInConstructionCol, defaultMissingValue);
+                int numStructures = GetRowValueForColumn(row, map.NumberOfStructuresCol, 1);
+                int yearInService = GetRowValueForColumn(row, map.YearInConstructionCol, defaultMissingValue);
                 //TODO: handle number 
                 int impactAreaID = GetImpactAreaFID(point, impactAreas);
                 Structures.Add(new Structure(fid, point, ff_elev, val_struct, st_damcat, occtype, impactAreaID, val_cont,
@@ -206,7 +195,7 @@ namespace HEC.FDA.Model.structures
         public static float[] GetGroundElevationFromRASTerrain(PointFeatureLayer pointLayer, TerrainLayer terrain, Projection studyProjection)
         {
             Projection siProjection = GetVectorProjection(pointLayer);
-            PointMs pointMs = new PointMs(pointLayer.Points().Select(p => p.PointM()));
+            PointMs pointMs = new(pointLayer.Points().Select(p => p.PointM()));
             if (!studyProjection.IsNull())
             {
                 if (!studyProjection.IsEqual(siProjection))
@@ -219,7 +208,7 @@ namespace HEC.FDA.Model.structures
 
         public static PointMs ReprojectPoints(Projection studyProjection, Projection siProjection, PointMs pointMs)
         {
-            PointMs reprojPointMs = new PointMs();
+            PointMs reprojPointMs = new();
             foreach (PointM pt in pointMs)
             {
                 reprojPointMs.Add(ReprojectPoint(pt, studyProjection, siProjection));
@@ -245,7 +234,7 @@ namespace HEC.FDA.Model.structures
         public static Projection GetVectorProjection(FeatureLayer featureLayer)
         {
             string siFilename = featureLayer.SourceFilename;
-            VectorDataset vector = new VectorDataset(siFilename);
+            VectorDataset vector = new(siFilename);
             VectorLayer vectorLayer = vector.GetLayer(0);
             Projection projection = vectorLayer.GetProjection();
             return projection;
@@ -253,7 +242,7 @@ namespace HEC.FDA.Model.structures
         #endregion
         public Inventory GetInventoryTrimmedToImpactArea(int impactAreaFID)
         {
-            List<Structure> filteredStructureList = new List<Structure>();
+            List<Structure> filteredStructureList = new();
 
             foreach (Structure structure in Structures)
             {
@@ -275,13 +264,13 @@ namespace HEC.FDA.Model.structures
         public (Inventory, List<float[]>) GetInventoryAndWaterTrimmedToDamageCategory(string damageCategory, List<float[]> wsesAtEachStructureByProfile)
         {
             //set up list for filtered structures 
-            List<Structure> filteredStructureList = new List<Structure>();
+            List<Structure> filteredStructureList = new();
             //set up lists for filtered WSEs - this list of list of floats will be converted back to list of float arrays below
             //the list of list is used because we are uncertain of the needed size a priori 
-            List<List<float>> listedWSEsFiltered = new List<List<float>>();
+            List<List<float>> listedWSEsFiltered = new();
             for (int j = 0; j < wsesAtEachStructureByProfile.Count; j++)
             {
-                List<float> listOfStages = new List<float>();
+                List<float> listOfStages = new();
                 listedWSEsFiltered.Add(listOfStages);
             }
             for (int i = 0; i < Structures.Count; i++)
@@ -296,7 +285,7 @@ namespace HEC.FDA.Model.structures
                     }
                 }
             }
-            List<float[]> arrayedWSEsFiltered = new List<float[]>();
+            List<float[]> arrayedWSEsFiltered = new();
             foreach (List<float> wses in listedWSEsFiltered)
             {
                 arrayedWSEsFiltered.Add(wses.ToArray());
@@ -305,14 +294,14 @@ namespace HEC.FDA.Model.structures
         }
         public PointMs GetPointMs()
         {
-            PointMs points = new PointMs();
+            PointMs points = new();
             foreach (Structure structure in Structures)
             {
                 points.Add(structure.Point);
             }
             return points;
         }
-        public int GetImpactAreaFID(PointM point, List<Polygon> ImpactAreas)
+        public static int GetImpactAreaFID(PointM point, List<Polygon> ImpactAreas)
         {
             for (int i = 0; i < ImpactAreas.Count; i++)
             {
@@ -326,7 +315,7 @@ namespace HEC.FDA.Model.structures
         internal List<string> StructureDetails()
         {
             string header = "StructureID,YearInService,DamageCategory,OccupancyType,X_Coordinate,Y_Coordinate,StructureValueInDatabase,StructureValueInflated,ContentValue,ContentValueInflated,OtherValue,OtherValueInflated,VehicleValue,VehicleValueInflated,TotalValue,TotalValueInflated,NumberOfStructures,FirstFloorElevation,GroundElevation,FoundationHeight,DepthBeginningDamage,";
-            List<string> structureDetails = new List<string>() { header };
+            List<string> structureDetails = new() { header };
             foreach (Structure structure in Structures)
             {
                 structureDetails.Add(structure.ProduceDetails(PriceIndex));
@@ -336,7 +325,7 @@ namespace HEC.FDA.Model.structures
         
         public List<DeterministicOccupancyType> SampleOccupancyTypes(IProvideRandomNumbers randomNumberProvider)
         {
-            List<DeterministicOccupancyType> deterministicOccupancyTypes = new List<DeterministicOccupancyType>();
+            List<DeterministicOccupancyType> deterministicOccupancyTypes = new();
             foreach(OccupancyType occupancyType in OccTypes.Values)
             {
                 DeterministicOccupancyType deterministicOccupancyType = occupancyType.Sample(randomNumberProvider);
@@ -349,7 +338,7 @@ namespace HEC.FDA.Model.structures
 
         public ConsequenceResult ComputeDamages(float[] wses, int analysisYear, string damageCategory, List<DeterministicOccupancyType> deterministicOccupancyType)
         {
-            ConsequenceResult aggregateConsequenceResult = new ConsequenceResult(damageCategory);
+            ConsequenceResult aggregateConsequenceResult = new(damageCategory);
             //assume each structure has a corresponding index to the depth
             for (int i = 0; i < Structures.Count; i++)
             {
@@ -390,7 +379,7 @@ namespace HEC.FDA.Model.structures
                 return defaultValue;
             else
             {
-                var retn = value as T;
+                T retn = value as T;
                 if (retn != null)
                     return retn;
                 else

@@ -8,6 +8,7 @@ using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.compute;
 using HEC.FDA.Model.scenarios;
 using HEC.FDA.Model.alternatives;
+using System.Threading;
 
 namespace HEC.FDA.ModelTest.unittests
 {
@@ -66,17 +67,17 @@ namespace HEC.FDA.ModelTest.unittests
             List<UncertainPairedData> updFuture = new List<UncertainPairedData>();
             updFuture.Add(future_stage_damage);
 
-            ImpactAreaScenarioSimulation sBase = ImpactAreaScenarioSimulation.builder(impactAreaID)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withStageDamages(updBase)
-                .build();
+            ImpactAreaScenarioSimulation sBase = ImpactAreaScenarioSimulation.Builder(impactAreaID)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithStageDamages(updBase)
+                .Build();
 
-            ImpactAreaScenarioSimulation sFuture = ImpactAreaScenarioSimulation.builder(impactAreaID)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withStageDamages(updFuture)
-                .build();
+            ImpactAreaScenarioSimulation sFuture = ImpactAreaScenarioSimulation.Builder(impactAreaID)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithStageDamages(updFuture)
+                .Build();
 
             IList<ImpactAreaScenarioSimulation> impactAreaListBaseYear = new List<ImpactAreaScenarioSimulation>();
             impactAreaListBaseYear.Add(sBase);
@@ -88,7 +89,8 @@ namespace HEC.FDA.ModelTest.unittests
             Scenario futureScenario = new Scenario(futureYear, impactAreaListFutureYear);
             ScenarioResults futureScenarioResults = futureScenario.Compute(meanRandomProvider, convergenceCriteria);
 
-            AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(meanRandomProvider, discountRate, poa, alternativeID, baseScenarioResults, futureScenarioResults);
+            AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, alternativeID, baseScenarioResults,
+                futureScenarioResults, new CancellationToken());
             double tolerance = 0.01;
 
             double actualAAEQExceededWithProb = alternativeResults.AAEQDamageExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damCat, assetCat);
@@ -167,17 +169,17 @@ namespace HEC.FDA.ModelTest.unittests
             updFuture.Add(future_stage_damage_commercial);
             updFuture.Add(future_stage_damage_residential);
 
-            ImpactAreaScenarioSimulation sBase = ImpactAreaScenarioSimulation.builder(impactAreaID)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withStageDamages(updBase)
-                .build();
+            ImpactAreaScenarioSimulation sBase = ImpactAreaScenarioSimulation.Builder(impactAreaID)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithStageDamages(updBase)
+                .Build();
 
-            ImpactAreaScenarioSimulation sFuture = ImpactAreaScenarioSimulation.builder(impactAreaID)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withStageDamages(updFuture)
-                .build();
+            ImpactAreaScenarioSimulation sFuture = ImpactAreaScenarioSimulation.Builder(impactAreaID)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithStageDamages(updFuture)
+                .Build();
 
             IList<ImpactAreaScenarioSimulation> impactAreaListBaseYear = new List<ImpactAreaScenarioSimulation>();
             impactAreaListBaseYear.Add(sBase);
@@ -190,7 +192,8 @@ namespace HEC.FDA.ModelTest.unittests
             ScenarioResults futureScenarioResults = futureScenario.Compute(meanRandomProvider, convergenceCriteria);
 
 
-            AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(meanRandomProvider, discountRate, poa, alternativeID, baseScenarioResults, futureScenarioResults);
+            AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, alternativeID, baseScenarioResults,
+                futureScenarioResults, new CancellationToken());
             List<string> damCats = alternativeResults.GetDamageCategories();
             List<string> expectedList = new List<string>() { "residential", "commercial" };
             bool testPasses = true;

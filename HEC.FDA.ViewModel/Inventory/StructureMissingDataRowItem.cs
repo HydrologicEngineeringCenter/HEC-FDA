@@ -11,8 +11,11 @@
         public bool IsMissingStructureValue { get; set; }
         public bool IsMissingTerrainElevation { get; set; }
 
-        public StructureMissingDataRowItem(string id, MissingDataType missingType)
+        public object[] RowValues { get; }
+
+        public StructureMissingDataRowItem(string id, object[] rowVals, MissingDataType missingType)
         {
+            RowValues = rowVals;
             ID = id;
             switch(missingType)
             {

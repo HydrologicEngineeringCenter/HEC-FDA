@@ -9,7 +9,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
         public List<EADSummaryRowItem> Rows { get; } = new List<EADSummaryRowItem>();
         public double DiscountRate { get; set; }
         public int PeriodOfAnalysis { get; set; }
-        public EADSummaryVM(List<EADSummaryRowItem> rows , AlternativeResult altResult, double discountRate, int period) 
+        public EADSummaryVM(List<EADSummaryRowItem> rows, double discountRate, int period) 
         {
             DiscountRate = discountRate;
             PeriodOfAnalysis = period;

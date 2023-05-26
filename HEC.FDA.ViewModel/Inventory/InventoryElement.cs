@@ -318,32 +318,32 @@ namespace HEC.FDA.ViewModel.Inventory
             ValueUncertainty vehicleUncertainty = CreateValueUncertainty(ot.VehicleItem.ValueUncertainty.CreateOrdinate());
             ValueUncertainty otherUncertainty = CreateValueUncertainty(ot.OtherItem.ValueUncertainty.CreateOrdinate());
 
-            OccupancyTypeBuilder builder = OccupancyType.builder()
-                .withName(ot.Name)
-                .withDamageCategory(ot.DamageCategory)
-                .withStructureDepthPercentDamage(structureUPD)
-                .withContentDepthPercentDamage(contentUPD)
-                .withVehicleDepthPercentDamage(vehicleUPD)
-                .withOtherDepthPercentDamage(otherUPD)
+            OccupancyTypeBuilder builder = OccupancyType.Builder()
+                .WithName(ot.Name)
+                .WithDamageCategory(ot.DamageCategory)
+                .WithStructureDepthPercentDamage(structureUPD)
+                .WithContentDepthPercentDamage(contentUPD)
+                .WithVehicleDepthPercentDamage(vehicleUPD)
+                .WithOtherDepthPercentDamage(otherUPD)
 
-                .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
+                .WithFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
 
-                .withStructureValueUncertainty(structureUncertainty)
-                .withContentValueUncertainty(contentUncertainty)
-                .withVehicleValueUncertainty(vehicleUncertainty)
-                .withOtherValueUncertainty(otherUncertainty);
+                .WithStructureValueUncertainty(structureUncertainty)
+                .WithContentValueUncertainty(contentUncertainty)
+                .WithVehicleValueUncertainty(vehicleUncertainty)
+                .WithOtherValueUncertainty(otherUncertainty);
 
             if (ot.ContentItem.IsByValue)
             {
-                builder.withContentToStructureValueRatio(CreateValueRatioWithUncertainty(ot.ContentItem.ContentByRatioVM.CreateOrdinate()));
+                builder.WithContentToStructureValueRatio(CreateValueRatioWithUncertainty(ot.ContentItem.ContentByRatioVM.CreateOrdinate()));
             }
 
             if (ot.OtherItem.IsByValue)
             {
-                builder.withOtherToStructureValueRatio(CreateValueRatioWithUncertainty(ot.OtherItem.ContentByRatioVM.CreateOrdinate()));
+                builder.WithOtherToStructureValueRatio(CreateValueRatioWithUncertainty(ot.OtherItem.ContentByRatioVM.CreateOrdinate()));
             }
 
-            return builder.build();
+            return builder.Build();
         }
 
         private Dictionary<String, OccupancyType> CreateModelOcctypesMapping()

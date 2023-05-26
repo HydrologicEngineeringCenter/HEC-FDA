@@ -12,6 +12,9 @@
              xmlns:AlternativeResultsVM="clr-namespace:HEC.FDA.ViewModel.Alternatives.Results;assembly=HEC.FDA.ViewModel"
              xmlns:AlternativeResultsView ="clr-namespace:HEC.FDA.View.Alternatives.Results"
 
+             xmlns:AlternativeBatchResultsVM="clr-namespace:HEC.FDA.ViewModel.Alternatives.Results.BatchCompute;assembly=HEC.FDA.ViewModel"
+             xmlns:AlternativeBatchResultsView ="clr-namespace:HEC.FDA.View.Alternatives.Results.BatchCompute"
+
              xmlns:ScenarioResultsVM ="clr-namespace:HEC.FDA.ViewModel.ImpactAreaScenario.Results;assembly=HEC.FDA.ViewModel"
              xmlns:IASResultsView ="clr-namespace:HEC.FDA.View.ImpactAreaScenario.Results"
              
@@ -77,6 +80,9 @@
              
              xmlns:SteadyHydraulicsVM="clr-namespace:HEC.FDA.ViewModel.Hydraulics.SteadyHDF;assembly=HEC.FDA.ViewModel"
              xmlns:UnsteadyHydraulicsVM="clr-namespace:HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF;assembly=HEC.FDA.ViewModel"
+             
+             xmlns:ResultsView="clr-namespace:HEC.FDA.View.Results"
+             xmlns:ResultsVM="clr-namespace:HEC.FDA.ViewModel.Results;assembly=HEC.FDA.ViewModel"
              
              xmlns:frameworkControls="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=HEC.MVVMFramework.View"
              
@@ -259,9 +265,13 @@
       <AlternativeCompReportResultsView:AltCompReportResults/>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type AlternativeCompReportResultsVM:EADSummaryVM }" >
-      <AlternativeCompReportResultsView:EADSummary/>
-    </DataTemplate>
+        <DataTemplate DataType="{x:Type AlternativeCompReportResultsVM:SummaryVM }" >
+            <AlternativeCompReportResultsView:SummaryResults/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type AlternativeCompReportResultsVM:EADSummaryVM }" >
+            <AlternativeCompReportResultsView:EADSummary/>
+        </DataTemplate>
     <DataTemplate DataType="{x:Type AlternativeCompReportResultsVM:AAEQSummaryVM }" >
       <AlternativeCompReportResultsView:AAEQSummary/>
     </DataTemplate>
@@ -282,7 +292,7 @@
       <IASEditorView:IASEditor/>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type ComputeVM:ComputeBase }" >
+    <DataTemplate DataType="{x:Type ComputeVM:ComputeWithProgressAndMessagesBase }" >
       <IASEditorView:ComputeScenarioEditor/>
     </DataTemplate>
 
@@ -357,7 +367,16 @@
       <UtilitiesView:TabHeaderControl/>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type StageTransformsVM:ImportRatingsFromFDA1VM }" >
+        <DataTemplate DataType="{x:Type UtilitiesVM:SplashScreenVM }" >
+            <UtilitiesView:SplashScreen />
+            <DataTemplate.Resources>
+                <UtilitiesView:Dimension x:Key="{x:Static UtilitiesView:WindowDimensions.KEY}" 
+                                         MinWidth="400" Width="1000" 
+                                         MinHeight="400" Height="800" />
+            </DataTemplate.Resources>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type StageTransformsVM:ImportRatingsFromFDA1VM }" >
       <UtilitiesView:ImportFromFDA1/>
     </DataTemplate>
 
@@ -398,5 +417,23 @@
       <WaterSurfaceElevationsView:UnsteadyHydraulicsImporter/>
     </DataTemplate>
 
-  </Application.Resources>
+        <DataTemplate DataType="{x:Type ResultsVM:ScenarioSelectorVM }" >
+            <ResultsView:ScenarioChildSelector/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type ResultsVM:ScenarioDamageSummaryVM }" >
+            <ResultsView:ScenarioDamageSummary/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type ResultsVM:ScenarioProgressVM }" >
+            <ResultsView:ScenarioProgressControl/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type AlternativeBatchResultsVM:AlternativeSelectorVM}" >
+            <AlternativeBatchResultsView:AlternativeSelector/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type AlternativeBatchResultsVM:AlternativeSummaryVM}" >
+            <AlternativeBatchResultsView:AlternativeSummaryTable/>
+        </DataTemplate>
+
+    </Application.Resources>
 </Application>

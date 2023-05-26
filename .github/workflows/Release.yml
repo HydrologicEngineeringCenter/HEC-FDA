@@ -28,7 +28,7 @@ jobs:
         dotnet nuget add source --name fda-nuget "https://www.hec.usace.army.mil/nexus/repository/fda-nuget/"
 
     - name: Publish
-      run: dotnet publish View/HEC.FDA.View.csproj
+      run: dotnet publish HEC.FDA.View/HEC.FDA.View.csproj
 
     - name: Zip
       run: 7z a HEC-FDA.7z D:\a\HEC-FDA\HEC-FDA\Build\publish\FDA2.0\ 

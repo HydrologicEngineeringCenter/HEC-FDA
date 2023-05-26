@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace HEC.FDA.ViewModel.Compute
 {
-    public class ComputeAltCompReportVM:ComputeBase
+    public class ComputeAltCompReportVM:ComputeWithProgressAndMessagesBase
     {
         private readonly List<AlternativeResults> AllResults = new List<AlternativeResults>();
         private int _TotalProgressCount;
@@ -45,7 +45,7 @@ namespace HEC.FDA.ViewModel.Compute
                 RandomProvider randomProvider = new RandomProvider(seed);
                 ConvergenceCriteria cc = StudyCache.GetStudyPropertiesElement().GetStudyConvergenceCriteria();
 
-                AlternativeComparisonReportResults results = altCompReport.ComputeAlternativeComparisonReport(randomProvider, cc, withoutResult, AllResults);
+                AlternativeComparisonReportResults results = altCompReport.ComputeAlternativeComparisonReport(withoutResult, AllResults);
                 Progress = 100;
                 callback?.Invoke(results);
             }

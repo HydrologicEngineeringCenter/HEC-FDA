@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
@@ -13,18 +14,10 @@ namespace HEC.FDA.Model.metrics
 {
     public class ScenarioResults : ValidationErrorLogger
     {
-        #region Fields 
-        List<IContainImpactAreaScenarioResults> _resultsList;
-        #endregion
-
         #region Properties 
-        public List<IContainImpactAreaScenarioResults> ResultsList
-        {
-            get
-            {
-                return _resultsList;
-            }
-        }
+        public string ComputeDate { get; set; }
+
+        public List<IContainImpactAreaScenarioResults> ResultsList { get; }
         public int AnalysisYear { get; }
 
         #endregion
@@ -32,15 +25,16 @@ namespace HEC.FDA.Model.metrics
         #region Constructor
         internal ScenarioResults()
         {
-            _resultsList = new List<IContainImpactAreaScenarioResults>();
+            ResultsList = new List<IContainImpactAreaScenarioResults>();
             int dummyImpactAreaID = 0;
-            ImpactAreaScenarioResults dummyImpactAreaScenarioResults = new ImpactAreaScenarioResults(dummyImpactAreaID, true);
-            _resultsList.Add(dummyImpactAreaScenarioResults);
+            ImpactAreaScenarioResults dummyImpactAreaScenarioResults = new(dummyImpactAreaID, true);
+            ResultsList.Add(dummyImpactAreaScenarioResults);
             AnalysisYear = 1900;
+            
         }
         public ScenarioResults(int year)
         {
-            _resultsList = new List<IContainImpactAreaScenarioResults>();
+            ResultsList = new List<IContainImpactAreaScenarioResults>();
             AnalysisYear = year;
         }
         #endregion
@@ -48,10 +42,10 @@ namespace HEC.FDA.Model.metrics
         #region Methods
         public List<int> GetImpactAreaIDs()
         {
-            List<int> impactAreaIDs = new List<int>();
-            if (_resultsList.Count != 0)
+            List<int> impactAreaIDs = new();
+            if (ResultsList.Count != 0)
             {
-                foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in _resultsList)
+                foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in ResultsList)
                 {
                     foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                     {
@@ -67,10 +61,10 @@ namespace HEC.FDA.Model.metrics
         }
         public List<string> GetAssetCategories()
         {
-            List<string> assetCats = new List<string>();
-            if (_resultsList.Count != 0)
+            List<string> assetCats = new();
+            if (ResultsList.Count != 0)
             {
-                foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in _resultsList)
+                foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in ResultsList)
                 {
                     foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                     {
@@ -87,10 +81,10 @@ namespace HEC.FDA.Model.metrics
         }
         public List<string> GetDamageCategories()
         {
-            List<string> damCats = new List<string>();
-            if (_resultsList.Count != 0)
+            List<string> damCats = new();
+            if (ResultsList.Count != 0)
             {
-                foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in _resultsList)
+                foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in ResultsList)
                 {
                     foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                     {
@@ -143,7 +137,7 @@ namespace HEC.FDA.Model.metrics
         public double MeanExpectedAnnualConsequences(int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {//TODO: This could probably be more efficient and could use some null checking
             double consequenceValue = 0;
-            foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList)
+            foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList.Cast<ImpactAreaScenarioResults>())
             {
                 foreach (ConsequenceDistributionResult consequenceResult in impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                 {
@@ -219,7 +213,7 @@ namespace HEC.FDA.Model.metrics
         public double ConsequencesExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {//efficiency and null checking 
             double consequenceValue = 0;
-            foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList)
+            foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList.Cast<ImpactAreaScenarioResults>())
             {
                 foreach (ConsequenceDistributionResult consequenceResult in impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                 {
@@ -292,9 +286,9 @@ namespace HEC.FDA.Model.metrics
         /// <returns></returns>        
         public Empirical GetConsequencesDistribution(int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
-            List<Empirical> empiricalDistsToStack = new List<Empirical>();
+            List<Empirical> empiricalDistsToStack = new();
 
-            foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList)
+            foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList.Cast<ImpactAreaScenarioResults>())
             {
                 foreach (ConsequenceDistributionResult consequenceResult in impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                 {
@@ -356,7 +350,7 @@ namespace HEC.FDA.Model.metrics
             if (empiricalDistsToStack.Count == 0)
             {
                 string message = "The requested damage category - asset category - impact area combination could not be found. An arbitrary object is being returned";
-                ErrorMessage errorMessage = new ErrorMessage(message, MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+                ErrorMessage errorMessage = new(message, MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
                 ReportMessage(this, new MessageEventArgs(errorMessage));
                 return new Empirical();
             }
@@ -370,12 +364,12 @@ namespace HEC.FDA.Model.metrics
             ImpactAreaScenarioResults results = GetResults(resultsToAdd.ImpactAreaID);
             if (results.IsNull)
             {
-                _resultsList.Add(resultsToAdd);
+                ResultsList.Add(resultsToAdd);
             }
         }
         public ImpactAreaScenarioResults GetResults(int impactAreaID)
         {
-            foreach (ImpactAreaScenarioResults results in _resultsList)
+            foreach (ImpactAreaScenarioResults results in ResultsList.Cast<ImpactAreaScenarioResults>())
             {
                 if (results.ImpactAreaID.Equals(impactAreaID))
                 {
@@ -383,9 +377,9 @@ namespace HEC.FDA.Model.metrics
                 }
             }
             int dummyImpactAreaID = 9999;
-            ImpactAreaScenarioResults dummyResults = new ImpactAreaScenarioResults(dummyImpactAreaID, true);
+            ImpactAreaScenarioResults dummyResults = new(dummyImpactAreaID, true);
             string message = $"The IMPACT AREA SCENARIO RESULTS could not be found. An arbitrary object is being returned";
-            ErrorMessage errorMessage = new ErrorMessage(message, MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
+            ErrorMessage errorMessage = new(message, MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
             ReportMessage(this, new MessageEventArgs(errorMessage));
             return dummyResults;
         }
@@ -393,7 +387,7 @@ namespace HEC.FDA.Model.metrics
         public bool Equals(ScenarioResults scenarioResultsForComparison)
         {
             bool resultsAreEqual = true;
-            foreach (ImpactAreaScenarioResults scenarioResults in _resultsList)
+            foreach (ImpactAreaScenarioResults scenarioResults in ResultsList.Cast<ImpactAreaScenarioResults>())
             {
                 ImpactAreaScenarioResults impactAreaScenarioResultsToCompare = scenarioResultsForComparison.GetResults(scenarioResults.ImpactAreaID);
                 resultsAreEqual = scenarioResults.Equals(impactAreaScenarioResultsToCompare);
@@ -406,9 +400,10 @@ namespace HEC.FDA.Model.metrics
         }
         public XElement WriteToXML()
         {
-            XElement mainElement = new XElement("ScenarioResults");
+            XElement mainElement = new("ScenarioResults");
             mainElement.SetAttributeValue("Year", AnalysisYear);
-            foreach (ImpactAreaScenarioResults impactAreaScenarioResults in _resultsList)
+            mainElement.SetAttributeValue("ComputeDate", ComputeDate);
+            foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList.Cast<ImpactAreaScenarioResults>())
             {
                 XElement impactAreaScenarioResultsElement = impactAreaScenarioResults.WriteToXml();
                 mainElement.Add(impactAreaScenarioResultsElement);
@@ -419,12 +414,21 @@ namespace HEC.FDA.Model.metrics
         public static ScenarioResults ReadFromXML(XElement xElement)
         {
             int year = Convert.ToInt32(xElement.Attribute("Year").Value);
-            ScenarioResults scenarioResults = new ScenarioResults(year);
+
+            ScenarioResults scenarioResults = new(year);
+            
             foreach (XElement element in xElement.Elements())
             {
                 IContainImpactAreaScenarioResults impactAreaScenarioResults = ImpactAreaScenarioResults.ReadFromXML(element);
                 scenarioResults.AddResults(impactAreaScenarioResults);
             }
+
+            if(xElement.Attribute("ComputeDate") != null)
+            {
+                string computeDate = xElement.Attribute("ComputeDate").Value;
+                scenarioResults.ComputeDate = computeDate;
+            }
+
             return scenarioResults;
         }
         #endregion

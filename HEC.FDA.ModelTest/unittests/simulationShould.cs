@@ -51,12 +51,12 @@ namespace HEC.FDA.ModelTest.unittests
             upd.Add(stage_damage);
 
             Threshold threshold = new Threshold(1, convergenceCriteria, ThresholdEnum.DefaultExteriorStage, 150000);//do we want to access this through _results?
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withStageDamages(upd)
-                .withAdditionalThreshold(threshold)
-                .build();
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(id)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithStageDamages(upd)
+                .WithAdditionalThreshold(threshold)
+                .Build();
             MedianRandomProvider mrp = new MedianRandomProvider();
             ImpactAreaScenarioResults impactAreaScenarioResult = simulation.Compute(mrp, convergenceCriteria); //here we test compute, below we test preview compute 
             double actual = impactAreaScenarioResult.MeanExpectedAnnualConsequences(id, damCat, assetCat);
@@ -89,12 +89,12 @@ namespace HEC.FDA.ModelTest.unittests
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
             Threshold threshold = new Threshold(1, convergenceCriteria, ThresholdEnum.DefaultExteriorStage, 150000);
-            ImpactAreaScenarioSimulation s = ImpactAreaScenarioSimulation.builder(id)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withStageDamages(upd)
-                .withAdditionalThreshold(threshold)
-                .build();
+            ImpactAreaScenarioSimulation s = ImpactAreaScenarioSimulation.Builder(id)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithStageDamages(upd)
+                .WithAdditionalThreshold(threshold)
+                .Build();
 
             ImpactAreaScenarioResults results = s.PreviewCompute(); //here we test preview compute 
             double actual = results.MeanExpectedAnnualConsequences(id, damCat, assetCat);
@@ -131,11 +131,11 @@ namespace HEC.FDA.ModelTest.unittests
             UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, metaData);
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withStageDamages(upd)
-                .build();
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(id)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithStageDamages(upd)
+                .Build();
             RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
             ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria);
@@ -179,12 +179,12 @@ namespace HEC.FDA.ModelTest.unittests
             UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, metaData);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stage_damage);
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withLevee(levee, 100000.0d)
-                .withStageDamages(stageDamageList)
-                .build();
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(id)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithLevee(levee, 100000.0d)
+                .WithStageDamages(stageDamageList)
+                .Build();
             MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             ConvergenceCriteria convergencriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
             ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, convergencriteria);
@@ -227,12 +227,12 @@ namespace HEC.FDA.ModelTest.unittests
             upd.Add(stage_damage);
 
             Threshold threshold = new Threshold(1, convergenceCriteria, ThresholdEnum.DefaultExteriorStage, 150000);//do we want to access this through _results?
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(id)
-                .withFlowFrequency(flow_frequency)
-                .withFlowStage(flow_stage)
-                .withStageDamages(upd)
-                .withAdditionalThreshold(threshold)
-                .build();
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(id)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithStageDamages(upd)
+                .WithAdditionalThreshold(threshold)
+                .Build();
             MedianRandomProvider mrp = new MedianRandomProvider();
             ImpactAreaScenarioResults impactAreaScenarioResult = simulation.Compute(mrp, convergenceCriteria); //here we test compute, below we test preview compute 
             XElement simulationElement = simulation.WriteToXML();
@@ -284,11 +284,11 @@ namespace HEC.FDA.ModelTest.unittests
             int seed = 1234;
             RandomProvider randomProvider = new RandomProvider(seed);
 
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
-                .withFrequencyStage(graphicalUncertain)
-                .withStageDamages(stageDamageList)
-                .build();
-            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(randomProvider, new ConvergenceCriteria());
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
+                .WithFrequencyStage(graphicalUncertain)
+                .WithStageDamages(stageDamageList)
+                .Build();
+            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(randomProvider, new ConvergenceCriteria(minIterations: 101, maxIterations: 110));
             double actualMeanEAD = impactAreaScenarioResults.MeanExpectedAnnualConsequences();
             Assert.Equal(expectedEAD, actualMeanEAD);
             bool actualHistogramZeroValued = impactAreaScenarioResults.GetSpecificHistogram(impactAreaID, damCat, assetCat).HistogramIsZeroValued;
@@ -341,13 +341,13 @@ namespace HEC.FDA.ModelTest.unittests
             UncertainPairedData systemResponseCurve = new UncertainPairedData(xStages, yFailureProbabilities, metaData);
             double leveeElevation = 40;
             int impactAreaID = 44;
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
-                .withFlowFrequency(frequencyFlow)
-                .withFlowStage(dischargeStage)
-                .withInteriorExterior(exteriorInterior)
-                .withStageDamages(stageDamages)
-                .withLevee(systemResponseCurve, leveeElevation)
-                .build();
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
+                .WithFlowFrequency(frequencyFlow)
+                .WithFlowStage(dischargeStage)
+                .WithInteriorExterior(exteriorInterior)
+                .WithStageDamages(stageDamages)
+                .WithLevee(systemResponseCurve, leveeElevation)
+                .Build();
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
             MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(meanRandomProvider, convergenceCriteria);
@@ -380,12 +380,12 @@ namespace HEC.FDA.ModelTest.unittests
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>() { stageDamage };
 
             int impactAreaID = 899;
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.builder(impactAreaID)
-                .withFlowFrequency(flowFrequency)
-                .withFlowStage(stageDischarge)
-                .withInteriorExterior(interiorExterior)
-                .withStageDamages(stageDamageList)
-                .build();
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
+                .WithFlowFrequency(flowFrequency)
+                .WithFlowStage(stageDischarge)
+                .WithInteriorExterior(interiorExterior)
+                .WithStageDamages(stageDamageList)
+                .Build();
 
             //Act 
             ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(meanRandomProvider, deterministicConvergenceCriteria);
@@ -395,6 +395,79 @@ namespace HEC.FDA.ModelTest.unittests
 
             //Assert
             Assert.True(relativeDifference < tolerance);
+        }
+
+        [Theory]
+        [InlineData(1234, 50000)]
+        public void RandomnessShouldBeControlledWithSeed(int seed, int iterations)
+        {
+            //Arrange
+            ContinuousDistribution flow_frequency = new LogPearson3(mean: 3.6, standardDeviation: 0.45, skew: 0.075, sampleSize: 40);
+            //create a stage distribution
+            IDistribution[] stages = new IDistribution[2];
+            for (int i = 0; i < 2; i++)
+            {
+                stages[i] = new Triangular(0, 0.3*30*i, 30*i) ;
+            }
+            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, metaData);
+            //create a damage distribution
+            IDistribution[] damages = new IDistribution[3]
+            {
+                    new Normal(1000, 100),
+                    new Normal(34735984.75983, 1000),
+                    new Normal(549584098.509458, 10000)
+            };
+            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, metaData);
+            List<UncertainPairedData> upd = new List<UncertainPairedData>();
+            upd.Add(stage_damage);
+
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(id)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithStageDamages(upd)
+                .Build();
+
+            ImpactAreaScenarioSimulation simulation2 = ImpactAreaScenarioSimulation.Builder(id)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithStageDamages(upd)
+                .Build();
+
+            RandomProvider randomProvider = new RandomProvider(seed);
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 10000, maxIterations: iterations);
+
+
+            //Act
+            ImpactAreaScenarioResults results_one = simulation.Compute(randomProvider, convergenceCriteria);
+            ImpactAreaScenarioResults results_two = simulation2.Compute(randomProvider, convergenceCriteria);
+
+
+            //Assert 
+            ////Mean EAD
+            Assert.Equal(results_one.MeanExpectedAnnualConsequences(), results_two.MeanExpectedAnnualConsequences());
+
+            ////EAD Distribution
+            Assert.Equal(results_one.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.25), results_two.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.25));
+            Assert.Equal(results_one.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.50), results_two.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.5));
+            Assert.Equal(results_one.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.75), results_two.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.75));
+
+            //Mean and Median AEP
+            Assert.Equal(results_one.MeanAEP(thresholdID: 0), results_two.MeanAEP(thresholdID: 0));
+            Assert.Equal(results_one.MedianAEP(thresholdID: 0), results_two.MedianAEP(thresholdID: 0));
+
+            //AEP Distribution - Assurance of AEP
+            Assert.Equal(results_one.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.10), results_two.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.10));
+            Assert.Equal(results_one.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.04), results_two.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.04));
+            Assert.Equal(results_one.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.02), results_two.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.02));
+            Assert.Equal(results_one.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.004), results_two.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.004));
+            Assert.Equal(results_one.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.002), results_two.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.002));
+
+            //Assurance of Threshold 
+            Assert.Equal(results_one.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.90), results_two.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.90));
+            Assert.Equal(results_one.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.96), results_two.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.96));
+            Assert.Equal(results_one.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.98), results_two.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.98));
+            Assert.Equal(results_one.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.996), results_two.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.996));
+            Assert.Equal(results_one.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.998), results_two.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.998));
         }
     }
 }

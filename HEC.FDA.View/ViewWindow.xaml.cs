@@ -93,6 +93,10 @@ namespace HEC.FDA.View
             else
             {
                 TextFileMessageSubscriber.Instance.Dispose();
+                if (!ViewModel.Storage.Connection.Instance.IsConnectionNull)
+                {
+                    ViewModel.Storage.Connection.Instance.Close();
+                }
                 Environment.Exit(0);
             }
         }
@@ -149,7 +153,11 @@ namespace HEC.FDA.View
                     MaxHeight = dimensions.MaxHeight;
                 }
             }
-
+            if (winVM.Tab == null)
+            {
+                //then we are the main window. Launch the splash screen
+                winVM.StudyVM.LaunchSplashScreen();
+            }
         }
         
     }

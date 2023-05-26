@@ -33,15 +33,15 @@ namespace HEC.FDA.ModelTest.unittests.structures
         private static MedianRandomProvider medianRandomProvider = new MedianRandomProvider();
         private static string occupancyTypeName = "MyOccupancyType";
         private static string damageCategory = "DamageCategory";
-        private static OccupancyType occupancyType = OccupancyType.builder()
-            .withName(occupancyTypeName)
-            .withDamageCategory(damageCategory)
-            .withStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
-            .withContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
-            .withFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-            .withStructureValueUncertainty(_structureValueUncertainty)
-            .withContentToStructureValueRatio(_contentToStructureValueRatio)
-            .build();
+        private static OccupancyType occupancyType = OccupancyType.Builder()
+            .WithName(occupancyTypeName)
+            .WithDamageCategory(damageCategory)
+            .WithStructureDepthPercentDamage(_StructureDepthPercentDamageFunction)
+            .WithContentDepthPercentDamage(_ContentDepthPercentDamageFunction)
+            .WithFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
+            .WithStructureValueUncertainty(_structureValueUncertainty)
+            .WithContentToStructureValueRatio(_contentToStructureValueRatio)
+            .Build();
         private static int structureID = 44;
         private static PointM pointM = new PointM();
         private static double firstFloorElevation = 100;
