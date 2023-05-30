@@ -8,7 +8,7 @@ namespace HEC.FDA.Model.extensions
 {
     public static class ContinuousDistributionExtensions
     {
-        public static PairedData BootstrapToPairedData(this ContinuousDistribution continuousDistribution, double[] ExceedanceProbabilities, double[] samples)
+        public static PairedData BootstrapToPairedData(this ContinuousDistribution continuousDistribution, double[] samples, double[] ExceedanceProbabilities )
         {
             IDistribution bootstrap = continuousDistribution.Sample(samples);
             double[] x = new double[ExceedanceProbabilities.Length];
@@ -36,7 +36,7 @@ namespace HEC.FDA.Model.extensions
             }
             Parallel.For(0, realizations, i =>
             {
-                PairedData pd = continuousDistribution.BootstrapToPairedData(ExceedanceProbabilities, samples[i]);
+                PairedData pd = continuousDistribution.BootstrapToPairedData(samples[i],ExceedanceProbabilities );
                 for (int j = 0; j < ExceedanceProbabilities.Length; j++)
                 {
                     double y = pd.Yvals[j];
