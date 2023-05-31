@@ -30,9 +30,8 @@ namespace HEC.FDA.ViewModel.Compute
 
         public Task RunAnnualizationCompute(Alternative alt, AlternativeElement altElem, Action<AlternativeResults> callback, CancellationToken cancellationToken)
         {
-            IASElement[] iASElems = altElem.GetElementsFromID();
-            IASElement firstElem = iASElems[0];
-            IASElement secondElem = iASElems[1];
+            IASElement firstElem = altElem.BaseScenario.GetElement();
+            IASElement secondElem = altElem.FutureScenario.GetElement();
 
             ScenarioResults firstResults = firstElem.Results;
             ScenarioResults secondResults = secondElem.Results;
@@ -43,9 +42,12 @@ namespace HEC.FDA.ViewModel.Compute
             double discountRate = studyProperties.DiscountRate;
             int periodOfAnalysis = studyProperties.PeriodOfAnalysis;
 
+            int baseYear = altElem.BaseScenario.Year;
+            int futureYear = altElem.FutureScenario.Year;
             return Task.Run(() =>
             {
-                AlternativeResults results = alt.AnnualizationCompute(discountRate, periodOfAnalysis, altElem.ID, firstResults, secondResults, cancellationToken);
+                AlternativeResults results = alt.AnnualizationCompute(randomProvider, discountRate, periodOfAnalysis, altElem.ID, 
+                    firstResults, secondResults,baseYear, futureYear, cancellationToken);
                 callback?.Invoke(results);
             });
         }

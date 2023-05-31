@@ -21,55 +21,79 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
 
-        <GroupBox Grid.Row="1"  Header="{Binding ImpactAreaRowItem.Name}" >
             <StackPanel Orientation="Vertical">
-                <Grid Grid.Row="2" Margin="0,5,5,0">
+                <Grid Margin="0,5,5,0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="140"/>
+                        <ColumnDefinition Width="142"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="100"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="110"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
+                    
                     <Label  Grid.Column="0" Content="{x:Static utilVM:StringConstants.FREQUENCY_RELATIONSHIP_LABEL}" HorizontalAlignment="Right" Margin="0,0,7,0"/>
-                    <Label Grid.Row="0" Grid.Column="0" Content="*" Foreground="Red" HorizontalAlignment="Right" />
+                    <Label  Grid.Column="0" Content="*" Foreground="Red" HorizontalAlignment="Right" />
 
                     <ComboBox  Grid.Column="1"  HorizontalAlignment="Stretch" ItemsSource="{Binding FrequencyElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedFrequencyElement}" />
 
                     <Label  Grid.Column="2" Content="{x:Static utilVM:StringConstants.REGULATED_UNREGULATED_LABEL}" HorizontalAlignment="Right" />
                     <ComboBox  Grid.Column="3"  HorizontalAlignment="Stretch" ItemsSource="{Binding InflowOutflowElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedInflowOutflowElement}" />
 
-                    <Label  Grid.Column="4" Content="{x:Static utilVM:StringConstants.STAGE_DISCHARGE_LABEL}" HorizontalAlignment="Right" Margin="0,0,7,0"/>
-                    <Label Grid.Row="0" Grid.Column="4" Content="*" Foreground="Red" HorizontalAlignment="Right" Visibility="{Binding RatingRequired,Converter={StaticResource BoolToVisibilityConverter}}" />
-                    <ComboBox  Grid.Column="5"  HorizontalAlignment="Stretch" ItemsSource="{Binding RatingCurveElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedRatingCurveElement}" />
+                <StackPanel Grid.Column="4" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Label Content="{x:Static utilVM:StringConstants.STAGE_DISCHARGE_LABEL}" HorizontalAlignment="Right" />
+                    <Label  Content="*" Foreground="Red" HorizontalAlignment="Right" Padding="0,5,5,5" Visibility="{Binding RatingRequired,Converter={StaticResource BoolToVisibilityConverter}}" />
+                </StackPanel>
+                <ComboBox  Grid.Column="5"  HorizontalAlignment="Stretch" ItemsSource="{Binding RatingCurveElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedRatingCurveElement}" />
 
-                </Grid>
 
-                <Grid Grid.Row="3" Margin="0,5,5,0">
+            </Grid>
+
+                <Grid  Margin="0,5,5,0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="140"/>
+                        <ColumnDefinition Width="142"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="100"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="110"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
+
+
+
                     <Label  Grid.Column="0" Content="{x:Static utilVM:StringConstants.LATERAL_STRUCTURE_LABEL}" HorizontalAlignment="Right" />
                     <ComboBox  Grid.Column="1"  HorizontalAlignment="Stretch" ItemsSource="{Binding LeveeFeatureElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedLeveeFeatureElement}"/>
 
                     <Label  Grid.Column="2" Content="{x:Static utilVM:StringConstants.EXT_INT_SHORT_LABEL}" HorizontalAlignment="Right" />
                     <ComboBox  Grid.Column="3"  HorizontalAlignment="Stretch" ItemsSource="{Binding ExteriorInteriorElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedExteriorInteriorElement}"/>
 
-                    <Label Grid.Column="4" Content="Thresholds:" HorizontalAlignment="Right" Margin="0,0,0,0"/>
-                    <Button Grid.Column="5" Content="Add Additional Thresholds..."  HorizontalAlignment="Stretch" Click="addThresholdBtn_Click"  />
+                    
                 </Grid>
+
+                <Grid Margin="0,5,5,0">
+                    <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="142"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="110"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                    <CheckBox Grid.ColumnSpan="2" Content="Scenario Reflects Without Project Conditions" IsChecked="{Binding ScenarioReflectsWithoutProjCondition}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" >
+                    <Label Grid.Column="2" Content="Default Stage:" HorizontalAlignment="Right"  />
+                    <Label  Grid.Column="2" Content="*" Foreground="Red" HorizontalAlignment="Right" Padding="0,5,5,5" Visibility="{Binding DefaultStageRequired,Converter={StaticResource BoolToVisibilityConverter}}" />
+                </StackPanel>
+
+                <TextBox Grid.Column="3" HorizontalAlignment="Stretch" IsEnabled="{Binding DefaultStageRequired}" />
+
+                    <Label Grid.Column="4" Content="Thresholds:" HorizontalAlignment="Right" Margin="0,0,0,0"/>
+                    <Button Grid.Column="5" Content="Additional Thresholds..."  HorizontalAlignment="Stretch" Click="addThresholdBtn_Click"  />
+                </Grid>
+                
             </StackPanel>
-        </GroupBox>
 
         <Grid Grid.Row="3" Margin="5,5,5,0">
             <StackPanel Orientation="Horizontal" >

@@ -27,9 +27,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
         public AlternativeDamCatRowItem(AlternativeElement altElem)
         {
             Name = altElem.Name;
-            IASElement[] iASElements = altElem.GetElementsFromID();
-            BaseYearScenario = iASElements[0];
-            FutureYearScenario = iASElements[1];
+            BaseYearScenario = altElem.BaseScenario.GetElement();
+            FutureYearScenario = altElem.FutureScenario.GetElement();
 
             StudyPropertiesElement studyPropElem = StudyCache.GetStudyPropertiesElement();
             DiscountRate = studyPropElem.DiscountRate;

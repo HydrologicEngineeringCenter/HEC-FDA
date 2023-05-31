@@ -73,8 +73,9 @@ namespace HEC.FDA.ViewModel.Results
             }
             else if(childElement is AlternativeElement altElem)
             {
-                IASElement[] iASElements = altElem.GetElementsFromID();
-                HasComputeMessage = "\t* Base year scenario: " + iASElements[0].Name + "\n\t* Future year scenario: " + iASElements[1].Name;
+                IASElement firstElem = altElem.BaseScenario.GetElement();
+                IASElement secondElem = altElem.FutureScenario.GetElement();
+                HasComputeMessage = "\t* Base year scenario: " + firstElem.Name + "\n\t* Future year scenario: " + secondElem.Name;
             }
         }
 

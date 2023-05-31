@@ -10,10 +10,10 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="70"/>
-            <RowDefinition Height="35"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="45"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <Grid.RowDefinitions>
@@ -30,9 +30,45 @@
             <UserControls:TextBoxDescription Grid.Row="1" Grid.Column="1" Text="{Binding Description}" Margin="5"/>
         </Grid>
         
-        <TextBlock Grid.Row="1" Text="Pick Two Scenarios:" Margin="10,0,0,0" VerticalAlignment="Bottom"/>
+        <!--<TextBlock Grid.Row="1" Text="Pick Two Scenarios:" Margin="10,0,0,0" VerticalAlignment="Bottom"/>-->
 
-        <ListBox Grid.Row="2" Name="lst_conditions" ItemsSource="{Binding Rows}"   SelectionMode="Multiple" Margin="10,5,10,10">
+        <Grid Grid.Row="2" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Content="Base Year Scenario:" HorizontalAlignment="Right" />
+                <ComboBox Grid.Column="1" ItemsSource="{Binding Scenarios}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedBaseScenario}" />
+                <Label Grid.Column="2" Content="Year:" />
+                <TextBox Grid.Column="3" Text="{Binding BaseYear}" />
+            </Grid>
+            <Grid Grid.Row="1" Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Content="Future Year Scenario:" HorizontalAlignment="Right"/>
+                <ComboBox Grid.Column="1" ItemsSource="{Binding Scenarios}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedFutureScenario}" />
+                <Label Grid.Column="2" Content="Year:" />
+                <TextBox Grid.Column="3" Text="{Binding FutureYear}" />
+            </Grid>
+        </Grid>
+        <!--<ListBox Grid.Row="2" Name="lst_conditions" ItemsSource="{Binding Rows}"   SelectionMode="Multiple" Margin="10,5,10,10">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
                     <Setter Property="ToolTip" Value="{Binding Tooltip}"/>
@@ -43,7 +79,7 @@
                     <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected, Mode=TwoWay}" IsEnabled="{Binding HasComputed}" />
                 </DataTemplate>
                 </ListBox.ItemTemplate>
-            </ListBox>
+            </ListBox>-->
 
         <utils:SaveCloseControl Grid.Row="3" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5" />
     </Grid>

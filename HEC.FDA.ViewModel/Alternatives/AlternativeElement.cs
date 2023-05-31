@@ -23,12 +23,16 @@ namespace HEC.FDA.ViewModel.Alternatives
         public const string LAST_EDIT_DATE = "LastEditDate";
         private const string IAS_SET = "IASSet";
         private const string ID_STRING = "ID";
+        
+        private const string BASE_SCENARIO = "BaseScenario";
+        private const string FUTURE_SCENARIO = "FutureScenario";
+
 
         #region properties
-
         public AlternativeResults Results { get; set; }
+        public AlternativeScenario BaseScenario { get; }
+        public AlternativeScenario FutureScenario { get; }
 
-        public List<int> IASElementSets { get; } = new List<int>();
         #endregion
 
         #region Constructors
@@ -39,9 +43,10 @@ namespace HEC.FDA.ViewModel.Alternatives
         /// <param name="name"></param>
         /// <param name="description"></param>
         /// <param name="IASElements"></param>
-        public AlternativeElement(string name, string description, string creationDate, List<int> IASElements, int id) : base(name, creationDate, description, id)
+        public AlternativeElement(string name, string description, string creationDate, AlternativeScenario baseScenario, AlternativeScenario futureScenario, int id) : base(name, creationDate, description, id)
         {
-            IASElementSets.AddRange(IASElements);
+            BaseScenario = baseScenario;
+            FutureScenario = futureScenario;
 
             AddDefaultActions(EditAlternative, StringConstants.EDIT_ALTERNATIVE_MENU);
             NamedAction viewResults = new NamedAction();
@@ -56,82 +61,96 @@ namespace HEC.FDA.ViewModel.Alternatives
         /// <param name="xml"></param>
         public AlternativeElement(XElement altElement, int id) : base(altElement, id)
         {
-            IEnumerable<XElement> iasElements = altElement.Elements(IAS_SET);
-            foreach (XElement elem in iasElements)
+            //IEnumerable<XElement> iasElements = altElement.Elements(IAS_SET);
+            bool isOldXMLStyle = altElement.Elements(IAS_SET).Any();
+            if(isOldXMLStyle)
             {
-                int iasID = int.Parse(elem.Attribute(ID_STRING).Value);
-                IASElementSets.Add(iasID);
-            }
+                IEnumerable<XElement> iasElements = altElement.Elements(IAS_SET);
 
+                int i = 0;
+                foreach(XElement elem in iasElements)// XElement elem in iasElements)
+                {
+                    int iasID = int.Parse(elem.Attribute(ID_STRING).Value);
+                    //get the element from the id and grab the year from it. If no year that make it the current year.
+                    IASElement iasElem = GetElementFromID(iasID);
+                    int year;
+                    bool yearSuccess = int.TryParse( iasElem.AnalysisYear,out year);
+                    if(!yearSuccess)
+                    {
+                        year = DateTime.Now.Year;
+                    }
+                    if(i== 0)
+                    {
+                        BaseScenario = new AlternativeScenario(iasID, year);
+                    }
+                    else
+                    {
+                        FutureScenario = new AlternativeScenario(iasID, year);
+                    }
+                    i++;
+                }
+            }
+            else
+            {
+                XElement baseElem = altElement.Element(BASE_SCENARIO);
+                BaseScenario = new AlternativeScenario(baseElem.Element(AlternativeScenario.ALTERNATIVE_SCENARIO));
+                XElement futureElem = altElement.Element(FUTURE_SCENARIO);
+                FutureScenario = new AlternativeScenario(futureElem.Element(AlternativeScenario.ALTERNATIVE_SCENARIO));
+            }
+           
             AddDefaultActions(EditAlternative, StringConstants.EDIT_ALTERNATIVE_MENU);
             NamedAction viewResults = new NamedAction();
             viewResults.Header = StringConstants.VIEW_RESULTS_MENU;
             viewResults.Action = ComputeAlternative;
             Actions.Insert(1, viewResults);
         }
-        #endregion       
+        #endregion
 
-        /// <summary>
-        /// These elements will be returned in year order. The lower year will be the first element.
-        /// If the element cannot be found then it will be null.
-        /// </summary>
-        /// <returns></returns>
-        public IASElement[] GetElementsFromID()
+        public override XElement ToXML()
         {
-            IASElement[] iASElems = new IASElement[] { null, null };
+            XElement altElement = new XElement(ALTERNATIVE);
+            altElement.Add(CreateHeaderElement());
 
-            bool firstElemFound = false;
-            bool secondElemFound = false;
+            XElement baseElem = new XElement(BASE_SCENARIO);
+            baseElem.Add(BaseScenario.ToXML());
 
-            int firstID = IASElementSets[0];
-            int secondID = IASElementSets[1];
-            //get the current ias elements in the study
+            XElement futureElem = new XElement(FUTURE_SCENARIO);
+            futureElem.Add(FutureScenario.ToXML());
+
+            altElement.Add(baseElem);
+            altElement.Add(futureElem);
+
+            return altElement;
+        }     
+
+        public IASElement GetElementFromID(int id)
+        {
+            IASElement elem = null;
             List<IASElement> currentElementSets = StudyCache.GetChildElementsOfType<IASElement>();
             foreach (IASElement set in currentElementSets)
             {
                 int setID = set.ID;
-                if (setID == firstID)
+                if (setID == id)
                 {
-                    iASElems[0] = set;
-                    firstElemFound = true;
-                }
-                else if (setID == secondID)
-                {
-                    iASElems[1] = set;
-                    secondElemFound = true;
+                    elem = set;
                 }
             }
-
-            //put them in the correct order
-            if(firstElemFound && secondElemFound)
-            {
-                IASElement firstElem = iASElems[0];
-                IASElement secondElem = iASElems[1];
-                int firstYear = firstElem.AnalysisYear;
-                int secondYear = secondElem.AnalysisYear;
-                if(firstYear > secondYear)
-                {
-                    iASElems[0] = secondElem;
-                    iASElems[1] = firstElem;
-                }
-            }
-
-            return iASElems;
+            return elem;
         }
 
         public FdaValidationResult RunPreComputeValidation()
         {
             FdaValidationResult vr = new FdaValidationResult();
-            IASElement[] iASElems = GetElementsFromID();
-            IASElement firstElem = iASElems[0];
-            IASElement secondElem = iASElems[1];
+          
+            IASElement baseElem = BaseScenario.GetElement();
+            IASElement futureElem = FutureScenario.GetElement();
 
-            FdaValidationResult scenariosExistResults = DoBothScenariosExist(firstElem, secondElem);
+            FdaValidationResult scenariosExistResults = DoBothScenariosExist(baseElem, futureElem);
             vr.AddErrorMessage(scenariosExistResults.ErrorMessage);
             if (scenariosExistResults.IsValid)
             {
-                vr.AddErrorMessage(AreScenarioYearsDifferent(firstElem, secondElem).ErrorMessage);
-                vr.AddErrorMessage(DoScenariosHaveResults(firstElem, secondElem).ErrorMessage);
+                //vr.AddErrorMessage(AreScenarioYearsDifferent(baseElem, futureElem).ErrorMessage);
+                vr.AddErrorMessage(DoScenariosHaveResults(baseElem, futureElem).ErrorMessage);
             }
 
             return vr;
@@ -160,20 +179,7 @@ namespace HEC.FDA.ViewModel.Alternatives
                 vr.AddErrorMessage("Scenario '" + secondElem.Name + "' has no compute results.");
             }
             return vr;
-        }
-
-        private FdaValidationResult AreScenarioYearsDifferent(IASElement firstElem, IASElement secondElem)
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-            int firstYear = firstElem.AnalysisYear;
-            int secondYear = secondElem.AnalysisYear;
-            if (firstYear == secondYear)
-            {
-                vr.AddErrorMessage("The selected impact area scenarios both have the same analysis year.");
-                vr.AddErrorMessage("Different years are required to run the calculation.");
-            }
-            return vr;
-        }
+        }       
 
         private FdaValidationResult DoBothScenariosExist(IASElement firstElem, IASElement secondElem)
         {
@@ -212,8 +218,6 @@ namespace HEC.FDA.ViewModel.Alternatives
             FdaValidationResult vr = RunPreComputeValidation();
             if (vr.IsValid)
             {
-                IASElement[] iASElems = GetElementsFromID();
-
                 ComputeAlternativeVM vm = new ComputeAlternativeVM(this, ComputeCompleted);
                 string header = "Compute Log For Alternative: " + Name;
                 DynamicTabVM tab = new DynamicTabVM(header, vm, "ComputeLog" + Name);
@@ -227,13 +231,11 @@ namespace HEC.FDA.ViewModel.Alternatives
 
         public void ComputeAlternative(Action<AlternativeResults> callback)
         {
-            IASElement[] iASElems = GetElementsFromID();
+            IASElement baseElem = BaseScenario.GetElement();
+            IASElement futureElem = FutureScenario.GetElement();
 
-            IASElement firstElem = iASElems[0];
-            IASElement secondElem = iASElems[1];
-
-            ScenarioResults firstResults = firstElem.Results;
-            ScenarioResults secondResults = secondElem.Results;
+            ScenarioResults baseResults = baseElem.Results;
+            ScenarioResults futureResults = futureElem.Results;
 
             int seed = 99;
             RandomProvider randomProvider = new RandomProvider(seed);
@@ -243,7 +245,8 @@ namespace HEC.FDA.ViewModel.Alternatives
             int periodOfAnalysis = studyProperties.PeriodOfAnalysis;
 
             //todo: register somthing with the message hub?
-            AlternativeResults results = new Alternative().AnnualizationCompute(discountRate, periodOfAnalysis, ID, firstResults, secondResults, new CancellationToken());
+            AlternativeResults results = new Alternative().AnnualizationCompute(randomProvider, discountRate, periodOfAnalysis, ID,
+                baseResults, futureResults,BaseScenario.Year, FutureScenario.Year, new CancellationToken());
             callback?.Invoke(results);
         }
 
@@ -281,20 +284,6 @@ namespace HEC.FDA.ViewModel.Alternatives
             string header = "Edit Alternative " + Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditAlternative" + Name);
             Navigate(tab, false, true);
-        }
-
-        public override XElement ToXML()
-        {
-            XElement altElement = new XElement(ALTERNATIVE);
-            altElement.Add(CreateHeaderElement());
-
-            foreach (int elemID in IASElementSets)
-            {
-                XElement setElement = new XElement(IAS_SET);
-                setElement.SetAttributeValue(ID_STRING, elemID);
-                altElement.Add(setElement);
-            }
-            return altElement;
         }
 
     }

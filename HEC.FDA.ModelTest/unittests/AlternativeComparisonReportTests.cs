@@ -106,12 +106,13 @@ namespace HEC.FDA.ModelTest.unittests
             IList<ImpactAreaScenarioSimulation> impactAreaListFutureYear = new List<ImpactAreaScenarioSimulation>();
             impactAreaListFutureYear.Add(withoutProjectSimulationFuture);
 
-            Scenario baseWithoutProjectScenario = new Scenario(baseYear, impactAreaListBaseYear);
+            Scenario baseWithoutProjectScenario = new Scenario( impactAreaListBaseYear);
             ScenarioResults baseWithoutProjectScenarioResults = baseWithoutProjectScenario.Compute(mrp, convergenceCriteria);
-            Scenario futureWithoutProjectScenario = new Scenario(futureYear, impactAreaListFutureYear);
+            Scenario futureWithoutProjectScenario = new Scenario( impactAreaListFutureYear);
             ScenarioResults futureWithoutProjectScenarioResults = futureWithoutProjectScenario.Compute(mrp, convergenceCriteria);
-            AlternativeResults withoutProjectAlternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, withoutAlternativeIdentifier, baseWithoutProjectScenarioResults,
-                futureWithoutProjectScenarioResults, new CancellationToken());
+            AlternativeResults withoutProjectAlternativeResults = new Alternative().AnnualizationCompute(mrp, discountRate, poa, withoutAlternativeIdentifier, 
+                baseWithoutProjectScenarioResults, futureWithoutProjectScenarioResults, baseWithoutProjectScenarioResults.AnalysisYear,
+                futureWithoutProjectScenarioResults.AnalysisYear, new CancellationToken());
 
             //build with project alternative results 
             ImpactAreaScenarioSimulation withProjectSimulationBase = ImpactAreaScenarioSimulation.Builder(impactAreaIdentifier)
@@ -136,12 +137,13 @@ namespace HEC.FDA.ModelTest.unittests
             impactAreaListWithProjectfutureYear.Add(withProjectSimulationFuture);
 
 
-            Scenario baseWithProjectScenario = new Scenario(baseYear, impactAreaListWithProjectBaseYear);
+            Scenario baseWithProjectScenario = new Scenario( impactAreaListWithProjectBaseYear);
             ScenarioResults baseWithProjectScenarioResults = baseWithProjectScenario.Compute(mrp, convergenceCriteria);
-            Scenario futureWithProjectScenario = new Scenario(futureYear, impactAreaListWithProjectfutureYear);
+            Scenario futureWithProjectScenario = new Scenario( impactAreaListWithProjectfutureYear);
             ScenarioResults futureWithProjectScenarioResults = futureWithProjectScenario.Compute(mrp, convergenceCriteria);
-            AlternativeResults withProjectAlternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, withAlternativeIdentifier, baseWithProjectScenarioResults,
-                futureWithProjectScenarioResults, new CancellationToken());
+            AlternativeResults withProjectAlternativeResults = new Alternative().AnnualizationCompute(mrp, discountRate, poa, withAlternativeIdentifier, 
+                baseWithProjectScenarioResults, futureWithProjectScenarioResults, baseWithoutProjectScenarioResults.AnalysisYear,
+                futureWithoutProjectScenarioResults.AnalysisYear, new CancellationToken());
 
             List<AlternativeResults> withProjectAlternativeResultsList = new List<AlternativeResults>();
             withProjectAlternativeResultsList.Add(withProjectAlternativeResults);
@@ -258,12 +260,13 @@ namespace HEC.FDA.ModelTest.unittests
             IList<ImpactAreaScenarioSimulation> impactAreaListFutureYear = new List<ImpactAreaScenarioSimulation>();
             impactAreaListFutureYear.Add(withoutProjectSimulationFuture);
 
-            Scenario baseWithoutProjectScenario = new Scenario(baseYear, impactAreaListBaseYear);
+            Scenario baseWithoutProjectScenario = new Scenario( impactAreaListBaseYear);
             ScenarioResults baseWithoutProjectScenarioResults = baseWithoutProjectScenario.Compute(mrp, convergenceCriteria);
-            Scenario futureWothoutProjectScenario = new Scenario(futureYear, impactAreaListFutureYear);
+            Scenario futureWothoutProjectScenario = new Scenario( impactAreaListFutureYear);
             ScenarioResults futureWithoutProjectScenarioResults = futureWothoutProjectScenario.Compute(mrp, convergenceCriteria);
-            AlternativeResults withoutProjectAlternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, withoutAlternativeIdentifier, baseWithoutProjectScenarioResults,
-                futureWithoutProjectScenarioResults, new CancellationToken());
+            AlternativeResults withoutProjectAlternativeResults = new Alternative().AnnualizationCompute(mrp, discountRate, poa, withoutAlternativeIdentifier, 
+                baseWithoutProjectScenarioResults, futureWithoutProjectScenarioResults, baseWithoutProjectScenarioResults.AnalysisYear,
+                futureWithoutProjectScenarioResults.AnalysisYear, new CancellationToken());
 
             //build with project alternative results 
             ImpactAreaScenarioSimulation withProjectSimulationBase = ImpactAreaScenarioSimulation.Builder(impactAreaIdentifier)
@@ -288,12 +291,13 @@ namespace HEC.FDA.ModelTest.unittests
             impactAreaListWithProjectfutureYear.Add(withProjectSimulationFuture);
 
 
-            Scenario baseWithProjectScenario = new Scenario(baseYear, impactAreaListWithProjectBaseYear);
+            Scenario baseWithProjectScenario = new Scenario( impactAreaListWithProjectBaseYear);
             ScenarioResults baseWithProjectScenarioResults = baseWithProjectScenario.Compute(mrp, convergenceCriteria);
-            Scenario futureWithProjectScenario = new Scenario(futureYear, impactAreaListWithProjectfutureYear);
+            Scenario futureWithProjectScenario = new Scenario( impactAreaListWithProjectfutureYear);
             ScenarioResults futureWithProjectScenarioResults = futureWithProjectScenario.Compute(mrp, convergenceCriteria);
-            AlternativeResults withProjectAlternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, withAlternativeIdentifier, baseWithProjectScenarioResults,
-                futureWithProjectScenarioResults, new CancellationToken());
+            AlternativeResults withProjectAlternativeResults = new Alternative().AnnualizationCompute(mrp, discountRate, poa, withAlternativeIdentifier, 
+                baseWithProjectScenarioResults, futureWithProjectScenarioResults, baseWithoutProjectScenarioResults.AnalysisYear,
+                futureWithoutProjectScenarioResults.AnalysisYear, new CancellationToken());
 
             List<AlternativeResults> withProjectAlternativeResultsList = new List<AlternativeResults>();
             withProjectAlternativeResultsList.Add(withProjectAlternativeResults);
@@ -395,12 +399,13 @@ namespace HEC.FDA.ModelTest.unittests
             IList<ImpactAreaScenarioSimulation> impactAreaListFutureYear = new List<ImpactAreaScenarioSimulation>();
             impactAreaListFutureYear.Add(withoutProjectSimulationFuture);
 
-            Scenario baseWithoutProjectScenario = new Scenario(baseYear, impactAreaListBaseYear);
+            Scenario baseWithoutProjectScenario = new Scenario( impactAreaListBaseYear);
             ScenarioResults baseWithoutProjectScenarioResults = baseWithoutProjectScenario.Compute(mrp, convergenceCriteria);
-            Scenario futureWothoutProjectScenario = new Scenario(futureYear, impactAreaListFutureYear);
+            Scenario futureWothoutProjectScenario = new Scenario( impactAreaListFutureYear);
             ScenarioResults futureWithoutProjectScenarioResults = futureWothoutProjectScenario.Compute(mrp, convergenceCriteria);
-            AlternativeResults withoutProjectAlternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, withoutAlternativeIdentifier,
-                baseWithoutProjectScenarioResults, futureWithoutProjectScenarioResults, new CancellationToken());
+            AlternativeResults withoutProjectAlternativeResults = new Alternative().AnnualizationCompute(mrp, discountRate, poa, 
+                withoutAlternativeIdentifier, baseWithoutProjectScenarioResults, futureWithoutProjectScenarioResults, baseWithoutProjectScenarioResults.AnalysisYear,
+                futureWithoutProjectScenarioResults.AnalysisYear, new CancellationToken());
 
             //build with project alternative results 
             ImpactAreaScenarioSimulation withProjectSimulationBase = ImpactAreaScenarioSimulation.Builder(impactAreaIdentifier)
@@ -425,12 +430,13 @@ namespace HEC.FDA.ModelTest.unittests
             impactAreaListWithProjectfutureYear.Add(withProjectSimulationFuture);
 
 
-            Scenario baseWithProjectScenario = new Scenario(baseYear, impactAreaListWithProjectBaseYear);
+            Scenario baseWithProjectScenario = new Scenario( impactAreaListWithProjectBaseYear);
             ScenarioResults baseWithProjectScenarioResults = baseWithProjectScenario.Compute(mrp, convergenceCriteria);
-            Scenario futureWithProjectScenario = new Scenario(futureYear, impactAreaListWithProjectfutureYear);
+            Scenario futureWithProjectScenario = new Scenario( impactAreaListWithProjectfutureYear);
             ScenarioResults futureWithProjectScenarioResults = futureWithProjectScenario.Compute(mrp, convergenceCriteria);
-            AlternativeResults withProjectAlternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, withAlternativeIdentifier, baseWithProjectScenarioResults,
-                futureWithProjectScenarioResults, new CancellationToken());
+            AlternativeResults withProjectAlternativeResults = new Alternative().AnnualizationCompute(mrp, discountRate, poa, withAlternativeIdentifier, 
+                baseWithProjectScenarioResults, futureWithProjectScenarioResults, baseWithoutProjectScenarioResults.AnalysisYear,
+                futureWithoutProjectScenarioResults.AnalysisYear, new CancellationToken());
 
             List<AlternativeResults> withProjectAlternativeResultsList = new List<AlternativeResults>();
             withProjectAlternativeResultsList.Add(withProjectAlternativeResults);

@@ -21,13 +21,34 @@
 
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal">
-            <Button Name="Add_btn" Content="Add" Width="80" Margin="3" Click="Add_btn_Click" />
-            <Button Name="Copy_btn" Content="Copy" Width="80" Margin="3" Click="Copy_btn_Click"/>
-            <Button Name="Remove_btn" Content="Remove" Width="80" Margin="3" Click="Remove_btn_Click" />
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5">
+            <Button Name="Add_btn" Content="Add" Width="80"  Click="Add_btn_Click" />
+            <Button Name="Remove_btn" Content="Remove" Width="80" Margin="5,0,0,0" Click="Remove_btn_Click" />
         </StackPanel>
 
-        <ListView Grid.Row="1" x:Name="lst" Height="300" Margin="5" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}" 
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Rows}" Width="500" AutoGenerateColumns="False" HorizontalAlignment="Left"
+                  VerticalAlignment="Top"  IsReadOnly="False" CanUserResizeColumns="True" CanUserReorderColumns="False"
+                  CanUserSortColumns="false" Margin="5,0,5,5" SelectionUnit="FullRow">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding ID}" Width="100" IsReadOnly="True">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Threshold ID" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding ThresholdType.DisplayName}" Width="*" IsReadOnly="True">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Threshold Type" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding ThresholdValue}" Width="*">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Stage Value" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        
+        <!--<ListView Grid.Row="1" x:Name="lst" Height="300" Margin="5" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}" 
                    SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" HorizontalAlignment="Stretch"  >
             <ListView.View>
                 <GridView AllowsColumnReorder="False">
@@ -55,7 +76,7 @@
                     </GridViewColumn>
                 </GridView>
             </ListView.View>
-        </ListView>
+        </ListView>-->
 
         <Button Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="OK" Width="40" Height="22" Click="ok_btn_Click" Margin="5"/>
 
