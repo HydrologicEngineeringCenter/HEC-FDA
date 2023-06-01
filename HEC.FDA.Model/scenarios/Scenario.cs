@@ -102,8 +102,6 @@ namespace HEC.FDA.Model.scenarios
 
         public static Scenario ReadFromXML(XElement xElement)
         {
-            string yearString = xElement.Attribute("Year").Value;
-            int year = Convert.ToInt32(yearString);
             IList<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
             foreach (XElement element in xElement.Elements())
             {
