@@ -41,6 +41,7 @@ namespace HEC.FDA.View.ImpactAreaScenario.Editor
                 {
                     var myWindow = Window.GetWindow(this);
                     myWindow.Close();
+                    vm.WasCanceled = false;
                 }
             }
         }

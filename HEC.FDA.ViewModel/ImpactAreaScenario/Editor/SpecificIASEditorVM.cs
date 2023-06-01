@@ -41,7 +41,13 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private bool _IsSufficientForCompute;
         private string _IsSufficientForComputeTooltip;
         private bool _ScenarioReflectsWithoutProjCondition = true;
+        private double _DefaultStage;
 
+        public double DefaultStage
+        {
+            get { return _DefaultStage; }
+            set { _DefaultStage = value; NotifyPropertyChanged(); }
+        }
         public bool ScenarioReflectsWithoutProjCondition
         {
             get { return _ScenarioReflectsWithoutProjCondition; }
@@ -274,7 +280,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
     
         private void FillForm(SpecificIAS elem)
         {
-            FillThresholds(elem);
+            ScenarioReflectsWithoutProjCondition = elem.ScenarioReflectsWithoutProj;
+            DefaultStage = elem.DefaultStage;
+            Thresholds.AddRange(elem.Thresholds);
             //all the available elements have been loaded into this editor. We now want to select
             //the correct element for each dropdown. 
             //all the available elements have been loaded into this editor. We now want to select
@@ -309,11 +317,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 SelectedExteriorInteriorElement = ExteriorInteriorElements[0];
             }
             
-        }
-
-        private void FillThresholds(SpecificIAS elem)
-        {
-            Thresholds.AddRange(elem.Thresholds);
         }
 
         private void LoadElements()
@@ -433,7 +436,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private FdaValidationResult GetFrequencyRelationshipValidationResult()
         {
             FdaValidationResult vr = new FdaValidationResult();
-            if(SelectedFrequencyElement.ChildElement == null)
+            if(SelectedFrequencyElement == null || SelectedFrequencyElement.ChildElement == null)
             {
                 vr.AddErrorMessage("A Frequency Relationship is required.");
             }
@@ -443,7 +446,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private FdaValidationResult GetRatingCurveValidationResult()
         {
             FdaValidationResult vr = new FdaValidationResult();
-            if (_ratingRequired && SelectedRatingCurveElement.ChildElement == null)
+            if (_ratingRequired && (SelectedRatingCurveElement == null || SelectedRatingCurveElement.ChildElement == null))
             {
                 vr.AddErrorMessage("A stage-discharge function is required if the frequency function reflects discharge");
             }
@@ -453,7 +456,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         {
             ChildElementComboItem selectedStageDamage = _SelectedStageDamage();
             FdaValidationResult vr = new FdaValidationResult();
-            if (selectedStageDamage.ChildElement == null)
+            if (selectedStageDamage == null || selectedStageDamage.ChildElement == null)
             {
                 vr.AddErrorMessage("A Stage Damage is required. ");
             }
@@ -704,7 +707,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
             SpecificIAS elementToSave = new SpecificIAS(CurrentImpactArea.ID,
             flowFreqID, inflowOutID,
-            ratingID, extIntID, latStructID, stageDamID, thresholdRowItems);
+            ratingID, extIntID, latStructID, stageDamID, thresholdRowItems, ScenarioReflectsWithoutProjCondition, DefaultStage);
             return elementToSave;
         }
 
@@ -713,14 +716,28 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             return (comboItem != null && comboItem.ChildElement != null) ? comboItem.ChildElement.ID : -1;
         }
 
+        private List<ThresholdRowItem> CloneCurrentThresholdsList()
+        {
+            List<ThresholdRowItem> currentThresholds = new List<ThresholdRowItem>();
+            int i = 1;
+            foreach (ThresholdRowItem thresh in Thresholds)
+            {
+                currentThresholds.Add(new ThresholdRowItem(thresh.ToXML(), i));
+                i++;
+            }
+            return currentThresholds;
+        }
+
         public void AddThresholds()
         {
             string header = "System Performance Thresholds";
-            ThresholdsVM vm = new ThresholdsVM();
-            vm.AddRows(Thresholds);
+ 
+            ThresholdsVM vm = new ThresholdsVM(CloneCurrentThresholdsList());
+            //List<ThresholdRowItem> currentThresholds = new List<ThresholdRowItem>(Thresholds);
+            //vm.AddRows(Thresholds);
             DynamicTabVM tab = new DynamicTabVM(header, vm, "additionalThresholds",false,false);
             Navigate(tab, true, true);
-            if(vm.IsThresholdsValid)
+            if(vm.IsThresholdsValid && vm.WasCanceled == false)
             {
                 Thresholds = vm.Rows.ToList();
             }

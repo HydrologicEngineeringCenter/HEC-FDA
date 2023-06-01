@@ -28,7 +28,7 @@
 
         <DataGrid Grid.Row="1" ItemsSource="{Binding Rows}" Width="500" AutoGenerateColumns="False" HorizontalAlignment="Left"
                   VerticalAlignment="Top"  IsReadOnly="False" CanUserResizeColumns="True" CanUserReorderColumns="False"
-                  CanUserSortColumns="false" Margin="5,0,5,5" SelectionUnit="FullRow">
+                  CanUserSortColumns="false" Margin="5,0,5,5" SelectionUnit="FullRow" SelectedItem="{Binding Path=SelectedRow}">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding ID}" Width="100" IsReadOnly="True">
                     <DataGridTextColumn.Header>

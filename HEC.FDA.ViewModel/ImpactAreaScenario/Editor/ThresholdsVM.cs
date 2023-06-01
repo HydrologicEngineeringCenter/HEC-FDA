@@ -10,7 +10,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
     public class ThresholdsVM : BaseViewModel
     {
         private ThresholdRowItem _selectedRow;
-
+        public bool WasCanceled { get; set; } = true;
         public ObservableCollection<ThresholdRowItem> Rows { get; } = new ObservableCollection<ThresholdRowItem>();
         public bool IsThresholdsValid { get; set; } = false;
         public ThresholdRowItem SelectedRow
@@ -19,17 +19,15 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             set { _selectedRow = value; NotifyPropertyChanged(); }
         }
 
-        public ThresholdsVM()
-        {
-        }
- 
-        public void AddRows(List<ThresholdRowItem> rows)
+        public ThresholdsVM(List<ThresholdRowItem> rows)
         {
             foreach (ThresholdRowItem row in rows)
             {
                 Rows.Add(row);
             }
+
         }
+ 
         public void AddRow()
         {
             Rows.Add(new ThresholdRowItem(getNextIdInteger(), ThresholdEnum.DefaultExteriorStage, 0));
@@ -99,18 +97,16 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         public void OkClicked()
         {
-         
-                FdaValidationResult result = ValidateThresholds();
-                if (result.IsValid)
-                {
-                    IsThresholdsValid = true;
-                }
-                else
-                {
-                    IsThresholdsValid = false;
-                    MessageBox.Show(result.ErrorMessage.ToString(), "Invalid Thresholds", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            
+            FdaValidationResult result = ValidateThresholds();
+            if (result.IsValid)
+            {
+                IsThresholdsValid = true;
+            }
+            else
+            {
+                IsThresholdsValid = false;
+                MessageBox.Show(result.ErrorMessage.ToString(), "Invalid Thresholds", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }
