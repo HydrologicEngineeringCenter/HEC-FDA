@@ -523,9 +523,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             }
             return vr;
         }
-
         
-
         private void PreviewCompute()
         {
             ChildElementComboItem selectedStageDamage = _SelectedStageDamage();
@@ -733,8 +731,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             string header = "System Performance Thresholds";
  
             ThresholdsVM vm = new ThresholdsVM(CloneCurrentThresholdsList());
-            //List<ThresholdRowItem> currentThresholds = new List<ThresholdRowItem>(Thresholds);
-            //vm.AddRows(Thresholds);
             DynamicTabVM tab = new DynamicTabVM(header, vm, "additionalThresholds",false,false);
             Navigate(tab, true, true);
             if(vm.IsThresholdsValid && vm.WasCanceled == false)

@@ -61,14 +61,13 @@ namespace HEC.FDA.ViewModel.Alternatives
         /// <param name="xml"></param>
         public AlternativeElement(XElement altElement, int id) : base(altElement, id)
         {
-            //IEnumerable<XElement> iasElements = altElement.Elements(IAS_SET);
             bool isOldXMLStyle = altElement.Elements(IAS_SET).Any();
             if(isOldXMLStyle)
             {
                 IEnumerable<XElement> iasElements = altElement.Elements(IAS_SET);
 
                 int i = 0;
-                foreach(XElement elem in iasElements)// XElement elem in iasElements)
+                foreach(XElement elem in iasElements)
                 {
                     int iasID = int.Parse(elem.Attribute(ID_STRING).Value);
                     //get the element from the id and grab the year from it. If no year that make it the current year.
@@ -149,7 +148,6 @@ namespace HEC.FDA.ViewModel.Alternatives
             vr.AddErrorMessage(scenariosExistResults.ErrorMessage);
             if (scenariosExistResults.IsValid)
             {
-                //vr.AddErrorMessage(AreScenarioYearsDifferent(baseElem, futureElem).ErrorMessage);
                 vr.AddErrorMessage(DoScenariosHaveResults(baseElem, futureElem).ErrorMessage);
             }
 

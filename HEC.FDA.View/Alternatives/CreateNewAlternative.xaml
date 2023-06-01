@@ -29,8 +29,6 @@
             <Label Content="Description:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
             <UserControls:TextBoxDescription Grid.Row="1" Grid.Column="1" Text="{Binding Description}" Margin="5"/>
         </Grid>
-        
-        <!--<TextBlock Grid.Row="1" Text="Pick Two Scenarios:" Margin="10,0,0,0" VerticalAlignment="Bottom"/>-->
 
         <Grid Grid.Row="2" >
             <Grid.RowDefinitions>
@@ -68,18 +66,6 @@
                 <TextBox Grid.Column="3" Text="{Binding FutureYear}" />
             </Grid>
         </Grid>
-        <!--<ListBox Grid.Row="2" Name="lst_conditions" ItemsSource="{Binding Rows}"   SelectionMode="Multiple" Margin="10,5,10,10">
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="ListBoxItem">
-                    <Setter Property="ToolTip" Value="{Binding Tooltip}"/>
-                </Style>
-            </ListBox.ItemContainerStyle>
-            <ListBox.ItemTemplate>
-                    <DataTemplate>
-                    <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected, Mode=TwoWay}" IsEnabled="{Binding HasComputed}" />
-                </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>-->
 
         <utils:SaveCloseControl Grid.Row="3" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5" />
     </Grid>
