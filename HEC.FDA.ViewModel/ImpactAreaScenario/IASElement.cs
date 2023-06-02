@@ -97,9 +97,16 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             NamedAction compute = new NamedAction();
             compute.Header = StringConstants.COMPUTE_SCENARIO_MENU;
             compute.Action = ComputeScenario;
+
             NamedAction viewResults = new NamedAction();
             viewResults.Header = StringConstants.VIEW_RESULTS_MENU;
             viewResults.Action = ViewResults;
+
+            NamedAction viewThresholds = new NamedAction();
+            viewThresholds.Header = StringConstants.VIEW_THRESHOLDS_MENU;
+            viewThresholds.Action = ViewThresholds;
+
+            Actions.Insert(1, viewThresholds);
             Actions.Insert(1, viewResults);
             Actions.Insert(1, compute);
         }
@@ -165,6 +172,14 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 }
             }
             return rowName;
+        }
+
+        private void ViewThresholds(object arg1, EventArgs arg2)
+        {
+            ViewThresholdsVM vm = new ViewThresholdsVM(this);
+            string header = "Thresholds for " + Name;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ThresholdsFor" + Name);
+            Navigate(tab, false, false);
         }
 
         private void ViewResults(object arg1, EventArgs arg2)

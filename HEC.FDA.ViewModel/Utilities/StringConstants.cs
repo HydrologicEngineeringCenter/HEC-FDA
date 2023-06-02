@@ -157,6 +157,7 @@
         public const string VIEW_SUMMARY_RESULTS_HEADER = "Summary Results";
         public const string EDIT_SCENARIO_MENU = "Edit Scenario...";
         public const string COMPUTE_SCENARIO_MENU = "Compute Scenario...";
+        public const string VIEW_THRESHOLDS_MENU = "View Thresholds...";
         public const string CREATE_NEW_SCENARIO_HEADER = "Create New Scenario";
 
         public const string ALTERNATIVES = "Alternatives";
