@@ -12,7 +12,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
     public class DamageWithUncertaintyVM : BaseViewModel
     {
-        public PlotModel MyPlot { get; set; } = new PlotModel();
+        public ViewResolvingPlotModel MyPlot { get; } = new ViewResolvingPlotModel();
         public List<EadRowItem> Rows { get; } = new List<EadRowItem>();
         public double Mean { get; set; }
         public DamageWithUncertaintyVM(ScenarioResults scenarioResults, int impactAreaID)
@@ -33,7 +33,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         #region OxyPlot
         private void InitializePlotModel(Empirical empirical)
         {
-            PlotModel MyPlot = new PlotModel();
             MyPlot.Title = StringConstants.EAD_DISTRIBUTION;
             AddAxes(empirical);
             AddSeries(empirical);

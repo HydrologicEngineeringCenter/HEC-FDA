@@ -18,12 +18,12 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Base
     public abstract class BaseLP3Plotter: ValidatingBaseViewModel
     {
         #region Backing Fields
-        private PlotModel _plotModel;
+        private ViewResolvingPlotModel _plotModel;
         private LogPearson3 _lP3Distriution;
         #endregion
 
         #region Properties
-        public PlotModel PlotModel
+        public ViewResolvingPlotModel PlotModel
         {
             get { return _plotModel; }
             set
@@ -46,7 +46,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Base
         #region OxyPlot
         protected void InitializePlotModel()
         {
-            PlotModel = new PlotModel();
+            PlotModel = new ViewResolvingPlotModel();
             _plotModel.Title = StringConstants.ANALYTICAL_FREQUENCY;
             Legend legend = new Legend();
             legend.LegendPosition = LegendPosition.BottomRight;
