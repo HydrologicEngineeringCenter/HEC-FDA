@@ -18,13 +18,9 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
             {
                 _isFitToFlows = value;
                 NotifyPropertyChanged();
-                NotifyPropertyChanged(nameof(IsParameterEntry));
             }
         }
-        public bool IsParameterEntry
-        {
-            get { return !IsFitToFlows; }
-        }
+
         #endregion
 
         #region Constructors

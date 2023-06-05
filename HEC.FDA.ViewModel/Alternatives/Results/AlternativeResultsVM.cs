@@ -36,7 +36,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
         {
             AlternativeResult = altResult;
             //set the starting state of the combos.
-            _SelectedReport = DAMAGE_WITH_UNCERTAINTY;
+            SelectedReport = DAMAGE_WITH_UNCERTAINTY;
         }
         #endregion
 

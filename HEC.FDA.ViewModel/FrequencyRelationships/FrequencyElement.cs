@@ -19,8 +19,8 @@ public class FrequencyElement : ChildElement
 
     #region Properties  
     public XElement FrequencyEditorXML { get => _frequencyEditorVM.ToXML(); }
-    public bool IsAnalytical { get => _frequencyEditorVM.IsAnalytic; }
-    public bool IsStandard { get => _frequencyEditorVM.AnalyticalVM.IsParameterEntry;}
+    public bool IsAnalytical { get => !_frequencyEditorVM.IsGraphical; }
+    public bool IsStandard { get => !_frequencyEditorVM.AnalyticalVM.IsFitToFlows;}
     public bool GraphicalUsesFlow { get => ((GraphicalVM)(_frequencyEditorVM.GraphicalVM.CurveComponentVM)).UseFlow; }
     public LogPearson3 LPIII
     {
