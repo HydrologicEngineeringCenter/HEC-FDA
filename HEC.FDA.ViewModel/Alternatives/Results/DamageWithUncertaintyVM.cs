@@ -1,8 +1,11 @@
 ﻿using HEC.FDA.Model.metrics;
+using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.Plotting.SciChart2D.DataModel;
 using HEC.Plotting.SciChart2D.ViewModel;
+using OxyPlot.Axes;
+using OxyPlot.Series;
 using Statistics.Distributions;
 using Statistics.Histograms;
 using System.Collections.Generic;
@@ -13,7 +16,9 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
     public class DamageWithUncertaintyVM : BaseViewModel, IAlternativeResult
     {
         private HistogramData2D _data;
-        public SciChart2DChartViewModel ChartViewModel { get; set; } = new SciChart2DChartViewModel("chart title");
+        public ViewResolvingPlotModel MyPlot { get; } = new ViewResolvingPlotModel();
+
+        //public SciChart2DChartViewModel ChartViewModel { get; set; } = new SciChart2DChartViewModel("chart title");
         public bool HistogramVisible { get; set; } = true;
 
         public List<EadRowItem> Rows { get; } = new List<EadRowItem>();
@@ -154,16 +159,75 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                 }
                 else
                 {
-                    (double min, double valueStep, double[] cumulativeRelativeFrequencies) = empirical.ComputeCumulativeFrequenciesForPlotting();
-                    _data = new HistogramData2D(valueStep, min, cumulativeRelativeFrequencies, "Chart", "Cumulative Relative Frequency", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);
-                    HistogramColor.SetHistogramColor(_data);
-                    ChartViewModel.LineData.Add(_data);
+                    InitializePlotModel(empirical);
+                    //(double min, double valueStep, double[] cumulativeRelativeFrequencies) = empirical.ComputeCumulativeFrequenciesForPlotting();
+                    //_data = new HistogramData2D(valueStep, min, cumulativeRelativeFrequencies, "Chart", "Cumulative Relative Frequency", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);
+                    //HistogramColor.SetHistogramColor(_data);
+                    //MyPlot.LineData.Add(_data);
                 }
             }
             else
             {
                 HistogramVisible = false;
             }
+        }
+
+        private void InitializePlotModel(Empirical empirical)
+        {
+            MyPlot.Title = StringConstants.EAD_DISTRIBUTION;
+            AddAxes(empirical);
+            AddSeries(empirical);
+        }
+
+        private void AddSeries(Empirical empirical)
+        {
+            var lineSeries = new LineSeries()
+            {
+                DataFieldX = nameof(NormalDataPoint.ZScore),
+                DataFieldY = nameof(NormalDataPoint.Value),
+                TrackerFormatString = "X: {Probability:0.####}, Y: {Value:F2}",
+                Title = StringConstants.EAD_DISTRIBUTION,
+            };
+            var points = new NormalDataPoint[empirical.CumulativeProbabilities.Length];
+            for (int i = 0; i < points.Length; i++)
+            {
+                double exceedenceProbability = 1 - empirical.CumulativeProbabilities[i];
+                double zScore = Normal.StandardNormalInverseCDF(exceedenceProbability);
+                points[i] = new NormalDataPoint(exceedenceProbability, zScore, empirical.ObservationValues[i]);
+            }
+            lineSeries.ItemsSource = points;
+            MyPlot.Series.Add(lineSeries);
+            MyPlot.InvalidatePlot(true);
+        }
+        private void AddAxes(Empirical empirical)
+        {
+            LinearAxis x = new LinearAxis()
+            {
+                Position = AxisPosition.Bottom,
+                Title = StringConstants.EXCEEDANCE_PROBABILITY,
+                LabelFormatter = _probabilityFormatter,
+                Maximum = 3.719, //probability of .9999
+                Minimum = -3.719, //probability of .0001
+                StartPosition = 1,
+                EndPosition = 0
+            };
+            LinearAxis y = new LinearAxis()
+            {
+                Position = AxisPosition.Left,
+                Title = StringConstants.EXPECTED_ANNUAL_DAMAGE,
+                MinorTickSize = 0,
+                Unit = "$",
+
+            };
+            MyPlot.Axes.Add(x);
+            MyPlot.Axes.Add(y);
+        }
+        private static string _probabilityFormatter(double d)
+        {
+            Normal standardNormal = new Normal(0, 1);
+            double value = standardNormal.CDF(d);
+            string stringval = value.ToString("0.0000");
+            return stringval;
         }
 
         private void LoadData(AlternativeResults scenarioResults, DamageMeasureYear damageMeasureYear)
@@ -222,10 +286,10 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             return yValues;
         }
 
-        public void PlotHistogram()
-        {
-            ChartViewModel.LineData.Set(new List<SciLineData>() { _data });
-        }
+        //public void PlotHistogram()
+        //{
+        //    ChartViewModel.LineData.Set(new List<SciLineData>() { _data });
+        //}
 
     }
 }
