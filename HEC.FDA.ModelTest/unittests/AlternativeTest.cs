@@ -89,7 +89,7 @@ namespace HEC.FDA.ModelTest.unittests
             Scenario futureScenario = new Scenario(impactAreaListFutureYear);
             ScenarioResults futureScenarioResults = futureScenario.Compute(meanRandomProvider, convergenceCriteria);
 
-            AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(meanRandomProvider, discountRate, poa, alternativeID, 
+            AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, alternativeID, 
                 baseScenarioResults, futureScenarioResults,baseYear, futureYear, new CancellationToken());
             double tolerance = 0.01;
 
@@ -192,7 +192,7 @@ namespace HEC.FDA.ModelTest.unittests
             ScenarioResults futureScenarioResults = futureScenario.Compute(meanRandomProvider, convergenceCriteria);
 
 
-            AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(meanRandomProvider, discountRate, poa, alternativeID, 
+            AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, alternativeID, 
                 baseScenarioResults, futureScenarioResults, baseYear, futureYear, new CancellationToken());
             List<string> damCats = alternativeResults.GetDamageCategories();
             List<string> expectedList = new List<string>() { "residential", "commercial" };

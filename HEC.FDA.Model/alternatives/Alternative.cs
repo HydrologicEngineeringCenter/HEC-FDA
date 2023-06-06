@@ -44,7 +44,7 @@ namespace HEC.FDA.Model.alternatives
         /// <param name="computedResultsFutureYear"<>/param> Previously computed Scenario results for the future year. Optionally, leave null and run scenario compute. 
         /// <returns></returns>
         /// 
-        public AlternativeResults AnnualizationCompute(IProvideRandomNumbers randomProvider, double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear,
+        public AlternativeResults AnnualizationCompute(double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear,
             ScenarioResults computedResultsFutureYear,int baseYear, int futureYear, CancellationToken cancellationToken)
         {
             List<int> analysisYears = new List<int>() { baseYear, futureYear };
