@@ -3,47 +3,35 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.Model.metrics;
+using System.Windows;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {
     public class ThresholdsVM : BaseViewModel
     {
         private ThresholdRowItem _selectedRow;
-
+        public bool WasCanceled { get; set; } = true;
         public ObservableCollection<ThresholdRowItem> Rows { get; } = new ObservableCollection<ThresholdRowItem>();
-
+        public bool IsThresholdsValid { get; set; } = false;
         public ThresholdRowItem SelectedRow
         {
             get { return _selectedRow; }
             set { _selectedRow = value; NotifyPropertyChanged(); }
         }
 
-        public ThresholdsVM()
-        {
-        }
- 
-        public void AddRows(List<ThresholdRowItem> rows)
+        public ThresholdsVM(List<ThresholdRowItem> rows)
         {
             foreach (ThresholdRowItem row in rows)
             {
                 Rows.Add(row);
             }
+
         }
+ 
         public void AddRow()
         {
             Rows.Add(new ThresholdRowItem(getNextIdInteger(), ThresholdEnum.DefaultExteriorStage, 0));
             SelectedRow = Rows[Rows.Count - 1];
-        }
-
-        public void Copy()
-        {
-            int selectedIndex = Rows.IndexOf(SelectedRow);
-            if (selectedIndex > -1)
-            {
-                ThresholdRowItem newRI = new ThresholdRowItem(getNextIdInteger(), SelectedRow.ThresholdType.Metric, SelectedRow.ThresholdValue);
-                Rows.Add(newRI);
-                SelectedRow = newRI;
-            }
         }
 
         private int getNextIdInteger()
@@ -83,12 +71,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             }
         }
 
-        public List<ThresholdRowItem> GetThresholds()
-        {
-            return Rows.ToList();
-        }
-
-        public FdaValidationResult IsValid()
+        public FdaValidationResult ValidateThresholds()
         {
             FdaValidationResult result = new FdaValidationResult();
             foreach(ThresholdRowItem ri in Rows)
@@ -110,6 +93,20 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         {
             List<ThresholdRowItem> selections = Rows.Where(row => row.ThresholdType.Metric == rowItem.ThresholdType.Metric && row.ThresholdValue == rowItem.ThresholdValue).ToList();
             return selections.Count() == 1;    
+        }
+
+        public void OkClicked()
+        {
+            FdaValidationResult result = ValidateThresholds();
+            if (result.IsValid)
+            {
+                IsThresholdsValid = true;
+            }
+            else
+            {
+                IsThresholdsValid = false;
+                MessageBox.Show(result.ErrorMessage.ToString(), "Invalid Thresholds", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

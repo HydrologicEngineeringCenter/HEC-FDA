@@ -21,42 +21,33 @@
 
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal">
-            <Button Name="Add_btn" Content="Add" Width="80" Margin="3" Click="Add_btn_Click" />
-            <Button Name="Copy_btn" Content="Copy" Width="80" Margin="3" Click="Copy_btn_Click"/>
-            <Button Name="Remove_btn" Content="Remove" Width="80" Margin="3" Click="Remove_btn_Click" />
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5">
+            <Button Name="Add_btn" Content="Add" Width="80"  Click="Add_btn_Click" />
+            <Button Name="Remove_btn" Content="Remove" Width="80" Margin="5,0,0,0" Click="Remove_btn_Click" />
         </StackPanel>
 
-        <ListView Grid.Row="1" x:Name="lst" Height="300" Margin="5" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}" 
-                   SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" HorizontalAlignment="Stretch"  >
-            <ListView.View>
-                <GridView AllowsColumnReorder="False">
-                    <GridView.ColumnHeaderContainerStyle>
-                        <Style BasedOn="{StaticResource {x:Type GridViewColumnHeader}}" TargetType="{x:Type GridViewColumnHeader}">
-                            <Setter Property="IsHitTestVisible" Value="False"/>
-                        </Style>
-                    </GridView.ColumnHeaderContainerStyle>
-                    <GridViewColumn Header="Threshold ID" Width="100" DisplayMemberBinding="{Binding ID}" />
-
-                    <GridViewColumn Header="Threshold Type" Width="150">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <ComboBox ItemsSource="{Binding ThresholdTypes}" SelectedItem="{Binding ThresholdType}" DisplayMemberPath="DisplayName" Width="135" HorizontalAlignment="Stretch"/>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                        
-                    </GridViewColumn>
-                    <GridViewColumn Header="Threshold Value" Width="150">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <Utilities:NullableDoubleTextBox DoubleValue="{Binding ThresholdValue, Mode=TwoWay}" Width="135"/>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                </GridView>
-            </ListView.View>
-        </ListView>
-
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Rows}" Width="500" AutoGenerateColumns="False" HorizontalAlignment="Left"
+                  VerticalAlignment="Top"  IsReadOnly="False" CanUserResizeColumns="True" CanUserReorderColumns="False"
+                  CanUserSortColumns="false" Margin="5,0,5,5" SelectionUnit="FullRow" SelectedItem="{Binding Path=SelectedRow}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding ID}" Width="100" IsReadOnly="True">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Threshold ID" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding ThresholdType.DisplayName}" Width="*" IsReadOnly="True">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Threshold Type" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding ThresholdValue}" Width="*">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Stage Value" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        
         <Button Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="OK" Width="40" Height="22" Click="ok_btn_Click" Margin="5"/>
 
     </Grid>

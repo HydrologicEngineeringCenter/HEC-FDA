@@ -23,14 +23,6 @@ namespace HEC.FDA.View.ImpactAreaScenario.Editor
             }
         }
 
-        private void Copy_btn_Click(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is ThresholdsVM vm)
-            {
-                vm.Copy();
-            }
-        }
-
         private void Remove_btn_Click(object sender, RoutedEventArgs e)
         {
             if (DataContext is ThresholdsVM vm)
@@ -43,15 +35,13 @@ namespace HEC.FDA.View.ImpactAreaScenario.Editor
         {
             if (DataContext is ThresholdsVM vm)
             {
-                FdaValidationResult result = vm.IsValid();
-                if (result.IsValid)
+                vm.OkClicked();
+
+                if (vm.IsThresholdsValid)
                 {
                     var myWindow = Window.GetWindow(this);
                     myWindow.Close();
-                }
-                else
-                {
-                    MessageBox.Show(result.ErrorMessage.ToString(), "Duplicate Rows", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    vm.WasCanceled = false;
                 }
             }
         }

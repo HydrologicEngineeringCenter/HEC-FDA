@@ -1,19 +1,24 @@
 ﻿using HEC.CS.Collections;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
 
 namespace HEC.FDA.ViewModel.Alternatives
 {
     public class CreateNewAlternativeVM : BaseEditorVM
-    {
-        public CustomObservableCollection<AlternativeRowItem> Rows { get; } = new CustomObservableCollection<AlternativeRowItem>();
-        
+    {        
+        public CustomObservableCollection<IASElement> Scenarios { get; } = new CustomObservableCollection<IASElement>();
+        public IASElement SelectedBaseScenario { get; set; }
+        public IASElement SelectedFutureScenario { get; set; }
+        public int BaseYear { get; set; } = DateTime.Now.Year;
+        public int FutureYear { get; set; } = DateTime.Now.Year;
+
+
         #region Constructors
         /// <summary>
         /// Create new ctor
@@ -21,7 +26,7 @@ namespace HEC.FDA.ViewModel.Alternatives
         /// <param name="actionManager"></param>
         public CreateNewAlternativeVM( EditorActionManager actionManager) : base(actionManager)
         {
-            Rows.AddRange(CreateRowsForIASElementsInStudy());
+            Scenarios.AddRange(StudyCache.GetChildElementsOfType<IASElement>());
             ListenToIASEvents();
         }
 
@@ -31,9 +36,13 @@ namespace HEC.FDA.ViewModel.Alternatives
         /// <param name="elem"></param>
         public CreateNewAlternativeVM(AlternativeElement elem, EditorActionManager actionManager) :base(elem, actionManager)
         {
+            Scenarios.AddRange(StudyCache.GetChildElementsOfType<IASElement>());
             Name = elem.Name;
             Description = elem.Description;
-            SelectSavedRows(elem.IASElementSets);
+            SelectedBaseScenario = elem.BaseScenario.GetElement();
+            SelectedFutureScenario = elem.FutureScenario.GetElement();
+            BaseYear = elem.BaseScenario.Year;
+            FutureYear = elem.FutureScenario.Year;
             ListenToIASEvents();
         }
 
@@ -48,12 +57,12 @@ namespace HEC.FDA.ViewModel.Alternatives
 
         private void IASAdded(object sender, ElementAddedEventArgs e)
         {
-            Rows.Add(new AlternativeRowItem((IASElement)e.Element));
+            Scenarios.Add((IASElement)e.Element);
         }
 
         private void IASRemoved(object sender, ElementAddedEventArgs e)
         {
-            Rows.Remove(Rows.Where(row => row.ID == e.Element.ID).Single());
+            Scenarios.Remove(Scenarios.Where(row => row.ID == e.Element.ID).Single());
         }
 
         private void IASUpdated(object sender, ElementUpdatedEventArgs e)
@@ -62,123 +71,77 @@ namespace HEC.FDA.ViewModel.Alternatives
             int idToUpdate = newElement.ID;
 
             //find the row with this id and update the row's values;
-            AlternativeRowItem foundRow = Rows.Where(row => row.ID == idToUpdate).SingleOrDefault();
+            IASElement foundRow = Scenarios.Where(row => row.ID == idToUpdate).SingleOrDefault();
             if(foundRow != null)
             {
-                foundRow.Year = newElement.AnalysisYear;
-                //name has to be set after the year for the display name to get updated properly.
                 foundRow.Name = newElement.Name;
             }   
         }
 
-        private void SelectSavedRows(List<int> savedIASIDs)
+        private FdaValidationResult ValidateYears()
         {
-            //if an id that was saved no longer exists then i will ignore that id when populating the rows. The alternative will
-            //still point to the missing id until the user saves. If a new id exists that wasn't saved then i will make a row for it.
-            List<AlternativeRowItem> currentIASRowsInStudy = CreateRowsForIASElementsInStudy();
-            foreach(int id in savedIASIDs)
+            FdaValidationResult result = new FdaValidationResult();
+            if(BaseYear<1900 || BaseYear > 3000)
             {
-                foreach(AlternativeRowItem row in currentIASRowsInStudy)
-                {
-                    if(row.ID == id)
-                    {
-                        row.IsSelected = true;
-                    }
-                }
+                result.AddErrorMessage("A base year is required and must be greater than 1900 and less than 3000.");
             }
-            Rows.AddRange( currentIASRowsInStudy);
+            if (FutureYear < 1900 || FutureYear > 3000)
+            {
+                result.AddErrorMessage("A future year is required and must be greater than 1900 and less than 3000.");
+            }
+            if(BaseYear > FutureYear || BaseYear == FutureYear)
+            {
+                result.AddErrorMessage("The base year must be before the future year.");
+            }
+            return result;
         }
 
-        private List<AlternativeRowItem> CreateRowsForIASElementsInStudy()
+        private FdaValidationResult ValidateScenarioSelections()
         {
-            List<IASElement> elems = StudyCache.GetChildElementsOfType<IASElement>();
-
-            List<AlternativeRowItem> rows = new List<AlternativeRowItem>();
-            foreach (IASElement elem in elems)
+            FdaValidationResult vr = new FdaValidationResult();
+            if(SelectedBaseScenario == null)
             {
-                AlternativeRowItem condWrapper = new AlternativeRowItem(elem);
-                rows.Add(condWrapper);
+                vr.AddErrorMessage("Base scenario is required.");
             }
-            return rows;
+            if (SelectedFutureScenario == null)
+            {
+                vr.AddErrorMessage("Future scenario is required.");
+            }
+            if (SelectedBaseScenario == SelectedFutureScenario)
+            {
+                vr.AddErrorMessage("Base scenario must be different than future scenario.");
+            }
+            return vr;
+        }
+
+        private FdaValidationResult ValidateAlternative()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            vr.AddErrorMessage(ValidateYears().ErrorMessage);
+            vr.AddErrorMessage(ValidateScenarioSelections().ErrorMessage);
+            return vr;
         }
 
         public override void Save()
         {
-            List<AlternativeRowItem> selectedRows = GetSelectedRows();
-            FdaValidationResult vr = IsValid(selectedRows);
+            FdaValidationResult vr = ValidateAlternative();
             if (vr.IsValid)
             {
-                if (selectedRows[0].Year == selectedRows[1].Year)
-                {
-                    var Result = MessageBox.Show("Two scenarios with different analysis years must be selected to calculate average annual equivalent damage." + Environment.NewLine +
-                        Environment.NewLine + "Do you want to continue saving?", "Same Analysis Years", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                    if (Result == MessageBoxResult.No)
-                    {
-                        //don't save.
-                        return;
-                    }
-                }
-
                 int id = PersistenceFactory.GetElementManager<AlternativeElement>().GetNextAvailableId();
                 if (!IsCreatingNewElement)
                 {
                     id = OriginalElement.ID;
                 }
-                AlternativeElement elemToSave = new AlternativeElement(Name, Description, DateTime.Now.ToString("G"), GetSelectedIASSets(), id);
+                AlternativeScenario baseScenario = new AlternativeScenario(SelectedBaseScenario.ID, BaseYear);
+                AlternativeScenario futureScenario = new AlternativeScenario(SelectedBaseScenario.ID, FutureYear);
+                AlternativeElement elemToSave = new AlternativeElement(Name, Description, DateTime.Now.ToString("G"), baseScenario, futureScenario, id);
                 Save(elemToSave);
             }
             else
             {
-                MessageBox.Show(vr.ErrorMessage.ToString(), "Cannot Save", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                MessageBox.Show(vr.ErrorMessage.ToString(), "Cannot Save", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-        }
-
-        private FdaValidationResult IsValid(List<AlternativeRowItem> selectedRows)
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-            //There has to be two and only two selected impact areas.
-            if(selectedRows.Count != 2)
-            {
-                vr.AddErrorMessage("Two impact area scenarios are required to create an alternative.");
-            }
-
-            return vr;
-        }
-
-        /// <summary>
-        /// Gets the IAS element id's for the selected rows.
-        /// </summary>
-        /// <returns></returns>
-        private List<int> GetSelectedIASSets()
-        {
-            List<int> selectedSets = new List<int>();
-            foreach (AlternativeRowItem row in Rows)
-            {
-                if (row.IsSelected)
-                {
-                    selectedSets.Add(row.ID);
-                }
-            }
-            return selectedSets;
-        }
-
-        /// <summary>
-        /// Gets the rows that the user has selected.
-        /// </summary>
-        /// <returns></returns>
-        private List<AlternativeRowItem> GetSelectedRows()
-        {
-            List<AlternativeRowItem> selectedRows = new List<AlternativeRowItem>();
-            foreach(AlternativeRowItem row in Rows)
-            {
-                if(row.IsSelected)
-                {
-                    selectedRows.Add(row);
-                }
-            }
-            return selectedRows;
-        }
+        }       
 
     }
 }

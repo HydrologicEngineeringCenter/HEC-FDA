@@ -18,7 +18,7 @@ namespace HEC.FDA.ViewModel.Compute
         public ComputeScenarioVM(IASElement elem, Action<IASElement, ScenarioResults> callback):base()
         {
             List<SpecificIAS> iasElems = elem.SpecificIASElements;
-            int analysisYear = elem.AnalysisYear;
+            string analysisYear = elem.AnalysisYear;
             ProgressLabel = StringConstants.SCENARIO_PROGRESS_LABEL;
             _TotalSims = iasElems.Count;
             NumberCompleted = _IterationsCompleted + "/" + _TotalSims;
@@ -33,7 +33,7 @@ namespace HEC.FDA.ViewModel.Compute
 
                 RegisterProgressAndMessages(sims);
 
-                Scenario scenario = new Scenario(analysisYear, sims);
+                Scenario scenario = new Scenario( sims);
 
                 CancellationTokenSource _CancellationToken = new CancellationTokenSource();
                 ComputeScenario(elem, scenario, callback, _CancellationToken.Token);

@@ -29,7 +29,7 @@ namespace HEC.FDA.ViewModel.Results
                 List<ImpactAreaScenarioSimulation> sims = ComputeScenarioVM.CreateSimulations(elem.SpecificIASElements);
                 ElemToSims.Add(elem, sims);
                 RegisterProgressAndMessages(sims);
-                Scenarios.Add(elem, new Scenario(elem.AnalysisYear, sims));
+                Scenarios.Add(elem, new Scenario( sims));
                 ProgressControls.Add(new ScenarioProgressVM(elem, sims));
             }
         }

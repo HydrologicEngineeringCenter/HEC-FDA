@@ -206,11 +206,12 @@ namespace HEC.FDA.ModelTest.integrationtests
             List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
             impactAreaScenarioSimulations.Add(simulation);
 
-            Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
+            Scenario scenario = new Scenario(impactAreaScenarioSimulations);
             ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
-            Scenario scenario2 = new Scenario(futureYear, impactAreaScenarioSimulations);
+            Scenario scenario2 = new Scenario(impactAreaScenarioSimulations);
             ScenarioResults scenarioResults2 = scenario2.Compute(randomProvider, convergenceCriteria);
-            AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(.025, 50, 1, scenarioResults, scenarioResults2, new CancellationToken());
+            AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(.025, 50, 1, scenarioResults, 
+                scenarioResults2, baseYear, futureYear, new CancellationToken());
             Empirical empiricalEADDistribution = alternativeResults.GetBaseYearEADDistribution(impactAreaID1, commercialDamageCategory);
 
             //Act
@@ -259,12 +260,11 @@ namespace HEC.FDA.ModelTest.integrationtests
                 .WithFlowStage(stageDischarge)
                 .WithStageDamages(stageDamageList)
                 .Build();
-            List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>
-            {
-                simulation,
-                simulation2
-            };
-            Scenario scenario = new Scenario(baseYear, impactAreaScenarioSimulations);
+
+            List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
+            impactAreaScenarioSimulations.Add(simulation);
+            impactAreaScenarioSimulations.Add(simulation2);
+            Scenario scenario = new Scenario(impactAreaScenarioSimulations);
             ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
 
             //Act

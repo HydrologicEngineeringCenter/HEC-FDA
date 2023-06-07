@@ -67,7 +67,7 @@ namespace HEC.FDA.ModelTest.unittests
             IList<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
             impactAreaScenarioSimulations.Add(simulation1);
             impactAreaScenarioSimulations.Add(simulation2);
-            Scenario scenario = new Scenario(year, impactAreaScenarioSimulations);
+            Scenario scenario = new Scenario( impactAreaScenarioSimulations);
             XElement element = scenario.WriteToXML();
             Scenario scenarioFromXML = Scenario.ReadFromXML(element);
             bool scenariosAreEqual = scenario.Equals(scenarioFromXML);
@@ -116,7 +116,7 @@ namespace HEC.FDA.ModelTest.unittests
             IList<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
             impactAreaScenarioSimulations.Add(simulation1);
             impactAreaScenarioSimulations.Add(simulation2);
-            Scenario scenario = new Scenario(year, impactAreaScenarioSimulations);
+            Scenario scenario = new Scenario( impactAreaScenarioSimulations);
 
             MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             ScenarioResults scenarioResults = scenario.Compute(meanRandomProvider, convergenceCriteria);

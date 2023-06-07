@@ -11,6 +11,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <Utilities:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <Utilities:BoolToValidationImageConverter x:Key="BoolToValidationImageConverter" />
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -28,41 +29,40 @@
         <Grid x:Name="FirstRowGrid" Grid.Row="0" Margin="0,5,5,0">
 
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="140"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="110"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
+
             <Label Grid.Row="0" Grid.Column="0" Content="Name:" HorizontalAlignment="Right" Margin="0,0,7,0"/>
             <Label Grid.Row="0" Grid.Column="0" Content="*" Foreground="Red" HorizontalAlignment="Right" />
             <TextBox Grid.Row="0" Grid.Column="1"  HorizontalAlignment="Stretch" Text="{Binding Name, ValidatesOnDataErrors=True}" />
             <Label Grid.Row="0" Grid.Column="2" Content="Description:" HorizontalAlignment="Right" />
             <Controls:TextBoxDescription Grid.Row="0" Grid.Column="3" Text="{Binding Description}" />
-            <Label Grid.Row="0" Grid.Column="4" Content="Year:" HorizontalAlignment="Right" Margin="0,0,7,0" />
-            <Label Grid.Row="0" Grid.Column="4" Content="*" Foreground="Red" HorizontalAlignment="Right" />
+            <Label Grid.Row="0" Grid.Column="4" Content="Year(s):" HorizontalAlignment="Right"  />
             <Utilities:YearField Grid.Row="0" Grid.Column="5"/>
+            
+            <Label  Grid.Column="6" Content="{x:Static utilVM:StringConstants.STAGE_DAMAGE_LABEL}" HorizontalAlignment="Right" Margin="0,0,7,0"/>
+            <Label Grid.Row="0" Grid.Column="6" Content="*" Foreground="Red" HorizontalAlignment="Right" />
+            <ComboBox  Grid.Column="7"  HorizontalAlignment="Stretch" ItemsSource="{Binding StageDamageElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedStageDamageElement}" />
         </Grid>
 
-        <Grid x:Name="SecondRowGrid" Grid.Row="1" Margin="0,5,5,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="140"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="100"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="110"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Label  Grid.Column="0" Content="Impact Area:" HorizontalAlignment="Right" />
-            <ComboBox  Grid.Column="1"  HorizontalAlignment="Stretch" ItemsSource="{Binding ImpactAreas}" DisplayMemberPath="Name"  SelectedItem="{Binding SelectedImpactArea}" IsEnabled="{Binding HasImpactArea}" />
-
-            <Label  Grid.Column="2" Content="{x:Static utilVM:StringConstants.STAGE_DAMAGE_LABEL}" HorizontalAlignment="Right" Margin="0,0,7,0"/>
-            <Label Grid.Row="0" Grid.Column="2" Content="*" Foreground="Red" HorizontalAlignment="Right" />
-            <ComboBox  Grid.Column="3"  HorizontalAlignment="Stretch" ItemsSource="{Binding StageDamageElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedStageDamageElement}" />
-
-        </Grid>
-        <local:SpecificIASControl DataContext="{Binding SelectedEditorVM}" Grid.Row="2" />
+        <TabControl Grid.Row="2" Margin="5" ItemsSource="{Binding ImpactAreaTabs}" SelectedIndex="0">
+            <TabControl.ItemTemplate>
+                <!-- this is the header template-->
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" ToolTip="{Binding IsSufficientForComputeTooltip}">
+                        <TextBlock Text="{Binding CurrentImpactArea.Name}" />
+                        <Image x:Name="icon" Source="{Binding IsSufficientForCompute,Converter={StaticResource BoolToValidationImageConverter}}"  />
+                    </StackPanel>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+        </TabControl>
         
         <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
             <Utilities:SaveCloseControl VerticalAlignment="Bottom"/>

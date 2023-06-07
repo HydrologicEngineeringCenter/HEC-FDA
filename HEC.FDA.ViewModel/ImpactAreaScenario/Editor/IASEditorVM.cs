@@ -18,8 +18,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
     {
         #region Fields
         private List<ImpactAreaRowItem> _ImpactAreaNames = new List<ImpactAreaRowItem>(); 
-        private ImpactAreaRowItem _SelectedImpactArea;
-        private Dictionary<ImpactAreaRowItem, SpecificIASEditorVM> _ImpactAreaEditorDictionary = new Dictionary<ImpactAreaRowItem, SpecificIASEditorVM>();
         private SpecificIASEditorVM _SelectedEditorVM;
         private bool _HasImpactArea = true;
         private ChildElementComboItem _SelectedStageDamageElement;
@@ -27,6 +25,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         #endregion
 
         #region Properties
+        public List<SpecificIASEditorVM> ImpactAreaTabs { get; } = new List<SpecificIASEditorVM>();
         public ChildElementComboItem SelectedStageDamageElement
         {
             get { return _SelectedStageDamageElement; }
@@ -40,18 +39,14 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             get { return _HasImpactArea; }
             set { _HasImpactArea = value; NotifyPropertyChanged(); }
         }
-        public int? Year { get; set; } = DateTime.Now.Year;
+        public string Year { get; set; } = DateTime.Now.Year.ToString();
         
         public List<ImpactAreaRowItem> ImpactAreas
         {
             get { return _ImpactAreaNames; }
             set { _ImpactAreaNames = value; NotifyPropertyChanged(); }
         }
-        public ImpactAreaRowItem SelectedImpactArea
-        {
-            get { return _SelectedImpactArea; }
-            set { _SelectedImpactArea = value; SelectedImpactAreaChanged(); NotifyPropertyChanged(); }
-        }
+
         public SpecificIASEditorVM SelectedEditorVM
         {
             get { return _SelectedEditorVM; }
@@ -124,10 +119,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                     ImpactAreas.Add(row);
                     SpecificIASEditorVM specificIASEditorVM = new SpecificIASEditorVM(row, GetSelectedStageDamage);
                     specificIASEditorVM.RequestNavigation += Navigate;
-                    _ImpactAreaEditorDictionary.Add(row, specificIASEditorVM);
+                    ImpactAreaTabs.Add(specificIASEditorVM);
                     RegisterChildViewModel(specificIASEditorVM);
                 }
-                SelectedImpactArea = ImpactAreas[0];
             }
         }
 
@@ -145,18 +139,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 impactAreaRows = impactAreaElements[0].ImpactAreaRows;
             }
             return impactAreaRows;
-        }
-        
-        /// <summary>
-        /// The user has changed the selected impact area in the combobox. We swap out the selected view model
-        /// and the view will adjust based on binding.
-        /// </summary>
-        private void SelectedImpactAreaChanged()
-        {
-            if(_ImpactAreaEditorDictionary.ContainsKey(SelectedImpactArea))
-            {
-                SelectedEditorVM = _ImpactAreaEditorDictionary[SelectedImpactArea];
-            }
         }
 
         /// <summary>
@@ -187,41 +169,49 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 {
                     SpecificIASEditorVM specificIASEditorVM = new SpecificIASEditorVM(foundElement, row, GetSelectedStageDamage);
                     specificIASEditorVM.RequestNavigation += Navigate;
-                    _ImpactAreaEditorDictionary.Add(row, specificIASEditorVM);
+                    ImpactAreaTabs.Add(specificIASEditorVM);
                     RegisterChildViewModel(specificIASEditorVM);
                 }
                 else
                 {
                     SpecificIASEditorVM specificIASEditorVM = new SpecificIASEditorVM(row, GetSelectedStageDamage);
                     specificIASEditorVM.RequestNavigation += Navigate;
-                    _ImpactAreaEditorDictionary.Add(row, specificIASEditorVM);
+                    ImpactAreaTabs.Add(specificIASEditorVM);
                     RegisterChildViewModel(specificIASEditorVM);
                 }
             }
-            //There should always be an impact area.
-            SelectedImpactArea = ImpactAreas[0];
         }
 
-        #region validation
-        private FdaValidationResult IsYearValid()
+        private void NotifyUserOfImpactAreasInError()
         {
             FdaValidationResult vr = new FdaValidationResult();
-            if (Year == null || Year < 1900 || Year > 3000)
-            {
-                vr.AddErrorMessage( "A year is required and must be greater than 1900 and less than 3000");
-            }
-            return vr;
-        }
 
-        #endregion
+            foreach (SpecificIASEditorVM vm in ImpactAreaTabs)
+            {
+                FdaValidationResult result = vm.GetEditorValidationResult();
+                if(!result.IsValid)
+                {
+                    vr.AddErrorMessage(result.ErrorMessage);
+                }
+            }
+
+            if(!vr.IsValid)
+            {
+                MessageBox.Show("Scenario has saved successfully.\n" +
+                    "This scenario will not be able to compute for the following reasons:\n" + 
+                    vr.ErrorMessage.ToString(), "Saved with Errors", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+        }
 
         public override void Save()
         {
+            //we now have no validation. The only thing that we require is a name and the save button will not be enabled if there is no name
+            //so we don't have to check for that here.
+
             //get the list of specific IAS elements.
             List<SpecificIAS> elementsToSave = new List<SpecificIAS>();
-            foreach (KeyValuePair<ImpactAreaRowItem, SpecificIASEditorVM> entry in _ImpactAreaEditorDictionary)
+            foreach (SpecificIASEditorVM vm in ImpactAreaTabs)
             {
-                SpecificIASEditorVM vm = entry.Value;
                 elementsToSave.Add(vm.CreateSpecificIAS());
             }
 
@@ -238,7 +228,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             {
                 stageDamageId = SelectedStageDamageElement.ChildElement.ID;
             }
-            IASElement elemToSave = new IASElement(Name, Description, DateTime.Now.ToString("G"), Year.Value, stageDamageId, elementsToSave, id);
+            IASElement elemToSave = new IASElement(Name, Description, DateTime.Now.ToString("G"), Year, stageDamageId, elementsToSave, id);
 
             if (IsCreatingNewElement)
             {
@@ -256,6 +246,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             HasChanges = false;
             HasSaved = true;
             OriginalElement = elemToSave;
+            NotifyUserOfImpactAreasInError();
         }
 
         public ChildElementComboItem GetSelectedStageDamage()
@@ -285,10 +276,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private void StageDamageSelectionChanged()
         {
-            foreach(KeyValuePair< ImpactAreaRowItem, SpecificIASEditorVM > specificIAS in _ImpactAreaEditorDictionary)
+            foreach(SpecificIASEditorVM specificIAS in ImpactAreaTabs)
             {
-                specificIAS.Value.StageDamageSelectionChanged(_SelectedStageDamageElement);
-
+                specificIAS.StageDamageSelectionChanged(_SelectedStageDamageElement);
+                specificIAS.UpdateSufficientToCompute();
             }
         }
 

@@ -24,7 +24,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         public const string STAGE_DAMAGE_ID = "StageDamageID";
 
         private string _Description = "";
-        private int _AnalysisYear;
+        private string _AnalysisYear;
         private int _StageDamageID;
 
         #endregion
@@ -38,7 +38,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             set { _Description = value; NotifyPropertyChanged(); }
         }
 
-        public int AnalysisYear
+        public string AnalysisYear
         {
             get { return _AnalysisYear; }
             set { _AnalysisYear = value; NotifyPropertyChanged(); }
@@ -55,7 +55,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         #endregion
         #region Constructors
 
-        public IASElement(string name, string description, string creationDate, int year, int stageDamageElementID, List<SpecificIAS> elems, int id) 
+        public IASElement(string name, string description, string creationDate, string year, int stageDamageElementID, List<SpecificIAS> elems, int id) 
             : base(name, creationDate, description, id)
         {
             StageDamageID = stageDamageElementID;
@@ -72,7 +72,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         public IASElement(XElement setElem, int id) : base(setElem,id)
         {
 
-            AnalysisYear = int.Parse(setElem.Attribute(YEAR).Value);
+            AnalysisYear = setElem.Attribute(YEAR).Value;
             StageDamageID = int.Parse(setElem.Attribute(STAGE_DAMAGE_ID).Value);
 
             IEnumerable<XElement> iasElements = setElem.Elements("IAS");

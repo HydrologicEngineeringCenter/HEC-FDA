@@ -26,11 +26,7 @@ namespace HEC.FDA.Model.metrics
         internal ScenarioResults()
         {
             ResultsList = new List<IContainImpactAreaScenarioResults>();
-            int dummyImpactAreaID = 0;
-            ImpactAreaScenarioResults dummyImpactAreaScenarioResults = new(dummyImpactAreaID, true);
-            ResultsList.Add(dummyImpactAreaScenarioResults);
             AnalysisYear = 1900;
-            
         }
         public ScenarioResults(int year)
         {
