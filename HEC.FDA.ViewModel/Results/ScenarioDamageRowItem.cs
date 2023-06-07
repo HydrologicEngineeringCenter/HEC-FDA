@@ -8,7 +8,7 @@ namespace HEC.FDA.ViewModel.Results
     public class ScenarioDamageRowItem
     {
         public string Name { get; set; }
-        public int AnalysisYear { get; set; }
+        public string AnalysisYear { get; set; }
         public double Mean { get; set; }
         public double Q1 { get; set; }
         public double Q2 { get; set; }

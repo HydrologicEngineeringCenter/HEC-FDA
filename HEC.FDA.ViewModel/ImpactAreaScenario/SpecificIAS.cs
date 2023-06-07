@@ -16,7 +16,7 @@ using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario
 {
-    public class SpecificIAS:BaseViewModel
+    public class SpecificIAS : BaseViewModel
     {
         #region Notes
         #endregion
@@ -31,6 +31,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         private const string EXTERIOR_INTERIOR = "ExteriorInterior";
         private const string STAGE_DAMAGE = "StageDamage";
         private const string THRESHOLDS = "Thresholds";
+        private const string SCENARIO_REFLECTS_WITHOUT_PROJ = "ScenarioReflectsWithoutProject";
+        private const string DEFAULT_STAGE = "DefaultStage";
+
 
         #endregion
         #region Properties
@@ -73,23 +76,28 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         public int StageDamageID { get; set; }
 
         public List<ThresholdRowItem> Thresholds { get; } = new List<ThresholdRowItem>();
+
+        public bool ScenarioReflectsWithoutProj {get;set;}
+        public double DefaultStage { get; set; }
         #endregion
         #region Constructors
 
-/// <summary>
-/// This is a specific IAS element. The IAS element set will hold a list of these.
-/// </summary>
-/// <param name="impactAreaID"></param>
-/// <param name="flowFreqID"></param>
-/// <param name="inflowOutflowID"></param>
-/// <param name="ratingID"></param>
-/// <param name="extIntID"></param>
-/// <param name="leveeFailureID"></param>
-/// <param name="stageDamageID"></param>
-/// <param name="thresholds"></param>
+        /// <summary>
+        /// This is a specific IAS element. The IAS element set will hold a list of these.
+        /// </summary>
+        /// <param name="impactAreaID"></param>
+        /// <param name="flowFreqID"></param>
+        /// <param name="inflowOutflowID"></param>
+        /// <param name="ratingID"></param>
+        /// <param name="extIntID"></param>
+        /// <param name="leveeFailureID"></param>
+        /// <param name="stageDamageID"></param>
+        /// <param name="thresholds"></param>
         public SpecificIAS(int impactAreaID, int flowFreqID, int inflowOutflowID, int ratingID, int extIntID, 
-            int leveeFailureID, int stageDamageID, List<ThresholdRowItem> thresholds) : base()
+            int leveeFailureID, int stageDamageID, List<ThresholdRowItem> thresholds, bool scenarioReflectsWithoutProj, double defaultStage) : base()
         {
+            DefaultStage = defaultStage;
+            ScenarioReflectsWithoutProj = scenarioReflectsWithoutProj;
             ImpactAreaID = impactAreaID;
             FlowFreqID = flowFreqID;
             InflowOutflowID = inflowOutflowID;
@@ -115,6 +123,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             ExtIntStageID = int.Parse(iasElem.Element(EXTERIOR_INTERIOR).Attribute(ID).Value);
             StageDamageID = int.Parse(iasElem.Element(STAGE_DAMAGE).Attribute(ID).Value);
 
+            //check if new elements exist before reading
+            if (iasElem.Elements(SCENARIO_REFLECTS_WITHOUT_PROJ).Any())
+            {
+                ScenarioReflectsWithoutProj = Convert.ToBoolean(iasElem.Element(SCENARIO_REFLECTS_WITHOUT_PROJ).Attribute("value").Value);
+                DefaultStage = double.Parse(iasElem.Element(DEFAULT_STAGE).Attribute("value").Value);
+            }
             Thresholds.AddRange( ReadThresholdsXML(iasElem.Element(THRESHOLDS)));
         }
 
@@ -265,9 +279,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
             foreach (ThresholdRowItem row in Thresholds)
             {
-                XElement rowElement = new XElement("Row");
-                rowElement.SetAttributeValue("Type", row.ThresholdType.Metric);
-                rowElement.SetAttributeValue("Value", row.ThresholdValue);
+                XElement rowElement = row.ToXML();
                 functionsElem.Add(rowElement);
             }
 
@@ -303,6 +315,14 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             stageDamageElem.SetAttributeValue(ID, StageDamageID);
             iasElement.Add(stageDamageElem);
 
+            XElement scenarioReflectsWithoutProjElem = new XElement(SCENARIO_REFLECTS_WITHOUT_PROJ);
+            scenarioReflectsWithoutProjElem.SetAttributeValue("value", ScenarioReflectsWithoutProj);
+            iasElement.Add(scenarioReflectsWithoutProjElem);
+
+            XElement defaultStageElem = new XElement(DEFAULT_STAGE);
+            defaultStageElem.SetAttributeValue("value", DefaultStage);
+            iasElement.Add(defaultStageElem);
+
             iasElement.Add(WriteThresholdsToXML());
 
             return iasElement;
@@ -316,45 +336,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             foreach (XElement rowElem in rows)
             {
                 i++;
-                string thresholdType = rowElem.Attribute("Type").Value;
-                ThresholdType metricEnum = ConvertStringToMetricEnum(thresholdType);
-                double thresholdValue = Double.Parse(rowElem.Attribute("Value").Value);
-                thresholdRows.Add(new ThresholdRowItem(i, metricEnum.Metric, thresholdValue));
+                thresholdRows.Add(new ThresholdRowItem(rowElem, i));
             }
             return thresholdRows;
-        }
-
-        private ThresholdType ConvertStringToMetricEnum(string metric)
-        {
-            //TODO: there are a lot of cases here that are old - is this for backward compatibility? 
-            //TODO: I think these cases will need to be updated to reflect the new types
-            switch (metric.ToUpper())
-            {
-                case "NOTSET":
-                    {
-                        return new ThresholdType( ThresholdEnum.NotSupported, "Not Set");
-                    }
-                case "EXTERIORSTAGEAEP":
-                case "EXTERIORSTAGE":
-                    {
-                        return new ThresholdType(ThresholdEnum.DefaultExteriorStage, "Default Exterior Stage");
-                    }
-                case "INTERIORSTAGEAEP":
-                case "INTERIORSTAGE":
-                    {
-                        return new ThresholdType(ThresholdEnum.DefaultExteriorStage, "Default Interior Stage");
-                    }
-                case "DAMAGEAEP":
-                case "DAMAGES":
-                case "DAMAGE":
-                    {
-                        return new ThresholdType(ThresholdEnum.DefaultExteriorStage, "Default Interior Stage");
-                    }
-                default:
-                    {
-                        throw new ArgumentOutOfRangeException("Could not convert string: " + metric + " to an IMetricEnum.");
-                    }
-            }
         }
 
     }

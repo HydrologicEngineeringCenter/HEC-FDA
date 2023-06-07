@@ -12,7 +12,7 @@ namespace HEC.FDA.ViewModel.Results
     public class ScenarioDamCatRowItem
     {
         public string Name { get; set; }
-        public int AnalysisYear { get; set; }
+        public string AnalysisYear { get; set; }
         public Dictionary<string, double> DamCatMap = new Dictionary<string, double>();
 
         public ScenarioDamCatRowItem(IASElement scenario)

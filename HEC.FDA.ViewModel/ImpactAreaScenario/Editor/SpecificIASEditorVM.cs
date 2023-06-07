@@ -23,11 +23,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {
     public class SpecificIASEditorVM : BaseViewModel
     {
-        private ThresholdsVM _additionalThresholdsVM;
         private StageDamageCurve _selectedDamageCurve;
         private string _selectedAssetCategory;
         private ChildElementComboItem _selectedFrequencyRelationship;
         private bool _ratingRequired;
+        private bool _DefaultStageRequired = false;
         private bool _showWarnings;
         private ChildElementComboItem _selectedInflowOutflowElement;
         private ChildElementComboItem _selectedRatingCurveElement;
@@ -38,7 +38,33 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private PairedData _DamageFrequencyCurve = null;
 
         private Func<ChildElementComboItem> _SelectedStageDamage;
+        private bool _IsSufficientForCompute;
+        private string _IsSufficientForComputeTooltip;
+        private bool _ScenarioReflectsWithoutProjCondition = true;
+        private double _DefaultStage;
 
+        public double DefaultStage
+        {
+            get { return _DefaultStage; }
+            set { _DefaultStage = value; NotifyPropertyChanged(); }
+        }
+        public bool ScenarioReflectsWithoutProjCondition
+        {
+            get { return _ScenarioReflectsWithoutProjCondition; }
+            set { _ScenarioReflectsWithoutProjCondition = value; UpdateDefaultStageRequired(); NotifyPropertyChanged(); }
+        }
+
+        public string IsSufficientForComputeTooltip
+        {
+            get { return _IsSufficientForComputeTooltip; }
+            set { _IsSufficientForComputeTooltip = value; NotifyPropertyChanged(); }
+        }
+
+        public bool IsSufficientForCompute
+        {
+            get { return _IsSufficientForCompute; }
+            set { _IsSufficientForCompute = value; NotifyPropertyChanged(); }
+        }
         public ImpactAreaRowItem CurrentImpactArea { get; }
         public double EAD
         {
@@ -63,10 +89,17 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             set { _ratingRequired = value; NotifyPropertyChanged(); }
         }
 
+        public bool DefaultStageRequired
+        {
+            get { return _DefaultStageRequired; }
+            set { _DefaultStageRequired = value; NotifyPropertyChanged(); }
+        }
+
+
         public int Year { get; set; } = DateTime.Now.Year;
         public CustomObservableCollection<StageDamageCurve> DamageCategories { get; } = new CustomObservableCollection<StageDamageCurve>();
         public CustomObservableCollection<string> AssetCategories { get; } = new CustomObservableCollection<string>();
-        public List<ThresholdRowItem> Thresholds { get; } = new List<ThresholdRowItem>();
+        public List<ThresholdRowItem> Thresholds { get; set; } = new List<ThresholdRowItem>();
         public CustomObservableCollection<ChildElementComboItem> FrequencyElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
         public CustomObservableCollection<ChildElementComboItem> InflowOutflowElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
         public CustomObservableCollection<ChildElementComboItem> RatingCurveElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
@@ -87,27 +120,27 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         public ChildElementComboItem SelectedFrequencyElement
         {
             get { return _selectedFrequencyRelationship; }
-            set { _selectedFrequencyRelationship = value; UpdateRatingRequired(); }
+            set { _selectedFrequencyRelationship = value; UpdateRatingRequired(); UpdateSufficientToCompute(); }
         }
         public ChildElementComboItem SelectedInflowOutflowElement
         {
             get { return _selectedInflowOutflowElement; }
-            set { _selectedInflowOutflowElement = value; NotifyPropertyChanged(); }
+            set { _selectedInflowOutflowElement = value; NotifyPropertyChanged(); UpdateSufficientToCompute(); }
         }
         public ChildElementComboItem SelectedRatingCurveElement
         {
             get { return _selectedRatingCurveElement; }
-            set { _selectedRatingCurveElement = value; NotifyPropertyChanged(); }
+            set { _selectedRatingCurveElement = value; NotifyPropertyChanged(); UpdateSufficientToCompute(); }
         }
         public ChildElementComboItem SelectedLeveeFeatureElement
         {
             get { return _selectedLeveeElement; }
-            set { _selectedLeveeElement = value; NotifyPropertyChanged(); }
+            set { _selectedLeveeElement = value; NotifyPropertyChanged(); UpdateDefaultStageRequired(); UpdateSufficientToCompute(); }
         }
         public ChildElementComboItem SelectedExteriorInteriorElement
         {
             get { return _selectedExteriorInteriorElement; }
-            set { _selectedExteriorInteriorElement = value; NotifyPropertyChanged(); }
+            set { _selectedExteriorInteriorElement = value; NotifyPropertyChanged(); UpdateSufficientToCompute(); }
         }
 
         /// <summary>
@@ -120,23 +153,21 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         /// </summary>
         public SpecificIASEditorVM(ImpactAreaRowItem rowItem, Func<ChildElementComboItem> getSelectedStageDamage)
         {
-            Initialize();
-            CurrentImpactArea = rowItem;
             _SelectedStageDamage = getSelectedStageDamage;
+            CurrentImpactArea = rowItem;
+            Initialize();
         }
 
         public SpecificIASEditorVM(SpecificIAS elem, ImpactAreaRowItem rowItem, Func<ChildElementComboItem> getSelectedStageDamage)
         {
-            Initialize();
-            CurrentImpactArea = rowItem;
-            FillForm(elem);
             _SelectedStageDamage = getSelectedStageDamage;
+            CurrentImpactArea = rowItem;
+            Initialize();
+            FillForm(elem);
         }
 
         private void Initialize()
         {
-            _additionalThresholdsVM = new ThresholdsVM();
-
             LoadElements();
 
             StudyCache.FlowFrequencyAdded += AddFlowFreqElement;
@@ -249,7 +280,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
     
         private void FillForm(SpecificIAS elem)
         {
-            FillThresholds(elem);
+            ScenarioReflectsWithoutProjCondition = elem.ScenarioReflectsWithoutProj;
+            DefaultStage = elem.DefaultStage;
+            Thresholds.AddRange(elem.Thresholds);
             //all the available elements have been loaded into this editor. We now want to select
             //the correct element for each dropdown. 
             //all the available elements have been loaded into this editor. We now want to select
@@ -284,12 +317,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 SelectedExteriorInteriorElement = ExteriorInteriorElements[0];
             }
             
-        }
-
-        private void FillThresholds(SpecificIAS elem)
-        {
-            _additionalThresholdsVM.AddRows(elem.Thresholds);
-            Thresholds.AddRange(elem.Thresholds);
         }
 
         private void LoadElements()
@@ -409,7 +436,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private FdaValidationResult GetFrequencyRelationshipValidationResult()
         {
             FdaValidationResult vr = new FdaValidationResult();
-            if(SelectedFrequencyElement.ChildElement == null)
+            if(SelectedFrequencyElement == null || SelectedFrequencyElement.ChildElement == null)
             {
                 vr.AddErrorMessage("A Frequency Relationship is required.");
             }
@@ -419,7 +446,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private FdaValidationResult GetRatingCurveValidationResult()
         {
             FdaValidationResult vr = new FdaValidationResult();
-            if (_ratingRequired && SelectedRatingCurveElement.ChildElement == null)
+            if (_ratingRequired && (SelectedRatingCurveElement == null || SelectedRatingCurveElement.ChildElement == null))
             {
                 vr.AddErrorMessage("A stage-discharge function is required if the frequency function reflects discharge");
             }
@@ -429,7 +456,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         {
             ChildElementComboItem selectedStageDamage = _SelectedStageDamage();
             FdaValidationResult vr = new FdaValidationResult();
-            if (selectedStageDamage.ChildElement == null)
+            if (selectedStageDamage == null || selectedStageDamage.ChildElement == null)
             {
                 vr.AddErrorMessage("A Stage Damage is required. ");
             }
@@ -447,6 +474,20 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         }
 
         #endregion
+
+        public void UpdateSufficientToCompute()
+        {
+            FdaValidationResult result = GetPlotValidationResults();
+            IsSufficientForCompute = result.IsValid;
+            if(IsSufficientForCompute)
+            {
+                IsSufficientForComputeTooltip = "Can compute";
+            }
+            else
+            {
+                IsSufficientForComputeTooltip = result.ErrorMessage;
+            }
+        }
 
         public FdaValidationResult GetPlotValidationResults()
         {
@@ -482,9 +523,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             }
             return vr;
         }
-
         
-
         private void PreviewCompute()
         {
             ChildElementComboItem selectedStageDamage = _SelectedStageDamage();
@@ -662,11 +701,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             int latStructID = GetComboElementID(SelectedLeveeFeatureElement);
             int stageDamID = GetComboElementID(selectedStageDamage);
 
-            List<ThresholdRowItem> thresholdRowItems = _additionalThresholdsVM.GetThresholds();
+            List<ThresholdRowItem> thresholdRowItems = Thresholds;
 
             SpecificIAS elementToSave = new SpecificIAS(CurrentImpactArea.ID,
             flowFreqID, inflowOutID,
-            ratingID, extIntID, latStructID, stageDamID, thresholdRowItems);
+            ratingID, extIntID, latStructID, stageDamID, thresholdRowItems, ScenarioReflectsWithoutProjCondition, DefaultStage);
             return elementToSave;
         }
 
@@ -675,13 +714,38 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             return (comboItem != null && comboItem.ChildElement != null) ? comboItem.ChildElement.ID : -1;
         }
 
+        private List<ThresholdRowItem> CloneCurrentThresholdsList()
+        {
+            List<ThresholdRowItem> currentThresholds = new List<ThresholdRowItem>();
+            int i = 1;
+            foreach (ThresholdRowItem thresh in Thresholds)
+            {
+                currentThresholds.Add(new ThresholdRowItem(thresh.ToXML(), i));
+                i++;
+            }
+            return currentThresholds;
+        }
+
         public void AddThresholds()
         {
             string header = "System Performance Thresholds";
-            DynamicTabVM tab = new DynamicTabVM(header, _additionalThresholdsVM, "additionalThresholds",false,false);
+ 
+            ThresholdsVM vm = new ThresholdsVM(CloneCurrentThresholdsList());
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "additionalThresholds",false,false);
             Navigate(tab, true, true);
-            Thresholds.Clear();
-            Thresholds.AddRange(_additionalThresholdsVM.GetThresholds());
+            if(vm.IsThresholdsValid && vm.WasCanceled == false)
+            {
+                Thresholds = vm.Rows.ToList();
+            }
+        }
+
+        public bool HasLeveeSelected()
+        {
+            return SelectedLeveeFeatureElement != null && SelectedLeveeFeatureElement.ChildElement != null;
+        }
+        public void UpdateDefaultStageRequired()
+        {
+            DefaultStageRequired = !ScenarioReflectsWithoutProjCondition && !HasLeveeSelected();
         }
     }
 }

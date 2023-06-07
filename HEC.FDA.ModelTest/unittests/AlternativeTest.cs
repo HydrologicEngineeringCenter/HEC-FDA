@@ -84,13 +84,13 @@ namespace HEC.FDA.ModelTest.unittests
             IList<ImpactAreaScenarioSimulation> impactAreaListFutureYear = new List<ImpactAreaScenarioSimulation>();
             impactAreaListFutureYear.Add(sFuture);
 
-            Scenario baseScenario = new Scenario(baseYear, impactAreaListBaseYear);
+            Scenario baseScenario = new Scenario( impactAreaListBaseYear);
             ScenarioResults baseScenarioResults = baseScenario.Compute(meanRandomProvider, convergenceCriteria);
-            Scenario futureScenario = new Scenario(futureYear, impactAreaListFutureYear);
+            Scenario futureScenario = new Scenario(impactAreaListFutureYear);
             ScenarioResults futureScenarioResults = futureScenario.Compute(meanRandomProvider, convergenceCriteria);
 
-            AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, alternativeID, baseScenarioResults,
-                futureScenarioResults, new CancellationToken());
+            AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, alternativeID, 
+                baseScenarioResults, futureScenarioResults,baseYear, futureYear, new CancellationToken());
             double tolerance = 0.01;
 
             double actualAAEQExceededWithProb = alternativeResults.AAEQDamageExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damCat, assetCat);
@@ -186,14 +186,14 @@ namespace HEC.FDA.ModelTest.unittests
             IList<ImpactAreaScenarioSimulation> impactAreaListFutureYear = new List<ImpactAreaScenarioSimulation>();
             impactAreaListFutureYear.Add(sFuture);
 
-            Scenario baseScenario = new Scenario(baseYear, impactAreaListBaseYear);
+            Scenario baseScenario = new Scenario(impactAreaListBaseYear);
             ScenarioResults baseScenarioResults = baseScenario.Compute(meanRandomProvider, convergenceCriteria);
-            Scenario futureScenario = new Scenario(futureYear, impactAreaListFutureYear);
+            Scenario futureScenario = new Scenario(impactAreaListFutureYear);
             ScenarioResults futureScenarioResults = futureScenario.Compute(meanRandomProvider, convergenceCriteria);
 
 
-            AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, alternativeID, baseScenarioResults,
-                futureScenarioResults, new CancellationToken());
+            AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, alternativeID, 
+                baseScenarioResults, futureScenarioResults, baseYear, futureYear, new CancellationToken());
             List<string> damCats = alternativeResults.GetDamageCategories();
             List<string> expectedList = new List<string>() { "residential", "commercial" };
             bool testPasses = true;

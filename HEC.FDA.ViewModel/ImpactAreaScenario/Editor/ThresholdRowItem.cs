@@ -1,6 +1,7 @@
 ﻿using HEC.FDA.Model.metrics;
+using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {
@@ -20,22 +21,15 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         public ThresholdRowItem(int id, ThresholdEnum thresholdType, double? value)
         {
             ID = id;
-            LoadThresholdTypes();
-            ThresholdType = ThresholdTypes.FirstOrDefault(tt => tt.Metric == thresholdType);
+            ThresholdType = new ThresholdType(ThresholdEnum.AdditionalExteriorStage, "Additional Exterior Stage");
             ThresholdValue = value;
         }
 
-        private void LoadThresholdTypes()
+        public ThresholdRowItem(XElement elem, int index)
         {
-            ThresholdTypes.Add(new ThresholdType(ThresholdEnum.DefaultExteriorStage, "Default Exterior Stage"));
-            ThresholdTypes.Add(new ThresholdType(ThresholdEnum.TopOfLevee, "Top Elevation of Levee"));
-            ThresholdTypes.Add(new ThresholdType(ThresholdEnum.LeveeSystemResponse, "Levee with System Response"));
-            ThresholdTypes.Add(new ThresholdType(ThresholdEnum.AdditionalExteriorStage, "Additional Exterior Stage"));
-            //TODO: THese are relics. Do we need to keep them for backward compatibilty?
-            ThresholdTypes.Add(new ThresholdType(ThresholdEnum.ExteriorStage, "Exterior Stage"));
-            ThresholdTypes.Add(new ThresholdType(ThresholdEnum.InteriorStage, "Interior Stage"));
-            ThresholdTypes.Add(new ThresholdType(ThresholdEnum.Damage, "Damage"));
-
+            ID = index;
+            ThresholdType = ConvertStringToMetricEnum(elem.Attribute("Type").Value);
+            ThresholdValue = Double.Parse(elem.Attribute("Value").Value);
         }
 
         public Threshold GetThreshold()
@@ -44,5 +38,43 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             return new Threshold(ID, convergenceCriteria, ThresholdType.Metric, ThresholdValue.Value);
         }
 
+        public XElement ToXML()
+        {
+            XElement rowElement = new XElement("Row");
+            rowElement.SetAttributeValue("Type", ThresholdType.Metric);
+            rowElement.SetAttributeValue("Value", ThresholdValue);
+            return rowElement;
+        }
+
+        private ThresholdType ConvertStringToMetricEnum(string metric)
+        {
+            switch (metric)
+            {
+                case nameof(ThresholdEnum.NotSupported):
+                    {
+                        return new ThresholdType(ThresholdEnum.NotSupported, "Not Supported");
+                    }
+                case nameof(ThresholdEnum.DefaultExteriorStage):
+                    {
+                        return new ThresholdType(ThresholdEnum.DefaultExteriorStage, "Default Exterior Stage");
+                    }
+                case nameof(ThresholdEnum.TopOfLevee):
+                    {
+                        return new ThresholdType(ThresholdEnum.TopOfLevee, "Top Of Levee");
+                    }
+                case nameof(ThresholdEnum.LeveeSystemResponse):
+                    {
+                        return new ThresholdType(ThresholdEnum.LeveeSystemResponse, "Levee System Response");
+                    }
+                case nameof(ThresholdEnum.AdditionalExteriorStage):
+                    {
+                        return new ThresholdType(ThresholdEnum.AdditionalExteriorStage, "Additional Exterior Stage");
+                    }
+                default:
+                    {
+                        throw new ArgumentOutOfRangeException("Could not convert string: " + metric + " to an IMetricEnum.");
+                    }
+            }
+        }
     }
 }

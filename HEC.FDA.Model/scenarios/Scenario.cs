@@ -15,9 +15,7 @@ namespace HEC.FDA.Model.scenarios
     public class Scenario : IReportMessage
     {
         #region Fields 
-        private int _year;
         private IList<ImpactAreaScenarioSimulation> _impactAreaSimulations;
-        //probably need getters and setters
         #endregion
         #region Properties 
         public IList<ImpactAreaScenarioSimulation> ImpactAreaSimulations
@@ -28,10 +26,7 @@ namespace HEC.FDA.Model.scenarios
             }
         }
         public event MessageReportedEventHandler MessageReport;
-        public int Year
-        {
-            get { return _year; }
-        }
+
         public IList<ImpactAreaScenarioSimulation> ImpactAreas
         {
             get { return _impactAreaSimulations; }
@@ -40,12 +35,10 @@ namespace HEC.FDA.Model.scenarios
         #region Constructors
         internal Scenario()
         {
-            _year = 0;
             _impactAreaSimulations = new List<ImpactAreaScenarioSimulation>();
         }
-        public Scenario(int year, IList<ImpactAreaScenarioSimulation> impactAreaSimulations)
+        public Scenario( IList<ImpactAreaScenarioSimulation> impactAreaSimulations)
         {
-            _year = year;
             _impactAreaSimulations = impactAreaSimulations;
         }
         #endregion
@@ -58,7 +51,7 @@ namespace HEC.FDA.Model.scenarios
             bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false)
         {
             //probably instantiate a rng to seed each impact area differently
-            ScenarioResults scenarioResults = new ScenarioResults(_year);
+            ScenarioResults scenarioResults = new ScenarioResults();
             foreach (ImpactAreaScenarioSimulation impactArea in _impactAreaSimulations)
             {
                 scenarioResults.AddResults(impactArea.Compute(randomProvider, convergenceCriteria, cancellationToken));
@@ -85,11 +78,6 @@ namespace HEC.FDA.Model.scenarios
         }
         public bool Equals(Scenario scenarioToCompare)
         {
-            bool yearIsSame = _year.Equals(scenarioToCompare._year);
-            if (!yearIsSame)
-            {
-                return false;
-            }
             foreach (ImpactAreaScenarioSimulation impactAreaScenarioSimulation in _impactAreaSimulations)
             {
                 ImpactAreaScenarioSimulation impactAreaScenarioSimulationToCompare = scenarioToCompare.GetImpactAreaScenarioSimulation(impactAreaScenarioSimulation.ImpactAreaID);
@@ -109,21 +97,18 @@ namespace HEC.FDA.Model.scenarios
                 XElement iasElement = impactAreaScenarioSimulation.WriteToXML();
                 mainElement.Add(iasElement);
             }
-            mainElement.SetAttributeValue("Year", _year);
             return mainElement;
         }
 
         public static Scenario ReadFromXML(XElement xElement)
         {
-            string yearString = xElement.Attribute("Year").Value;
-            int year = Convert.ToInt32(yearString);
             IList<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
             foreach (XElement element in xElement.Elements())
             {
                 ImpactAreaScenarioSimulation iasFromXML = ImpactAreaScenarioSimulation.ReadFromXML(element);
                 impactAreaScenarioSimulations.Add(iasFromXML);
             }
-            Scenario scenario = new Scenario(year, impactAreaScenarioSimulations);
+            Scenario scenario = new Scenario( impactAreaScenarioSimulations);
             return scenario;
         }
         #endregion
