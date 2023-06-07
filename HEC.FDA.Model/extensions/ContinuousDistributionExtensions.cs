@@ -26,7 +26,7 @@ namespace HEC.FDA.Model.extensions
             return new PairedData(x, y);
         }
 
-        public static UncertainPairedData BootstrapToUncertainPairedData(this ContinuousDistribution continuousDistribution, IProvideRandomNumbers randomProvider, double[] ExceedanceProbabilities,int realizations = 10 , double histogramBinWidth = 100 )
+        public static UncertainPairedData BootstrapToUncertainPairedData(this ContinuousDistribution continuousDistribution, IProvideRandomNumbers randomProvider, double[] ExceedanceProbabilities, int realizations = 10, double histogramBinWidth = 100)
         {
             Histogram[] ys = new Histogram[ExceedanceProbabilities.Length];
             for (int iterator = 0; iterator < ys.Length; iterator++)
@@ -34,12 +34,12 @@ namespace HEC.FDA.Model.extensions
                 ys[iterator] = new Histogram(histogramBinWidth, new ConvergenceCriteria());
             }
 
-            for(int i=0; i<realizations; i++)
+            for (int i = 0; i < realizations; i++)
             {
-                PairedData pd = continuousDistribution.BootstrapToPairedData( randomProvider, ExceedanceProbabilities);
-                for(int j=0;j<ExceedanceProbabilities.Length;j++)
+                PairedData pd = continuousDistribution.BootstrapToPairedData(randomProvider, ExceedanceProbabilities);
+                for (int j = 0; j < ExceedanceProbabilities.Length; j++)
                 {
-                    ys[j].AddObservationToHistogram(pd.Yvals[j]) ;
+                    ys[j].AddObservationToHistogram(pd.Yvals[j]);
                 }
             }
             return new UncertainPairedData(ExceedanceProbabilities, ys, new CurveMetaData("Exceedance Probs", "Flow Histograms"));

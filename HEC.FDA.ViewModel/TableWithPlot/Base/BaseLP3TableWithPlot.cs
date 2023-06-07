@@ -2,6 +2,7 @@
 using HEC.FDA.Model.extensions;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.TableWithPlot.Data;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.MVVMFramework.ViewModel.Implementations;
 using OxyPlot;
@@ -9,20 +10,18 @@ using OxyPlot.Axes;
 using OxyPlot.Legends;
 using OxyPlot.Series;
 using Statistics.Distributions;
-using System;
-using System.Runtime.CompilerServices;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.TableWithPlot.Base
 {
-    public abstract class BaseLP3Plotter: ValidatingBaseViewModel
+    public abstract class BaseLP3TableWithPlot: ValidatingBaseViewModel
     {
-        #region Backing Fields
-        private PlotModel _plotModel;
-        private LogPearson3 _lP3Distriution;
+        #region Fields
+        public static readonly double[] _ExceedenceProbs = new double[16] { 0.999, 0.99, 0.95, 0.9, 0.8, 0.7, 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.004, 0.002, 0.001 };
         #endregion
 
         #region Properties
+        private PlotModel _plotModel;
         public PlotModel PlotModel
         {
             get { return _plotModel; }
@@ -32,6 +31,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Base
                 NotifyPropertyChanged();
             }
         }
+        private LogPearson3 _lP3Distriution;
         public LogPearson3 LP3Distribution
         {
             get { return _lP3Distriution; }
@@ -41,6 +41,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Base
                 UpdatePlot();
             }
         }
+        public HistogramDataProvider ConfidenceLimitsDataTable{ get; } =  new HistogramDataProvider();
         #endregion
 
         #region OxyPlot
@@ -48,8 +49,10 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Base
         {
             PlotModel = new PlotModel();
             _plotModel.Title = StringConstants.ANALYTICAL_FREQUENCY;
-            Legend legend = new Legend();
-            legend.LegendPosition = LegendPosition.BottomRight;
+            Legend legend = new()
+            {
+                LegendPosition = LegendPosition.BottomRight
+            };
             _plotModel.Legends.Add(legend);
             AddAxes();
             PlotModel.InvalidatePlot(true);
@@ -57,22 +60,24 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Base
         protected void UpdatePlot()
         {
             PlotModel.Series.Clear();
-
             LP3Distribution.Validate();
             if (!LP3Distribution.HasErrors)
             {
-                UncertainPairedData LP3asUPD = LP3Distribution.BootstrapToUncertainPairedData(new RandomProvider(1234), LogPearson3._RequiredExceedanceProbabilitiesForBootstrapping);
+                RandomProvider rp = new (1234);
+                UncertainPairedData LP3asUPD = LP3Distribution.BootstrapToUncertainPairedData(rp, _ExceedenceProbs);
                 AddLineSeriesToPlot(LP3asUPD);
                 AddLineSeriesToPlot(LP3asUPD, 0.95, true);
                 AddLineSeriesToPlot(LP3asUPD, 0.05, true);
+                ConfidenceLimitsDataTable.Data.Clear();
+                ConfidenceLimitsDataTable.UpdateFromUncertainPairedData(LP3asUPD);
             }
-           
             PlotModel.InvalidatePlot(true);
+            NotifyPropertyChanged(nameof(ConfidenceLimitsDataTable));
             NotifyPropertyChanged(nameof(PlotModel));
         }
         private void AddLineSeriesToPlot(UncertainPairedData function, double probability = 0.5, bool isConfidenceLimit = false)
         {
-            LineSeries lineSeries = new LineSeries()
+            LineSeries lineSeries = new()
             {
                 TrackerFormatString = "X: {Probability:0.####}, Y: {4:F2} ",
                 CanTrackerInterpolatePoints = false
@@ -101,7 +106,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Base
             {
                 Position = AxisPosition.Bottom,
                 Title = StringConstants.EXCEEDANCE_PROBABILITY,
-                LabelFormatter = _probabilityFormatter,
+                LabelFormatter = ProbabilityFormatter,
                 Maximum = 3.719, //probability of .9999
                 Minimum = -3.719, //probability of .0001
                 StartPosition = 1,
@@ -117,9 +122,9 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Base
             PlotModel.Axes.Add(x);
             PlotModel.Axes.Add(y);
         }
-        private static string _probabilityFormatter(double d)
+        private static string ProbabilityFormatter(double d)
         {
-            Normal standardNormal = new Normal(0, 1);
+            Normal standardNormal = new(0, 1);
             double value = standardNormal.CDF(d);
             string stringval = value.ToString("0.0000");
             return stringval;
@@ -129,7 +134,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Base
         #region Load and Save
         public XElement ToXML()
         {
-            XElement ele = new XElement(this.GetType().Name);
+            XElement ele = new(this.GetType().Name);
             ele.Add(LP3Distribution.ToXML());
             ele = ToXMLInternal(ele);
             return ele;

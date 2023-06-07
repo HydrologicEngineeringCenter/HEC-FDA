@@ -317,7 +317,7 @@ namespace HEC.FDA.Model.compute
                                 if (_FrequencyDischargeGraphical.CurveMetaData.IsNull)
                                 {
                                     //If threadlocalRandomProvider is medianRandomProvider then we get a quasi-deterministic result
-                                    frequencyDischarge = _FrequencyDischarge.BootstrapToPairedData(threadlocalRandomProvider, _RequiredExceedanceProbabilities);//ordinates defines the number of values in the frequency curve, more would be a better approximation.                                                                                                                  
+                                    frequencyDischarge = _FrequencyDischarge.BootstrapToPairedData(threadlocalRandomProvider, _RequiredExceedanceProbabilities );//ordinates defines the number of values in the frequency curve, more would be a better approximation.                                                                                                                  
                                 }
                                 else
                                 {
