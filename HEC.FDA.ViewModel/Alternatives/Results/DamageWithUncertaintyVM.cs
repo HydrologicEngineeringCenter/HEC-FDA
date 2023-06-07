@@ -3,22 +3,16 @@ using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.Plotting.SciChart2D.DataModel;
-using HEC.Plotting.SciChart2D.ViewModel;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using Statistics.Distributions;
-using Statistics.Histograms;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace HEC.FDA.ViewModel.Alternatives.Results
 {
     public class DamageWithUncertaintyVM : BaseViewModel, IAlternativeResult
     {
-        private HistogramData2D _data;
         public ViewResolvingPlotModel MyPlot { get; } = new ViewResolvingPlotModel();
-
-        //public SciChart2DChartViewModel ChartViewModel { get; set; } = new SciChart2DChartViewModel("chart title");
         public bool HistogramVisible { get; set; } = true;
 
         public List<EadRowItem> Rows { get; } = new List<EadRowItem>();
@@ -27,7 +21,6 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
         public int PeriodOfAnalysis { get; set; }
         public bool RateAndPeriodVisible { get; }
         public string ProbabilityExceedsValueLabel { get; }
-
 
         public DamageWithUncertaintyVM(AlternativeResults results, DamageMeasureYear damageMeasureYear, double discountRate = double.NaN, int periodOfAnalysis = -1)
         {
@@ -58,7 +51,6 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                     Mean = results.MeanAAEQDamage();
                     break;
             }
-
         }
 
         public DamageWithUncertaintyVM( AlternativeComparisonReportResults altCompReport, int altID, DamageMeasureYear damageMeasureYear, double discountRate = double.NaN, int periodOfAnalysis = -1)
@@ -125,8 +117,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                     break;
             }
 
-            CreateHistogramData(empirical);
-
+            CreateHistogramData(empirical, true);
         }
 
         private void LoadHistogramData(AlternativeComparisonReportResults altResults, int altID, DamageMeasureYear damageMeasureYear)
@@ -146,10 +137,10 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                     break;
             }
 
-            CreateHistogramData(empirical);
+            CreateHistogramData(empirical, false);
         }
 
-        private void CreateHistogramData(Empirical empirical)
+        private void CreateHistogramData(Empirical empirical, bool isAlternative)
         {
             if (empirical != null)
             {
@@ -159,11 +150,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                 }
                 else
                 {
-                    InitializePlotModel(empirical);
-                    //(double min, double valueStep, double[] cumulativeRelativeFrequencies) = empirical.ComputeCumulativeFrequenciesForPlotting();
-                    //_data = new HistogramData2D(valueStep, min, cumulativeRelativeFrequencies, "Chart", "Cumulative Relative Frequency", StringConstants.HISTOGRAM_VALUE, StringConstants.HISTOGRAM_FREQUENCY);
-                    //HistogramColor.SetHistogramColor(_data);
-                    //MyPlot.LineData.Add(_data);
+                    InitializePlotModel(empirical, isAlternative);
                 }
             }
             else
@@ -172,9 +159,16 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             }
         }
 
-        private void InitializePlotModel(Empirical empirical)
+        private void InitializePlotModel(Empirical empirical, bool isAlternative)
         {
-            MyPlot.Title = StringConstants.EAD_DISTRIBUTION;
+            if(isAlternative)
+            {
+                MyPlot.Title = StringConstants.AAEQ_DAMAGE_DISTRIBUTION;
+            }
+            else
+            {
+                MyPlot.Title = StringConstants.DAMAGE_REDUCED;
+            }
             AddAxes(empirical);
             AddSeries(empirical);
         }
@@ -217,7 +211,6 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                 Title = StringConstants.EXPECTED_ANNUAL_DAMAGE,
                 MinorTickSize = 0,
                 Unit = "$",
-
             };
             MyPlot.Axes.Add(x);
             MyPlot.Axes.Add(y);
@@ -268,7 +261,6 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             List<double> yValues = new List<double>();
             foreach (double x in xVals)
             {
-
                 switch (damageMeasureYear)
                 {
                     case DamageMeasureYear.Base:
@@ -281,15 +273,9 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                         yValues.Add(scenarioResults.AAEQDamageReducedExceededWithProbabilityQ(x, altID));
                         break;
                 }
-
             }
             return yValues;
         }
-
-        //public void PlotHistogram()
-        //{
-        //    ChartViewModel.LineData.Set(new List<SciLineData>() { _data });
-        //}
 
     }
 }
