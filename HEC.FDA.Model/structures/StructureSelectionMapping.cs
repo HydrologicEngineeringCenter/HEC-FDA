@@ -83,28 +83,29 @@ namespace HEC.FDA.Model.structures
 
             StructureIDCol = selections.Element(STRUCTURE_ID).Attribute(VALUE).Value;
 
-            OccTypeCol = selections.Element(OCCUPANCY_TYPE).Attribute(VALUE).Value;
-            FirstFloorElevCol = selections.Element(FIRST_FLOOR_ELEV).Attribute(VALUE).Value;
-            StructureValueCol = selections.Element(STRUCTURE_VALUE).Attribute(VALUE).Value;
-            FoundationHeightCol = selections.Element(FOUNDATION_HEIGHT).Attribute(VALUE).Value;
-            GroundElevCol = selections.Element(GROUND_ELEV).Attribute(VALUE).Value;
-            ContentValueCol = selections.Element(CONTENT_VALUE).Attribute(VALUE).Value;
-            OtherValueCol = selections.Element(OTHER_VALUE).Attribute(VALUE).Value;
-            VehicleValueCol = selections.Element(VEHICLE_VALUE).Attribute(VALUE).Value;
-            BeginningDamageDepthCol = selections.Element(BEG_DAMAGE_DEPTH).Attribute(VALUE).Value;
-            YearInConstructionCol = selections.Element(YEAR_IN_CONSTRUCTION).Attribute(VALUE).Value;
-            NotesCol = selections.Element(NOTES).Attribute(VALUE).Value;
-            //for backwards compatability, check if it exists
-            XElement descriptionElem = selections.Element(DESCRIPTION);
-            if (descriptionElem != null)
+            OccTypeCol = GetXMLValue(selections, OCCUPANCY_TYPE);
+            FirstFloorElevCol = GetXMLValue(selections, FIRST_FLOOR_ELEV);
+            StructureValueCol = GetXMLValue(selections, STRUCTURE_VALUE);
+            FoundationHeightCol = GetXMLValue(selections, FOUNDATION_HEIGHT);
+            GroundElevCol = GetXMLValue(selections, GROUND_ELEV);
+            ContentValueCol = GetXMLValue(selections, CONTENT_VALUE);
+            OtherValueCol = GetXMLValue(selections, OTHER_VALUE);
+            VehicleValueCol = GetXMLValue(selections, VEHICLE_VALUE);
+            BeginningDamageDepthCol = GetXMLValue(selections, BEG_DAMAGE_DEPTH);
+            YearInConstructionCol = GetXMLValue(selections, YEAR_IN_CONSTRUCTION);
+            NotesCol = GetXMLValue(selections, NOTES);
+            DescriptionCol = GetXMLValue(selections, DESCRIPTION);     
+            NumberOfStructuresCol = GetXMLValue(selections, NUMBER_OF_STRUCTURES); 
+        }
+
+        private string GetXMLValue(XElement parentElem, string elemName)
+        {
+            string xmlValue = string.Empty;
+            if(parentElem.Element(elemName) != null && parentElem.Element(elemName).Attribute(VALUE) != null)
             {
-                DescriptionCol = descriptionElem.Attribute(VALUE).Value;
+                xmlValue = parentElem.Element(elemName).Attribute(VALUE).Value;
             }
-            else
-            {
-                DescriptionCol = "";
-            }
-            NumberOfStructuresCol = selections.Element(NUMBER_OF_STRUCTURES).Attribute(VALUE).Value;
+            return xmlValue;
         }
 
         public XElement ToXML()

@@ -43,7 +43,7 @@ namespace HEC.FDA.ViewModel.Inventory
             get { return _SelectedPath; }
             set { _SelectedPath = value; SelectedPathChanged(); }
         }
-
+        public bool SelectedPathEnabled { get; }
         #endregion
         #region Constructors
         public ImportStructuresFromShapefileVM( EditorActionManager actionManager) :base(actionManager)
@@ -51,6 +51,7 @@ namespace HEC.FDA.ViewModel.Inventory
             _ColumnSelections = new InventoryColumnSelectionsVM();
             CurrentViewIsEnabled = true;
             CurrentView = _ColumnSelections;
+            SelectedPathEnabled = true;
         }
 
         public ImportStructuresFromShapefileVM(ChildElement elem, EditorActionManager actionManager) : base(elem, actionManager)
@@ -61,6 +62,7 @@ namespace HEC.FDA.ViewModel.Inventory
             _OcctypeLinking = new InventoryOcctypeLinkingVM(_SelectedPath, _ColumnSelections.OccupancyTypeRow.SelectedItem, inventoryElement.OcctypeMapping);
             CurrentViewIsEnabled = true;
             CurrentView = _ColumnSelections;
+            SelectedPathEnabled = false;
         }
 
         #endregion
