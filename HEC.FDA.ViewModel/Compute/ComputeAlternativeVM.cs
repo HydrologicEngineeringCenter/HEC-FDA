@@ -46,7 +46,7 @@ namespace HEC.FDA.ViewModel.Compute
             int futureYear = altElem.FutureScenario.Year;
             return Task.Run(() =>
             {
-                AlternativeResults results = alt.AnnualizationCompute(randomProvider, discountRate, periodOfAnalysis, altElem.ID, 
+                AlternativeResults results = alt.AnnualizationCompute(discountRate, periodOfAnalysis, altElem.ID, 
                     firstResults, secondResults,baseYear, futureYear, cancellationToken);
                 callback?.Invoke(results);
             });

@@ -210,7 +210,7 @@ namespace HEC.FDA.ModelTest.integrationtests
             ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
             Scenario scenario2 = new Scenario(impactAreaScenarioSimulations);
             ScenarioResults scenarioResults2 = scenario2.Compute(randomProvider, convergenceCriteria);
-            AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(randomProvider, .025, 50, 1, scenarioResults, 
+            AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(.025, 50, 1, scenarioResults, 
                 scenarioResults2, baseYear, futureYear, new CancellationToken());
             Empirical empiricalEADDistribution = alternativeResults.GetBaseYearEADDistribution(impactAreaID1, commercialDamageCategory);
 
