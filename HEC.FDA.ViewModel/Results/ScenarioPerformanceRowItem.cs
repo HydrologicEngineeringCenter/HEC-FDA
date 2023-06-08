@@ -6,7 +6,7 @@ namespace HEC.FDA.ViewModel.Results
     public class ScenarioPerformanceRowItem
     {
         public string Name { get; set; }
-        public int AnalysisYear { get; set; }
+        public string AnalysisYear { get; set; }
         public string ImpactArea { get; set; }
 
         public string ThresholdType { get; set; }
@@ -33,7 +33,7 @@ namespace HEC.FDA.ViewModel.Results
             ImpactAreaScenarioResults results = scenarioResults.GetResults(iasID);
 
             Name = scenario.Name;
-            AnalysisYear = scenarioResults.AnalysisYear;
+            AnalysisYear = scenario.AnalysisYear;
             ImpactArea = ias.GetSpecificImpactAreaName();
 
             ThresholdType = threshold.ThresholdType.ToString();
