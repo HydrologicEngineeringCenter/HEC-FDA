@@ -193,7 +193,7 @@
         public static readonly string HISTOGRAM_EXCEEDANCE_PROBABILITY = "Exceedance Probability";
         public static readonly string EXPECTED_ANNUAL_DAMAGE = "Expected Annual Damage";
         public static readonly string EAD_DISTRIBUTION = "EAD Distribution";
-        public static readonly string DAMAGE_REDUCED = "Damage Reduced";
+        public static readonly string DAMAGE_REDUCED = "Damage Reduced Distribution";
         public static readonly string AAEQ_DAMAGE_DISTRIBUTION = "AAEQ Damage Distribution";
 
 
