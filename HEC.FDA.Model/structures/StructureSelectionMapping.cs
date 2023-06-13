@@ -98,7 +98,7 @@ namespace HEC.FDA.Model.structures
             NumberOfStructuresCol = GetXMLValue(selections, NUMBER_OF_STRUCTURES); 
         }
 
-        private string GetXMLValue(XElement parentElem, string elemName)
+        private static string GetXMLValue(XElement parentElem, string elemName)
         {
             string xmlValue = string.Empty;
             if(parentElem.Element(elemName) != null && parentElem.Element(elemName).Attribute(VALUE) != null)
