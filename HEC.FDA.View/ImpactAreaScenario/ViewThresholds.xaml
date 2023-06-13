@@ -5,7 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HEC.FDA.View.ImpactAreaScenario"
              xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
-             xmlns:utils="clr-namespace:HEC.FDA.View.Utilities"
+             xmlns:utils="clr-namespace:HEC.FDA.View.Utilities" 
+             xmlns:impactareascenario="clr-namespace:HEC.FDA.ViewModel.ImpactAreaScenario;assembly=HEC.FDA.ViewModel"
+             d:DataContext="{d:DesignInstance Type=impactareascenario:ViewThresholdsVM}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
