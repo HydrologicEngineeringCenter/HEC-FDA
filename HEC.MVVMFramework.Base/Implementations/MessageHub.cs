@@ -56,8 +56,13 @@ namespace HEC.MVVMFramework.Base.Implementations
         public static void Unregister(IReportMessage messanger)
         {
             messanger.MessageReport -= Broadcast;
-            _reporters.Remove(messanger);
-            ReporterRemoved?.Invoke(null, new ReporterRemovedEventArgs(messanger));
+            if (_reporters.Contains(messanger))
+            {
+                _reporters.Remove(messanger);
+                ReporterRemoved?.Invoke(null, new ReporterRemovedEventArgs(messanger));
+            }
+            
+            
         }
         public static void InitalizeListener(int port)
         {
