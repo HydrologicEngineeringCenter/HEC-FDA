@@ -2,7 +2,6 @@
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
 using HEC.FDA.ViewModel.Utilities;
-using HEC.Plotting.SciChart2D.DataModel;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using Statistics.Distributions;
@@ -14,7 +13,6 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
     {
         public ViewResolvingPlotModel MyPlot { get; } = new ViewResolvingPlotModel();
         public bool HistogramVisible { get; set; } = true;
-
         public List<EadRowItem> Rows { get; } = new List<EadRowItem>();
         public double Mean { get; set; }
         public double DiscountRate { get; set; }
@@ -90,9 +88,9 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
         private void LoadAAEQData(AlternativeComparisonReportResults altResults, int altID, DamageMeasureYear damageMeasureYear)
         {
-            List<double> xVals = new List<double>() { .75, .5, .25 };
-            List<string> xValNames = new List<string>() { "First", "Second", "Third" };
-            List<double> yVals = loadYData(xVals, altResults, altID, damageMeasureYear);
+            List<double> xVals = new() { .75, .5, .25 };
+            List<string> xValNames = new() { "First", "Second", "Third" };
+            List<double> yVals = LoadYData(xVals, altResults, altID, damageMeasureYear);
 
             for (int i = 0; i < xValNames.Count; i++)
             {
@@ -169,7 +167,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             {
                 MyPlot.Title = StringConstants.DAMAGE_REDUCED;
             }
-            AddAxes(empirical);
+            AddAxes();
             AddSeries(empirical);
         }
 
@@ -193,19 +191,19 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             MyPlot.Series.Add(lineSeries);
             MyPlot.InvalidatePlot(true);
         }
-        private void AddAxes(Empirical empirical)
+        private void AddAxes()
         {
-            LinearAxis x = new LinearAxis()
+            LinearAxis x = new()
             {
                 Position = AxisPosition.Bottom,
                 Title = StringConstants.EXCEEDANCE_PROBABILITY,
-                LabelFormatter = _probabilityFormatter,
+                LabelFormatter = ProbabilityFormatter,
                 Maximum = 3.719, //probability of .9999
                 Minimum = -3.719, //probability of .0001
                 StartPosition = 1,
                 EndPosition = 0
             };
-            LinearAxis y = new LinearAxis()
+            LinearAxis y = new()
             {
                 Position = AxisPosition.Left,
                 Title = StringConstants.EXPECTED_ANNUAL_DAMAGE,
@@ -215,9 +213,9 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             MyPlot.Axes.Add(x);
             MyPlot.Axes.Add(y);
         }
-        private static string _probabilityFormatter(double d)
+        private static string ProbabilityFormatter(double d)
         {
-            Normal standardNormal = new Normal(0, 1);
+            Normal standardNormal = new(0, 1);
             double value = standardNormal.CDF(d);
             string stringval = value.ToString("0.0000");
             return stringval;
@@ -225,9 +223,9 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
         private void LoadData(AlternativeResults scenarioResults, DamageMeasureYear damageMeasureYear)
         {
-            List<double> xVals = new List<double>() { .75, .5, .25 };
-            List<string> xValNames = new List<string>() { "First", "Second", "Third" };
-            List<double> yVals = loadYData(xVals, scenarioResults, damageMeasureYear);
+            List<double> xVals = new() { .75, .5, .25 };
+            List<string> xValNames = new() { "First", "Second", "Third" };
+            List<double> yVals = LoadYData(xVals, scenarioResults, damageMeasureYear);
 
             for (int i = 0; i < xValNames.Count; i++)
             {
@@ -235,9 +233,9 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             }
         }
 
-        private List<double> loadYData(List<double> xVals, AlternativeResults results, DamageMeasureYear damageMeasureYear)
+        private static List<double> LoadYData(List<double> xVals, AlternativeResults results, DamageMeasureYear damageMeasureYear)
         {
-            List<double> yValues = new List<double>();
+            List<double> yValues = new();
             foreach (double x in xVals)
             {
                 switch (damageMeasureYear)
@@ -256,9 +254,9 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             return yValues;
         }
 
-        private List<double> loadYData(List<double> xVals, AlternativeComparisonReportResults scenarioResults, int altID, DamageMeasureYear damageMeasureYear)
+        private static List<double> LoadYData(List<double> xVals, AlternativeComparisonReportResults scenarioResults, int altID, DamageMeasureYear damageMeasureYear)
         {
-            List<double> yValues = new List<double>();
+            List<double> yValues = new();
             foreach (double x in xVals)
             {
                 switch (damageMeasureYear)
