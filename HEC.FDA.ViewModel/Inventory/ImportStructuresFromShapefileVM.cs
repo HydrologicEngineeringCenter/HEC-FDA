@@ -19,7 +19,7 @@ namespace HEC.FDA.ViewModel.Inventory
         #region Fields
         private string _SelectedPath;
         private BaseViewModel _CurrentView;
-        private InventoryColumnSelectionsVM _ColumnSelections;
+        private readonly InventoryColumnSelectionsVM _ColumnSelections;
         private InventoryOcctypeLinkingVM _OcctypeLinking;
         private bool _CurrentViewIsEnabled;
 
@@ -85,7 +85,7 @@ namespace HEC.FDA.ViewModel.Inventory
 
         private FdaValidationResult ValidateRules()
         {
-            FdaValidationResult vr = new FdaValidationResult();
+            FdaValidationResult vr = new();
             Validate();
             if (HasFatalError)
             {
@@ -96,7 +96,7 @@ namespace HEC.FDA.ViewModel.Inventory
 
         private FdaValidationResult ValidateTerrainFileExists()
         {
-            FdaValidationResult vr = new FdaValidationResult();
+            FdaValidationResult vr = new();
             if (!_ColumnSelections.FirstFloorElevationIsSelected && _ColumnSelections.FromTerrainFileIsSelected)
             {
                 //then the user wants to use the terrain file to get elevations. Validate that the terrain file exists.
@@ -111,7 +111,7 @@ namespace HEC.FDA.ViewModel.Inventory
 
         private FdaValidationResult ValidateDefineSIAttributes()
         {
-            FdaValidationResult vr = new FdaValidationResult();
+            FdaValidationResult vr = new();
             //validate the property rules like "Name".
             FdaValidationResult rulesValid = ValidateRules();
             if (!rulesValid.IsValid)
@@ -141,8 +141,8 @@ namespace HEC.FDA.ViewModel.Inventory
             StructuresMissingDataManager missingDataManager = _ColumnSelections.Validate();
             if (missingDataManager.GetRows().Count > 0)
             {
-                StructureMissingElevationEditorVM vm = new StructureMissingElevationEditorVM(missingDataManager.GetRows(), _ColumnSelections);
-                DynamicTabVM tab = new DynamicTabVM("Missing Data", vm, "missingData",false,false);
+                StructureMissingElevationEditorVM vm = new(missingDataManager.GetRows(), _ColumnSelections);
+                DynamicTabVM tab = new("Missing Data", vm, "missingData",false,false);
                 Navigate(tab);
                 missingValues = true;
             }
@@ -151,10 +151,7 @@ namespace HEC.FDA.ViewModel.Inventory
 
         private void SwitchToOcctypeLinkingVM()
         {
-            if(_OcctypeLinking == null)
-            {
-                _OcctypeLinking = new InventoryOcctypeLinkingVM(_SelectedPath,_ColumnSelections.OccupancyTypeRow.SelectedItem);
-            }
+            _OcctypeLinking ??= new InventoryOcctypeLinkingVM(_SelectedPath,_ColumnSelections.OccupancyTypeRow.SelectedItem);
             //when we switch to the occtype linking vm, we need to check if the user has switched the occtype column name.
             //if it is the same as it was before, then this call won't do anything.
             _OcctypeLinking.UpdateOcctypeColumnSelectionName(_ColumnSelections.OccupancyTypeRow.SelectedItem);
@@ -198,23 +195,13 @@ namespace HEC.FDA.ViewModel.Inventory
             return isValid;
         }
 
-        //private StructureSelectionMapping CreateSelectionMapping(InventoryColumnSelectionsVM selections)
-        //{
-        //    return new StructureSelectionMapping(selections.FirstFloorElevationIsSelected, selections.FromTerrainFileIsSelected,
-        //        selections._StructureIDRow.SelectedItem, selections._OccupancyTypeRow.SelectedItem, selections._FirstFloorElevRow.SelectedItem,
-        //        selections._StructureValueRow.SelectedItem, selections._FoundationHeightRow.SelectedItem, selections._GroundElevRow.SelectedItem,
-        //        selections._ContentValueRow.SelectedItem, selections._OtherValueRow.SelectedItem, selections._VehicleValueRow.SelectedItem,
-        //        selections._BegDamDepthRow.SelectedItem, selections._YearInConstructionRow.SelectedItem, selections._NotesRow.SelectedItem,
-        //        selections._DescriptionRow.SelectedItem, selections._NumberOfStructuresRow.SelectedItem);
-        //}
-
         public override void Save()
         {
             //the validation before saving is done in the NextButtonClicked() method.
             int id = GetElementID<InventoryElement>();
             StructureSelectionMapping mapping = _ColumnSelections.CreateSelectionMapping();
             Dictionary<string, OcctypeReference> occtypeMappings = _OcctypeLinking.CreateOcctypeMapping();
-            InventoryElement elementToSave = new InventoryElement(Name, Description, mapping, occtypeMappings, false, id);
+            InventoryElement elementToSave = new(Name, Description, mapping, occtypeMappings, false, id);
 
             if (IsCreatingNewElement)
             {
