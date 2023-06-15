@@ -6,8 +6,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 {
     public class ViewThresholdsVM : BaseViewModel
     {
-        private int _IASElementID;
-        public ObservableCollection<ViewThresholdRowItem> Rows { get; set; } = new ObservableCollection<ViewThresholdRowItem>();
+        private readonly int _IASElementID;
+        public ObservableCollection<ViewThresholdRowItem> Rows { get; set; } = new();
         public ViewThresholdsVM(IASElement elem)
         {
             _IASElementID = elem.ID;
