@@ -14,8 +14,6 @@ namespace HEC.FDA.ViewModel.Study
         private const string CREATED_BY = "CreatedBy";
         private const string CREATED_DATE = "CreatedDate";
         private const string STUDY_NOTES = "StudyNotes";
-        private const string MONETARY_UNIT = "MonetaryUnit";
-        private const string UNIT_SYSTEM = "UnitSystem";
         private const string SURVEYED_YEAR = "SurveyedYear";
         private const string UPDATED_YEAR = "UpdatedYear";
         private const string UPDATED_PRICE_INDEX = "UpdatedPriceIndex";
@@ -41,10 +39,6 @@ namespace HEC.FDA.ViewModel.Study
         public string CreatedDate { get; }
 
         public string StudyNotes { get; }
-
-        public MonetaryUnitsEnum MonetaryUnit { get; }
-
-        public UnitsSystemEnum UnitSystem { get; }
 
         public int SurveyedYear { get; }
 
@@ -72,8 +66,6 @@ namespace HEC.FDA.ViewModel.Study
             CreatedBy = Environment.UserName;
             CreatedDate = DateTime.Now.ToShortDateString();
             StudyNotes = "";
-            MonetaryUnit = MonetaryUnitsEnum.Millions;
-            UnitSystem = UnitsSystemEnum.English;
             SurveyedYear = DateTime.Now.Year - 1;
             UpdatedYear = DateTime.Now.Year;
             UpdatedPriceIndex = 1.0;
@@ -83,7 +75,7 @@ namespace HEC.FDA.ViewModel.Study
         }
 
         public StudyPropertiesElement(string name, string path, string description, string createdBy, string createdDate, string studyNotes,
-            MonetaryUnitsEnum monetaryUnits, UnitsSystemEnum unitSystem, int surveyedYear, int updatedYear, double priceIndex, double discountRate, 
+            int surveyedYear, int updatedYear, double priceIndex, double discountRate, 
             int periodOfAnalysis, ConvergenceCriteriaVM convCriteria, int id) 
             : base(name, createdDate, description, id)
         {
@@ -93,8 +85,6 @@ namespace HEC.FDA.ViewModel.Study
             CreatedBy = createdBy;
             CreatedDate = createdDate;
             StudyNotes = studyNotes;
-            MonetaryUnit = monetaryUnits;
-            UnitSystem = unitSystem;
             SurveyedYear = surveyedYear;
             UpdatedYear = updatedYear;
             UpdatedPriceIndex = priceIndex;
@@ -111,8 +101,6 @@ namespace HEC.FDA.ViewModel.Study
             CreatedBy = elem.CreatedBy;
             CreatedDate = elem.CreatedDate;
             StudyNotes = elem.StudyNotes;
-            MonetaryUnit = elem.MonetaryUnit;
-            UnitSystem = elem.UnitSystem;
             SurveyedYear = elem.SurveyedYear;
             UpdatedYear = elem.UpdatedYear;
             UpdatedPriceIndex = elem.UpdatedPriceIndex;
@@ -141,26 +129,6 @@ namespace HEC.FDA.ViewModel.Study
                 ConvergenceCriteria = new ConvergenceCriteriaVM();
             }
 
-            MonetaryUnitsEnum monetaryUnitsEnum = MonetaryUnitsEnum.Dollars;
-            if (!Enum.TryParse(studyProperty.Attribute(MONETARY_UNIT).Value, out monetaryUnitsEnum))
-            {
-                MonetaryUnit = MonetaryUnitsEnum.Dollars;
-            }
-            else
-            {
-                MonetaryUnit = monetaryUnitsEnum;
-            }
-
-            UnitsSystemEnum unitSystemEnum = UnitsSystemEnum.English;
-            if (!Enum.TryParse(studyProperty.Attribute(UNIT_SYSTEM).Value, out unitSystemEnum))
-            {
-                UnitSystem = UnitsSystemEnum.English;
-            }
-            else
-            {
-                UnitSystem = unitSystemEnum;
-            }
-
             SurveyedYear = Convert.ToInt32(studyProperty.Attribute(SURVEYED_YEAR).Value);
             UpdatedYear = Convert.ToInt32(studyProperty.Attribute(UPDATED_YEAR).Value);
             UpdatedPriceIndex = Convert.ToDouble(studyProperty.Attribute(UPDATED_PRICE_INDEX).Value);
@@ -177,8 +145,6 @@ namespace HEC.FDA.ViewModel.Study
             studyPropsElem.SetAttributeValue(CREATED_BY, CreatedBy);
             studyPropsElem.SetAttributeValue(CREATED_DATE, CreatedDate);
             studyPropsElem.SetAttributeValue(STUDY_NOTES, StudyNotes);
-            studyPropsElem.SetAttributeValue(MONETARY_UNIT, MonetaryUnit);
-            studyPropsElem.SetAttributeValue(UNIT_SYSTEM, UnitSystem);
             studyPropsElem.SetAttributeValue(SURVEYED_YEAR, SurveyedYear);
             studyPropsElem.SetAttributeValue(UPDATED_YEAR, UpdatedYear);
             studyPropsElem.SetAttributeValue(UPDATED_PRICE_INDEX, UpdatedPriceIndex);

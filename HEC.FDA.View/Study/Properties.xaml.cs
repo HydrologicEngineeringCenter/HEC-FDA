@@ -11,10 +11,5 @@ namespace HEC.FDA.View.Study
         {
             InitializeComponent();
         }
-
-        private void ConvergenceCriteria_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-            //todo: get the vm and call something
-        }
     }
 }
