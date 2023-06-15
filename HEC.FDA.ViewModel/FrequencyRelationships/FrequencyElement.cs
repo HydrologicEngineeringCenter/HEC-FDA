@@ -94,8 +94,10 @@ public class FrequencyElement : ChildElement
         string FIT_TO_FLOWS = "FitToFlows";
         string FLOWS = "Flows";
 
-        FrequencyEditorVM vm = new();
-        vm.IsGraphical = !(bool)flowFreqElem.Attribute(IS_ANALYTICAL);
+        FrequencyEditorVM vm = new()
+        {
+            IsGraphical = !(bool)flowFreqElem.Attribute(IS_ANALYTICAL)
+        };
 
         XElement analyticalElem = flowFreqElem.Element(ANALYTICAL_DATA);
         vm.AnalyticalVM.IsFitToFlows = !(bool)analyticalElem.Attribute(USES_MOMENTS);
@@ -142,7 +144,7 @@ public class FrequencyElement : ChildElement
 
     public override XElement ToXML()
     {
-        XElement flowFrequencyElement = new XElement(GetType().Name);
+        XElement flowFrequencyElement = new(GetType().Name);
         flowFrequencyElement.Add(CreateHeaderElement());
         flowFrequencyElement.Add(_frequencyEditorVM.ToXML());
         return flowFrequencyElement;

@@ -260,6 +260,7 @@ namespace HEC.FDA.ModelTest.integrationtests
                 .WithFlowStage(stageDischarge)
                 .WithStageDamages(stageDamageList)
                 .Build();
+
             List<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
             impactAreaScenarioSimulations.Add(simulation);
             impactAreaScenarioSimulations.Add(simulation2);
