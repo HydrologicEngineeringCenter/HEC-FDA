@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Sockets;
 using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Base.Events;
@@ -58,8 +60,17 @@ namespace HEC.MVVMFramework.Base.Implementations
             messanger.MessageReport -= Broadcast;
             if (_reporters.Contains(messanger))
             {
-                _reporters.Remove(messanger);
-                ReporterRemoved?.Invoke(null, new ReporterRemovedEventArgs(messanger));
+                try
+                {
+                    _reporters.Remove(messanger);
+                    ReporterRemoved?.Invoke(null, new ReporterRemovedEventArgs(messanger));
+                }
+                catch(Exception e)
+                {
+                    //don't do anything, because objects are registering and unregistering many times in their lifecycle,
+                    //we're running into a race condition I think where we get an index was out of range exception because that list is changing sizes so rapidly. 
+                    Debug.WriteLine(e.Message + e.StackTrace);
+                }
             }
             
             
