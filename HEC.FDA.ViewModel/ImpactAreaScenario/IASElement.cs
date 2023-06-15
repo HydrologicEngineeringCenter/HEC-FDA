@@ -23,7 +23,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         public const string LAST_EDIT_DATE = "LastEditDate";
         public const string STAGE_DAMAGE_ID = "StageDamageID";
 
-        private string _Description = "";
         private string _AnalysisYear;
         private int _StageDamageID;
 
@@ -32,11 +31,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         #region Properties
         public bool UpdateComputeDate { get; set; }
         public ScenarioResults Results{get; set;}
-        public string Description
-        {
-            get { return _Description; }
-            set { _Description = value; NotifyPropertyChanged(); }
-        }
 
         public string AnalysisYear
         {
@@ -94,17 +88,23 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         private void AddActions()
         {
             AddDefaultActions(EditIASSet, StringConstants.EDIT_SCENARIO_MENU);
-            NamedAction compute = new NamedAction();
-            compute.Header = StringConstants.COMPUTE_SCENARIO_MENU;
-            compute.Action = ComputeScenario;
+            NamedAction compute = new()
+            {
+                Header = StringConstants.COMPUTE_SCENARIO_MENU,
+                Action = ComputeScenario
+            };
 
-            NamedAction viewResults = new NamedAction();
-            viewResults.Header = StringConstants.VIEW_RESULTS_MENU;
-            viewResults.Action = ViewResults;
+            NamedAction viewResults = new()
+            {
+                Header = StringConstants.VIEW_RESULTS_MENU,
+                Action = ViewResults
+            };
 
-            NamedAction viewThresholds = new NamedAction();
-            viewThresholds.Header = StringConstants.VIEW_THRESHOLDS_MENU;
-            viewThresholds.Action = ViewThresholds;
+            NamedAction viewThresholds = new()
+            {
+                Header = StringConstants.VIEW_THRESHOLDS_MENU,
+                Action = ViewThresholds
+            };
 
             Actions.Insert(1, viewThresholds);
             Actions.Insert(1, viewResults);
@@ -120,17 +120,17 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         {
             EditorActionManager actionManager = new EditorActionManager()
                .WithSiblingRules(this);
-            IASEditorVM vm = new IASEditorVM(this, actionManager);
+            IASEditorVM vm = new(this, actionManager);
             vm.RequestNavigation += Navigate;
 
             string header = "Edit Impact Area Scenario";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "EditIAS" + Name);
+            DynamicTabVM tab = new(header, vm, "EditIAS" + Name);
             Navigate(tab, false, false);
         }
 
-        private List<ImpactAreaRowItem> GetStudyImpactAreaRowItems()
+        private static List<ImpactAreaRowItem> GetStudyImpactAreaRowItems()
         {
-            List<ImpactAreaRowItem> impactAreaRows = new List<ImpactAreaRowItem>();
+            List<ImpactAreaRowItem> impactAreaRows = new();
             List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
             if (impactAreaElements.Count > 0)
             {
@@ -141,7 +141,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
         public List<SpecificIASResultVM> GetResults()
         {
-            List<SpecificIASResultVM> results = new List<SpecificIASResultVM>();
+            List<SpecificIASResultVM> results = new();
             if (Results != null)
             {
                 List<string> damCats = Results.GetDamageCategories();
@@ -152,7 +152,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                     string impactAreaName = GetImpactAreaNameFromID(impactAreaRows, impactAreaID);
                     if (impactAreaName != null)
                     {
-                        SpecificIASResultVM result = new SpecificIASResultVM(impactAreaName, impactAreaID, Results, damCats);
+                        SpecificIASResultVM result = new(impactAreaName, impactAreaID, Results, damCats);
                         results.Add(result);
                     }
                 }
@@ -160,7 +160,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             return results;
         }
 
-        private string GetImpactAreaNameFromID(List<ImpactAreaRowItem> rows, int id)
+        private static string GetImpactAreaNameFromID(List<ImpactAreaRowItem> rows, int id)
         {
             string rowName = null;
             foreach(ImpactAreaRowItem row in rows)
@@ -176,9 +176,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
         private void ViewThresholds(object arg1, EventArgs arg2)
         {
-            ViewThresholdsVM vm = new ViewThresholdsVM(this);
+            ViewThresholdsVM vm = new(this);
             string header = "Thresholds for " + Name;
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "ThresholdsFor" + Name);
+            DynamicTabVM tab = new(header, vm, "ThresholdsFor" + Name);
             Navigate(tab, false, false);
         }
 
@@ -187,9 +187,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             List<SpecificIASResultVM> results = GetResults();
             if (results.Count>0)
             {
-                ScenarioResultsVM resultViewer = new ScenarioResultsVM(results);
+                ScenarioResultsVM resultViewer = new(results);
                 string header = "Results for " + Name;
-                DynamicTabVM tab = new DynamicTabVM(header, resultViewer, "resultViewer" + Name);
+                DynamicTabVM tab = new(header, resultViewer, "resultViewer" + Name);
                 Navigate(tab, false, false);
             }
             else
@@ -200,7 +200,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         
         public FdaValidationResult CanCompute()
         {
-            FdaValidationResult vr = new FdaValidationResult();
+            FdaValidationResult vr = new();
 
             if (SpecificIASElements.Count > 0)
             {
@@ -218,9 +218,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
         private void ComputeScenario(object arg1, EventArgs arg2)
         {
-            ComputeScenarioVM vm = new ComputeScenarioVM(this, ComputeCompleted);
+            ComputeScenarioVM vm = new(this, ComputeCompleted);
             string header = "Compute Log For Scenario: " + Name;
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "ComputeLog" + Name);
+            DynamicTabVM tab = new(header, vm, "ComputeLog" + Name);
             Navigate(tab, false, false);
         }
         private void ComputeCompleted(IASElement elem, ScenarioResults results)
@@ -245,7 +245,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
         public override XElement ToXML()
         {
-            XElement setElement = new XElement(IAS_SET);
+            XElement setElement = new(IAS_SET);
             setElement.SetAttributeValue(YEAR, AnalysisYear);
             setElement.SetAttributeValue(STAGE_DAMAGE_ID, StageDamageID);
 
