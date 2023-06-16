@@ -320,7 +320,7 @@ namespace HEC.FDA.ViewModel.Saving
                     retval = Convert.ToInt32(id) + 1;
                 }
             }
-            catch (Exception e)
+            catch
             {
                 //todo: some message? Name doesn't exist in the database.
                 retval = -1;
@@ -355,7 +355,7 @@ namespace HEC.FDA.ViewModel.Saving
                 }
                 return retval;
             }
-            catch(Exception e)
+            catch
             {
                 //todo: some message? Name doesn't exist in the database.
                 retval = -1;

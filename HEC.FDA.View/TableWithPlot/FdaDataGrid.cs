@@ -298,7 +298,7 @@ namespace HEC.FDA.View.TableWithPlot
                                 var newVal = Convert.ChangeType(clipboardData[i][j], y.PropertyType);
                                 ((SequentialRow)Items[RowIndex + i]).UpdateRow(ColumnIndex + j, (double)newVal);
                             }
-                            catch (Exception ex)
+                            catch
                             {
                                 //ignore
                             }
@@ -359,8 +359,7 @@ namespace HEC.FDA.View.TableWithPlot
                                 var newVal = Convert.ChangeType(clipboardData[i][j], y.PropertyType);
                                 ((SequentialRow)Items[RowIndex + i]).UpdateRow(ColumnIndex + j, (double)newVal);
                             }
-                            catch (Exception ex)
-                            {
+                            catch {
                                 //ignore
                             }
                         }

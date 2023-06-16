@@ -29,7 +29,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                         //TODO: should this be non-exceedance probabilities, too?
                         rows.Add(new PerformanceFrequencyRowItem(xVal, yVal));
                     }
-                    catch (Exception e)
+                    catch
                     {
                         //todo: Getting the y value can throw an exception if the exceedanceProb isn't in the dictionary
                     }
