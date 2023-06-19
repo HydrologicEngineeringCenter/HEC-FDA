@@ -1,6 +1,7 @@
 ﻿using HEC.CS.Collections;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
+using HEC.FDA.ViewModel.Utilities;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -111,6 +112,18 @@ namespace HEC.FDA.ViewModel.ImpactArea
         }
         #endregion
 
+        public override FdaValidationResult IsValid()
+        {
+            FdaValidationResult result = new FdaValidationResult();
+            foreach(ImpactAreaRowItem row in ListOfRows)
+            {
+                if(string.IsNullOrEmpty(row.Name))
+                {
+                    result.AddErrorMessage("The unique name cannot be blank. Modify your shapefile and import again.");
+                }
+            }
+            return result;
+        }
         public override void Save()
         {
             int id = GetElementID<ImpactAreaElement>();

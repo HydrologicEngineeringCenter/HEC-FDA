@@ -59,7 +59,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             else
             {
                 ManualVM = new ManualStageDamageVM();
-                CalculatedVM = new CalculatedStageDamageVM(element.SelectedWSE, element.SelectedStructures, element.Curves, element.ImpactAreaFrequencyRows,element.WriteDetailsOut, GetName);
+                CalculatedVM = new CalculatedStageDamageVM(element.SelectedWSE, element.SelectedStructures, element.AnalysisYear, element.Curves, element.ImpactAreaFrequencyRows,element.WriteDetailsOut, GetName);
                 CurrentVM = CalculatedVM;
             }
             //this registration is so that fda can detect changes made in child view models
@@ -113,7 +113,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 }
                 List<StageDamageCurve> stageDamageCurves = CalculatedVM.GetStageDamageCurves();
                 UpdateStageDamageMetaData(stageDamageCurves);
-                AggregatedStageDamageElement elemToSave = new AggregatedStageDamageElement(Name, lastEditDate, Description, wseID, structID, 
+                AggregatedStageDamageElement elemToSave = new AggregatedStageDamageElement(Name, lastEditDate, Description, CalculatedVM.AnalysisYear, wseID, structID, 
                    stageDamageCurves, CalculatedVM.ImpactAreaFrequencyRows, false, CalculatedVM.WriteDetailsFile, id);              
                 base.Save(elemToSave);
             }
@@ -133,7 +133,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 List<ImpactAreaFrequencyFunctionRowItem> impAreaFrequencyRows = new List<ImpactAreaFrequencyFunctionRowItem>();
                 List<StageDamageCurve> stageDamageCurves = ManualVM.GetStageDamageCurves();
                 UpdateStageDamageMetaData(stageDamageCurves);
-                AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, lastEditDate, Description, -1, -1, stageDamageCurves,
+                int analysisYear = DateTime.Now.Year;
+                AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, lastEditDate, Description, analysisYear, - 1, -1, stageDamageCurves,
                     impAreaFrequencyRows, true, false, id);
                 base.Save(elem);
             }

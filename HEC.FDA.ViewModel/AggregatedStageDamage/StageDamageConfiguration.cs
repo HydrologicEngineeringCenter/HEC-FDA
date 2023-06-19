@@ -12,14 +12,16 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
     public class StageDamageConfiguration:BaseViewModel
     {
+        private int _AnalysisYear;
         public List<ImpactAreaFrequencyFunctionRowItem> ImpactAreaFrequencyRows { get; } = new List<ImpactAreaFrequencyFunctionRowItem>();
         public InventoryElement SelectedStructures { get; }
         public HydraulicElement SelectedHydraulics { get; }
         public ImpactAreaElement SelectedImpactArea { get; }
 
         public StageDamageConfiguration(ImpactAreaElement impAreaElem, HydraulicElement hydroElem, InventoryElement inventoryElem,
-             List<ImpactAreaFrequencyFunctionRowItem> impactAreaRows)
+             List<ImpactAreaFrequencyFunctionRowItem> impactAreaRows, int analysisYear)
         {
+            _AnalysisYear = analysisYear;
             SelectedImpactArea = impAreaElem;
             SelectedStructures = inventoryElem;
             SelectedHydraulics = hydroElem;
@@ -36,6 +38,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             if(vr.IsValid)
             {
                 vr.AddErrorMessage(DoAllRequiredFilesExist().ErrorMessage);
+                vr.AddErrorMessage(GetIsYearValidResult().ErrorMessage);
             }
             if(vr.IsValid)
             {
@@ -44,11 +47,21 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             return vr;
         }
 
+        private FdaValidationResult GetIsYearValidResult()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            if (_AnalysisYear < 1900 || _AnalysisYear > 3000)
+            {
+                vr.AddErrorMessage("The analysis year must be greater than 1900 and less than 3000.");
+            }
+            return vr;
+        }
+
         /// <summary>
         /// Validates that the hydros, structures, and frequency function table selections are all valid.
         /// </summary>
         /// <returns></returns>
-        public FdaValidationResult GetAreAllSelectionsValidResult()
+        private FdaValidationResult GetAreAllSelectionsValidResult()
         {
             FdaValidationResult vr = new FdaValidationResult();
             if (SelectedHydraulics == null)
@@ -185,13 +198,13 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                     {
                         UncertainPairedData stageDischargePairedData = impactAreaRow.StageDischargeFunction.Element.CurveComponentVM.SelectedItemToPairedData();
                         stageDamages.Add(new ImpactAreaStageDamage(impactAreaId, inv, SelectedHydraulics.DataSet, convergenceCriteria, hydroParentDirectory,
-                            graphicalFrequency: graphicaluncertPairedData, dischargeStage: stageDischargePairedData, unregulatedRegulated:regulatedUnregulatedFunction ));
+                            graphicalFrequency: graphicaluncertPairedData, dischargeStage: stageDischargePairedData, unregulatedRegulated:regulatedUnregulatedFunction, analysisYear: _AnalysisYear ));
 
                     }
                     else
                     {
                         stageDamages.Add(new ImpactAreaStageDamage(impactAreaId, inv, SelectedHydraulics.DataSet, convergenceCriteria, hydroParentDirectory,
-                            graphicalFrequency: graphicaluncertPairedData, unregulatedRegulated: regulatedUnregulatedFunction));
+                            graphicalFrequency: graphicaluncertPairedData, unregulatedRegulated: regulatedUnregulatedFunction, analysisYear: _AnalysisYear));
                     }
                 }
                 else
@@ -199,7 +212,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                     Statistics.Distributions.LogPearson3 logPearson3 = freqElement.LPIII;
                     UncertainPairedData stageDischargePairedData = impactAreaRow.StageDischargeFunction.Element.CurveComponentVM.SelectedItemToPairedData();
                     stageDamages.Add(new ImpactAreaStageDamage(impactAreaId, inv, SelectedHydraulics.DataSet, convergenceCriteria, hydroParentDirectory,
-                        analyticalFlowFrequency: logPearson3, dischargeStage:stageDischargePairedData, unregulatedRegulated: regulatedUnregulatedFunction));
+                        analyticalFlowFrequency: logPearson3, dischargeStage:stageDischargePairedData, unregulatedRegulated: regulatedUnregulatedFunction, analysisYear: _AnalysisYear));
                 }
 
             }
