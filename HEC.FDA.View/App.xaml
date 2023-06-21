@@ -63,8 +63,8 @@
              xmlns:AggregatedVM="clr-namespace:HEC.FDA.ViewModel.AggregatedStageDamage;assembly=HEC.FDA.ViewModel"
              xmlns:AggregatedView="clr-namespace:HEC.FDA.View.AggregatedStageDamage"
              
-             xmlns:ImpactAreaScenarioVM="clr-namespace:HEC.FDA.ViewModel.ImpactAreaScenario;assembly=HEC.FDA.ViewModel"
-             xmlns:ImpactAreaScenarioView="clr-namespace:HEC.FDA.View.ImpactAreaScenario"
+             xmlns:IASVM="clr-namespace:HEC.FDA.ViewModel.ImpactAreaScenario;assembly=HEC.FDA.ViewModel"
+             xmlns:IASView="clr-namespace:HEC.FDA.View.ImpactAreaScenario"
              
              xmlns:OccupancyTypesVM="clr-namespace:HEC.FDA.ViewModel.Inventory.OccupancyTypes;assembly=HEC.FDA.ViewModel"
              xmlns:OccupancyTypesView="clr-namespace:HEC.FDA.View.Inventory.OccupancyTypes"
@@ -437,6 +437,10 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type AlternativeBatchResultsVM:AlternativeSummaryVM}" >
             <AlternativeBatchResultsView:AlternativeSummaryTable/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type IASVM:ViewThresholdsVM}" >
+            <IASView:ViewThresholds/>
         </DataTemplate>
 
     </Application.Resources>

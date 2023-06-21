@@ -18,7 +18,6 @@ namespace HEC.FDA.ViewModel.Compute
         public ComputeScenarioVM(IASElement elem, Action<IASElement, ScenarioResults> callback):base()
         {
             List<SpecificIAS> iasElems = elem.SpecificIASElements;
-            string analysisYear = elem.AnalysisYear;
             ProgressLabel = StringConstants.SCENARIO_PROGRESS_LABEL;
             _TotalSims = iasElems.Count;
             NumberCompleted = _IterationsCompleted + "/" + _TotalSims;

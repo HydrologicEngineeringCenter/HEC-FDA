@@ -32,10 +32,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
             {
                 _isGraphical = value;
                 NotifyPropertyChanged();
-                NotifyPropertyChanged(nameof(IsAnalytic));
             }
         }
-        public bool IsAnalytic => !IsGraphical;
         #endregion
 
         #region Constructors

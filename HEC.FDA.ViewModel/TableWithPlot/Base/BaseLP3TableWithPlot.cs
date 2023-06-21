@@ -21,8 +21,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Base
         #endregion
 
         #region Properties
-        private PlotModel _plotModel;
-        public PlotModel PlotModel
+        private ViewResolvingPlotModel _plotModel;
+        public ViewResolvingPlotModel PlotModel
         {
             get { return _plotModel; }
             set
@@ -47,7 +47,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Base
         #region OxyPlot
         protected void InitializePlotModel()
         {
-            PlotModel = new PlotModel();
+            PlotModel = new ViewResolvingPlotModel();
             _plotModel.Title = StringConstants.ANALYTICAL_FREQUENCY;
             Legend legend = new()
             {

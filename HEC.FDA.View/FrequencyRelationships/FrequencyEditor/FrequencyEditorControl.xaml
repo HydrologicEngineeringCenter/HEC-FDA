@@ -7,12 +7,14 @@
              xmlns:FEvm="clr-namespace:HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor;assembly=HEC.FDA.ViewModel"
              xmlns:Utilities="clr-namespace:HEC.FDA.View.Utilities"
              mc:Ignorable="d" 
+             xmlns:util="clr-namespace:HEC.FDA.View.Utilities"
              xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=HEC.FDA.UserControls"
              d:DataContext="{d:DesignInstance Type=FEvm:FrequencyEditorVM}"
              d:DesignHeight="450" d:DesignWidth="800" d:Background="AliceBlue">
   <UserControl.Resources>
     <BooleanToVisibilityConverter x:Key="VisibleIfTrueConverter"/>
-  </UserControl.Resources>
+        <util:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+    </UserControl.Resources>
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="35"/>
@@ -49,8 +51,8 @@
     </Grid>
 
     <StackPanel Orientation="Horizontal" Grid.Row="3">
-      <RadioButton Margin="5" x:Name="AnalyticButton"  Content="Analytical" GroupName="graphOrAnal" IsChecked="{Binding Path=IsAnalytic, Mode=OneWay}"/>
-      <RadioButton Margin="5" x:Name="GraphicalButton" Content="Graphical"  GroupName="graphOrAnal" IsChecked="{Binding Path=IsGraphical, Mode=TwoWay}"/>
+      <RadioButton Margin="5" x:Name="AnalyticButton"  Content="Analytical"  IsChecked="{Binding Path=IsGraphical, Converter={StaticResource InverseBooleanConverter}}"/>
+      <RadioButton Margin="5" x:Name="GraphicalButton" Content="Graphical"  IsChecked="{Binding Path=IsGraphical}"/>
     </StackPanel>
     
     <!--This is our Graphical Control inside a table with plot. It seemed like a good idea at the time to force everything into TableWithPlot, but later decided it was unnecessarily confusing.

@@ -42,7 +42,13 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private string _IsSufficientForComputeTooltip;
         private bool _ScenarioReflectsWithoutProjCondition = true;
         private double _DefaultStage;
+        private bool _ScenarioReflectsEnabled;
 
+        public bool ScenarioReflectsEnabled
+        {
+            get { return _ScenarioReflectsEnabled; }
+            set { _ScenarioReflectsEnabled = value; NotifyPropertyChanged(); }
+        }
         public double DefaultStage
         {
             get { return _DefaultStage; }
@@ -135,7 +141,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         public ChildElementComboItem SelectedLeveeFeatureElement
         {
             get { return _selectedLeveeElement; }
-            set { _selectedLeveeElement = value; NotifyPropertyChanged(); UpdateDefaultStageRequired(); UpdateSufficientToCompute(); }
+            set { _selectedLeveeElement = value; NotifyPropertyChanged(); UpdateThresholdStageValue(); UpdateDefaultStageRequired(); UpdateSufficientToCompute(); }
         }
         public ChildElementComboItem SelectedExteriorInteriorElement
         {
@@ -746,6 +752,21 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         public void UpdateDefaultStageRequired()
         {
             DefaultStageRequired = !ScenarioReflectsWithoutProjCondition && !HasLeveeSelected();
+        }
+        private void UpdateThresholdStageValue()
+        {
+            if(HasLeveeSelected())
+            {
+                DefaultStage = ((LateralStructureElement)SelectedLeveeFeatureElement.ChildElement).Elevation;
+                //disable the checkbox
+                ScenarioReflectsEnabled = false;
+            }
+            else
+            {
+                DefaultStage = 0;
+                //enable the checkbox
+                ScenarioReflectsEnabled = true;
+            }
         }
     }
 }

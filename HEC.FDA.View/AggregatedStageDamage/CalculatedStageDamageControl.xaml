@@ -16,16 +16,21 @@
     
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*" MinHeight="30"/>
             <RowDefinition Height="5" />
             <RowDefinition Height="*" MinHeight="30" />
             <RowDefinition Height="5" />
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-
-        <GroupBox Header="Configure and Compute" Grid.Row="0" Margin="5">
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5,0,0,0">
+            <Label Content="Analysis Year:" />
+            <TextBox Text="{Binding AnalysisYear}" MinWidth="100" />
+        </StackPanel>
+        
+        <GroupBox Header="Configure and Compute" Grid.Row="1" Margin="5">
             
-        <Grid Grid.Row="0" >
+        <Grid Grid.Row="1" >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
@@ -100,9 +105,9 @@
             </Grid>
         </GroupBox>
 
-        <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch"/>
+        <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch"/>
 
-        <GroupBox Grid.Row="2" Grid.Column="0"  Header="Generated Curves" Margin="10,5,5,5" HorizontalAlignment="Stretch">
+        <GroupBox Grid.Row="3" Grid.Column="0"  Header="Generated Curves" Margin="10,5,5,5" HorizontalAlignment="Stretch">
             <ListView  Margin="5" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}" SelectionMode="Single" 
                        ScrollViewer.VerticalScrollBarVisibility="Auto" SizeChanged="ComputedCurves_SizeChanged">
                 <ListView.View>
@@ -115,9 +120,9 @@
                 </ListView.View>
             </ListView>
         </GroupBox>
-        <GridSplitter Grid.Row="3" HorizontalAlignment="Stretch"/>
+        <GridSplitter Grid.Row="4" HorizontalAlignment="Stretch"/>
 
-        <Grid x:Name="editorGrid" Grid.Row="4" Grid.ColumnSpan="2" Visibility="{Binding ShowChart, Converter={StaticResource BoolToVisibilityConverter}}">
+        <Grid x:Name="editorGrid" Grid.Row="5" Grid.ColumnSpan="2" Visibility="{Binding ShowChart, Converter={StaticResource BoolToVisibilityConverter}}">
             <twp:TableWithPlotControl DataContext="{Binding TableWithPlot}"  Grid.Column="0" Margin="5" />
         </Grid>
     </Grid>

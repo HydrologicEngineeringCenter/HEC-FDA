@@ -84,7 +84,15 @@ namespace HEC.FDA.Model.metrics
 
         public static Threshold ReadFromXML(XElement xElement)
         {
-            ThresholdEnum thresholdType = (ThresholdEnum)Enum.Parse(typeof(ThresholdEnum), xElement.Attribute("Threshold_Type").Value);
+            ThresholdEnum thresholdType = ThresholdEnum.AdditionalExteriorStage;
+            try
+            {
+                thresholdType = (ThresholdEnum)Enum.Parse(typeof(ThresholdEnum), xElement.Attribute("Threshold_Type").Value);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
             double thresholdValue = Convert.ToDouble(xElement.Attribute("Threshold_Value").Value);
             int thresholdID = Convert.ToInt32(xElement.Attribute("Threshold_ID").Value);
             SystemPerformanceResults projectPerformanceResults = SystemPerformanceResults.ReadFromXML(xElement.Element("Project_Performance_Results"));

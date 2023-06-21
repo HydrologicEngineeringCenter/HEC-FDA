@@ -81,9 +81,9 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                    <CheckBox Grid.ColumnSpan="2" Content="Scenario Reflects Without Project Conditions" IsChecked="{Binding ScenarioReflectsWithoutProjCondition}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                    <CheckBox Grid.ColumnSpan="2" Content="Scenario Reflects Without Project Conditions" IsChecked="{Binding ScenarioReflectsWithoutProjCondition}" IsEnabled="{Binding ScenarioReflectsEnabled}" HorizontalAlignment="Right" VerticalAlignment="Center" />
                 <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" >
-                    <Label Grid.Column="2" Content="Default Stage:" HorizontalAlignment="Right"  />
+                    <Label Grid.Column="2" Content="Threshold Stage:" HorizontalAlignment="Right"  />
                     <Label  Grid.Column="2" Content="*" Foreground="Red" HorizontalAlignment="Right" Padding="0,5,5,5" Visibility="{Binding DefaultStageRequired,Converter={StaticResource BoolToVisibilityConverter}}" />
                 </StackPanel>
 
@@ -99,9 +99,9 @@
             <StackPanel Orientation="Horizontal" >
                 <Button Content="Preview Compute" Width="120" HorizontalAlignment="Left" Click="plotBtn_Click"/>
                 <Label Content="Damage Category:" />
-                <ComboBox ItemsSource="{Binding DamageCategories}" SelectedItem="{Binding SelectedDamageCurve}" DisplayMemberPath="DamCat" Width="Auto"/>
+                <ComboBox ItemsSource="{Binding DamageCategories}" SelectedItem="{Binding SelectedDamageCurve}" DisplayMemberPath="DamCat" MinWidth="100" Width="Auto"/>
                 <Label Content="Asset Category:" />
-                <ComboBox ItemsSource="{Binding AssetCategories}" SelectedItem="{Binding SelectedAssetCategory}" Width="Auto"/>
+                <ComboBox ItemsSource="{Binding AssetCategories}" SelectedItem="{Binding SelectedAssetCategory}" Width="Auto" MinWidth="100"/>
                 <Label Content="EAD: " Visibility="{Binding ShowEAD,Converter={StaticResource BoolToVisibilityConverter}}"/>
                 <TextBlock Text="{Binding EAD, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Visibility="{Binding ShowEAD,Converter={StaticResource BoolToVisibilityConverter}}" VerticalAlignment="Center"/>
             </StackPanel>

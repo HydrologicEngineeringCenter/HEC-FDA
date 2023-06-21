@@ -349,13 +349,6 @@ namespace HEC.FDA.ViewModel.Utilities
                 foreach (AggregateDamageFunction func in funcs)
                 {
                     curves.AddRange(CreateDamageCurves(func, impactAreaElements,ref messages));
-
-                    //SingleDamageFunction totalDamageFunc = func.DamageFunctions[(int)StructureValueType.TOTAL];
-                    //StageDamageCurve stageDamageCurve = CreateStageDamageCurve(totalDamageFunc, "Total", func.DamageReachName, func.CategoryName, impactAreaElements, ref messages);
-                    //if (stageDamageCurve != null)
-                    //{
-                    //    curves.Add(stageDamageCurve);
-                    //}
                 }
 
                 messages += "\nNumber of curves successfully created: " + curves.Count;
@@ -363,7 +356,8 @@ namespace HEC.FDA.ViewModel.Utilities
                 if (curves.Count > 0)
                 {
                     List<ImpactAreaFrequencyFunctionRowItem> impAreaFrequencyRows = new List<ImpactAreaFrequencyFunctionRowItem>();
-                    elem = new AggregatedStageDamageElement(name, funcs[0].CalculationDate, funcs[0].Description, -1, -1, curves, impAreaFrequencyRows, true,false, elemID);
+                    int analysisYear = DateTime.Now.Year;
+                    elem = new AggregatedStageDamageElement(name, funcs[0].CalculationDate, funcs[0].Description,analysisYear, -1, -1, curves, impAreaFrequencyRows, true,false, elemID);
                 }
                 else
                 {

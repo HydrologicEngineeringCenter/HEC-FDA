@@ -17,22 +17,15 @@ namespace HEC.FDA.Model.metrics
         #region Properties 
         public string ComputeDate { get; set; }
 
-        public List<IContainImpactAreaScenarioResults> ResultsList { get; }
-        public int AnalysisYear { get; }
+        public List<IContainImpactAreaScenarioResults> ResultsList { get; } = new List<IContainImpactAreaScenarioResults>();
 
         #endregion
 
         #region Constructor
         internal ScenarioResults()
         {
-            ResultsList = new List<IContainImpactAreaScenarioResults>();
-            AnalysisYear = 1900;
         }
-        public ScenarioResults(int year)
-        {
-            ResultsList = new List<IContainImpactAreaScenarioResults>();
-            AnalysisYear = year;
-        }
+
         #endregion
 
         #region Methods
@@ -397,7 +390,6 @@ namespace HEC.FDA.Model.metrics
         public XElement WriteToXML()
         {
             XElement mainElement = new("ScenarioResults");
-            mainElement.SetAttributeValue("Year", AnalysisYear);
             mainElement.SetAttributeValue("ComputeDate", ComputeDate);
             foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList.Cast<ImpactAreaScenarioResults>())
             {
@@ -409,9 +401,7 @@ namespace HEC.FDA.Model.metrics
 
         public static ScenarioResults ReadFromXML(XElement xElement)
         {
-            int year = Convert.ToInt32(xElement.Attribute("Year").Value);
-
-            ScenarioResults scenarioResults = new(year);
+            ScenarioResults scenarioResults = new();
             
             foreach (XElement element in xElement.Elements())
             {

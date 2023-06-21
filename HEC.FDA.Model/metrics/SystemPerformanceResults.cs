@@ -342,7 +342,15 @@ namespace HEC.FDA.Model.metrics
             {
                 systemResponseCurve = UncertainPairedData.ReadFromXML(xElement.Element("System_Response_Curve"));
             }
-            ThresholdEnum thresholdType = (ThresholdEnum)Enum.Parse(typeof(ThresholdEnum), xElement.Attribute("Threshold_Type").Value);
+            ThresholdEnum thresholdType = ThresholdEnum.AdditionalExteriorStage;
+            try
+            {
+                thresholdType = (ThresholdEnum)Enum.Parse(typeof(ThresholdEnum), xElement.Attribute("Threshold_Type").Value);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
             double thresholdValue = Convert.ToDouble(xElement.Attribute("Threshold_Value").Value);
 
             if (calculatePerformanceForLevee)

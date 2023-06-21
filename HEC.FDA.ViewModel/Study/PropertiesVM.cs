@@ -23,8 +23,7 @@ namespace HEC.FDA.ViewModel.Study
         public string CreatedBy { get; set; }
         public string CreatedDate { get; set; }
         public string StudyNotes { get; set; }
-        public MonetaryUnitsEnum MonetaryUnit { get; set; }
-        public UnitsSystemEnum UnitSystem { get; set; }
+
         public int SurveyedYear
         {
             get { return _SurveyedYear; }
@@ -50,8 +49,7 @@ namespace HEC.FDA.ViewModel.Study
             CreatedBy = elem.CreatedBy;
             CreatedDate = elem.CreatedDate;
             StudyNotes = elem.StudyNotes;
-            MonetaryUnit = elem.MonetaryUnit;
-            UnitSystem = elem.UnitSystem;
+     
             SurveyedYear = elem.SurveyedYear;
             UpdatedYear = elem.UpdatedYear;
             UpdatedPriceIndex = elem.UpdatedPriceIndex;
@@ -77,7 +75,7 @@ namespace HEC.FDA.ViewModel.Study
             //there is only one row of study properties. The id will always be 1.
             int id = 1;
             StudyPropertiesElement elemToSave = new StudyPropertiesElement(StudyName, StudyPath, StudyDescription, CreatedBy,
-                CreatedDate, StudyNotes, MonetaryUnit, UnitSystem, SurveyedYear, UpdatedYear, UpdatedPriceIndex, DiscountRate, PeriodOfAnalysis, ConvergenceCriteria, id);
+                CreatedDate, StudyNotes, SurveyedYear, UpdatedYear, UpdatedPriceIndex, DiscountRate, PeriodOfAnalysis, ConvergenceCriteria, id);
             ProjectionPicker.Save(); 
             base.Save(elemToSave);
         }

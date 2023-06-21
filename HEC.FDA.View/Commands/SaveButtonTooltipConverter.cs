@@ -32,8 +32,7 @@ namespace HEC.FDA.View.Commands
                     return null;
                 }
             }
-            catch (Exception e)
-            {
+            catch {
                 return null;
             }
 

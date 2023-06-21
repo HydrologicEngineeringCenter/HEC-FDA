@@ -1,8 +1,4 @@
-﻿using HEC.Plotting.SciChart2D.Charts;
-using HEC.Plotting.SciChart2D.ViewModel;
-using System.Windows;
-using System.Windows.Controls;
-using HEC.FDA.ViewModel.ImpactAreaScenario.Results;
+﻿using System.Windows.Controls;
 
 namespace HEC.FDA.View.ImpactAreaScenario.Results
 {

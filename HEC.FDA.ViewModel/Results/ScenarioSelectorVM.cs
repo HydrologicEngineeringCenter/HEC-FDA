@@ -31,7 +31,7 @@ namespace HEC.FDA.ViewModel.Results
 
         private void IASAdded(object sender, ElementAddedEventArgs e)
         {
-            ComputeChildRowItem newRow = new ComputeChildRowItem((IASElement)e.Element);
+            ComputeChildRowItem newRow = new((IASElement)e.Element);
             Rows.Add(newRow);
             ValidateScenario(newRow);
         }
@@ -67,7 +67,7 @@ namespace HEC.FDA.ViewModel.Results
 
         private void LoadComputeManager(List<ComputeChildRowItem> scenarioRows)
         {
-            List<IASElement> elems = new List<IASElement>();
+            List<IASElement> elems = new();
             foreach (ComputeChildRowItem row in scenarioRows)
             {
                 IASElement elem = (IASElement)row.ChildElement;
@@ -87,7 +87,7 @@ namespace HEC.FDA.ViewModel.Results
         public override async void Compute(List<ComputeChildRowItem> scenarioRows)
         {
             LoadComputeManager(scenarioRows);
-            List<Task> taskList = new List<Task>();
+            List<Task> taskList = new();
             try
             {
                 foreach (KeyValuePair<IASElement, Scenario> keyValue in ScenarioProgressManager.Scenarios)
@@ -96,21 +96,21 @@ namespace HEC.FDA.ViewModel.Results
                 }
                 await Task.WhenAll(taskList.ToArray());
             }
-            catch (TaskCanceledException ex)
+            catch 
             {
                 MessageBox.Show("Compute Canceled.", "Compute Canceled", MessageBoxButton.OK, MessageBoxImage.Information);
                 ComputeButtonLabel = COMPUTE;
                 return;
             }
             ComputeButtonLabel = COMPUTE;
-            MessageEventArgs finishedComputeMessageArgs = new MessageEventArgs(new Message("All Scenarios Computed"));
+            MessageEventArgs finishedComputeMessageArgs = new(new Message("All Scenarios Computed"));
             ReportMessage(this, finishedComputeMessageArgs);
 
             var result = MessageBox.Show("Do you want to view summary results?", "Compute Finished", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result == MessageBoxResult.Yes)
             {
-                ScenarioDamageSummaryVM vm = new ScenarioDamageSummaryVM(ScenarioProgressManager.Scenarios.Keys.ToList());
-                DynamicTabVM tab = new DynamicTabVM(StringConstants.VIEW_SUMMARY_RESULTS_HEADER, vm, StringConstants.VIEW_SUMMARY_RESULTS_HEADER);
+                ScenarioDamageSummaryVM vm = new(ScenarioProgressManager.Scenarios.Keys.ToList());
+                DynamicTabVM tab = new(StringConstants.VIEW_SUMMARY_RESULTS_HEADER, vm, StringConstants.VIEW_SUMMARY_RESULTS_HEADER);
                 Navigate(tab, false, false);
             }
         }
@@ -124,7 +124,7 @@ namespace HEC.FDA.ViewModel.Results
             }
         }
 
-        private void ValidateScenario(ComputeChildRowItem row)
+        private static void ValidateScenario(ComputeChildRowItem row)
         {
             IASElement elem = (IASElement)row.ChildElement;
             FdaValidationResult canComputeVR = elem.CanCompute();

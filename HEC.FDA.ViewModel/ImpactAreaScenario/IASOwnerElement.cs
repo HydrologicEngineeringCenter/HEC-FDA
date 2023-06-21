@@ -111,7 +111,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             RemoveElement(e.Element);
         }
 
-        public void ComputeScenarios(object arg1, EventArgs arg2)
+        private void ComputeScenarios(object arg1, EventArgs arg2)
         {
             ScenarioSelectorVM vm = new ScenarioSelectorVM();
             vm.RequestNavigation += Navigate;
@@ -120,7 +120,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             Navigate(tab, false, false);
         }
 
-        public void ViewSummaryResults(object arg1, EventArgs arg2)
+        private void ViewSummaryResults(object arg1, EventArgs arg2)
         {
             List<IASElement> elems = StudyCache.GetChildElementsOfType<IASElement>();
             List<IASElement> elemsWithResults = new List<IASElement>();

@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.ViewModel.Results;
+using HEC.FDA.ViewModel.Tabs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,5 +35,9 @@ namespace HEC.FDA.View.Results
             }
         }
 
+        private void Close_Click(object sender, RoutedEventArgs e)
+        {
+            TabController.Instance.CloseTabOrWindow(this);
+        }
     }
 }

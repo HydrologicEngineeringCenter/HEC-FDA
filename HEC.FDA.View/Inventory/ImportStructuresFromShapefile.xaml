@@ -33,7 +33,7 @@
             <StackPanel Margin="0,5,0,0" Orientation="Vertical" Name="stack_ShapefilePath">
                 <TextBlock Name="SILabel" Text="Structure Inventory Shapefile:" TextAlignment="left" HorizontalAlignment="Left" VerticalAlignment="Center" />
                 <Grid Height="27" Name="SIStackPanel" HorizontalAlignment="Stretch" VerticalAlignment="Center">
-                    <frameworkControls:TextBoxFileBrowserControl FileDialogTitle="Select File" Path="{Binding SelectedPath}" Filter="Shapefiles (*.shp) |*.shp|All files (*.*) |*.*"  />
+                    <frameworkControls:TextBoxFileBrowserControl FileDialogTitle="Select File" Path="{Binding SelectedPath}" Filter="Shapefiles (*.shp) |*.shp|All files (*.*) |*.*" IsEnabled="{Binding SelectedPathEnabled}"  />
                 </Grid>
             </StackPanel>
         </StackPanel>

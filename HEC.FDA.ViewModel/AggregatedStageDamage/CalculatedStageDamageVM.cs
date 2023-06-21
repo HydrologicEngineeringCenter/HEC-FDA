@@ -30,6 +30,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private readonly Func<string> getName;
         private bool _WriteDetailsFile = true;
 
+        public int AnalysisYear { get; set; }
+
         public bool WriteDetailsFile
         {
             get { return _WriteDetailsFile; }
@@ -78,6 +80,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         public CalculatedStageDamageVM(Func<string> getName)
         {
+            AnalysisYear = DateTime.Now.Year;
             Rows = new ObservableCollection<CalculatedStageDamageRowItem>();
             LoadStructureInventories();
             LoadDepthGrids();
@@ -86,8 +89,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             this.getName = getName;
         }
         
-        public CalculatedStageDamageVM(int wseId, int inventoryID, List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impAreaFrequencyRows,bool writeDetailsOut, Func<string> getName)
+        public CalculatedStageDamageVM(int wseId, int inventoryID, int analysisYear, List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impAreaFrequencyRows,bool writeDetailsOut, Func<string> getName)
         {
+            AnalysisYear = analysisYear;
             WriteDetailsFile = writeDetailsOut;
             Rows = new ObservableCollection<CalculatedStageDamageRowItem>();
             LoadStructureInventories();
@@ -483,7 +487,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             ImpactAreaElement impactAreaElement = impactAreaElements[0];
 
             StageDamageConfiguration config = new StageDamageConfiguration(impactAreaElement, SelectedWaterSurfaceElevation, SelectedStructures,
-                ImpactAreaFrequencyRows);
+                ImpactAreaFrequencyRows, AnalysisYear);
 
             FdaValidationResult vr = config.ValidateConfiguration();
             if (vr.IsValid)
@@ -702,6 +706,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public FdaValidationResult ValidateForm()
         {
             FdaValidationResult vr = new FdaValidationResult();
+            if(AnalysisYear < 1900 || AnalysisYear > 3000)
+            {
+                vr.AddErrorMessage("The analysis year must be greater than 1900 and less than 3000.");
+            }
             if (SelectedWaterSurfaceElevation == null)
             {
                 vr.AddErrorMessage("A hydraulics data set must be selected.");

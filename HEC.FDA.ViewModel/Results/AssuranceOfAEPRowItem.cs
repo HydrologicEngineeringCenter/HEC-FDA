@@ -6,7 +6,7 @@ namespace HEC.FDA.ViewModel.Results
     public class AssuranceOfAEPRowItem
     {
         public string Name { get; set; }
-        public int AnalysisYear { get; set; }
+        public string AnalysisYear { get; set; }
         public string ImpactArea { get; set; }
         public string ThresholdType { get; set; }
         public double ThresholdValue { get; set; }
@@ -26,7 +26,7 @@ namespace HEC.FDA.ViewModel.Results
             ScenarioResults results = scenario.Results;
 
             Name = scenario.Name;
-            AnalysisYear = results.AnalysisYear;
+            AnalysisYear = scenario.AnalysisYear;
             ImpactArea = ias.GetSpecificImpactAreaName();
 
             ThresholdType = threshold.ThresholdType.ToString();

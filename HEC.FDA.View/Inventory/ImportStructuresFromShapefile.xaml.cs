@@ -47,10 +47,7 @@ namespace HEC.FDA.View.Inventory
             NextButton.Content = "Next→";
             PreviousButton.Visibility = Visibility.Collapsed;
             ImportStructuresFromShapefileVM vm = DataContext as ImportStructuresFromShapefileVM;
-            if (vm != null)
-            {
-                vm.PreviousButtonClicked();
-            }
+            vm?.PreviousButtonClicked();
             stack_ShapefilePath.Visibility = Visibility.Visible;
         }
 

@@ -37,7 +37,6 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -85,26 +84,8 @@
                 <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding PeriodOfAnalysis, ValidatesOnDataErrors=True}" Margin="0,3,0,3"/>
             </Grid>
         </GroupBox>
-        <GroupBox Header="Units of Measurment" Grid.Row="7" Grid.ColumnSpan="2">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="{StaticResource FirstColumnWidth}" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Label  Content="Monetary Unit:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                <ComboBox  Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" ItemsSource="{Binding Source={StaticResource MonetaryUnits}}" SelectedItem="{Binding Path=MonetaryUnit}"/>
 
-                <Label  Content="Unit System:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                <ComboBox  Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" ItemsSource="{Binding Source={StaticResource UnitSystems}}" SelectedItem="{Binding Path=UnitSystem}"/>
-
-            </Grid>
-        </GroupBox>
-
-        <GroupBox Header="Price Information" Grid.Row="8" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" >
+        <GroupBox Header="Price Information" Grid.Row="7" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" >
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="{StaticResource FirstColumnWidth}" />
@@ -126,7 +107,7 @@
                     </Grid>
                 </GroupBox>
 
-        <GroupBox Header="Convergence Criteria" Grid.Row="9" Grid.ColumnSpan="2">
+        <GroupBox Header="Convergence Criteria" Grid.Row="8" Grid.ColumnSpan="2">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -153,7 +134,7 @@
             </Grid>
         </GroupBox>
 
-        <GroupBox Header="Study Projection" Grid.Row="10" Grid.ColumnSpan="2">
+        <GroupBox Header="Study Projection" Grid.Row="9" Grid.ColumnSpan="2">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -171,7 +152,7 @@
             </Grid>
         </GroupBox>
 
-        <Utilities:SaveCloseControl Grid.Row="11" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5"/>
+        <Utilities:SaveCloseControl Grid.Row="10" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5"/>
             
     </Grid>
 

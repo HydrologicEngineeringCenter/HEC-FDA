@@ -19,6 +19,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private const string IMPACT_AREA_FREQUENCY_ROWS = "ImpactAreaFrequencyRow";
 
         #region Properties
+        public int AnalysisYear { get; }
         public int SelectedWSE { get; }
         public int SelectedStructures { get; }
         public List<StageDamageCurve> Curves { get; } = new List<StageDamageCurve>();
@@ -29,10 +30,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         #endregion
         #region Constructors
 
-        public AggregatedStageDamageElement(String name, string lastEditDate, string description,int selectedWSE, int selectedStructs, 
+        public AggregatedStageDamageElement(String name, string lastEditDate, string description, int analysisYear, int selectedWSE, int selectedStructs, 
              List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impactAreaRows, bool isManual, bool writeDetailsOut, int id) 
             : base(name, lastEditDate, description, id)
         {
+            AnalysisYear = analysisYear;
             ImpactAreaFrequencyRows = impactAreaRows;
             WriteDetailsOut = writeDetailsOut;
 
@@ -46,6 +48,16 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         public AggregatedStageDamageElement(XElement elementXML, int id):base(elementXML, id)
         {
+            //This is for backwards compatability. The analysis year is new.
+            if(elementXML.Attribute("AnalysisYear") != null)
+            {
+                AnalysisYear = Convert.ToInt32(elementXML.Attribute("AnalysisYear").Value);
+            }
+            else
+            {
+                AnalysisYear = DateTime.Now.Year;
+            }
+
             SelectedStructures = Convert.ToInt32( elementXML.Attribute(SELECTED_STRUCTURES).Value);
             SelectedWSE = Convert.ToInt16(elementXML.Attribute(SELECTED_HYDRO).Value);
             IsManual = Convert.ToBoolean(elementXML.Attribute(IS_MANUAL).Value);
@@ -96,6 +108,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             XElement stageDamageElem = new XElement(StringConstants.ELEMENT_XML_TAG);
             stageDamageElem.Add(CreateHeaderElement());
 
+            stageDamageElem.SetAttributeValue("AnalysisYear", AnalysisYear);
             stageDamageElem.SetAttributeValue(SELECTED_STRUCTURES, SelectedStructures);
             stageDamageElem.SetAttributeValue(SELECTED_HYDRO, SelectedWSE);
             //todo: save the selected wse

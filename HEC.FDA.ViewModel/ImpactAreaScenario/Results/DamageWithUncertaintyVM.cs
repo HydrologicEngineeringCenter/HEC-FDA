@@ -12,8 +12,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
     public class DamageWithUncertaintyVM : BaseViewModel
     {
-        public PlotModel MyPlot { get; set; } = new PlotModel();
-        public List<EadRowItem> Rows { get; } = new List<EadRowItem>();
+        public ViewResolvingPlotModel MyPlot { get; } = new();
+        public List<EadRowItem> Rows { get; } = new();
         public double Mean { get; set; }
         public DamageWithUncertaintyVM(ScenarioResults scenarioResults, int impactAreaID)
         {
@@ -22,20 +22,21 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             Empirical empirical = iasResult.ConsequenceResults.GetAggregateEmpiricalDistribution(impactAreaID: iasResult.ImpactAreaID);
             InitializePlotModel(empirical);
 
-            List<double> qValues = new List<double>();
-            qValues.Add(scenarioResults.ConsequencesExceededWithProbabilityQ(.75, impactAreaID));
-            qValues.Add(scenarioResults.ConsequencesExceededWithProbabilityQ(.5, impactAreaID));
-            qValues.Add(scenarioResults.ConsequencesExceededWithProbabilityQ(.25, impactAreaID));
+            List<double> qValues = new()
+            {
+                scenarioResults.ConsequencesExceededWithProbabilityQ(.75, impactAreaID),
+                scenarioResults.ConsequencesExceededWithProbabilityQ(.5, impactAreaID),
+                scenarioResults.ConsequencesExceededWithProbabilityQ(.25, impactAreaID)
+            };
 
-            loadTableValues(qValues);
+            LoadTableValues(qValues);
         }
 
         #region OxyPlot
         private void InitializePlotModel(Empirical empirical)
         {
-            PlotModel MyPlot = new PlotModel();
             MyPlot.Title = StringConstants.EAD_DISTRIBUTION;
-            AddAxes(empirical);
+            AddAxes();
             AddSeries(empirical);
         }
         private void AddSeries(Empirical empirical)
@@ -58,19 +59,19 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             MyPlot.Series.Add(lineSeries);
             MyPlot.InvalidatePlot(true);
         }
-        private void AddAxes(Empirical empirical)
+        private void AddAxes()
         {
-            LinearAxis x = new LinearAxis()
+            LinearAxis x = new()
             {
                 Position = AxisPosition.Bottom,
                 Title = StringConstants.EXCEEDANCE_PROBABILITY,
-                LabelFormatter = _probabilityFormatter,
+                LabelFormatter = ProbabilityFormatter,
                 Maximum = 3.719, //probability of .9999
                 Minimum = -3.719, //probability of .0001
                 StartPosition = 1,
                 EndPosition = 0
             };
-            LinearAxis y = new LinearAxis()
+            LinearAxis y = new()
             {
                 Position = AxisPosition.Left,
                 Title = StringConstants.EXPECTED_ANNUAL_DAMAGE,
@@ -81,9 +82,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             MyPlot.Axes.Add(x);
             MyPlot.Axes.Add(y);
         }
-        private static string _probabilityFormatter(double d)
+        private static string ProbabilityFormatter(double d)
         {
-            Normal standardNormal = new Normal(0, 1);
+            Normal standardNormal = new(0, 1);
             double value = standardNormal.CDF(d);
             string stringval = value.ToString("0.0000");
             return stringval;
@@ -91,13 +92,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         #endregion
 
 
-        private void loadTableValues(List<double> qValues)
+        private void LoadTableValues(List<double> qValues)
         {
-            List<EadRowItem> rows = new List<EadRowItem>();
+            List<EadRowItem> rows = new();
             if (qValues.Count == 3)
             {
-                List<double> xVals = new List<double>() { .75, .5, .25 };
-                List<string> xValNames = new List<string>() { "First", "Second", "Third" };
+                List<string> xValNames = new() { "First", "Second", "Third" };
 
                 for (int i = 0; i < xValNames.Count; i++)
                 {

@@ -94,6 +94,10 @@ namespace HEC.FDA.ViewModel.Editors
             }
         }
 
+        /// <summary>
+        /// This is here so that an editor can override it and evaluate if it is valid before the save gets called.
+        /// </summary>
+        /// <returns></returns>
         public virtual FdaValidationResult IsValid()
         {
             return new FdaValidationResult();
