@@ -168,11 +168,9 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
                 }     
                 else
                 {
-                    double prob = 0;
                     foreach (string file in validFiles)
                     {
-                        prob += .1;
-                        AddRow(getUnsteadyRASResultName(file), Path.GetFullPath(file), prob);
+                        AddRow(getUnsteadyRASResultName(file), Path.GetFullPath(file), 0);
                     }
                 }
                 if(!vrWarnings.IsValid)

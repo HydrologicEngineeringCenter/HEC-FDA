@@ -114,11 +114,9 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
                 {
 
                     string[] profileNames = GetProfileNamesFromFilePath(fullpath);
-                    double prob = 0;
                     foreach (string name in profileNames)
                     {
-                        prob += .1;
-                        AddRow(Path.GetFileName(name), Path.GetFullPath(name), prob);
+                        AddRow(Path.GetFileName(name), Path.GetFullPath(name), 0);
                     }
                     if (!vr.IsValid)
                     {
