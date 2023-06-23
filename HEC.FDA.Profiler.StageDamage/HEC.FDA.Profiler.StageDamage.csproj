@@ -8,6 +8,8 @@
 		<DebugType>pdbonly</DebugType>
 		<DebugSymbols>true</DebugSymbols>
 		<TieredCompilation>false</TieredCompilation>
+		<WarningLevel>0</WarningLevel>
+		<!--!This turns off all warnings!-->
 	</PropertyGroup>
 
 	<ItemGroup>
