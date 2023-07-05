@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.utilities;
 using Statistics;
 using System;
 using System.Reflection;
@@ -39,7 +40,7 @@ namespace HEC.FDA.Model.metrics
         {
             ThresholdType = thresholdType;
             ThresholdValue = thresholdValue;
-            SystemPerformanceResults = new SystemPerformanceResults(thresholdType, thresholdValue, c);
+            SystemPerformanceResults = new SystemPerformanceResults(c);
             ThresholdID = thresholdID;
             IsNull = false;
         }
@@ -48,7 +49,7 @@ namespace HEC.FDA.Model.metrics
         {
             ThresholdType = thresholdType;
             ThresholdValue = thresholdValue;
-            SystemPerformanceResults = new SystemPerformanceResults(thresholdType, thresholdValue, systemResponseCurve, c);
+            SystemPerformanceResults = new SystemPerformanceResults(systemResponseCurve, c);
             ThresholdID = thresholdID;
             IsNull = false;
 
@@ -78,21 +79,19 @@ namespace HEC.FDA.Model.metrics
             return true;
         }
 
+        #region Serialization
         public XElement WriteToXML()
         {
-            XElement masterElement = new(this.GetAttribute<StoredPropertyAttribute>().SerializedName);
-
-            string thresholdTypeTag = ThresholdType.GetAttribute<StoredPropertyAttribute>().SerializedName;
-            masterElement.SetAttributeValue(thresholdTypeTag, ThresholdType.GetAttribute<StoredPropertyAttribute>());
-
-            string thresholdValueTag = ThresholdValue.GetAttribute<StoredPropertyAttribute>().SerializedName;
+            StoredPropertyAttribute attribute = (StoredPropertyAttribute)Attribute.GetCustomAttribute(typeof(Threshold), typeof(StoredPropertyAttribute));
+            string thresholdMasterTag = attribute.SerializedName;
+            XElement masterElement = new(thresholdMasterTag);
+            string thresholdTypeTag = GetXMLTagFromProperty(nameof(ThresholdType));
+            masterElement.SetAttributeValue(thresholdTypeTag, ThresholdType);
+            string thresholdValueTag = GetXMLTagFromProperty(nameof(ThresholdValue));
             masterElement.SetAttributeValue(thresholdValueTag, ThresholdValue);
-
-            string thresholdIDTag = ThresholdID.GetAttribute<StoredPropertyAttribute>().SerializedName;
+            string thresholdIDTag = GetXMLTagFromProperty(nameof(ThresholdID));
             masterElement.SetAttributeValue(thresholdIDTag, ThresholdID);
-
             XElement projectPerformanceElement = SystemPerformanceResults.WriteToXML();
-
             masterElement.Add(projectPerformanceElement);
             return masterElement;
         }
@@ -103,19 +102,18 @@ namespace HEC.FDA.Model.metrics
             ThresholdEnum thresholdType = ThresholdEnumFromString(xElement.Attribute(thresholdTypeTag)?.Value);
 
             string thresholdValueTag = GetXMLTagFromProperty(nameof(ThresholdValue));
-            if (double.TryParse(xElement.Attribute(thresholdValueTag)?.Value, out double thresholdValue))
-            {
-                string thresholdIDTag = GetXMLTagFromProperty(nameof(ThresholdID));
-                if (int.TryParse(xElement.Attribute(thresholdIDTag)?.Value, out int thresholdID))
-                {
-                    string performanceResultsTag = GetXMLTagFromProperty(nameof(SystemPerformanceResults));
-                    SystemPerformanceResults projectPerformanceResults = SystemPerformanceResults.ReadFromXML(xElement.Element(performanceResultsTag));
-                    if(projectPerformanceResults != null)
-                    {
-                        return new Threshold(thresholdID, thresholdType, thresholdValue, projectPerformanceResults);
-                    }
-                }
-            }
+            if (!double.TryParse(xElement.Attribute(thresholdValueTag)?.Value, out double thresholdValue))
+                return null;
+
+            string thresholdIDTag = GetXMLTagFromProperty(nameof(ThresholdID));
+            if (!int.TryParse(xElement.Attribute(thresholdIDTag)?.Value, out int thresholdID))
+                return null;
+
+            string performanceResultsTag = GetXMLTagFromProperty(nameof(SystemPerformanceResults));
+            SystemPerformanceResults projectPerformanceResults = SystemPerformanceResults.ReadFromXML(xElement.Element(performanceResultsTag));
+            if (projectPerformanceResults != null)
+                return new Threshold(thresholdID, thresholdType, thresholdValue, projectPerformanceResults);
+
             return null;
         }
 
@@ -126,29 +124,23 @@ namespace HEC.FDA.Model.metrics
 
         private static ThresholdEnum ThresholdEnumFromString(string value)
         {
-            foreach(ThresholdEnum option in Enum.GetValues(typeof(ThresholdEnum)))
+            foreach (ThresholdEnum option in Enum.GetValues(typeof(ThresholdEnum)))
             {
                 var attribute = option.GetAttribute<StoredPropertyAttribute>();
-                if(attribute.SerializedName.Equals(value))
-                {
+
+                if (attribute.SerializedName.Equals(value))
                     return option;
-                }
-                else
-                {
-                    if(attribute.AlsoKnownAs != null)
-                    {
-                        foreach (string alias in attribute.AlsoKnownAs)
-                        {
-                            if (alias.Equals(value))
-                            {
-                                return option;
-                            }
-                        }
-                    }
-                }
+
+                if (attribute.AlsoKnownAs == null)
+                    continue;
+
+                foreach (string alias in attribute.AlsoKnownAs)
+                    if (alias.Equals(value))
+                        return option;
             }
-            return ThresholdEnum.NotSupported; 
+            return ThresholdEnum.NotSupported;
         }
+        #endregion
         #endregion
 
 

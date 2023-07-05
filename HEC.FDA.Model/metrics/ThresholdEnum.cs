@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using HEC.FDA.Model.utilities;
 
 namespace HEC.FDA.Model.metrics
 {
@@ -15,21 +14,5 @@ namespace HEC.FDA.Model.metrics
         LeveeSystemResponse = 3,
         [StoredProperty("AdditionalExteriorStage", AlsoKnownAs = new[] {"InteriorStage"})]
         AdditionalExteriorStage = 4,
-    }
-    
-
-    [System.AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = true)]
-    sealed class StoredPropertyAttribute : Attribute
-    {
-        readonly string _serializedName;
-        public string[] AlsoKnownAs { get; set; }
-        public StoredPropertyAttribute(string serializedName)
-        {
-            this._serializedName = serializedName;
-        }
-        public string SerializedName
-        {
-            get { return _serializedName; }
-        }
     }
 }

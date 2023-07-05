@@ -89,7 +89,10 @@ namespace HEC.FDA.Model.metrics
             foreach (XElement thresholdElement in xElement.Elements())
             {
                 Threshold threshold = Threshold.ReadFromXML(thresholdElement);
-                thresholdList.Add(threshold);
+                if(threshold != null)
+                {
+                    thresholdList.Add(threshold);
+                }
             }
             return new PerformanceByThresholds(thresholdList);
         }
