@@ -7,6 +7,7 @@ using Statistics.Distributions;
 using System.Threading.Tasks;
 using Statistics.Histograms;
 using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.compute;
 
 namespace HEC.FDA.ModelTest.unittests
 {
@@ -207,6 +208,24 @@ namespace HEC.FDA.ModelTest.unittests
             }
             Histogram histogram = new Histogram(data, convergenceCriteria);
             return histogram;
+        }
+
+        [Fact]
+        public void PairedDataSamplesCorrectly()
+        {
+            double[] xVals_probabilities = { 0.0001, 0.5, 0.9999 };
+            Normal[] yVals_normalDists =
+            {
+                new Normal(0,2), new Normal(-10,2), new Normal(100,2)
+            };
+            UncertainPairedData uncertainPairedData = new(xVals_probabilities, yVals_normalDists, new CurveMetaData("fake"));
+
+            MedianRandomProvider medianRandomProvider = new MedianRandomProvider();
+            PairedData pairedData = uncertainPairedData.SamplePairedData(medianRandomProvider.NextRandom());
+            Assert.Equal(0, pairedData.Yvals[0]);
+            Assert.Equal(0, pairedData.Yvals[1],.02); //forced monotonicity should make this 0 instead of -10
+            Assert.Equal(100, pairedData.Yvals[2]);
+
         }
 
     }
