@@ -595,11 +595,6 @@ namespace HEC.FDA.ViewModel.Study
                 }
                 return retVal;
             }
-            else if(element is AlternativeComparisonReportElement)
-            {
-                retVal.AddRange(AlternativeCompReports);
-            }
-
             return retVal;
 
         }

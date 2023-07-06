@@ -62,7 +62,8 @@ namespace HEC.FDA.Model.metrics
         }
         public double AssuranceOfEvent(int thresholdID, double standardNonExceedanceProbability)
         {
-            return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.AssuranceOfEvent(standardNonExceedanceProbability);
+            Threshold thresh = PerformanceByThresholds.GetThreshold(thresholdID);
+            return thresh.SystemPerformanceResults.AssuranceOfEvent(standardNonExceedanceProbability, thresh.ThresholdValue);
         }
         /// <summary>
         /// This method returns the mean of the consequences measure of the consequence result object for the given damage category, asset category, impact area combination 

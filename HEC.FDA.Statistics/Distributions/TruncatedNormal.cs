@@ -163,7 +163,7 @@ namespace Statistics.Distributions
         }
         #endregion
 
-        internal new static string Print(double mean, double sd, int n) => $"TruncatedNormal(mean: {mean.Print()}, sd: {sd.Print()}, sample size: {n.Print()})";
+        internal static string Print(double mean, double sd, int n) => $"TruncatedNormal(mean: {mean.Print()}, sd: {sd.Print()}, sample size: {n.Print()})";
         public new static string RequiredParameterization(bool printNotes = false) => $"The TruncatedNormal distribution requires the following parameterization: {Parameterization()}.";
         internal new static string Parameterization() => $"TruncatedNormal(mean: [{double.MinValue.Print()}, {double.MaxValue.Print()}], sd: [{double.MinValue.Print()}, {double.MaxValue.Print()}], sample size: > 0)";
         public override IDistribution Fit(double[] sample)

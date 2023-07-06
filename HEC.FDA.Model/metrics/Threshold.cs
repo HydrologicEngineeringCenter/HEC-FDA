@@ -1,16 +1,25 @@
 ﻿using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.utilities;
 using Statistics;
 using System;
+using System.Reflection;
+using System.Runtime.Serialization;
 using System.Xml.Linq;
+using Utility.Extensions.Attributes;
 
 namespace HEC.FDA.Model.metrics
 {
+    [StoredProperty("Threshold")]
     public class Threshold
     {
         #region Properties
+        [StoredProperty("Threshold_Type")]
         public ThresholdEnum ThresholdType { get; set; }
+        [StoredProperty("Threshold_Value")]
         public double ThresholdValue { get; set; }
+        [StoredProperty("Project_Performance_Results")]
         public SystemPerformanceResults SystemPerformanceResults { get; set; }
+        [StoredProperty("Threshold_ID")]
         /// <summary>
         /// Threshold ID should be an integer greater than or equal to 1. 
         /// The threshold ID = 0 is reserved for the default threshold.
@@ -31,7 +40,7 @@ namespace HEC.FDA.Model.metrics
         {
             ThresholdType = thresholdType;
             ThresholdValue = thresholdValue;
-            SystemPerformanceResults = new SystemPerformanceResults(thresholdType, thresholdValue, c);
+            SystemPerformanceResults = new SystemPerformanceResults(c);
             ThresholdID = thresholdID;
             IsNull = false;
         }
@@ -40,7 +49,7 @@ namespace HEC.FDA.Model.metrics
         {
             ThresholdType = thresholdType;
             ThresholdValue = thresholdValue;
-            SystemPerformanceResults = new SystemPerformanceResults(thresholdType, thresholdValue, systemResponseCurve, c);
+            SystemPerformanceResults = new SystemPerformanceResults(systemResponseCurve, c);
             ThresholdID = thresholdID;
             IsNull = false;
 
@@ -70,34 +79,70 @@ namespace HEC.FDA.Model.metrics
             return true;
         }
 
+        #region Serialization
         public XElement WriteToXML()
         {
-            XElement masterElement = new("Threshold");
-            masterElement.SetAttributeValue("Threshold_Type", Convert.ToString(ThresholdType));
-            masterElement.SetAttributeValue("Threshold_Value", ThresholdValue);
-            masterElement.SetAttributeValue("Threshold_ID", ThresholdID);
+            StoredPropertyAttribute attribute = (StoredPropertyAttribute)Attribute.GetCustomAttribute(typeof(Threshold), typeof(StoredPropertyAttribute));
+            string thresholdMasterTag = attribute.SerializedName;
+            XElement masterElement = new(thresholdMasterTag);
+            string thresholdTypeTag = GetXMLTagFromProperty(nameof(ThresholdType));
+            masterElement.SetAttributeValue(thresholdTypeTag, ThresholdType);
+            string thresholdValueTag = GetXMLTagFromProperty(nameof(ThresholdValue));
+            masterElement.SetAttributeValue(thresholdValueTag, ThresholdValue);
+            string thresholdIDTag = GetXMLTagFromProperty(nameof(ThresholdID));
+            masterElement.SetAttributeValue(thresholdIDTag, ThresholdID);
             XElement projectPerformanceElement = SystemPerformanceResults.WriteToXML();
-            projectPerformanceElement.Name = "Project_Performance_Results";
             masterElement.Add(projectPerformanceElement);
             return masterElement;
         }
 
         public static Threshold ReadFromXML(XElement xElement)
         {
-            ThresholdEnum thresholdType = ThresholdEnum.AdditionalExteriorStage;
-            try
+            string thresholdTypeTag = GetXMLTagFromProperty(nameof(ThresholdType));
+            ThresholdEnum thresholdType = ThresholdEnumFromString(xElement.Attribute(thresholdTypeTag)?.Value);
+
+            string thresholdValueTag = GetXMLTagFromProperty(nameof(ThresholdValue));
+            if (!double.TryParse(xElement.Attribute(thresholdValueTag)?.Value, out double thresholdValue))
+                return null;
+
+            string thresholdIDTag = GetXMLTagFromProperty(nameof(ThresholdID));
+            if (!int.TryParse(xElement.Attribute(thresholdIDTag)?.Value, out int thresholdID))
+                return null;
+
+            string performanceResultsTag = GetXMLTagFromProperty(nameof(SystemPerformanceResults));
+            SystemPerformanceResults projectPerformanceResults = SystemPerformanceResults.ReadFromXML(xElement.Element(performanceResultsTag));
+            if (projectPerformanceResults != null)
+                return new Threshold(thresholdID, thresholdType, thresholdValue, projectPerformanceResults);
+
+            return null;
+        }
+
+        private static string GetXMLTagFromProperty(string propertyName)
+        {
+            return typeof(Threshold).GetProperty(propertyName).GetCustomAttribute<StoredPropertyAttribute>().SerializedName;
+        }
+
+        private static ThresholdEnum ThresholdEnumFromString(string value)
+        {
+            foreach (ThresholdEnum option in Enum.GetValues(typeof(ThresholdEnum)))
             {
-                thresholdType = (ThresholdEnum)Enum.Parse(typeof(ThresholdEnum), xElement.Attribute("Threshold_Type").Value);
+                var attribute = option.GetAttribute<StoredPropertyAttribute>();
+
+                if (attribute.SerializedName.Equals(value))
+                    return option;
+
+                if (attribute.AlsoKnownAs == null)
+                    continue;
+
+                foreach (string alias in attribute.AlsoKnownAs)
+                    if (alias.Equals(value))
+                        return option;
             }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-            double thresholdValue = Convert.ToDouble(xElement.Attribute("Threshold_Value").Value);
-            int thresholdID = Convert.ToInt32(xElement.Attribute("Threshold_ID").Value);
-            SystemPerformanceResults projectPerformanceResults = SystemPerformanceResults.ReadFromXML(xElement.Element("Project_Performance_Results"));
-            return new Threshold(thresholdID, thresholdType, thresholdValue, projectPerformanceResults);
+            return ThresholdEnum.NotSupported;
         }
         #endregion
+        #endregion
+
+
     }
 }

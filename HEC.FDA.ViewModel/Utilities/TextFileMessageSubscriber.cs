@@ -16,7 +16,6 @@ namespace HEC.FDA.ViewModel.Utilities
         private ErrorLevel _filterLevel = ErrorLevel.Unassigned;
         private Type _messageTypeFilter = null;
         private Type _senderTypeFilter = null;
-        private int _maxMessageCount = 1;
         private object _bwListLock = new object();
         private static int _enqueue;
         private static int _dequeue;
