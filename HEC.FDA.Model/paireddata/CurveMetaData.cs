@@ -72,24 +72,25 @@ namespace HEC.FDA.Model.paireddata
         {
             StoredPropertyAttribute attribute = (StoredPropertyAttribute)Attribute.GetCustomAttribute(typeof(CurveMetaData), typeof(StoredPropertyAttribute));
             string thresholdMasterTag = attribute.SerializedName;
-            XElement masterElement = new XElement("thresholdMasterTag");
 
-            string xLabelTag = Serialization.GetXMLTagFromProperty(XLabel.GetType(),nameof(XLabel));
+            XElement masterElement = new XElement(thresholdMasterTag);
+
+            string xLabelTag = Serialization.GetXMLTagFromProperty(GetType(), nameof(XLabel));
             masterElement.SetAttributeValue(xLabelTag, XLabel);
 
-            string yLabelTag = Serialization.GetXMLTagFromProperty(YLabel.GetType(),nameof(YLabel));
+            string yLabelTag = Serialization.GetXMLTagFromProperty(GetType(),nameof(YLabel));
             masterElement.SetAttributeValue(yLabelTag, YLabel);
 
-            string nameTag = Serialization.GetXMLTagFromProperty(Name.GetType(),nameof(Name));
+            string nameTag = Serialization.GetXMLTagFromProperty(GetType(),nameof(Name));
             masterElement.SetAttributeValue(nameTag, Name);
 
-            string damCatTag = Serialization.GetXMLTagFromProperty(DamageCategory.GetType(),nameof(DamageCategory));
+            string damCatTag = Serialization.GetXMLTagFromProperty(GetType(),nameof(DamageCategory));
             masterElement.SetAttributeValue(damCatTag, DamageCategory);
 
-            string assetCatTag = Serialization.GetXMLTagFromProperty(AssetCategory.GetType(),nameof(AssetCategory));
+            string assetCatTag = Serialization.GetXMLTagFromProperty(GetType(),nameof(AssetCategory));
             masterElement.SetAttributeValue(assetCatTag, AssetCategory);
 
-            string isNullTag = Serialization.GetXMLTagFromProperty(IsNull.GetType(),nameof(IsNull));
+            string isNullTag = Serialization.GetXMLTagFromProperty(GetType(),nameof(IsNull));
             masterElement.SetAttributeValue(isNullTag, IsNull);
             return masterElement;
         }
@@ -98,22 +99,22 @@ namespace HEC.FDA.Model.paireddata
         {
             CurveMetaData metaDataForReflection = new();
 
-            string xLabelTag = Serialization.GetXMLTagFromProperty(metaDataForReflection.XLabel.GetType(), nameof(XLabel));
+            string xLabelTag = Serialization.GetXMLTagFromProperty(metaDataForReflection.GetType(), nameof(XLabel));
             string xLabel = xElement.Attribute(xLabelTag)?.Value;
 
-            string yLabelTag = Serialization.GetXMLTagFromProperty(metaDataForReflection.YLabel.GetType(), nameof(YLabel));
+            string yLabelTag = Serialization.GetXMLTagFromProperty(metaDataForReflection.GetType(), nameof(YLabel));
             string yLabel = xElement.Attribute(yLabelTag)?.Value;
 
-            string nameTag = Serialization.GetXMLTagFromProperty(metaDataForReflection.Name.GetType(), nameof(Name));
+            string nameTag = Serialization.GetXMLTagFromProperty(metaDataForReflection.GetType(), nameof(Name));
             string name = xElement.Attribute(nameTag)?.Value;
 
-            string damCatTag = Serialization.GetXMLTagFromProperty(metaDataForReflection.DamageCategory.GetType(), nameof(DamageCategory));
+            string damCatTag = Serialization.GetXMLTagFromProperty(metaDataForReflection.GetType(), nameof(DamageCategory));
             string damageCategory = xElement.Attribute(damCatTag)?.Value;
 
-            string assetCatTag = Serialization.GetXMLTagFromProperty(metaDataForReflection.AssetCategory.GetType(), nameof(AssetCategory));
+            string assetCatTag = Serialization.GetXMLTagFromProperty(metaDataForReflection.GetType(), nameof(AssetCategory));
             string assetCategory = xElement.Attribute(assetCatTag)?.Value;
 
-            string isNullTag = Serialization.GetXMLTagFromProperty(metaDataForReflection.IsNull.GetType(), nameof(IsNull));
+            string isNullTag = Serialization.GetXMLTagFromProperty(metaDataForReflection.GetType(), nameof(IsNull));
             if (!bool.TryParse(xElement.Attribute(isNullTag)?.Value, out bool isNull))
                 return new CurveMetaData();
             

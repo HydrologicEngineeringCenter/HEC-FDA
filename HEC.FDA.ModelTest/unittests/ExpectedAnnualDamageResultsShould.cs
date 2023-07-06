@@ -20,9 +20,8 @@ namespace HEC.FDA.ModelTest.unittests
         static string damCat = "Residential";
         static string assetCat = "content";
         static int id = 0;
-        static CurveTypesEnum curveTypesEnum = CurveTypesEnum.StrictlyMonotonicallyIncreasing;
         static CurveMetaData curveMetaDataWithCategory = new CurveMetaData(xLabel, name, damCat);
-        static CurveMetaData curveMetaDataWithoutCategory = new CurveMetaData(xLabel, name, curveTypesEnum);
+        static CurveMetaData curveMetaDataWithoutCategory = new CurveMetaData(xLabel, name);
 
         [Theory]
         [InlineData(1111, 100)]

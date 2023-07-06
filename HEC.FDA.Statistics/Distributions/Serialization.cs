@@ -6,6 +6,9 @@ internal class Serialization
 {
     public static string GetXMLTagFromProperty(Type ownerType, string propertyName)
     {
-        return ownerType.GetProperty(propertyName).GetCustomAttribute<StoredPropertyAttribute>().SerializedName;
+        var oT = ownerType.GetProperty(propertyName);
+        var sP = oT.GetCustomAttribute<StoredPropertyAttribute>();
+        var name = sP.SerializedName;
+        return name;
     }
 }

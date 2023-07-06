@@ -5,27 +5,28 @@ using Statistics.Distributions;
 using Utilities;
 using HEC.MVVMFramework.Base.Implementations;
 using System.Xml.Linq;
+using HEC.FDA.Model.utilities;
 
 namespace Statistics.GraphicalRelationships
 {
+    [StoredProperty("GraphicalDistributionWithLessSimple")]
     public class GraphicalDistributionWithLessSimple: Validation
     {
-
         #region Properties
-        [Stored(Name = "LowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant", type = typeof(double))]
-        private double LowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant { get; }
-        [Stored(Name = "HigherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant", type = typeof(double))]
-        private double HigherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant { get; }
-        [Stored(Name = "StageOrLoggedFlowValues", type = typeof(double[]))]
-        private double[] StageOrLoggedFlowValues { get; }
-        [Stored(Name ="Using Stages Not Flows", type = typeof(bool))]
+        [StoredProperty("LowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant")]
+        public double LowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant { get; }
+        [StoredProperty("HigherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant")]
+        public double HigherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant { get; }
+        [StoredProperty("StageOrLoggedFlowValues")]
+        public double[] StageOrLoggedFlowValues { get; internal set; }
+        [StoredProperty("UsingStagesNotFlows")]
         public bool UsingStagesNotFlows { get; }
-        [Stored(Name = "Equivalent Record Length", type = typeof(int))]
+        [StoredProperty("EquivalentRecordLength")]
         public int EquivalentRecordLength { get; }
-        [Stored(Name = "Exceedance Probabilities", type = typeof(double[]))]
+        [StoredProperty("ExceedanceProbabilities")]
         public double[] ExceedanceProbabilities { get; internal set; }
-        
-        [Stored(Name = "FlowOrStageDistributions", type = typeof(IDistribution[]))]
+
+        [StoredProperty("StageOrLogFlowDistributions")]
         public ContinuousDistribution[] StageOrLogFlowDistributions { get; internal set; }
         //TODO: Add validation and set these properties 
         public IMessageLevels State { get; private set; }
@@ -187,7 +188,7 @@ namespace Statistics.GraphicalRelationships
                 finalFlowOrStageValues.Add(upperFlowOrStage);
                 finalExceedanceProbabilities.Add(minimumExceedanceProbability);
             }
-            _StageOrLoggedFlowValues = finalFlowOrStageValues.ToArray();
+            StageOrLoggedFlowValues = finalFlowOrStageValues.ToArray();
             ExceedanceProbabilities = finalExceedanceProbabilities.ToArray();
         }
 
@@ -311,54 +312,100 @@ namespace Statistics.GraphicalRelationships
         #region XML Methods
         public static GraphicalDistributionWithLessSimple ReadFromXML(XElement xElement)
         {
-            double lowerProb = Convert.ToDouble(xElement.Attribute("LowerProb").Value);
-            double upperProb = Convert.ToDouble(xElement.Attribute("UpperProb").Value);
-            int erl = Convert.ToInt32(xElement.Attribute("ERL").Value);
-            bool usesStageNotFlows = Convert.ToBoolean(xElement.Attribute("UsesStagesNotFLows").Value);
+            //serves for reflection and as null object to be returned in case of error
+            GraphicalDistributionWithLessSimple graphical = new GraphicalDistributionWithLessSimple();
+
+            string lowerProbTag = Serialization.GetXMLTagFromProperty(graphical.GetType(), nameof(LowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant));
+            if (!double.TryParse(xElement.Attribute(lowerProbTag)?.Value, out double lowerProb))
+                return graphical;
+
+            string upperProbTag = Serialization.GetXMLTagFromProperty(graphical.GetType(), nameof(HigherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant));
+            if (!double.TryParse(xElement.Attribute(upperProbTag)?.Value, out double upperProb))
+                return graphical;
+
+            string erlTag = Serialization.GetXMLTagFromProperty(graphical.GetType(), nameof(EquivalentRecordLength));
+            if (!int.TryParse(xElement.Attribute(erlTag)?.Value, out int erl))
+                return graphical;
+
+            string boolTag = Serialization.GetXMLTagFromProperty(graphical.GetType(), nameof(UsingStagesNotFlows));
+            if (!bool.TryParse(xElement.Attribute(boolTag)?.Value, out bool usesStageNotFlows))
+                return graphical;
+
+            string probsTag = Serialization.GetXMLTagFromProperty(graphical.GetType(), nameof(ExceedanceProbabilities));
             List<double> exceedanceProbabilities = new();
-            foreach (XElement exceedanceProbability in xElement.Element("ExceedanceProbabilities").Elements())
+            int i = 0;
+            foreach (XElement exceedanceProbability in xElement.Element(probsTag).Elements())
             {
-               exceedanceProbabilities.Add(Convert.ToDouble(exceedanceProbability.Attribute("Value").Value));
+               if (!double.TryParse(xElement.Attribute(probsTag + $"{i}")?.Value, out double prob))
+                    return graphical;
+                exceedanceProbabilities.Add(prob);
+                i++;
             }
+
+            string distsTag = Serialization.GetXMLTagFromProperty(graphical.StageOrLogFlowDistributions.GetType(), nameof(StageOrLogFlowDistributions));
             List<Normal> stageOrFlowDistributions = new();
-            foreach (XElement stageOrFlowDistribution in xElement.Element("StageOrLogFlowDistributions").Elements())
+            foreach (XElement stageOrFlowDistribution in xElement.Element(distsTag).Elements())
             {
-                stageOrFlowDistributions.Add((Normal)ContinuousDistribution.FromXML(stageOrFlowDistribution));
+                Normal normal = (Normal)ContinuousDistribution.FromXML(stageOrFlowDistribution);
+                if (normal != null)
+                {
+                    stageOrFlowDistributions.Add(normal);
+                }
             }
+
+            string valsTag = Serialization.GetXMLTagFromProperty(graphical.StageOrLoggedFlowValues.GetType(), nameof(StageOrLoggedFlowValues));
             List<double> inputStageFlowVals = new();
-            foreach (XElement stageOrFlowValue in xElement.Element("InputValues").Elements())
+
+            int j = 0;
+            foreach (XElement stageOrFlowValue in xElement.Element(valsTag).Elements())
             {
-                inputStageFlowVals.Add(Convert.ToDouble(stageOrFlowValue.Attribute("Value").Value));
+                if (!double.TryParse(xElement.Attribute(valsTag + $"{i}")?.Value, out double val))
+                    return graphical;
+                inputStageFlowVals.Add(val);
+                j++;
             }
+
             return new GraphicalDistributionWithLessSimple(lowerProb, upperProb, inputStageFlowVals.ToArray(), usesStageNotFlows, erl, exceedanceProbabilities.ToArray(), stageOrFlowDistributions.ToArray()); ;
         }
         public XElement WriteToXML()
         {
-            XElement masterElement = new XElement(this.GetType().Name);
+            XElement masterElement = new XElement(GetType().Name);
 
-            masterElement.SetAttributeValue("LowerProb", LowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant);
-            masterElement.SetAttributeValue("UpperProb", HigherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant);
-            masterElement.SetAttributeValue("UsesStagesNotFLows", UsingStagesNotFlows);
-            masterElement.SetAttributeValue("ERL", EquivalentRecordLength);
-            XElement exceedanceProbabilities = new XElement("ExceedanceProbabilities");
+            string lowerProbTag = Serialization.GetXMLTagFromProperty(GetType(), nameof(LowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant));
+            masterElement.SetAttributeValue(lowerProbTag, LowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant);
+
+            string upperProbTag = Serialization.GetXMLTagFromProperty(GetType(), nameof(HigherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant));
+            masterElement.SetAttributeValue(upperProbTag, HigherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant);
+
+            string boolTag = Serialization.GetXMLTagFromProperty(GetType(), nameof(UsingStagesNotFlows));
+            masterElement.SetAttributeValue(boolTag, UsingStagesNotFlows);
+
+            string erlTag = Serialization.GetXMLTagFromProperty(GetType(), nameof(EquivalentRecordLength));
+            masterElement.SetAttributeValue(erlTag, EquivalentRecordLength);
+
+            string probsTag = Serialization.GetXMLTagFromProperty(GetType(), nameof(ExceedanceProbabilities));
+            XElement exceedanceProbabilities = new XElement(probsTag);
             for (int i = 0; i < ExceedanceProbabilities.Length; i++)
             {
+                //the name of rowElement does not matter, only the name of the attribute does 
                 XElement rowElement = new XElement("Probability");
-                rowElement.SetAttributeValue("Value", ExceedanceProbabilities[i]);
+                rowElement.SetAttributeValue(probsTag+$"{i}", ExceedanceProbabilities[i]);
                 exceedanceProbabilities.Add(rowElement);
             }
             masterElement.Add(exceedanceProbabilities);
 
-            XElement inputStageFlowValues = new XElement("InputValues");
+            string valsTag = Serialization.GetXMLTagFromProperty(GetType(), nameof(StageOrLoggedFlowValues));
+            XElement inputStageFlowValues = new XElement(valsTag);
             for (int i = 0; i < StageOrLoggedFlowValues.Length; i++)
             {
                 XElement rowElement = new XElement("StageFlow");
-                rowElement.SetAttributeValue("Value", StageOrLoggedFlowValues[i]);
+                rowElement.SetAttributeValue(valsTag+$"{i}", StageOrLoggedFlowValues[i]);
                 inputStageFlowValues.Add(rowElement);
             }
             masterElement.Add(inputStageFlowValues);
 
-            XElement stageOrLogFlowDistributions = new XElement("StageOrLogFlowDistributions");
+            string distsTag = Serialization.GetXMLTagFromProperty(GetType(), nameof(StageOrLogFlowDistributions));
+            XElement stageOrLogFlowDistributions = new XElement(distsTag);
             for (int i = 0; i < StageOrLogFlowDistributions.Length; i++)
             {
                 stageOrLogFlowDistributions.Add(StageOrLogFlowDistributions[i].ToXML());
