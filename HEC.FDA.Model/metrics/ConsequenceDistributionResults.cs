@@ -426,7 +426,7 @@ namespace HEC.FDA.Model.metrics
                 {
                     foreach (string assetCategory in assetCategories)
                     {
-                        CurveMetaData curveMetaData = new("X Values", "Consequences", "Consequences Uncertain Paired Data", damageCategory, CurveTypesEnum.MonotonicallyIncreasing, impactAreaID, assetCategory);
+                        CurveMetaData curveMetaData = new("X Values", "Consequences", "Consequences Uncertain Paired Data", damageCategory, impactAreaID, assetCategory);
                         List<IHistogram> histograms = new();
                         foreach (ConsequenceDistributionResults consequenceDistributions in yValues)
                         {
