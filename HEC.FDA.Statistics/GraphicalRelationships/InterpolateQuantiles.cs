@@ -1,57 +1,64 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Statistics.Distributions;
+using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Statistics.Graphical
 {
     public class InterpolateQuantiles
     {
-
-        private double[] _InputXValues;
-        private double[] _InputYValues;
-        public InterpolateQuantiles(double[] xvalues, double[] yvalues)
+        /// <summary>
+        /// Interpolates on stage for flow for an expanded set of exceedance probabilities 
+        /// </summary>
+        /// <param name="inputProbabilities"></param> input non-exceedance probabilities 
+        /// <param name="probabilitiesForWhichQuantilesAreRequired"></param> non-exceedance probabilities at which to calculate stage or flow
+        /// <param name="inputDataForInterpolation"></param> input stage or flow values
+        /// <returns></returns>
+        public static double[] InterpolateOnX(double[] inputProbabilities, double[] probabilitiesForWhichQuantilesAreRequired, double[] inputDataForInterpolation)
         {
-            _InputXValues = xvalues;
-            _InputYValues = yvalues;
-        }
-        public double[] ComputeQuantiles(double[] finalExceedanceProbabilities)
-        {
-            double[] quantiles = new double[finalExceedanceProbabilities.Count()];
-            Distributions.Normal standardNormalDistribution = new Distributions.Normal();
-            double exceedanceProbability;
+            double[] quantiles = new double[probabilitiesForWhichQuantilesAreRequired.Length];
+            double tolerance = 0.00001;
+            Normal standardNormalDistribution = new Normal();
+            double currentExceedanceProbabilityOnWhichToInterpolate;
             int inputOrdinate = 0;
-            for (int i = 0; i < finalExceedanceProbabilities.Count(); i++)
+
+            for (int i = 0; i < probabilitiesForWhichQuantilesAreRequired.Length; i++)
             {
-                exceedanceProbability = finalExceedanceProbabilities[i];
-                for (int j = 0; j < _InputXValues.Count(); j++) //look over input exceedance probabilities
+                currentExceedanceProbabilityOnWhichToInterpolate = probabilitiesForWhichQuantilesAreRequired[i];
+
+                //look over input exceedance probabilities 
+                for (int j = 0; j < inputProbabilities.Length; j++) 
                 {
-                    if ((exceedanceProbability - _InputYValues[j]) > -1.0e-5) //if the required exceedance probability matches the input exceedance probability
+                    //if the required exceedance probability reasonably matches the input exceedance probability
+                    if (Math.Abs((currentExceedanceProbabilityOnWhichToInterpolate - inputProbabilities[j])) < tolerance) 
                     {
-                        inputOrdinate = j; //get the index of the input flow or exceedance value 
+                        //get the index of the input flow or exceedance value that corresponds to probability at j 
+                        inputOrdinate = j;  
                         break;
                     }
                 }
-                if (inputOrdinate == 0) //if the index is for the first input flow or stage value
+                //if the index is for the first input flow or stage value
+                if (inputOrdinate == 0) 
                 {
-                    quantiles[i] = _InputXValues[inputOrdinate];  
+                    //observe that this could lead to 
+                    quantiles[i] = inputDataForInterpolation[inputOrdinate];  
 
                 }
                 else
                 {
-                    if (_InputYValues[inputOrdinate - 1] < .99999)
+                    //for all non-exceedance probabilities less than 0.999 (or exceedance probabilities greater than 0.001) 
+                    //So for about the .002 AEP and more frequent 
+                    if (inputProbabilities[inputOrdinate - 1] < .999)
                     {
-                        double zValueExceedanceProbability = standardNormalDistribution.InverseCDF(exceedanceProbability);
-                        double zValueSmallerInputExceedanceProbability = standardNormalDistribution.InverseCDF(_InputYValues[inputOrdinate - 1]);
-                        double zValueLargerExceedanceProbability = standardNormalDistribution.InverseCDF(_InputYValues[inputOrdinate]);
+                        double zValueExceedanceProbability = standardNormalDistribution.InverseCDF(currentExceedanceProbabilityOnWhichToInterpolate);
+                        double zValueSmallerInputExceedanceProbability = standardNormalDistribution.InverseCDF(inputProbabilities[inputOrdinate - 1]);
+                        double zValueLargerExceedanceProbability = standardNormalDistribution.InverseCDF(inputProbabilities[inputOrdinate]);
                         double fractionOfQuantileDifference = ((zValueExceedanceProbability - zValueSmallerInputExceedanceProbability) / (zValueLargerExceedanceProbability - zValueSmallerInputExceedanceProbability));
-                        quantiles[i] = fractionOfQuantileDifference * _InputXValues[inputOrdinate] + (1-fractionOfQuantileDifference)* _InputXValues[inputOrdinate - 1];
+                        quantiles[i] = fractionOfQuantileDifference * inputDataForInterpolation[inputOrdinate] + (1-fractionOfQuantileDifference)* inputDataForInterpolation[inputOrdinate - 1];
                         
                     }
                     else//out at the tail, use linear interpolation...
                     {
-                        quantiles[i] = _InputXValues[inputOrdinate - 1] + ((finalExceedanceProbabilities[i] - _InputYValues[inputOrdinate - 1]) / (_InputYValues[inputOrdinate] - _InputYValues[inputOrdinate - 1])) * (_InputXValues[inputOrdinate] - _InputXValues[inputOrdinate - 1]);
+                        quantiles[i] = inputProbabilities[inputOrdinate - 1] + ((probabilitiesForWhichQuantilesAreRequired[i] - inputDataForInterpolation[inputOrdinate - 1]) / (inputDataForInterpolation[inputOrdinate] - inputDataForInterpolation[inputOrdinate - 1])) * (inputProbabilities[inputOrdinate] - inputProbabilities[inputOrdinate - 1]);
                     }
                 }
             }

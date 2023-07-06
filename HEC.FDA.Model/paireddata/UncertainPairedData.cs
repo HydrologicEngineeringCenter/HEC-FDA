@@ -166,7 +166,7 @@ namespace HEC.FDA.Model.paireddata
 
             }
             PairedData pairedData = new PairedData(_xvals, y, _metadata);//mutability leakage on xvals
-            pairedData.ForceMonotonic();
+            pairedData.ForceMonotonicity();
             return pairedData;
         }
 

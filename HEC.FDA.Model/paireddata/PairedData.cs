@@ -295,8 +295,7 @@ namespace HEC.FDA.Model.paireddata
             PairedData newSystemREsponse = new PairedData(tempXvals.ToArray(), tempYvals.ToArray());
             return newSystemREsponse;
         }
-
-        public void ForceMonotonic(double max = double.MaxValue, double min = double.MinValue)
+        public void ForceMonotonicity(double max = double.MaxValue, double min = double.MinValue)
         {
             double previousYval = min;
 
@@ -304,12 +303,45 @@ namespace HEC.FDA.Model.paireddata
             int index = 0;
             foreach (double currentY in Yvals)
             {
-                if (previousYval > currentY)
+                if (previousYval >= currentY)
                 {
                     update[index] = previousYval;
                 }
                 else
                 {
+                    //if max is default, this condition does nothing
+                    if (currentY > max)
+                    {
+                        update[index] = max;
+                        previousYval = max;
+                    }
+                    else
+                    {
+                        update[index] = currentY;
+                        previousYval = currentY;
+                    }
+                }
+                index++;
+            }
+            Yvals = update;
+        }
+        public void ForceStrictMonotonicity(double max = double.MaxValue, double min = double.MinValue)
+        {
+            double epsilon = 0.005;
+            double previousYval = min;
+
+            double[] update = new double[Yvals.Length];
+            int index = 0;
+            foreach (double currentY in Yvals)
+            {
+                if (previousYval >= currentY)
+                {
+                    update[index] = previousYval + epsilon;
+                    previousYval += epsilon;
+                }
+                else
+                {
+                    //if max is default, this condition does nothing
                     if (currentY > max)
                     {
                         update[index] = max;

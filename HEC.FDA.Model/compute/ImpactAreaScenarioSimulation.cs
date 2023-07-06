@@ -938,8 +938,10 @@ namespace HEC.FDA.Model.compute
         {
             double maxOfF = uncertainPairedData_f.Xvals[^1];
             double minOfF = uncertainPairedData_f.Xvals[0];
-            double minOfG = uncertainPairedData_g.InputFlowOrStageValues[0];
-            double maxOfG = uncertainPairedData_g.InputFlowOrStageValues[^1];
+
+            IPairedData pairedData = uncertainPairedData_g.SamplePairedData(0.5, true);
+            double minOfG = pairedData.Yvals[0];
+            double maxOfG = pairedData.Yvals[^1];
 
             bool curvesOverlap = CurvesOverlap(maxOfF, minOfF, maxOfG, minOfG);
             return curvesOverlap;

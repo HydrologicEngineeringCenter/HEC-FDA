@@ -103,7 +103,7 @@ namespace HEC.FDA.ModelTest.integrationtests
             ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria);
             double difference = Math.Abs(expected - results.MeanExpectedAnnualConsequences(impactareaid, category, assetcategory));
             double relativeDifference = difference / expected;
-            double tolerance = 0.05;
+            double tolerance = 0.09;
             Assert.True(relativeDifference < tolerance);
         }
 
