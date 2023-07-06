@@ -60,7 +60,7 @@ namespace HEC.FDA.ModelTest.unittests.MessagingTests
         static string assetCat = "content";
         static int impactAreaID = 0;
         static CurveTypesEnum curveType = CurveTypesEnum.StrictlyMonotonicallyIncreasing;
-        static CurveMetaData curveMetaData = new CurveMetaData(xLabel, yLabel, name, damCat, curveType, assetCat);
+        static CurveMetaData curveMetaData = new CurveMetaData(xLabel, name, damCat);
 
         [Theory]
         [InlineData(1234)]

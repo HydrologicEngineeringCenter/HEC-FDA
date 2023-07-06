@@ -26,14 +26,14 @@ namespace HEC.FDA.ModelTest.integrationtests
         private static string name = "Name";
         private static CurveTypesEnum curveType = CurveTypesEnum.MonotonicallyIncreasing;
 
-        private static CurveMetaData analyticalMetaData = new CurveMetaData("frequency", "flow", "Muncie Analytical Flow Frequeny", curveType);
-        private static CurveMetaData regulatedUnregulatedMetaData = new CurveMetaData("unregulated", "regulated", "Muncie Regulated Unregulated Flow Transform Function", curveType);
-        private static CurveMetaData graphicalFlowMetaData = new CurveMetaData("frequency", "flow", "Muncie Graphical Flow Frequency", curveType);
-        private static CurveMetaData graphicalStageMetaData = new CurveMetaData("frequency", "stage", "Muncie Graphical Stage Frequency", curveType);
-        private static CurveMetaData stageDischargeMetaData = new CurveMetaData("discharge", "stage", "Muncie Stage Disharge Function", curveType);
-        private static CurveMetaData interiorExteriorMetaData = new CurveMetaData("interior", "exterior", "Muncie Interior Exterior Function", curveType);
-        private static CurveMetaData defaultLeveeMetaData = new CurveMetaData("stage", "probability of failure", "Muncie Default Levee No Fragility", curveType);
-        private static CurveMetaData failureLeveeMetaData = new CurveMetaData("stage", "probability of failure", "Muncie Levee With Failure", curveType);
+        private static CurveMetaData analyticalMetaData = new CurveMetaData("frequency", "Muncie Analytical Flow Frequeny", curveType);
+        private static CurveMetaData regulatedUnregulatedMetaData = new CurveMetaData("unregulated", "Muncie Regulated Unregulated Flow Transform Function", curveType);
+        private static CurveMetaData graphicalFlowMetaData = new CurveMetaData("frequency", "Muncie Graphical Flow Frequency", curveType);
+        private static CurveMetaData graphicalStageMetaData = new CurveMetaData("frequency", "Muncie Graphical Stage Frequency", curveType);
+        private static CurveMetaData stageDischargeMetaData = new CurveMetaData("discharge", "Muncie Stage Disharge Function", curveType);
+        private static CurveMetaData interiorExteriorMetaData = new CurveMetaData("interior", "Muncie Interior Exterior Function", curveType);
+        private static CurveMetaData defaultLeveeMetaData = new CurveMetaData("stage", "Muncie Default Levee No Fragility", curveType);
+        private static CurveMetaData failureLeveeMetaData = new CurveMetaData("stage", "Muncie Levee With Failure", curveType);
         private static string residentialDamageCategory = "Residential";
         private static string commercialDamageCategory = "Commercial";
         private static CurveMetaData residentialDamageMetaData = new CurveMetaData("stage", "damage", "Muncie Residential Stage Damage", residentialDamageCategory, "Total");
