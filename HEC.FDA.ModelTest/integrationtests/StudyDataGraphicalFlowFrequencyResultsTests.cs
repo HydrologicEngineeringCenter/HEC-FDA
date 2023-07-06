@@ -61,7 +61,7 @@ namespace HEC.FDA.ModelTest.integrationtests
         static string damCat = "residential";
         static string assetCat = "content";
         static int impactAreaID = 0;
-        static CurveMetaData curveMetaData = new CurveMetaData(xLabel, name, damCat);
+        static CurveMetaData curveMetaData = new CurveMetaData(xLabel, yLabel, name, damCat, assetCat);
 
         [Theory]
         [InlineData(1234, 0.96)]

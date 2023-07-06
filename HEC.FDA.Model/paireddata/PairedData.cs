@@ -24,7 +24,7 @@ namespace HEC.FDA.Model.paireddata
             get
             {
 
-                if (IsArrayValid(Xvals, (a, b) => a > b) && IsArrayValid(Xvals, (a, b) => a > b))
+                if (IsArrayValid(Xvals, (a, b) => a >= b) && IsArrayValid(Yvals, (a, b) => a >= b))
                 {
                     return true;
                 }                

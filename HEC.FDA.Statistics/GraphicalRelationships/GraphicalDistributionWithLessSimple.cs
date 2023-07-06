@@ -336,13 +336,13 @@ namespace Statistics.GraphicalRelationships
             int i = 0;
             foreach (XElement exceedanceProbability in xElement.Element(probsTag).Elements())
             {
-               if (!double.TryParse(xElement.Attribute(probsTag + $"{i}")?.Value, out double prob))
+               if (!double.TryParse(exceedanceProbability.Attribute(probsTag)?.Value, out double prob))
                     return graphical;
                 exceedanceProbabilities.Add(prob);
                 i++;
             }
 
-            string distsTag = Serialization.GetXMLTagFromProperty(graphical.StageOrLogFlowDistributions.GetType(), nameof(StageOrLogFlowDistributions));
+            string distsTag = Serialization.GetXMLTagFromProperty(graphical.GetType(), nameof(StageOrLogFlowDistributions));
             List<Normal> stageOrFlowDistributions = new();
             foreach (XElement stageOrFlowDistribution in xElement.Element(distsTag).Elements())
             {
@@ -353,13 +353,13 @@ namespace Statistics.GraphicalRelationships
                 }
             }
 
-            string valsTag = Serialization.GetXMLTagFromProperty(graphical.StageOrLoggedFlowValues.GetType(), nameof(StageOrLoggedFlowValues));
+            string valsTag = Serialization.GetXMLTagFromProperty(graphical.GetType(), nameof(StageOrLoggedFlowValues));
             List<double> inputStageFlowVals = new();
 
             int j = 0;
             foreach (XElement stageOrFlowValue in xElement.Element(valsTag).Elements())
             {
-                if (!double.TryParse(xElement.Attribute(valsTag + $"{i}")?.Value, out double val))
+                if (!double.TryParse(stageOrFlowValue.Attribute(valsTag)?.Value, out double val))
                     return graphical;
                 inputStageFlowVals.Add(val);
                 j++;
@@ -389,7 +389,7 @@ namespace Statistics.GraphicalRelationships
             {
                 //the name of rowElement does not matter, only the name of the attribute does 
                 XElement rowElement = new XElement("Probability");
-                rowElement.SetAttributeValue(probsTag+$"{i}", ExceedanceProbabilities[i]);
+                rowElement.SetAttributeValue(probsTag, ExceedanceProbabilities[i]);
                 exceedanceProbabilities.Add(rowElement);
             }
             masterElement.Add(exceedanceProbabilities);
@@ -399,7 +399,7 @@ namespace Statistics.GraphicalRelationships
             for (int i = 0; i < StageOrLoggedFlowValues.Length; i++)
             {
                 XElement rowElement = new XElement("StageFlow");
-                rowElement.SetAttributeValue(valsTag+$"{i}", StageOrLoggedFlowValues[i]);
+                rowElement.SetAttributeValue(valsTag, StageOrLoggedFlowValues[i]);
                 inputStageFlowValues.Add(rowElement);
             }
             masterElement.Add(inputStageFlowValues);
