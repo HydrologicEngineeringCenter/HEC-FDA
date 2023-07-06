@@ -272,7 +272,7 @@ namespace HEC.FDA.ModelTest.unittests
         public void AssuranceResultStorageShould(ThresholdEnum thresholdEnum, double thresholdValue)
         {
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1000, maxIterations: 10000);
-            SystemPerformanceResults systemPerformanceResults = new SystemPerformanceResults(thresholdEnum, thresholdValue, convergenceCriteria);
+            SystemPerformanceResults systemPerformanceResults = new SystemPerformanceResults(convergenceCriteria);
             double standardProbability = 0.998;
             systemPerformanceResults.AddStageAssuranceHistogram(standardProbability);
             RandomProvider randomProvider = new RandomProvider(1234);
@@ -301,7 +301,7 @@ namespace HEC.FDA.ModelTest.unittests
                 systemPerformanceResults.PutDataIntoHistograms();
             }
             double expected = standardNormal.CDF(thresholdValue);
-            double actual = systemPerformanceResults.AssuranceOfEvent(standardProbability);
+            double actual = systemPerformanceResults.AssuranceOfEvent(standardProbability,thresholdValue);
             Assert.Equal(expected, actual, .009);
         }
     }

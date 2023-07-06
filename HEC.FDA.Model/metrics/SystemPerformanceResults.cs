@@ -23,8 +23,6 @@ namespace HEC.FDA.Model.metrics
         private const double STAGE_BIN_WIDTH = 0.001;
         private const double AEP_FOR_PLOTTING_BIN_WIDTH = 0.02;
         private readonly bool _CalculatePerformanceForLevee;
-        private readonly ThresholdEnum _ThresholdType;
-        private readonly double _ThresholdValue;
         private readonly UncertainPairedData _SystemResponseFunction;
         private readonly ConvergenceCriteria _ConvergenceCriteria;
 
@@ -36,8 +34,6 @@ namespace HEC.FDA.Model.metrics
         ///
         public SystemPerformanceResults()
         {
-            _ThresholdType = ThresholdEnum.DefaultExteriorStage;
-            _ThresholdValue = 0;
             _ConvergenceCriteria = new ConvergenceCriteria();
             Assurances = new List<AssuranceResultStorage>();
             AssuranceResultStorage dummyAEP = new(AEP_ASSURANCE_TYPE, 0);
@@ -51,10 +47,8 @@ namespace HEC.FDA.Model.metrics
                 Assurances.Add(dummyAssurance);
             }
         }
-        public SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, ConvergenceCriteria convergenceCriteria)
+        public SystemPerformanceResults(ConvergenceCriteria convergenceCriteria)
         {
-            _ThresholdType = thresholdType;
-            _ThresholdValue = thresholdValue;
             _ConvergenceCriteria = convergenceCriteria;
             Assurances = new List<AssuranceResultStorage>();
             AssuranceResultStorage aepAssurance = new(AEP_ASSURANCE_TYPE, AEP_BIN_WIDTH, convergenceCriteria);
@@ -62,7 +56,7 @@ namespace HEC.FDA.Model.metrics
             AssuranceResultStorage aepAssuranceForPlotting = new(AEP_ASSURANCE_FOR_PLOTTING, AEP_FOR_PLOTTING_BIN_WIDTH, convergenceCriteria);
             Assurances.Add(aepAssuranceForPlotting);
         }
-        public SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData systemResponseFunction, ConvergenceCriteria convergenceCriteria)
+        public SystemPerformanceResults(UncertainPairedData systemResponseFunction, ConvergenceCriteria convergenceCriteria)
         {
             _SystemResponseFunction = systemResponseFunction;
             //If the system response function is the default function
@@ -73,8 +67,6 @@ namespace HEC.FDA.Model.metrics
             {
                 _CalculatePerformanceForLevee = true;
             }
-            _ThresholdType = thresholdType;
-            _ThresholdValue = thresholdValue;
             Assurances = new List<AssuranceResultStorage>();
             AssuranceResultStorage aepAssurance = new(AEP_ASSURANCE_TYPE, AEP_BIN_WIDTH, convergenceCriteria);
             Assurances.Add(aepAssurance);
@@ -84,14 +76,12 @@ namespace HEC.FDA.Model.metrics
         }
 
         //TODO: these two constructors don't seem that useful - delete?
-        private SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, ConvergenceCriteria convergenceCriteria, List<AssuranceResultStorage> assurances)
+        private SystemPerformanceResults(ConvergenceCriteria convergenceCriteria, List<AssuranceResultStorage> assurances)
         {
-            _ThresholdType = thresholdType;
-            _ThresholdValue = thresholdValue;
             Assurances = assurances;
             _ConvergenceCriteria = convergenceCriteria;
         }
-        private SystemPerformanceResults(ThresholdEnum thresholdType, double thresholdValue, UncertainPairedData systemResponseFunction, ConvergenceCriteria convergenceCriteria, List<AssuranceResultStorage> assurances)
+        private SystemPerformanceResults(UncertainPairedData systemResponseFunction, ConvergenceCriteria convergenceCriteria, List<AssuranceResultStorage> assurances)
         {
             _SystemResponseFunction = systemResponseFunction;
             if (_SystemResponseFunction.Xvals.Length <= 2)
@@ -102,8 +92,6 @@ namespace HEC.FDA.Model.metrics
             {
                 _CalculatePerformanceForLevee = true;
             }
-            _ThresholdType = thresholdType;
-            _ThresholdValue = thresholdValue;
             Assurances = assurances;
             _ConvergenceCriteria = convergenceCriteria;
         }
@@ -190,7 +178,7 @@ namespace HEC.FDA.Model.metrics
             long iterationsRemaining = assuranceHistogram.EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb);
             return iterationsRemaining;
         }
-        public double AssuranceOfEvent(double standardNonExceedanceProbability)
+        public double AssuranceOfEvent(double standardNonExceedanceProbability, double thresholdValue)
         {
             if (_CalculatePerformanceForLevee)
             {
@@ -200,7 +188,7 @@ namespace HEC.FDA.Model.metrics
             {
                 GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram.ForceDeQueue();
                 Histogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
-                double assurance = assuranceHistogram.CDF(_ThresholdValue);
+                double assurance = assuranceHistogram.CDF(thresholdValue);
                 return assurance;
             }
 
@@ -304,8 +292,6 @@ namespace HEC.FDA.Model.metrics
         {
             XElement masterElement = new("Project_Performance_Results");
             masterElement.SetAttributeValue("Calculates_Performance_For_Levee", _CalculatePerformanceForLevee);
-            masterElement.SetAttributeValue("Threshold_Type", Convert.ToString(_ThresholdType));
-            masterElement.SetAttributeValue("Threshold_Value", _ThresholdValue);
             if (_CalculatePerformanceForLevee)
             {
                 XElement systemResponseCurveElement = _SystemResponseFunction.WriteToXML();
@@ -342,24 +328,13 @@ namespace HEC.FDA.Model.metrics
             {
                 systemResponseCurve = UncertainPairedData.ReadFromXML(xElement.Element("System_Response_Curve"));
             }
-            ThresholdEnum thresholdType = ThresholdEnum.AdditionalExteriorStage;
-            try
-            {
-                thresholdType = (ThresholdEnum)Enum.Parse(typeof(ThresholdEnum), xElement.Attribute("Threshold_Type").Value);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-            double thresholdValue = Convert.ToDouble(xElement.Attribute("Threshold_Value").Value);
-
             if (calculatePerformanceForLevee)
             {
-                return new SystemPerformanceResults(thresholdType, thresholdValue, systemResponseCurve, convergenceCriteria, histogramList);
+                return new SystemPerformanceResults(systemResponseCurve, convergenceCriteria, histogramList);
             }
             else
             {
-                return new SystemPerformanceResults(thresholdType, thresholdValue, convergenceCriteria, histogramList);
+                return new SystemPerformanceResults(convergenceCriteria, histogramList);
             }
         }
         #endregion

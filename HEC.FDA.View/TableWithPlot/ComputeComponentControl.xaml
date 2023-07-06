@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:HEC.FDA.View.TableWithPlot"
+             xmlns:local="clr-namespace:HEC.FDA.View.TableWithPlot" xmlns:tablewithplot="clr-namespace:HEC.FDA.ViewModel.TableWithPlot;assembly=HEC.FDA.ViewModel" d:DataContext="{d:DesignInstance Type=tablewithplot:CurveComponentVM}"
              mc:Ignorable="d" 
              d:DesignHeight="50" d:DesignWidth="120">
     <Grid>

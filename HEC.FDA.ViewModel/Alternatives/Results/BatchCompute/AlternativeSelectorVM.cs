@@ -132,7 +132,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
                 }
                 await Task.WhenAll(taskList.ToArray());
             }
-            catch (TaskCanceledException ex)
+            catch (TaskCanceledException)
             {
                 MessageBox.Show("Compute Canceled.", "Compute Canceled", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
