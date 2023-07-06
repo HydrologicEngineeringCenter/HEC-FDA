@@ -61,7 +61,6 @@ namespace HEC.FDA.ModelTest.integrationtests
         static string damCat = "residential";
         static string assetCat = "content";
         static int impactAreaID = 0;
-        static CurveTypesEnum curveType = CurveTypesEnum.StrictlyMonotonicallyIncreasing;
         static CurveMetaData curveMetaData = new CurveMetaData(xLabel, name, damCat);
 
         [Theory]

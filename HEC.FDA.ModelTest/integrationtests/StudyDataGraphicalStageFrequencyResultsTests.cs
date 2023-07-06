@@ -83,7 +83,6 @@ namespace HEC.FDA.ModelTest.integrationtests
         static string yLabel = "y label";
         static string name = "name";
         static string category = "residential";
-        static CurveTypesEnum curveType = CurveTypesEnum.StrictlyMonotonicallyIncreasing;
         static CurveMetaData curveMetaData = new CurveMetaData(xLabel, name, category);
 
         [Theory]

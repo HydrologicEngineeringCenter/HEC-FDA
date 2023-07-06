@@ -23,21 +23,16 @@ namespace HEC.FDA.Model.paireddata
         {
             get
             {
-                if (_metadata.CurveType == CurveTypesEnum.MonotonicallyIncreasing)
+
+                if (IsArrayValid(Xvals, (a, b) => a > b) && IsArrayValid(Xvals, (a, b) => a > b))
                 {
-                    if (IsArrayValid(Xvals, (a, b) => a > b) && IsArrayValid(Xvals, (a, b) => a > b))
-                    {
-                        return true;
-                    }
-                }
-                if (_metadata.CurveType == CurveTypesEnum.StrictlyMonotonicallyIncreasing)
+                    return true;
+                }                
+                else
                 {
-                    if (IsArrayValid(Xvals, (a, b) => a >= b) && IsArrayValid(Yvals, (a, b) => a >= b))
-                    {
-                        return true;
-                    }
+                    return false;
+
                 }
-                return false;
             }
         }
         #endregion
