@@ -64,9 +64,17 @@ namespace HEC.FDA.Model.paireddata
         public PairedData SamplePairedData(double probability, bool computeIsDeterministic = false)
         {
             double[] y = new double[GraphicalDistributionWithLessSimple.StageOrLogFlowDistributions.Length];
+
             for (int i = 0; i < GraphicalDistributionWithLessSimple.StageOrLogFlowDistributions.Length; i++)
             {
-                y[i] = GraphicalDistributionWithLessSimple.StageOrLogFlowDistributions[i].InverseCDF(probability);
+                if (GraphicalDistributionWithLessSimple.UsingStagesNotFlows)
+                {
+                    y[i] = GraphicalDistributionWithLessSimple.StageOrLogFlowDistributions[i].InverseCDF(probability);
+                }
+                else
+                {
+                    y[i] = Math.Log(GraphicalDistributionWithLessSimple.StageOrLogFlowDistributions[i].InverseCDF(probability));
+                }
             }
             PairedData pairedData = new PairedData(ExceedanceToNonExceedance(GraphicalDistributionWithLessSimple.ExceedanceProbabilities), y, CurveMetaData);
             bool isMonotonicallyIncreasing = IsMonotonicallyIncreasing(pairedData);
@@ -75,11 +83,19 @@ namespace HEC.FDA.Model.paireddata
                 pairedData.ForceStrictMonotonicity();
             }
             double[] expandedStageOrLogFlowValues = InterpolateQuantiles.InterpolateOnX(pairedData.Xvals, CombinedExceedanceProbabilities, pairedData.Yvals);
+            if (!GraphicalDistributionWithLessSimple.UsingStagesNotFlows)
+            {
+                double[] tempArray = new double[expandedStageOrLogFlowValues.Length];
+                for (int i = 0; i < expandedStageOrLogFlowValues.Length; i++)
+                {
+                    tempArray[i] = Math.Exp(expandedStageOrLogFlowValues[i]);
+                }
+                expandedStageOrLogFlowValues = tempArray;
+            }
             PairedData expandedPairedData = new PairedData(ExceedanceToNonExceedance(CombinedExceedanceProbabilities), expandedStageOrLogFlowValues);
             return expandedPairedData;
         }
-        //This method duplicates the IsArrayValid method functionality
-        //I don't like IsArrayValid, too complicated. 
+
         private bool IsMonotonicallyIncreasing(IPairedData pairedData)
         {
             for (int i = 1; i < pairedData.Yvals.Length; i++)
