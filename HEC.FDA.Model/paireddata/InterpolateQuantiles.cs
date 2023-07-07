@@ -31,12 +31,6 @@ namespace Statistics.Graphical
             IPairedData zScore_stage_flow = new PairedData(inputZs, inputDataForInterpolation);
             IPairedData interpolatedFrequencyCurve = zScore_stage_flow.compose(nonexceedance_zScore);
 
-            //TODO: We do not have this linear interpolation taking place instead of interpolating by way of normal distribution
-            //else//out at the tail, use linear interpolation...
-            //{
-            //    quantiles[i] = inputProbabilities[inputOrdinate - 1] + ((probabilitiesForWhichQuantilesAreRequired[i] - inputDataForInterpolation[inputOrdinate - 1]) / (inputDataForInterpolation[inputOrdinate] - inputDataForInterpolation[inputOrdinate - 1])) * (inputProbabilities[inputOrdinate] - inputProbabilities[inputOrdinate - 1]);
-            //}
-
             return interpolatedFrequencyCurve.Yvals;
         }
     }

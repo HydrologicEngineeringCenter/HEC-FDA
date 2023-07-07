@@ -230,18 +230,13 @@ namespace Statistics.GraphicalRelationships
             }
 
 
-            double p1;
-            double p2;
-            double slope;
-            double standardErrorSquared;
             double[] _scurve = new double[ExceedanceProbabilities.Count()];
             
             for (int i = 1; i < ExceedanceProbabilities.Count() - 1; i++)
             {
+                //p is a non-exceedance probability 
                 p = 1 - ExceedanceProbabilities[i];
-                p2 = 1 - ExceedanceProbabilities[i + 1];
-                p1 = 1 - ExceedanceProbabilities[i - 1];
-                slope = (StageOrLoggedFlowValues[i + 1] - StageOrLoggedFlowValues[i - 1]) / (p2 - p1);
+                double slope = ComputeSlope(ExceedanceProbabilities, StageOrLoggedFlowValues, i);
                 _scurve[i] = Equation6StandardError(p, slope);
 
                 //hold slope constant and calculate standard error for the first coordinate
@@ -252,10 +247,10 @@ namespace Statistics.GraphicalRelationships
 
                 }
                 //hold slope constant and calculate standard error for the last coordinate
-                if (i == ExceedanceProbabilities.Count() -2 )
+                if (i == ExceedanceProbabilities.Count()-2)
                 {
                     p = 1 - ExceedanceProbabilities[i + 1];
-                    standardErrorSquared = (p * (1 - p)) / (Math.Pow(1 / slope, 2.0D) * EquivalentRecordLength);
+                    double standardErrorSquared = (p * (1 - p)) / (Math.Pow(1 / slope, 2.0D) * EquivalentRecordLength);
                     _scurve[i +1 ] = Math.Sqrt(standardErrorSquared);
                 }
 
@@ -271,6 +266,49 @@ namespace Statistics.GraphicalRelationships
                 }
             return _scurve;
         }
+
+        private static double ComputeSlope(double[] exceedanceProbabilities, double[] stageOrLoggedFlowValues, int i)
+        {
+            Normal normal = new Normal();
+
+            //step 1: identify the non-exceedance probability and coinciding quantiles for which we're calculating the slope 
+            double p = 1 - exceedanceProbabilities[i];
+            double q = stageOrLoggedFlowValues[i];
+
+            double p_minus = 1 - exceedanceProbabilities[i - 1];
+            double q_minus = stageOrLoggedFlowValues[i-1];
+
+            double p_plus = 1 - exceedanceProbabilities[i+1];
+            double q_plus = stageOrLoggedFlowValues[i+1];
+
+            //step 2: identify probability margins that feed into the slope calculator 
+            double epsilon = 0.00001;
+            double p_minusEpsilon = p - epsilon;
+            double p_plusEpsilon = p + epsilon;
+
+            //step 3: interpolate the quantiles at the probability margins 
+            double q_minusEpsilon = InterpolateNormally(p, p_minus, q, q_minus, p_minusEpsilon);
+            double q_plusEpsilon = InterpolateNormally(p_plus, p, q_plus, q, p_plusEpsilon);
+
+            //step 4: calculate slope between the probability margins 
+            double slope = (q_plusEpsilon - q_minusEpsilon) / (p_plusEpsilon - p_minusEpsilon);
+            return slope;
+        }
+
+        private static double InterpolateNormally(double p, double p_minus, double q, double q_minus, double p_minusEpsilon)
+        {
+            Normal standardNormal = new Normal();
+
+
+            double z = standardNormal.InverseCDF(p);
+            double z_minus = standardNormal.InverseCDF(p_minus);
+            double z_minusEpsilon = standardNormal.InverseCDF(p_minusEpsilon);
+
+            double q_minusEpsilon = q_minus + (z_minusEpsilon - z_minus)/(z - z_minus) * (q - q_minus);
+
+            return q_minusEpsilon;
+        }
+
         private ContinuousDistribution[] ConstructContinuousDistributions()
         {
             double[] stageOrLogFlowStandardErrorsComputed = ComputeStandardDeviations(LowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant, HigherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant);
