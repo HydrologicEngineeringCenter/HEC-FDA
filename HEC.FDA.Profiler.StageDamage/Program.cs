@@ -1,2 +1,2 @@
-﻿var testClass = new HEC.FDA.ModelTest.integrationtests.UncertainStageDamageTests();
-testClass.UncertainStageDamageTest();
+﻿var testClass = new HEC.FDA.ModelTest.integrationtests.BigInventoryStageDamageTest();
+testClass.ComputeTime();
