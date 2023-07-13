@@ -224,7 +224,7 @@ public class BigInventoryStageDamageTest
     private static GraphicalUncertainPairedData stageFrequency = new GraphicalUncertainPairedData(new double[] { .5, .2, .1, .04, .02, .01, .005, .002 },
 new double[] { 0, 1, 2, 3, 4, 5, 6, 7 }, 50, new CurveMetaData("Probability", "Stage", "Graphical Stage Frequency"), true);
 
-    private static string filePath = @"C:\Temp\HEC-FDA\Diagnostics\times.csv";
+    private static string filePath = @"C:\Temp\HEC-FDA\times.csv";
 
     #endregion
 
