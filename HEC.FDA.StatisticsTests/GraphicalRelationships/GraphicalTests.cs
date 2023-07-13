@@ -15,7 +15,7 @@ namespace StatisticsTests.GraphicalRelationships
             20)]
         public void ReturnDistributionsForInputProbabilities(double[] probs, double[] flows, int erl)
         {
-            GraphicalDistributionWithLessSimple graphical = new GraphicalDistributionWithLessSimple(probs, flows, erl);
+            GraphicalDistribution graphical = new GraphicalDistribution(probs, flows, erl);
             double[] outputProbs = graphical.ExceedanceProbabilities;
             foreach (double value in probs)
             {
@@ -29,7 +29,7 @@ namespace StatisticsTests.GraphicalRelationships
             20)]
         public void ReturnDistributionsWithInputMeanValues(double[] probs, double[] flows, int erl)
         {
-            GraphicalDistributionWithLessSimple graphical = new GraphicalDistributionWithLessSimple(probs, flows, erl);
+            GraphicalDistribution graphical = new GraphicalDistribution(probs, flows, erl);
             Statistics.ContinuousDistribution[] dists = graphical.StageOrLogFlowDistributions;
             double[] means = new double[dists.Length];
             for (int i = 0; i < dists.Length; i++)
@@ -48,7 +48,7 @@ namespace StatisticsTests.GraphicalRelationships
             20)]
         public void ReturnSameNumberOfProbabilitesAsDistributions(double[] probs, double[] flows, int erl)
         {
-            GraphicalDistributionWithLessSimple graphical = new GraphicalDistributionWithLessSimple(probs, flows, erl);
+            GraphicalDistribution graphical = new GraphicalDistribution(probs, flows, erl);
             Statistics.ContinuousDistribution[] dists = graphical.StageOrLogFlowDistributions;
             double[] prob = graphical.ExceedanceProbabilities;
             Assert.Equal(dists.Length, prob.Length);
@@ -62,7 +62,7 @@ namespace StatisticsTests.GraphicalRelationships
         [InlineData(new double[] { 0.999, 0.5, 0.2, 0.1, 0.02, 0.01, 0.005, 0.001, 0.0001 }, new double[] { 80, 11320, 18520, 23810, 35010, 39350, 42850, 47300, 52739.48924 }, 50, false, new double[] {.2244,  .1164, .1293, .1924, .2030, .2030})]
         public void ReturnsCorrectStandardDeviations(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, bool usingStagesNotFlows, double[] expectedSD)
         {
-            GraphicalDistributionWithLessSimple graphical = new GraphicalDistributionWithLessSimple(exceedanceProbabilities, flowOrStageValues, equivalentRecordLength, usingStagesNotFlows);
+            GraphicalDistribution graphical = new GraphicalDistribution(exceedanceProbabilities, flowOrStageValues, equivalentRecordLength, usingStagesNotFlows);
             Statistics.ContinuousDistribution[] actualDistributions = graphical.StageOrLogFlowDistributions;
             for (int i = 2; i < 8; i++)
             {

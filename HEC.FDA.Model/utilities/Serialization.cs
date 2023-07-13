@@ -9,8 +9,7 @@ internal class Serialization
     {
         var oT = ownerType.GetProperty(propertyName);
         var sP = oT.GetCustomAttribute<StoredPropertyAttribute>();
-        var name = sP.SerializedName;
-        return name;
+        return sP.SerializedName;
     }
 
 }

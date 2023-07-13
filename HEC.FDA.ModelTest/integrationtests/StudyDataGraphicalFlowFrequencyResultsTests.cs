@@ -19,9 +19,9 @@ namespace HEC.FDA.ModelTest.integrationtests
     public class StudyDataGraphicalFlowFrequencyResultsTests
     {
         static int equivalentRecordLength = 48;
-        static double[] exceedanceProbabilities = new double[] { .999, .5, .2, .1, .04, .02, .01, .004, .002 };
-        static double[] dischargeFrequencyDischarges = new double[] { 900, 1500, 2120, 3140, 4210, 5070, 6240, 7050, 9680 };
-        static double[] stageDischargeFunctionDischarges = new double[] { 0, 1500, 2120, 3140, 4210, 5070, 6240, 7050, 9680 };
+        static double[] exceedanceProbabilities = new double[] { .999, .5, .2, .1, .04, .02, .01, .004, .002, .00001 };
+        static double[] dischargeFrequencyDischarges = new double[] { 900, 1500, 2120, 3140, 4210, 5070, 6240, 7050, 9680, 30000 };
+        static double[] stageDischargeFunctionDischarges = new double[] { 0, 1500, 2120, 3140, 4210, 5070, 6240, 7050, 9680, 30000 };
         static IDistribution[] stageDischargeFunctionStageDistributions = new IDistribution[]
         {
             new Normal(458,0),
@@ -32,6 +32,7 @@ namespace HEC.FDA.ModelTest.integrationtests
             new Normal(473.66,.474),
             new Normal(474.53, .5),
             new Normal(475.11, .5),
+            new Normal(477.4, .5),
             new Normal(477.4, .5)
         }; ///observe the large non-overlapping portion of stage-damage vs stage-discharge
         static double[] stageDamageStages = new double[] { 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479};

@@ -961,7 +961,7 @@ namespace HEC.FDA.Model.compute
             bool curvesOverlap = true;
             double overlapThreshold = 0.95;
             double rangeOfF = maxOfF - minOfF;
-            double rangeOfG = maxOfF - minOfG;
+            double rangeOfG = maxOfG - minOfG;
             double minDifference = Math.Abs(minOfG - minOfF);
             double maxDifference = Math.Abs(maxOfG - maxOfF);
             double minDiffRelativeToF = minDifference / rangeOfF;

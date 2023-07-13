@@ -9,8 +9,8 @@ using HEC.FDA.Model.utilities;
 
 namespace Statistics.GraphicalRelationships
 {
-    [StoredProperty("GraphicalDistributionWithLessSimple")]
-    public class GraphicalDistributionWithLessSimple: Validation
+    [StoredProperty("GraphicalDistribution")]
+    public class GraphicalDistribution: Validation
     {
         #region Properties
         [StoredProperty("LowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant")]
@@ -35,7 +35,7 @@ namespace Statistics.GraphicalRelationships
         #endregion
 
         #region Constructor 
-        public GraphicalDistributionWithLessSimple()
+        public GraphicalDistribution()
         {
             EquivalentRecordLength = 10;
             UsingStagesNotFlows = true;
@@ -47,13 +47,15 @@ namespace Statistics.GraphicalRelationships
 
         }
         /// <summary>
+        /// Graphical Distribution implements Beth Faber's Less Simple Method for calculating uncertainty about the distribution
+        /// See the HEC-FDA Technical Reference for more information on the Less Simple Method
         /// This constructor assumes that exceedance probabilities and flow or stage values have a strictly monotonic relationships.
         /// </summary>
         /// <param name="exceedanceProbabilities"></param> User-provided exceedance probabilities. There should be at least 8.
         /// <param name="stageOrUnloggedFlowValues"></param> User-provided flow or stage values. A value should correspond to a probability. 
         /// <param name="equivalentRecordLength"></param> The equivalent record length in years.
       
-        public GraphicalDistributionWithLessSimple(double[] exceedanceProbabilities, double[] stageOrUnloggedFlowValues, int equivalentRecordLength, bool usingStagesNotFlows = true, double higherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant = 0.99, double lowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant = 0.01)
+        public GraphicalDistribution(double[] exceedanceProbabilities, double[] stageOrUnloggedFlowValues, int equivalentRecordLength, bool usingStagesNotFlows = true, double higherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant = 0.99, double lowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant = 0.01)
         {//TODO: Validate that ERL > 0
             EquivalentRecordLength = equivalentRecordLength;
             UsingStagesNotFlows = usingStagesNotFlows;
@@ -69,7 +71,7 @@ namespace Statistics.GraphicalRelationships
             AddRules(exceedanceProbabilities);
             Compute(exceedanceProbabilities);
         }
-        private GraphicalDistributionWithLessSimple(double lowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant, double higherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant, double[] stageOrLoggedFlowValues, bool usingStagesNotFlows, int equivalentRecordLength, double[] exceedanceProbabilities, ContinuousDistribution[] stageOrLogFlowDistributions)
+        private GraphicalDistribution(double lowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant, double higherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant, double[] stageOrLoggedFlowValues, bool usingStagesNotFlows, int equivalentRecordLength, double[] exceedanceProbabilities, ContinuousDistribution[] stageOrLogFlowDistributions)
         {
             LowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant = lowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant;
             HigherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant = higherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant;
@@ -348,39 +350,44 @@ namespace Statistics.GraphicalRelationships
         #endregion
 
         #region XML Methods
-        public static GraphicalDistributionWithLessSimple ReadFromXML(XElement xElement)
+        public static GraphicalDistribution ReadFromXML(XElement xElement)
         {
-            //serves for reflection and as null object to be returned in case of error
-            GraphicalDistributionWithLessSimple graphical = new GraphicalDistributionWithLessSimple();
+            GraphicalDistribution graphicalInError = new GraphicalDistribution();
 
-            string lowerProbTag = Serialization.GetXMLTagFromProperty(graphical.GetType(), nameof(LowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant));
+            Type graphicalDistributionType = typeof(GraphicalDistribution);
+
+            string lowerProbTag = Serialization.GetXMLTagFromProperty(graphicalDistributionType, nameof(LowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant));
             if (!double.TryParse(xElement.Attribute(lowerProbTag)?.Value, out double lowerProb))
-                return graphical;
+                return graphicalInError;
 
-            string upperProbTag = Serialization.GetXMLTagFromProperty(graphical.GetType(), nameof(HigherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant));
+            string upperProbTag = Serialization.GetXMLTagFromProperty(graphicalDistributionType, nameof(HigherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant));
             if (!double.TryParse(xElement.Attribute(upperProbTag)?.Value, out double upperProb))
-                return graphical;
+                return graphicalInError;
 
-            string erlTag = Serialization.GetXMLTagFromProperty(graphical.GetType(), nameof(EquivalentRecordLength));
+            string erlTag = Serialization.GetXMLTagFromProperty(graphicalDistributionType, nameof(EquivalentRecordLength));
             if (!int.TryParse(xElement.Attribute(erlTag)?.Value, out int erl))
-                return graphical;
+                return graphicalInError;
 
-            string boolTag = Serialization.GetXMLTagFromProperty(graphical.GetType(), nameof(UsingStagesNotFlows));
+            string boolTag = Serialization.GetXMLTagFromProperty(graphicalDistributionType, nameof(UsingStagesNotFlows));
             if (!bool.TryParse(xElement.Attribute(boolTag)?.Value, out bool usesStageNotFlows))
-                return graphical;
+                return graphicalInError;
 
-            string probsTag = Serialization.GetXMLTagFromProperty(graphical.GetType(), nameof(ExceedanceProbabilities));
+            string probsTag = Serialization.GetXMLTagFromProperty(graphicalDistributionType, nameof(ExceedanceProbabilities));
             List<double> exceedanceProbabilities = new();
             int i = 0;
             foreach (XElement exceedanceProbability in xElement.Element(probsTag).Elements())
             {
                if (!double.TryParse(exceedanceProbability.Attribute(probsTag)?.Value, out double prob))
+                {
+                    //serves as null object to be returned in case of error
+                    GraphicalDistribution graphical = new GraphicalDistribution();
                     return graphical;
+                }
                 exceedanceProbabilities.Add(prob);
                 i++;
             }
 
-            string distsTag = Serialization.GetXMLTagFromProperty(graphical.GetType(), nameof(StageOrLogFlowDistributions));
+            string distsTag = Serialization.GetXMLTagFromProperty(graphicalDistributionType, nameof(StageOrLogFlowDistributions));
             List<Normal> stageOrFlowDistributions = new();
             foreach (XElement stageOrFlowDistribution in xElement.Element(distsTag).Elements())
             {
@@ -391,19 +398,23 @@ namespace Statistics.GraphicalRelationships
                 }
             }
 
-            string valsTag = Serialization.GetXMLTagFromProperty(graphical.GetType(), nameof(StageOrLoggedFlowValues));
+            string valsTag = Serialization.GetXMLTagFromProperty(graphicalDistributionType, nameof(StageOrLoggedFlowValues));
             List<double> inputStageFlowVals = new();
 
             int j = 0;
             foreach (XElement stageOrFlowValue in xElement.Element(valsTag).Elements())
             {
                 if (!double.TryParse(stageOrFlowValue.Attribute(valsTag)?.Value, out double val))
+                {
+                    //serves as null object to be returned in case of error
+                    GraphicalDistribution graphical = new GraphicalDistribution();
                     return graphical;
+                }
                 inputStageFlowVals.Add(val);
                 j++;
             }
 
-            return new GraphicalDistributionWithLessSimple(lowerProb, upperProb, inputStageFlowVals.ToArray(), usesStageNotFlows, erl, exceedanceProbabilities.ToArray(), stageOrFlowDistributions.ToArray()); ;
+            return new GraphicalDistribution(lowerProb, upperProb, inputStageFlowVals.ToArray(), usesStageNotFlows, erl, exceedanceProbabilities.ToArray(), stageOrFlowDistributions.ToArray()); ;
         }
         public XElement WriteToXML()
         {

@@ -6,6 +6,7 @@ using HEC.FDA.Model.interfaces;
 using HEC.MVVMFramework.Model.Messaging;
 using Statistics.Graphical;
 using HEC.FDA.Model.utilities;
+using System.Linq;
 
 namespace HEC.FDA.Model.paireddata
 {
@@ -13,7 +14,7 @@ namespace HEC.FDA.Model.paireddata
     {
 
         #region Properties
-        internal GraphicalDistributionWithLessSimple GraphicalDistributionWithLessSimple { get; }
+        internal GraphicalDistribution GraphicalDistributionWithLessSimple { get; }
         public CurveMetaData CurveMetaData { get; private set; }
         /// <summary>
         /// Exceedance probabilities are the required and the input, combined.
@@ -37,12 +38,12 @@ namespace HEC.FDA.Model.paireddata
         }
         public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, CurveMetaData curveMetaData, bool usingStagesNotFlows)
         {
-            GraphicalDistributionWithLessSimple = new GraphicalDistributionWithLessSimple(exceedanceProbabilities, flowOrStageValues, equivalentRecordLength, usingStagesNotFlows);
+            GraphicalDistributionWithLessSimple = new GraphicalDistribution(exceedanceProbabilities, flowOrStageValues, equivalentRecordLength, usingStagesNotFlows);
             CurveMetaData = curveMetaData;
             //combine required and input probabilities 
             CombinedExceedanceProbabilities =  CombineInputAndRequiredExceedanceProbabilities(exceedanceProbabilities);
         }
-        private GraphicalUncertainPairedData(double[] combinedExceedanceProbabilities, GraphicalDistributionWithLessSimple graphicalDistributionWithLessSimple, CurveMetaData curveMetaData)
+        private GraphicalUncertainPairedData(double[] combinedExceedanceProbabilities, GraphicalDistribution graphicalDistributionWithLessSimple, CurveMetaData curveMetaData)
         {
             GraphicalDistributionWithLessSimple = graphicalDistributionWithLessSimple;
             CombinedExceedanceProbabilities = combinedExceedanceProbabilities;
@@ -141,61 +142,18 @@ namespace HEC.FDA.Model.paireddata
 
         private double[] CombineInputAndRequiredExceedanceProbabilities(double[] inputExceedanceProbabilities)
         {
-            //TODO: I think this code gets the final probabilities used in the graphical frequency relationship? 
-            //_take pfreq and standard probablities and iclude them. EVSET
-
-            List<double> combinedProbabilities = new List<double>();
-            int totalCount = inputExceedanceProbabilities.Length + DoubleGlobalStatics.RequiredExceedanceProbabilities.Length;
-            int required = 0;
-            int provided = 0;
-            for (int i = 0; i < totalCount; i++)
+            List<double> allProbabilities = DoubleGlobalStatics.RequiredExceedanceProbabilities.ToList();
+            foreach (double probability in inputExceedanceProbabilities)
             {
-                if (required >= DoubleGlobalStatics.RequiredExceedanceProbabilities.Length)
+                if (!allProbabilities.Contains(probability))
                 {
-                    if (DoubleGlobalStatics.RequiredExceedanceProbabilities[required - 1] < inputExceedanceProbabilities[provided])
-                    {
-                        provided++;
-                    }
-                    else
-                    {
-                        combinedProbabilities.Add(inputExceedanceProbabilities[provided]);
-                        provided++;
-                    }
-                    continue;
-                }
-                if (provided >= inputExceedanceProbabilities.Length)
-                {
-                    if (DoubleGlobalStatics.RequiredExceedanceProbabilities[required] > inputExceedanceProbabilities[provided - 1])
-                    {
-                        combinedProbabilities.Add(DoubleGlobalStatics.RequiredExceedanceProbabilities[required]);
-                        required++;
-                    }
-                    else
-                    {
-                        required++;
-                    }
-                    continue;
-                }
-                if (Math.Abs(DoubleGlobalStatics.RequiredExceedanceProbabilities[required] - inputExceedanceProbabilities[provided]) < .000001)
-                {
-                    combinedProbabilities.Add(inputExceedanceProbabilities[provided]);
-                    provided++;
-                    required++;
-                    i++;//skip one
-                }
-                else if (DoubleGlobalStatics.RequiredExceedanceProbabilities[required] > inputExceedanceProbabilities[provided])
-                {
-                    combinedProbabilities.Add(DoubleGlobalStatics.RequiredExceedanceProbabilities[required]);
-                    required++;
-                }
-                else
-                {
-                    combinedProbabilities.Add(inputExceedanceProbabilities[provided]);
-                    provided++;
+                    allProbabilities.Add(probability);
                 }
             }
-            return combinedProbabilities.ToArray();
+            allProbabilities.Sort((a, b) => b.CompareTo(a));
+            return allProbabilities.ToArray();
         }
+
         #endregion
         #region XML Methods
         public XElement WriteToXML()
@@ -231,7 +189,7 @@ namespace HEC.FDA.Model.paireddata
             }
             else
             {
-                GraphicalDistributionWithLessSimple graphicalDistributionWithLessSimple = GraphicalDistributionWithLessSimple.ReadFromXML(xElement.Element("Graphical"));
+                GraphicalDistribution graphicalDistributionWithLessSimple = GraphicalDistribution.ReadFromXML(xElement.Element("Graphical"));
                 
                 List<double> combinedProbabilities = new List<double>();
                 foreach (XElement valueElement in xElement.Element("Probabilities").Elements())

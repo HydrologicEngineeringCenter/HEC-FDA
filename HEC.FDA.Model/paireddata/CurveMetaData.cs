@@ -97,24 +97,24 @@ namespace HEC.FDA.Model.paireddata
 
         public static CurveMetaData ReadFromXML(XElement xElement)
         {
-            CurveMetaData metaDataForReflection = new();
+            Type metaDataType = typeof(CurveMetaData);
 
-            string xLabelTag = Serialization.GetXMLTagFromProperty(metaDataForReflection.GetType(), nameof(XLabel));
+            string xLabelTag = Serialization.GetXMLTagFromProperty(metaDataType, nameof(XLabel));
             string xLabel = xElement.Attribute(xLabelTag)?.Value;
 
-            string yLabelTag = Serialization.GetXMLTagFromProperty(metaDataForReflection.GetType(), nameof(YLabel));
+            string yLabelTag = Serialization.GetXMLTagFromProperty(metaDataType, nameof(YLabel));
             string yLabel = xElement.Attribute(yLabelTag)?.Value;
 
-            string nameTag = Serialization.GetXMLTagFromProperty(metaDataForReflection.GetType(), nameof(Name));
+            string nameTag = Serialization.GetXMLTagFromProperty(metaDataType, nameof(Name));
             string name = xElement.Attribute(nameTag)?.Value;
 
-            string damCatTag = Serialization.GetXMLTagFromProperty(metaDataForReflection.GetType(), nameof(DamageCategory));
+            string damCatTag = Serialization.GetXMLTagFromProperty(metaDataType, nameof(DamageCategory));
             string damageCategory = xElement.Attribute(damCatTag)?.Value;
 
-            string assetCatTag = Serialization.GetXMLTagFromProperty(metaDataForReflection.GetType(), nameof(AssetCategory));
+            string assetCatTag = Serialization.GetXMLTagFromProperty(metaDataType, nameof(AssetCategory));
             string assetCategory = xElement.Attribute(assetCatTag)?.Value;
 
-            string isNullTag = Serialization.GetXMLTagFromProperty(metaDataForReflection.GetType(), nameof(IsNull));
+            string isNullTag = Serialization.GetXMLTagFromProperty(metaDataType, nameof(IsNull));
             if (!bool.TryParse(xElement.Attribute(isNullTag)?.Value, out bool isNull))
                 return new CurveMetaData();
             
