@@ -193,8 +193,7 @@ namespace Statistics.GraphicalRelationships
             StageOrLoggedFlowValues = finalFlowOrStageValues.ToArray();
             ExceedanceProbabilities = finalExceedanceProbabilities.ToArray();
         }
-
-
+        //TODO: This method contains tech debt 
         /// <summary>
         /// This method implements Beth Faber's Less Simple Method for quantifying uncertainty about a graphical frequency relationship 
         /// </summary>
@@ -231,7 +230,6 @@ namespace Statistics.GraphicalRelationships
                 }
             }
 
-
             double[] _scurve = new double[ExceedanceProbabilities.Count()];
             
             for (int i = 1; i < ExceedanceProbabilities.Count() - 1; i++)
@@ -239,13 +237,13 @@ namespace Statistics.GraphicalRelationships
                 //p is a non-exceedance probability 
                 p = 1 - ExceedanceProbabilities[i];
                 double slope = ComputeSlope(ExceedanceProbabilities, StageOrLoggedFlowValues, i);
-                _scurve[i] = Equation6StandardError(p, slope);
+                _scurve[i] = Equation6StandardError(p, slope, EquivalentRecordLength);
 
                 //hold slope constant and calculate standard error for the first coordinate
                 if (i == 1)
                 { 
                     p = 1 - ExceedanceProbabilities[i - 1];
-                    _scurve[i - 1] = Equation6StandardError(p, slope);
+                    _scurve[i - 1] = Equation6StandardError(p, slope, EquivalentRecordLength);
 
                 }
                 //hold slope constant and calculate standard error for the last coordinate
@@ -269,10 +267,8 @@ namespace Statistics.GraphicalRelationships
             return _scurve;
         }
 
-        private static double ComputeSlope(double[] exceedanceProbabilities, double[] stageOrLoggedFlowValues, int i)
+        public static double ComputeSlope(double[] exceedanceProbabilities, double[] stageOrLoggedFlowValues, int i)
         {
-            Normal normal = new Normal();
-
             //step 1: identify the non-exceedance probability and coinciding quantiles for which we're calculating the slope 
             double p = 1 - exceedanceProbabilities[i];
             double q = stageOrLoggedFlowValues[i];
@@ -341,9 +337,9 @@ namespace Statistics.GraphicalRelationships
         /// <param name="nonExceedanceProbability"></param>
         /// <param name="slope"></param>
         /// <returns></returns>
-        private double Equation6StandardError(double nonExceedanceProbability, double slope)
+        public static double Equation6StandardError(double nonExceedanceProbability, double slope, int erl)
         {
-            double standardErrorSquared = (nonExceedanceProbability * (1 - nonExceedanceProbability)) / (Math.Pow(1 / slope, 2.0D) * EquivalentRecordLength);
+            double standardErrorSquared = (nonExceedanceProbability * (1 - nonExceedanceProbability)) / (Math.Pow(1 / slope, 2.0D) * erl);
             double standardError = Math.Pow(standardErrorSquared, 0.5);
             return standardError;
         }

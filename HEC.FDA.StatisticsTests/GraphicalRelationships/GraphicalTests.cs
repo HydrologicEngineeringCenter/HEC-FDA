@@ -83,5 +83,14 @@ namespace StatisticsTests.GraphicalRelationships
             }
         }
 
+        [Theory]
+        [InlineData(0.25, 1/0.1797, 50, 0.3408)]
+        [InlineData(0.963, 1/0.0017, 50, 15.3195)]
+        public void Equation6Should(double nonExceedanceProbability, double slope, int erl, double expected)
+        {
+            double actual = GraphicalDistribution.Equation6StandardError(nonExceedanceProbability, slope, erl);
+            Assert.Equal(expected, actual, 0.4);
+        }
+
     }
 }
