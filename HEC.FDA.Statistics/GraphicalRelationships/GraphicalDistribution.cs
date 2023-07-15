@@ -293,7 +293,7 @@ namespace Statistics.GraphicalRelationships
             return slope;
         }
 
-        private static double InterpolateNormally(double p, double p_minus, double q, double q_minus, double p_minusEpsilon)
+        public static double InterpolateNormally(double p, double p_minus, double q, double q_minus, double p_minusEpsilon)
         {
             Normal standardNormal = new Normal();
 
