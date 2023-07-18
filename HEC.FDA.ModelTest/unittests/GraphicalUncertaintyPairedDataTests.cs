@@ -89,6 +89,7 @@ new double[] { 6.6, 7.4, 8.55, 9.95, 11.5, 12.7, 13.85, 14.7, 15.8, 16.7, 17.5, 
 
         /// <summary>
         /// This test demonstrates that our quantile interpolation reasonably matches direct quantile calculation
+        /// test data can be found at: https://docs.google.com/spreadsheets/d/1aLnGuzmmopDID7ehb1Jux5IZtegMpmnX/edit?usp=drive_link&ouid=105470256128470573157&rtpof=true&sd=true
         /// </summary>
         /// <param name="probabilitiesAtWhichToTest"></param> these are probabilities for quantiles that are interpolated
         /// <param name="expectedQuantile"></param> these are interpolated quantiles 
