@@ -66,6 +66,7 @@ new double[] { 6.6, 7.4, 8.55, 9.95, 11.5, 12.7, 13.85, 14.7, 15.8, 16.7, 17.5, 
             Assert.True(success);
 
         }
+
         /// <summary>
         /// Test data: https://docs.google.com/spreadsheets/d/1GhRe3ECAFIKgRqEE8Xo6f_0lHYnHqUW0/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
         /// </summary>
@@ -85,5 +86,32 @@ new double[] { 6.6, 7.4, 8.55, 9.95, 11.5, 12.7, 13.85, 14.7, 15.8, 16.7, 17.5, 
                 Assert.True(relativeError < tolerance);
             }
         }
+
+        /// <summary>
+        /// This test demonstrates that our quantile interpolation reasonably matches direct quantile calculation
+        /// </summary>
+        /// <param name="probabilitiesAtWhichToTest"></param> these are probabilities for quantiles that are interpolated
+        /// <param name="expectedQuantile"></param> these are interpolated quantiles 
+        [Theory]
+        [InlineData(new double[] {0.35, 0.75, 0.956, 0.9905}, new double[] {81.8684, 84.060773, 84.970707, 88.707344})]
+        public void SamplePairedDataShould(double[] probabilitiesAtWhichToTest, double[] expectedQuantile)
+        {
+            int erl = 50;
+            double[] inputProbabilities = new double[] { 0.999, 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.004, 0.002 };
+            double[] inputStages = new double[] { 80, 82, 84, 84.5, 84.8, 85, 86, 88, 90 };
+            GraphicalUncertainPairedData graphicalUncertainPairedData = new(inputProbabilities, inputStages, erl, new CurveMetaData("hello"), true);
+            double probOneStandardDeviation = new Normal().CDF(1);
+            PairedData oneStandardDeviationAboveMean = graphicalUncertainPairedData.SamplePairedData(probOneStandardDeviation);
+            for (int i = 0; i < probabilitiesAtWhichToTest.Length; i++)
+            {
+                double probability = probabilitiesAtWhichToTest[i];
+                double actual = oneStandardDeviationAboveMean.f(probability);
+                double expected = expectedQuantile[i];
+                Assert.Equal(expected, actual, 0.18);
+            }
+
+
+        }   
+
     }
 }
