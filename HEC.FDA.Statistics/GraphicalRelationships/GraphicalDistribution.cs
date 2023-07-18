@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using Statistics.Distributions;
-using Utilities;
+using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Base.Implementations;
 using System.Xml.Linq;
 using HEC.FDA.Model.utilities;
+using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Model.Messaging;
 
 namespace Statistics.GraphicalRelationships
 {
     [StoredProperty("GraphicalDistribution")]
-    public class GraphicalDistribution: Validation
+    public class GraphicalDistribution: ValidationErrorLogger
     {
         #region Properties
         [StoredProperty("LowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant")]
@@ -28,10 +30,7 @@ namespace Statistics.GraphicalRelationships
 
         [StoredProperty("StageOrLogFlowDistributions")]
         public ContinuousDistribution[] StageOrLogFlowDistributions { get; internal set; }
-        //TODO: Add validation and set these properties 
-        public IMessageLevels State { get; private set; }
 
-        public IEnumerable<IMessage> Messages { get; private set; }
         #endregion
 
         #region Constructor 
@@ -56,7 +55,7 @@ namespace Statistics.GraphicalRelationships
         /// <param name="equivalentRecordLength"></param> The equivalent record length in years.
       
         public GraphicalDistribution(double[] exceedanceProbabilities, double[] stageOrUnloggedFlowValues, int equivalentRecordLength, bool usingStagesNotFlows = true, double higherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant = 0.99, double lowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant = 0.01)
-        {//TODO: Validate that ERL > 0
+        {
             EquivalentRecordLength = equivalentRecordLength;
             UsingStagesNotFlows = usingStagesNotFlows;
             if (UsingStagesNotFlows)
@@ -88,18 +87,21 @@ namespace Statistics.GraphicalRelationships
         private void Compute(double[] exceedanceProbabilities)
         {
             Validate();
-            if (ErrorLevel >= HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Major)
+            if (ErrorLevel >= ErrorLevel.Major)
             {
-                //message that it cannot be constructed
+                string message = $"There are major or worse errors associated with a graphical frequency function, confidence intervals cannot be computed." + Environment.NewLine;
+                ErrorMessage errorMessage = new(message, ErrorLevel.Major);
+                ReportMessage(this, new MessageEventArgs(errorMessage));
             }
             else
             {
-                ExtendFrequencyCurveBasedOnNormalProbabilityPaper(exceedanceProbabilities);
+                ExtrapolateFrequencyFunction(exceedanceProbabilities);
                 StageOrLogFlowDistributions = ConstructContinuousDistributions();
             }
         }
         private void AddRules(double[] exceedanceProbabilities)
         {
+            AddSinglePropertyRule(nameof(EquivalentRecordLength), new Rule(() => EquivalentRecordLength > 0, "Equivalent record length must be greater than 0."));
                 AddSinglePropertyRule(nameof(exceedanceProbabilities), new Rule(() => IsArrayValid(exceedanceProbabilities, (a, b) => (a >= b)), "Exceedance Probabilities must be strictly monotonically decreasing"));
                 AddSinglePropertyRule(nameof(StageOrLoggedFlowValues), new Rule(() => IsArrayValid(StageOrLoggedFlowValues, (a, b) => (a <= b)), "Y must be strictly monotonically decreasing"));
         }
@@ -133,7 +135,8 @@ namespace Statistics.GraphicalRelationships
             return loggedFlows;
         }
 
-        public void ExtendFrequencyCurveBasedOnNormalProbabilityPaper(double[] exceedanceProbabilities) //I think we need a better name. 
+        //TODO: This method can be refactored for clarity.
+        public void ExtrapolateFrequencyFunction(double[] exceedanceProbabilities)
         {
             double toleratedDifference = 0.0001;
             double maximumExceedanceProbability = 0.9999;
@@ -193,7 +196,8 @@ namespace Statistics.GraphicalRelationships
             StageOrLoggedFlowValues = finalFlowOrStageValues.ToArray();
             ExceedanceProbabilities = finalExceedanceProbabilities.ToArray();
         }
-        //TODO: This method contains tech debt 
+
+        //TODO: This method can be refactored for clarity.  
         /// <summary>
         /// This method implements Beth Faber's Less Simple Method for quantifying uncertainty about a graphical frequency relationship 
         /// </summary>
