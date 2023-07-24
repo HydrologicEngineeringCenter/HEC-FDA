@@ -2,6 +2,8 @@
 using HEC.MVVMFramework.Base.Enumerations;
 using Statistics;
 using Statistics.Distributions;
+using Utilities;
+using System;
 
 namespace HEC.FDA.Model.structures
 {
@@ -63,6 +65,11 @@ namespace HEC.FDA.Model.structures
                     case IDistributionEnum.Uniform:
                         Uniform uniform = new(_StandardDeviationOrMin, _Max);
                         Deterministic deterministicUniform = UncertainToDeterministicDistributionConverter.ConvertDistributionToDeterministic(uniform);
+                        //arbitrary change
+                        if (uniform.IsNull())
+                        {
+                            Console.WriteLine("Complain");
+                        }
                         sampledValueRatio = deterministicUniform.InverseCDF(probability);
                         break;
                     default:
