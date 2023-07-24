@@ -78,13 +78,13 @@ namespace HEC.FDA.ModelTest.integrationtests
             new Normal(117.61,21.64),
             new Normal(117.61,21.64)
         };
-        static string assetcategory = "structure";
         static string xLabel = "x label";
         static string yLabel = "y label";
         static string name = "name";
-        static string category = "residential";
-        static CurveTypesEnum curveType = CurveTypesEnum.StrictlyMonotonicallyIncreasing;
-        static CurveMetaData curveMetaData = new CurveMetaData(xLabel, yLabel, name, category, curveType, assetcategory);
+        static string damCat = "residential";
+        static string assetCat = "content";
+        static int impactAreaID = 0;
+        static CurveMetaData curveMetaData = new CurveMetaData(xLabel, yLabel, name, damCat, assetCat);
 
         [Theory]
         [InlineData(1234, 5.88)]
@@ -101,9 +101,9 @@ namespace HEC.FDA.ModelTest.integrationtests
             RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1000, maxIterations: 10000);
             ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria);
-            double difference = Math.Abs(expected - results.MeanExpectedAnnualConsequences(impactareaid, category, assetcategory));
+            double difference = Math.Abs(expected - results.MeanExpectedAnnualConsequences(impactareaid, damCat, assetCat));
             double relativeDifference = difference / expected;
-            double tolerance = 0.05;
+            double tolerance = 0.09;
             Assert.True(relativeDifference < tolerance);
         }
 

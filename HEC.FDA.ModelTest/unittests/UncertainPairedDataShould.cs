@@ -223,7 +223,7 @@ namespace HEC.FDA.ModelTest.unittests
             MedianRandomProvider medianRandomProvider = new MedianRandomProvider();
             PairedData pairedData = uncertainPairedData.SamplePairedData(medianRandomProvider.NextRandom());
             Assert.Equal(0, pairedData.Yvals[0]);
-            Assert.Equal(0, pairedData.Yvals[1],.02); //forced monotonicity should make this 0 instead of -10
+            Assert.Equal(0.005, pairedData.Yvals[1],.02); //forced strict monotonicity should make this 0.005 instead of -10
             Assert.Equal(100, pairedData.Yvals[2]);
 
         }

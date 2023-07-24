@@ -25,7 +25,7 @@ namespace HEC.FDA.Model.metrics
         public IHistogram ConsequenceHistogram { get; private set; }
         public string DamageCategory { get; }
         public string AssetCategory { get; }
-        public int RegionID { get; } = utilities.IntegerConstants.DEFAULT_MISSING_VALUE;
+        public int RegionID { get; } = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE;
         public bool IsNull { get; }
         public ConvergenceCriteria ConvergenceCriteria { get; }
         #endregion 

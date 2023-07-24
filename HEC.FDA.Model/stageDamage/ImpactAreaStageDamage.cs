@@ -138,7 +138,7 @@ namespace HEC.FDA.Model.stageDamage
             }
             else if (_GraphicalFrequency != null)
             {
-                if (_GraphicalFrequency.UsesStagesNotFlows)
+                if (_GraphicalFrequency.GraphicalDistributionWithLessSimple.UsingStagesNotFlows)
                 {
                     IPairedData minStages = _GraphicalFrequency.SamplePairedData(MIN_PROBABILITY);
                     _MinStageForArea = minStages.Yvals[0];
@@ -203,7 +203,7 @@ namespace HEC.FDA.Model.stageDamage
             }
             else if (_GraphicalFrequency != null)
             {
-                if (_GraphicalFrequency.UsesStagesNotFlows)
+                if (_GraphicalFrequency.GraphicalDistributionWithLessSimple.UsingStagesNotFlows)
                 {
                     return _GraphicalFrequency.SamplePairedData(0.5, true) as PairedData;
                 }
@@ -318,10 +318,10 @@ namespace HEC.FDA.Model.stageDamage
             {
                 List<ConsequenceDistributionResult> consequenceDistributionResultList = new()
                 {
-                    new(damageCategory, utilities.StringConstants.STRUCTURE_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID),
-                    new(damageCategory, utilities.StringConstants.CONTENT_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID),
-                    new(damageCategory, utilities.StringConstants.OTHER_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID),
-                    new(damageCategory, utilities.StringConstants.VEHICLE_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID)
+                    new(damageCategory, utilities.StringGlobalConstants.STRUCTURE_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID),
+                    new(damageCategory, utilities.StringGlobalConstants.CONTENT_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID),
+                    new(damageCategory, utilities.StringGlobalConstants.OTHER_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID),
+                    new(damageCategory, utilities.StringGlobalConstants.VEHICLE_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID)
                 };
                 ConsequenceDistributionResults consequenceDistributionResults = new(consequenceDistributionResultList);
                 consequenceDistributionResultsList.Add(consequenceDistributionResults);
@@ -515,10 +515,10 @@ namespace HEC.FDA.Model.stageDamage
             //DeterministicInventory deterministicInventory = .Sample(, computeIsDeterministic: true);
             StagesToStrings(ref structureDetails);
             DepthsToStrings(ref structureDetails);
-            DamagesToStrings(StringConstants.STRUCTURE_ASSET_CATEGORY, deterministicOccupancyTypes, ref structureDetails);
-            DamagesToStrings(StringConstants.CONTENT_ASSET_CATEGORY, deterministicOccupancyTypes, ref structureDetails);
-            DamagesToStrings(StringConstants.OTHER_ASSET_CATEGORY, deterministicOccupancyTypes, ref structureDetails);
-            DamagesToStrings(StringConstants.VEHICLE_ASSET_CATEGORY, deterministicOccupancyTypes, ref structureDetails);
+            DamagesToStrings(StringGlobalConstants.STRUCTURE_ASSET_CATEGORY, deterministicOccupancyTypes, ref structureDetails);
+            DamagesToStrings(StringGlobalConstants.CONTENT_ASSET_CATEGORY, deterministicOccupancyTypes, ref structureDetails);
+            DamagesToStrings(StringGlobalConstants.OTHER_ASSET_CATEGORY, deterministicOccupancyTypes, ref structureDetails);
+            DamagesToStrings(StringGlobalConstants.VEHICLE_ASSET_CATEGORY, deterministicOccupancyTypes, ref structureDetails);
 
             return structureDetails;
         }
@@ -540,7 +540,7 @@ namespace HEC.FDA.Model.stageDamage
                     consequenceResultList.Add(consequenceResult);
                 }
 
-                if (assetType == StringConstants.STRUCTURE_ASSET_CATEGORY)
+                if (assetType == StringGlobalConstants.STRUCTURE_ASSET_CATEGORY)
                 {
                     for (int i = 0; i < stagesAtStructures.Length; i++)
                     {
@@ -549,7 +549,7 @@ namespace HEC.FDA.Model.stageDamage
                     }
 
                 }
-                else if (assetType == StringConstants.CONTENT_ASSET_CATEGORY)
+                else if (assetType == StringGlobalConstants.CONTENT_ASSET_CATEGORY)
                 {
                     for (int i = 0; i < stagesAtStructures.Length; i++)
                     {
@@ -558,7 +558,7 @@ namespace HEC.FDA.Model.stageDamage
                     }
 
                 }
-                else if (assetType == StringConstants.VEHICLE_ASSET_CATEGORY)
+                else if (assetType == StringGlobalConstants.VEHICLE_ASSET_CATEGORY)
                 {
                     for (int i = 0; i < stagesAtStructures.Length; i++)
                     {

@@ -77,7 +77,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param> the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
         /// <returns></returns>The mean of consequences
-        public double MeanExpectedAnnualConsequences(int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+        public double MeanExpectedAnnualConsequences(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             return ConsequenceResults.MeanDamage(damageCategory, assetCategory, impactAreaID);
         }
@@ -92,7 +92,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param>the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
         /// <returns></returns> the level of consequences exceeded by the specified probability 
-        public double ConsequencesExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+        public double ConsequencesExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             return ConsequenceResults.ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
         }
@@ -106,7 +106,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="assetCategory"></param> The default is null 
         /// <param name="impactAreaID"></param> The default is a null value (utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
         /// <returns></returns>
-        public Empirical GetAggregateEmpiricalDistribution(int impactAreaID = utilities.IntegerConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+        public Empirical GetAggregateEmpiricalDistribution(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             return ConsequenceResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID);
         }
