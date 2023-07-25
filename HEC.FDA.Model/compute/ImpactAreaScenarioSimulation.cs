@@ -97,8 +97,7 @@ namespace HEC.FDA.Model.compute
             //Validate();
             if (!CanCompute(convergenceCriteria, randomProvider))
             {
-                _ImpactAreaScenarioResults = new ImpactAreaScenarioResults(_ImpactAreaID, true);
-                return _ImpactAreaScenarioResults;
+                return null;
             }
             int masterseed = 0;
             if (randomProvider is RandomProvider)
@@ -826,11 +825,11 @@ namespace HEC.FDA.Model.compute
                     bool firstTwoCurvesOverlap;
                     if (_UnregulatedRegulated.CurveMetaData.IsNull)
                     {
-                        firstTwoCurvesOverlap = CurvesHaveOverlap(_DischargeStage, _FrequencyDischarge);
+                        firstTwoCurvesOverlap = LP3IsContainedByRatingCurve(_DischargeStage, _FrequencyDischarge);
                     }
                     else
                     {
-                        firstTwoCurvesOverlap = CurvesHaveOverlap(_UnregulatedRegulated, _FrequencyDischarge);
+                        firstTwoCurvesOverlap = LP3IsContainedByRatingCurve(_UnregulatedRegulated, _FrequencyDischarge);
                         nextTwoCurvesOverlap = CurvesHaveOverlap(_DischargeStage, _UnregulatedRegulated);
                     }
                     if (!firstTwoCurvesOverlap)
@@ -946,15 +945,13 @@ namespace HEC.FDA.Model.compute
             bool curvesOverlap = CurvesOverlap(maxOfF, minOfF, maxOfG, minOfG);
             return curvesOverlap;
         }
-        private static bool CurvesHaveOverlap(UncertainPairedData uncertainPairedData_f, ContinuousDistribution continuousDistribution_g)
+        private static bool LP3IsContainedByRatingCurve(UncertainPairedData ratingCurve, ContinuousDistribution lp3dist)
         {
-            double maxOfF = uncertainPairedData_f.Xvals[^1];
-            double minOfF = uncertainPairedData_f.Xvals[0];
-            double minOfG = continuousDistribution_g.InverseCDF(.001);
-            double maxOfG = continuousDistribution_g.InverseCDF(.75);
-
-            bool curvesOverlap = CurvesOverlap(maxOfF, minOfF, maxOfG, minOfG);
-            return curvesOverlap;
+            double MaxRatingCurve = ratingCurve.Xvals[^1];
+            double MinRatingCurve = ratingCurve.Xvals[0];
+            double MinLP3 = lp3dist.InverseCDF(.001);
+            double MaxLP3 = lp3dist.InverseCDF(.75);
+            return (MinLP3 >= MinRatingCurve && MaxLP3 <= MaxRatingCurve);
         }
         private static bool CurvesOverlap(double maxOfF, double minOfF, double maxOfG, double minOfG)
         {

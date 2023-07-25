@@ -18,6 +18,7 @@ using HEC.MVVMFramework.Base.Events;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.compute;
+using HEC.MVVMFramework.Base.Implementations;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {
@@ -37,7 +38,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private double _EAD;
         private PairedData _DamageFrequencyCurve = null;
 
-        private Func<ChildElementComboItem> _SelectedStageDamage;
+        private readonly Func<ChildElementComboItem> _SelectedStageDamage;
         private bool _IsSufficientForCompute;
         private string _IsSufficientForComputeTooltip;
         private bool _ScenarioReflectsWithoutProjCondition = true;
@@ -194,11 +195,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
             StudyCache.ExteriorInteriorAdded += AddExtIntElement;
             StudyCache.ExteriorInteriorRemoved += RemoveExtIntElement;
-            StudyCache.ExteriorInteriorUpdated += UpdateExtIntElement;      
+            StudyCache.ExteriorInteriorUpdated += UpdateExtIntElement;
         }
 
         #region Live Update Event Methods
-  
+
         private void AddExtIntElement(object sender, ElementAddedEventArgs e)
         {
             ExteriorInteriorElements.Add(new ChildElementComboItem(e.Element));
@@ -283,7 +284,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         }
 
         #endregion
-    
+
         private void FillForm(SpecificIAS elem)
         {
             ScenarioReflectsWithoutProjCondition = elem.ScenarioReflectsWithoutProj;
@@ -302,27 +303,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
             //i don't want a selected value to ever be null. Even if there are no elements we should select the blank row option.
             //so if it is null, i will set it to the first option which is empty.
-            if (SelectedFrequencyElement == null)
-            {
-                SelectedFrequencyElement = FrequencyElements[0];
-            }
-            if (SelectedInflowOutflowElement == null)
-            {
-                SelectedInflowOutflowElement = InflowOutflowElements[0];
-            }
-            if (SelectedRatingCurveElement == null)
-            {
-                SelectedRatingCurveElement = RatingCurveElements[0];
-            }
-            if (SelectedLeveeFeatureElement == null)
-            {
-                SelectedLeveeFeatureElement = LeveeFeatureElements[0];
-            }
-            if (SelectedExteriorInteriorElement == null)
-            {
-                SelectedExteriorInteriorElement = ExteriorInteriorElements[0];
-            }
-            
+            SelectedFrequencyElement ??= FrequencyElements[0];
+            SelectedInflowOutflowElement ??= InflowOutflowElements[0];
+            SelectedRatingCurveElement ??= RatingCurveElements[0];
+            SelectedLeveeFeatureElement ??= LeveeFeatureElements[0];
+            SelectedExteriorInteriorElement ??= ExteriorInteriorElements[0];
+
         }
 
         private void LoadElements()
@@ -330,7 +316,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             //what happens if there are no elements for a combo?
             //I will always add an empty ChildElementComboItem and then select it by default.
             //this means that when asking for the selected combo item, it should never be null.
-            List<ChildElement> childElems = new List<ChildElement>();
+            List<ChildElement> childElems = new();
 
             List<FrequencyElement> analyticalFrequencyElements = StudyCache.GetChildElementsOfType<FrequencyElement>();
             childElems.Clear();
@@ -360,13 +346,15 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             childElems.Clear();
             childElems.AddRange(exteriorInteriorElements);
             ExteriorInteriorElements.AddRange(CreateComboItems(childElems));
-            SelectedExteriorInteriorElement = ExteriorInteriorElements.First();  
+            SelectedExteriorInteriorElement = ExteriorInteriorElements.First();
         }
 
-        private ObservableCollection<ChildElementComboItem> CreateComboItems(List<ChildElement> elems)
+        private static ObservableCollection<ChildElementComboItem> CreateComboItems(List<ChildElement> elems)
         {
-            ObservableCollection<ChildElementComboItem> items = new ObservableCollection<ChildElementComboItem>();
-            items.Add(new ChildElementComboItem(null));
+            ObservableCollection<ChildElementComboItem> items = new()
+            {
+                new ChildElementComboItem(null)
+            };
             foreach (ChildElement elem in elems)
             {
                 items.Add(new ChildElementComboItem(elem));
@@ -413,13 +401,13 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private void LoadAssetCategories(List<StageDamageCurve> stageDamageCurves)
         {
-            List<string> assetCategories = new List<string>();
-            foreach(StageDamageCurve curve in stageDamageCurves)
+            List<string> assetCategories = new();
+            foreach (StageDamageCurve curve in stageDamageCurves)
             {
                 assetCategories.Add(curve.AssetCategory);
             }
             AssetCategories.AddRange(assetCategories.Distinct());
-            if(AssetCategories.Count > 0)
+            if (AssetCategories.Count > 0)
             {
                 SelectedAssetCategory = AssetCategories[0];
             }
@@ -428,7 +416,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private List<StageDamageCurve> GetStageDamageCurves()
         {
             ChildElementComboItem selectedStageDamage = _SelectedStageDamage();
-            List<StageDamageCurve> stageDamageCurves = new List<StageDamageCurve>();
+            List<StageDamageCurve> stageDamageCurves = new();
             if (selectedStageDamage != null && selectedStageDamage.ChildElement != null)
             {
                 AggregatedStageDamageElement elem = (AggregatedStageDamageElement)selectedStageDamage.ChildElement;
@@ -441,8 +429,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private FdaValidationResult GetFrequencyRelationshipValidationResult()
         {
-            FdaValidationResult vr = new FdaValidationResult();
-            if(SelectedFrequencyElement == null || SelectedFrequencyElement.ChildElement == null)
+            FdaValidationResult vr = new();
+            if (SelectedFrequencyElement == null || SelectedFrequencyElement.ChildElement == null)
             {
                 vr.AddErrorMessage("A Frequency Relationship is required.");
             }
@@ -451,7 +439,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private FdaValidationResult GetRatingCurveValidationResult()
         {
-            FdaValidationResult vr = new FdaValidationResult();
+            FdaValidationResult vr = new();
             if (_ratingRequired && (SelectedRatingCurveElement == null || SelectedRatingCurveElement.ChildElement == null))
             {
                 vr.AddErrorMessage("A stage-discharge function is required if the frequency function reflects discharge");
@@ -461,7 +449,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private FdaValidationResult GetStageDamageValidationResult()
         {
             ChildElementComboItem selectedStageDamage = _SelectedStageDamage();
-            FdaValidationResult vr = new FdaValidationResult();
+            FdaValidationResult vr = new();
             if (selectedStageDamage == null || selectedStageDamage.ChildElement == null)
             {
                 vr.AddErrorMessage("A Stage Damage is required. ");
@@ -471,7 +459,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private FdaValidationResult GetDamageCurveSelectedValidationResult()
         {
-            FdaValidationResult vr = new FdaValidationResult();
+            FdaValidationResult vr = new();
             if (SelectedDamageCurve == null)
             {
                 vr.AddErrorMessage("A damage category selection is required.");
@@ -485,7 +473,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         {
             FdaValidationResult result = GetPlotValidationResults();
             IsSufficientForCompute = result.IsValid;
-            if(IsSufficientForCompute)
+            if (IsSufficientForCompute)
             {
                 IsSufficientForComputeTooltip = "Can compute";
             }
@@ -497,7 +485,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         public FdaValidationResult GetPlotValidationResults()
         {
-            FdaValidationResult vr = new FdaValidationResult();
+            FdaValidationResult vr = new();
 
             vr.AddErrorMessage(GetFrequencyRelationshipValidationResult().ErrorMessage);
             vr.AddErrorMessage(GetRatingCurveValidationResult().ErrorMessage);
@@ -517,7 +505,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         /// <returns></returns>
         public FdaValidationResult GetEditorValidationResult()
         {
-            FdaValidationResult vr = new FdaValidationResult();
+            FdaValidationResult vr = new();
 
             vr.AddErrorMessage(GetFrequencyRelationshipValidationResult().ErrorMessage);
             vr.AddErrorMessage(GetRatingCurveValidationResult().ErrorMessage);
@@ -529,7 +517,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             }
             return vr;
         }
-        
+
         private void PreviewCompute()
         {
             ChildElementComboItem selectedStageDamage = _SelectedStageDamage();
@@ -541,7 +529,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             LateralStructureElement leveeElem = SelectedLeveeFeatureElement.ChildElement as LateralStructureElement;
             AggregatedStageDamageElement stageDamageElem = selectedStageDamage.ChildElement as AggregatedStageDamageElement;
 
-            SimulationCreator sc = new SimulationCreator(freqElem, inOutElem, ratElem, extIntElem, leveeElem,
+            SimulationCreator sc = new(freqElem, inOutElem, ratElem, extIntElem, leveeElem,
                 stageDamageElem, CurrentImpactArea.ID);
 
             foreach (ThresholdRowItem thresholdRow in Thresholds)
@@ -551,27 +539,23 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             }
 
             FdaValidationResult configurationValidationResult = sc.IsConfigurationValid();
-            if(configurationValidationResult.IsValid)
+            if (configurationValidationResult.IsValid)
             {
                 ImpactAreaScenarioSimulation simulation = sc.BuildSimulation();
                 simulation.MessageReport += MyMessageHandler;
-                MedianRandomProvider randomProvider = new MedianRandomProvider();
+                MedianRandomProvider randomProvider = new();
                 ConvergenceCriteria cc = StudyCache.GetStudyPropertiesElement().GetStudyConvergenceCriteria();
-                try
+                ImpactAreaScenarioResults result = simulation.PreviewCompute();
+                if (result == null)
                 {
-                    ImpactAreaScenarioResults result = simulation.PreviewCompute();
+                    MessageBox.Show("Preview Compute returned null result", "Failed Compute", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                else
+                {
                     EAD = result.ConsequenceResults.MeanDamage(_selectedDamageCurve.DamCat, _selectedAssetCategory, CurrentImpactArea.ID);
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message, "Failed Compute", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
             }
-            else
-            {
-                MessageBox.Show(configurationValidationResult.ErrorMessage, "Invalid Setup", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-            }
-    
+
         }
 
         public void MyMessageHandler(object sender, MessageEventArgs e)
@@ -584,7 +568,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             if (e.Message is FrequencyDamageMessage damageMessage)
             {
                 //todo: not sure that this is correct. Maybe we want the "total" one, but in the current case the "total" has no values?
-                if(e.Message.Message.Equals("FrequencyDamage"))
+                if (e.Message.Message.Equals("FrequencyDamage"))
                 {
                     _DamageFrequencyCurve = damageMessage.FrequencyDamage;
                 }
@@ -592,12 +576,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         }
 
         #region PlotCurves
-        private IPairedDataProducer getFrequencyRelationshipFunction()
+        private IPairedDataProducer GetFrequencyRelationshipFunction()
         {
             IPairedDataProducer retval = null;
             if (SelectedFrequencyElement != null && SelectedFrequencyElement.ChildElement != null)
             {
-                if(SelectedFrequencyElement.ChildElement is FrequencyElement elem)
+                if (SelectedFrequencyElement.ChildElement is FrequencyElement elem)
                 {
                     if (elem.IsAnalytical)
                     {
@@ -612,7 +596,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             return retval;
         }
 
-        private UncertainPairedData getRatingCurveFunction()
+        private UncertainPairedData GetRatingCurveFunction()
         {
             UncertainPairedData retval = null;
             if (SelectedRatingCurveElement != null && SelectedRatingCurveElement.ChildElement != null)
@@ -624,8 +608,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             return retval;
         }
 
-        private UncertainPairedData getStageDamageFunction()
-        {      
+        private UncertainPairedData GetStageDamageFunction()
+        {
             UncertainPairedData retval = null;
             if (SelectedDamageCurve != null)
             {
@@ -634,7 +618,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             return retval;
         }
 
-        private UncertainPairedData getDamageFrequencyFunction()
+        private UncertainPairedData GetDamageFrequencyFunction()
         {
             UncertainPairedData curve = null;
             if (_DamageFrequencyCurve != null)
@@ -646,8 +630,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 {
                     yDists[i] = new Deterministic(ys[i]);
                 }
-
-                curve = new UncertainPairedData(xs, yDists, "Stage", "Damage", "Stage-Damage", "");
+                CurveMetaData curveMetaData = new("Stage", "Damage", "Stage-Damage", "");
+                curve = new UncertainPairedData(xs, yDists, curveMetaData);
             }
             return curve;
         }
@@ -655,38 +639,35 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         public void Plot()
         {
             FdaValidationResult validationResult = GetPlotValidationResults();
-            if (validationResult.IsValid)
-            {
-                MessageRows.Clear();
-                OverlappingRangeHelper.CheckForOverlappingRanges(SelectedFrequencyElement, SelectedInflowOutflowElement, SelectedRatingCurveElement,
-                    SelectedExteriorInteriorElement, (AggregatedStageDamageElement)_SelectedStageDamage.Invoke().ChildElement, SelectedDamageCurve, MessageRows);
-
-                PreviewCompute();
-
-                //get the current curves and set that data on the chart controls
-                //this update call will set the current crosshair data on each one
-                PlotControlVM.FrequencyRelationshipControl.UpdatePlotData(getFrequencyRelationshipFunction());
-                PlotControlVM.RatingRelationshipControl.UpdatePlotData(getRatingCurveFunction());
-                PlotControlVM.StageDamageControl.UpdatePlotData(getStageDamageFunction());
-
-                UncertainPairedData damageFrequencyCurve = getDamageFrequencyFunction();
-                if (damageFrequencyCurve != null)
-                {
-                    PlotControlVM.DamageFrequencyControl.UpdatePlotData(getDamageFrequencyFunction());
-
-                    PlotControlVM.Plot();
-                    ShowWarnings = true;
-                    ShowEAD = true;
-                }
-                else
-                {
-                    MessageBox.Show("The compute failed to create a damage frequency curve", "No Damage-Frequency", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                }
-            }
-            else
+            if (!validationResult.IsValid)
             {
                 MessageBox.Show(validationResult.ErrorMessage.ToString(), "Insufficient Data", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return;
             }
+
+            MessageRows.Clear();
+            OverlappingRangeHelper.CheckForOverlappingRanges(SelectedFrequencyElement, SelectedInflowOutflowElement, SelectedRatingCurveElement,
+                SelectedExteriorInteriorElement, (AggregatedStageDamageElement)_SelectedStageDamage.Invoke().ChildElement, SelectedDamageCurve, MessageRows);
+
+            PreviewCompute();
+            //get the current curves and set that data on the chart controls
+            //this update call will set the current crosshair data on each one
+            PlotControlVM.FrequencyRelationshipControl.UpdatePlotData(GetFrequencyRelationshipFunction());
+            PlotControlVM.RatingRelationshipControl.UpdatePlotData(GetRatingCurveFunction());
+            PlotControlVM.StageDamageControl.UpdatePlotData(GetStageDamageFunction());
+            UncertainPairedData damageFrequencyCurve = GetDamageFrequencyFunction();
+
+            if (damageFrequencyCurve == null)
+            {
+                MessageBox.Show("The compute failed to create a damage frequency curve", "No Damage-Frequency", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return;
+            }
+
+            PlotControlVM.DamageFrequencyControl.UpdatePlotData(damageFrequencyCurve);
+            PlotControlVM.Plot();
+            ShowWarnings = true;
+            ShowEAD = true;
+
         }
 
         #endregion
@@ -709,20 +690,20 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
             List<ThresholdRowItem> thresholdRowItems = Thresholds;
 
-            SpecificIAS elementToSave = new SpecificIAS(CurrentImpactArea.ID,
+            SpecificIAS elementToSave = new(CurrentImpactArea.ID,
             flowFreqID, inflowOutID,
             ratingID, extIntID, latStructID, stageDamID, thresholdRowItems, ScenarioReflectsWithoutProjCondition, DefaultStage);
             return elementToSave;
         }
 
-        private int GetComboElementID(ChildElementComboItem comboItem)
+        private static int GetComboElementID(ChildElementComboItem comboItem)
         {
             return (comboItem != null && comboItem.ChildElement != null) ? comboItem.ChildElement.ID : -1;
         }
 
         private List<ThresholdRowItem> CloneCurrentThresholdsList()
         {
-            List<ThresholdRowItem> currentThresholds = new List<ThresholdRowItem>();
+            List<ThresholdRowItem> currentThresholds = new();
             int i = 1;
             foreach (ThresholdRowItem thresh in Thresholds)
             {
@@ -735,11 +716,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         public void AddThresholds()
         {
             string header = "System Performance Thresholds";
- 
-            ThresholdsVM vm = new ThresholdsVM(CloneCurrentThresholdsList());
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "additionalThresholds",false,false);
+
+            ThresholdsVM vm = new(CloneCurrentThresholdsList());
+            DynamicTabVM tab = new(header, vm, "additionalThresholds", false, false);
             Navigate(tab, true, true);
-            if(vm.IsThresholdsValid && vm.WasCanceled == false)
+            if (vm.IsThresholdsValid && vm.WasCanceled == false)
             {
                 Thresholds = vm.Rows.ToList();
             }
@@ -755,7 +736,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         }
         private void UpdateThresholdStageValue()
         {
-            if(HasLeveeSelected())
+            if (HasLeveeSelected())
             {
                 DefaultStage = ((LateralStructureElement)SelectedLeveeFeatureElement.ChildElement).Elevation;
                 //disable the checkbox
