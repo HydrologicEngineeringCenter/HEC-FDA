@@ -135,6 +135,9 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
                 case 0:
                     X = value;
                     break;
+                case 1:
+                    Value = value;
+                    break;
             }
         }
     }
