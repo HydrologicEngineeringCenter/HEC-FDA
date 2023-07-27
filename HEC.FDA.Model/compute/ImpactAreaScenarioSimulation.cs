@@ -15,6 +15,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Utilities;
 
 namespace HEC.FDA.Model.compute
 {
@@ -219,32 +220,32 @@ namespace HEC.FDA.Model.compute
                 return true;
             }
 
-                if (ErrorLevel >= ErrorLevel.Fatal)
-                {
-                    ReportMessage(this, new MessageEventArgs(new Message($"The simulation for impact area {_ImpactAreaID} contains errors. The compute has been aborted." + Environment.NewLine)));
-                    canCompute = false;
-                }
+            if (ErrorLevel >= ErrorLevel.Fatal)
+            {
+                ReportMessage(this, new MessageEventArgs(new Message($"The simulation for impact area {_ImpactAreaID} contains errors. The compute has been aborted." + Environment.NewLine)));
+                canCompute = false;
+            }
 
             LogSimulationErrors();
-                    //TODO if curves do not overlap we don't have a way here of saying HasErrors = true 
-                    //Nor is there relevant messaging 
-                    //Cody added a simple error message below, but I think we probably want the sim overlap method to return a string
-                    // and not a bool so that it can pass out a better message. Maybe we should add my FDA Validation Result object into the model
-                    //so that we can return that object.
+            //TODO if curves do not overlap we don't have a way here of saying HasErrors = true 
+            //Nor is there relevant messaging 
+            //Cody added a simple error message below, but I think we probably want the sim overlap method to return a string
+            // and not a bool so that it can pass out a better message. Maybe we should add my FDA Validation Result object into the model
+            //so that we can return that object.
             bool curvesOverlap = CurvesOverlapProperly();
-                    if (!curvesOverlap)
-                    {
-                        ErrorMessage errorMessage = new("The simulation contains curves that do not overlap.", ErrorLevel.Fatal);
-                        ReportMessage(this, new MessageEventArgs(errorMessage));
-                        canCompute = false;
-                    }
-                    //TODO if convergence criteria is not valid, we don't have a way of saying HasErrors = true 
-                    //nor is there relevant messaging
-                    convergenceCriteria.Validate();
-                    if (convergenceCriteria.HasErrors)
-                    {
-                        canCompute = false;
-                    }
+            if (!curvesOverlap)
+            {
+                ErrorMessage errorMessage = new("The simulation contains curves that do not overlap.", ErrorLevel.Fatal);
+                ReportMessage(this, new MessageEventArgs(errorMessage));
+                canCompute = false;
+            }
+            //TODO if convergence criteria is not valid, we don't have a way of saying HasErrors = true 
+            //nor is there relevant messaging
+            convergenceCriteria.Validate();
+            if (convergenceCriteria.HasErrors)
+            {
+                canCompute = false;
+            }
             return canCompute;
 
         }
@@ -298,7 +299,7 @@ namespace HEC.FDA.Model.compute
                                 if (_FrequencyDischargeGraphical.CurveMetaData.IsNull)
                                 {
                                     //If threadlocalRandomProvider is medianRandomProvider then we get a quasi-deterministic result
-                                    frequencyDischarge = _FrequencyDischarge.BootstrapToPairedData(threadlocalRandomProvider, _RequiredExceedanceProbabilities );//ordinates defines the number of values in the frequency curve, more would be a better approximation.                                                                                                                  
+                                    frequencyDischarge = _FrequencyDischarge.BootstrapToPairedData(threadlocalRandomProvider, _RequiredExceedanceProbabilities);//ordinates defines the number of values in the frequency curve, more would be a better approximation.                                                                                                                  
                                 }
                                 else
                                 {
@@ -717,11 +718,6 @@ namespace HEC.FDA.Model.compute
 
         }
 
-
-
-
-
-
         internal static PairedData ComputeTotalDamageFrequency(PairedData pairedDataTotal, PairedData pairedDataToBeAddedToTotal)
         {
             pairedDataTotal = pairedDataTotal.SumYsForGivenX(pairedDataToBeAddedToTotal);
@@ -788,134 +784,105 @@ namespace HEC.FDA.Model.compute
             }
         }
 
-        //TODO: Add messaging to indicate which curves do not overlap
-        private bool SimulationCurvesHaveOverlap()
+        
+        #region Overlapping Curve Logic
+        public bool CurvesOverlapProperly()
         {
-            bool allCurvesHaveOverlap = true;
-            if (_FrequencyStage.CurveMetaData.IsNull)
+            List<Func<bool>> overlappingCurveChecks = new()
             {
-                if (_DischargeStage.CurveMetaData.IsNull)
-                {
-                    string message = $"A stage-discharge function must accompany a discharge-frequency function but was not found for the impact area with ID {_ImpactAreaID}. Compute aborted." + Environment.NewLine;
-                    ErrorMessage errorMessage = new(message, ErrorLevel.Fatal);
-                    ReportMessage(this, new MessageEventArgs(errorMessage));
-                    allCurvesHaveOverlap = false;
-                }
-                if (_FrequencyDischargeGraphical.CurveMetaData.IsNull)
-                {
-                    bool nextTwoCurvesOverlap = true;
-                    bool firstTwoCurvesOverlap;
-                    if (_UnregulatedRegulated.CurveMetaData.IsNull)
-                    {
-                        firstTwoCurvesOverlap = LP3IsContainedByRatingCurve(_DischargeStage, _FrequencyDischarge);
-                    }
-                    else
-                    {
-                        firstTwoCurvesOverlap = LP3IsContainedByRatingCurve(_UnregulatedRegulated, _FrequencyDischarge);
-                        nextTwoCurvesOverlap = CurvesHaveOverlap(_DischargeStage, _UnregulatedRegulated);
-                    }
-                    if (!firstTwoCurvesOverlap)
-                    {
-                        allCurvesHaveOverlap = firstTwoCurvesOverlap;
-                    }
-                    if (!nextTwoCurvesOverlap)
-                    {
-                        allCurvesHaveOverlap = nextTwoCurvesOverlap;
-                    }
-                }
-                else
-                {
-                    bool nextTwoCurvesOverlap = true;
-                    bool firstTwoCurvesOverlap;
-                    if (_UnregulatedRegulated.CurveMetaData.IsNull)
-                    {
-                        firstTwoCurvesOverlap = CurvesHaveOverlap(_DischargeStage, _FrequencyDischargeGraphical);
-                    }
-                    else
-                    {
-                        firstTwoCurvesOverlap = CurvesHaveOverlap(_UnregulatedRegulated, _FrequencyDischargeGraphical);
-                        nextTwoCurvesOverlap = CurvesHaveOverlap(_DischargeStage, _UnregulatedRegulated);
-                    }
-                    if (!firstTwoCurvesOverlap)
-                    {
-                        allCurvesHaveOverlap = firstTwoCurvesOverlap;
-                    }
-                    if (!nextTwoCurvesOverlap)
-                    {
-                        allCurvesHaveOverlap = nextTwoCurvesOverlap;
-                    }
-                }
-                if (_ChannelStageFloodplainStage.CurveMetaData.IsNull)
-                {
-                    foreach (UncertainPairedData uncertainPairedData in _DamageCategoryStageDamage)
-                    {
-                        bool stageDamageOverlaps = CurvesHaveOverlap(uncertainPairedData, _DischargeStage);
-                        if (!stageDamageOverlaps)
-                        {
-                            allCurvesHaveOverlap = stageDamageOverlaps;
-                        }
-                    }
-                }
-                else
-                {
-                    bool nextTwoCurvesHaveOverlap = CurvesHaveOverlap(_ChannelStageFloodplainStage, _DischargeStage);
-                    if (!nextTwoCurvesHaveOverlap)
-                    {
-                        allCurvesHaveOverlap = nextTwoCurvesHaveOverlap;
-                    }
-                    foreach (UncertainPairedData uncertain in _DamageCategoryStageDamage)
-                    {
-                        bool stageDamageOverlaps = CurvesHaveOverlap(uncertain, _ChannelStageFloodplainStage);
-                        if (!stageDamageOverlaps)
-                        {
-                            allCurvesHaveOverlap = stageDamageOverlaps;
-                        }
-                    }
-                }
-            }
-            else
+                AnalFlowFreqAndRatingCurvesOK,
+                AnalFlowFreqAndInflowOutflowOK,
+                GraphicalFlowFreqAndRatingCurveOK,
+                GraphicalFlowFreqAndInflowOutflowOK,
+                GraphicalStageFreqAndExtIntStageOK,
+                RatingCurveAndExtIntStageOK,
+                GraphicalStageFreqAndLeveeOK,
+               // RatingCurveAndLeveeOK,
+                ExtIntStageAndLeveeOK
+            };
+
+            foreach(Func<bool> curveIsOK in overlappingCurveChecks)
             {
-                if (!_ChannelStageFloodplainStage.CurveMetaData.IsNull)
-                {
-                    bool nextTwoCurvesHaveOverlap = CurvesHaveOverlap(_ChannelStageFloodplainStage, _FrequencyStage);
-                    if (!nextTwoCurvesHaveOverlap)
-                    {
-                        allCurvesHaveOverlap = nextTwoCurvesHaveOverlap;
-                    }
-                    foreach (UncertainPairedData uncertain in _DamageCategoryStageDamage)
-                    {
-                        bool stageDamageOverlaps = CurvesHaveOverlap(uncertain, _ChannelStageFloodplainStage);
-                        if (!stageDamageOverlaps)
-                        {
-                            allCurvesHaveOverlap = stageDamageOverlaps;
-                        }
-                    }
-                }
-                else
-                {
-                    foreach (UncertainPairedData uncertain in _DamageCategoryStageDamage)
-                    {
-                        bool stageDamageOverlaps = CurvesHaveOverlap(uncertain, _FrequencyStage);
-                        if (!stageDamageOverlaps)
-                        {
-                            allCurvesHaveOverlap = stageDamageOverlaps;
-                        }
-                    }
-                }
+                if (!curveIsOK.Invoke())
+                    return false;
             }
-            return allCurvesHaveOverlap;
+            return true;
         }
-        private static bool CurvesHaveOverlap(UncertainPairedData uncertainPairedData_f, UncertainPairedData uncertainPairedData_g)
+
+        private bool AnalFlowFreqAndRatingCurvesOK()
         {
-            double maxOfF = uncertainPairedData_f.Xvals[uncertainPairedData_f.Yvals.Length - 1];
+            if (_FrequencyDischarge == null || _DischargeStage.IsNull) 
+                return true ;
+            return DistIsContainedByUPD(_DischargeStage, _FrequencyDischarge);
+        }
+        private bool AnalFlowFreqAndInflowOutflowOK()
+        {
+            if (_FrequencyDischarge == null || _UnregulatedRegulated.IsNull)
+                return true;
+            return DistIsContainedByUPD(_UnregulatedRegulated, _FrequencyDischarge);
+        }
+        private bool GraphicalFlowFreqAndRatingCurveOK()
+        {
+            if(_FrequencyDischargeGraphical.IsNull || _DischargeStage.IsNull)
+                return true;
+            return CurveRangesMatch(_DischargeStage, _FrequencyDischargeGraphical);
+        }
+        private bool GraphicalFlowFreqAndInflowOutflowOK()
+        {
+            if (_FrequencyDischargeGraphical.IsNull || _UnregulatedRegulated.IsNull)
+                return true;
+            return CurveRangesMatch(_UnregulatedRegulated, _FrequencyDischargeGraphical);
+        }
+        private bool GraphicalStageFreqAndExtIntStageOK()
+        {
+            if (_FrequencyDischargeGraphical.IsNull || _UnregulatedRegulated.IsNull)
+                return true;
+            return CurveRangesMatch(_UnregulatedRegulated, _ChannelStageFloodplainStage);
+        }
+        private bool RatingCurveAndExtIntStageOK()
+        {
+            if (_DischargeStage.IsNull || _ChannelStageFloodplainStage.IsNull)
+                return true;
+            return CurveRangesMatch(_ChannelStageFloodplainStage, _DischargeStage);
+        }
+        private bool GraphicalStageFreqAndLeveeOK()
+        {
+            if (_FrequencyDischargeGraphical.IsNull || _SystemResponseFunction.IsNull)
+                return true;
+            return CurveRangesMatch(_SystemResponseFunction, _FrequencyDischargeGraphical);
+        }
+        private bool RatingCurveAndLeveeOK()
+        {
+            if (_DischargeStage.IsNull || _SystemResponseFunction.IsNull)
+                return true;
+            return CurveAxIsContainedByCurveBy(_SystemResponseFunction, _DischargeStage);
+        }
+        private bool ExtIntStageAndLeveeOK()
+        {
+            if (_ChannelStageFloodplainStage.IsNull || _SystemResponseFunction.IsNull)
+                return true;
+            return CurveRangesMatch(_SystemResponseFunction, _ChannelStageFloodplainStage);
+        }
+        #endregion
+
+
+        /// <summary>
+        /// returns true if the range of X values on the first parameter matches the range of Y values on the second within a tolerance. 
+        /// </summary>
+        /// <param name="uncertainPairedData_f"></param>
+        /// <param name="uncertainPairedData_g"></param>
+        /// <returns></returns>
+        private static bool CurveRangesMatch(UncertainPairedData uncertainPairedData_f, UncertainPairedData uncertainPairedData_g)
+        {
+            double maxOfF = uncertainPairedData_f.Xvals[^1];
             double minOfF = uncertainPairedData_f.Xvals[0];
             double minOfG = uncertainPairedData_g.Yvals[0].InverseCDF(.001);
             double maxOfG = uncertainPairedData_g.Yvals[^1].InverseCDF(.999);
 
-            bool curvesOverlap = CurvesOverlap(maxOfF, minOfF, maxOfG, minOfG);
+            bool curvesOverlap = CurveRangesMatch(maxOfF, minOfF, maxOfG, minOfG);
             return curvesOverlap;
         }
-        private static bool CurvesHaveOverlap(UncertainPairedData uncertainPairedData_f, GraphicalUncertainPairedData uncertainPairedData_g)
+        private static bool CurveRangesMatch(UncertainPairedData uncertainPairedData_f, GraphicalUncertainPairedData uncertainPairedData_g)
         {
             double maxOfF = uncertainPairedData_f.Xvals[^1];
             double minOfF = uncertainPairedData_f.Xvals[0];
@@ -924,10 +891,10 @@ namespace HEC.FDA.Model.compute
             double minOfG = pairedData.Yvals[0];
             double maxOfG = pairedData.Yvals[^1];
 
-            bool curvesOverlap = CurvesOverlap(maxOfF, minOfF, maxOfG, minOfG);
+            bool curvesOverlap = CurveRangesMatch(maxOfF, minOfF, maxOfG, minOfG);
             return curvesOverlap;
         }
-        private static bool LP3IsContainedByRatingCurve(UncertainPairedData ratingCurve, ContinuousDistribution lp3dist)
+        private static bool DistIsContainedByUPD(UncertainPairedData ratingCurve, ContinuousDistribution lp3dist)
         {
             double MaxRatingCurve = ratingCurve.Xvals[^1];
             double MinRatingCurve = ratingCurve.Xvals[0];
@@ -935,7 +902,7 @@ namespace HEC.FDA.Model.compute
             double MaxLP3 = lp3dist.InverseCDF(.75);
             return (MinLP3 >= MinRatingCurve && MaxLP3 <= MaxRatingCurve);
         }
-        private static bool CurvesOverlap(double maxOfF, double minOfF, double maxOfG, double minOfG)
+        private static bool CurveRangesMatch(double maxOfF, double minOfF, double maxOfG, double minOfG)
         {
             bool curvesOverlap = true;
             double overlapThreshold = 0.95;
@@ -956,6 +923,14 @@ namespace HEC.FDA.Model.compute
             return curvesOverlap;
         }
 
+        private static bool CurveAxIsContainedByCurveBy(UncertainPairedData A, UncertainPairedData B)
+        {
+            double maxOfAx = A.Xvals[^1];
+            double minOfAx = A.Xvals[0];
+            double minOfBy = B.Yvals[0].InverseCDF(.001);
+            double maxOfBy = B.Yvals[^1].InverseCDF(.999);
+            return (maxOfAx <= maxOfBy && minOfAx >= minOfBy);
+        }
         public void ReportProgress(object sender, ProgressReportEventArgs e)
         {
             ProgressReport?.Invoke(sender, e);
