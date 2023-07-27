@@ -5,6 +5,7 @@ using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Results;
 using HEC.FDA.ViewModel.Utilities;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario
 {
@@ -19,22 +20,30 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             Name = StringConstants.SCENARIOS;
             CustomTreeViewHeader = new CustomHeaderVM(Name);
 
-            NamedAction addCondition = new NamedAction();
-            addCondition.Header = StringConstants.CREATE_NEW_SCENARIO_MENU;
-            addCondition.Action = AddNewIASSet;
+            NamedAction addCondition = new()
+            {
+                Header = StringConstants.CREATE_NEW_SCENARIO_MENU,
+                Action = AddNewIASSet
+            };
 
-            NamedAction computeAllMenu = new NamedAction();
-            computeAllMenu.Header = StringConstants.COMPUTE_SCENARIOS_MENU;
-            computeAllMenu.Action = ComputeScenarios;
+            NamedAction computeAllMenu = new()
+            {
+                Header = StringConstants.COMPUTE_SCENARIOS_MENU,
+                Action = ComputeScenarios
+            };
 
-            NamedAction viewSummaryResultsMenu = new NamedAction();
-            viewSummaryResultsMenu.Header = StringConstants.VIEW_SUMMARY_RESULTS_MENU;
-            viewSummaryResultsMenu.Action = ViewSummaryResults;
+            NamedAction viewSummaryResultsMenu = new()
+            {
+                Header = StringConstants.VIEW_SUMMARY_RESULTS_MENU,
+                Action = ViewSummaryResults
+            };
 
-            List<NamedAction> localActions = new List<NamedAction>();
-            localActions.Add(addCondition);
-            localActions.Add(computeAllMenu);
-            localActions.Add(viewSummaryResultsMenu);
+            List<NamedAction> localActions = new()
+            {
+                addCondition,
+                computeAllMenu,
+                viewSummaryResultsMenu
+            };
 
             Actions = localActions;
             StudyCache.IASElementAdded += AddIASElementSet;
@@ -70,9 +79,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         private void ChildElementUpdated(object sender, Saving.ElementUpdatedEventArgs args)
         {
             int removedElementID = args.NewElement.ID;
-            if (args.NewElement is ChildElement)
+            if (args.NewElement is ChildElement childElem)
             {
-                ChildElement childElem = (ChildElement)args.NewElement;
                 Saving.PersistenceFactory.GetIASManager().UpdateIASTooltipsChildElementModified(childElem, removedElementID);
             }
         }
@@ -88,9 +96,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         private void ChildElementRemoved(object sender, Saving.ElementAddedEventArgs args)
         {
             int removedElementID = args.Element.ID;
-            if (args.Element is ChildElement)
+            if (args.Element is ChildElement childElem)
             {
-                ChildElement childElem = (ChildElement)args.Element;
                 Saving.PersistenceFactory.GetIASManager().UpdateIASTooltipsChildElementModified(childElem, removedElementID);
             }
         }
@@ -113,17 +120,17 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
         private void ComputeScenarios(object arg1, EventArgs arg2)
         {
-            ScenarioSelectorVM vm = new ScenarioSelectorVM();
+            ScenarioSelectorVM vm = new();
             vm.RequestNavigation += Navigate;
             //todo: add to string constants
-            DynamicTabVM tab = new DynamicTabVM(StringConstants.COMPUTE_SCENARIOS_HEADER, vm, StringConstants.COMPUTE_SCENARIOS_HEADER);
+            DynamicTabVM tab = new(StringConstants.COMPUTE_SCENARIOS_HEADER, vm, StringConstants.COMPUTE_SCENARIOS_HEADER);
             Navigate(tab, false, false);
         }
 
         private void ViewSummaryResults(object arg1, EventArgs arg2)
         {
             List<IASElement> elems = StudyCache.GetChildElementsOfType<IASElement>();
-            List<IASElement> elemsWithResults = new List<IASElement>();
+            List<IASElement> elemsWithResults = new();
             foreach(IASElement elem in elems)
             {
                 if(elem.Results != null)
@@ -132,8 +139,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 }
             }
 
-            ScenarioDamageSummaryVM vm = new ScenarioDamageSummaryVM(elemsWithResults);
-            DynamicTabVM tab = new DynamicTabVM(StringConstants.VIEW_SUMMARY_RESULTS_HEADER, vm, StringConstants.VIEW_SUMMARY_RESULTS_HEADER);
+            ScenarioDamageSummaryVM vm = new(elemsWithResults);
+            DynamicTabVM tab = new(StringConstants.VIEW_SUMMARY_RESULTS_HEADER, vm, StringConstants.VIEW_SUMMARY_RESULTS_HEADER);
             Navigate(tab, false, false);
         }
 
@@ -148,9 +155,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             {
                 EditorActionManager actionManager = new EditorActionManager()
                      .WithSiblingRules(this);
-                Editor.IASEditorVM vm = new Editor.IASEditorVM(actionManager);
+                Editor.IASEditorVM vm = new(actionManager);
                 vm.RequestNavigation += Navigate;
-                DynamicTabVM tab = new DynamicTabVM(StringConstants.CREATE_NEW_SCENARIO_HEADER, vm, StringConstants.CREATE_NEW_SCENARIO_HEADER);
+                string uniqueSuffix = DateTime.Now.ToString();
+                DynamicTabVM tab = new(StringConstants.CREATE_NEW_SCENARIO_HEADER, vm, StringConstants.CREATE_NEW_SCENARIO_HEADER + uniqueSuffix);
                 Navigate(tab, false, false);
             }
 

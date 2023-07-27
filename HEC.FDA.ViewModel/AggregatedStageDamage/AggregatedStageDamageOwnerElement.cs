@@ -18,17 +18,23 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             IsBold = false;
             CustomTreeViewHeader = new CustomHeaderVM(Name);
 
-            NamedAction addDamageCurve = new NamedAction();
-            addDamageCurve.Header = StringConstants.CREATE_NEW_STAGE_DAMAGE_MENU;
-            addDamageCurve.Action = AddNewStageDamageCurveSet;
+            NamedAction addDamageCurve = new()
+            {
+                Header = StringConstants.CREATE_NEW_STAGE_DAMAGE_MENU,
+                Action = AddNewStageDamageCurveSet
+            };
 
-            NamedAction importDamageCurve = new NamedAction();
-            importDamageCurve.Header = StringConstants.CreateImportFromFileMenuString(StringConstants.IMPORT_STAGE_DAMAGE_FROM_OLD_NAME);
-            importDamageCurve.Action = ImportNewStageDamageCurveSet;
+            NamedAction importDamageCurve = new()
+            {
+                Header = StringConstants.CreateImportFromFileMenuString(StringConstants.IMPORT_STAGE_DAMAGE_FROM_OLD_NAME),
+                Action = ImportNewStageDamageCurveSet
+            };
 
-            List<NamedAction> localActions = new List<NamedAction>();
-            localActions.Add(addDamageCurve);
-            localActions.Add(importDamageCurve);
+            List<NamedAction> localActions = new()
+            {
+                addDamageCurve,
+                importDamageCurve
+            };
 
             Actions = localActions;
 
@@ -59,7 +65,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             {
                 ImportFromFDA1VM vm = new ImportStageDamageFromFDA1VM();
                 string header = StringConstants.CreateImportHeader(StringConstants.IMPORT_STAGE_DAMAGE_FROM_OLD_NAME);
-                DynamicTabVM tab = new DynamicTabVM(header, vm, header);
+                DynamicTabVM tab = new(header, vm, header);
                 Navigate(tab, false, true);
             }
             else
@@ -87,9 +93,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 EditorActionManager actionManager = new EditorActionManager()
                      .WithSiblingRules(this);
 
-                AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM( actionManager);
+                AggregatedStageDamageEditorVM vm = new( actionManager);
                 string header = StringConstants.CREATE_NEW_STAGE_DAMAGE_HEADER;
-                DynamicTabVM tab = new DynamicTabVM(header, vm, header);
+                string uniqueSuffix = DateTime.Now.ToString();
+                DynamicTabVM tab = new(header, vm, header + uniqueSuffix);
                 Navigate(tab, false, true);
             }
         }
