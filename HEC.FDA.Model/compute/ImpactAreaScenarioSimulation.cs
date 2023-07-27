@@ -214,40 +214,24 @@ namespace HEC.FDA.Model.compute
         private bool CanCompute(ConvergenceCriteria convergenceCriteria, IProvideRandomNumbers randomProvider)
         {
             bool canCompute = true;
-            if (HasErrors)
+            if (!HasErrors)
             {
+                return true;
+            }
+
                 if (ErrorLevel >= ErrorLevel.Fatal)
                 {
                     ReportMessage(this, new MessageEventArgs(new Message($"The simulation for impact area {_ImpactAreaID} contains errors. The compute has been aborted." + Environment.NewLine)));
                     canCompute = false;
                 }
-                else
-                {
-                    LogSimulationErrors();
-                    if (randomProvider is MedianRandomProvider)
-                    {
-                        if (convergenceCriteria.MaxIterations != 1)
-                        {
 
-                            string message = $"The simulation for impact area {_ImpactAreaID} was requested to provide a mean estimate, but asked for more than one iteration." + Environment.NewLine;
-                            ErrorMessage errorMessage = new(message, ErrorLevel.Fatal);
-                            ReportMessage(this, new MessageEventArgs(errorMessage));
-                            canCompute = false;
-                        }
-                    }
-                    else if (convergenceCriteria.MinIterations < 100)
-                    {
-                        string message = $"The simulation for impact area {_ImpactAreaID} was requested to provide a random estimate, but asked for a minimum of one iteration." + Environment.NewLine;
-                        ErrorMessage errorMessage = new(message, ErrorLevel.Fatal);
-                        ReportMessage(this, new MessageEventArgs(errorMessage));
-                        canCompute = false;
-                    }
+            LogSimulationErrors();
                     //TODO if curves do not overlap we don't have a way here of saying HasErrors = true 
                     //Nor is there relevant messaging 
                     //Cody added a simple error message below, but I think we probably want the sim overlap method to return a string
                     // and not a bool so that it can pass out a better message. Maybe we should add my FDA Validation Result object into the model
                     //so that we can return that object.
-                    bool curvesOverlap = SimulationCurvesHaveOverlap();
+            bool curvesOverlap = CurvesOverlapProperly();
                     if (!curvesOverlap)
                     {
                         ErrorMessage errorMessage = new("The simulation contains curves that do not overlap.", ErrorLevel.Fatal);
@@ -261,8 +245,6 @@ namespace HEC.FDA.Model.compute
                     {
                         canCompute = false;
                     }
-                }
-            }
             return canCompute;
 
         }
