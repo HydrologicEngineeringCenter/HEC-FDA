@@ -351,7 +351,7 @@ namespace HEC.FDA.Model.metrics
         public void AddResults(IContainImpactAreaScenarioResults resultsToAdd)
         {
             ImpactAreaScenarioResults results = GetResults(resultsToAdd.ImpactAreaID);
-            if (results.IsNull)
+            if (!results.IsNull)
             {
                 ResultsList.Add(resultsToAdd);
             }
