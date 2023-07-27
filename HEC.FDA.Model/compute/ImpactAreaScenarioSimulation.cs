@@ -94,10 +94,10 @@ namespace HEC.FDA.Model.compute
         public ImpactAreaScenarioResults Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, CancellationToken cancellationToken,
             bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false, bool computeIsDeterministic = false)
         {
-            //Validate();
             if (!CanCompute(convergenceCriteria, randomProvider))
             {
-                return null;
+                _ImpactAreaScenarioResults = new ImpactAreaScenarioResults(_ImpactAreaID, true); //I would like to just return regular Null here but I'm unsure who is relying on this behavior. BBB
+                return _ImpactAreaScenarioResults;
             }
             int masterseed = 0;
             if (randomProvider is RandomProvider)
