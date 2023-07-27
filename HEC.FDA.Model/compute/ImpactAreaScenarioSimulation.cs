@@ -797,7 +797,6 @@ namespace HEC.FDA.Model.compute
                 GraphicalStageFreqAndExtIntStageOK,
                 RatingCurveAndExtIntStageOK,
                 GraphicalStageFreqAndLeveeOK,
-               // RatingCurveAndLeveeOK,
                 ExtIntStageAndLeveeOK
             };
 
@@ -850,12 +849,6 @@ namespace HEC.FDA.Model.compute
             if (_FrequencyDischargeGraphical.IsNull || _SystemResponseFunction.IsNull)
                 return true;
             return CurveRangesMatch(_SystemResponseFunction, _FrequencyDischargeGraphical);
-        }
-        private bool RatingCurveAndLeveeOK()
-        {
-            if (_DischargeStage.IsNull || _SystemResponseFunction.IsNull)
-                return true;
-            return CurveAxIsContainedByCurveBy(_SystemResponseFunction, _DischargeStage);
         }
         private bool ExtIntStageAndLeveeOK()
         {
