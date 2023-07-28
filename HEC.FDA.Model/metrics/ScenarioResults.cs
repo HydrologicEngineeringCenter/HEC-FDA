@@ -349,12 +349,8 @@ namespace HEC.FDA.Model.metrics
             }
         }
         public void AddResults(IContainImpactAreaScenarioResults resultsToAdd)
-        {
-            ImpactAreaScenarioResults results = GetResults(resultsToAdd.ImpactAreaID);
-            if (!results.IsNull)
-            {
-                ResultsList.Add(resultsToAdd);
-            }
+        { 
+            ResultsList.Add(resultsToAdd);
         }
         public ImpactAreaScenarioResults GetResults(int impactAreaID)
         {
