@@ -42,7 +42,6 @@ namespace Importer
         {
             OccupancyType aOccType = ObjectCopier.Clone(theOcctype);
             _OcctypeListSort.Add(aOccType.Name.Trim(), aOccType);
-            WriteLine($"Add Occupancy Type to SortList. {aOccType.Name}");
             if (logger != null && GlobalVariables.mp_fdaStudy._TraceConvertLevel > 19)
             {
                 aOccType.Print(logger);
@@ -61,7 +60,6 @@ namespace Importer
         public void PrintToTable()
         {
             OccupancyType aOcctype;
-            WriteLine($"Number of Occupancy Types {_OcctypeListSort.Count}");
             for (int i = 0; i < _OcctypeListSort.Count; i++)
             {
                 aOcctype = _OcctypeListSort.ElementAt(i).Value;
@@ -85,7 +83,6 @@ namespace Importer
         {
             int ix = _OcctypeListSort.IndexOfKey(nameOcctype);
             _OccupancyType = _OcctypeListSort.ElementAt(ix).Value;
-            WriteLine($"Did I find the {nameOcctype} Occupancy Type, name = {_OccupancyType.Name}");
             return _OccupancyType;
         }
         #endregion
