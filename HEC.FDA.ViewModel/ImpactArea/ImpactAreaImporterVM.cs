@@ -56,8 +56,9 @@ namespace HEC.FDA.ViewModel.ImpactArea
         }
         #endregion
         #region Voids
-        private void AddValidationRules()
+        public override void AddValidationRules()
         {
+            base.AddValidationRules();
             AddRule(nameof(SelectedUniqueNameColumnHeader), () =>
             {
                 return !string.IsNullOrEmpty(SelectedUniqueNameColumnHeader);

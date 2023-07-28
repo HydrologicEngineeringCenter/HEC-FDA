@@ -14,7 +14,6 @@ namespace Statistics
         private double _max;
         private double _median;
         private double _skew;
-        private double _kurtosis;
         private int _n;
 
         public double Mean
@@ -42,10 +41,6 @@ namespace Statistics
         public double Skewness
         {
             get { return _skew; }
-        }
-        public double Kurtosis
-        {
-            get { return _kurtosis; }
         }
         public Utilities.IRange<double> Range { get; }
         public int SampleSize
