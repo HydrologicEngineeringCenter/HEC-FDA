@@ -646,8 +646,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 {
                     yDists[i] = new Deterministic(ys[i]);
                 }
-
-                curve = new UncertainPairedData(xs, yDists, "Stage", "Damage", "Stage-Damage", "");
+                CurveMetaData curveMetaData = new("Stage", "Damage", "Stage-Damage", "");
+                curve = new UncertainPairedData(xs, yDists, curveMetaData);
             }
             return curve;
         }

@@ -8,7 +8,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
     {
         private ImpactAreaRowItem _ImpactArea;
         private String _DamCat;
-        private bool _UserModified;
 
         public StageDamageConstructionType ConstructionType { get; set; }
 

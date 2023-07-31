@@ -14,11 +14,6 @@ namespace HEC.FDA.ViewModel.Study
         private string _Description = "";
         #endregion
         #region Properties
-        public string Description
-        {
-            get { return _Description; }
-            set { _Description = value;}
-        }
         public string Path { get { return _Path; }
         set
             {
