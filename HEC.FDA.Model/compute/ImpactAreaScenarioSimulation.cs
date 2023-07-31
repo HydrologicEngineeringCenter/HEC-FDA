@@ -95,7 +95,7 @@ namespace HEC.FDA.Model.compute
         public ImpactAreaScenarioResults Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, CancellationToken cancellationToken,
             bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false, bool computeIsDeterministic = false)
         {
-            if (!CanCompute(convergenceCriteria, randomProvider))
+            if (!CanCompute(convergenceCriteria))
             {
                 _ImpactAreaScenarioResults = new ImpactAreaScenarioResults(_ImpactAreaID, true); //I would like to just return regular Null here but I'm unsure who is relying on this behavior. BBB
                 return _ImpactAreaScenarioResults;
@@ -212,7 +212,7 @@ namespace HEC.FDA.Model.compute
             //}
         }
 
-        private bool CanCompute(ConvergenceCriteria convergenceCriteria, IProvideRandomNumbers randomProvider)
+        private bool CanCompute(ConvergenceCriteria convergenceCriteria)
         {
             bool canCompute = true;
             if (!HasErrors)
