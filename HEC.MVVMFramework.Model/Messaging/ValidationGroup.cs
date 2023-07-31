@@ -33,7 +33,7 @@ namespace HEC.MVVMFramework.Model.Messaging
             _IntroMessage = introMessage;
         }
 
-        public string GetErrorMessages()
+        public new string GetErrorMessages()
         {
             string errorMsg = null;
             StringBuilder sb = new StringBuilder();

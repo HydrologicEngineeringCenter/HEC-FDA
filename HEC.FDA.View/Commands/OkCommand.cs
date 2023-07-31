@@ -14,7 +14,7 @@ namespace HEC.FDA.View.Commands
         /// <summary>
         /// This is required by ICommand
         /// </summary>
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler CanExecuteChanged { add { } remove { } }
 
         public void Execute(object parameter)
         {

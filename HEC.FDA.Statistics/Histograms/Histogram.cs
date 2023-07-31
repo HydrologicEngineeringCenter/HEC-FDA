@@ -18,7 +18,6 @@ namespace Statistics.Histograms
         private bool _HistogramShutDown = false;
         #endregion
         #region Properties
-        public event MessageReportedEventHandler MessageReport;
         public bool HistogramIsZeroValued
         {
             get

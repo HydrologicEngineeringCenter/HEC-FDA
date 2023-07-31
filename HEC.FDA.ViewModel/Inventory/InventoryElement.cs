@@ -29,7 +29,7 @@ namespace HEC.FDA.ViewModel.Inventory
         private const string OCCTYPE_MAPPING = "OcctypeMapping";
         private const string SHAPEFILE_OCCTYPE = "ShapefileOcctype";
         private const string GROUP_ID = "GroupID";
-        private const string ID = "ID";
+        private const string ID_Constant = "ID";
         private Dictionary<String, OccupancyTypes.OcctypeReference> _OcctypeMapping = new Dictionary<string, OccupancyTypes.OcctypeReference>();
         #endregion
         #region Properties
@@ -72,7 +72,7 @@ namespace HEC.FDA.ViewModel.Inventory
             {
                 string shapefileOcctypeName = occtypeMappingElement.Attribute(SHAPEFILE_OCCTYPE).Value;
                 int groupID = Convert.ToInt32(occtypeMappingElement.Attribute(GROUP_ID).Value);
-                int id = Convert.ToInt32(occtypeMappingElement.Attribute(ID).Value);
+                int id = Convert.ToInt32(occtypeMappingElement.Attribute(ID_Constant).Value);
                 OccupancyTypes.OcctypeReference otRef = new OccupancyTypes.OcctypeReference(groupID, id);
                 _OcctypeMapping.Add(shapefileOcctypeName, otRef);
             }
@@ -111,7 +111,7 @@ namespace HEC.FDA.ViewModel.Inventory
             XElement rowElem = new XElement(OCCTYPE_MAPPING);
             rowElem.SetAttributeValue(SHAPEFILE_OCCTYPE, shapefileOcctype);
             rowElem.SetAttributeValue(GROUP_ID, fDAOcctype.GroupID);
-            rowElem.SetAttributeValue(ID, fDAOcctype.ID);
+            rowElem.SetAttributeValue(ID_Constant, fDAOcctype.ID);
             return rowElem;
         }
 

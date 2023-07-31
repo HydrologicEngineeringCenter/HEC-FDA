@@ -16,7 +16,8 @@ namespace HEC.FDA.ViewModel.Utilities
                 xs[i] = i;
                 ys[i] = new Normal(i, 0);
             }
-            UncertainPairedData curve = new UncertainPairedData(xs, ys, xLabel, yLabel, name, "");
+            CurveMetaData metaData = new(xLabel, yLabel, name, "");
+            UncertainPairedData curve = new(xs, ys, metaData);
             return curve;
         }
         public static UncertainPairedData CreateDefaultDeterminateData(string xLabel, string yLabel, string name)
@@ -28,28 +29,31 @@ namespace HEC.FDA.ViewModel.Utilities
                 xs[i] = i;
                 ys[i] = new Deterministic(i);
             }
-            UncertainPairedData curve = new UncertainPairedData(xs, ys, xLabel, yLabel, name, "");
+            CurveMetaData metaData = new(xLabel, yLabel, name, "");
+            UncertainPairedData curve = new(xs, ys, metaData);
             return curve;
         }
 
         public static UncertainPairedData CreateDeterminateData(List<double> xs, List<double> ys, string xLabel, string yLabel, string name)
         {
-            List<Deterministic> yVals = new List<Deterministic>();
+            List<Deterministic> yVals = new();
             foreach(double d in ys)
             {
                 yVals.Add(new Deterministic(d));
             }
-            UncertainPairedData curve = new UncertainPairedData(xs.ToArray(), yVals.ToArray(), xLabel, yLabel, name, "");
+            CurveMetaData metaData = new(xLabel, yLabel, name, "");
+            UncertainPairedData curve = new(xs.ToArray(), yVals.ToArray(), metaData);
             return curve;
         }
         public static UncertainPairedData CreateDeterminateData(double[] xs, double[] ys, string xLabel, string yLabel, string name)
         {
-            List<Deterministic> yVals = new List<Deterministic>();
+            List<Deterministic> yVals = new();
             foreach (double d in ys)
             {
                 yVals.Add(new Deterministic(d));
             }
-            UncertainPairedData curve = new UncertainPairedData(xs, yVals.ToArray(), xLabel, yLabel, name, "");
+            CurveMetaData metaData = new(xLabel, yLabel, name, "");
+            UncertainPairedData curve = new(xs, yVals.ToArray(), metaData);
             return curve;
         }
 
@@ -61,7 +65,8 @@ namespace HEC.FDA.ViewModel.Utilities
             {
                 yVals[i] = new Deterministic( lp3.InverseCDF(probs[i]));
             }
-            return new UncertainPairedData(probs, yVals, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE, StringConstants.FREQUENCY_RELATIONSHIP, "");
+            CurveMetaData metaData = new(StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE, StringConstants.FREQUENCY_RELATIONSHIP, "");
+            return new UncertainPairedData(probs, yVals, metaData);
         }
 
 
