@@ -51,8 +51,9 @@ namespace HEC.FDA.ViewModel.IndexPoints
         }
         #endregion
         #region Voids
-        private void AddValidationRules()
+        public override void AddValidationRules()
         {
+            base.AddValidationRules();
             AddRule(nameof(ListOfRows), () =>
             {
                 return ListOfRows.Count > 0;

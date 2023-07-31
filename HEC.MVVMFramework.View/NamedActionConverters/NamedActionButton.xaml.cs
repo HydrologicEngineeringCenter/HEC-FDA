@@ -13,7 +13,6 @@ namespace HEC.MVVMFramework.View.NamedActionConverters
     {
         public static DependencyProperty ButtonNamedActionProperty = DependencyProperty.Register(nameof(NamedAction), typeof(INamedAction), typeof(NamedActionButton), new FrameworkPropertyMetadata(ButtonNamedActionPropertyCallback));
         private RoutedEventHandler _ActionHandler;
-        public event MessageReportedEventHandler MessageReport;
 
         public INamedAction NamedAction
         {

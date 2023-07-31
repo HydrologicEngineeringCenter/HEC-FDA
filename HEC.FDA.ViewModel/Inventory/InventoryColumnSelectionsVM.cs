@@ -333,7 +333,7 @@ namespace HEC.FDA.ViewModel.Inventory
             return vr;
         }
 
-        public StructuresMissingDataManager Validate()
+        public new StructuresMissingDataManager Validate()
         {
             StructuresMissingDataManager missingDataManager = new StructuresMissingDataManager();
 

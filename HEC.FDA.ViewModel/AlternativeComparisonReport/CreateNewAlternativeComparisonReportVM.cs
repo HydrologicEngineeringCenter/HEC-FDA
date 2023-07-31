@@ -20,7 +20,6 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             get { return _ProjectAlternatives; }
         }
         public AlternativeComboItem SelectedWithoutProjectAlternative { get; set; }
-        public string Description { get; set; }
         public int SelectedIndex
         {
             get { return _SelectedIndex; }
@@ -133,7 +132,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             Rows.Add(new ComparisonRowItemVM( _ProjectAlternatives));
         }
 
-        private FdaValidationResult IsValid()
+        public override FdaValidationResult IsValid()
         {
             FdaValidationResult vr = new FdaValidationResult();
             string errorMsg = "'Without Project' and 'With Project' selections must be unique.";

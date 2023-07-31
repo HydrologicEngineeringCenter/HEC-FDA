@@ -10,7 +10,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
     public class ThresholdsVM : BaseViewModel
     {
         private ThresholdRowItem _selectedRow;
-        public bool WasCanceled { get; set; } = true;
         public ObservableCollection<ThresholdRowItem> Rows { get; } = new ObservableCollection<ThresholdRowItem>();
         public bool IsThresholdsValid { get; set; } = false;
         public ThresholdRowItem SelectedRow
@@ -21,6 +20,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         public ThresholdsVM(List<ThresholdRowItem> rows)
         {
+            WasCanceled = true;
             foreach (ThresholdRowItem row in rows)
             {
                 Rows.Add(row);
