@@ -222,7 +222,6 @@ namespace HEC.FDA.Model.paireddata
         /// <summary>
         /// Appropriate when subject is a stage damage curve, and the input is a fragility curve. 
         /// multiply multiplies a stage damage curve by a fragility curve. All damages below the curve are considered 0.
-        /// A point is added just above and just below the curve. 
         /// </summary>
         public IPairedData multiply(IPairedData systemResponseFunction)
         {
