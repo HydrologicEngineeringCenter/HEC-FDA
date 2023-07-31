@@ -259,7 +259,7 @@ namespace HEC.FDA.Model.paireddata
             return new PairedData(stages,damages);
         }
 
-        public void ForceMonotonic(double max = double.MaxValue, double min = double.MinValue)
+        public void ForceMonotonicity(double max = double.MaxValue, double min = double.MinValue)
         {
             double previousYval = min;
 

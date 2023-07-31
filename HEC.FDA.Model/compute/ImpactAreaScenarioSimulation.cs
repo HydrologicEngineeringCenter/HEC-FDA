@@ -11,7 +11,6 @@ using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -193,23 +192,6 @@ namespace HEC.FDA.Model.compute
                 validationObjects.Add(relationship);
                 validationIntroMessages.Add(nameof(_DamageCategoryStageDamage) + ": " + relationship.CurveMetaData.DamageCategory + ": " + relationship.CurveMetaData.AssetCategory + ": " + "has the following messages");
             }
-
-            //TODO - is there a reason for keeping this commented out code? 
-            //    ReportMessage(this, new MessageEventArgs(new ErrorMessage($"The simulation for impact area {_impactAreaID} contains warnings:", errorLevel)));
-
-            //    _frequency_discharge?.LogErrors(nameof(_frequency_discharge) + $" has the following messages for the impact area with ID {_impactAreaID}:");
-            //    _frequency_discharge_graphical?.LogErrors(nameof(_frequency_discharge_graphical) + $" has the following messages for the impact area with ID {_impactAreaID}:");
-            //    _unregulated_regulated?.LogErrors(nameof(_unregulated_regulated) + $" has the following messages for the impact area with ID {_impactAreaID}:");
-            //    _discharge_stage?.LogErrors(nameof(_discharge_stage) + $" has the following messages for the impact area with ID {_impactAreaID}:");
-            //    _frequency_stage?.LogErrors(nameof(_frequency_stage) + $" has the following messages for the impact area with ID {_impactAreaID}:");
-            //    _channelstage_floodplainstage?.LogErrors(nameof(_channelstage_floodplainstage) + $" has the following messages for the impact area with ID {_impactAreaID}:");
-            //    _systemResponseFunction_stage_failureProbability?.LogErrors(nameof(_systemResponseFunction_stage_failureProbability) + $" has the following messages for the impact area with ID {_impactAreaID}:");
-
-            //    foreach (UncertainPairedData relationship in _damage_category_stage_damage)
-            //    {
-            //        relationship?.LogErrors(nameof(_damage_category_stage_damage) + ": " + relationship.CurveMetaData.DamageCategory + ": " + relationship.CurveMetaData.AssetCategory + ": " + "has the following messages");
-            //    }
-            //}
         }
 
         private bool CanCompute(ConvergenceCriteria convergenceCriteria, IProvideRandomNumbers randomProvider)
@@ -415,7 +397,6 @@ namespace HEC.FDA.Model.compute
                 {
                     if (_LeveeIsValid)
                     {
-                        //TODO: why commented out and why still exists
                         IPairedData systemResponse_sample = _SystemResponseFunction.SamplePairedData(randomProvider.NextRandom(), computeIsDeterministic); //needs to be a random number
                                                                                                                                                            //IPairedData frequency_stage_withLevee = frequency_stage.multiply(levee_curve_sample);
                         if (computeWithDamage)
@@ -437,7 +418,7 @@ namespace HEC.FDA.Model.compute
 
             }
             else
-            {   //todo is there a reason for the starting underscore? 
+            {   
                 IPairedData _channelstage_floodplainstage_sample = _ChannelStageFloodplainStage.SamplePairedData(randomProvider.NextRandom(), computeIsDeterministic); //needs to be a random number
                 IPairedData frequency_floodplainstage = _channelstage_floodplainstage_sample.compose(frequency_stage);
                 //levees
@@ -452,7 +433,7 @@ namespace HEC.FDA.Model.compute
                 else
                 {
                     if (_LeveeIsValid)
-                    {//TODO: why commented out and why still exists
+                    {
                         IPairedData systemResponse_sample = _SystemResponseFunction.SamplePairedData(randomProvider.NextRandom(), computeIsDeterministic); //needs to be a random number
                                                                                                                                                            //IPairedData frequency_floodplainstage_withLevee = frequency_floodplainstage.multiply(_levee_curve_sample);
                         if (computeWithDamage)
@@ -504,7 +485,7 @@ namespace HEC.FDA.Model.compute
         private void ComputeDamagesFromStageFrequency_WithLeveeAndInteriorExterior(IProvideRandomNumbers randomProvider, IPairedData exterior_interior, IPairedData frequency_exteriorStage, IPairedData systemResponse, long iteration, bool computeIsDeterministic)
         {
             foreach (UncertainPairedData stageUncertainDamage in _DamageCategoryStageDamage)
-            {   //TODO: why are we doing this stuff with the underscores? I think this needs to be cleaned up 
+            {   
                 IPairedData interiorStage_damage_sample = stageUncertainDamage.SamplePairedData(randomProvider.NextRandom(), computeIsDeterministic);//needs to be a random number
                 IPairedData exteriorStage_damage_sample = interiorStage_damage_sample.compose(exterior_interior);
                 IPairedData validatedSystemResponse = EnsureBottomAndTopHaveCorrectProbabilities(systemResponse);
@@ -528,7 +509,6 @@ namespace HEC.FDA.Model.compute
             }
         }
         //this method assumes that the levee fragility function spans the entire probability domain 
-        //TODO why is this here but levee CNP is in system performance results?
         public void ComputeLeveePerformance(IPairedData frequency_stage, IPairedData levee_curve_sample, int iteration)
         {
             IPairedData levee_frequency_stage = levee_curve_sample.compose(frequency_stage);

@@ -32,7 +32,6 @@ namespace HEC.FDA.ModelTest.unittests
         private static string[] damageCategories = new string[] { residentialDamageCategory, residentialDamageCategory, residentialDamageCategory, residentialDamageCategory };
         private static string[] occupancyTypes = new string[] { residentialNormalDistOccupancyTypeName, residentialNormalDistOccupancyTypeName, residentialNormalDistOccupancyTypeName, residentialNormalDistOccupancyTypeName };
         private static int impactAreaID = 1;
-        private static ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 20000, maxIterations: 50000);
 
         #region Normally Distributed Occ Type Data
         //occupancy type data
@@ -313,7 +312,7 @@ namespace HEC.FDA.ModelTest.unittests
             List<ImpactAreaStageDamage> impactAreaStageDamages = new List<ImpactAreaStageDamage>();
             impactAreaStageDamages.Add(impactAreaStageDamage);
             ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(new List<ImpactAreaStageDamage>(impactAreaStageDamages));
-            List<UncertainPairedData> results = scenarioStageDamage.Compute(new MedianRandomProvider(), convergenceCriteriaDeterministic);
+            List<UncertainPairedData> results = scenarioStageDamage.Compute(new MedianRandomProvider());
 
             Assert.NotNull(results);
 

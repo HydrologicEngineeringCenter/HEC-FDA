@@ -168,9 +168,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             
             string hydroParentDirectory = SelectedHydraulics.GetDirectoryInStudy();
 
-            Study.StudyPropertiesElement propElem = StudyCache.GetStudyPropertiesElement();
-            Statistics.ConvergenceCriteria convergenceCriteria = propElem.GetStudyConvergenceCriteria();
-
             List<ImpactAreaStageDamage> stageDamages = new List<ImpactAreaStageDamage>();
 
             foreach (ImpactAreaFrequencyFunctionRowItem impactAreaRow in ImpactAreaFrequencyRows)

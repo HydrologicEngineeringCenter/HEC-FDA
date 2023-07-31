@@ -155,10 +155,6 @@ namespace HEC.FDA.ModelTest.integrationtests
 
         #endregion
 
-        #region Other objects 
-        private static readonly ConvergenceCriteria convergenceCriteria = new(minIterations: 100, maxIterations: 200);
-        #endregion
-
         /// <summary>
         /// The solution for the below test is available at https://docs.google.com/spreadsheets/d/1QTjZ6BzGMBmxB-xWurNz08wnQx7HrmOm/edit?usp=share_link&ouid=105470256128470573157&rtpof=true&sd=true
         /// </summary>

@@ -118,18 +118,18 @@ namespace HEC.FDA.ModelTest.integrationtests
         private static PointM pointM = new PointM();
 
         //First impact area structures
-        private static int impactAreaID_A = 34;
-        private static Structure structure1 = new Structure(fid: 1, point: pointM, firstFloorElevation: 473, val_struct: 100, st_damcat: residentialDamCat, occtype: res2OccType, impactAreaID: impactAreaID_A);
-        private static Structure structure2 = new Structure(fid: 2, point: pointM, firstFloorElevation: 474, val_struct: 200, st_damcat: residentialDamCat, occtype: res2OccType, impactAreaID: impactAreaID_A);
-        private static Structure structure3 = new Structure(fid: 3, point: pointM, firstFloorElevation: 473.5, val_struct: 300, st_damcat: residentialDamCat, occtype: res1OccType, impactAreaID: impactAreaID_A);
-        private static Structure structure4 = new Structure(fid: 4, point: pointM, firstFloorElevation: 474.5, val_struct: 400, st_damcat: residentialDamCat, occtype: res1OccType, impactAreaID: impactAreaID_A);
+        private static int impactAreaID_1 = 1;
+        private static Structure structure1 = new Structure(fid: 1, point: pointM, firstFloorElevation: 473, val_struct: 100, st_damcat: residentialDamCat, occtype: res2OccType, impactAreaID: impactAreaID_1);
+        private static Structure structure2 = new Structure(fid: 2, point: pointM, firstFloorElevation: 474, val_struct: 200, st_damcat: residentialDamCat, occtype: res2OccType, impactAreaID: impactAreaID_1);
+        private static Structure structure3 = new Structure(fid: 3, point: pointM, firstFloorElevation: 473.5, val_struct: 300, st_damcat: residentialDamCat, occtype: res1OccType, impactAreaID: impactAreaID_1);
+        private static Structure structure4 = new Structure(fid: 4, point: pointM, firstFloorElevation: 474.5, val_struct: 400, st_damcat: residentialDamCat, occtype: res1OccType, impactAreaID: impactAreaID_1);
 
         //Second impact area structures 
-        private static int impactAreaID_B = 56;
-        private static Structure structure5 = new Structure(fid: 5, point: pointM, firstFloorElevation: 473, val_struct: 100, st_damcat: residentialDamCat, occtype: res2OccType, impactAreaID: impactAreaID_B);
-        private static Structure structure6 = new Structure(fid: 6, point: pointM, firstFloorElevation: 474, val_struct: 200, st_damcat: residentialDamCat, occtype: res2OccType, impactAreaID: impactAreaID_B);
-        private static Structure structure7 = new Structure(fid: 7, point: pointM, firstFloorElevation: 473.5, val_struct: 300, st_damcat: residentialDamCat, occtype: res1OccType, impactAreaID: impactAreaID_B);
-        private static Structure structure8 = new Structure(fid: 8, point: pointM, firstFloorElevation: 474.5, val_struct: 400, st_damcat: residentialDamCat, occtype: res1OccType, impactAreaID: impactAreaID_B);
+        private static int impactAreaID_2 = 2;
+        private static Structure structure5 = new Structure(fid: 5, point: pointM, firstFloorElevation: 473, val_struct: 100, st_damcat: residentialDamCat, occtype: res2OccType, impactAreaID: impactAreaID_2);
+        private static Structure structure6 = new Structure(fid: 6, point: pointM, firstFloorElevation: 474, val_struct: 200, st_damcat: residentialDamCat, occtype: res2OccType, impactAreaID: impactAreaID_2);
+        private static Structure structure7 = new Structure(fid: 7, point: pointM, firstFloorElevation: 473.5, val_struct: 300, st_damcat: residentialDamCat, occtype: res1OccType, impactAreaID: impactAreaID_2);
+        private static Structure structure8 = new Structure(fid: 8, point: pointM, firstFloorElevation: 474.5, val_struct: 400, st_damcat: residentialDamCat, occtype: res1OccType, impactAreaID: impactAreaID_2);
 
         private static StructureSelectionMapping map = new StructureSelectionMapping(false, false, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
@@ -139,7 +139,6 @@ namespace HEC.FDA.ModelTest.integrationtests
         #endregion
 
         #region Other objects 
-        private static ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: 200000);
         RandomProvider randomProvider = new RandomProvider(seed: 1234);
         #endregion
 
@@ -161,13 +160,13 @@ namespace HEC.FDA.ModelTest.integrationtests
         public void UncertainStageDamageTest()
         {
             //Arrange
-            ImpactAreaStageDamage impactAreaStageDamage_A = new ImpactAreaStageDamage(impactAreaID_A, impactArea_A_StructureInventory, hydraulicDataset_A, "fakeHydroDir", analyticalFlowFrequency: lp3, dischargeStage: dischargeStage, usingMockData: true);
-            ImpactAreaStageDamage impactAreaStageDamage_B = new ImpactAreaStageDamage(impactAreaID_B, impactArea_B_StructureInventory, hydraulicDataset_B, "fakeHydroDir", graphicalFrequency: frequencyStage, usingMockData: true);
+            ImpactAreaStageDamage impactAreaStageDamage_A = new ImpactAreaStageDamage(impactAreaID_1, impactArea_A_StructureInventory, hydraulicDataset_A, "fakeHydroDir", analyticalFlowFrequency: lp3, dischargeStage: dischargeStage, usingMockData: true);
+            ImpactAreaStageDamage impactAreaStageDamage_B = new ImpactAreaStageDamage(impactAreaID_2, impactArea_B_StructureInventory, hydraulicDataset_B, "fakeHydroDir", graphicalFrequency: frequencyStage, usingMockData: true);
             List<ImpactAreaStageDamage> impactAreas = new List<ImpactAreaStageDamage>() { impactAreaStageDamage_A, impactAreaStageDamage_B };
             ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(impactAreas);
 
             //Act
-            List<UncertainPairedData> stageDamageFunctions = scenarioStageDamage.Compute(randomProvider, convergenceCriteria);
+            List<UncertainPairedData> stageDamageFunctions = scenarioStageDamage.Compute(randomProvider);
 
             List<IPairedData> meanDamageFunctions = new List<IPairedData>();
             double meanProb = 0.5;
@@ -197,7 +196,7 @@ namespace HEC.FDA.ModelTest.integrationtests
 
                 foreach (PairedData stageDamageFunction in meanDamageFunctions)
                 {
-                    if (stageDamageFunction.MetaData.ImpactAreaID == impactAreaID_A)
+                    if (stageDamageFunction.MetaData.ImpactAreaID == impactAreaID_1)
                     {
                         meanDamageA += stageDamageFunction.f(stageAtWhichToCheckForDamage[i]);
                     }
@@ -210,7 +209,7 @@ namespace HEC.FDA.ModelTest.integrationtests
                 actual_meanDamages_B[i] = meanDamageB;
                 foreach (PairedData stageDamageFunction in conf95DamageFunctions)
                 {
-                    if (stageDamageFunction.MetaData.ImpactAreaID == impactAreaID_A)
+                    if (stageDamageFunction.MetaData.ImpactAreaID == impactAreaID_1)
                     {
                         conf95DamageA += stageDamageFunction.f(stageAtWhichToCheckForDamage[i]);
                     }
