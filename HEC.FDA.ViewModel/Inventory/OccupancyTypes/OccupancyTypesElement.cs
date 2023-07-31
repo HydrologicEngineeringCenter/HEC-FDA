@@ -16,12 +16,12 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         #region Properties
 
-        public List<IOccupancyType> ListOfOccupancyTypes { get; set; } = new List<IOccupancyType>();       
+        public List<OccupancyType> ListOfOccupancyTypes { get; set; } = new List<OccupancyType>();       
 
         #endregion
         #region Constructors
 
-        public OccupancyTypesElement( string name, string lastEditDate, string description,  List<IOccupancyType> listOfOccTypes, int id):base(name, lastEditDate, description, id)
+        public OccupancyTypesElement( string name, string lastEditDate, string description,  List<OccupancyType> listOfOccTypes, int id):base(name, lastEditDate, description, id)
         {
             ListOfOccupancyTypes = listOfOccTypes;
             AddDefaultActions(EditOccupancyTypes, StringConstants.EDIT_OCCTYPE_MENU);
@@ -42,7 +42,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
             XElement occTypeGroup = new XElement("OccTypeGroup");
             occTypeGroup.Add(CreateHeaderElement());
-            foreach (IOccupancyType ot in ListOfOccupancyTypes)
+            foreach (OccupancyType ot in ListOfOccupancyTypes)
             {
                 occTypeGroup.Add(ot.ToXML());
             }
@@ -67,7 +67,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public List<String> getUniqueDamageCategories()
         {
             HashSet<String> dams = new HashSet<String>();
-            foreach (IOccupancyType ot in ListOfOccupancyTypes)
+            foreach (OccupancyType ot in ListOfOccupancyTypes)
             {
                 dams.Add(ot.DamageCategory);
             }

@@ -23,9 +23,9 @@
 //        {
 //            _filePath = occtypeFilePath;
 //        }
-//        public  IOccupancyTypeGroup Read(string occtypeFilePath)
+//        public  OccupancyTypeGroup Read(string occtypeFilePath)
 //        {
-//            //IOccupancyTypeGroup group = new OccupancyTypeGroup()
+//            //OccupancyTypeGroup group = new OccupancyTypeGroup()
 
 //            ImportAsciiData(occtypeFilePath);
 //            return null;

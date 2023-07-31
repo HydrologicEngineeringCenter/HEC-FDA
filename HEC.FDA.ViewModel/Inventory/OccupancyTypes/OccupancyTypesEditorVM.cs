@@ -90,7 +90,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
             List<OccupancyTypeEditable> editableOcctypes = new List<OccupancyTypeEditable>();
 
-            foreach (IOccupancyType ot in group.ListOfOccupancyTypes)
+            foreach (OccupancyType ot in group.ListOfOccupancyTypes)
             {
                 OccupancyTypeEditable otEdit = new OccupancyTypeEditable(ot, ref _DamageCategoriesList);
                 otEdit.RequestNavigation += this.Navigate;
@@ -140,7 +140,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                     }
 
                     //create the new occupancy type
-                    IOccupancyType newOT = new OccupancyType(vm.Name, damCatName, SelectedOccTypeGroup.ID);
+                    OccupancyType newOT = new OccupancyType(vm.Name, damCatName, SelectedOccTypeGroup.ID);
                     OccupancyTypeEditable otEditable = new OccupancyTypeEditable(newOT, ref _DamageCategoriesList, false);
                     otEditable.RequestNavigation += this.Navigate;
 
@@ -158,7 +158,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
             if (SelectedOccType != null)
             {
-                IOccupancyType newOT = SelectedOccType.CreateOccupancyType();
+                OccupancyType newOT = SelectedOccType.CreateOccupancyType();
 
                 CreateNewDamCatVM vm = new CreateNewDamCatVM(SelectedOccType.Name + "_Copy", GetAllOccTypeNames());
                 string header = "Copy Occupancy Type";
@@ -217,7 +217,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         private OccupancyTypeEditable CreateDefaultOcctype(int groupID)
         {
-            IOccupancyType newOT = new OccupancyType("New Occupancy Type", "", groupID);
+            OccupancyType newOT = new OccupancyType("New Occupancy Type", "", groupID);
             ObservableCollection<string> damCatOptions = new ObservableCollection<string>();
             OccupancyTypeEditable otEditable = new OccupancyTypeEditable(newOT, ref damCatOptions, false);
             otEditable.RequestNavigation += this.Navigate;
@@ -225,9 +225,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             return otEditable;
         }      
 
-        private void LoadDamageCategories(List<IOccupancyType> occtypes)
+        private void LoadDamageCategories(List<OccupancyType> occtypes)
         {
-            foreach (IOccupancyType ot in occtypes)
+            foreach (OccupancyType ot in occtypes)
             {
                 if (!DamageCategoriesList.Contains(ot.DamageCategory))
                 {

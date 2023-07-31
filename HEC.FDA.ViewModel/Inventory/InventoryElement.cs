@@ -286,7 +286,7 @@ namespace HEC.FDA.ViewModel.Inventory
 
             foreach (OccupancyTypes.OcctypeReference otRef in _OcctypeMapping.Values)
             {
-                OccupancyTypes.IOccupancyType ot = otRef.GetOccupancyType();
+                OccupancyTypes.OccupancyType ot = otRef.GetOccupancyType();
                 if(ot == null)
                 {
                     //we didn't find the occtype. We could write out to the user the group id and the occtype id that we didn't find but i don't think
@@ -304,7 +304,7 @@ namespace HEC.FDA.ViewModel.Inventory
 
         private OccupancyType CreateModelOcctype(OccupancyTypes.OcctypeReference otRef)
         {
-            OccupancyTypes.IOccupancyType ot = otRef.GetOccupancyType();
+            OccupancyTypes.OccupancyType ot = otRef.GetOccupancyType();
             UncertainPairedData structureUPD = ot.StructureItem.Curve.SelectedItemToPairedData();
             UncertainPairedData contentUPD = ot.ContentItem.Curve.SelectedItemToPairedData();
             UncertainPairedData vehicleUPD = ot.VehicleItem.Curve.SelectedItemToPairedData();

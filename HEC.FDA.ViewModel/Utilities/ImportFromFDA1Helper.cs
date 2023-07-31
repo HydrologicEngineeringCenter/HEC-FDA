@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using static HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccTypeAsset;
 using static Importer.ProbabilityFunction;
+using OccupancyType = HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccupancyType;
 
 namespace HEC.FDA.ViewModel.Utilities
 {
@@ -596,7 +597,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
         public static ChildElement CreateOcctypes(OccupancyTypeList ots, string groupName, ref string messages, int groupID)
         {
-            List<IOccupancyType> fda2Occtypes = new List<IOccupancyType>();
+            List<OccupancyType> fda2Occtypes = new List<OccupancyType>();
             int occtypeID = 1;
             foreach (Importer.OccupancyType ot in ots.Occtypes)
             {
@@ -617,7 +618,7 @@ namespace HEC.FDA.ViewModel.Utilities
             return elem;
         }
 
-        private static IOccupancyType GetFDA2OccupancyType(Importer.OccupancyType importedOT, int groupID, int ID)
+        private static OccupancyType GetFDA2OccupancyType(Importer.OccupancyType importedOT, int groupID, int ID)
         {
             List<string> errorMessages = new List<string>();
 
@@ -679,7 +680,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
             ContinuousDistribution FoundationHeightUncertainty = foundationHeightUncertainty;
 
-            IOccupancyType ot = new Inventory.OccupancyTypes.OccupancyType(importedOT.Name, importedOT.Description, groupID, importedOT.CategoryName,
+            OccupancyType ot = new Inventory.OccupancyTypes.OccupancyType(importedOT.Name, importedOT.Description, groupID, importedOT.CategoryName,
                 StructureItem, ContentItem, VehicleItem, OtherItem, FoundationHeightUncertainty, ID);
             return ot;
         }
