@@ -23,6 +23,7 @@ namespace HEC.FDA.Model.stageDamage
         #region Hard Coded Compute Settings
         private const double MIN_PROBABILITY = 0.0001;
         private const double MAX_PROBABILITY = 0.9999;
+        private readonly ConvergenceCriteria _ConvergenceCriteria = new(minIterations: 10000, maxIterations: 50000);
         #endregion
 
         #region Fields 
@@ -36,7 +37,6 @@ namespace HEC.FDA.Model.stageDamage
 
         private double _MinStageForArea;
         private double _MaxStageForArea;
-        private readonly ConvergenceCriteria _ConvergenceCriteria;
 
         private readonly int _NumExtrapolatedStagesToCompute = 7;
         private readonly int _NumInterpolatedStagesToCompute = 2;
@@ -54,9 +54,8 @@ namespace HEC.FDA.Model.stageDamage
         #endregion
 
         #region Constructor
-        public ImpactAreaStageDamage(int impactAreaID, Inventory inventory, HydraulicDataset hydraulicDataset, ConvergenceCriteria convergence, string hydroParentDirectory, int analysisYear = 9999,
-            ContinuousDistribution analyticalFlowFrequency = null, GraphicalUncertainPairedData graphicalFrequency = null, UncertainPairedData dischargeStage = null, UncertainPairedData unregulatedRegulated = null,
-            bool usingMockData = false)
+        public ImpactAreaStageDamage(int impactAreaID, Inventory inventory, HydraulicDataset hydraulicDataset, string hydroParentDirectory, int analysisYear = 9999, ContinuousDistribution analyticalFlowFrequency = null,
+            GraphicalUncertainPairedData graphicalFrequency = null, UncertainPairedData dischargeStage = null, UncertainPairedData unregulatedRegulated = null, bool usingMockData = false)
         {
             //TODO: Validate provided functions here
             _HydraulicParentDirectory = hydroParentDirectory;
@@ -75,7 +74,6 @@ namespace HEC.FDA.Model.stageDamage
                 Inventory = inventory.GetInventoryTrimmedToImpactArea(impactAreaID);
             }
             _HydraulicDataset = hydraulicDataset;
-            _ConvergenceCriteria = convergence;
             SetMinAndMaxStage();
             _StageFrequency = CreateStageFrequency();
             AddRules();

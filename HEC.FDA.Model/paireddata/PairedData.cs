@@ -226,8 +226,6 @@ namespace HEC.FDA.Model.paireddata
         /// </summary>
         public IPairedData multiply(IPairedData systemResponseFunction)
         {
-            IPairedData newSystemResponse = EnsureBottomAndTopHaveCorrectProbabilities(systemResponseFunction);
-
             List<double> newXvals = new List<double>(); //xvals are stages in the stage-damage function
             List<double> newYvals = new List<double>(); //yvals are damage*prob(failure)
 
@@ -235,19 +233,19 @@ namespace HEC.FDA.Model.paireddata
             for (int i = 0; i < Xvals.Count(); i++)
             {
                 double stageFromStageDamage = Xvals[i];
-                double probabilityOfFailure = newSystemResponse.f(stageFromStageDamage);
+                double probabilityOfFailure = systemResponseFunction.f(stageFromStageDamage);
                 double probabilityWeightedDamage = probabilityOfFailure*Yvals[i];
 
                 newXvals.Add(stageFromStageDamage);
                 newYvals.Add(probabilityWeightedDamage);
             }
-            for (int i = 0; i < newSystemResponse.Xvals.Length; i++)
+            for (int i = 0; i < systemResponseFunction.Xvals.Length; i++)
             {
-                double fragilityStage = newSystemResponse.Xvals[i];
+                double fragilityStage = systemResponseFunction.Xvals[i];
                 bool fragilityStageIsInStages = newXvals.Contains(fragilityStage);
                 if (!fragilityStageIsInStages)
                 {
-                    double probabilityOfFailure = newSystemResponse.Yvals[i];
+                    double probabilityOfFailure = systemResponseFunction.Yvals[i];
                     double unweightedDamage = f(fragilityStage);
                     double probabilityWeightedDamage = probabilityOfFailure*unweightedDamage;
                     newXvals.Add(fragilityStage);
@@ -261,36 +259,7 @@ namespace HEC.FDA.Model.paireddata
             return new PairedData(stages,damages);
         }
 
-        private IPairedData EnsureBottomAndTopHaveCorrectProbabilities(IPairedData systemResponseFunction)
-        {
-            List<double> tempXvals = new List<double>(); //xvals are stages
-            List<double> tempYvals = new List<double>(); //yvals are prob failure 
-
-            //First step is to ensure that the fragility function begins with 0 prob failure and ends with 1 prob failure 
-            double buffer = .001; //buffer to define point just above and just below the multiplying curve.
-
-            double belowFragilityCurveValue = 0.0;
-            double stageToAddBelowFragility = systemResponseFunction.Xvals[0] - buffer;
-
-            tempXvals.Add(stageToAddBelowFragility);
-            tempYvals.Add(belowFragilityCurveValue);
-
-            for (int i = 0; i < systemResponseFunction.Xvals.Length; i++)
-            {
-                tempXvals.Add(systemResponseFunction.Xvals[i]);
-                tempYvals.Add(systemResponseFunction.Yvals[i]);
-            }
-
-            double aboveFragilityCurveValue = 1.0;
-            double stageToAddAboveFragility = systemResponseFunction.Xvals[systemResponseFunction.Xvals.Length - 1] + buffer;
-
-            tempXvals.Add(stageToAddAboveFragility);
-            tempYvals.Add(aboveFragilityCurveValue);
-
-            PairedData newSystemREsponse = new PairedData(tempXvals.ToArray(), tempYvals.ToArray());
-            return newSystemREsponse;
-        }
-        public void ForceMonotonicity(double max = double.MaxValue, double min = double.MinValue)
+        public void ForceMonotonic(double max = double.MaxValue, double min = double.MinValue)
         {
             double previousYval = min;
 

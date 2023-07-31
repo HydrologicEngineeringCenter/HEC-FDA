@@ -492,8 +492,9 @@ namespace HEC.FDA.Model.compute
             foreach (UncertainPairedData stageUncertainDamage in _DamageCategoryStageDamage)
             {
                 IPairedData stage_damage_sample = stageUncertainDamage.SamplePairedData(randomProvider.NextRandom(), computeIsDeterministic);//needs to be a random number
-                                                                                                                                             //here we need to compose with interior exterior 
-                IPairedData stage_damage_sample_withLevee = stage_damage_sample.multiply(systemResponse);
+                IPairedData validatedSystemResponse = EnsureBottomAndTopHaveCorrectProbabilities(systemResponse);
+                //here we need to compose with interior exterior 
+                IPairedData stage_damage_sample_withLevee = stage_damage_sample.multiply(validatedSystemResponse);
                 IPairedData frequency_damage = stage_damage_sample_withLevee.compose(frequency_stage);
                 double eadEstimate = frequency_damage.integrate();
                 _ImpactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadEstimate, stageUncertainDamage.CurveMetaData.DamageCategory, stageUncertainDamage.CurveMetaData.AssetCategory, _ImpactAreaID, iteration);
@@ -506,7 +507,8 @@ namespace HEC.FDA.Model.compute
             {   //TODO: why are we doing this stuff with the underscores? I think this needs to be cleaned up 
                 IPairedData interiorStage_damage_sample = stageUncertainDamage.SamplePairedData(randomProvider.NextRandom(), computeIsDeterministic);//needs to be a random number
                 IPairedData exteriorStage_damage_sample = interiorStage_damage_sample.compose(exterior_interior);
-                IPairedData stage_damage_sample_withLevee = exteriorStage_damage_sample.multiply(systemResponse);
+                IPairedData validatedSystemResponse = EnsureBottomAndTopHaveCorrectProbabilities(systemResponse);
+                IPairedData stage_damage_sample_withLevee = exteriorStage_damage_sample.multiply(validatedSystemResponse);
                 IPairedData frequency_damage = stage_damage_sample_withLevee.compose(frequency_exteriorStage);
                 double eadEstimate = frequency_damage.integrate();
                 _ImpactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadEstimate, stageUncertainDamage.CurveMetaData.DamageCategory, stageUncertainDamage.CurveMetaData.AssetCategory, _ImpactAreaID, iteration);
@@ -805,6 +807,35 @@ namespace HEC.FDA.Model.compute
                 ErrorMessage errorMessage = new(message, ErrorLevel.Major);
                 ReportMessage(this, new MessageEventArgs(errorMessage));
             }
+        }
+        private IPairedData EnsureBottomAndTopHaveCorrectProbabilities(IPairedData systemResponseFunction)
+        {
+            List<double> tempXvals = new List<double>(); //xvals are stages
+            List<double> tempYvals = new List<double>(); //yvals are prob failure 
+
+            //First step is to ensure that the fragility function begins with 0 prob failure and ends with 1 prob failure 
+            double buffer = .001; //buffer to define point just above and just below the multiplying curve.
+
+            double belowFragilityCurveValue = 0.0;
+            double stageToAddBelowFragility = systemResponseFunction.Xvals[0] - buffer;
+
+            tempXvals.Add(stageToAddBelowFragility);
+            tempYvals.Add(belowFragilityCurveValue);
+
+            for (int i = 0; i < systemResponseFunction.Xvals.Length; i++)
+            {
+                tempXvals.Add(systemResponseFunction.Xvals[i]);
+                tempYvals.Add(systemResponseFunction.Yvals[i]);
+            }
+
+            double aboveFragilityCurveValue = 1.0;
+            double stageToAddAboveFragility = systemResponseFunction.Xvals[systemResponseFunction.Xvals.Length - 1] + buffer;
+
+            tempXvals.Add(stageToAddAboveFragility);
+            tempYvals.Add(aboveFragilityCurveValue);
+
+            PairedData newSystemREsponse = new PairedData(tempXvals.ToArray(), tempYvals.ToArray());
+            return newSystemREsponse;
         }
 
         //TODO: Add messaging to indicate which curves do not overlap

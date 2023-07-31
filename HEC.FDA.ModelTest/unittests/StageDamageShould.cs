@@ -264,7 +264,7 @@ namespace HEC.FDA.ModelTest.unittests
         {
             //Arrange
             Inventory inventory = CreateInventory();
-            ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, inventory, hydraulicDataset, convergenceCriteria, String.Empty, usingMockData: true);
+            ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, inventory, hydraulicDataset, String.Empty, usingMockData: true);
             List<ImpactAreaStageDamage> impactAreaStageDamageList = new List<ImpactAreaStageDamage>() { impactAreaStageDamage };
             ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(impactAreaStageDamageList);
 
@@ -283,7 +283,7 @@ namespace HEC.FDA.ModelTest.unittests
         {
             //Arrange
             Inventory inventory = CreateInventory();
-            ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, inventory, hydraulicDataset, convergenceCriteria, String.Empty, usingMockData: true);
+            ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, inventory, hydraulicDataset, String.Empty, usingMockData: true);
             List<ImpactAreaStageDamage> impactAreaStageDamageList = new List<ImpactAreaStageDamage>() { impactAreaStageDamage };
             ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(impactAreaStageDamageList);
 
@@ -309,7 +309,7 @@ namespace HEC.FDA.ModelTest.unittests
         {
             ConvergenceCriteria convergenceCriteriaDeterministic = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
             Inventory inventory = CreateInventory();
-            ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, inventory, hydraulicDataset, convergenceCriteriaDeterministic, String.Empty, graphicalFrequency: stageFrequency, usingMockData: true);
+            ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, inventory, hydraulicDataset, String.Empty, graphicalFrequency: stageFrequency, usingMockData: true);
             List<ImpactAreaStageDamage> impactAreaStageDamages = new List<ImpactAreaStageDamage>();
             impactAreaStageDamages.Add(impactAreaStageDamage);
             ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(new List<ImpactAreaStageDamage>(impactAreaStageDamages));
