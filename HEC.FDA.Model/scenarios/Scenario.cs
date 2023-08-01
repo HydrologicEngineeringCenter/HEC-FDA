@@ -15,7 +15,7 @@ namespace HEC.FDA.Model.scenarios
     public class Scenario : IReportMessage
     {
         #region Fields 
-        private IList<ImpactAreaScenarioSimulation> _impactAreaSimulations;
+        private readonly IList<ImpactAreaScenarioSimulation> _impactAreaSimulations;
         #endregion
         #region Properties 
         public IList<ImpactAreaScenarioSimulation> ImpactAreaSimulations
@@ -47,11 +47,10 @@ namespace HEC.FDA.Model.scenarios
         {
             return Compute(randomProvider, convergenceCriteria, new CancellationToken());
         }
-        public ScenarioResults Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, CancellationToken cancellationToken,
-            bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false)
+        public ScenarioResults Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, CancellationToken cancellationToken)
         {
             //probably instantiate a rng to seed each impact area differently
-            ScenarioResults scenarioResults = new ScenarioResults();
+            ScenarioResults scenarioResults = new();
             foreach (ImpactAreaScenarioSimulation impactArea in _impactAreaSimulations)
             {
                 scenarioResults.AddResults(impactArea.Compute(randomProvider, convergenceCriteria, cancellationToken));
@@ -68,7 +67,7 @@ namespace HEC.FDA.Model.scenarios
                     return impactAreaScenarioSimulation;
                 }
             }
-            ImpactAreaScenarioSimulation dummyScenario = new ImpactAreaScenarioSimulation(impactAreaID);
+            ImpactAreaScenarioSimulation dummyScenario = new(impactAreaID);
             ReportMessage(this, new MessageEventArgs(new Message("The requested scenario could not be found. An arbitrary object is being returned.")));
             return dummyScenario;
         }
@@ -91,7 +90,7 @@ namespace HEC.FDA.Model.scenarios
         }
         public XElement WriteToXML()
         {
-            XElement mainElement = new XElement("Scenario");
+            XElement mainElement = new("Scenario");
             foreach (ImpactAreaScenarioSimulation impactAreaScenarioSimulation in _impactAreaSimulations)
             {
                 XElement iasElement = impactAreaScenarioSimulation.WriteToXML();
@@ -108,7 +107,7 @@ namespace HEC.FDA.Model.scenarios
                 ImpactAreaScenarioSimulation iasFromXML = ImpactAreaScenarioSimulation.ReadFromXML(element);
                 impactAreaScenarioSimulations.Add(iasFromXML);
             }
-            Scenario scenario = new Scenario( impactAreaScenarioSimulations);
+            Scenario scenario = new( impactAreaScenarioSimulations);
             return scenario;
         }
         #endregion

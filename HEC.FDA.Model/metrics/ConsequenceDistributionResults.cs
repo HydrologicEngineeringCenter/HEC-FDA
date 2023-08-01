@@ -263,6 +263,7 @@ namespace HEC.FDA.Model.metrics
             return dummyResult;
         }
 
+        //TODO: This needs to confirm that the histograms inside each ConsequenceDistributionResult Match. 
         public bool Equals(ConsequenceDistributionResults inputDamageResults)
         {
             foreach (ConsequenceDistributionResult damageResult in ConsequenceResultList)
