@@ -190,7 +190,6 @@ namespace HEC.FDA.Model.structures
                 Structures.Add(new Structure(fid, point, ff_elev, val_struct, st_damcat, occtype, impactAreaID, val_cont,
                     val_vehic, val_other, cbfips, beginningDamage, ground_elv, found_ht, yearInService, numStructures));
             }
-            Console.WriteLine("finished");
         }
         public static float[] GetGroundElevationFromRASTerrain(PointFeatureLayer pointLayer, TerrainLayer terrain, Projection studyProjection)
         {
