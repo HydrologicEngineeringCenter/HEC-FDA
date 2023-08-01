@@ -139,7 +139,6 @@ namespace HEC.FDA.ModelTest.integrationtests
         #endregion
 
         #region Other objects 
-        private static ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: 200000);
         RandomProvider randomProvider = new RandomProvider(seed: 1234);
         #endregion
 
@@ -161,13 +160,13 @@ namespace HEC.FDA.ModelTest.integrationtests
         public void UncertainStageDamageTest()
         {
             //Arrange
-            ImpactAreaStageDamage impactAreaStageDamage_A = new ImpactAreaStageDamage(impactAreaID_1, impactArea_A_StructureInventory, hydraulicDataset_A, convergenceCriteria, "fakeHydroDir", analyticalFlowFrequency: lp3, dischargeStage: dischargeStage, usingMockData: true);
-            ImpactAreaStageDamage impactAreaStageDamage_B = new ImpactAreaStageDamage(impactAreaID_2, impactArea_B_StructureInventory, hydraulicDataset_B, convergenceCriteria, "fakeHydroDir", graphicalFrequency: frequencyStage, usingMockData: true);
+            ImpactAreaStageDamage impactAreaStageDamage_A = new ImpactAreaStageDamage(impactAreaID_1, impactArea_A_StructureInventory, hydraulicDataset_A, "fakeHydroDir", analyticalFlowFrequency: lp3, dischargeStage: dischargeStage, usingMockData: true);
+            ImpactAreaStageDamage impactAreaStageDamage_B = new ImpactAreaStageDamage(impactAreaID_2, impactArea_B_StructureInventory, hydraulicDataset_B, "fakeHydroDir", graphicalFrequency: frequencyStage, usingMockData: true);
             List<ImpactAreaStageDamage> impactAreas = new List<ImpactAreaStageDamage>() { impactAreaStageDamage_A, impactAreaStageDamage_B };
             ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(impactAreas);
 
             //Act
-            List<UncertainPairedData> stageDamageFunctions = scenarioStageDamage.Compute(randomProvider, convergenceCriteria);
+            List<UncertainPairedData> stageDamageFunctions = scenarioStageDamage.Compute(randomProvider);
 
             List<IPairedData> meanDamageFunctions = new List<IPairedData>();
             double meanProb = 0.5;
@@ -243,12 +242,14 @@ namespace HEC.FDA.ModelTest.integrationtests
                 //Impact Area B Assertion 
                 Assert.True(AssertWithinTolerance(expected_mean_residentialDamage_B[i],actual_meanDamages_B[i]));
                 Assert.True(AssertWithinTolerance(expected_conf95_damageDists_B[i],actual_Conf95Damages_B[i]));
+
+
             }
         }
         //TODO: check magnitude of both values
         private bool AssertWithinTolerance(double expectedValue, double actualValue)
         {
-            double twoZeroTolerance = 17;
+            double twoZeroTolerance = 14;
             double threeZeroTolerance = 100;
             double fourZeroTolerance = 100;
             
