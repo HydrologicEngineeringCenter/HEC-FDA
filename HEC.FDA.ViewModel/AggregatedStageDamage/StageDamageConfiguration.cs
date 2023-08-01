@@ -168,9 +168,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             
             string hydroParentDirectory = SelectedHydraulics.GetDirectoryInStudy();
 
-            Study.StudyPropertiesElement propElem = StudyCache.GetStudyPropertiesElement();
-            Statistics.ConvergenceCriteria convergenceCriteria = propElem.GetStudyConvergenceCriteria();
-
             List<ImpactAreaStageDamage> stageDamages = new List<ImpactAreaStageDamage>();
 
             foreach (ImpactAreaFrequencyFunctionRowItem impactAreaRow in ImpactAreaFrequencyRows)
@@ -197,22 +194,22 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                     if (isFlow)
                     {
                         UncertainPairedData stageDischargePairedData = impactAreaRow.StageDischargeFunction.Element.CurveComponentVM.SelectedItemToPairedData();
-                        stageDamages.Add(new ImpactAreaStageDamage(impactAreaId, inv, SelectedHydraulics.DataSet, convergenceCriteria, hydroParentDirectory,
-                            graphicalFrequency: graphicaluncertPairedData, dischargeStage: stageDischargePairedData, unregulatedRegulated:regulatedUnregulatedFunction, analysisYear: _AnalysisYear ));
+                        stageDamages.Add(new ImpactAreaStageDamage(impactAreaId, inv, SelectedHydraulics.DataSet, hydroParentDirectory, graphicalFrequency: graphicaluncertPairedData,
+                            dischargeStage: stageDischargePairedData, unregulatedRegulated: regulatedUnregulatedFunction, analysisYear: _AnalysisYear));
 
                     }
                     else
                     {
-                        stageDamages.Add(new ImpactAreaStageDamage(impactAreaId, inv, SelectedHydraulics.DataSet, convergenceCriteria, hydroParentDirectory,
-                            graphicalFrequency: graphicaluncertPairedData, unregulatedRegulated: regulatedUnregulatedFunction, analysisYear: _AnalysisYear));
+                        stageDamages.Add(new ImpactAreaStageDamage(impactAreaId, inv, SelectedHydraulics.DataSet, hydroParentDirectory, graphicalFrequency: graphicaluncertPairedData,
+                            unregulatedRegulated: regulatedUnregulatedFunction, analysisYear: _AnalysisYear));
                     }
                 }
                 else
                 {
                     Statistics.Distributions.LogPearson3 logPearson3 = freqElement.LPIII;
                     UncertainPairedData stageDischargePairedData = impactAreaRow.StageDischargeFunction.Element.CurveComponentVM.SelectedItemToPairedData();
-                    stageDamages.Add(new ImpactAreaStageDamage(impactAreaId, inv, SelectedHydraulics.DataSet, convergenceCriteria, hydroParentDirectory,
-                        analyticalFlowFrequency: logPearson3, dischargeStage:stageDischargePairedData, unregulatedRegulated: regulatedUnregulatedFunction, analysisYear: _AnalysisYear));
+                    stageDamages.Add(new ImpactAreaStageDamage(impactAreaId, inv, SelectedHydraulics.DataSet, hydroParentDirectory, analyticalFlowFrequency: logPearson3,
+                        dischargeStage: stageDischargePairedData, unregulatedRegulated: regulatedUnregulatedFunction, analysisYear: _AnalysisYear));
                 }
 
             }
