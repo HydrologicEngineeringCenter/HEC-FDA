@@ -652,14 +652,12 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(impactAreaStageDamages);
                 int seed = 1234;
                 Model.compute.RandomProvider randomProvider = new Model.compute.RandomProvider(seed);
-                Study.StudyPropertiesElement propElem = StudyCache.GetStudyPropertiesElement();
-                Statistics.ConvergenceCriteria convergenceCriteria = propElem.GetStudyConvergenceCriteria();
 
                 bool canCompute = ValidateStructureCount(scenarioStageDamage);
                 if(canCompute)
                 {
                     //these are the rows in the computed table
-                    stageDamageFunctions = scenarioStageDamage.Compute(randomProvider, convergenceCriteria);
+                    stageDamageFunctions = scenarioStageDamage.Compute(randomProvider);
                     if (WriteDetailsFile)
                     {
                         WriteDetailsCsvFile(scenarioStageDamage);
