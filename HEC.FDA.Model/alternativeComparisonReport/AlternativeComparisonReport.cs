@@ -37,12 +37,11 @@ namespace HEC.FDA.Model.alternativeComparisonReport
             ReportMessage(this, new MessageEventArgs(new ErrorMessage("Starting alternative comparison report compute", ErrorLevel.Info)));
             ReportProgress(this, new ProgressReportEventArgs(10));
 
-            Parallel.Invoke(
-                () => ComputeDistributionOfAAEQDamageReduced(withoutProjectAlternativeResults, withProjectAlternativesResults),
-                () => ComputeDistributionEADReducedBaseYear(withoutProjectAlternativeResults, withProjectAlternativesResults),
-                () => ComputeDistributionEADReducedFutureYear(withoutProjectAlternativeResults, withProjectAlternativesResults)
-                );
 
+            ComputeDistributionOfAAEQDamageReduced(withoutProjectAlternativeResults, withProjectAlternativesResults);
+            ComputeDistributionEADReducedBaseYear(withoutProjectAlternativeResults, withProjectAlternativesResults);
+            ComputeDistributionEADReducedFutureYear(withoutProjectAlternativeResults, withProjectAlternativesResults);
+                
             //TODO: Fix the hacked in progress reporting 
             ReportProgress(this, new ProgressReportEventArgs(100));
             return new AlternativeComparisonReportResults(withProjectAlternativesResults, withoutProjectAlternativeResults, _AAEqResults, _BaseYearEADResults , _FutureYearEADResults);

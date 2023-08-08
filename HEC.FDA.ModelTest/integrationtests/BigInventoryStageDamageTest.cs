@@ -233,13 +233,13 @@ new double[] { 0, 1, 2, 3, 4, 5, 6, 7 }, 50, new CurveMetaData("Probability", "S
     {
         //Arrange
         Inventory inventory = CreateInventory();
-        ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, inventory, hydraulicDataset, convergenceCriteria, String.Empty, graphicalFrequency: stageFrequency, usingMockData: true);
+        ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, inventory, hydraulicDataset, String.Empty, graphicalFrequency: stageFrequency, usingMockData: true);
         List<ImpactAreaStageDamage> impactAreaStageDamageList = new List<ImpactAreaStageDamage>() { impactAreaStageDamage };
         ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(impactAreaStageDamageList);
 
         string time = "the big inventory stage damage compute was started at: " + DateTime.Now.ToString();
         //Act
-        List<UncertainPairedData> stageDamageFunctions = scenarioStageDamage.Compute(new RandomProvider(), convergenceCriteria);
+        List<UncertainPairedData> stageDamageFunctions = scenarioStageDamage.Compute(new RandomProvider());
         time += " and the compute was completed at: " + DateTime.Now.ToString();
 
         File.AppendAllText(filePath, time);
