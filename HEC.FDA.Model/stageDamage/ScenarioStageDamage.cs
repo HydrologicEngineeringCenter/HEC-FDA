@@ -22,7 +22,7 @@ namespace HEC.FDA.Model.stageDamage
         #endregion
 
         #region Methods 
-        public List<UncertainPairedData> Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria)
+        public List<UncertainPairedData> Compute(IProvideRandomNumbers randomProvider)
         {
             List<UncertainPairedData> scenarioStageDamageResults = new List<UncertainPairedData>();
             foreach (ImpactAreaStageDamage impactAreaStageDamage in _ImpactAreaStageDamage)

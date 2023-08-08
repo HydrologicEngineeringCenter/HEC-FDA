@@ -30,10 +30,6 @@ namespace Statistics
         /// </summary>
         double Skewness { get; }
         /// <summary>
-        /// The sample kurtosis or average quartic deviation of the sample values from the mean - measuring the peakedness of the distribution of sample values, see https://en.wikipedia.org/wiki/Kurtosis.
-        /// </summary>
-        double Kurtosis { get; }
-        /// <summary>
         /// The inclusive range of sample value, e.g. [min, max].
         /// </summary>
         Utilities.IRange<double> Range { get; }

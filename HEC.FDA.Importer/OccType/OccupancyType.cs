@@ -114,25 +114,19 @@ namespace Importer
 
                     logger.Append($"\n\tType of Function: {(StructureValueType)itype}");
                     logger.Append("\tNumber of coordinates: " + numRows);
-                    for (int i = 0; i < numRows; i++) Write($"\t{depth[i]}");
-                    for (int i = 0; i < numRows; i++) Write($"\t{damage[i]}");
                     switch (sdf.GetTypeError())
                     {
                         case ErrorType.NONE:
                             break;
                         case ErrorType.NORMAL:
                             err = sdf.StdDev;
-                            for (int i = 0; i < numRows; i++) Write($"\t{err[i]}");
                             break;
                         case ErrorType.LOGNORMAL:
                             err = sdf.StdDev;
-                            for (int i = 0; i < numRows; i++) Write($"\t{err[i]}");
                             break;
                         case ErrorType.TRIANGULAR:
                             err = sdf.ErrHi;
                             errLo = sdf.StdDev;
-                            for (int i = 0; i < numRows; i++) Write($"\t{err[i]}");
-                            for (int i = 0; i < numRows; i++) Write($"\t{errLo[i]}");
                             break;
                         default:
                             break;

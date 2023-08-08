@@ -12,12 +12,16 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             Name = StringConstants.ALTERNATIVE_COMP_REPORTS;
             CustomTreeViewHeader = new CustomHeaderVM(Name);
 
-            NamedAction addAlternativeAction = new NamedAction();
-            addAlternativeAction.Header = StringConstants.CREATE_NEW_ALTERNATIVE_COMP_REPORTS_MENU;
-            addAlternativeAction.Action = AddNewAlternative;
+            NamedAction addAlternativeAction = new()
+            {
+                Header = StringConstants.CREATE_NEW_ALTERNATIVE_COMP_REPORTS_MENU,
+                Action = AddNewAlternative
+            };
 
-            List<NamedAction> localActions = new List<NamedAction>();
-            localActions.Add(addAlternativeAction);
+            List<NamedAction> localActions = new()
+            {
+                addAlternativeAction
+            };
 
             Actions = localActions;
 
@@ -44,9 +48,10 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 .WithSiblingRules(this);
           
-            CreateNewAlternativeComparisonReportVM vm = new CreateNewAlternativeComparisonReportVM( actionManager);
+            CreateNewAlternativeComparisonReportVM vm = new( actionManager);
             string header = StringConstants.CREATE_NEW_ALTERNATIVE_COMP_REPORTS_HEADER;
-            DynamicTabVM tab = new DynamicTabVM(header, vm, header);
+            string uniqueSuffix = DateTime.Now.ToString();
+            DynamicTabVM tab = new(header, vm, header + uniqueSuffix);
             Navigate(tab, false, true);
         }
 

@@ -23,21 +23,16 @@ namespace HEC.FDA.Model.paireddata
         {
             get
             {
-                if (_metadata.CurveType == CurveTypesEnum.MonotonicallyIncreasing)
+
+                if (IsArrayValid(Xvals, (a, b) => a >= b) && IsArrayValid(Yvals, (a, b) => a >= b))
                 {
-                    if (IsArrayValid(Xvals, (a, b) => a > b) && IsArrayValid(Xvals, (a, b) => a > b))
-                    {
-                        return true;
-                    }
-                }
-                if (_metadata.CurveType == CurveTypesEnum.StrictlyMonotonicallyIncreasing)
+                    return true;
+                }                
+                else
                 {
-                    if (IsArrayValid(Xvals, (a, b) => a >= b) && IsArrayValid(Yvals, (a, b) => a >= b))
-                    {
-                        return true;
-                    }
+                    return false;
+
                 }
-                return false;
             }
         }
         #endregion
@@ -227,12 +222,9 @@ namespace HEC.FDA.Model.paireddata
         /// <summary>
         /// Appropriate when subject is a stage damage curve, and the input is a fragility curve. 
         /// multiply multiplies a stage damage curve by a fragility curve. All damages below the curve are considered 0.
-        /// A point is added just above and just below the curve. 
         /// </summary>
         public IPairedData multiply(IPairedData systemResponseFunction)
         {
-            IPairedData newSystemResponse = EnsureBottomAndTopHaveCorrectProbabilities(systemResponseFunction);
-
             List<double> newXvals = new List<double>(); //xvals are stages in the stage-damage function
             List<double> newYvals = new List<double>(); //yvals are damage*prob(failure)
 
@@ -240,19 +232,19 @@ namespace HEC.FDA.Model.paireddata
             for (int i = 0; i < Xvals.Count(); i++)
             {
                 double stageFromStageDamage = Xvals[i];
-                double probabilityOfFailure = newSystemResponse.f(stageFromStageDamage);
+                double probabilityOfFailure = systemResponseFunction.f(stageFromStageDamage);
                 double probabilityWeightedDamage = probabilityOfFailure*Yvals[i];
 
                 newXvals.Add(stageFromStageDamage);
                 newYvals.Add(probabilityWeightedDamage);
             }
-            for (int i = 0; i < newSystemResponse.Xvals.Length; i++)
+            for (int i = 0; i < systemResponseFunction.Xvals.Length; i++)
             {
-                double fragilityStage = newSystemResponse.Xvals[i];
+                double fragilityStage = systemResponseFunction.Xvals[i];
                 bool fragilityStageIsInStages = newXvals.Contains(fragilityStage);
                 if (!fragilityStageIsInStages)
                 {
-                    double probabilityOfFailure = newSystemResponse.Yvals[i];
+                    double probabilityOfFailure = systemResponseFunction.Yvals[i];
                     double unweightedDamage = f(fragilityStage);
                     double probabilityWeightedDamage = probabilityOfFailure*unweightedDamage;
                     newXvals.Add(fragilityStage);
@@ -266,37 +258,7 @@ namespace HEC.FDA.Model.paireddata
             return new PairedData(stages,damages);
         }
 
-        private IPairedData EnsureBottomAndTopHaveCorrectProbabilities(IPairedData systemResponseFunction)
-        {
-            List<double> tempXvals = new List<double>(); //xvals are stages
-            List<double> tempYvals = new List<double>(); //yvals are prob failure 
-
-            //First step is to ensure that the fragility function begins with 0 prob failure and ends with 1 prob failure 
-            double buffer = .001; //buffer to define point just above and just below the multiplying curve.
-
-            double belowFragilityCurveValue = 0.0;
-            double stageToAddBelowFragility = systemResponseFunction.Xvals[0] - buffer;
-
-            tempXvals.Add(stageToAddBelowFragility);
-            tempYvals.Add(belowFragilityCurveValue);
-
-            for (int i = 0; i < systemResponseFunction.Xvals.Length; i++)
-            {
-                tempXvals.Add(systemResponseFunction.Xvals[i]);
-                tempYvals.Add(systemResponseFunction.Yvals[i]);
-            }
-
-            double aboveFragilityCurveValue = 1.0;
-            double stageToAddAboveFragility = systemResponseFunction.Xvals[systemResponseFunction.Xvals.Length - 1] + buffer;
-
-            tempXvals.Add(stageToAddAboveFragility);
-            tempYvals.Add(aboveFragilityCurveValue);
-
-            PairedData newSystemREsponse = new PairedData(tempXvals.ToArray(), tempYvals.ToArray());
-            return newSystemREsponse;
-        }
-
-        public void ForceMonotonic(double max = double.MaxValue, double min = double.MinValue)
+        public void ForceMonotonicity(double max = double.MaxValue, double min = double.MinValue)
         {
             double previousYval = min;
 
@@ -304,12 +266,45 @@ namespace HEC.FDA.Model.paireddata
             int index = 0;
             foreach (double currentY in Yvals)
             {
-                if (previousYval > currentY)
+                if (previousYval >= currentY)
                 {
                     update[index] = previousYval;
                 }
                 else
                 {
+                    //if max is default, this condition does nothing
+                    if (currentY > max)
+                    {
+                        update[index] = max;
+                        previousYval = max;
+                    }
+                    else
+                    {
+                        update[index] = currentY;
+                        previousYval = currentY;
+                    }
+                }
+                index++;
+            }
+            Yvals = update;
+        }
+        public void ForceStrictMonotonicity(double max = double.MaxValue, double min = double.MinValue)
+        {
+            double epsilon = 0.005;
+            double previousYval = min;
+
+            double[] update = new double[Yvals.Length];
+            int index = 0;
+            foreach (double currentY in Yvals)
+            {
+                if (previousYval >= currentY)
+                {
+                    update[index] = previousYval + epsilon;
+                    previousYval += epsilon;
+                }
+                else
+                {
+                    //if max is default, this condition does nothing
                     if (currentY > max)
                     {
                         update[index] = max;

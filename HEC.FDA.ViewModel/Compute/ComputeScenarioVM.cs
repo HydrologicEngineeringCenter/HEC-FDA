@@ -32,9 +32,9 @@ namespace HEC.FDA.ViewModel.Compute
 
                 RegisterProgressAndMessages(sims);
 
-                Scenario scenario = new Scenario( sims);
+                Scenario scenario = new( sims);
 
-                CancellationTokenSource _CancellationToken = new CancellationTokenSource();
+                CancellationTokenSource _CancellationToken = new();
                 ComputeScenario(elem, scenario, callback, _CancellationToken.Token);
                 //UnregisterMessages(sims);
             }
@@ -51,12 +51,12 @@ namespace HEC.FDA.ViewModel.Compute
             return Task.Run(() =>
             {
                 int seed = 1234;
-                RandomProvider randomProvider = new RandomProvider(seed);
+                RandomProvider randomProvider = new(seed);
                 ConvergenceCriteria cc = StudyCache.GetStudyPropertiesElement().GetStudyConvergenceCriteria();              
                 ScenarioResults scenarioResults = scenario.Compute(randomProvider, cc, cancellationToken);       
                 //Event for when everything has been computed.
                 callback?.Invoke(elem, scenarioResults);
-            });
+            }, cancellationToken);
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace HEC.FDA.ViewModel.Compute
         /// <param name="iasElems"></param>
         public static List<ImpactAreaScenarioSimulation> CreateSimulations(List<SpecificIAS> iasElems)
         {
-            List<ImpactAreaScenarioSimulation> sims = new List<ImpactAreaScenarioSimulation>();
+            List<ImpactAreaScenarioSimulation> sims = new();
 
             foreach (SpecificIAS ias in iasElems)
             { 

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HEC.FDA.Model.utilities
+﻿namespace HEC.FDA.Model.utilities
 {
-    internal class StringConstants
+    internal class StringGlobalConstants
     {
         public const string STRUCTURE_ASSET_CATEGORY = "Structure";
         public const string CONTENT_ASSET_CATEGORY = "Content";

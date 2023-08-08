@@ -6,6 +6,7 @@ using Statistics.Distributions;
 using Statistics.Histograms;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.metrics;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ModelTest.unittests
 {
@@ -52,10 +53,11 @@ namespace HEC.FDA.ModelTest.unittests
             int expectedUPDLength = 20;
             double expectedMeanAllOver = mean + 0.5;
             double actualMeanFirstUPDMiddleStage = uncertainPairedData[0].Yvals[9].InverseCDF(0.5);
-            double actualMeanLastUPDLastStage = uncertainPairedData[3].SamplePairedData(0.5).f(19);
+            IPairedData pairedData = uncertainPairedData[3].SamplePairedData(0.5, true);
+            double actualMeanLastUPDLastStage = pairedData.f(19);
             double relativeErrorMeanFirstUPDMiddleStage = Math.Abs(actualMeanFirstUPDMiddleStage - expectedMeanAllOver) / expectedMeanAllOver;
             double relativeErrorMeanLastUPDLastStage = Math.Abs(actualMeanLastUPDLastStage - expectedMeanAllOver) / expectedMeanAllOver;
-            double tolerance = 0.5;
+            double tolerance = 0.05;
             //Assert
             Assert.Equal(expectedUPDs, uncertainPairedData.Count);
             Assert.Equal(expectedUPDLength, uncertainPairedData[0].Yvals.Length);
@@ -80,6 +82,21 @@ namespace HEC.FDA.ModelTest.unittests
             }
             Histogram histogram = new(data, convergenceCriteria);
             return histogram;
+        }
+
+        [Theory]
+        [InlineData(1111, 100)]
+        public void SerializationShouldReadTheSameObjectItWrites(int seed, int iterations)
+        {
+            ConsequenceDistributionResults expected = new ConsequenceDistributionResults();
+            List<ConsequenceDistributionResult> resultList = new();
+            List<double> data = new() { 0, 1, 2, 3, 4 };
+            expected.AddExistingConsequenceResultObject(new ConsequenceDistributionResult("DamCat", "AssetCat", new Histogram(data, new ConvergenceCriteria(69, 8008)), 0));
+            XElement xElement = expected.WriteToXML();
+
+            ConsequenceDistributionResults actual = ConsequenceDistributionResults.ReadFromXML(xElement);
+
+            Assert.True(actual.Equals(expected));
         }
     }
 }

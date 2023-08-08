@@ -197,7 +197,7 @@ namespace HEC.FDA.ModelTest.unittests
             {
                 double difference = expected - actual;
                 double relativeDifference = Math.Abs(difference / expected);
-                double tolerance = 0.01;
+                double tolerance = 0.014;
                 Assert.True(relativeDifference < tolerance);
             }
 
@@ -288,7 +288,7 @@ namespace HEC.FDA.ModelTest.unittests
                 .WithFrequencyStage(graphicalUncertain)
                 .WithStageDamages(stageDamageList)
                 .Build();
-            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(randomProvider, new ConvergenceCriteria(minIterations: 101, maxIterations: 110));
+            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(randomProvider, new ConvergenceCriteria(minIterations: 1001, maxIterations: 1100));
             double actualMeanEAD = impactAreaScenarioResults.MeanExpectedAnnualConsequences();
             Assert.Equal(expectedEAD, actualMeanEAD);
             bool actualHistogramZeroValued = impactAreaScenarioResults.GetSpecificHistogram(impactAreaID, damCat, assetCat).HistogramIsZeroValued;

@@ -3,9 +3,6 @@ using System.Linq;
 using Utilities;
 using System.Xml.Linq;
 using System.Collections.Generic;
-using HEC.MVVMFramework.Base.Events;
-using HEC.MVVMFramework.Base.Interfaces;
-using HEC.MVVMFramework.Base.Implementations;
 using Statistics.Distributions;
 
 namespace Statistics.Histograms
@@ -18,7 +15,6 @@ namespace Statistics.Histograms
         private bool _HistogramShutDown = false;
         #endregion
         #region Properties
-        public event MessageReportedEventHandler MessageReport;
         public bool HistogramIsZeroValued
         {
             get
