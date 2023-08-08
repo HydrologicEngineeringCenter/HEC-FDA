@@ -1,15 +1,12 @@
-﻿using System.Collections.Generic;
-using Statistics.Histograms;
-using Statistics;
+﻿using HEC.FDA.Model.metrics;
+using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
-using HEC.FDA.Model.metrics;
-using HEC.FDA.Model.interfaces;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Model.Messaging;
-using HEC.MVVMFramework.Base.Enumerations;
 using Statistics.Distributions;
-using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace HEC.FDA.Model.alternativeComparisonReport
@@ -34,15 +31,20 @@ namespace HEC.FDA.Model.alternativeComparisonReport
 
         public AlternativeComparisonReportResults ComputeAlternativeComparisonReport(AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
         {
-            ReportMessage(this, new MessageEventArgs(new ErrorMessage("Starting alternative comparison report compute", ErrorLevel.Info)));
-            ReportProgress(this, new ProgressReportEventArgs(10));
-
+            ReportMessage(this, new MessageEventArgs(new ErrorMessage("Starting alternative comparison report results processing." + Environment.NewLine, ErrorLevel.Info)));
+            
+            ReportProgress(this, new ProgressReportEventArgs(1));
             ComputeDistributionOfAAEQDamageReduced(withoutProjectAlternativeResults, withProjectAlternativesResults);
+            ReportProgress(this, new ProgressReportEventArgs(33));
+
             ComputeDistributionEADReducedBaseYear(withoutProjectAlternativeResults, withProjectAlternativesResults);
+            ReportProgress(this, new ProgressReportEventArgs(67));
+
             ComputeDistributionEADReducedFutureYear(withoutProjectAlternativeResults, withProjectAlternativesResults);
-                
-            //TODO: Fix the hacked in progress reporting 
+
+            ReportMessage(this, new MessageEventArgs(new ErrorMessage("Alternative comparison report results processing complete." + Environment.NewLine, ErrorLevel.Info)));
             ReportProgress(this, new ProgressReportEventArgs(100));
+
             return new AlternativeComparisonReportResults(withProjectAlternativesResults, withoutProjectAlternativeResults, _AAEqResults, _BaseYearEADResults , _FutureYearEADResults);
         }
         private  void ComputeDistributionOfAAEQDamageReduced(AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
@@ -54,8 +56,6 @@ namespace HEC.FDA.Model.alternativeComparisonReport
             {
                 
                 ManyEmpiricalDistributionsOfConsequences damageReducedOneAlternative = new(withProjectAlternativeResults.AlternativeID);
-                MessageEventArgs beginComputeMessageArgs = new(new Message($"Compute of the distribution of AAEQ damage reduced for alternative ID {withProjectAlternativeResults.AlternativeID} has been initiated."));
-                ReportMessage(this, beginComputeMessageArgs);
 
                 List<SingleEmpiricalDistributionOfConsequences> withoutProjectConsequenceDistList = new();
                 foreach (SingleEmpiricalDistributionOfConsequences consequenceDistributionResult in withoutProjectAlternativeResults.AAEQDamageResults.ConsequenceResultList)
@@ -88,20 +88,11 @@ namespace HEC.FDA.Model.alternativeComparisonReport
 
         private SingleEmpiricalDistributionOfConsequences IterateOnConsequenceDistributionResult(SingleEmpiricalDistributionOfConsequences withProjectDamageResult, SingleEmpiricalDistributionOfConsequences withoutProjectDamageResult, bool iterateOnWithProject = true)
         {
-            List<Empirical> empiricalList = new();
-            if (iterateOnWithProject)
+            List<Empirical> empiricalList = new()
             {
-                MessageEventArgs beginComputeMessageArgs = new(new Message($"Damage reduced distribution compute for damage category {withProjectDamageResult.DamageCategory}, asset category {withProjectDamageResult.AssetCategory}, and impact area ID {withProjectDamageResult.RegionID} has been initiated."));
-                ReportMessage(this, beginComputeMessageArgs);
-            }
-            else
-            {
-                MessageEventArgs beginComputeMessageArgs = new(new Message($"Damage reduced distribution compute for damage category {withoutProjectDamageResult.DamageCategory}, asset category {withoutProjectDamageResult.AssetCategory}, and impact area ID {withoutProjectDamageResult.RegionID} has been initiated."));
-                ReportMessage(this, beginComputeMessageArgs);
-            }
-
-            empiricalList.Add(withoutProjectDamageResult.ConsequenceDistribution);
-            empiricalList.Add(withProjectDamageResult.ConsequenceDistribution);
+                withoutProjectDamageResult.ConsequenceDistribution,
+                withProjectDamageResult.ConsequenceDistribution
+            };
             Empirical empirical = Empirical.StackEmpiricalDistributions(empiricalList, Empirical.Subtract);
             SingleEmpiricalDistributionOfConsequences singleEmpiricalDistributionOfConsequences = new();
 
@@ -116,9 +107,6 @@ namespace HEC.FDA.Model.alternativeComparisonReport
                 singleEmpiricalDistributionOfConsequences = new SingleEmpiricalDistributionOfConsequences(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, empirical, withoutProjectDamageResult.RegionID);
 
             }
-
-            MessageEventArgs endComputeMessageArgs = new(new Message($"Damage reduced distribution compute for damage category {singleEmpiricalDistributionOfConsequences.DamageCategory}, asset category {singleEmpiricalDistributionOfConsequences.AssetCategory}, and impact area ID {singleEmpiricalDistributionOfConsequences.RegionID} has completed."));
-            ReportMessage(this, endComputeMessageArgs);
             return singleEmpiricalDistributionOfConsequences;
         }
 
@@ -128,8 +116,6 @@ namespace HEC.FDA.Model.alternativeComparisonReport
             foreach (AlternativeResults withProjectResults in withProjectAlternativesResults)
             {
                 ManyEmpiricalDistributionsOfConsequences damageReducedAlternative = new(withProjectResults.AlternativeID);
-                MessageEventArgs beginComputeMessageArgs = new(new Message($"Compute of the distribution of base year EAD reduced for alternative ID {damageReducedAlternative.AlternativeID} has been initiated."));
-                ReportMessage(this, beginComputeMessageArgs);
 
                 foreach (ImpactAreaScenarioResults withProjectIAS in withProjectResults.BaseYearScenarioResults.ResultsList.Cast<ImpactAreaScenarioResults>())
                 {
@@ -167,7 +153,6 @@ namespace HEC.FDA.Model.alternativeComparisonReport
                 damageReducedAllAlternatives.Add(damageReducedAlternative);
             }
             _BaseYearEADResults = damageReducedAllAlternatives;
-
         }
 
 
@@ -177,7 +162,7 @@ namespace HEC.FDA.Model.alternativeComparisonReport
             foreach (AlternativeResults alternative in withProjectAlternativesResults)
             {
                 ManyEmpiricalDistributionsOfConsequences damageReducedAlternative = new(alternative.AlternativeID);
-                MessageEventArgs beginComputeMessageArgs = new(new Message($"Compute of the distribution of AAEQ damage reduced for alternative ID {damageReducedAlternative.AlternativeID} has been initiated."));
+                MessageEventArgs beginComputeMessageArgs = new(new Message($"Compute of the distribution of AAEQ damage reduced for alternative ID {damageReducedAlternative.AlternativeID} has been initiated." + Environment.NewLine));
                 ReportMessage(this, beginComputeMessageArgs);
 
                 foreach (ImpactAreaScenarioResults withProjectResults in alternative.FutureYearScenarioResults.ResultsList.Cast<ImpactAreaScenarioResults>())
@@ -213,6 +198,8 @@ namespace HEC.FDA.Model.alternativeComparisonReport
                     }
                 }
                 damageReducedAlternatives.Add(damageReducedAlternative);
+                MessageEventArgs endComputeMessageArgs = new(new Message($"Compute of the distribution of AAEQ damage reduced for alternative ID {damageReducedAlternative.AlternativeID} has completed." + Environment.NewLine));
+                ReportMessage(this, endComputeMessageArgs);
             }
             _FutureYearEADResults = damageReducedAlternatives;
 
