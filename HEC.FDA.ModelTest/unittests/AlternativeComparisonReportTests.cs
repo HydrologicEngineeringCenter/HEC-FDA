@@ -17,13 +17,13 @@ namespace HEC.FDA.ModelTest.unittests
     public class AlternativeComparisonReportTest
     {
         [Theory]
-        [InlineData(37500, 37500, 300000, 300000, 50, .0275, 2023, 2072, 1, 75000, "residential", "residential", 0)]
-        [InlineData(150000, -112500, 300000, -225000, 50, .0275, 2023, 2050, 1, 75000, "residential", "commercial", 1200000)]
-        [InlineData(150000, -112500, 300000, 0, 50, .0275, 2023, 2050, 1, 75000, "residential", "commercial", 0)]
+        [InlineData(37500, 37500, 300000, 300000, 50, .0275, 2023, 2072, 1, 7.5, "residential", "residential", 0)]
+        [InlineData(150000, -112500, 300000, -225000, 50, .0275, 2023, 2050, 1, 7.5, "residential", "commercial", 1200000)]
+        [InlineData(150000, -112500, 300000, 0, 50, .0275, 2023, 2050, 1, 7.5, "residential", "commercial", 0)]
         public void ComputeHandlesZeroDollarDamageAndDifferentSetsOfDamageCategories(double expectedEADReducedBaseYearDamCat1, double expectedEADReducedBaseYearDamCat2, double expectedEADReducedFutureYearDamCat1, double expectedEADReducedFutureYearDamCat2, int poa, double discountRate, int baseYear, int futureYear, int iterations, double topOfLeveeElevation, string damCat1, string damCat2, double futureYearDamageModified)
         {
             double[] FlowXs = { 0, 100000 };
-            double[] StageXs = { 0, 150000, 300000 };
+            double[] StageXs = { 0, 15, 30 };
             string xLabel = "x label";
             string yLabel = "y label";
             string name = "name";
@@ -41,7 +41,7 @@ namespace HEC.FDA.ModelTest.unittests
             IDistribution[] stages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
             {
-                stages[i] = IDistributionFactory.FactoryUniform(0, 300000 * i, 10);
+                stages[i] = IDistributionFactory.FactoryUniform(0, 30 * i, 10);
             }
             UncertainPairedData flow_stage = new UncertainPairedData(FlowXs, stages, metaData1);
             //create a damage distribution for base and future year (future year assumption is massive economic development) 
@@ -186,7 +186,7 @@ namespace HEC.FDA.ModelTest.unittests
         }
 
         [Theory]
-        [InlineData(50, .0275, 2023, 2050, 1, 75000)]
+        [InlineData(50, .0275, 2023, 2050, 1, 7.5)]
         public void AlternativeComparisonReturnsCorrectDamCats(int poa, double discountRate, int baseYear, int futureYear, int iterations, double topOfLeveeElevation)
         {
             double[] FlowXs = { 0, 100000 };
@@ -321,12 +321,12 @@ namespace HEC.FDA.ModelTest.unittests
         }
 
         [Theory]
-        [InlineData(51442, 36500, 75000, 50, .0275, 2023, 2072, 1, 75000)]
-        [InlineData(59410, 36500, 75000, 50, .0275, 2023, 2050, 1, 75000)]
+        [InlineData(51442, 36500, 75000, 50, .0275, 2023, 2072, 1, 7.5)]
+        [InlineData(59410, 36500, 75000, 50, .0275, 2023, 2050, 1, 7.5)]
         public void ComputeAAEQDamage(double expectedAAEQReduced, double expectedEADReducedBaseYear, double expectedEADReducedFutureYear, int poa, double discountRate, int baseYear, int futureYear, int iterations, double topOfLeveeElevation)
         {
             double[] FlowXs = { 0, 100000 };
-            double[] StageXs = { 0, 150000, 300000 };
+            double[] StageXs = { 0, 15, 30 };
             string xLabel = "x label";
             string yLabel = "y label";
             string name = "name";
@@ -336,7 +336,7 @@ namespace HEC.FDA.ModelTest.unittests
             int impactAreaIdentifier = 1;
             int withoutAlternativeIdentifier = 1;
             int withAlternativeIdentifier = 2;
-            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
             MedianRandomProvider mrp = new MedianRandomProvider();
             double exceedanceProbability = 0.5;
 
@@ -345,7 +345,7 @@ namespace HEC.FDA.ModelTest.unittests
             IDistribution[] stages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
             {
-                stages[i] = IDistributionFactory.FactoryUniform(0, 300000 * i, 10);
+                stages[i] = IDistributionFactory.FactoryUniform(0, 30 * i, 10);
             }
             UncertainPairedData flow_stage = new UncertainPairedData(FlowXs, stages, metaData);
             //create a damage distribution for base and future year (future year assumption is massive economic development) 
