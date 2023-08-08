@@ -86,7 +86,7 @@ namespace HEC.FDA.Model.alternativeComparisonReport
             _AAEqResults = damagesReducedAllAlternatives;
         }
 
-        private SingleEmpiricalDistributionOfConsequences IterateOnConsequenceDistributionResult(SingleEmpiricalDistributionOfConsequences withProjectDamageResult, SingleEmpiricalDistributionOfConsequences withoutProjectDamageResult, bool iterateOnWithProject = true)
+        private static SingleEmpiricalDistributionOfConsequences IterateOnConsequenceDistributionResult(SingleEmpiricalDistributionOfConsequences withProjectDamageResult, SingleEmpiricalDistributionOfConsequences withoutProjectDamageResult, bool iterateOnWithProject = true)
         {
             List<Empirical> empiricalList = new()
             {

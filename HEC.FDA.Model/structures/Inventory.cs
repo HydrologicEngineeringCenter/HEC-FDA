@@ -340,7 +340,7 @@ namespace HEC.FDA.Model.structures
 
         public ConsequenceResult ComputeDamages(float[] wses, int analysisYear, string damageCategory, List<DeterministicOccupancyType> deterministicOccupancyType)
         {
-            ConsequenceResult aggregateConsequenceResult = new ConsequenceResult(damageCategory);
+            ConsequenceResult aggregateConsequenceResult = new(damageCategory);
             //assume each structure has a corresponding index to the depth
             int iterationsPerComputeChunk = 1;
             if (Structures.Count >= 100)
@@ -373,7 +373,7 @@ namespace HEC.FDA.Model.structures
                 });
 
                 startingPosition += iterationsPerComputeChunk;
-                for (int i = 0; i < structureParallelCollectionArray.Count(); i++)
+                for (int i = 0; i < structureParallelCollectionArray.Count; i++)
                 {
                     aggregateConsequenceResult.IncrementConsequence(structureParallelCollectionArray[i], contentParallelCollectionArray[i], otherParallelCollectionArray[i], vehicleParallelCollectionArray[i]);
                 }
@@ -398,7 +398,7 @@ namespace HEC.FDA.Model.structures
                     }
                     Thread.Sleep(0);
                 });
-                for (int i = 0; i < structureParallelRemainderArray.Count(); i++)
+                for (int i = 0; i < structureParallelRemainderArray.Count; i++)
                 {
                     aggregateConsequenceResult.IncrementConsequence(structureParallelRemainderArray[i], contentParallelRemainderArray[i], otherParallelRemainderArray[i], vehicleParallelRemainderArray[i]);
                 }
