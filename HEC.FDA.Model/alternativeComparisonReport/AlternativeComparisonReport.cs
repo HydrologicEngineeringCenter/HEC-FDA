@@ -37,7 +37,6 @@ namespace HEC.FDA.Model.alternativeComparisonReport
             ReportMessage(this, new MessageEventArgs(new ErrorMessage("Starting alternative comparison report compute", ErrorLevel.Info)));
             ReportProgress(this, new ProgressReportEventArgs(10));
 
-
             ComputeDistributionOfAAEQDamageReduced(withoutProjectAlternativeResults, withProjectAlternativesResults);
             ComputeDistributionEADReducedBaseYear(withoutProjectAlternativeResults, withProjectAlternativesResults);
             ComputeDistributionEADReducedFutureYear(withoutProjectAlternativeResults, withProjectAlternativesResults);
