@@ -17,6 +17,9 @@ using System.Linq;
 using System.IO;
 
 namespace HEC.FDA.ModelTest.integrationtests;
+
+[Trait("RunsOn", "Local")]
+[Collection("Serial")]
 public class BigInventoryStageDamageTest
 {
     #region Structure Data 
