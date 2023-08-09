@@ -242,7 +242,9 @@ new double[] { 0, 1, 2, 3, 4, 5, 6, 7 }, 50, new CurveMetaData("Probability", "S
 
         string time = "the big inventory stage damage compute was started at: " + DateTime.Now.ToString();
         //Act
-        List<UncertainPairedData> stageDamageFunctions = scenarioStageDamage.Compute(new RandomProvider());
+
+        
+        List<UncertainPairedData> stageDamageFunctions = scenarioStageDamage.Compute(new RandomProvider(seed: 1234));
         time += " and the compute was completed at: " + DateTime.Now.ToString();
 
         File.AppendAllText(filePath, time);

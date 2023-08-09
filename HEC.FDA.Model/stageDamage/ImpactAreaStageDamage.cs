@@ -38,8 +38,8 @@ namespace HEC.FDA.Model.stageDamage
         private double _MinStageForArea;
         private double _MaxStageForArea;
 
-        private readonly int _NumExtrapolatedStagesToCompute = 7;
-        private readonly int _NumInterpolatedStagesToCompute = 2;
+        private readonly int _NumExtrapolatedStagesToCompute = 10;
+        private readonly int _NumInterpolatedStagesToCompute = 10;
 
         private readonly string _HydraulicParentDirectory;
         private readonly PairedData _StageFrequency;
@@ -450,6 +450,8 @@ namespace HEC.FDA.Model.stageDamage
                 stageIndex += _NumInterpolatedStagesToCompute;
             }
         }
+
+
         private void InterpolateBetweenProfiles(ref List<ConsequenceDistributionResults> parallelConsequenceResultCollection, List<DeterministicOccupancyType> occTypes, float[] previousHydraulicProfile, float[] currentHydraulicProfile, string damageCategory, Inventory inventory, int stageIndex, int iterationIndex)
         {
             float[] intervalsAtStructures = CalculateIntervals(previousHydraulicProfile, currentHydraulicProfile);
@@ -493,7 +495,7 @@ namespace HEC.FDA.Model.stageDamage
         private void ComputeUpperStageDamage(ref List<ConsequenceDistributionResults> parallelConsequenceResultCollection, string damageCategory, List<DeterministicOccupancyType> deterministicOccTypes, (Inventory, List<float[]>) inventoryAndWaterCoupled, List<double> profileProbabilities, int iterationIndex)
         {
             //the probability of a profile is an EXCEEDANCE probability but in the model we use NONEXCEEDANCE PROBABILITY
-            int stageIndex = _NumExtrapolatedStagesToCompute + _NumInterpolatedStagesToCompute * profileProbabilities.Count - 2;
+            int stageIndex = _NumExtrapolatedStagesToCompute + _NumInterpolatedStagesToCompute * (profileProbabilities.Count - 1);
             double stageAtProbabilityOfHighestProfile = _StageFrequency.f(1 - profileProbabilities.Min());
             float indexStationUpperStageDelta = (float)(_MaxStageForArea - stageAtProbabilityOfHighestProfile);
             float upperInterval = indexStationUpperStageDelta / _NumExtrapolatedStagesToCompute;

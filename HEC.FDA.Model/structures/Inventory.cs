@@ -369,7 +369,7 @@ namespace HEC.FDA.Model.structures
             for (int j = 0;j < wses.Count; j++)
             {
                 ConsequenceResult aggregateConsequenceResult = new(damageCategory);
-                for (int i = 0; i < structureParallelCollection.Length; i++)
+                for (int i = 0; i < Structures.Count; i++)
                 {
                     aggregateConsequenceResult.IncrementConsequence(structureParallelCollection[j,i], contentParallelCollection[j, i], otherParallelCollection[j, i], vehicleParallelCollection[j,i]);
                 }
