@@ -344,9 +344,9 @@ namespace HEC.FDA.Model.structures
             ConsequenceResult aggregateConsequenceResult = new(damageCategory);
             //assume each structure has a corresponding index to the depth
             int iterationsPerComputeChunk = 1;
-            if (Structures.Count >= 100)
+            if (Structures.Count >= 50000)
             {
-                iterationsPerComputeChunk = 100;
+                iterationsPerComputeChunk = 50000;
             }
             double computeChunks = System.Math.Floor(Structures.Count / Convert.ToDouble(iterationsPerComputeChunk));
             int remainderIterations = Structures.Count % iterationsPerComputeChunk;
