@@ -86,7 +86,7 @@ namespace HEC.FDA.Model.structures
             {
                 return polygons;
             }
-            if (impactAreaPrj.IsEqual(studyProjection) )
+            if (impactAreaPrj.IsEqual(studyProjection))
             {
                 return polygons;
             }
@@ -217,7 +217,7 @@ namespace HEC.FDA.Model.structures
                 reprojPointMs.Add(ReprojectPoint(pt, studyProjection, siProjection));
             }
             return reprojPointMs;
-         
+
         }
         #region Projection
         public static PointM ReprojectPoint(PointM point, Projection newProjection, Projection currentProjection)
@@ -325,11 +325,11 @@ namespace HEC.FDA.Model.structures
             }
             return structureDetails;
         }
-        
+
         public List<DeterministicOccupancyType> SampleOccupancyTypes(IProvideRandomNumbers randomNumberProvider)
         {
             List<DeterministicOccupancyType> deterministicOccupancyTypes = new();
-            foreach(OccupancyType occupancyType in OccTypes.Values)
+            foreach (OccupancyType occupancyType in OccTypes.Values)
             {
                 DeterministicOccupancyType deterministicOccupancyType = occupancyType.Sample(randomNumberProvider);
                 deterministicOccupancyTypes.Add(deterministicOccupancyType);
@@ -339,72 +339,43 @@ namespace HEC.FDA.Model.structures
         }
 
 
-        public ConsequenceResult ComputeDamages(float[] wses, int analysisYear, string damageCategory, List<DeterministicOccupancyType> deterministicOccupancyType)
+        public List<ConsequenceResult> ComputeDamages(List<float[]> wses, int analysisYear, string damageCategory, List<DeterministicOccupancyType> deterministicOccupancyType)
         {
-            ConsequenceResult aggregateConsequenceResult = new(damageCategory);
+
+            List<ConsequenceResult> aggregateConsequenceResults = new List<ConsequenceResult>();
             //assume each structure has a corresponding index to the depth
-            int iterationsPerComputeChunk = 1;
-            if (Structures.Count >= 50000)
-            {
-                iterationsPerComputeChunk = 50000;
-            }
-            double computeChunks = System.Math.Floor(Structures.Count / Convert.ToDouble(iterationsPerComputeChunk));
-            int remainderIterations = Structures.Count % iterationsPerComputeChunk;
-            int startingPosition = 0;
-            
-            for (int j = 0; j < computeChunks; j++)
-            {
-                var structureParallelCollection = new double[iterationsPerComputeChunk];
-                var contentParallelCollection = new double[iterationsPerComputeChunk];
-                var otherParallelCollection = new double[iterationsPerComputeChunk];
-                var vehicleParallelCollection = new double[iterationsPerComputeChunk];
+            var structureParallelCollection = new double[wses.Count,Structures.Count];
+            var contentParallelCollection = new double[wses.Count, Structures.Count];
+            var otherParallelCollection = new double[wses.Count, Structures.Count];
+            var vehicleParallelCollection = new double[wses.Count, Structures.Count];
 
-                Parallel.For(0, iterationsPerComputeChunk, i =>
+            Parallel.For(0, Structures.Count, i =>
+            {
+                float[] wse = wses.Select(array => array[i]).ToArray();
+
+                for (int j = 0; j < wse.Length; j++)
                 {
-                    float wse = wses[startingPosition + i];
-                    if (wse != -9999)
+                    if (wse[j] != -9999)
                     {
-                        ConsequenceResult consequenceResult = Structures[startingPosition + i].ComputeDamage(wse, deterministicOccupancyType, PriceIndex, analysisYear);
-                        structureParallelCollection[i] = (consequenceResult.StructureDamage);
-                        contentParallelCollection[i] = (consequenceResult.ContentDamage);
-                        otherParallelCollection[i] = (consequenceResult.OtherDamage);
-                        vehicleParallelCollection[i] = (consequenceResult.VehicleDamage);
+                        ConsequenceResult consequenceResult = Structures[i].ComputeDamage(wse[j], deterministicOccupancyType, PriceIndex, analysisYear);
+                        structureParallelCollection[j,i] = (consequenceResult.StructureDamage);
+                        contentParallelCollection[j, i] = (consequenceResult.ContentDamage);
+                        otherParallelCollection[j, i] = (consequenceResult.OtherDamage);
+                        vehicleParallelCollection[j, i] = (consequenceResult.VehicleDamage);
                     }
-                    Thread.Sleep(0);
-                });
-
-                startingPosition += iterationsPerComputeChunk;
+                }
+                Thread.Sleep(0);
+            });
+            for (int j = 0;j < wses.Count; j++)
+            {
+                ConsequenceResult aggregateConsequenceResult = new(damageCategory);
                 for (int i = 0; i < structureParallelCollection.Length; i++)
                 {
-                    aggregateConsequenceResult.IncrementConsequence(structureParallelCollection[i], contentParallelCollection[i], otherParallelCollection[i], vehicleParallelCollection[i]);
+                    aggregateConsequenceResult.IncrementConsequence(structureParallelCollection[j,i], contentParallelCollection[j, i], otherParallelCollection[j, i], vehicleParallelCollection[j,i]);
                 }
+                aggregateConsequenceResults.Add(aggregateConsequenceResult);
             }
-            if (remainderIterations > 0)
-            {
-                var structureParallelRemainderArray = new double[remainderIterations];
-                var contentParallelRemainderArray = new double[remainderIterations];
-                var otherParallelRemainderArray = new double[remainderIterations];
-                var vehicleParallelRemainderArray = new double[remainderIterations];
-
-                Parallel.For(0, remainderIterations, i =>
-                {
-                    float wse = wses[startingPosition + i];
-                    if (wse != -9999)
-                    {
-                        ConsequenceResult consequenceResult = Structures[startingPosition + i].ComputeDamage(wse, deterministicOccupancyType, PriceIndex, analysisYear);
-                        structureParallelRemainderArray[i] = (consequenceResult.StructureDamage);
-                        contentParallelRemainderArray[i] = (consequenceResult.ContentDamage);
-                        otherParallelRemainderArray[i] = (consequenceResult.OtherDamage);
-                        vehicleParallelRemainderArray[i] = (consequenceResult.VehicleDamage);
-                    }
-                    Thread.Sleep(0);
-                });
-                for (int i = 0; i < structureParallelRemainderArray.Length; i++)
-                {
-                    aggregateConsequenceResult.IncrementConsequence(structureParallelRemainderArray[i], contentParallelRemainderArray[i], otherParallelRemainderArray[i], vehicleParallelRemainderArray[i]);
-                }
-            }
-            return aggregateConsequenceResult;
+            return aggregateConsequenceResults;
         }
         #endregion
 

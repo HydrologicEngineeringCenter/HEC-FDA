@@ -398,13 +398,20 @@ namespace HEC.FDA.Model.stageDamage
         {
 
             float interval = CalculateLowerIncrementOfStages(profileProbabilities);
+            List<float[]> stagesAtAllStructuresAllEvents = new List<float[]>();
             for (int stageIndex = 0; stageIndex < _NumExtrapolatedStagesToCompute + 1; stageIndex++)
             {
                 //for each stage, add the consequenceResult to the consequenceResultArray in the correct place
                 float[] WSEsParallelToIndexLocation = ExtrapolateFromBelowStagesAtIndexLocation(inventoryAndWaterCoupled.Item2[0], interval, stageIndex, _NumExtrapolatedStagesToCompute);
-                //this inventory is not trimmed 
-                ConsequenceResult consequenceResult = inventoryAndWaterCoupled.Item1.ComputeDamages(WSEsParallelToIndexLocation, _AnalysisYear, damageCategory, deterministicOccTypes);
-                parallelConsequenceResultCollection[stageIndex].AddConsequenceRealization(consequenceResult, damageCategory, ImpactAreaID, iterationIndex);
+                //Can we modify the below to push more of the calculation into the parallelization. So, instead of passing in a float[] wses, it might be a float[][].
+                stagesAtAllStructuresAllEvents.Add(WSEsParallelToIndexLocation);
+            }
+            List<ConsequenceResult> consequenceResults = inventoryAndWaterCoupled.Item1.ComputeDamages(stagesAtAllStructuresAllEvents, _AnalysisYear, damageCategory, deterministicOccTypes);
+            int i = 0;
+            foreach (ConsequenceResult consequenceResult in consequenceResults)
+            {
+                parallelConsequenceResultCollection[i].AddConsequenceRealization(consequenceResult, damageCategory, ImpactAreaID, iterationIndex);
+                i++;
             }
         }
 
@@ -446,11 +453,18 @@ namespace HEC.FDA.Model.stageDamage
         private void InterpolateBetweenProfiles(ref List<ConsequenceDistributionResults> parallelConsequenceResultCollection, List<DeterministicOccupancyType> occTypes, float[] previousHydraulicProfile, float[] currentHydraulicProfile, string damageCategory, Inventory inventory, int stageIndex, int iterationIndex)
         {
             float[] intervalsAtStructures = CalculateIntervals(previousHydraulicProfile, currentHydraulicProfile);
+            List<float[]> stagesAllStructuresAllStages = new List<float[]>();
             for (int interpolatorIndex = 0; interpolatorIndex < _NumInterpolatedStagesToCompute; interpolatorIndex++)
             {
                 float[] stages = CalculateIncrementOfStages(previousHydraulicProfile, intervalsAtStructures, interpolatorIndex + 1);
-                ConsequenceResult consequenceResult = inventory.ComputeDamages(stages, _AnalysisYear, damageCategory, occTypes);
-                parallelConsequenceResultCollection[stageIndex + interpolatorIndex].AddConsequenceRealization(consequenceResult,damageCategory, ImpactAreaID, iterationIndex);
+                stagesAllStructuresAllStages.Add(stages);
+            }
+            int i = 0;
+            List<ConsequenceResult> consequenceResults = inventory.ComputeDamages(stagesAllStructuresAllStages, _AnalysisYear, damageCategory, occTypes);
+            foreach (ConsequenceResult consequenceResult in consequenceResults)
+            {
+                parallelConsequenceResultCollection[stageIndex + i].AddConsequenceRealization(consequenceResult,damageCategory, ImpactAreaID, iterationIndex);
+                i++;
             }
         }
 
@@ -483,11 +497,19 @@ namespace HEC.FDA.Model.stageDamage
             double stageAtProbabilityOfHighestProfile = _StageFrequency.f(1 - profileProbabilities.Min());
             float indexStationUpperStageDelta = (float)(_MaxStageForArea - stageAtProbabilityOfHighestProfile);
             float upperInterval = indexStationUpperStageDelta / _NumExtrapolatedStagesToCompute;
+
+            List<float[]> stagesAllStructuresAllEvents = new List<float[]>();
             for (int extrapolatorIndex = 1; extrapolatorIndex < _NumExtrapolatedStagesToCompute; extrapolatorIndex++)
             {
                 float[] WSEsParallelToIndexLocation = ExtrapolateFromAboveAtIndexLocation(inventoryAndWaterCoupled.Item2[^1], upperInterval, extrapolatorIndex);
-                ConsequenceResult consequenceResult = inventoryAndWaterCoupled.Item1.ComputeDamages(WSEsParallelToIndexLocation, _AnalysisYear, damageCategory, deterministicOccTypes);
-                parallelConsequenceResultCollection[stageIndex + extrapolatorIndex].AddConsequenceRealization(consequenceResult, damageCategory, ImpactAreaID, iterationIndex);
+                stagesAllStructuresAllEvents.Add(WSEsParallelToIndexLocation);
+            }
+            List<ConsequenceResult> consequenceResults = inventoryAndWaterCoupled.Item1.ComputeDamages(stagesAllStructuresAllEvents, _AnalysisYear, damageCategory, deterministicOccTypes);
+            int i = 1;
+            foreach (ConsequenceResult consequenceResult in consequenceResults)
+            {
+                parallelConsequenceResultCollection[stageIndex + i].AddConsequenceRealization(consequenceResult, damageCategory, ImpactAreaID, iterationIndex);
+                i++;
             }
         }
 
