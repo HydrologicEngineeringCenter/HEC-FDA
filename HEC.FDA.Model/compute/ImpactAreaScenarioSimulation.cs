@@ -753,10 +753,10 @@ namespace HEC.FDA.Model.compute
                 ReportMessage(this, new MessageEventArgs(errorMessage));
             }
         }
-        private IPairedData EnsureBottomAndTopHaveCorrectProbabilities(IPairedData systemResponseFunction)
+        private static IPairedData EnsureBottomAndTopHaveCorrectProbabilities(IPairedData systemResponseFunction)
         {
-            List<double> tempXvals = new List<double>(); //xvals are stages
-            List<double> tempYvals = new List<double>(); //yvals are prob failure 
+            List<double> tempXvals = new(); //xvals are stages
+            List<double> tempYvals = new(); //yvals are prob failure 
 
             //First step is to ensure that the fragility function begins with 0 prob failure and ends with 1 prob failure 
             double buffer = .001; //buffer to define point just above and just below the multiplying curve.
@@ -774,12 +774,12 @@ namespace HEC.FDA.Model.compute
             }
 
             double aboveFragilityCurveValue = 1.0;
-            double stageToAddAboveFragility = systemResponseFunction.Xvals[systemResponseFunction.Xvals.Length - 1] + buffer;
+            double stageToAddAboveFragility = systemResponseFunction.Xvals[^1] + buffer;
 
             tempXvals.Add(stageToAddAboveFragility);
             tempYvals.Add(aboveFragilityCurveValue);
 
-            PairedData newSystemREsponse = new PairedData(tempXvals.ToArray(), tempYvals.ToArray());
+            PairedData newSystemREsponse = new(tempXvals.ToArray(), tempYvals.ToArray());
             return newSystemREsponse;
         }
 

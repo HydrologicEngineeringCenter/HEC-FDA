@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using Utilities;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace Statistics.Distributions
 {
@@ -402,21 +404,21 @@ namespace Statistics.Distributions
             int probabilitySteps = 2500;
             double[] cumulativeProbabilities = new double[probabilitySteps];
             double[] stackedInvCDFs = new double[probabilitySteps];
-          
-          
-            for ( int i = 0; i < probabilitySteps; i++)
+
+            Parallel.For(0, probabilitySteps, i =>
             {
                 double probabilityStep = (0.5 + i) / probabilitySteps;
                 double stackedValue = empiricalDistributionsForStacking[0].InverseCDF(probabilityStep);
-
                 for (int j = 1; j < empiricalDistributionsForStacking.Count; j++)
                 {
                     stackedValue = addOrSubtract(stackedValue, empiricalDistributionsForStacking[j].InverseCDF(probabilityStep));
                 }
-
                 cumulativeProbabilities[i] = probabilityStep;
                 stackedInvCDFs[i] = stackedValue;
-            }
+                Thread.Sleep(0);
+
+            });
+
             return FitToSample(stackedInvCDFs.ToList());
         }
 
