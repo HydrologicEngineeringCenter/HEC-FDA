@@ -38,8 +38,8 @@ namespace HEC.FDA.Model.stageDamage
         private double _MinStageForArea;
         private double _MaxStageForArea;
 
-        private readonly int _NumExtrapolatedStagesToCompute = 10;
-        private readonly int _NumInterpolatedStagesToCompute = 10;
+        private int _NumExtrapolatedStagesToCompute;
+        private int _NumInterpolatedStagesToCompute;
 
         private readonly string _HydraulicParentDirectory;
         private readonly PairedData _StageFrequency;
@@ -75,12 +75,38 @@ namespace HEC.FDA.Model.stageDamage
             }
             _HydraulicDataset = hydraulicDataset;
             SetMinAndMaxStage();
+            SetCoordinateQuantity();
             _StageFrequency = CreateStageFrequency();
             AddRules();
 
             ValidationGroup vg = new("Impact area stage damage with impact area id '" + ImpactAreaID + "' has the following errors:");
             vg.ChildGroups.AddRange(Inventory.ValidationGroups);
             ValidationGroups.Add(vg);
+        }
+
+        //larger ranges need more points to preserve information content 
+        private void SetCoordinateQuantity()
+        {
+            //depth-percent damage functions typically defined at half-foot intervals
+            //this preserves the level of information content 
+            double feetPerCoordinate = 0.5;
+            double range = _MaxStageForArea - _MinStageForArea;
+            int coordinateQuantity = Convert.ToInt32(Math.Ceiling((range / feetPerCoordinate))/10);
+
+            //require at least two coordinates to interpolate and extrapolate 
+            if (coordinateQuantity < 4) {
+                coordinateQuantity = 4;
+            }
+            _NumExtrapolatedStagesToCompute = coordinateQuantity;
+
+
+            //if there are sufficiently many, we can reduce resolution in between 
+            //space between profiles requires fewer coordinates than space outside profiles 
+            if (coordinateQuantity >= 4) {
+                coordinateQuantity = Convert.ToInt32((coordinateQuantity / 2));
+            }
+            _NumInterpolatedStagesToCompute = coordinateQuantity;
+
         }
         #endregion
 
@@ -192,11 +218,11 @@ namespace HEC.FDA.Model.stageDamage
                 {
                     Tuple<double[], double[]> flowFreqAsTuple = _AnalyticalFlowFrequency.ToCoordinates();
                     PairedData flowFrequencyPairedData = new(flowFreqAsTuple.Item1, flowFreqAsTuple.Item2);
-                    if(_UnregulatedRegulated != null)
+                    if (_UnregulatedRegulated != null)
                     {
                         flowFrequencyPairedData = _UnregulatedRegulated.SamplePairedData(0.5, true).compose(flowFrequencyPairedData) as PairedData;
                     }
-                    return  _DischargeStage.SamplePairedData(0.5, true).compose(flowFrequencyPairedData) as PairedData;
+                    return _DischargeStage.SamplePairedData(0.5, true).compose(flowFrequencyPairedData) as PairedData;
                 }
             }
             else if (_GraphicalFrequency != null)
@@ -279,7 +305,8 @@ namespace HEC.FDA.Model.stageDamage
                 {
                     //Parallel.For(0, iterations, i =>
                     //{
-                     for (int i = 0; i < iterations; i++) { 
+                    for (int i = 0; i < iterations; i++)
+                    {
                         List<DeterministicOccupancyType> deterministicOccTypes = Inventory.SampleOccupancyTypes(randomProvider);
                         ComputeLowerStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, i);
                         ComputeMiddleStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, i);
