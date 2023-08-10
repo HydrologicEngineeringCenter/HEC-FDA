@@ -83,7 +83,9 @@ namespace HEC.FDA.Model.stageDamage
             vg.ChildGroups.AddRange(Inventory.ValidationGroups);
             ValidationGroups.Add(vg);
         }
+        #endregion
 
+        #region Methods
         //larger ranges need more points to preserve information content 
         private void SetCoordinateQuantity()
         {
@@ -91,10 +93,11 @@ namespace HEC.FDA.Model.stageDamage
             //this preserves the level of information content 
             double feetPerCoordinate = 0.5;
             double range = _MaxStageForArea - _MinStageForArea;
-            int coordinateQuantity = Convert.ToInt32(Math.Ceiling((range / feetPerCoordinate))/10);
+            int coordinateQuantity = Convert.ToInt32(Math.Ceiling((range / feetPerCoordinate)) / 10);
 
             //require at least two coordinates to interpolate and extrapolate 
-            if (coordinateQuantity < 4) {
+            if (coordinateQuantity < 4)
+            {
                 coordinateQuantity = 4;
             }
             _NumExtrapolatedStagesToCompute = coordinateQuantity;
@@ -102,15 +105,13 @@ namespace HEC.FDA.Model.stageDamage
 
             //if there are sufficiently many, we can reduce resolution in between 
             //space between profiles requires fewer coordinates than space outside profiles 
-            if (coordinateQuantity >= 4) {
+            if (coordinateQuantity >= 4)
+            {
                 coordinateQuantity = Convert.ToInt32((coordinateQuantity / 2));
             }
             _NumInterpolatedStagesToCompute = coordinateQuantity;
 
         }
-        #endregion
-
-        #region Methods
         private void AddRules()
         {
             AddSinglePropertyRule(nameof(Inventory), new Rule(() => { Inventory.Validate(); return !Inventory.HasErrors; }, $"The structure inventory has errors: " + Inventory.GetErrors().ToString(), Inventory.ErrorLevel));
