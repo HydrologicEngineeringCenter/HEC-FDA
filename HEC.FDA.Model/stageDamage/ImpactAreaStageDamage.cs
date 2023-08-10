@@ -425,7 +425,7 @@ namespace HEC.FDA.Model.stageDamage
         {
 
             float interval = CalculateLowerIncrementOfStages(profileProbabilities);
-            List<float[]> stagesAtAllStructuresAllEvents = new List<float[]>();
+            List<float[]> stagesAtAllStructuresAllEvents = new();
             for (int stageIndex = 0; stageIndex < _NumExtrapolatedStagesToCompute + 1; stageIndex++)
             {
                 //for each stage, add the consequenceResult to the consequenceResultArray in the correct place
@@ -482,7 +482,7 @@ namespace HEC.FDA.Model.stageDamage
         private void InterpolateBetweenProfiles(ref List<ConsequenceDistributionResults> parallelConsequenceResultCollection, List<DeterministicOccupancyType> occTypes, float[] previousHydraulicProfile, float[] currentHydraulicProfile, string damageCategory, Inventory inventory, int stageIndex, int iterationIndex)
         {
             float[] intervalsAtStructures = CalculateIntervals(previousHydraulicProfile, currentHydraulicProfile);
-            List<float[]> stagesAllStructuresAllStages = new List<float[]>();
+            List<float[]> stagesAllStructuresAllStages = new();
             for (int interpolatorIndex = 0; interpolatorIndex < _NumInterpolatedStagesToCompute; interpolatorIndex++)
             {
                 float[] stages = CalculateIncrementOfStages(previousHydraulicProfile, intervalsAtStructures, interpolatorIndex + 1);
@@ -527,7 +527,7 @@ namespace HEC.FDA.Model.stageDamage
             float indexStationUpperStageDelta = (float)(_MaxStageForArea - stageAtProbabilityOfHighestProfile);
             float upperInterval = indexStationUpperStageDelta / _NumExtrapolatedStagesToCompute;
 
-            List<float[]> stagesAllStructuresAllEvents = new List<float[]>();
+            List<float[]> stagesAllStructuresAllEvents = new();
             for (int extrapolatorIndex = 1; extrapolatorIndex < _NumExtrapolatedStagesToCompute; extrapolatorIndex++)
             {
                 float[] WSEsParallelToIndexLocation = ExtrapolateFromAboveAtIndexLocation(inventoryAndWaterCoupled.Item2[^1], upperInterval, extrapolatorIndex);
