@@ -342,9 +342,9 @@ namespace HEC.FDA.Model.structures
         public List<ConsequenceResult> ComputeDamages(List<float[]> wses, int analysisYear, string damageCategory, List<DeterministicOccupancyType> deterministicOccupancyType)
         {
 
-            List<ConsequenceResult> aggregateConsequenceResults = new List<ConsequenceResult>();
+            List<ConsequenceResult> aggregateConsequenceResults = new();
             //assume each structure has a corresponding index to the depth
-            var structureParallelCollection = new double[wses.Count,Structures.Count];
+            var structureParallelCollection = new double[wses.Count, Structures.Count];
             var contentParallelCollection = new double[wses.Count, Structures.Count];
             var otherParallelCollection = new double[wses.Count, Structures.Count];
             var vehicleParallelCollection = new double[wses.Count, Structures.Count];
@@ -358,7 +358,7 @@ namespace HEC.FDA.Model.structures
                     if (wse[j] != -9999)
                     {
                         ConsequenceResult consequenceResult = Structures[i].ComputeDamage(wse[j], deterministicOccupancyType, PriceIndex, analysisYear);
-                        structureParallelCollection[j,i] = (consequenceResult.StructureDamage);
+                        structureParallelCollection[j, i] = (consequenceResult.StructureDamage);
                         contentParallelCollection[j, i] = (consequenceResult.ContentDamage);
                         otherParallelCollection[j, i] = (consequenceResult.OtherDamage);
                         vehicleParallelCollection[j, i] = (consequenceResult.VehicleDamage);
@@ -366,12 +366,17 @@ namespace HEC.FDA.Model.structures
                 }
                 Thread.Sleep(0);
             });
-            for (int j = 0;j < wses.Count; j++)
+            return AggregateResults(wses, damageCategory, aggregateConsequenceResults, structureParallelCollection, contentParallelCollection, otherParallelCollection, vehicleParallelCollection);
+        }
+
+        private List<ConsequenceResult> AggregateResults(List<float[]> wses, string damageCategory, List<ConsequenceResult> aggregateConsequenceResults, double[,] structureParallelCollection, double[,] contentParallelCollection, double[,] otherParallelCollection, double[,] vehicleParallelCollection)
+        {
+            for (int j = 0; j < wses.Count; j++)
             {
                 ConsequenceResult aggregateConsequenceResult = new(damageCategory);
                 for (int i = 0; i < Structures.Count; i++)
                 {
-                    aggregateConsequenceResult.IncrementConsequence(structureParallelCollection[j,i], contentParallelCollection[j, i], otherParallelCollection[j, i], vehicleParallelCollection[j,i]);
+                    aggregateConsequenceResult.IncrementConsequence(structureParallelCollection[j, i], contentParallelCollection[j, i], otherParallelCollection[j, i], vehicleParallelCollection[j, i]);
                 }
                 aggregateConsequenceResults.Add(aggregateConsequenceResult);
             }
@@ -405,8 +410,7 @@ namespace HEC.FDA.Model.structures
                 return defaultValue;
             else
             {
-                T retn = value as T;
-                if (retn != null)
+                if (value is T retn)
                     return retn;
                 else
                     return defaultValue;
