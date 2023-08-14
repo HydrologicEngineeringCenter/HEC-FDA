@@ -15,7 +15,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
     public class OccTypeAssetWithRatio : OccTypeAsset
     {
         private bool _IsByValue;
-        private bool _IsNotByValue;
 
         private ValueUncertaintyVM _CurrentContentValueVM;
         private ValueUncertaintyVM _ContentByRatioVM;
@@ -37,16 +36,10 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             set 
             { 
                 _IsByValue = value; 
-                IsNotByValue = !value; 
                 UpdateCurrentValueUncertaintyVM(); 
                 SomethingChanged(this, EventArgs.Empty); 
                 NotifyPropertyChanged(); 
             }
-        }
-        public bool IsNotByValue
-        {
-            get { return _IsNotByValue; }
-            set { _IsNotByValue = value; NotifyPropertyChanged(); }
         }
 
         public OccTypeAssetWithRatio(OccTypeAssetWithRatio item):base(item)
