@@ -4,6 +4,7 @@ using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
+using SixLabors.ImageSharp.Formats.Gif;
 using Statistics;
 using Statistics.Distributions;
 using System;
