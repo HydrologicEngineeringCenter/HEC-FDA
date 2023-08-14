@@ -229,13 +229,12 @@ namespace HEC.FDA.ViewModel.Inventory
                     double triMostLikely = ((Triangular)ordinate).MostLikely;
                     double triMin = ((Triangular)ordinate).Min;
                     double triMax = ((Triangular)ordinate).Max;
-                    //todo: what about most likely???
-                    valueUncertainty = new ValueRatioWithUncertainty(IDistributionEnum.Triangular, triMin, triMax);
+                    valueUncertainty = new ValueRatioWithUncertainty(IDistributionEnum.Triangular, triMin, triMostLikely, triMax);
                     break;
                 case IDistributionEnum.Uniform:
                     double uniMin = ((Uniform)ordinate).Min;
                     double uniMax = ((Uniform)ordinate).Max;
-                    valueUncertainty = new ValueRatioWithUncertainty(IDistributionEnum.Triangular, uniMin, uniMax);
+                    valueUncertainty = new ValueRatioWithUncertainty(IDistributionEnum.Uniform, uniMin, -9999, uniMax); //Uniform doesn't have a most likely. that -9999 wont get used. 
                     break;
 
             }
@@ -300,7 +299,7 @@ namespace HEC.FDA.ViewModel.Inventory
             return vr;
         }
 
-        private OccupancyType CreateModelOcctype(OccupancyTypes.OcctypeReference otRef)
+        private static OccupancyType CreateModelOcctype(OccupancyTypes.OcctypeReference otRef)
         {
             OccupancyTypes.OccupancyType ot = otRef.GetOccupancyType();
             UncertainPairedData structureUPD = ot.StructureItem.Curve.SelectedItemToPairedData();
