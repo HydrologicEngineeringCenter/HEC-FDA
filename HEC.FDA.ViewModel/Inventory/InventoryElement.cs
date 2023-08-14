@@ -183,20 +183,16 @@ namespace HEC.FDA.ViewModel.Inventory
                     elevationUncertainty = new FirstFloorElevationUncertainty();
                     break;
                 case IDistributionEnum.Normal:
-                    double normalMean = ((Normal)ordinate).Mean;
                     double normalStDev = ((Normal)ordinate).StandardDeviation;
                     elevationUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.Normal, normalStDev);
                     break;
                 case IDistributionEnum.LogNormal:
-                    double logNormalMean = ((LogNormal)ordinate).Mean;
                     double logNormalStDev = ((LogNormal)ordinate).StandardDeviation;
                     elevationUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.LogNormal, logNormalStDev);
                     break;
                 case IDistributionEnum.Triangular:
-                    double triMostLikely = ((Triangular)ordinate).MostLikely;
                     double triMin = ((Triangular)ordinate).Min;
                     double triMax = ((Triangular)ordinate).Max;
-                    //todo: what about most likely???
                     elevationUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.Triangular, triMin, triMax);
                     break;
                 case IDistributionEnum.Uniform:
