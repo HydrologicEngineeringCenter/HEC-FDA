@@ -6,6 +6,7 @@ using Statistics.Distributions;
 using Statistics.Histograms;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.metrics;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ModelTest.unittests
 {
@@ -81,6 +82,21 @@ namespace HEC.FDA.ModelTest.unittests
             }
             Histogram histogram = new(data, convergenceCriteria);
             return histogram;
+        }
+
+        [Theory]
+        [InlineData(1111, 100)]
+        public void SerializationShouldReadTheSameObjectItWrites(int seed, int iterations)
+        {
+            ConsequenceDistributionResults expected = new ConsequenceDistributionResults();
+            List<ConsequenceDistributionResult> resultList = new();
+            List<double> data = new() { 0, 1, 2, 3, 4 };
+            expected.AddExistingConsequenceResultObject(new ConsequenceDistributionResult("DamCat", "AssetCat", new Histogram(data, new ConvergenceCriteria(69, 8008)), 0));
+            XElement xElement = expected.WriteToXML();
+
+            ConsequenceDistributionResults actual = ConsequenceDistributionResults.ReadFromXML(xElement);
+
+            Assert.True(actual.Equals(expected));
         }
     }
 }

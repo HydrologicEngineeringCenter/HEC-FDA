@@ -43,7 +43,7 @@ jobs:
       run: dotnet publish -v quiet HEC.FDA.View/HEC.FDA.View.csproj
       
     - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v2.2.4
+      uses: actions/upload-artifact@v3.1.2
       with:
         name: HEC-FDA-2.0-Snapshot
         path: .\build\publish\fda2.0

@@ -10,7 +10,8 @@ namespace HEC.FDA.View.Commands
         /// <summary>
         /// This has to be here for "ICommand"
         /// </summary>
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler CanExecuteChanged { add { } remove { } }
+
         #region Voids
 
         public void Execute(object parameter)

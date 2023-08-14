@@ -115,7 +115,6 @@ namespace Importer
                 {
                     continue;
                 }
-                WriteLine($"Input Line->{_InpString}");
                 string inpStringTrimmed = _InpString.TrimEnd();
                 _InpStringCap = inpStringTrimmed.ToUpper();
 
@@ -127,12 +126,6 @@ namespace Importer
                 _InputStringParsed = inpStringTrimmed.Split(delimiterChar);
                 _NumFieldsInputString = _InputStringParsed.Length;
                 _InputStringCapParsed = _InpStringCap.Split(delimiterChar);
-
-                WriteLine($"Number of fields: {_NumFieldsInputString}");
-                for (int i = 0; i < _NumFieldsInputString; i++)
-                {
-                    WriteLine($"Field: {i},\tContent: {_InputStringParsed[i]}");
-                }
 
                 //Check for Keyword, Flush if necessary
                 if (IsKeyRecord(_InputStringParsed[0].ToUpper()))
@@ -833,13 +826,10 @@ namespace Importer
                 //Read the data
                 int numOrds = _NumFieldsInputString - _IStartOcctype;
                 if (numOrds > 0) _FlushOccType = true;
-
-                WriteLine($"numOrds: {numOrds}\tnumFieldsInputString: {_NumFieldsInputString}\tiStartOcctype: {_IStartOcctype}");
                 _TheData = new double[numOrds];
                 _NumValTheData = numOrds;
                 for (int jfl = _IStartOcctype; jfl < _NumFieldsInputString; jfl++)
                 {
-                    WriteLine($"jfl {jfl},   Data: {_InputStringParsed[jfl]}");
                     int jdata = jfl - _IStartOcctype;
                     _TheData[jdata] = Convert.ToDouble(_InputStringParsed[jfl]);
                 }

@@ -12,6 +12,10 @@ using Geospatial.Terrain;
 using HEC.MVVMFramework.Model.Messaging;
 using Utilities;
 using HEC.FDA.Model.metrics;
+using System.Threading.Tasks;
+using System.Collections.Immutable;
+using System.Threading;
+using System.Collections.Concurrent;
 
 namespace HEC.FDA.Model.structures
 {
@@ -82,7 +86,7 @@ namespace HEC.FDA.Model.structures
             {
                 return polygons;
             }
-            if (impactAreaPrj.IsEqual(studyProjection) )
+            if (impactAreaPrj.IsEqual(studyProjection))
             {
                 return polygons;
             }
@@ -190,7 +194,6 @@ namespace HEC.FDA.Model.structures
                 Structures.Add(new Structure(fid, point, ff_elev, val_struct, st_damcat, occtype, impactAreaID, val_cont,
                     val_vehic, val_other, cbfips, beginningDamage, ground_elv, found_ht, yearInService, numStructures));
             }
-            Console.WriteLine("finished");
         }
         public static float[] GetGroundElevationFromRASTerrain(PointFeatureLayer pointLayer, TerrainLayer terrain, Projection studyProjection)
         {
@@ -214,7 +217,7 @@ namespace HEC.FDA.Model.structures
                 reprojPointMs.Add(ReprojectPoint(pt, studyProjection, siProjection));
             }
             return reprojPointMs;
-         
+
         }
         #region Projection
         public static PointM ReprojectPoint(PointM point, Projection newProjection, Projection currentProjection)
@@ -322,11 +325,11 @@ namespace HEC.FDA.Model.structures
             }
             return structureDetails;
         }
-        
+
         public List<DeterministicOccupancyType> SampleOccupancyTypes(IProvideRandomNumbers randomNumberProvider)
         {
             List<DeterministicOccupancyType> deterministicOccupancyTypes = new();
-            foreach(OccupancyType occupancyType in OccTypes.Values)
+            foreach (OccupancyType occupancyType in OccTypes.Values)
             {
                 DeterministicOccupancyType deterministicOccupancyType = occupancyType.Sample(randomNumberProvider);
                 deterministicOccupancyTypes.Add(deterministicOccupancyType);
@@ -336,20 +339,48 @@ namespace HEC.FDA.Model.structures
         }
 
 
-        public ConsequenceResult ComputeDamages(float[] wses, int analysisYear, string damageCategory, List<DeterministicOccupancyType> deterministicOccupancyType)
+        public List<ConsequenceResult> ComputeDamages(List<float[]> wses, int analysisYear, string damageCategory, List<DeterministicOccupancyType> deterministicOccupancyType)
         {
-            ConsequenceResult aggregateConsequenceResult = new(damageCategory);
+
+            List<ConsequenceResult> aggregateConsequenceResults = new();
             //assume each structure has a corresponding index to the depth
-            for (int i = 0; i < Structures.Count; i++)
+            var structureParallelCollection = new double[wses.Count, Structures.Count];
+            var contentParallelCollection = new double[wses.Count, Structures.Count];
+            var otherParallelCollection = new double[wses.Count, Structures.Count];
+            var vehicleParallelCollection = new double[wses.Count, Structures.Count];
+
+            Parallel.For(0, Structures.Count, i =>
             {
-                float wse = wses[i];
-                if (wse != -9999)
+                float[] wse = wses.Select(array => array[i]).ToArray();
+
+                for (int j = 0; j < wse.Length; j++)
                 {
-                    ConsequenceResult consequenceResult = Structures[i].ComputeDamage(wse, deterministicOccupancyType, PriceIndex, analysisYear);
-                    aggregateConsequenceResult.IncrementConsequence(consequenceResult.StructureDamage, consequenceResult.ContentDamage, consequenceResult.VehicleDamage, consequenceResult.OtherDamage);
+                    if (wse[j] != -9999)
+                    {
+                        ConsequenceResult consequenceResult = Structures[i].ComputeDamage(wse[j], deterministicOccupancyType, PriceIndex, analysisYear);
+                        structureParallelCollection[j, i] = (consequenceResult.StructureDamage);
+                        contentParallelCollection[j, i] = (consequenceResult.ContentDamage);
+                        otherParallelCollection[j, i] = (consequenceResult.OtherDamage);
+                        vehicleParallelCollection[j, i] = (consequenceResult.VehicleDamage);
+                    }
                 }
+                Thread.Sleep(0);
+            });
+            return AggregateResults(wses, damageCategory, aggregateConsequenceResults, structureParallelCollection, contentParallelCollection, otherParallelCollection, vehicleParallelCollection);
+        }
+
+        private List<ConsequenceResult> AggregateResults(List<float[]> wses, string damageCategory, List<ConsequenceResult> aggregateConsequenceResults, double[,] structureParallelCollection, double[,] contentParallelCollection, double[,] otherParallelCollection, double[,] vehicleParallelCollection)
+        {
+            for (int j = 0; j < wses.Count; j++)
+            {
+                ConsequenceResult aggregateConsequenceResult = new(damageCategory);
+                for (int i = 0; i < Structures.Count; i++)
+                {
+                    aggregateConsequenceResult.IncrementConsequence(structureParallelCollection[j, i], contentParallelCollection[j, i], otherParallelCollection[j, i], vehicleParallelCollection[j, i]);
+                }
+                aggregateConsequenceResults.Add(aggregateConsequenceResult);
             }
-            return aggregateConsequenceResult;
+            return aggregateConsequenceResults;
         }
         #endregion
 
@@ -379,8 +410,7 @@ namespace HEC.FDA.Model.structures
                 return defaultValue;
             else
             {
-                T retn = value as T;
-                if (retn != null)
+                if (value is T retn)
                     return retn;
                 else
                     return defaultValue;

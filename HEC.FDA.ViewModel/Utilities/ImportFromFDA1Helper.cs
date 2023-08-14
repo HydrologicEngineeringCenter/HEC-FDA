@@ -81,7 +81,8 @@ namespace HEC.FDA.ViewModel.Utilities
             {
                 discharges.Add(rat.GetDischarge()[i]);
             }
-            return new UncertainPairedData(discharges.ToArray(), ys.ToArray(), "Stage", "Flow", "Rating", "");
+            CurveMetaData curveMetaData = new("Stage", "Flow", "Rating", "");
+            return new UncertainPairedData(discharges.ToArray(), ys.ToArray(), curveMetaData);
         }
 
         private static List<IDistribution> CreateLogNormalDistributions(RatingFunction rat)
@@ -395,7 +396,8 @@ namespace HEC.FDA.ViewModel.Utilities
                     damagesList.Add(new Normal(damages[i], stDevs[i]));
                 }
             }
-            return new UncertainPairedData(depthsList.ToArray(), damagesList.ToArray(), "Stage", "Damage", "Stage-Damage", "");
+            CurveMetaData curveMetaData = new("Stage", "Damage", "Stage-Damage", "");
+            return new UncertainPairedData(depthsList.ToArray(), damagesList.ToArray(), curveMetaData);
         }
 
         private static StageDamageCurve CreateStageDamageCurve(SingleDamageFunction sdf, string assetCategory, string damageReachName, string damCat,
@@ -537,7 +539,8 @@ namespace HEC.FDA.ViewModel.Utilities
         private static InflowOutflowElement CreateInflowOutflow(ProbabilityFunction probFunction, int elemID)
         {
             List<IDistribution> distributedOrdinates = GetUncertaintyValues(probFunction);
-            UncertainPairedData func = new UncertainPairedData(probFunction.TransFlowInflow, distributedOrdinates.ToArray(), "Inflow", "Outflow", "Inflow-Outflow", "");
+            CurveMetaData metaData = new("Inflow", "Outflow", "Inflow-Outflow", "");
+            UncertainPairedData func = new UncertainPairedData(probFunction.TransFlowInflow, distributedOrdinates.ToArray(), metaData);
             CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.REGULATED_UNREGULATED, StringConstants.UNREGULATED, StringConstants.REGULATED);
             curveComponentVM.SetPairedData(func);
             return new InflowOutflowElement(probFunction.Name, probFunction.CalculationDate, CreatePYSRDescription(probFunction), curveComponentVM, elemID);
@@ -844,7 +847,8 @@ namespace HEC.FDA.ViewModel.Utilities
         {
             List<double> xs = new List<double>() { 0 };
             List<Deterministic> ys = new List<Deterministic>() { new Deterministic(0) };
-            return new UncertainPairedData(xs.ToArray(), ys.ToArray(), "Stage", "Damage", "Stage Damage", "");
+            CurveMetaData metaData = new("Stage", "Damage", "Stage Damage", "");
+            return new UncertainPairedData(xs.ToArray(), ys.ToArray(), metaData);
         }
 
         private static bool IsEmptyFunction(SingleDamageFunction function)
@@ -923,7 +927,8 @@ namespace HEC.FDA.ViewModel.Utilities
 
             try
             {
-                return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "Stage", "Damage", "Occupancy Type", "");
+                CurveMetaData metaData = new("Stage", "Damage", "Occupancy Type", "");
+                return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), metaData);
             }
             catch (ArgumentException e)
             {
@@ -942,7 +947,8 @@ namespace HEC.FDA.ViewModel.Utilities
 
             try
             {
-                return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "Stage", "Damage", "Occupancy Type", "");
+                CurveMetaData metaData = new("Stage", "Damage", "Occupancy Type", "");
+                return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), metaData);
             }
             catch (ArgumentException e)
             {
@@ -961,7 +967,8 @@ namespace HEC.FDA.ViewModel.Utilities
 
             try
             {
-                return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "Stage", "Damage", "Occupancy Type", "");
+                CurveMetaData metaData = new("Stage", "Damage", "Occupancy Type", "");
+                return new UncertainPairedData(xs.ToArray(), yVals.ToArray(), metaData);
             }
             catch (ArgumentException e)
             {
@@ -1068,7 +1075,8 @@ namespace HEC.FDA.ViewModel.Utilities
                 List<double> defaultXs = new List<double>() { lev.ElevationTopOfLevee, lev.ElevationTopOfLevee + .000000000000001 };
                 List<Deterministic> defaultYs = new List<Deterministic>() { new Deterministic(0), new Deterministic(1) };
 
-                func = new UncertainPairedData(defaultXs.ToArray(), defaultYs.ToArray(), "Elevation", "Probability", "Failure Function", "");
+                CurveMetaData cm = new("Elevation", "Probability", "Failure Function", "");
+                func = new UncertainPairedData(defaultXs.ToArray(), defaultYs.ToArray(), cm);
                 message += "No failure function was detected.\nCreating default failure function at top of levee.";
             }
             else
@@ -1078,7 +1086,8 @@ namespace HEC.FDA.ViewModel.Utilities
                 {
                     yVals.Add(new Deterministic(d));
                 }
-                func = new UncertainPairedData(xs.ToArray(), yVals.ToArray(), "Elevation", "Probability", "Failure Function", "");
+                CurveMetaData cm = new("Elevation", "Probability", "Failure Function", "");
+                func = new UncertainPairedData(xs.ToArray(), yVals.ToArray(), cm);
                 isDefault = false;
             }
             CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.SYSTEM_RESPONSE_CURVE, StringConstants.STAGE, StringConstants.FAILURE_FREQUENCY);
@@ -1117,7 +1126,8 @@ namespace HEC.FDA.ViewModel.Utilities
                 xs.Add(xy.GetX());
                 ys.Add(new Deterministic(xy.GetY()));
             }
-            UncertainPairedData func = new UncertainPairedData(xs.ToArray(), ys.ToArray(), "Exterior Stage", "Interior Stage", "Exterior-Interior", "");
+            CurveMetaData cm = new("Exterior Stage", "Interior Stage", "Exterior-Interior", "");
+            UncertainPairedData func = new UncertainPairedData(xs.ToArray(), ys.ToArray(), cm);
 
             CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.EXT_INT, StringConstants.EXT_STAGE, StringConstants.INT_STAGE);
             curveComponentVM.SetPairedData(func);

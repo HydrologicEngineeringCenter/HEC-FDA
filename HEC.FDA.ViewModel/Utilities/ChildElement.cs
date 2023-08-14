@@ -20,8 +20,6 @@ namespace HEC.FDA.ViewModel.Utilities
         private const string LAST_EDIT_DATE_XML_TAG = "LastEditDate";
 
         private string _Description = "";
-        private int _FontSize = 14;
-        private bool _IsBold = false;
 
         #endregion
         #region Properties
@@ -33,16 +31,6 @@ namespace HEC.FDA.ViewModel.Utilities
         public int ID { get; set; }
         public bool IsOpenInTabOrWindow { get; set; }
 
-        public int FontSize
-        {
-            get { return _FontSize; }
-            set { _FontSize = value; NotifyPropertyChanged(nameof(FontSize)); }
-        }
-        public bool IsBold
-        {
-            get { return _IsBold; }
-            set { _IsBold = value; NotifyPropertyChanged(nameof(IsBold)); }
-        }
 
         public string Description
         {
@@ -54,6 +42,8 @@ namespace HEC.FDA.ViewModel.Utilities
         #region Constructors
         public ChildElement(XElement element, int id)
         {
+            FontSize = 14;
+            IsBold = false;
             ID = id;
             ReadHeaderXElement(element.Element(HEADER_XML_TAG));
             CustomTreeViewHeader = new CustomHeaderVM(Name)
@@ -65,6 +55,8 @@ namespace HEC.FDA.ViewModel.Utilities
 
         public ChildElement(string name, string lastEditDate, string description, int id)
         {
+            FontSize = 14;
+            IsBold = false;
             Name = name;
             LastEditDate = lastEditDate;
             Description = description;

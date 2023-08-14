@@ -5,7 +5,7 @@ namespace HEC.FDA.ViewModel.Utilities
 {
     public class CommandHandler : ICommand
     {
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler CanExecuteChanged { add { } remove { } }
         private Action _action;
         private bool _canExecute;
 
