@@ -9,6 +9,7 @@ using Statistics;
 using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Xml.Linq;
 using static HEC.FDA.Model.structures.OccupancyType;
@@ -334,16 +335,10 @@ namespace HEC.FDA.ViewModel.Inventory
                 .WithVehicleValueUncertainty(vehicleUncertainty)
                 .WithOtherValueUncertainty(otherUncertainty);
 
-            if (ot.ContentItem.IsByValue)
-            {
-                builder.WithContentToStructureValueRatio(CreateValueRatioWithUncertainty(ot.ContentItem.ContentByRatioVM.CreateOrdinate()));
-            }
-
-            if (ot.OtherItem.IsByValue)
+            if (!ot.OtherItem.IsByValue)
             {
                 builder.WithOtherToStructureValueRatio(CreateValueRatioWithUncertainty(ot.OtherItem.ContentByRatioVM.CreateOrdinate()));
             }
-
             return builder.Build();
         }
 
