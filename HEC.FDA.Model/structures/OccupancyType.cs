@@ -17,7 +17,6 @@ namespace HEC.FDA.Model.structures
         private string _OccupancyTypeDamageCategory;
 
         //configuration flags 
-        private bool _ComputeStructureDamage = false;
         private bool _ComputeContentDamage = false;
         private bool _ComputeVehicleDamage = false;
         private bool _ComputeOtherDamage = false;
@@ -46,36 +45,6 @@ namespace HEC.FDA.Model.structures
         #endregion
 
         #region Properties 
-        internal bool UseContentToStructureValueRatio
-        {
-            get
-            {
-                return _UseContentToStructureValueRatio;
-            }
-        }
-        internal bool UseOtherToStructureValueRatio
-        {
-            get
-            {
-                return _UseOtherToStructureValueRatio;
-            }
-        }
-        internal bool ComputeStructureDamage
-        {
-            get { return _ComputeStructureDamage; }
-        }
-        internal bool ComputeContentDamage
-        {
-            get { return _ComputeContentDamage; }
-        }
-        internal bool ComputeOtherDamage
-        {
-            get { return _ComputeOtherDamage; }
-        }
-        internal bool ComputeVehicleDamage
-        {
-            get { return _ComputeVehicleDamage; }
-        }
         public string DamageCategory
         {
             get { return _OccupancyTypeDamageCategory; }
@@ -217,7 +186,6 @@ namespace HEC.FDA.Model.structures
             {
                 _OccupancyType._StructureDepthPercentDamageFunction = structureDepthPercentDamage;
                 _OccupancyType.AddSinglePropertyRule(nameof(structureDepthPercentDamage), new Rule(() => { structureDepthPercentDamage.Validate(); return !structureDepthPercentDamage.HasErrors; }, $"The structure depth-percent damage function named {structureDepthPercentDamage.Name} associated with occupancy type {_OccupancyType.Name} has errors: "+structureDepthPercentDamage.GetErrors().ToString(), structureDepthPercentDamage.ErrorLevel)) ;
-                _OccupancyType._ComputeStructureDamage = true;
                 return new OccupancyTypeBuilder(_OccupancyType);
             }
 
