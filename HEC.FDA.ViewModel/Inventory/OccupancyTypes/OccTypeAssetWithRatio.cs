@@ -30,6 +30,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             get { return _ContentByRatioVM; }
         }
 
+        /// <summary>
+        /// If true, occupancy type uses the value assigned in the structure inventory as it's most likely, else it uses the assigned ratio of the structure value.
+        /// </summary>
         public bool IsByValue
         {
             get { return _IsByValue; }

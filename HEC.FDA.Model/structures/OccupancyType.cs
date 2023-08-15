@@ -2,7 +2,6 @@
 using HEC.FDA.Model.interfaces;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Enumerations;
-using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Model.Messaging;
 using System.Collections.Generic;
@@ -20,9 +19,6 @@ namespace HEC.FDA.Model.structures
         private bool _ComputeContentDamage = false;
         private bool _ComputeVehicleDamage = false;
         private bool _ComputeOtherDamage = false;
-
-        private bool _UseContentToStructureValueRatio = false;
-        private bool _UseOtherToStructureValueRatio = false;
 
         //damage functions
         private UncertainPairedData _StructureDepthPercentDamageFunction;
@@ -53,8 +49,9 @@ namespace HEC.FDA.Model.structures
         {
             get { return _OccupancyTypeName; }
         }
-
         public List<ValidationGroup> ValidationGroups { get; } = new List<ValidationGroup>();
+        public bool UseContentToStructureValueRatio { get; set; }
+        public bool UseOtherToStructureValueRatio { get; set; }
 
         #endregion
         #region Constructor
@@ -119,7 +116,7 @@ namespace HEC.FDA.Model.structures
             double contentValueRatioSampled = 0;
             if (_ComputeContentDamage)
             {
-                if (_UseContentToStructureValueRatio)
+                if (UseContentToStructureValueRatio)
                 {
                     contentValueRatioSampled = (_ContentToStructureValueRatio.Sample(randomNumbers.NextRandom(), computeIsDeterministic));
                 }
@@ -133,7 +130,7 @@ namespace HEC.FDA.Model.structures
             double otherValueRatioSampled = 0;
             if (_ComputeOtherDamage)
             {
-                if (_UseOtherToStructureValueRatio)
+                if (UseOtherToStructureValueRatio)
                 {
                     otherValueRatioSampled = (_OtherToStructureValueRatio.Sample(randomNumbers.NextRandom(), computeIsDeterministic))/100;
                 }
@@ -150,7 +147,7 @@ namespace HEC.FDA.Model.structures
                 vehicleValueOffsetSampled = _VehicleValueError.Sample(randomNumbers.NextRandom(), computeIsDeterministic);
                 vehicleDamagePairedData = _VehicleDepthPercentDamageFunction.SamplePairedData(randomNumbers.NextRandom(), computeIsDeterministic);
             }
-            return new DeterministicOccupancyType(_OccupancyTypeName, _OccupancyTypeDamageCategory, structDamagePairedData, firstFloorElevationOffsetSampled, structureValueOffsetSampled, _ComputeContentDamage, _ComputeVehicleDamage, _ComputeOtherDamage, contentDamagePairedData, contentValueOffsetSampled, _UseContentToStructureValueRatio, contentValueRatioSampled, vehicleDamagePairedData, vehicleValueOffsetSampled, otherDamagePairedData, otherValueOffsetSampled, _UseOtherToStructureValueRatio, otherValueRatioSampled, _StructureValueIsLogNormal, _ContentValueIsLogNormal, _OtherValueIsLogNormal, _VehicleValueIsLogNormal, _FirstFloorElevationIsLogNormal);
+            return new DeterministicOccupancyType(_OccupancyTypeName, _OccupancyTypeDamageCategory, structDamagePairedData, firstFloorElevationOffsetSampled, structureValueOffsetSampled, _ComputeContentDamage, _ComputeVehicleDamage, _ComputeOtherDamage, contentDamagePairedData, contentValueOffsetSampled, UseContentToStructureValueRatio, contentValueRatioSampled, vehicleDamagePairedData, vehicleValueOffsetSampled, otherDamagePairedData, otherValueOffsetSampled, UseOtherToStructureValueRatio, otherValueRatioSampled, _StructureValueIsLogNormal, _ContentValueIsLogNormal, _OtherValueIsLogNormal, _VehicleValueIsLogNormal, _FirstFloorElevationIsLogNormal);
         }
 
 
@@ -258,14 +255,14 @@ namespace HEC.FDA.Model.structures
             {
                 _OccupancyType._ContentToStructureValueRatio = valueRatioWithUncertainty;
                 _OccupancyType.AddSinglePropertyRule(nameof(valueRatioWithUncertainty), new Rule(() => { valueRatioWithUncertainty.Validate(); return !valueRatioWithUncertainty.HasErrors; }, $"The uncertainty about the content to structure value ratio for occupancy type {_OccupancyType.Name} has errors: " + valueRatioWithUncertainty.GetErrors().ToString(), valueRatioWithUncertainty.ErrorLevel));
-                _OccupancyType._UseContentToStructureValueRatio = true;
+                _OccupancyType.UseContentToStructureValueRatio = true;
                 return new OccupancyTypeBuilder(_OccupancyType);
             }
             public OccupancyTypeBuilder WithOtherToStructureValueRatio(ValueRatioWithUncertainty valueRatioWithUncertainty)
             {
                 _OccupancyType._OtherToStructureValueRatio = valueRatioWithUncertainty;
                 _OccupancyType.AddSinglePropertyRule(nameof(valueRatioWithUncertainty), new Rule(() => { valueRatioWithUncertainty.Validate(); return !valueRatioWithUncertainty.HasErrors; }, $"The uncertainty about the other to structure value ratio for occupancy type {_OccupancyType.Name} has errors: " + valueRatioWithUncertainty.GetErrors().ToString(), valueRatioWithUncertainty.ErrorLevel));
-                _OccupancyType._UseOtherToStructureValueRatio = true;
+                _OccupancyType.UseOtherToStructureValueRatio = true;
                 return new OccupancyTypeBuilder(_OccupancyType);
             }
             public OccupancyTypeBuilder WithFirstFloorElevationUncertainty(FirstFloorElevationUncertainty firstFloorElevationUncertainty)

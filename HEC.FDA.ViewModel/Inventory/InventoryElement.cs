@@ -302,6 +302,11 @@ namespace HEC.FDA.ViewModel.Inventory
         private static OccupancyType CreateModelOcctype(OccupancyTypes.OcctypeReference otRef)
         {
             OccupancyTypes.OccupancyType ot = otRef.GetOccupancyType();
+            return CreateModelOcctypeFromVMOcctype(ot);
+        }
+
+        public static OccupancyType CreateModelOcctypeFromVMOcctype(OccupancyTypes.OccupancyType ot)
+        {
             UncertainPairedData structureUPD = ot.StructureItem.Curve.SelectedItemToPairedData();
             UncertainPairedData contentUPD = ot.ContentItem.Curve.SelectedItemToPairedData();
             UncertainPairedData vehicleUPD = ot.VehicleItem.Curve.SelectedItemToPairedData();
@@ -315,7 +320,7 @@ namespace HEC.FDA.ViewModel.Inventory
             ValueUncertainty vehicleUncertainty = CreateValueUncertainty(ot.VehicleItem.ValueUncertainty.CreateOrdinate());
             ValueUncertainty otherUncertainty = CreateValueUncertainty(ot.OtherItem.ValueUncertainty.CreateOrdinate());
 
-            OccupancyTypeBuilder builder = OccupancyType.Builder()
+            OccupancyTypeBuilder builder = Builder()
                 .WithName(ot.Name)
                 .WithDamageCategory(ot.DamageCategory)
                 .WithStructureDepthPercentDamage(structureUPD)
