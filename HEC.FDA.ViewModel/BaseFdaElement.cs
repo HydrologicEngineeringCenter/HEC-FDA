@@ -17,7 +17,6 @@ namespace HEC.FDA.ViewModel
         #region Fields
         private List<NamedAction> _Actions;
         private CustomHeaderVM _CustomTreeViewHeader;
-        private bool _TableContainsGeoData = false;
         private bool _IsExpanded = true;
         private int _FontSize = 14;
         private bool _IsBold = true;

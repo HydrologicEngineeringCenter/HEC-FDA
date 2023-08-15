@@ -11,7 +11,7 @@ namespace HEC.FDA.View.Commands
         #endregion
 
         #region Events
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler CanExecuteChanged { add { } remove { } }
         #endregion
 
         #region Voids

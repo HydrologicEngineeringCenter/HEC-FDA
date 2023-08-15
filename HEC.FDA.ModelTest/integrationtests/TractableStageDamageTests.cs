@@ -155,10 +155,6 @@ namespace HEC.FDA.ModelTest.integrationtests
 
         #endregion
 
-        #region Other objects 
-        private static readonly ConvergenceCriteria convergenceCriteria = new(minIterations: 100, maxIterations: 200);
-        #endregion
-
         /// <summary>
         /// The solution for the below test is available at https://docs.google.com/spreadsheets/d/1QTjZ6BzGMBmxB-xWurNz08wnQx7HrmOm/edit?usp=share_link&ouid=105470256128470573157&rtpof=true&sd=true
         /// </summary>
@@ -176,12 +172,12 @@ namespace HEC.FDA.ModelTest.integrationtests
             {
                 if (damageCategory == residentialDamAndOccType)
                 {
-                    ImpactAreaStageDamage impactAreaStageDamage = new(impactAreaID, residentialStructureInventory, hydraulicDataset, convergenceCriteria, "fakeHydroDir", graphicalFrequency: flowFrequency, dischargeStage: dischargeStage, unregulatedRegulated: unregReg, usingMockData: true);
+                    ImpactAreaStageDamage impactAreaStageDamage = new(impactAreaID, residentialStructureInventory, hydraulicDataset, "fakeHydroDir", graphicalFrequency: flowFrequency, dischargeStage: dischargeStage, unregulatedRegulated: unregReg, usingMockData: true);
                     stageDamageFunctions = impactAreaStageDamage.Compute(new MedianRandomProvider());
                 }
                 else
                 {
-                    ImpactAreaStageDamage impactAreaStageDamage = new(impactAreaID, commercialStructureInventory, hydraulicDataset, convergenceCriteria, "fakeHydroDir", graphicalFrequency: flowFrequency, dischargeStage: dischargeStage, unregulatedRegulated: unregReg, usingMockData: true);
+                    ImpactAreaStageDamage impactAreaStageDamage = new(impactAreaID, commercialStructureInventory, hydraulicDataset, "fakeHydroDir", graphicalFrequency: flowFrequency, dischargeStage: dischargeStage, unregulatedRegulated: unregReg, usingMockData: true);
                     stageDamageFunctions = impactAreaStageDamage.Compute(new MedianRandomProvider());
                 }
             } 
@@ -189,12 +185,12 @@ namespace HEC.FDA.ModelTest.integrationtests
             {
                 if (damageCategory == residentialDamAndOccType)
                 {
-                    ImpactAreaStageDamage impactAreaStageDamage = new(impactAreaID, residentialStructureInventory, hydraulicDataset, convergenceCriteria, "fakeHydroDir", graphicalFrequency: stageFrequency, usingMockData: true);
+                    ImpactAreaStageDamage impactAreaStageDamage = new(impactAreaID, residentialStructureInventory, hydraulicDataset, "fakeHydroDir", graphicalFrequency: stageFrequency, usingMockData: true);
                     stageDamageFunctions = impactAreaStageDamage.Compute(new MedianRandomProvider());
                 }
                 else
                 {
-                    ImpactAreaStageDamage impactAreaStageDamage = new(impactAreaID, commercialStructureInventory, hydraulicDataset, convergenceCriteria, "fakeHydroDir", graphicalFrequency: stageFrequency, usingMockData: true);
+                    ImpactAreaStageDamage impactAreaStageDamage = new(impactAreaID, commercialStructureInventory, hydraulicDataset, "fakeHydroDir", graphicalFrequency: stageFrequency, usingMockData: true);
                     stageDamageFunctions = impactAreaStageDamage.Compute(new MedianRandomProvider());
                 }
             }

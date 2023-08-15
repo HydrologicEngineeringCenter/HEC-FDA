@@ -35,11 +35,6 @@ namespace HEC.FDA.ViewModel.Study
             get { return _HaventImported; }
             set { _HaventImported = value; NotifyPropertyChanged(); }
         }
-        public string Description
-        {
-            get { return _Description; }
-            set { _Description = value; NotifyPropertyChanged(); }
-        }
         public string FolderPath
         {
             get { return _FolderPath; }
