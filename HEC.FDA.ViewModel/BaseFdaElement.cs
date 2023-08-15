@@ -1,5 +1,8 @@
 ﻿using HEC.FDA.ViewModel.Utilities;
+using System.Collections;
 using System.Collections.Generic;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace HEC.FDA.ViewModel
 {
@@ -43,6 +46,11 @@ namespace HEC.FDA.ViewModel
             get { return _IsBold; }
             set { _IsBold = value; NotifyPropertyChanged(nameof(IsBold)); }
         }
+
+        // These were added just to get rid of BindingExpression path errors. These are required by TreeViewItem, but apparently we don't actually use them?
+        public object ToolTip { get; set; } = new ToolTip();
+        public IEnumerable Elements { get; set; } 
+
 
         /// <summary>
         /// This governs the image and text that is displayed in the main trees.
