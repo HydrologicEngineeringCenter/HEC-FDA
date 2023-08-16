@@ -19,12 +19,18 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         private ValueUncertaintyVM _CurrentContentValueVM;
         private readonly ValueUncertaintyVM _ContentByRatioVM;
 
+        /// <summary>
+        /// This is the VM that shows in the UI
+        /// </summary>
         public ValueUncertaintyVM CurrentValueVM
         {
             get { return _CurrentContentValueVM; }
             set { _CurrentContentValueVM = value; SomethingChanged(this, EventArgs.Empty); NotifyPropertyChanged(); }
         }
 
+        /// <summary>
+        /// This is the VM that clobbers the parent VM if the Use Ratio checkbox is checked. 
+        /// </summary>
         public ValueUncertaintyVM ContentByRatioVM
         {
             get { return _ContentByRatioVM; }
@@ -82,11 +88,11 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
             if (IsByValue)
             {
-                CurrentValueVM = ValueUncertainty;
+                CurrentValueVM = ValueUncertainty; // if we're just doing the normal by value, use the value uncertainty defined in the parent occTypeAsset
             }
             else
             {
-                CurrentValueVM = _ContentByRatioVM;
+                CurrentValueVM = _ContentByRatioVM; // if not, we need to be using this child one that includes the ratio.
             }
         }
 

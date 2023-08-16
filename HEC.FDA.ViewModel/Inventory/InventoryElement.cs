@@ -333,7 +333,7 @@ namespace HEC.FDA.ViewModel.Inventory
                 builder.WithOtherDepthPercentDamage(otherUPD);
                 if (!ot.OtherItem.IsByValue)
                 {
-                    builder.WithOtherToStructureValueRatio(CreateValueRatioWithUncertainty(ot.OtherItem.ValueByRatioVM.CreateOrdinate())); // Look at renaming contentbyratioVM
+                    builder.WithOtherToStructureValueRatio(CreateValueRatioWithUncertainty(ot.OtherItem.ContentByRatioVM.CreateOrdinate())); // Look at renaming contentbyratioVM
                 }
                 else
                 {
@@ -346,7 +346,7 @@ namespace HEC.FDA.ViewModel.Inventory
                 builder.WithContentDepthPercentDamage(contentUPD);
                 if (!ot.ContentItem.IsByValue)
                 {
-                    builder.WithContentToStructureValueRatio(CreateValueRatioWithUncertainty(ot.ContentItem.ValueByRatioVM.CreateOrdinate()));
+                    builder.WithContentToStructureValueRatio(CreateValueRatioWithUncertainty(ot.ContentItem.ContentByRatioVM.CreateOrdinate()));
                 }
                 else
                 {
