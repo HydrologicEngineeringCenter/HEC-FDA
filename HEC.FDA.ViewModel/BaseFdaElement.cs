@@ -49,7 +49,7 @@ namespace HEC.FDA.ViewModel
         }
 
         // These were added just to get rid of BindingExpression path errors. These are required by TreeViewItem, but apparently we don't actually use them?
-        public object ToolTip { get; set; } = new ToolTip();
+        public object ToolTip { get; set; } 
         public ObservableCollection<BaseFdaElement> Elements
         {
             get { return _Elements; }
