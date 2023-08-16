@@ -17,7 +17,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         private bool _IsByValue;
 
         private ValueUncertaintyVM _CurrentContentValueVM;
-        private ValueUncertaintyVM _ContentByRatioVM;
+        private readonly ValueUncertaintyVM _ContentByRatioVM;
 
         public ValueUncertaintyVM CurrentValueVM
         {
@@ -72,7 +72,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
             XElement elem = base.ToXML();
             elem.SetAttributeValue("ByValue", _IsByValue);
-            XElement ratioElem = new XElement("RatioUncertainty");
+            XElement ratioElem = new("RatioUncertainty");
             ratioElem.Add(_ContentByRatioVM.CreateOrdinate().ToXML());
             elem.Add(ratioElem);
             return elem;

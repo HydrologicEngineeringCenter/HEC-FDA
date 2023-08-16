@@ -9,7 +9,7 @@
              DataContextChanged="UserControl_DataContextChanged"
              Loaded="UserControl_Loaded"
              xmlns:util="clr-namespace:HEC.FDA.View.Utilities"
-             xmlns:twp="clr-namespace:HEC.FDA.View.TableWithPlot"
+             xmlns:twp="clr-namespace:HEC.FDA.View.TableWithPlot" xmlns:occupancytypes="clr-namespace:HEC.FDA.ViewModel.Inventory.OccupancyTypes;assembly=HEC.FDA.ViewModel" d:DataContext="{d:DesignInstance Type=occupancytypes:OccupancyType}"
              d:DesignHeight="580" d:DesignWidth="700">
   <UserControl.Resources>
     <util:InverseBooleanConverter x:Key="InverseBooleanConverter" />
@@ -143,11 +143,8 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="1*"/>
           </Grid.RowDefinitions>
-          <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="5">
-            <RadioButton   Content="By Other Value" IsChecked="{Binding OtherItem.IsByValue, Mode=TwoWay}"/>
-            <RadioButton  Content="By Other-to-Structure Value Ratio" IsChecked="{Binding OtherItem.IsNotByValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Margin="10,0,0,0" />
-          </StackPanel>
-          <GroupBox Grid.Row="1" Header="Selected Other Parameter Uncertainty Distribution" BorderBrush="Black" BorderThickness=".5" Padding="2" HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.ColumnSpan="2">
+          <CheckBox Content="Use Other-to-Structure Value Ratio" IsChecked="{Binding OtherItem.IsByValue, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"  Grid.Row="0" Margin="5"/>
+            <GroupBox Grid.Row="1" Header="Selected Other Parameter Uncertainty Distribution" BorderBrush="Black" BorderThickness=".5" Padding="2" HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.ColumnSpan="2">
             <ContentControl  Content="{Binding OtherItem.CurrentValueVM}" Margin="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
           </GroupBox>
           <twp:TableWithPlotControl DataContext="{Binding OtherItem.TableWithPlot}" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"/>
