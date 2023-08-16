@@ -91,11 +91,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="1*"/>
           </Grid.RowDefinitions>
-
-          <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="5">
-            <RadioButton   Content="By Content Value" IsChecked="{Binding ContentItem.IsByValue, Mode=TwoWay}" GroupName="ContentValueTypeRadios"/>
-            <RadioButton  Content="By Content-to-Structure Value Ratio" GroupName="ContentValueTypeRadios" Margin="10,0,0,0" />
-          </StackPanel>
+          <CheckBox Content="Use Content-to-Structure Value Ratio" IsChecked="{Binding ContentItem.IsByValue, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"  Grid.Row="0" Margin="5"/>
           <GroupBox Header="Selected Content Parameter Uncertainty Distribution" Grid.Row="1" BorderBrush="Black" BorderThickness=".5"  Padding="2" HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.ColumnSpan="2">
             <ContentControl Content="{Binding ContentItem.CurrentValueVM}" Margin="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
           </GroupBox>
