@@ -302,7 +302,8 @@ namespace HEC.FDA.ViewModel.Inventory
         private static OccupancyType CreateModelOcctype(OccupancyTypes.OcctypeReference otRef)
         {
             OccupancyTypes.OccupancyType ot = otRef.GetOccupancyType();
-            return CreateModelOcctypeFromVMOcctype(ot);
+            var modelOT = CreateModelOcctypeFromVMOcctype(ot);
+            return modelOT;
         }
 
         public static OccupancyType CreateModelOcctypeFromVMOcctype(OccupancyTypes.OccupancyType ot)
@@ -324,20 +325,39 @@ namespace HEC.FDA.ViewModel.Inventory
                 .WithName(ot.Name)
                 .WithDamageCategory(ot.DamageCategory)
                 .WithStructureDepthPercentDamage(structureUPD)
-                .WithContentDepthPercentDamage(contentUPD)
-                .WithVehicleDepthPercentDamage(vehicleUPD)
-                .WithOtherDepthPercentDamage(otherUPD)
-
-                .WithFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-
                 .WithStructureValueUncertainty(structureUncertainty)
-                .WithContentValueUncertainty(contentUncertainty)
-                .WithVehicleValueUncertainty(vehicleUncertainty)
-                .WithOtherValueUncertainty(otherUncertainty);
+                .WithFirstFloorElevationUncertainty(firstFloorElevationUncertainty);
 
-            if (!ot.OtherItem.IsByValue)
+            if (ot.OtherItem.IsChecked)
             {
-                builder.WithOtherToStructureValueRatio(CreateValueRatioWithUncertainty(ot.OtherItem.ContentByRatioVM.CreateOrdinate()));
+                builder.WithOtherDepthPercentDamage(otherUPD);
+                if (!ot.OtherItem.IsByValue)
+                {
+                    builder.WithOtherToStructureValueRatio(CreateValueRatioWithUncertainty(ot.OtherItem.ValueByRatioVM.CreateOrdinate())); // Look at renaming contentbyratioVM
+                }
+                else
+                {
+                    builder.WithOtherValueUncertainty(otherUncertainty);
+                }
+            }
+
+            if (ot.ContentItem.IsChecked)
+            {
+                builder.WithContentDepthPercentDamage(contentUPD);
+                if (!ot.ContentItem.IsByValue)
+                {
+                    builder.WithContentToStructureValueRatio(CreateValueRatioWithUncertainty(ot.ContentItem.ValueByRatioVM.CreateOrdinate()));
+                }
+                else
+                {
+                    builder.WithContentValueUncertainty(contentUncertainty);
+                }
+            }
+
+            if (ot.VehicleItem.IsChecked)
+            {
+                builder.WithVehicleDepthPercentDamage(vehicleUPD);
+                builder.WithVehicleValueUncertainty(vehicleUncertainty);
             }
             return builder.Build();
         }

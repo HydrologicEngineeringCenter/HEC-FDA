@@ -31,7 +31,6 @@ public class InventoryElementShould
 
         //Foundation
         ViewModel.Inventory.OccupancyTypes.OccupancyType occupancyType = new("name","desc",0,"damCat",structures,contents,vehicles,others, new Triangular(0,1,10),0);
-
         var modelOccupancyType = InventoryElement.CreateModelOcctypeFromVMOcctype(occupancyType);
 
         //Assert that user options are recorded
