@@ -34,9 +34,11 @@ public class InventoryElementShould
 
         var modelOccupancyType = InventoryElement.CreateModelOcctypeFromVMOcctype(occupancyType);
 
-        Assert.Equal(occupancyType.Name, modelOccupancyType.Name);
+        //Assert that user options are recorded
+        Assert.Equal(occupancyType.VehicleItem.IsChecked, modelOccupancyType.ComputeVehicleDamage);
+        Assert.Equal(occupancyType.ContentItem.IsChecked, modelOccupancyType.ComputeContentDamage);
         Assert.Equal(occupancyType.ContentItem.IsByValue, !modelOccupancyType.UseContentToStructureValueRatio);
+        Assert.Equal(occupancyType.OtherItem.IsChecked, modelOccupancyType.ComputeContentDamage);
         Assert.Equal(occupancyType.OtherItem.IsByValue, !modelOccupancyType.UseOtherToStructureValueRatio);
-
     }
 }

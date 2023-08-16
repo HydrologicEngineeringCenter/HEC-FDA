@@ -15,11 +15,6 @@ namespace HEC.FDA.Model.structures
         private string _OccupancyTypeName;
         private string _OccupancyTypeDamageCategory;
 
-        //configuration flags 
-        private bool _ComputeContentDamage = false;
-        private bool _ComputeVehicleDamage = false;
-        private bool _ComputeOtherDamage = false;
-
         //damage functions
         private UncertainPairedData _StructureDepthPercentDamageFunction;
         private UncertainPairedData _ContentDepthPercentDamageFunction;
@@ -52,6 +47,9 @@ namespace HEC.FDA.Model.structures
         public List<ValidationGroup> ValidationGroups { get; } = new List<ValidationGroup>();
         public bool UseContentToStructureValueRatio { get; set; }
         public bool UseOtherToStructureValueRatio { get; set; }
+        public bool ComputeContentDamage { get; set; }
+        public bool ComputeVehicleDamage { get; set; }
+        public bool ComputeOtherDamage { get; set; }
 
         #endregion
         #region Constructor
@@ -114,7 +112,7 @@ namespace HEC.FDA.Model.structures
             double structureValueOffsetSampled = _StructureValueError.Sample(randomNumbers.NextRandom(), computeIsDeterministic);
             double contentValueOffsetSampled = 0;
             double contentValueRatioSampled = 0;
-            if (_ComputeContentDamage)
+            if (ComputeContentDamage)
             {
                 if (UseContentToStructureValueRatio)
                 {
@@ -128,7 +126,7 @@ namespace HEC.FDA.Model.structures
             }
             double otherValueOffsetSampled = 0;
             double otherValueRatioSampled = 0;
-            if (_ComputeOtherDamage)
+            if (ComputeOtherDamage)
             {
                 if (UseOtherToStructureValueRatio)
                 {
@@ -142,12 +140,12 @@ namespace HEC.FDA.Model.structures
             }
 
             double vehicleValueOffsetSampled = 0;
-            if (_ComputeVehicleDamage)
+            if (ComputeVehicleDamage)
             {
                 vehicleValueOffsetSampled = _VehicleValueError.Sample(randomNumbers.NextRandom(), computeIsDeterministic);
                 vehicleDamagePairedData = _VehicleDepthPercentDamageFunction.SamplePairedData(randomNumbers.NextRandom(), computeIsDeterministic);
             }
-            return new DeterministicOccupancyType(_OccupancyTypeName, _OccupancyTypeDamageCategory, structDamagePairedData, firstFloorElevationOffsetSampled, structureValueOffsetSampled, _ComputeContentDamage, _ComputeVehicleDamage, _ComputeOtherDamage, contentDamagePairedData, contentValueOffsetSampled, UseContentToStructureValueRatio, contentValueRatioSampled, vehicleDamagePairedData, vehicleValueOffsetSampled, otherDamagePairedData, otherValueOffsetSampled, UseOtherToStructureValueRatio, otherValueRatioSampled, _StructureValueIsLogNormal, _ContentValueIsLogNormal, _OtherValueIsLogNormal, _VehicleValueIsLogNormal, _FirstFloorElevationIsLogNormal);
+            return new DeterministicOccupancyType(_OccupancyTypeName, _OccupancyTypeDamageCategory, structDamagePairedData, firstFloorElevationOffsetSampled, structureValueOffsetSampled, ComputeContentDamage, ComputeVehicleDamage, ComputeOtherDamage, contentDamagePairedData, contentValueOffsetSampled, UseContentToStructureValueRatio, contentValueRatioSampled, vehicleDamagePairedData, vehicleValueOffsetSampled, otherDamagePairedData, otherValueOffsetSampled, UseOtherToStructureValueRatio, otherValueRatioSampled, _StructureValueIsLogNormal, _ContentValueIsLogNormal, _OtherValueIsLogNormal, _VehicleValueIsLogNormal, _FirstFloorElevationIsLogNormal);
         }
 
 
@@ -190,7 +188,7 @@ namespace HEC.FDA.Model.structures
             {
                 _OccupancyType._ContentDepthPercentDamageFunction = contentDepthPercentDamage;
                 _OccupancyType.AddSinglePropertyRule(nameof(contentDepthPercentDamage), new Rule(() => { contentDepthPercentDamage.Validate(); return !contentDepthPercentDamage.HasErrors; }, $"The content depth percent-damage function named {contentDepthPercentDamage.Name} associated with occupancy type {_OccupancyType.Name} has errors: " + contentDepthPercentDamage.GetErrors().ToString(), contentDepthPercentDamage.ErrorLevel));
-                _OccupancyType._ComputeContentDamage = true;
+                _OccupancyType.ComputeContentDamage = true;
                 return new OccupancyTypeBuilder(_OccupancyType);
             }
 
@@ -198,7 +196,7 @@ namespace HEC.FDA.Model.structures
             {
                 _OccupancyType._VehicleDepthPercentDamageFunction = vehicleDepthPercentDamage;
                 _OccupancyType.AddSinglePropertyRule(nameof(vehicleDepthPercentDamage), new Rule(() => { vehicleDepthPercentDamage.Validate(); return !vehicleDepthPercentDamage.HasErrors; }, $"The vehicle depth percent-damage function named {vehicleDepthPercentDamage.Name} associated with occupancy type {_OccupancyType.Name}  has errors: " + vehicleDepthPercentDamage.GetErrors().ToString(), vehicleDepthPercentDamage.ErrorLevel));
-                _OccupancyType._ComputeVehicleDamage = true;
+                _OccupancyType.ComputeVehicleDamage = true;
                 return new OccupancyTypeBuilder(_OccupancyType);
             }
 
@@ -206,7 +204,7 @@ namespace HEC.FDA.Model.structures
             {
                 _OccupancyType._OtherDepthPercentDamageFunction = otherDepthPercentDamage;
                 _OccupancyType.AddSinglePropertyRule(nameof(otherDepthPercentDamage), new Rule(() => { otherDepthPercentDamage.Validate(); return !otherDepthPercentDamage.HasErrors; }, $"The vehicle depth percent-damage function named {otherDepthPercentDamage.Name} associated with occupancy type {_OccupancyType.Name} has errors: " + otherDepthPercentDamage.GetErrors().ToString(), otherDepthPercentDamage.ErrorLevel));
-                _OccupancyType._ComputeOtherDamage = true;
+                _OccupancyType.ComputeOtherDamage = true;
                 return new OccupancyTypeBuilder(_OccupancyType);
             }
 
