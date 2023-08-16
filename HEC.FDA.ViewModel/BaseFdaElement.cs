@@ -22,7 +22,7 @@ namespace HEC.FDA.ViewModel
         private int _FontSize = 14;
         private bool _IsBold = true;
         private string _Name;
-        private ObservableCollection<BaseFdaElement> _Elements;
+        private ObservableCollection<BaseFdaElement> _Elements = new();
         #endregion
 
         #region Properties
