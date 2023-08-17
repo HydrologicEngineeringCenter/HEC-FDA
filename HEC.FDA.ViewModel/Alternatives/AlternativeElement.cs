@@ -49,9 +49,11 @@ namespace HEC.FDA.ViewModel.Alternatives
             FutureScenario = futureScenario;
 
             AddDefaultActions(EditAlternative, StringConstants.EDIT_ALTERNATIVE_MENU);
-            NamedAction viewResults = new NamedAction();
-            viewResults.Header = StringConstants.VIEW_RESULTS_MENU;
-            viewResults.Action = ComputeAlternative;
+            NamedAction viewResults = new()
+            {
+                Header = StringConstants.VIEW_RESULTS_MENU,
+                Action = ComputeAlternative
+            };
             Actions.Insert(1, viewResults);
         }
 
@@ -72,9 +74,8 @@ namespace HEC.FDA.ViewModel.Alternatives
                     int iasID = int.Parse(elem.Attribute(ID_STRING).Value);
                     //get the element from the id and grab the year from it. If no year that make it the current year.
                     IASElement iasElem = GetElementFromID(iasID);
-                    int year;
-                    bool yearSuccess = int.TryParse( iasElem.AnalysisYear,out year);
-                    if(!yearSuccess)
+                    bool yearSuccess = int.TryParse(iasElem.AnalysisYear, out int year);
+                    if (!yearSuccess)
                     {
                         year = DateTime.Now.Year;
                     }
@@ -98,22 +99,24 @@ namespace HEC.FDA.ViewModel.Alternatives
             }
            
             AddDefaultActions(EditAlternative, StringConstants.EDIT_ALTERNATIVE_MENU);
-            NamedAction viewResults = new NamedAction();
-            viewResults.Header = StringConstants.VIEW_RESULTS_MENU;
-            viewResults.Action = ComputeAlternative;
+            NamedAction viewResults = new()
+            {
+                Header = StringConstants.VIEW_RESULTS_MENU,
+                Action = ComputeAlternative
+            };
             Actions.Insert(1, viewResults);
         }
         #endregion
 
         public override XElement ToXML()
         {
-            XElement altElement = new XElement(ALTERNATIVE);
+            XElement altElement = new(ALTERNATIVE);
             altElement.Add(CreateHeaderElement());
 
-            XElement baseElem = new XElement(BASE_SCENARIO);
+            XElement baseElem = new(BASE_SCENARIO);
             baseElem.Add(BaseScenario.ToXML());
 
-            XElement futureElem = new XElement(FUTURE_SCENARIO);
+            XElement futureElem = new(FUTURE_SCENARIO);
             futureElem.Add(FutureScenario.ToXML());
 
             altElement.Add(baseElem);
@@ -122,7 +125,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             return altElement;
         }     
 
-        public IASElement GetElementFromID(int id)
+        public static IASElement GetElementFromID(int id)
         {
             IASElement elem = null;
             List<IASElement> currentElementSets = StudyCache.GetChildElementsOfType<IASElement>();
@@ -139,7 +142,7 @@ namespace HEC.FDA.ViewModel.Alternatives
 
         public FdaValidationResult RunPreComputeValidation()
         {
-            FdaValidationResult vr = new FdaValidationResult();
+            FdaValidationResult vr = new();
           
             IASElement baseElem = BaseScenario.GetElement();
             IASElement futureElem = FutureScenario.GetElement();
@@ -154,9 +157,9 @@ namespace HEC.FDA.ViewModel.Alternatives
             return vr;
         }
 
-        private FdaValidationResult DoScenariosHaveResults(IASElement firstElem, IASElement secondElem)
+        private static FdaValidationResult DoScenariosHaveResults(IASElement firstElem, IASElement secondElem)
         {
-            FdaValidationResult vr = new FdaValidationResult();
+            FdaValidationResult vr = new();
             bool firstElemHasResults = false;
             bool secondElemHasResults = false;
             if (firstElem != null && firstElem.Results != null)
@@ -179,9 +182,9 @@ namespace HEC.FDA.ViewModel.Alternatives
             return vr;
         }       
 
-        private FdaValidationResult DoBothScenariosExist(IASElement firstElem, IASElement secondElem)
+        private static FdaValidationResult DoBothScenariosExist(IASElement firstElem, IASElement secondElem)
         {
-            FdaValidationResult vr = new FdaValidationResult();
+            FdaValidationResult vr = new();
             if (firstElem == null || secondElem == null)
             {
                 vr.AddErrorMessage("There are no longer two scenarios linked to this alternative.");
@@ -191,7 +194,6 @@ namespace HEC.FDA.ViewModel.Alternatives
 
         private AlternativeResult CreateAlternativeResult(AlternativeResults results)
         {
-            AlternativeResult altResult = null;
             StudyPropertiesElement studyPropElem = StudyCache.GetStudyPropertiesElement();
 
             double discountRate = studyPropElem.DiscountRate;
@@ -199,12 +201,12 @@ namespace HEC.FDA.ViewModel.Alternatives
 
             List<int> analysisYears = results.AnalysisYears;
 
-            YearResult yr1 = new YearResult(analysisYears.Min(), new DamageWithUncertaintyVM(results, DamageMeasureYear.Base), new DamageByImpactAreaVM(results, DamageMeasureYear.Base), new DamageByDamCatVM(results, DamageMeasureYear.Base));
-            YearResult yr2 = new YearResult(analysisYears.Max(), new DamageWithUncertaintyVM(results, DamageMeasureYear.Future), new DamageByImpactAreaVM(results, DamageMeasureYear.Future), new DamageByDamCatVM(results, DamageMeasureYear.Future));
+            YearResult yr1 = new(analysisYears.Min(), new DamageWithUncertaintyVM(results, DamageMeasureYear.Base), new DamageByImpactAreaVM(results, DamageMeasureYear.Base), new DamageByDamCatVM(results, DamageMeasureYear.Base));
+            YearResult yr2 = new(analysisYears.Max(), new DamageWithUncertaintyVM(results, DamageMeasureYear.Future), new DamageByImpactAreaVM(results, DamageMeasureYear.Future), new DamageByDamCatVM(results, DamageMeasureYear.Future));
 
-            EADResult eadResult = new EADResult(new List<YearResult>() { yr1, yr2 });
-            AAEQResult aaeqResult = new AAEQResult(new DamageWithUncertaintyVM( results, DamageMeasureYear.AAEQ, discountRate, period), new DamageByImpactAreaVM( results, DamageMeasureYear.AAEQ, discountRate, period), new DamageByDamCatVM(results, discountRate, period));
-            altResult = new AlternativeResult(Name, eadResult, aaeqResult);
+            EADResult eadResult = new(new List<YearResult>() { yr1, yr2 });
+            AAEQResult aaeqResult = new(new DamageWithUncertaintyVM( results, DamageMeasureYear.AAEQ, discountRate, period), new DamageByImpactAreaVM( results, DamageMeasureYear.AAEQ, discountRate, period), new DamageByDamCatVM(results, discountRate, period));
+            AlternativeResult altResult = new(Name, eadResult, aaeqResult);
 
             return altResult;
         }
@@ -216,9 +218,9 @@ namespace HEC.FDA.ViewModel.Alternatives
             FdaValidationResult vr = RunPreComputeValidation();
             if (vr.IsValid)
             {
-                ComputeAlternativeVM vm = new ComputeAlternativeVM(this, ComputeCompleted);
+                ComputeAlternativeVM vm = new(this, ComputeCompleted);
                 string header = "Compute Log For Alternative: " + Name;
-                DynamicTabVM tab = new DynamicTabVM(header, vm, "ComputeLog" + Name);
+                DynamicTabVM tab = new(header, vm, "ComputeLog" + Name);
                 Navigate(tab, false, false);
             }
             else
@@ -236,7 +238,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             ScenarioResults futureResults = futureElem.Results;
 
             int seed = 99;
-            RandomProvider randomProvider = new RandomProvider(seed);
+            RandomProvider randomProvider = new(seed);
             StudyPropertiesElement studyProperties = StudyCache.GetStudyPropertiesElement();
 
             double discountRate = studyProperties.DiscountRate;
@@ -251,20 +253,16 @@ namespace HEC.FDA.ViewModel.Alternatives
         private void ComputeCompleted(AlternativeResults results)
         {
             Results = results;
-            Application.Current.Dispatcher.Invoke(
-            (Action)(() =>
-            {
-                    ViewResults();
-            }));
+            Application.Current.Dispatcher.Invoke(() => { ViewResults();});
         }
 
         private void ViewResults()
         {
             if (Results != null)
             {
-                AlternativeResultsVM vm = new AlternativeResultsVM(CreateAlternativeResult(Results));
+                AlternativeResultsVM vm = new(CreateAlternativeResult(Results));
                 string header = "Alternative Results: " + Name;
-                DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeResults" + Name);
+                DynamicTabVM tab = new(header, vm, "AlternativeResults" + Name);
                 Navigate(tab, false, true);
             }
             else
@@ -278,9 +276,9 @@ namespace HEC.FDA.ViewModel.Alternatives
             EditorActionManager actionManager = new EditorActionManager()
                 .WithSiblingRules(this);
 
-            CreateNewAlternativeVM vm = new CreateNewAlternativeVM(this, actionManager);
+            CreateNewAlternativeVM vm = new(this, actionManager);
             string header = "Edit Alternative " + Name;
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "EditAlternative" + Name);
+            DynamicTabVM tab = new(header, vm, "EditAlternative" + Name);
             Navigate(tab, false, true);
         }
 
