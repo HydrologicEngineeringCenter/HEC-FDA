@@ -73,7 +73,7 @@ namespace HEC.FDA.Model.paireddata
             StoredPropertyAttribute attribute = (StoredPropertyAttribute)Attribute.GetCustomAttribute(typeof(CurveMetaData), typeof(StoredPropertyAttribute));
             string thresholdMasterTag = attribute.SerializedName;
 
-            XElement masterElement = new XElement(thresholdMasterTag);
+            XElement masterElement = new(thresholdMasterTag);
 
             string xLabelTag = Serialization.GetXMLTagFromProperty(GetType(), nameof(XLabel));
             masterElement.SetAttributeValue(xLabelTag, XLabel);
@@ -117,9 +117,11 @@ namespace HEC.FDA.Model.paireddata
             string isNullTag = Serialization.GetXMLTagFromProperty(metaDataType, nameof(IsNull));
             if (!bool.TryParse(xElement.Attribute(isNullTag)?.Value, out bool isNull))
                 return new CurveMetaData();
-            
-            CurveMetaData curveMetaData = new CurveMetaData(xLabel, yLabel, name, damageCategory, assetCategory);
-            curveMetaData.IsNull = isNull;
+
+            CurveMetaData curveMetaData = new(xLabel, yLabel, name, damageCategory, assetCategory)
+            {
+                IsNull = isNull
+            };
 
             return curveMetaData;
         }
