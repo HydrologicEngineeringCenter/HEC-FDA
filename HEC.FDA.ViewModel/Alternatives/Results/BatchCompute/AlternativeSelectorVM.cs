@@ -123,7 +123,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
                     {
                         Alternative alt = new Alternative();
                         ComputeAlternativeVM vm = new ComputeAlternativeVM(elem, ComputeCompleted);
-                        taskList.Add(vm.RunAnnualizationCompute(alt, elem, ComputeCompleted, _CancellationToken.Token));
+                        taskList.Add(ComputeAlternativeVM.RunAnnualizationCompute(alt, elem, ComputeCompleted, _CancellationToken.Token));
                     }
                     else
                     {

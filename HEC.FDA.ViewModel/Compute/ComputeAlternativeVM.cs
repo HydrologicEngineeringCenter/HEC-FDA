@@ -5,7 +5,6 @@ using HEC.FDA.ViewModel.Alternatives;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
-using HEC.MVVMFramework.Base.Implementations;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,16 +18,13 @@ namespace HEC.FDA.ViewModel.Compute
         public ComputeAlternativeVM(AlternativeElement altElem, Action<AlternativeResults> callback) : base()
         {
             ProgressLabel = StringConstants.ALTERNATIVE_PROGRESS_LABEL;
-
-       
-            Alternative alt = new Alternative();
+            Alternative alt = new();
             alt.ProgressReport += Alt_ProgressReport;
             MessageVM.InstanceHash.Add(alt.GetHashCode());
-
             RunAnnualizationCompute(alt, altElem, callback, new CancellationToken());
         }
 
-        public Task RunAnnualizationCompute(Alternative alt, AlternativeElement altElem, Action<AlternativeResults> callback, CancellationToken cancellationToken)
+        public static Task RunAnnualizationCompute(Alternative alt, AlternativeElement altElem, Action<AlternativeResults> callback, CancellationToken cancellationToken)
         {
             IASElement firstElem = altElem.BaseScenario.GetElement();
             IASElement secondElem = altElem.FutureScenario.GetElement();
@@ -36,7 +32,7 @@ namespace HEC.FDA.ViewModel.Compute
             ScenarioResults firstResults = firstElem.Results;
             ScenarioResults secondResults = secondElem.Results;
             int seed = 99;
-            RandomProvider randomProvider = new RandomProvider(seed);
+            RandomProvider randomProvider = new(seed);
             StudyPropertiesElement studyProperties = StudyCache.GetStudyPropertiesElement();
 
             double discountRate = studyProperties.DiscountRate;
