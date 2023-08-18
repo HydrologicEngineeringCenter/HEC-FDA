@@ -47,23 +47,21 @@ namespace HEC.FDA.Model.alternatives
         public AlternativeResults AnnualizationCompute(double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear,
             ScenarioResults computedResultsFutureYear,int baseYear, int futureYear, CancellationToken cancellationToken)
         {
-            List<int> analysisYears = new List<int>() { baseYear, futureYear };
-
-            //start with a default null alternative results
-            AlternativeResults alternativeResults = new(alternativeResultsID, analysisYears, periodOfAnalysis, false);
+            List<int> analysisYears = new() { baseYear, futureYear };
             ReportMessage(this, new MessageEventArgs(new Message("Starting alternative compute" + Environment.NewLine)));
 
             if (CanCompute(baseYear, futureYear, periodOfAnalysis))
             {
-                alternativeResults = RunAnnualizationCompute(analysisYears, discountRate, periodOfAnalysis, alternativeResultsID, computedResultsBaseYear, computedResultsFutureYear,
+               AlternativeResults alternativeResults = RunAnnualizationCompute(analysisYears, discountRate, periodOfAnalysis, alternativeResultsID, computedResultsBaseYear, computedResultsFutureYear,
                     cancellationToken);
+                return alternativeResults;
             }
             else
             {
-                MessageEventArgs messageArguments = new(new Message("The discounting parameters are not valid, discounting routine aborted. An arbitrary results object is being returned" + Environment.NewLine));
+                MessageEventArgs messageArguments = new(new Message("The discounting parameters are not valid, discounting routine aborted." + Environment.NewLine));
                 ReportMessage(this, messageArguments);
+                return null;
             }
-            return alternativeResults;
         }
 
         private AlternativeResults RunAnnualizationCompute(List<int> analysisYears, double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear, ScenarioResults computedResultsFutureYear,
@@ -102,57 +100,6 @@ namespace HEC.FDA.Model.alternatives
             if (futureYearResultsList.Count > 0)
             {
                 ProcessUnmatchedFutureResults(analysisYears, discountRate, periodOfAnalysis, computedResultsBaseYear, alternativeResults, futureYearResultsList, cancellationToken);
-                //foreach (ImpactAreaScenarioResults futureYearResults in futureYearResultsList)
-                //{
-                //    //get the baseYearResults for the same impact area as futureYearResults
-                //    //this should be zero if we got to this point 
-                //    //if that is guaranteed to be the case, then I don't think all of this computation is necessary 
-                //    ImpactAreaScenarioResults baseYearResults = computedResultsBaseYear.GetResults(futureYearResults.ImpactAreaID);
-
-                //    //keep track of baseYearResults in case we have any baseYearResults that are not matched to futureYearResults
-                //    //seems unlikely if we expect baseYearResults to be zero 
-                //    List<ConsequenceDistributionResult> baseYearDamageResultsList = new List<ConsequenceDistributionResult>();
-                //    foreach (ConsequenceDistributionResult baseYearResult in baseYearResults.ConsequenceResults.ConsequenceResultList)
-                //    {
-                //        baseYearDamageResultsList.Add(baseYearResult);
-                //    }
-
-                //    foreach (ConsequenceDistributionResult futureYearDamageResult in futureYearResults.ConsequenceResults.ConsequenceResultList)
-                //    {
-                //        //we expect baseYearResults to be zero, so baseYearDamageResult should be zero, too
-                //        ConsequenceDistributionResult baseYearDamageResult = baseYearResults.ConsequenceResults.GetConsequenceResult(futureYearDamageResult.DamageCategory, futureYearDamageResult.AssetCategory, futureYearDamageResult.RegionID);
-                //        //I must be able to handle a consequence distribution result with zero damage in this method 
-                //        //baseYearDamageResult is probably zero damage 
-                //        SingleEmpiricalDistributionOfConsequences aaeqResult = IterateOnAAEQ(baseYearDamageResult, futureYearDamageResult, analysisYears[0], analysisYears[1], periodOfAnalysis, discountRate, randomProvider);
-
-                //        //to keep track of base year damage results 
-                //        //in case there is a base year damage result that does not match with a future year damage result
-                //        //unlikely because we expect base year damage results to be zero 
-                //        baseYearDamageResultsList.Remove(baseYearDamageResult);
-
-                //        //the aaeq damage result is complete 
-                //        alternativeResults.AddConsequenceResults(aaeqResult);
-                //    }
-
-                //    //in case there were base year damage results that did not match any future year damage results 
-                //    //this is unlikely because we expect baseYearResults to be zero 
-                //    if (baseYearDamageResultsList.Count > 0)
-                //    {
-                //        foreach (ConsequenceDistributionResult baseYearDamageResult in baseYearDamageResultsList)
-                //        {
-                //            //try to get the future year result
-                //            //I think we will actually get the future year result here 
-                //            ConsequenceDistributionResult futureYearDamageResult = futureYearResults.ConsequenceResults.GetConsequenceResult(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, baseYearDamageResult.RegionID);
-
-                //            //so what happens here - we have null base year result but we have a future year result? 
-                //            SingleEmpiricalDistributionOfConsequences aaeqResult = IterateOnAAEQ(baseYearDamageResult, futureYearDamageResult, analysisYears[0], analysisYears[1], periodOfAnalysis, discountRate, randomProvider, false);
-                //            alternativeResults.AddConsequenceResults(aaeqResult);
-
-                //            //I am concerned about our possibility of getting here. We need to wave a really big red flag if it happens. 
-                //            throw new Exception("The alternative compute reached an illogical stream of combinations. The alternative compute was aborted");
-                //        }
-                //    }
-                //}
             }
             ReportProgress(this, new ProgressReportEventArgs(100));
             return alternativeResults;
@@ -210,7 +157,6 @@ namespace HEC.FDA.Model.alternatives
 
                     ReportProgress(this, new ProgressReportEventArgs((int)progressPercent));
                 }
-
                 //in the event that there are more most likely future year results than base year results 
                 //or simply most likely future year results that were not matched to any base year results 
                 //so in this case there is damage for a particular damage category asset category in the future year that does not occur in the base year
@@ -229,10 +175,7 @@ namespace HEC.FDA.Model.alternatives
                         alternativeResults.AddConsequenceResults(aaeqResult);
                     }
                 }
-
-
             }
-
             return progressTicker;
         }
 

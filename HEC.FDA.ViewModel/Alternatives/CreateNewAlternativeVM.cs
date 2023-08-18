@@ -80,7 +80,7 @@ namespace HEC.FDA.ViewModel.Alternatives
 
         private FdaValidationResult ValidateYears()
         {
-            FdaValidationResult result = new FdaValidationResult();
+            FdaValidationResult result = new();
             if(BaseYear<1900 || BaseYear > 3000)
             {
                 result.AddErrorMessage("A base year is required and must be greater than 1900 and less than 3000.");
@@ -98,7 +98,7 @@ namespace HEC.FDA.ViewModel.Alternatives
 
         private FdaValidationResult ValidateScenarioSelections()
         {
-            FdaValidationResult vr = new FdaValidationResult();
+            FdaValidationResult vr = new();
             if(SelectedBaseScenario == null)
             {
                 vr.AddErrorMessage("Base scenario is required.");
@@ -116,7 +116,7 @@ namespace HEC.FDA.ViewModel.Alternatives
 
         private FdaValidationResult ValidateAlternative()
         {
-            FdaValidationResult vr = new FdaValidationResult();
+            FdaValidationResult vr = new();
             vr.AddErrorMessage(ValidateYears().ErrorMessage);
             vr.AddErrorMessage(ValidateScenarioSelections().ErrorMessage);
             return vr;
@@ -132,9 +132,9 @@ namespace HEC.FDA.ViewModel.Alternatives
                 {
                     id = OriginalElement.ID;
                 }
-                AlternativeScenario baseScenario = new AlternativeScenario(SelectedBaseScenario.ID, BaseYear);
-                AlternativeScenario futureScenario = new AlternativeScenario(SelectedBaseScenario.ID, FutureYear);
-                AlternativeElement elemToSave = new AlternativeElement(Name, Description, DateTime.Now.ToString("G"), baseScenario, futureScenario, id);
+                AlternativeScenario baseScenario = new(SelectedBaseScenario.ID, BaseYear);
+                AlternativeScenario futureScenario = new(SelectedFutureScenario.ID, FutureYear);
+                AlternativeElement elemToSave = new(Name, Description, DateTime.Now.ToString("G"), baseScenario, futureScenario, id);
                 Save(elemToSave);
             }
             else
