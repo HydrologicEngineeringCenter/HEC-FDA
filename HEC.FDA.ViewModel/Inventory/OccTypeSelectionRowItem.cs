@@ -39,8 +39,8 @@ namespace HEC.FDA.ViewModel.Inventory
             foreach(OcctypeGroupRowItem row in selectedGroups)
             {
                 string groupName = row.GroupElement.Name;
-                List<IOccupancyType> occTypes = row.GroupElement.ListOfOccupancyTypes;
-                foreach(IOccupancyType ot in occTypes)
+                List<OccupancyType> occTypes = row.GroupElement.ListOfOccupancyTypes;
+                foreach(OccupancyType ot in occTypes)
                 {
                     PossibleOccTypes.Add(new OccTypeDisplayName(groupName,row.GroupElement.ID, ot));
                 }

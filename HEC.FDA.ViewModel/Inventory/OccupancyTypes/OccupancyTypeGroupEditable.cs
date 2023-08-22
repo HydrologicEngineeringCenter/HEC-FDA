@@ -30,9 +30,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             Occtypes = occtypes;
         }
 
-        public List<IOccupancyType> CreateOcctypes()
+        public List<OccupancyType> CreateOcctypes()
         {
-            List<IOccupancyType> occtypes = new List<IOccupancyType>();
+            List<OccupancyType> occtypes = new List<OccupancyType>();
             foreach (OccupancyTypeEditable ot in Occtypes)
             {
                 occtypes.Add(ot.CreateOccupancyType());

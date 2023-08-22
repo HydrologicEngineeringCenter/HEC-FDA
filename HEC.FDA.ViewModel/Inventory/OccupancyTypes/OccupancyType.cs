@@ -9,12 +9,11 @@ using static HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccTypeAsset;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
-    internal class OccupancyType : BaseViewModel,  IOccupancyType
+    public class OccupancyType : BaseViewModel
     {
 
         public string Description { get; set; }
         public string DamageCategory { get; set; }
-
         public OccTypeAsset StructureItem { get; set; }
         public OccTypeAssetWithRatio ContentItem { get; set; }
         public OccTypeAsset VehicleItem { get; set; }

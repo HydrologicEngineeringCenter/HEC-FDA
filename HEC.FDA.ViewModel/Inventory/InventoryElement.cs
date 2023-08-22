@@ -4,10 +4,12 @@ using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
+using SixLabors.ImageSharp.Formats.Gif;
 using Statistics;
 using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Xml.Linq;
 using static HEC.FDA.Model.structures.OccupancyType;
@@ -29,8 +31,8 @@ namespace HEC.FDA.ViewModel.Inventory
         private const string OCCTYPE_MAPPING = "OcctypeMapping";
         private const string SHAPEFILE_OCCTYPE = "ShapefileOcctype";
         private const string GROUP_ID = "GroupID";
-        private const string ID_Constant = "ID";
-        private Dictionary<String, OccupancyTypes.OcctypeReference> _OcctypeMapping = new Dictionary<string, OccupancyTypes.OcctypeReference>();
+        private const string ID_ATTRIBUTE_NAME = "ID";
+        private readonly Dictionary<string, OccupancyTypes.OcctypeReference> _OcctypeMapping = new();
         #endregion
         #region Properties
         public bool IsImportedFromOldFDA { get; set; }
@@ -58,13 +60,13 @@ namespace HEC.FDA.ViewModel.Inventory
 
             XElement mappingsElem = inventoryElem.Element(INVENTORY_MAPPINGS);
             SelectionMappings = new StructureSelectionMapping(mappingsElem);
-            readDictionaryFromXML(mappingsElem);
+            ReadDictionaryFromXML(mappingsElem);
             AddDefaultActions(EditElement,StringConstants.EDIT_STRUCTURES_MENU);
         }
 
         #endregion
 
-        private void readDictionaryFromXML(XElement mappingsElem)
+        private void ReadDictionaryFromXML(XElement mappingsElem)
         {
             XElement occtypeMappings = mappingsElem.Element(OCCTYPE_MAPPINGS);
             IEnumerable<XElement> occtypeMappingElements = occtypeMappings.Elements(OCCTYPE_MAPPING);
@@ -72,8 +74,8 @@ namespace HEC.FDA.ViewModel.Inventory
             {
                 string shapefileOcctypeName = occtypeMappingElement.Attribute(SHAPEFILE_OCCTYPE).Value;
                 int groupID = Convert.ToInt32(occtypeMappingElement.Attribute(GROUP_ID).Value);
-                int id = Convert.ToInt32(occtypeMappingElement.Attribute(ID_Constant).Value);
-                OccupancyTypes.OcctypeReference otRef = new OccupancyTypes.OcctypeReference(groupID, id);
+                int id = Convert.ToInt32(occtypeMappingElement.Attribute(ID_ATTRIBUTE_NAME).Value);
+                OccupancyTypes.OcctypeReference otRef = new(groupID, id);
                 _OcctypeMapping.Add(shapefileOcctypeName, otRef);
             }
         }
@@ -82,21 +84,21 @@ namespace HEC.FDA.ViewModel.Inventory
         {
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                .WithSiblingRules(this);
-            ImportStructuresFromShapefileVM vm = new ImportStructuresFromShapefileVM(this, actionManager);
+            ImportStructuresFromShapefileVM vm = new(this, actionManager);
             string header = "Edit " + Name;
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "EditInventory" + Name);
+            DynamicTabVM tab = new(header, vm, "EditInventory" + Name);
             Navigate(tab, false, false);
 
         }
 
         public override XElement ToXML()
         {
-            XElement inventoryElem = new XElement(StringConstants.ELEMENT_XML_TAG);
+            XElement inventoryElem = new(StringConstants.ELEMENT_XML_TAG);
             inventoryElem.Add(CreateHeaderElement());
             inventoryElem.SetAttributeValue(IMPORTED_FROM_OLD_FDA, IsImportedFromOldFDA);
             XElement selectionMappingsElem = SelectionMappings.ToXML();
 
-            XElement occtypesElem = new XElement(OCCTYPE_MAPPINGS);
+            XElement occtypesElem = new(OCCTYPE_MAPPINGS);
             foreach (KeyValuePair<string, OccupancyTypes.OcctypeReference> pair in _OcctypeMapping)
             {
                 occtypesElem.Add(CreateOcctypeMappingXElement(pair.Key, pair.Value));
@@ -106,12 +108,12 @@ namespace HEC.FDA.ViewModel.Inventory
             return inventoryElem;
         }
 
-        private XElement CreateOcctypeMappingXElement(String shapefileOcctype, OccupancyTypes.OcctypeReference fDAOcctype)
+        private static XElement CreateOcctypeMappingXElement(String shapefileOcctype, OccupancyTypes.OcctypeReference fDAOcctype)
         {
-            XElement rowElem = new XElement(OCCTYPE_MAPPING);
+            XElement rowElem = new(OCCTYPE_MAPPING);
             rowElem.SetAttributeValue(SHAPEFILE_OCCTYPE, shapefileOcctype);
             rowElem.SetAttributeValue(GROUP_ID, fDAOcctype.GroupID);
-            rowElem.SetAttributeValue(ID_Constant, fDAOcctype.ID);
+            rowElem.SetAttributeValue(ID_ATTRIBUTE_NAME, fDAOcctype.ID);
             return rowElem;
         }
 
@@ -137,12 +139,12 @@ namespace HEC.FDA.ViewModel.Inventory
 
         
 
-        private string GetImpactAreaDirectory(string impactAreaName)
+        private static string GetImpactAreaDirectory(string impactAreaName)
         {
             return Connection.Instance.ImpactAreaDirectory + "\\" + impactAreaName;
         }
 
-        private string GetImpactAreaShapefile(string impactAreaName)
+        private static string GetImpactAreaShapefile(string impactAreaName)
         {
             return Directory.GetFiles(GetImpactAreaDirectory(impactAreaName), "*.shp")[0];
         }
@@ -165,12 +167,12 @@ namespace HEC.FDA.ViewModel.Inventory
             string terrainPath = InventoryColumnSelectionsVM.getTerrainFile();
             StudyPropertiesElement studyProperties = StudyCache.GetStudyPropertiesElement();
             double priceIndex = studyProperties.UpdatedPriceIndex;
-            Model.structures.Inventory inv = new Model.structures.Inventory(pointShapefilePath, impAreaShapefilePath,
+            Model.structures.Inventory inv = new(pointShapefilePath, impAreaShapefilePath,
                 SelectionMappings, occtypeMappings, SelectionMappings.IsUsingTerrainFile,terrainPath, priceIndex);
             return inv;
         }
 
-        public FirstFloorElevationUncertainty CreateFirstFloorUncertainty(ContinuousDistribution ordinate)
+        public static FirstFloorElevationUncertainty CreateFirstFloorUncertainty(ContinuousDistribution ordinate)
         {
             FirstFloorElevationUncertainty elevationUncertainty = null;
             IDistributionEnum ordType = ordinate.Type;
@@ -181,20 +183,16 @@ namespace HEC.FDA.ViewModel.Inventory
                     elevationUncertainty = new FirstFloorElevationUncertainty();
                     break;
                 case IDistributionEnum.Normal:
-                    double normalMean = ((Normal)ordinate).Mean;
                     double normalStDev = ((Normal)ordinate).StandardDeviation;
-                    elevationUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.Normal, normalStDev, normalMean);
+                    elevationUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.Normal, normalStDev);
                     break;
                 case IDistributionEnum.LogNormal:
-                    double logNormalMean = ((LogNormal)ordinate).Mean;
                     double logNormalStDev = ((LogNormal)ordinate).StandardDeviation;
-                    elevationUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.LogNormal, logNormalStDev, logNormalMean);
+                    elevationUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.LogNormal, logNormalStDev);
                     break;
                 case IDistributionEnum.Triangular:
-                    double triMostLikely = ((Triangular)ordinate).MostLikely;
                     double triMin = ((Triangular)ordinate).Min;
                     double triMax = ((Triangular)ordinate).Max;
-                    //todo: what about most likely???
                     elevationUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.Triangular, triMin, triMax);
                     break;
                 case IDistributionEnum.Uniform:
@@ -207,7 +205,7 @@ namespace HEC.FDA.ViewModel.Inventory
             return elevationUncertainty;
         }
 
-        public ValueRatioWithUncertainty CreateValueRatioWithUncertainty(ContinuousDistribution ordinate)
+        public static ValueRatioWithUncertainty CreateValueRatioWithUncertainty(ContinuousDistribution ordinate)
         {
             ValueRatioWithUncertainty valueUncertainty = null;
             IDistributionEnum ordType = ordinate.Type;
@@ -231,13 +229,12 @@ namespace HEC.FDA.ViewModel.Inventory
                     double triMostLikely = ((Triangular)ordinate).MostLikely;
                     double triMin = ((Triangular)ordinate).Min;
                     double triMax = ((Triangular)ordinate).Max;
-                    //todo: what about most likely???
-                    valueUncertainty = new ValueRatioWithUncertainty(IDistributionEnum.Triangular, triMin, triMax);
+                    valueUncertainty = new ValueRatioWithUncertainty(IDistributionEnum.Triangular, triMin, triMostLikely, triMax);
                     break;
                 case IDistributionEnum.Uniform:
                     double uniMin = ((Uniform)ordinate).Min;
                     double uniMax = ((Uniform)ordinate).Max;
-                    valueUncertainty = new ValueRatioWithUncertainty(IDistributionEnum.Triangular, uniMin, uniMax);
+                    valueUncertainty = new ValueRatioWithUncertainty(IDistributionEnum.Uniform, uniMin, -9999, uniMax); //Uniform doesn't have a most likely. that -9999 wont get used. 
                     break;
 
             }
@@ -245,7 +242,7 @@ namespace HEC.FDA.ViewModel.Inventory
             return valueUncertainty;
         }
 
-        public ValueUncertainty CreateValueUncertainty(ContinuousDistribution ordinate)
+        public static ValueUncertainty CreateValueUncertainty(ContinuousDistribution ordinate)
         {
             ValueUncertainty valueUncertainty = null;
             IDistributionEnum ordType = ordinate.Type;
@@ -281,12 +278,12 @@ namespace HEC.FDA.ViewModel.Inventory
 
         public FdaValidationResult AreMappingsValid()
         {
-            FdaValidationResult vr = new FdaValidationResult();
+            FdaValidationResult vr = new();
             int numOcctypesNotFound = 0;
 
             foreach (OccupancyTypes.OcctypeReference otRef in _OcctypeMapping.Values)
             {
-                OccupancyTypes.IOccupancyType ot = otRef.GetOccupancyType();
+                OccupancyTypes.OccupancyType ot = otRef.GetOccupancyType();
                 if(ot == null)
                 {
                     //we didn't find the occtype. We could write out to the user the group id and the occtype id that we didn't find but i don't think
@@ -302,9 +299,15 @@ namespace HEC.FDA.ViewModel.Inventory
             return vr;
         }
 
-        private OccupancyType CreateModelOcctype(OccupancyTypes.OcctypeReference otRef)
+        private static OccupancyType CreateModelOcctype(OccupancyTypes.OcctypeReference otRef)
         {
-            OccupancyTypes.IOccupancyType ot = otRef.GetOccupancyType();
+            OccupancyTypes.OccupancyType ot = otRef.GetOccupancyType();
+            var modelOT = CreateModelOcctypeFromVMOcctype(ot);
+            return modelOT;
+        }
+
+        public static OccupancyType CreateModelOcctypeFromVMOcctype(OccupancyTypes.OccupancyType ot)
+        {
             UncertainPairedData structureUPD = ot.StructureItem.Curve.SelectedItemToPairedData();
             UncertainPairedData contentUPD = ot.ContentItem.Curve.SelectedItemToPairedData();
             UncertainPairedData vehicleUPD = ot.VehicleItem.Curve.SelectedItemToPairedData();
@@ -318,38 +321,51 @@ namespace HEC.FDA.ViewModel.Inventory
             ValueUncertainty vehicleUncertainty = CreateValueUncertainty(ot.VehicleItem.ValueUncertainty.CreateOrdinate());
             ValueUncertainty otherUncertainty = CreateValueUncertainty(ot.OtherItem.ValueUncertainty.CreateOrdinate());
 
-            OccupancyTypeBuilder builder = OccupancyType.Builder()
+            OccupancyTypeBuilder builder = Builder()
                 .WithName(ot.Name)
                 .WithDamageCategory(ot.DamageCategory)
                 .WithStructureDepthPercentDamage(structureUPD)
-                .WithContentDepthPercentDamage(contentUPD)
-                .WithVehicleDepthPercentDamage(vehicleUPD)
-                .WithOtherDepthPercentDamage(otherUPD)
-
-                .WithFirstFloorElevationUncertainty(firstFloorElevationUncertainty)
-
                 .WithStructureValueUncertainty(structureUncertainty)
-                .WithContentValueUncertainty(contentUncertainty)
-                .WithVehicleValueUncertainty(vehicleUncertainty)
-                .WithOtherValueUncertainty(otherUncertainty);
+                .WithFirstFloorElevationUncertainty(firstFloorElevationUncertainty);
 
-            if (ot.ContentItem.IsByValue)
+            if (ot.OtherItem.IsChecked)
             {
-                builder.WithContentToStructureValueRatio(CreateValueRatioWithUncertainty(ot.ContentItem.ContentByRatioVM.CreateOrdinate()));
+                builder.WithOtherDepthPercentDamage(otherUPD);
+                if (!ot.OtherItem.IsByValue)
+                {
+                    builder.WithOtherToStructureValueRatio(CreateValueRatioWithUncertainty(ot.OtherItem.ContentByRatioVM.CreateOrdinate())); // Look at renaming contentbyratioVM
+                }
+                else
+                {
+                    builder.WithOtherValueUncertainty(otherUncertainty);
+                }
             }
 
-            if (ot.OtherItem.IsByValue)
+            if (ot.ContentItem.IsChecked)
             {
-                builder.WithOtherToStructureValueRatio(CreateValueRatioWithUncertainty(ot.OtherItem.ContentByRatioVM.CreateOrdinate()));
+                builder.WithContentDepthPercentDamage(contentUPD);
+                if (!ot.ContentItem.IsByValue)
+                {
+                    builder.WithContentToStructureValueRatio(CreateValueRatioWithUncertainty(ot.ContentItem.ContentByRatioVM.CreateOrdinate()));
+                }
+                else
+                {
+                    builder.WithContentValueUncertainty(contentUncertainty);
+                }
             }
 
+            if (ot.VehicleItem.IsChecked)
+            {
+                builder.WithVehicleDepthPercentDamage(vehicleUPD);
+                builder.WithVehicleValueUncertainty(vehicleUncertainty);
+            }
             return builder.Build();
         }
 
-        private Dictionary<String, OccupancyType> CreateModelOcctypesMapping()
+        private Dictionary<string, OccupancyType> CreateModelOcctypesMapping()
         {
-            Dictionary<String, OccupancyType> occtypesMapping = new Dictionary<String,OccupancyType>();
-            foreach(KeyValuePair< String, OccupancyTypes.OcctypeReference> entry in _OcctypeMapping)
+            Dictionary<string, OccupancyType> occtypesMapping = new();
+            foreach(KeyValuePair< string, OccupancyTypes.OcctypeReference> entry in _OcctypeMapping)
             {
                 OccupancyType ot = CreateModelOcctype(entry.Value);              
                 //todo: log ot error messages?

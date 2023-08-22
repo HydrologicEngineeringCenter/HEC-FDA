@@ -71,23 +71,29 @@ namespace HEC.FDA.ViewModel.Utilities
 
         public void AddDefaultActions(Action<object, EventArgs> editAction = null, string actionHeader = "")
         {
-            List<NamedAction> localActions = new List<NamedAction>();
+            List<NamedAction> localActions = new();
 
             if (editAction != null)
             {
-                NamedAction editElement = new NamedAction();
-                editElement.Header = actionHeader;
-                editElement.Action = editAction;
+                NamedAction editElement = new()
+                {
+                    Header = actionHeader,
+                    Action = editAction
+                };
                 localActions.Add(editElement);
             }
 
-            NamedAction removeElement = new NamedAction();
-            removeElement.Header = StringConstants.REMOVE_MENU;
-            removeElement.Action = RemoveElement;
+            NamedAction removeElement = new()
+            {
+                Header = StringConstants.REMOVE_MENU,
+                Action = RemoveElement
+            };
 
-            NamedAction renameElement = new NamedAction(this);
-            renameElement.Header = StringConstants.RENAME_MENU;
-            renameElement.Action = Rename;
+            NamedAction renameElement = new(this)
+            {
+                Header = StringConstants.RENAME_MENU,
+                Action = Rename
+            };
 
             localActions.Add(removeElement);
             localActions.Add(renameElement);
@@ -99,9 +105,9 @@ namespace HEC.FDA.ViewModel.Utilities
 
         public virtual void Rename(object sender, EventArgs e)
         {
-            RenameVM renameViewModel = new RenameVM(this, CloneElement);
+            RenameVM renameViewModel = new(this, CloneElement);
             string header = "Rename";
-            DynamicTabVM tab = new DynamicTabVM(header, renameViewModel, "Rename",false,false);
+            DynamicTabVM tab = new(header, renameViewModel, "Rename",false,false);
             Navigate(tab);
         }
 
@@ -137,7 +143,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
         public XElement CreateHeaderElement()
         {
-            XElement headerElem = new XElement(HEADER_XML_TAG);
+            XElement headerElem = new(HEADER_XML_TAG);
             headerElem.SetAttributeValue("ID", ID);
             headerElem.SetAttributeValue(NAME_XML_TAG, Name);
             headerElem.SetAttributeValue(DESCRIPTION_XML_TAG, Description);

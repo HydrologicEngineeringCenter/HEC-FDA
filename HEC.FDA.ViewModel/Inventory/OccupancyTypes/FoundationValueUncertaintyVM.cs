@@ -14,27 +14,7 @@ namespace ViewModel.Inventory.OccupancyTypes
 
         public override XElement ToXML()
         {
-            XElement uncertElem = new XElement("ValueUncertainty");
-
-
-            //XElement uncertElem = new XElement("Uncertainty");
-
-            //uncertElem.Add(_ItemValueUncertainty.ToXML());
-
-            //uncertElem.SetAttributeValue("UncertType", _ItemValueUncertainty.GetType());
-
-            ////for the uncertainty type, if deterministic, the currentVM will be null
-            //if (_ItemValueUncertainty.CurrentVM == null)
-            //{
-            //    XElement deterministicElem = new XElement("Deterministic");
-            //    uncertElem.Add(deterministicElem);
-            //}
-            //else
-            //{
-            //    uncertElem.Add(_ItemValueUncertainty.CurrentVM.CreateOrdinate().ToXML());
-            //}
-            //return uncertElem;
-
+            XElement uncertElem = new("ValueUncertainty");
             return uncertElem;
 
         }
