@@ -474,7 +474,6 @@ namespace HEC.FDA.Model.metrics
             foreach (ConsequenceDistributionResult damageResult in ConsequenceResultList)
             {
                 XElement damageResultElement = damageResult.WriteToXML();
-                damageResultElement.Name = $"{damageResult.DamageCategory}-{damageResult.AssetCategory}";
                 masterElem.Add(damageResultElement);
             }
             return masterElem;
