@@ -18,11 +18,15 @@ namespace HEC.FDA.ViewModel.Watershed
         {
             Name = StringConstants.TERRAIN;
             CustomTreeViewHeader = new CustomHeaderVM(Name);
-            NamedAction add = new NamedAction();
-            add.Header = StringConstants.IMPORT_TERRAIN_MENU;
-            add.Action = AddNew;
-            List<NamedAction> localactions = new List<NamedAction>();
-            localactions.Add(add);
+            NamedAction add = new()
+            {
+                Header = StringConstants.IMPORT_TERRAIN_MENU,
+                Action = AddNew
+            };
+            List<NamedAction> localactions = new()
+            {
+                add
+            };
             Actions = localactions;
 
             StudyCache.TerrainAdded += AddTerrainElement;
@@ -54,9 +58,9 @@ namespace HEC.FDA.ViewModel.Watershed
                 EditorActionManager actionManager = new EditorActionManager()
                     .WithSiblingRules(this);
 
-                TerrainBrowserVM vm = new TerrainBrowserVM(actionManager);
+                TerrainBrowserVM vm = new(actionManager);
                 string header = StringConstants.IMPORT_TERRAIN_HEADER;
-                DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_TERRAIN_HEADER);
+                DynamicTabVM tab = new(header, vm, StringConstants.IMPORT_TERRAIN_HEADER);
                 Navigate(tab, false, true);
             }
             else

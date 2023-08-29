@@ -5,9 +5,9 @@ namespace HEC.FDA.ViewModel.Inventory
     public class OccTypeDisplayName
     {
         public string DisplayName { get; }
-        public IOccupancyType OccType { get; }
+        public OccupancyType OccType { get; }
         public int GroupID { get; }
-        public OccTypeDisplayName(string groupName,int groupID, IOccupancyType occType)
+        public OccTypeDisplayName(string groupName,int groupID, OccupancyType occType)
         {
             GroupID = groupID;
             OccType = occType;

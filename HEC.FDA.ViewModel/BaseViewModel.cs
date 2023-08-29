@@ -22,12 +22,12 @@ namespace HEC.FDA.ViewModel
 
         #endregion
         #region Fields
-        private List<BaseViewModel> _Children = new List<BaseViewModel>();
+        private readonly List<BaseViewModel> _Children = new();
 
         /// <summary>
         /// This is a dictionary of property names, and any rules that go with that property.
         /// </summary>
-        private Dictionary<string, PropertyRule> ruleMap = new Dictionary<string, PropertyRule>();
+        private readonly Dictionary<string, PropertyRule> ruleMap = new();
         private bool _HasChanges;
         private string _Error;
 
@@ -120,7 +120,7 @@ namespace HEC.FDA.ViewModel
         public void Validate()
         {
             HasFatalError = false;
-            List<string> errors = new List<string>();
+            List<string> errors = new();
             Error = "";
             foreach (PropertyRule pr in ruleMap.Values)
             {
@@ -290,7 +290,7 @@ namespace HEC.FDA.ViewModel
         /// </summary>
         protected class PropertyRule
         {
-            private List<Rule> _rules = new List<Rule>();
+            private readonly List<Rule> _rules = new();
             /// <summary>
             /// If a rule is in error then there will be some visual indication (turn red) and
             /// a tooltip message will be displayed over the control
