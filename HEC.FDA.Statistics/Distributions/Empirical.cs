@@ -7,6 +7,7 @@ using System.Xml.Linq;
 using Utilities;
 using System.Threading.Tasks;
 using System.Threading;
+using Statistics.Histograms;
 
 namespace Statistics.Distributions
 {
@@ -20,7 +21,7 @@ namespace Statistics.Distributions
         /// Cumulative probabilities are non-exceedance probabilities ONLY
         /// </summary>
         public double[] CumulativeProbabilities;
-        public double[] ObservationValues;
+        public double[] Quantiles;
 
         #endregion
 
@@ -49,7 +50,7 @@ namespace Statistics.Distributions
             Min = 0; 
             Max = 0;
             CumulativeProbabilities = new double[] { 0 };
-            ObservationValues = new double[] { 0 };
+            Quantiles = new double[] { 0 };
             _Constructed = true;
             
         }
@@ -57,16 +58,16 @@ namespace Statistics.Distributions
         public Empirical(double[] probabilities, double[] observationValues)
         {
             CumulativeProbabilities = probabilities;
-            ObservationValues = observationValues;
-            Min = ObservationValues[0];
-            Max = ObservationValues[^1];
+            Quantiles = observationValues;
+            Min = Quantiles[0];
+            Max = Quantiles[^1];
             BuildFromProperties();
             AddRules();
         }
         public Empirical(double[] probabilities, double[] observationValues, double min, double max)
         {
             CumulativeProbabilities = probabilities;
-            ObservationValues = observationValues;
+            Quantiles = observationValues;
             Min = min;
             Max = max;
             Truncated = true;
@@ -76,7 +77,7 @@ namespace Statistics.Distributions
         public void BuildFromProperties()
         {
             
-            SampleSize = ObservationValues.Length;
+            SampleSize = Quantiles.Length;
             Mean = ComputeMean();
             Median = ComputeMedian();
             Variance = ComputeVariance();
@@ -108,7 +109,7 @@ namespace Statistics.Distributions
             }
             else if (SampleSize == 1)
             {
-                return ObservationValues[0];
+                return Quantiles[0];
             }
             else
             {
@@ -118,7 +119,7 @@ namespace Statistics.Distributions
                 double valL, valR, cdfL, cdfR;
                 // left singleton
                 i = 0;
-                valR = ObservationValues[i];
+                valR = Quantiles[i];
                 cdfR = CumulativeProbabilities[i];
                 stepPDF = cdfR - 0.0;
                 mean += valR * stepPDF;
@@ -127,7 +128,7 @@ namespace Statistics.Distributions
                 // add interval values
                 for (i = 1; i < SampleSize; ++i)
                 {
-                    valR = ObservationValues[i];
+                    valR = Quantiles[i];
                     cdfR = CumulativeProbabilities[i];
                     stepPDF = cdfR - cdfL;
                     stepVal = (valL + valR) / 2.0;
@@ -137,7 +138,7 @@ namespace Statistics.Distributions
                 }
                 // add right singleton 
                 i = SampleSize - 1;
-                valR = ObservationValues[i];
+                valR = Quantiles[i];
                 cdfR = 1.0;
                 stepPDF = cdfR - cdfL;
                 mean += valR * stepPDF;
@@ -153,17 +154,17 @@ namespace Statistics.Distributions
             }
             else if (SampleSize == 1)
             {
-                return ObservationValues[SampleSize - 1];
+                return Quantiles[SampleSize - 1];
             }
             else
             {
                 if ((SampleSize % 2) == 0)
                 {
-                    return (ObservationValues[SampleSize / 2] + ObservationValues[SampleSize / 2 - 1]) / 2;
+                    return (Quantiles[SampleSize / 2] + Quantiles[SampleSize / 2 - 1]) / 2;
                 }
                 else
                 {
-                    return ObservationValues[(SampleSize - 1) / 2];
+                    return Quantiles[(SampleSize - 1) / 2];
                 }
 
             }
@@ -205,7 +206,7 @@ namespace Statistics.Distributions
                 double valL, valR, cdfL, cdfR;
                 // add left singleton 
                 i = 0;
-                valR = ObservationValues[i];
+                valR = Quantiles[i];
                 cdfR = CumulativeProbabilities[i];
                 stepPDF = cdfR - 0.0;
                 expect2 += valR * valR * stepPDF;
@@ -214,7 +215,7 @@ namespace Statistics.Distributions
                 // add interval values
                 for (i = 1; i < SampleSize; i++)
                 {
-                    valR = ObservationValues[i];
+                    valR = Quantiles[i];
                     cdfR = CumulativeProbabilities[i];
                     stepPDF = cdfR - cdfL;
                     stepVal = (valL * valL + valL * valR + valR * valR) / 3.0;
@@ -224,7 +225,7 @@ namespace Statistics.Distributions
                 }
                 // add last singleton 
                 i = SampleSize - 1;
-                valR = ObservationValues[i];
+                valR = Quantiles[i];
                 cdfR = 1.0;
                 stepPDF = cdfR - cdfL;
                 expect2 += valR * stepPDF;
@@ -250,7 +251,7 @@ namespace Statistics.Distributions
 
         public override double CDF(double x)
         {
-            int index = Array.BinarySearch(ObservationValues, x);
+            int index = Array.BinarySearch(Quantiles, x);
             if (index >= 0)
             {
                 return CumulativeProbabilities[index];
@@ -266,7 +267,7 @@ namespace Statistics.Distributions
                 // in between index-1 and index: interpolate
                 else if (index < size)
                 {
-                    double weight = (x - ObservationValues[index - 1]) / (ObservationValues[index] - ObservationValues[index - 1]);
+                    double weight = (x - Quantiles[index - 1]) / (Quantiles[index] - Quantiles[index - 1]);
                     return (1 - weight) * CumulativeProbabilities[index - 1] + weight * CumulativeProbabilities[index];
                 }
                 else
@@ -282,7 +283,7 @@ namespace Statistics.Distributions
             if (distribution.Type == IDistributionEnum.Empirical)
             {
                 Empirical distCompared = distribution as Empirical;
-                if (ObservationValues == distCompared.ObservationValues && CumulativeProbabilities == distCompared.ObservationValues)
+                if (Quantiles == distCompared.Quantiles && CumulativeProbabilities == distCompared.Quantiles)
                 {
                     return true;
                 }
@@ -321,7 +322,7 @@ namespace Statistics.Distributions
                 int index = Array.BinarySearch(CumulativeProbabilities, p);
                 if (index >= 0)
                 {
-                    return ObservationValues[index];
+                    return Quantiles[index];
                 }
                 else
                 {
@@ -329,16 +330,16 @@ namespace Statistics.Distributions
                     // in between index-1 and index: interpolate
                     if (index == 0)
                     {   // first value
-                        return ObservationValues[0];
+                        return Quantiles[0];
                     }
                     else if (index < SampleSize)
                     {
                         double weight = (p - CumulativeProbabilities[index - 1]) / (CumulativeProbabilities[index] - CumulativeProbabilities[index - 1]);
-                        return (1.0 - weight) * ObservationValues[index - 1] + weight * ObservationValues[index];
+                        return (1.0 - weight) * Quantiles[index - 1] + weight * Quantiles[index];
                     }
                     else
                     {   // last value
-                        return ObservationValues[SampleSize - 1];
+                        return Quantiles[SampleSize - 1];
                     }
                 }
             }
@@ -347,7 +348,7 @@ namespace Statistics.Distributions
 
         public override double PDF(double x)
         {
-            int index = ObservationValues.ToList().IndexOf(x);
+            int index = Quantiles.ToList().IndexOf(x);
             if (index >= 0)
             {
                 double pdfLeft;
@@ -357,12 +358,12 @@ namespace Statistics.Distributions
                 }
                 else
                 {
-                    pdfLeft = (CumulativeProbabilities[index] - CumulativeProbabilities[index - 1]) / (ObservationValues[index] - ObservationValues[index - 1]);
+                    pdfLeft = (CumulativeProbabilities[index] - CumulativeProbabilities[index - 1]) / (Quantiles[index] - Quantiles[index - 1]);
                 }
                 double pdfRight;
                 if (index < SampleSize - 1)
                 {
-                    pdfRight = (CumulativeProbabilities[index + 1] - CumulativeProbabilities[index]) / (ObservationValues[index + 1] - ObservationValues[index]);
+                    pdfRight = (CumulativeProbabilities[index + 1] - CumulativeProbabilities[index]) / (Quantiles[index + 1] - Quantiles[index]);
                 }
                 else
                 {   //last value
@@ -382,7 +383,7 @@ namespace Statistics.Distributions
                 }
                 else if (index < SampleSize)
                 {
-                    double pdfValue = (CumulativeProbabilities[index] - CumulativeProbabilities[index - 1]) / (ObservationValues[index] - ObservationValues[index - 1]);
+                    double pdfValue = (CumulativeProbabilities[index] - CumulativeProbabilities[index - 1]) / (Quantiles[index] - Quantiles[index - 1]);
                     return pdfValue;
                 }
                 else
@@ -439,7 +440,7 @@ namespace Statistics.Distributions
             }
             return returnString;
         }
-        public override string Print(bool round = false) => round ? Print(ObservationValues, CumulativeProbabilities) : $"Empirical(Observation Values: {ObservationValues}, Cumulative Probabilities {CumulativeProbabilities})";
+        public override string Print(bool round = false) => round ? Print(Quantiles, CumulativeProbabilities) : $"Empirical(Observation Values: {Quantiles}, Cumulative Probabilities {CumulativeProbabilities})";
 
         public override string Requirements(bool printNotes)
         {
@@ -462,7 +463,7 @@ namespace Statistics.Distributions
             {
                 XElement rowElement = new("Coordinate");
                 XElement xRowElement = new("X");
-                xRowElement.SetAttributeValue("Value", ObservationValues[i]);
+                xRowElement.SetAttributeValue("Value", Quantiles[i]);
                 XElement yRowElement = new("Y");
                 yRowElement.SetAttributeValue("Cumulative Probability", CumulativeProbabilities[i]);
                 rowElement.Add(xRowElement);

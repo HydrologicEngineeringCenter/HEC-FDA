@@ -11,7 +11,7 @@ namespace HEC.FDA.Model.metrics
     {
         #region Properties 
         public PerformanceByThresholds PerformanceByThresholds { get; set; } //exposed publicly for testing
-        public ConsequenceDistributionResults ConsequenceResults { get; }
+        public StudyAreaConsequencesBinned ConsequenceResults { get; }
         public int ImpactAreaID { get; }
         public bool IsNull { get; }
         #endregion
@@ -19,18 +19,18 @@ namespace HEC.FDA.Model.metrics
         public ImpactAreaScenarioResults(int impactAreaID, bool isNull)
         {
             PerformanceByThresholds = new PerformanceByThresholds(true);
-            ConsequenceResults = new ConsequenceDistributionResults();
+            ConsequenceResults = new StudyAreaConsequencesBinned();
             ImpactAreaID = impactAreaID;
             IsNull = isNull;
         }
         public ImpactAreaScenarioResults(int impactAreaID)
         {
             PerformanceByThresholds = new PerformanceByThresholds();
-            ConsequenceResults = new ConsequenceDistributionResults(false);
+            ConsequenceResults = new StudyAreaConsequencesBinned(false);
             ImpactAreaID = impactAreaID;
             IsNull = false;
         }
-        private ImpactAreaScenarioResults(PerformanceByThresholds performanceByThresholds, ConsequenceDistributionResults expectedAnnualDamageResults, int impactAreaID)
+        private ImpactAreaScenarioResults(PerformanceByThresholds performanceByThresholds, StudyAreaConsequencesBinned expectedAnnualDamageResults, int impactAreaID)
         {
             PerformanceByThresholds = performanceByThresholds;
             ConsequenceResults = expectedAnnualDamageResults;
@@ -118,7 +118,7 @@ namespace HEC.FDA.Model.metrics
         {
             if (computeWithDamage == true)
             {
-                foreach (ConsequenceDistributionResult consequenceDistributionResult in ConsequenceResults.ConsequenceResultList)
+                foreach (AggregatedConsequencesBinned consequenceDistributionResult in ConsequenceResults.ConsequenceResultList)
                 {
                     if (!consequenceDistributionResult.ConsequenceHistogram.HistogramIsZeroValued)
                     {
@@ -162,7 +162,7 @@ namespace HEC.FDA.Model.metrics
             bool eadIsConverged = true;
             if (computeWithDamage == true)
             {
-                foreach (ConsequenceDistributionResult consequenceDistributionResult in ConsequenceResults.ConsequenceResultList)
+                foreach (AggregatedConsequencesBinned consequenceDistributionResult in ConsequenceResults.ConsequenceResultList)
                 {
                     if (consequenceDistributionResult.ConsequenceHistogram.HistogramIsZeroValued)
                     {
@@ -207,7 +207,7 @@ namespace HEC.FDA.Model.metrics
             List<long> eadIterationsRemaining = new();
             if (computeWithDamage == true)
             {
-                foreach (ConsequenceDistributionResult consequenceDistributionResult in ConsequenceResults.ConsequenceResultList)
+                foreach (AggregatedConsequencesBinned consequenceDistributionResult in ConsequenceResults.ConsequenceResultList)
                 {
                     if (consequenceDistributionResult.ConsequenceHistogram.HistogramIsZeroValued)
                     {
@@ -260,7 +260,7 @@ namespace HEC.FDA.Model.metrics
         public static ImpactAreaScenarioResults ReadFromXML(XElement xElement)
         {
             PerformanceByThresholds performanceByThresholds = PerformanceByThresholds.ReadFromXML(xElement.Element("Performance_By_Thresholds"));
-            ConsequenceDistributionResults expectedAnnualDamageResults = ConsequenceDistributionResults.ReadFromXML(xElement.Element("Expected_Annual_Damage_Results"));
+            StudyAreaConsequencesBinned expectedAnnualDamageResults = StudyAreaConsequencesBinned.ReadFromXML(xElement.Element("Expected_Annual_Damage_Results"));
             int impactAreaID = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
             return new ImpactAreaScenarioResults(performanceByThresholds, expectedAnnualDamageResults, impactAreaID);
         }

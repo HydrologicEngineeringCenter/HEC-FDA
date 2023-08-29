@@ -12,7 +12,7 @@ using System.Collections.Concurrent;
 
 namespace HEC.FDA.Model.metrics
 { 
-    public class ConsequenceDistributionResult : IReportMessage, IProgressReport
+    public class AggregatedConsequencesBinned : IReportMessage, IProgressReport
     {
         #region Fields
         private readonly double[] _TempResults;
@@ -34,7 +34,7 @@ namespace HEC.FDA.Model.metrics
         /// <summary>
         /// This constructor builds a ThreadsafeInlineHistogram. Only use for parallel computes. 
         /// </summary>
-        public ConsequenceDistributionResult()
+        public AggregatedConsequencesBinned()
         {
             DamageCategory = "unassigned";
             AssetCategory = "unassigned";
@@ -50,7 +50,7 @@ namespace HEC.FDA.Model.metrics
         /// This constructor builds a ThreadsafeInlineHistogram. Only use for parallel computes. 
         /// This constructor is used only for simulation compute and does not track impact area ID
         /// </summary>
-        public ConsequenceDistributionResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID)
+        public AggregatedConsequencesBinned(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID)
         {
             DamageCategory = damageCategory;
             AssetCategory = assetCategory;
@@ -62,7 +62,7 @@ namespace HEC.FDA.Model.metrics
             MessageHub.Register(this);
 
         }
-        public ConsequenceDistributionResult(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, List<double> consequences, int impactAreaID)
+        public AggregatedConsequencesBinned(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, List<double> consequences, int impactAreaID)
         {
             DamageCategory = damageCategory;
             AssetCategory = assetCategory;
@@ -80,7 +80,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="assetCategory"></param>
         /// <param name="histogram"></param>
         /// <param name="impactAreaID"></param>
-        public ConsequenceDistributionResult(string damageCategory, string assetCategory, IHistogram histogram, int impactAreaID)
+        public AggregatedConsequencesBinned(string damageCategory, string assetCategory, IHistogram histogram, int impactAreaID)
         {
             DamageCategory = damageCategory;
             AssetCategory = assetCategory;
@@ -128,7 +128,7 @@ namespace HEC.FDA.Model.metrics
             return quartile;
         }
 
-        public bool Equals(ConsequenceDistributionResult damageResult)
+        public bool Equals(AggregatedConsequencesBinned damageResult)
         {
             bool histogramsMatch = ConsequenceHistogram.Equals(damageResult.ConsequenceHistogram);
             if (!histogramsMatch)
@@ -137,10 +137,10 @@ namespace HEC.FDA.Model.metrics
             }
             return true;
         }
-        public static SingleEmpiricalDistributionOfConsequences ConvertToSingleEmpiricalDistributionOfConsequences(ConsequenceDistributionResult consequenceDistributionResult)
+        public static AggregatedConsequencesByQuantile ConvertToSingleEmpiricalDistributionOfConsequences(AggregatedConsequencesBinned consequenceDistributionResult)
         {
             Empirical empirical = Histogram.ConvertToEmpiricalDistribution(consequenceDistributionResult.ConsequenceHistogram);
-            return new SingleEmpiricalDistributionOfConsequences(consequenceDistributionResult.DamageCategory, consequenceDistributionResult.AssetCategory, empirical, consequenceDistributionResult.RegionID);
+            return new AggregatedConsequencesByQuantile(consequenceDistributionResult.DamageCategory, consequenceDistributionResult.AssetCategory, empirical, consequenceDistributionResult.RegionID);
         }
         public XElement WriteToXML()
         {
@@ -154,13 +154,13 @@ namespace HEC.FDA.Model.metrics
             return masterElement;
         }
 
-        public static ConsequenceDistributionResult ReadFromXML(XElement xElement)
+        public static AggregatedConsequencesBinned ReadFromXML(XElement xElement)
         {
             IHistogram damageHistogram = Histogram.ReadFromXML(xElement.Element("DamageHistogram"));
             string damageCategory = xElement.Attribute("DamageCategory").Value;
             string assetCategory = xElement.Attribute("AssetCategory").Value;
             int id = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
-            return new ConsequenceDistributionResult(damageCategory, assetCategory, damageHistogram, id);
+            return new AggregatedConsequencesBinned(damageCategory, assetCategory, damageHistogram, id);
         }
 
         public void ReportMessage(object sender, MessageEventArgs e)

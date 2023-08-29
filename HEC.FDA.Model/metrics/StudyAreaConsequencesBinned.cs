@@ -13,38 +13,38 @@ using Statistics.Distributions;
 
 namespace HEC.FDA.Model.metrics
 {
-    public class ConsequenceDistributionResults : ValidationErrorLogger
+    public class StudyAreaConsequencesBinned : ValidationErrorLogger
     {
 
         #region Properties 
-        public List<ConsequenceDistributionResult> ConsequenceResultList { get; }
+        public List<AggregatedConsequencesBinned> ConsequenceResultList { get; }
         //this needs to be an error report
         public bool IsNull { get; }
         internal int AlternativeID { get; }
         #endregion
         #region Constructors
-        public ConsequenceDistributionResults()
+        public StudyAreaConsequencesBinned()
         {
-            ConsequenceResultList = new List<ConsequenceDistributionResult>();
-            ConsequenceDistributionResult dummyConsequenceDistributionResult = new();
+            ConsequenceResultList = new List<AggregatedConsequencesBinned>();
+            AggregatedConsequencesBinned dummyConsequenceDistributionResult = new();
             ConsequenceResultList.Add(dummyConsequenceDistributionResult);
             IsNull = true;
 
             //create an array to collect data the side of the convergence criteria iteration count 
         }
-        public ConsequenceDistributionResults(bool isNull)
+        public StudyAreaConsequencesBinned(bool isNull)
         {
-            ConsequenceResultList = new List<ConsequenceDistributionResult>();
+            ConsequenceResultList = new List<AggregatedConsequencesBinned>();
             IsNull = isNull;
         }
-        internal ConsequenceDistributionResults(int alternativeID)
+        internal StudyAreaConsequencesBinned(int alternativeID)
         {
-            ConsequenceResultList = new List<ConsequenceDistributionResult>();
+            ConsequenceResultList = new List<AggregatedConsequencesBinned>();
             AlternativeID = alternativeID;
             IsNull = false;
         }
         //public for testing
-        public ConsequenceDistributionResults(List<ConsequenceDistributionResult> damageResults)
+        public StudyAreaConsequencesBinned(List<AggregatedConsequencesBinned> damageResults)
         {
             ConsequenceResultList = damageResults;
             IsNull = false;
@@ -55,17 +55,17 @@ namespace HEC.FDA.Model.metrics
         //This constructor is used in the simulation parallel compute and creates a threadsafe inline histogram inside consequence distribution result 
         internal void AddNewConsequenceResultObject(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID)
         {
-            ConsequenceDistributionResult damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
+            AggregatedConsequencesBinned damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
             if (damageResult.IsNull)
             {
-                ConsequenceDistributionResult newDamageResult = new (damageCategory, assetCategory, convergenceCriteria, impactAreaID);
+                AggregatedConsequencesBinned newDamageResult = new (damageCategory, assetCategory, convergenceCriteria, impactAreaID);
                 ConsequenceResultList.Add(newDamageResult);
             }
         }
         //public for testing purposes
-        public void AddExistingConsequenceResultObject(ConsequenceDistributionResult consequenceResultToAdd)
+        public void AddExistingConsequenceResultObject(AggregatedConsequencesBinned consequenceResultToAdd)
         {
-            ConsequenceDistributionResult consequenceResult = GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
+            AggregatedConsequencesBinned consequenceResult = GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
             if (consequenceResult.IsNull)
             {
                 ConsequenceResultList.Add(consequenceResultToAdd);
@@ -73,7 +73,7 @@ namespace HEC.FDA.Model.metrics
         }
         internal void AddConsequenceRealization(double damageEstimate, string damageCategory, string assetCategory, int impactAreaID, long iteration)
         {
-            ConsequenceDistributionResult damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
+            AggregatedConsequencesBinned damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
             damageResult.AddConsequenceRealization(damageEstimate, iteration);
 
         }
@@ -86,7 +86,7 @@ namespace HEC.FDA.Model.metrics
         }
         public void PutDataIntoHistograms()
         {
-            foreach(ConsequenceDistributionResult consequenceDistributionResult in ConsequenceResultList)
+            foreach(AggregatedConsequencesBinned consequenceDistributionResult in ConsequenceResultList)
             {
                 consequenceDistributionResult.PutDataIntoHistogram();
             }
@@ -107,7 +107,7 @@ namespace HEC.FDA.Model.metrics
         public double MeanDamage(string damageCategory = null, string assetCategory = null, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
         {
             double consequenceValue = 0;
-            foreach (ConsequenceDistributionResult consequenceResult in ConsequenceResultList)
+            foreach (AggregatedConsequencesBinned consequenceResult in ConsequenceResultList)
             {
                 if (damageCategory == null && assetCategory == null && impactAreaID == utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
                 {
@@ -176,7 +176,7 @@ namespace HEC.FDA.Model.metrics
         public double ConsequenceExceededWithProbabilityQ(double exceedanceProbability, string damageCategory = null, string assetCategory = null, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
         {
             double consequenceValue = 0;
-            foreach (ConsequenceDistributionResult consequenceResult in ConsequenceResultList)
+            foreach (AggregatedConsequencesBinned consequenceResult in ConsequenceResultList)
             {
                 if (damageCategory == null && assetCategory == null && impactAreaID == utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
                 {
@@ -240,7 +240,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="assetCategory"></param>
         /// <param name="impactAreaID"></param>
         /// <returns></returns>
-        public ConsequenceDistributionResult GetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
+        public AggregatedConsequencesBinned GetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
         {
             //foreach (ConsequenceDistributionResult damageResult in _consequenceResultList)
             for (int i = 0; i < ConsequenceResultList.Count; i++)
@@ -259,16 +259,16 @@ namespace HEC.FDA.Model.metrics
             string message = "The requested damage category - asset category - impact area combination could not be found. An arbitrary object is being returned";
             ErrorMessage errorMessage = new(message, MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
             ReportMessage(this, new MessageEventArgs(errorMessage));
-            ConsequenceDistributionResult dummyResult = new();
+            AggregatedConsequencesBinned dummyResult = new();
             return dummyResult;
         }
 
         //TODO: This needs to confirm that the histograms inside each ConsequenceDistributionResult Match. 
-        public bool Equals(ConsequenceDistributionResults inputDamageResults)
+        public bool Equals(StudyAreaConsequencesBinned inputDamageResults)
         {
-            foreach (ConsequenceDistributionResult damageResult in ConsequenceResultList)
+            foreach (AggregatedConsequencesBinned damageResult in ConsequenceResultList)
             {
-                ConsequenceDistributionResult inputDamageResult = inputDamageResults.GetConsequenceResult(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.RegionID);
+                AggregatedConsequencesBinned inputDamageResult = inputDamageResults.GetConsequenceResult(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.RegionID);
                 bool resultsMatch = damageResult.Equals(inputDamageResult);
                 if (!resultsMatch)
                 {
@@ -290,7 +290,7 @@ namespace HEC.FDA.Model.metrics
         public Empirical GetAggregateEmpiricalDistribution(string damageCategory = null, string assetCategory = null, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
         {
             List<Empirical> empiricalDistsToStack = new();
-            foreach (ConsequenceDistributionResult consequenceResult in ConsequenceResultList)
+            foreach (AggregatedConsequencesBinned consequenceResult in ConsequenceResultList)
             {
                 if (damageCategory == null && assetCategory == null && impactAreaID == utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
                 {
@@ -340,7 +340,7 @@ namespace HEC.FDA.Model.metrics
                 }
                 if (damageCategory != null && assetCategory != null && impactAreaID != utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
                 {
-                    ConsequenceDistributionResult consequence = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
+                    AggregatedConsequencesBinned consequence = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
                     return Histogram.ConvertToEmpiricalDistribution(consequence.ConsequenceHistogram);
                 }
             }
@@ -361,7 +361,7 @@ namespace HEC.FDA.Model.metrics
         public IHistogram GetSpecificHistogram(string damageCategory, string assetCategory, int impactAreaID)
         {
             IHistogram returnHistogram = null;
-            foreach (ConsequenceDistributionResult consequenceDistributionResult in ConsequenceResultList)
+            foreach (AggregatedConsequencesBinned consequenceDistributionResult in ConsequenceResultList)
             {
                 if (consequenceDistributionResult.DamageCategory == damageCategory)
                 {
@@ -388,7 +388,7 @@ namespace HEC.FDA.Model.metrics
         {
             List<long> stageDamageIterationsRemaining = new();
 
-                foreach (ConsequenceDistributionResult consequenceDistributionResult in ConsequenceResultList)
+                foreach (AggregatedConsequencesBinned consequenceDistributionResult in ConsequenceResultList)
                 {
                     if (consequenceDistributionResult.ConsequenceHistogram.HistogramIsZeroValued)
                     {
@@ -405,7 +405,7 @@ namespace HEC.FDA.Model.metrics
         public bool ResultsAreConverged(double upperConfidenceLimit, double lowerConfidenceLimit)
         {
             bool allHistogramsAreConverged = true;
-            foreach (ConsequenceDistributionResult consequenceDistributionResult in ConsequenceResultList)
+            foreach (AggregatedConsequencesBinned consequenceDistributionResult in ConsequenceResultList)
             {
                 bool histogramIsConverged = consequenceDistributionResult.ConsequenceHistogram.IsHistogramConverged(upperConfidenceLimit, lowerConfidenceLimit);
                 if (!histogramIsConverged)
@@ -416,7 +416,7 @@ namespace HEC.FDA.Model.metrics
             }
             return allHistogramsAreConverged;
         }
-        public static List<UncertainPairedData> ToUncertainPairedData(List<double> xValues, List<ConsequenceDistributionResults> yValues, int impactAreaID)
+        public static List<UncertainPairedData> ToUncertainPairedData(List<double> xValues, List<StudyAreaConsequencesBinned> yValues, int impactAreaID)
         {
             List<UncertainPairedData> uncertainPairedDataList = new();
             List<string> damageCategories = yValues[^1].GetDamageCategories();
@@ -429,7 +429,7 @@ namespace HEC.FDA.Model.metrics
                     {
                         CurveMetaData curveMetaData = new("X Values", "Consequences", "Consequences Uncertain Paired Data", damageCategory, impactAreaID, assetCategory);
                         List<IHistogram> histograms = new();
-                        foreach (ConsequenceDistributionResults consequenceDistributions in yValues)
+                        foreach (StudyAreaConsequencesBinned consequenceDistributions in yValues)
                         {
                             IHistogram histogram = consequenceDistributions.GetSpecificHistogram(damageCategory, assetCategory, impactAreaID);
                             histograms.Add(histogram);
@@ -445,7 +445,7 @@ namespace HEC.FDA.Model.metrics
         private List<string> GetAssetCategories()
         {
             List<string> assetCategories = new();
-            foreach (ConsequenceDistributionResult consequenceDistributionResult in ConsequenceResultList)
+            foreach (AggregatedConsequencesBinned consequenceDistributionResult in ConsequenceResultList)
             {
                 if (!assetCategories.Contains(consequenceDistributionResult.AssetCategory))
                 {
@@ -458,7 +458,7 @@ namespace HEC.FDA.Model.metrics
         private List<string> GetDamageCategories()
         {
             List<string> damageCategories = new();
-            foreach (ConsequenceDistributionResult consequenceDistributionResult in ConsequenceResultList)
+            foreach (AggregatedConsequencesBinned consequenceDistributionResult in ConsequenceResultList)
             {
                 if (!damageCategories.Contains(consequenceDistributionResult.DamageCategory))
                 {
@@ -471,7 +471,7 @@ namespace HEC.FDA.Model.metrics
         public XElement WriteToXML()
         {
             XElement masterElem = new("EAD_Results");
-            foreach (ConsequenceDistributionResult damageResult in ConsequenceResultList)
+            foreach (AggregatedConsequencesBinned damageResult in ConsequenceResultList)
             {
                 XElement damageResultElement = damageResult.WriteToXML();
                 masterElem.Add(damageResultElement);
@@ -479,14 +479,14 @@ namespace HEC.FDA.Model.metrics
             return masterElem;
         }
 
-        public static ConsequenceDistributionResults ReadFromXML(XElement xElement)
+        public static StudyAreaConsequencesBinned ReadFromXML(XElement xElement)
         {
-            List<ConsequenceDistributionResult> damageResults = new();
+            List<AggregatedConsequencesBinned> damageResults = new();
             foreach (XElement histogramElement in xElement.Elements())
             {
-                damageResults.Add(ConsequenceDistributionResult.ReadFromXML(histogramElement));
+                damageResults.Add(AggregatedConsequencesBinned.ReadFromXML(histogramElement));
             }
-            return new ConsequenceDistributionResults(damageResults);
+            return new StudyAreaConsequencesBinned(damageResults);
         }
 
         #endregion

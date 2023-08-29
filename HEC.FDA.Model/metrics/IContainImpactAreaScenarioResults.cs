@@ -3,7 +3,7 @@ namespace HEC.FDA.Model.metrics
     public interface IContainImpactAreaScenarioResults
     {
         PerformanceByThresholds PerformanceByThresholds { get; }
-        ConsequenceDistributionResults ConsequenceResults { get; }
+        StudyAreaConsequencesBinned ConsequenceResults { get; }
         int ImpactAreaID { get; }
         bool Equals(ImpactAreaScenarioResults incomingIContainResults);
     }

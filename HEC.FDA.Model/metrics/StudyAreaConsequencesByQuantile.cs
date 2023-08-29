@@ -12,10 +12,10 @@ using System.Xml.Linq;
 
 namespace HEC.FDA.Model.metrics
 {
-    public class ManyEmpiricalDistributionsOfConsequences : Validation, IReportMessage
+    public class StudyAreaConsequencesByQuantile : Validation, IReportMessage
     {
         #region Properties 
-        public List<SingleEmpiricalDistributionOfConsequences> ConsequenceResultList { get; }
+        public List<AggregatedConsequencesByQuantile> ConsequenceResultList { get; }
         public event MessageReportedEventHandler MessageReport;
         public bool IsNull { get; }
         internal int AlternativeID { get; }
@@ -25,29 +25,29 @@ namespace HEC.FDA.Model.metrics
         #endregion
 
         #region Constructors
-        public ManyEmpiricalDistributionsOfConsequences()
+        public StudyAreaConsequencesByQuantile()
         {
-            ConsequenceResultList = new List<SingleEmpiricalDistributionOfConsequences>();
-            SingleEmpiricalDistributionOfConsequences dummyConsequenceDistributionResult = new();
+            ConsequenceResultList = new List<AggregatedConsequencesByQuantile>();
+            AggregatedConsequencesByQuantile dummyConsequenceDistributionResult = new();
             ConsequenceResultList.Add(dummyConsequenceDistributionResult);
             IsNull = true;
             MessageHub.Register(this);
         }
-        internal ManyEmpiricalDistributionsOfConsequences(bool isNull)
+        internal StudyAreaConsequencesByQuantile(bool isNull)
         {
-            ConsequenceResultList = new List<SingleEmpiricalDistributionOfConsequences>();
+            ConsequenceResultList = new List<AggregatedConsequencesByQuantile>();
             IsNull = isNull;
             MessageHub.Register(this);
         }
-        internal ManyEmpiricalDistributionsOfConsequences(int alternativeID)
+        internal StudyAreaConsequencesByQuantile(int alternativeID)
         {
-            ConsequenceResultList = new List<SingleEmpiricalDistributionOfConsequences>();
+            ConsequenceResultList = new List<AggregatedConsequencesByQuantile>();
             AlternativeID = alternativeID;
             IsNull = false;
             MessageHub.Register(this);
         }
         //public for testing
-        internal ManyEmpiricalDistributionsOfConsequences(List<SingleEmpiricalDistributionOfConsequences> damageResults)
+        internal StudyAreaConsequencesByQuantile(List<AggregatedConsequencesByQuantile> damageResults)
         {
             ConsequenceResultList = damageResults;
             IsNull = false;
@@ -62,17 +62,17 @@ namespace HEC.FDA.Model.metrics
         //This constructor is used in the simulation parallel compute and creates a threadsafe inline histogram inside consequence distribution result 
         internal void AddNewConsequenceResultObject(string damageCategory, string assetCategory, List<double> consequences, int impactAreaID)
         {
-            SingleEmpiricalDistributionOfConsequences damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
+            AggregatedConsequencesByQuantile damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
             if (damageResult.IsNull)
             {
-                SingleEmpiricalDistributionOfConsequences newDamageResult = new(damageCategory, assetCategory, consequences, impactAreaID);
+                AggregatedConsequencesByQuantile newDamageResult = new(damageCategory, assetCategory, consequences, impactAreaID);
                 ConsequenceResultList.Add(newDamageResult);
             }
         }
         //public for testing purposes
-        public void AddExistingConsequenceResultObject(SingleEmpiricalDistributionOfConsequences consequenceResultToAdd)
+        public void AddExistingConsequenceResultObject(AggregatedConsequencesByQuantile consequenceResultToAdd)
         {
-            SingleEmpiricalDistributionOfConsequences consequenceResult = GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
+            AggregatedConsequencesByQuantile consequenceResult = GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
             if (consequenceResult.IsNull)
             {
                 ConsequenceResultList.Add(consequenceResultToAdd);
@@ -93,7 +93,7 @@ namespace HEC.FDA.Model.metrics
         public double MeanDamage(string damageCategory = null, string assetCategory = null, int impactAreaID = -999)
         {
             double consequenceValue = 0;
-            foreach (SingleEmpiricalDistributionOfConsequences consequenceResult in ConsequenceResultList)
+            foreach (AggregatedConsequencesByQuantile consequenceResult in ConsequenceResultList)
             {
                 if (damageCategory == null && assetCategory == null && impactAreaID == -999)
                 {
@@ -162,7 +162,7 @@ namespace HEC.FDA.Model.metrics
         public double ConsequenceExceededWithProbabilityQ(double exceedanceProbability, string damageCategory = null, string assetCategory = null, int impactAreaID = -999)
         {
             double consequenceValue = 0;
-            foreach (SingleEmpiricalDistributionOfConsequences consequenceResult in ConsequenceResultList)
+            foreach (AggregatedConsequencesByQuantile consequenceResult in ConsequenceResultList)
             {
                 if (damageCategory == null && assetCategory == null && impactAreaID == -999)
                 {
@@ -226,7 +226,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="assetCategory"></param>
         /// <param name="impactAreaID"></param>
         /// <returns></returns>
-        public SingleEmpiricalDistributionOfConsequences GetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID = -999)
+        public AggregatedConsequencesByQuantile GetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID = -999)
         {
             for (int i = 0; i < ConsequenceResultList.Count; i++)
             {
@@ -244,7 +244,7 @@ namespace HEC.FDA.Model.metrics
             string message = "The requested damage category - asset category - impact area combination could not be found. An arbitrary object is being returned";
             ErrorMessage errorMessage = new(message, MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
             ReportMessage(this, new MessageEventArgs(errorMessage));
-            SingleEmpiricalDistributionOfConsequences singleEmpiricalDistributionOfConsequences = new();
+            AggregatedConsequencesByQuantile singleEmpiricalDistributionOfConsequences = new();
             return singleEmpiricalDistributionOfConsequences;
         }
 
@@ -265,7 +265,7 @@ namespace HEC.FDA.Model.metrics
         public Empirical GetAggregateEmpiricalDistribution(string damageCategory = null, string assetCategory = null, int impactAreaID = -999)
         {
             List<Empirical> empiricalDistsToStack = new();
-            foreach (SingleEmpiricalDistributionOfConsequences consequenceResult in ConsequenceResultList)
+            foreach (AggregatedConsequencesByQuantile consequenceResult in ConsequenceResultList)
             {
                 if (damageCategory == null && assetCategory == null && impactAreaID == -999)
                 {
@@ -315,7 +315,7 @@ namespace HEC.FDA.Model.metrics
                 }
                 if (damageCategory != null && assetCategory != null && impactAreaID != -999)
                 {
-                    SingleEmpiricalDistributionOfConsequences consequence = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
+                    AggregatedConsequencesByQuantile consequence = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
                     return consequence.ConsequenceDistribution;
                 }
             }
@@ -336,7 +336,7 @@ namespace HEC.FDA.Model.metrics
         public XElement WriteToXML()
         {
             XElement masterElem = new("EAD_Results");
-            foreach (SingleEmpiricalDistributionOfConsequences damageResult in ConsequenceResultList)
+            foreach (AggregatedConsequencesByQuantile damageResult in ConsequenceResultList)
             {
                 XElement damageResultElement = damageResult.WriteToXML();
                 damageResultElement.Name = $"{damageResult.DamageCategory}-{damageResult.AssetCategory}";
@@ -345,14 +345,14 @@ namespace HEC.FDA.Model.metrics
             return masterElem;
         }
 
-        public static ManyEmpiricalDistributionsOfConsequences ReadFromXML(XElement xElement)
+        public static StudyAreaConsequencesByQuantile ReadFromXML(XElement xElement)
         {
-            List<SingleEmpiricalDistributionOfConsequences> damageResults = new();
+            List<AggregatedConsequencesByQuantile> damageResults = new();
             foreach (XElement histogramElement in xElement.Elements())
             {
-                damageResults.Add(SingleEmpiricalDistributionOfConsequences.ReadFromXML(histogramElement));
+                damageResults.Add(AggregatedConsequencesByQuantile.ReadFromXML(histogramElement));
             }
-            return new ManyEmpiricalDistributionsOfConsequences(damageResults);
+            return new StudyAreaConsequencesByQuantile(damageResults);
         }
         #endregion
 
