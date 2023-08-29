@@ -101,6 +101,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="FDA.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Resources\errorMark.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
@@ -238,5 +242,6 @@
  
   <PropertyGroup>
     <RootNamespace>HEC.FDA.View</RootNamespace>
+    <ApplicationIcon>FDA.ico</ApplicationIcon>
   </PropertyGroup>
 </Project>
