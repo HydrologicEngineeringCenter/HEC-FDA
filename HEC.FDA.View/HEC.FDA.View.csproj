@@ -101,7 +101,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="FDA.ico" />
+    <Content Include="TableWithPlot\Icons\FDA.ico" />
   </ItemGroup>
 
   <ItemGroup>
