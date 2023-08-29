@@ -9,7 +9,7 @@ using static HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccTypeAsset;
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     /// <summary>
-    /// This represents an IOccupancyType while it is in the occupancy type editor. All the values can be edited.
+    /// This represents an OccupancyType while it is in the occupancy type editor. All the values can be edited.
     /// If the user saves, then a new occupancy type based off of these values will replace the original.
     /// </summary>
     public class OccupancyTypeEditable : BaseViewModel
@@ -87,10 +87,10 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         #endregion
 
         #region Constructors      
-        public OccupancyTypeEditable(IOccupancyType occtype,ref ObservableCollection<string> damageCategoriesList, bool occtypeHasBeenSaved = true)
+        public OccupancyTypeEditable(OccupancyType occtype,ref ObservableCollection<string> damageCategoriesList, bool occtypeHasBeenSaved = true)
         {
             //clone the occtype so that changes to it will not go into effect unless the user saves.
-            IOccupancyType clonedOcctype = new OccupancyType(occtype.ToXML());
+            OccupancyType clonedOcctype = new OccupancyType(occtype.ToXML());
 
             StructureItem = new OccTypeAsset(OcctypeAssetType.structure, clonedOcctype.StructureItem.IsChecked, clonedOcctype.StructureItem.Curve, clonedOcctype.StructureItem.ValueUncertainty.Distribution);
             ContentItem = new OccTypeAssetWithRatio(clonedOcctype.ContentItem);               
@@ -172,7 +172,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             return vr;
         }
 
-        public IOccupancyType CreateOccupancyType()
+        public OccupancyType CreateOccupancyType()
         {
             return new OccupancyType(Name, Description, GroupID, DamageCategory, StructureItem, ContentItem, VehicleItem, OtherItem,
                 FoundationHeightUncertainty.CreateOrdinate(), ID);

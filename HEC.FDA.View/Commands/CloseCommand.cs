@@ -17,8 +17,7 @@ namespace HEC.FDA.View.Commands
         #region Voids
         public void Execute(object parameter)
         {
-            Window window = parameter as Window;
-            if (window != null)
+            if (parameter is Window window)
             {
                 TabController.Instance.CloseTabOrWindow(window);
             }

@@ -8,8 +8,7 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes.Controls
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            string parameterString = parameter as string;
-            if (parameterString == null)
+            if (parameter is not string parameterString)
                 return DependencyProperty.UnsetValue;
 
             if (Enum.IsDefined(value.GetType(), value) == false)
@@ -22,8 +21,7 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes.Controls
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            string parameterString = parameter as string;
-            if (parameterString == null)
+            if (parameter is not string parameterString)
                 return DependencyProperty.UnsetValue;
 
             return Enum.Parse(targetType, parameterString);
