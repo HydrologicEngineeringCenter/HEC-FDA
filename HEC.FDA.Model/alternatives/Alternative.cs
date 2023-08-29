@@ -105,6 +105,7 @@ namespace HEC.FDA.Model.alternatives
             return alternativeResults;
         }
 
+            throw new NotImplementedException();
         private double ProcessBaseAndFutureYearScenarioResults(List<int> analysisYears, double discountRate, int periodOfAnalysis, ScenarioResults computedResultsBaseYear, ScenarioResults computedResultsFutureYear, AlternativeResults alternativeResults, List<IContainImpactAreaScenarioResults> futureYearResultsList, double quantityOFDamCatAssetCatImpactAreaCombos)
         {
             double progressTicker = 0;
