@@ -9,18 +9,36 @@ namespace Importer
     [Serializable]
     public class ErrorDistribution
     {
-        #region Notes
-        // Created By: $username$
-        // Created Date: $time$
-        //    public enum ErrorTypes { NONE, NORMAL, TRIANGULAR, LOGNORMAL, UNIFORM };
-        #endregion
-        #region Fields
-        private ErrorType _ErrorType;
-        private double _CentralValue;
-        private double _StdDev;
-        private double _Upper;
-        #endregion
+
         #region Properties
+        public ErrorType ErrorType { get; set; }
+        public String ErrorTypeCode
+        {
+            get
+            {
+                string code = "";
+
+                switch (ErrorType)
+                {
+                    case ErrorType.NORMAL:
+                        code = "N";
+                        break;
+                    case ErrorType.LOGNORMAL:
+                        code = "LN";
+                        break;
+                    case ErrorType.TRIANGULAR:
+                        code = "T";
+                        break;
+                    default:
+                        code = "";
+                        break;
+                }
+                return code;
+            }
+        }
+        public double CentralValue { get; set; }
+        public double StandardDeviationOrMin { get; set; }
+        public double Maximum { get; set; }
         #endregion
         #region Constructors
         public ErrorDistribution()
@@ -31,78 +49,28 @@ namespace Importer
         #region Voids
         public void Reset()
         {
-            _ErrorType = ErrorType.NONE;
-            _CentralValue = Study.badNumber;
-            _StdDev = Study.badNumber;
-            //stdDevLog = 1.0e-7;
-            //lower = 0.0;
-            _Upper = Study.badNumber;
+            ErrorType = ErrorType.NONE;
+            CentralValue = Study.badNumber;
+            StandardDeviationOrMin = Study.badNumber;
+            Maximum = Study.badNumber;
         }
-        #endregion
-        #region Functions
-        public ErrorType GetErrorType()
+        public void SetErrorType(string code)
         {
-            return this._ErrorType;
-        }
-        public String GetErrorTypeCode()
-        {
-            string code = "";
-
-            switch (this._ErrorType)
-            {
-                case ErrorType.NORMAL:
-                    code = "N";
-                    break;
-                case ErrorType.LOGNORMAL:
-                    code = "LN";
-                    break;
-                case ErrorType.TRIANGULAR:
-                    code = "T";
-                    break;
-                default:
-                    code = "";
-                    break;
-            }
-            return code;
-        }
-        public ErrorType SetErrorType(string code)
-        {
-            _ErrorType = ErrorType.NONE;
+            ErrorType = ErrorType.NONE;
             if (code.ToUpper() == "N")
-                _ErrorType = ErrorType.NORMAL;
+                ErrorType = ErrorType.NORMAL;
             else if (code.ToUpper() == "LN")
-                _ErrorType = ErrorType.LOGNORMAL;
+                ErrorType = ErrorType.LOGNORMAL;
             else if (code.ToUpper() == "T")
-                _ErrorType = ErrorType.TRIANGULAR;
+                ErrorType = ErrorType.TRIANGULAR;
             else
-                _ErrorType = ErrorType.NONE;
-            return _ErrorType;
+                ErrorType = ErrorType.NONE;
         }
-        public ErrorType SetErrorType(ErrorType errorType)
+
+        internal void FixRatioParameters()
         {
-            this._ErrorType = errorType;
-            return this._ErrorType;
-        }
-        public double GetCentralValue()
-        { return _CentralValue; }
-        public double SetCentralValue(double centralValue)
-        {
-            this._CentralValue = centralValue;
-            return this._CentralValue;
-        }
-        public double GetStdDev()
-        { return this._StdDev; }
-        public double SetStdDev(double stdDev)
-        {
-            this._StdDev = stdDev;
-            return this._StdDev;
-        }
-        public double GetUpper()
-        { return this._Upper; }
-        public double SetUpper(double upper)
-        {
-            this._Upper = upper;
-            return this._Upper;
+            StandardDeviationOrMin = StandardDeviationOrMin * CentralValue;
+            Maximum = Maximum * CentralValue;
         }
         #endregion
     }

@@ -717,9 +717,9 @@ namespace HEC.FDA.ViewModel.Utilities
             //It looks like the only options that will actually come in here is Normal, Triangular, Log Normal.
             double mostLikelyValue = 100;
             //st dev gets reused as min
-            double stDev = errorDist.GetStdDev();
-            double max = errorDist.GetUpper();
-            ErrorType type = errorDist.GetErrorType();
+            double stDev = errorDist.StandardDeviationOrMin;
+            double max = errorDist.Maximum;
+            ErrorType type = errorDist.ErrorType;
             ContinuousDistribution dist = new Deterministic(mostLikelyValue);
             switch (type)
             {
@@ -745,11 +745,11 @@ namespace HEC.FDA.ViewModel.Utilities
         private static ContinuousDistribution TranslateRatioValueUncertainty(ErrorDistribution errorDist)
         {
             //It looks like the only options that will actually come in here is Normal, Triangular, Log Normal.
-            double mean = errorDist.GetCentralValue();
+            double mean = errorDist.CentralValue;
             //st dev gets reused as min
-            double stDev = errorDist.GetStdDev();
-            double max = errorDist.GetUpper();
-            ErrorType type = errorDist.GetErrorType();
+            double stDev = errorDist.StandardDeviationOrMin;
+            double max = errorDist.Maximum;
+            ErrorType type = errorDist.ErrorType;
             ContinuousDistribution dist = new Deterministic(mean);
             switch (type)
             {

@@ -819,6 +819,7 @@ namespace Importer
             {
                 //Process fields for structure information (Error in values, FF stage error)
                 DetermineOcctypeStructureParameters();
+                FixRatioParameters();
             }
             //Anything else is data
             else
@@ -855,6 +856,14 @@ namespace Importer
 
             }
         }
+
+        private void FixRatioParameters()
+        {
+            _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.CONTENT).FixRatioParameters();
+            _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.OTHER).FixRatioParameters();
+
+        }
+
         void DetermineOcctypeStructureParameters()
         {
             //Determines the parameters associated with the structure (first floor, S, C, O, A)
@@ -875,10 +884,10 @@ namespace Importer
                     case 1:     //Median value (not entered for FF and S
                         break;
                     case 2:     //Std. Dev for N or L; Lower for T
-                        _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.FFLOOR).SetStdDev(Convert.ToDouble(fieldCap));
+                        _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.FFLOOR).StandardDeviationOrMin = (Convert.ToDouble(fieldCap));
                         break;
                     case 3:     //Upper for T
-                        _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.FFLOOR).SetUpper(Convert.ToDouble(fieldCap));
+                        _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.FFLOOR).Maximum = (Convert.ToDouble(fieldCap));
                         break;
                     //Structure Value 
                     case 4:     //Distribution type
@@ -887,49 +896,49 @@ namespace Importer
                     case 5:     //Median value (not entered for Structure Value
                         break;
                     case 6:     //Std. Dev for N or L, Lower for T
-                        _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.STRUCTURE).SetStdDev(Convert.ToDouble(fieldCap));
+                        _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.STRUCTURE).StandardDeviationOrMin = (Convert.ToDouble(fieldCap));
                         break;
                     case 7:     //Upper for T
-                        _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.STRUCTURE).SetUpper(Convert.ToDouble(fieldCap));
+                        _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.STRUCTURE).Maximum = (Convert.ToDouble(fieldCap));
                         break;
                     //Content Ratio Value
                     case 8:     //Distribution type
                         _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.CONTENT).SetErrorType(fieldCap);
                         break;
                     case 9:     //Content to structure value ratio
-                        _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.CONTENT).SetCentralValue(Convert.ToDouble(fieldCap));
+                        _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.CONTENT).CentralValue = (Convert.ToDouble(fieldCap));
                         break;
                     case 10:    //Std. Dev for N or L, Lower for T
-                        _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.CONTENT).SetStdDev(Convert.ToDouble(fieldCap));
+                        _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.CONTENT).StandardDeviationOrMin = (Convert.ToDouble(fieldCap));
                         break;
                     case 11:    //Upper for T
-                        _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.CONTENT).SetUpper(Convert.ToDouble(fieldCap));
+                        _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.CONTENT).Maximum = (Convert.ToDouble(fieldCap));
                         break;
                     //Other Ratio Value
                     case 12:    //Distribution Type
                         _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.OTHER).SetErrorType(fieldCap);
                         break;
                     case 13:    //Other to structure value ratio
-                        _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.OTHER).SetCentralValue(Convert.ToDouble(fieldCap));
+                        _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.OTHER).CentralValue = (Convert.ToDouble(fieldCap));
                         break;
                     case 14:    //Std. Dev for N or L, Lower for T
-                        _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.OTHER).SetStdDev(Convert.ToDouble(fieldCap));
+                        _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.OTHER).StandardDeviationOrMin = (Convert.ToDouble(fieldCap));
                         break;
                     case 15:    //Upper for T
-                        _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.OTHER).SetUpper(Convert.ToDouble(fieldCap));
+                        _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.OTHER).Maximum = (Convert.ToDouble(fieldCap));
                         break;
                     //Automobile Value Ratio
                     case 16:    //Distribution Type
                         _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.AUTO).SetErrorType(fieldCap);
                         break;
                     case 17:    //Automobile to structure value ratio
-                        _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.AUTO).SetCentralValue(Convert.ToDouble(fieldCap));
+                        _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.AUTO).CentralValue = (Convert.ToDouble(fieldCap));
                         break;
                     case 18:    //Std. Dev for N or L, Lower for T
-                        _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.AUTO).SetStdDev(Convert.ToDouble(fieldCap));
+                        _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.AUTO).StandardDeviationOrMin = (Convert.ToDouble(fieldCap));
                         break;
                     case 19:    //Upper for T
-                        _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.AUTO).SetUpper(Convert.ToDouble(fieldCap));
+                        _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.AUTO).Maximum = (Convert.ToDouble(fieldCap));
                         break;
                     default:
                         break;

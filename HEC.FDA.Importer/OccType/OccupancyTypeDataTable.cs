@@ -293,13 +293,13 @@ namespace Importer
                         errType = (ErrorType)((int)dataTable.Rows[irec][ifield]);
                         theFunc._ErrorDistribution[0].SetErrorType(errType);
                     }
-                    else if (colName == "SD_EL_FF" && theFunc._ErrorDistribution[0].GetErrorType() == ErrorType.NORMAL)
+                    else if (colName == "SD_EL_FF" && theFunc._ErrorDistribution[0].ErrorType == ErrorType.NORMAL)
                         theFunc._ErrorDistribution[0].SetStdDev((double)dataTable.Rows[irec][ifield]);
-                    else if (colName == "ERLO_FF" && theFunc._ErrorDistribution[0].GetErrorType() == ErrorType.TRIANGULAR)
+                    else if (colName == "ERLO_FF" && theFunc._ErrorDistribution[0].ErrorType == ErrorType.TRIANGULAR)
                         theFunc._ErrorDistribution[0].SetStdDev((double)dataTable.Rows[irec][ifield]);
-                    else if (colName == "ERHI_FF" && theFunc._ErrorDistribution[0].GetErrorType() == ErrorType.TRIANGULAR)
+                    else if (colName == "ERHI_FF" && theFunc._ErrorDistribution[0].ErrorType == ErrorType.TRIANGULAR)
                         theFunc._ErrorDistribution[0].SetUpper((double)dataTable.Rows[irec][ifield]);
-                    else if (colName == "LOGSD_FF" && theFunc._ErrorDistribution[0].GetErrorType() == ErrorType.LOGNORMAL)
+                    else if (colName == "LOGSD_FF" && theFunc._ErrorDistribution[0].ErrorType == ErrorType.LOGNORMAL)
                         theFunc._ErrorDistribution[0].SetStdDev((double)dataTable.Rows[irec][ifield]);
 
                     //Structure Value Errors
@@ -309,13 +309,13 @@ namespace Importer
                         errType = (ErrorType)((int)dataTable.Rows[irec][ifield]);
                         theFunc._ErrorDistribution[1].SetErrorType(errType);
                     }
-                    else if (colName == "SD_SVAL" && theFunc._ErrorDistribution[1].GetErrorType() == ErrorType.NORMAL)
+                    else if (colName == "SD_SVAL" && theFunc._ErrorDistribution[1].ErrorType == ErrorType.NORMAL)
                         theFunc._ErrorDistribution[1].SetStdDev((double)dataTable.Rows[irec][ifield]);
-                    else if (colName == "ERLO_SVAL" && theFunc._ErrorDistribution[1].GetErrorType() == ErrorType.TRIANGULAR)
+                    else if (colName == "ERLO_SVAL" && theFunc._ErrorDistribution[1].ErrorType == ErrorType.TRIANGULAR)
                         theFunc._ErrorDistribution[1].SetStdDev((double)dataTable.Rows[irec][ifield]);
-                    else if (colName == "ERHI_SVAL" && theFunc._ErrorDistribution[1].GetErrorType() == ErrorType.TRIANGULAR)
+                    else if (colName == "ERHI_SVAL" && theFunc._ErrorDistribution[1].ErrorType == ErrorType.TRIANGULAR)
                         theFunc._ErrorDistribution[1].SetUpper((double)dataTable.Rows[irec][ifield]);
-                    else if (colName == "LOGSD_SVAL" && theFunc._ErrorDistribution[1].GetErrorType() == ErrorType.LOGNORMAL)
+                    else if (colName == "LOGSD_SVAL" && theFunc._ErrorDistribution[1].ErrorType == ErrorType.LOGNORMAL)
                         theFunc._ErrorDistribution[1].SetStdDev((double)dataTable.Rows[irec][ifield]);
 
                     //Content Value Errors
@@ -325,13 +325,13 @@ namespace Importer
                         errType = (ErrorType)((int)dataTable.Rows[irec][ifield]);
                         theFunc._ErrorDistribution[2].SetErrorType(errType);
                     }
-                    else if (colName == "SD_CVAL" && theFunc._ErrorDistribution[2].GetErrorType() == ErrorType.NORMAL)
+                    else if (colName == "SD_CVAL" && theFunc._ErrorDistribution[2].ErrorType == ErrorType.NORMAL)
                         theFunc._ErrorDistribution[2].SetStdDev((double)dataTable.Rows[irec][ifield]);
-                    else if (colName == "ERLO_CVAL" && theFunc._ErrorDistribution[2].GetErrorType() == ErrorType.TRIANGULAR)
+                    else if (colName == "ERLO_CVAL" && theFunc._ErrorDistribution[2].ErrorType == ErrorType.TRIANGULAR)
                         theFunc._ErrorDistribution[2].SetStdDev((double)dataTable.Rows[irec][ifield]);
-                    else if (colName == "ERHI_CVAL" && theFunc._ErrorDistribution[2].GetErrorType() == ErrorType.TRIANGULAR)
+                    else if (colName == "ERHI_CVAL" && theFunc._ErrorDistribution[2].ErrorType == ErrorType.TRIANGULAR)
                         theFunc._ErrorDistribution[2].SetUpper((double)dataTable.Rows[irec][ifield]);
-                    else if (colName == "LOGSD_CVAL" && theFunc._ErrorDistribution[2].GetErrorType() == ErrorType.LOGNORMAL)
+                    else if (colName == "LOGSD_CVAL" && theFunc._ErrorDistribution[2].ErrorType == ErrorType.LOGNORMAL)
                         theFunc._ErrorDistribution[2].SetStdDev((double)dataTable.Rows[irec][ifield]);
 
                     //Other Value Errors
@@ -341,13 +341,13 @@ namespace Importer
                         errType = (ErrorType)((int)dataTable.Rows[irec][ifield]);
                         theFunc._ErrorDistribution[3].SetErrorType(errType);
                     }
-                    else if (colName == "SD_OVAL" && theFunc._ErrorDistribution[3].GetErrorType() == ErrorType.NORMAL)
+                    else if (colName == "SD_OVAL" && theFunc._ErrorDistribution[3].ErrorType == ErrorType.NORMAL)
                         theFunc._ErrorDistribution[3].SetStdDev((double)dataTable.Rows[irec][ifield]);
-                    else if (colName == "ERLO_OVAL" && theFunc._ErrorDistribution[3].GetErrorType() == ErrorType.TRIANGULAR)
+                    else if (colName == "ERLO_OVAL" && theFunc._ErrorDistribution[3].ErrorType == ErrorType.TRIANGULAR)
                         theFunc._ErrorDistribution[3].SetStdDev((double)dataTable.Rows[irec][ifield]);
-                    else if (colName == "ERHI_OVAL" && theFunc._ErrorDistribution[3].GetErrorType() == ErrorType.TRIANGULAR)
+                    else if (colName == "ERHI_OVAL" && theFunc._ErrorDistribution[3].ErrorType == ErrorType.TRIANGULAR)
                         theFunc._ErrorDistribution[3].SetUpper((double)dataTable.Rows[irec][ifield]);
-                    else if (colName == "LOGSD_OVAL" && theFunc._ErrorDistribution[3].GetErrorType() == ErrorType.LOGNORMAL)
+                    else if (colName == "LOGSD_OVAL" && theFunc._ErrorDistribution[3].ErrorType == ErrorType.LOGNORMAL)
                         theFunc._ErrorDistribution[3].SetStdDev((double)dataTable.Rows[irec][ifield]);
 
                     //Car Value Errors
@@ -357,13 +357,13 @@ namespace Importer
                         errType = (ErrorType)((int)dataTable.Rows[irec][ifield]);
                         theFunc._ErrorDistribution[4].SetErrorType(errType);
                     }
-                    else if (colName == "SD_CRVAL" && theFunc._ErrorDistribution[4].GetErrorType() == ErrorType.NORMAL)
+                    else if (colName == "SD_CRVAL" && theFunc._ErrorDistribution[4].ErrorType == ErrorType.NORMAL)
                         theFunc._ErrorDistribution[4].SetStdDev((double)dataTable.Rows[irec][ifield]);
-                    else if (colName == "ERLO_CRVAL" && theFunc._ErrorDistribution[4].GetErrorType() == ErrorType.TRIANGULAR)
+                    else if (colName == "ERLO_CRVAL" && theFunc._ErrorDistribution[4].ErrorType == ErrorType.TRIANGULAR)
                         theFunc._ErrorDistribution[4].SetStdDev((double)dataTable.Rows[irec][ifield]);
-                    else if (colName == "ERHI_CRVAL" && theFunc._ErrorDistribution[4].GetErrorType() == ErrorType.TRIANGULAR)
+                    else if (colName == "ERHI_CRVAL" && theFunc._ErrorDistribution[4].ErrorType == ErrorType.TRIANGULAR)
                         theFunc._ErrorDistribution[4].SetUpper((double)dataTable.Rows[irec][ifield]);
-                    else if (colName == "LSD_CRVAL" && theFunc._ErrorDistribution[4].GetErrorType() == ErrorType.LOGNORMAL)
+                    else if (colName == "LSD_CRVAL" && theFunc._ErrorDistribution[4].ErrorType == ErrorType.LOGNORMAL)
                         theFunc._ErrorDistribution[4].SetStdDev((double)dataTable.Rows[irec][ifield]);
                 }
                 theFuncList.Add(theFunc, null);
