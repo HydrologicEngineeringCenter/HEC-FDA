@@ -1,5 +1,9 @@
 ﻿using HEC.FDA.ViewModel.Utilities;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace HEC.FDA.ViewModel
 {
@@ -18,6 +22,7 @@ namespace HEC.FDA.ViewModel
         private int _FontSize = 14;
         private bool _IsBold = true;
         private string _Name;
+        private ObservableCollection<BaseFdaElement> _Elements = new();
         #endregion
 
         #region Properties
@@ -42,6 +47,16 @@ namespace HEC.FDA.ViewModel
             get { return _IsBold; }
             set { _IsBold = value; NotifyPropertyChanged(nameof(IsBold)); }
         }
+
+        // These were added just to get rid of BindingExpression path errors. These are required by TreeViewItem, but apparently we don't actually use them?
+        public object ToolTip { get; set; } 
+        public ObservableCollection<BaseFdaElement> Elements
+        {
+            get { return _Elements; }
+            set { _Elements = value; NotifyPropertyChanged(nameof(Elements)); }
+        }
+
+
 
         /// <summary>
         /// This governs the image and text that is displayed in the main trees.

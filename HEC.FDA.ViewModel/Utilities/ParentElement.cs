@@ -12,12 +12,6 @@ namespace HEC.FDA.ViewModel.Utilities
 
         #endregion
         #region Properties
-        public ObservableCollection<BaseFdaElement> Elements
-        {
-            get { return _Elements; }
-            set { _Elements = value;  NotifyPropertyChanged(nameof(Elements)); }
-        }
-  
         #endregion
         #region Constructors
         public ParentElement(): base()

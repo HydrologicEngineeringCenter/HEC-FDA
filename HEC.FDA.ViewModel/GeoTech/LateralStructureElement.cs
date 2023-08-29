@@ -68,9 +68,9 @@ namespace HEC.FDA.ViewModel.GeoTech
             EditorActionManager actionManager = new EditorActionManager()
                 .WithSiblingRules(this);
 
-            LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM(this, actionManager);
+            LeveeFeatureEditorVM vm = new(this, actionManager);
             string header = "Edit " + Name;
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "EditLevee" + Name);
+            DynamicTabVM tab = new(header, vm, "EditLevee" + Name);
             Navigate(tab, false,false);
         }        
         #endregion
@@ -79,7 +79,7 @@ namespace HEC.FDA.ViewModel.GeoTech
             double elev = Elevation;
             double[] xs = new double[] { elev, elev + _FailureMargin };
             IDistribution[] ys = new IDistribution[] { new Deterministic(0), new Deterministic(1) };
-            CurveMetaData curveMetaData = new CurveMetaData(StringConstants.STAGE, StringConstants.FREQUENCY, StringConstants.FAILURE_FREQUENCY);
+            CurveMetaData curveMetaData = new(StringConstants.STAGE, StringConstants.FREQUENCY, StringConstants.FAILURE_FREQUENCY);
             return new UncertainPairedData(xs, ys, curveMetaData);
         }
 

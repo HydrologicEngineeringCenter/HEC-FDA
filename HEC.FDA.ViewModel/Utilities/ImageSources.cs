@@ -22,7 +22,7 @@ namespace HEC.FDA.ViewModel.Utilities
     {
         private static readonly string IMAGE_PREFIX = "pack://application:,,,/HEC.FDA.View;component/Resources/";
 
-        private static Dictionary<Type, string> _TypeToImageDict = new Dictionary<Type, string>()
+        private static readonly Dictionary<Type, string> _TypeToImageDict = new()
         {
             {typeof(TerrainElement),IMAGE_PREFIX + "Terrain.png" },
             {typeof(AlternativeComparisonReportElement), IMAGE_PREFIX + "AlternativeComparisonReport_20x20.png" },
