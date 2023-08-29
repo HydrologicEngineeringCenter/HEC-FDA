@@ -229,8 +229,8 @@ namespace HEC.FDA.ViewModel.Inventory
                 case IDistributionEnum.Triangular:
                     double triMin = ((Triangular)ordinate).Min;
                     double triMax = ((Triangular)ordinate).Max;
-                    //todo: what about most likely???
-                    valueUncertainty = new ValueRatioWithUncertainty(IDistributionEnum.Triangular, triMin, triMax);
+                    double triMostLikely = ((Triangular)ordinate).MostLikely;
+                    valueUncertainty = new ValueRatioWithUncertainty(IDistributionEnum.Triangular, triMin, triMostLikely, triMax);
                     break;
                 case IDistributionEnum.Uniform:
                     double uniMin = ((Uniform)ordinate).Min;
