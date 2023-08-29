@@ -67,7 +67,7 @@ namespace Importer
                 ErrorType = ErrorType.NONE;
         }
 
-        internal void FixRatioParameters()
+        internal void ConvertRatioParametersFromVersion1ToVersion2()
         {
             StandardDeviationOrMin = StandardDeviationOrMin * CentralValue;
             Maximum = Maximum * CentralValue;
