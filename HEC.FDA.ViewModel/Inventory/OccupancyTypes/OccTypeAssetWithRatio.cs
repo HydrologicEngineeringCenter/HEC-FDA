@@ -15,38 +15,40 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
     public class OccTypeAssetWithRatio : OccTypeAsset
     {
         private bool _IsByValue;
-        private bool _IsNotByValue;
 
         private ValueUncertaintyVM _CurrentContentValueVM;
-        private ValueUncertaintyVM _ContentByRatioVM;
+        private readonly ValueUncertaintyVM _ContentByRatioVM;
 
+        /// <summary>
+        /// This is the VM that shows in the UI
+        /// </summary>
         public ValueUncertaintyVM CurrentValueVM
         {
             get { return _CurrentContentValueVM; }
             set { _CurrentContentValueVM = value; SomethingChanged(this, EventArgs.Empty); NotifyPropertyChanged(); }
         }
 
+        /// <summary>
+        /// This is the VM that clobbers the parent VM if the Use Ratio checkbox is checked. 
+        /// </summary>
         public ValueUncertaintyVM ContentByRatioVM
         {
             get { return _ContentByRatioVM; }
         }
 
+        /// <summary>
+        /// If true, occupancy type uses the value assigned in the structure inventory as it's most likely, else it uses the assigned ratio of the structure value.
+        /// </summary>
         public bool IsByValue
         {
             get { return _IsByValue; }
             set 
             { 
                 _IsByValue = value; 
-                IsNotByValue = !value; 
                 UpdateCurrentValueUncertaintyVM(); 
                 SomethingChanged(this, EventArgs.Empty); 
                 NotifyPropertyChanged(); 
             }
-        }
-        public bool IsNotByValue
-        {
-            get { return _IsNotByValue; }
-            set { _IsNotByValue = value; NotifyPropertyChanged(); }
         }
 
         public OccTypeAssetWithRatio(OccTypeAssetWithRatio item):base(item)
@@ -76,7 +78,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
             XElement elem = base.ToXML();
             elem.SetAttributeValue("ByValue", _IsByValue);
-            XElement ratioElem = new XElement("RatioUncertainty");
+            XElement ratioElem = new("RatioUncertainty");
             ratioElem.Add(_ContentByRatioVM.CreateOrdinate().ToXML());
             elem.Add(ratioElem);
             return elem;
@@ -86,11 +88,11 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
             if (IsByValue)
             {
-                CurrentValueVM = ValueUncertainty;
+                CurrentValueVM = ValueUncertainty; // if we're just doing the normal by value, use the value uncertainty defined in the parent occTypeAsset
             }
             else
             {
-                CurrentValueVM = _ContentByRatioVM;
+                CurrentValueVM = _ContentByRatioVM; // if not, we need to be using this child one that includes the ratio.
             }
         }
 

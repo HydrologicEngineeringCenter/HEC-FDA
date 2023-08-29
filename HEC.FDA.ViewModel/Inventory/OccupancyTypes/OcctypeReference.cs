@@ -18,15 +18,15 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             ID = id;
         }
 
-        public IOccupancyType GetOccupancyType()
+        public OccupancyType GetOccupancyType()
         {
-            IOccupancyType foundOT = null;
+            OccupancyType foundOT = null;
             List<OccupancyTypesElement> occTypeElems = StudyCache.GetChildElementsOfType<OccupancyTypesElement>();
             foreach(OccupancyTypesElement elem in occTypeElems)
             {
                 if(elem.ID == GroupID)
                 {
-                    foreach(IOccupancyType ot in elem.ListOfOccupancyTypes)
+                    foreach(OccupancyType ot in elem.ListOfOccupancyTypes)
                     {
                         if(ot.ID == ID)
                         {

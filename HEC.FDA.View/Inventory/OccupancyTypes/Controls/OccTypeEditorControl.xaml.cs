@@ -20,10 +20,7 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes.Controls
         private void DamageCategoryComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             //redraw the list view so that the occtype that changed dam cats will be in the correct group
-            if(ListViewNeedsUpdating != null)
-            {
-                ListViewNeedsUpdating(this, new EventArgs());
-            }
+            ListViewNeedsUpdating?.Invoke(this, new EventArgs());
         }
 
         private void CreateNewDamCat_Click(object sender, RoutedEventArgs e)
@@ -31,10 +28,7 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes.Controls
             OccupancyTypeEditable vm = (OccupancyTypeEditable)DataContext;
             if (vm == null) { return; }
             vm.LaunchNewDamCatWindow();
-            if (ListViewNeedsUpdating != null)
-            {
-                ListViewNeedsUpdating(this, new EventArgs());
-            }
+            ListViewNeedsUpdating?.Invoke(this, new EventArgs());
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
