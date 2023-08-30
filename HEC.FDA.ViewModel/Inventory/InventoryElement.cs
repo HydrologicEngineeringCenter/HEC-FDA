@@ -263,12 +263,12 @@ namespace HEC.FDA.ViewModel.Inventory
                 case IDistributionEnum.Triangular:
                     double triMin = ((Triangular)ordinate).Min;
                     double triMax = ((Triangular)ordinate).Max;
-                    valueUncertainty = new ValueUncertainty(IDistributionEnum.Triangular, 100 - triMin, 100 + triMax);
+                    valueUncertainty = new ValueUncertainty(IDistributionEnum.Triangular, triMin, triMax);
                     break;
                 case IDistributionEnum.Uniform:
                     double uniMin = ((Uniform)ordinate).Min;
                     double uniMax = ((Uniform)ordinate).Max;
-                    valueUncertainty = new ValueUncertainty(IDistributionEnum.Triangular, 100 - uniMin, 100 + uniMax);
+                    valueUncertainty = new ValueUncertainty(IDistributionEnum.Uniform, uniMin, uniMax);
                     break;
 
             }
