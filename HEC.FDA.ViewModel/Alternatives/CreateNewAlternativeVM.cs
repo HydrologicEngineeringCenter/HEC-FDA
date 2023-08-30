@@ -107,10 +107,6 @@ namespace HEC.FDA.ViewModel.Alternatives
             {
                 vr.AddErrorMessage("Future scenario is required.");
             }
-            if (SelectedBaseScenario == SelectedFutureScenario)
-            {
-                vr.AddErrorMessage("Base scenario must be different than future scenario.");
-            }
             return vr;
         }
 

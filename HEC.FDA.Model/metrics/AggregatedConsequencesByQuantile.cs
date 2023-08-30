@@ -11,7 +11,7 @@ using Statistics.Distributions;
 
 namespace HEC.FDA.Model.metrics
 {
-    public class SingleEmpiricalDistributionOfConsequences: IReportMessage, IProgressReport
+    public class AggregatedConsequencesByQuantile: IReportMessage, IProgressReport
     {
 
         #region Properties
@@ -28,7 +28,7 @@ namespace HEC.FDA.Model.metrics
         /// <summary>
         /// This constructor builds a ThreadsafeInlineHistogram. Only use for parallel computes. 
         /// </summary>
-        public SingleEmpiricalDistributionOfConsequences()
+        public AggregatedConsequencesByQuantile()
         {
             DamageCategory = "unassigned";
             AssetCategory = "unassigned";
@@ -46,7 +46,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="convergenceCriteria"></param>
         /// <param name="consequences"></param>
         /// <param name="impactAreaID"></param>
-        public SingleEmpiricalDistributionOfConsequences(string damageCategory, string assetCategory, List<double> consequences, int impactAreaID)
+        public AggregatedConsequencesByQuantile(string damageCategory, string assetCategory, List<double> consequences, int impactAreaID)
         {
             DamageCategory = damageCategory;
             AssetCategory = assetCategory;
@@ -61,7 +61,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="damageCategory"></param>
         /// <param name="assetCategory"></param>
         /// <param name="impactAreaID"></param>
-        public SingleEmpiricalDistributionOfConsequences(string damageCategory, string assetCategory, Empirical empirical, int impactAreaID)
+        public AggregatedConsequencesByQuantile(string damageCategory, string assetCategory, Empirical empirical, int impactAreaID)
         {
             DamageCategory = damageCategory;
             AssetCategory = assetCategory;
@@ -98,13 +98,13 @@ namespace HEC.FDA.Model.metrics
             return masterElement;
         }
 
-        public static SingleEmpiricalDistributionOfConsequences ReadFromXML(XElement xElement)
+        public static AggregatedConsequencesByQuantile ReadFromXML(XElement xElement)
         {
             Empirical empirical = Empirical.ReadFromXML(xElement.Element("DamageDistribution"));
             string damageCategory = xElement.Attribute("DamageCategory").Value;
             string assetCategory = xElement.Attribute("AssetCategory").Value;
             int id = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
-            return new SingleEmpiricalDistributionOfConsequences(damageCategory, assetCategory, empirical, id);
+            return new AggregatedConsequencesByQuantile(damageCategory, assetCategory, empirical, id);
         }
 
         public void ReportMessage(object sender, MessageEventArgs e)

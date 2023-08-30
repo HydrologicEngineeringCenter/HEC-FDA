@@ -23,23 +23,23 @@ namespace HEC.FDA.ModelTest.unittests
             string contentAssetCategory = "Content";
             double mean = 2;
             int impactAreaID_1 = 1;           
-            ConsequenceDistributionResults consequenceDistributionResults = new(false);
+            StudyAreaConsequencesBinned consequenceDistributionResults = new(false);
             Histogram histogram = FillHistogram(mean);
 
             //Impact Area 1
-            ConsequenceDistributionResult residentialStructure_1 = new(residentialDamageCategory, structureAssetCategory, histogram, impactAreaID_1);
+            AggregatedConsequencesBinned residentialStructure_1 = new(residentialDamageCategory, structureAssetCategory, histogram, impactAreaID_1);
             consequenceDistributionResults.AddExistingConsequenceResultObject(residentialStructure_1);
-            ConsequenceDistributionResult residentialContent_1 = new(residentialDamageCategory, contentAssetCategory, histogram, impactAreaID_1);
+            AggregatedConsequencesBinned residentialContent_1 = new(residentialDamageCategory, contentAssetCategory, histogram, impactAreaID_1);
             consequenceDistributionResults.AddExistingConsequenceResultObject(residentialContent_1);
-            ConsequenceDistributionResult commercialStructure_1 = new(commercialDamageCategory, structureAssetCategory, histogram, impactAreaID_1);
+            AggregatedConsequencesBinned commercialStructure_1 = new(commercialDamageCategory, structureAssetCategory, histogram, impactAreaID_1);
             consequenceDistributionResults.AddExistingConsequenceResultObject(commercialStructure_1);
-            ConsequenceDistributionResult commercialContent_1 = new(commercialDamageCategory, contentAssetCategory, histogram, impactAreaID_1);
+            AggregatedConsequencesBinned commercialContent_1 = new(commercialDamageCategory, contentAssetCategory, histogram, impactAreaID_1);
             consequenceDistributionResults.AddExistingConsequenceResultObject(commercialContent_1);
 
 
 
             List<double> stages = new();
-            List<ConsequenceDistributionResults> consequenceDistributionResultsList = new();
+            List<StudyAreaConsequencesBinned> consequenceDistributionResultsList = new();
             for (int i = 0; i < 20; i++)
             {
                 stages.Add(i);
@@ -48,7 +48,7 @@ namespace HEC.FDA.ModelTest.unittests
 
 
             //Act
-            List<UncertainPairedData> uncertainPairedData = ConsequenceDistributionResults.ToUncertainPairedData(stages, consequenceDistributionResultsList, impactAreaID_1);
+            List<UncertainPairedData> uncertainPairedData = StudyAreaConsequencesBinned.ToUncertainPairedData(stages, consequenceDistributionResultsList, impactAreaID_1);
             int expectedUPDs = 4;
             int expectedUPDLength = 20;
             double expectedMeanAllOver = mean + 0.5;
@@ -88,13 +88,13 @@ namespace HEC.FDA.ModelTest.unittests
         [InlineData(1111, 100)]
         public void SerializationShouldReadTheSameObjectItWrites(int seed, int iterations)
         {
-            ConsequenceDistributionResults expected = new ConsequenceDistributionResults();
-            List<ConsequenceDistributionResult> resultList = new();
+            StudyAreaConsequencesBinned expected = new StudyAreaConsequencesBinned();
+            List<AggregatedConsequencesBinned> resultList = new();
             List<double> data = new() { 0, 1, 2, 3, 4 };
-            expected.AddExistingConsequenceResultObject(new ConsequenceDistributionResult("DamCat", "AssetCat", new Histogram(data, new ConvergenceCriteria(69, 8008)), 0));
+            expected.AddExistingConsequenceResultObject(new AggregatedConsequencesBinned("DamCat", "AssetCat", new Histogram(data, new ConvergenceCriteria(69, 8008)), 0));
             XElement xElement = expected.WriteToXML();
 
-            ConsequenceDistributionResults actual = ConsequenceDistributionResults.ReadFromXML(xElement);
+            StudyAreaConsequencesBinned actual = StudyAreaConsequencesBinned.ReadFromXML(xElement);
 
             Assert.True(actual.Equals(expected));
         }

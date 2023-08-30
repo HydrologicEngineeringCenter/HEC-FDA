@@ -36,7 +36,7 @@ namespace HEC.FDA.Model.metrics
             {
                 foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in ResultsList)
                 {
-                    foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                    foreach (AggregatedConsequencesBinned consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                     {
                         if (!impactAreaIDs.Contains(consequenceResult.RegionID))
                         {
@@ -55,7 +55,7 @@ namespace HEC.FDA.Model.metrics
             {
                 foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in ResultsList)
                 {
-                    foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                    foreach (AggregatedConsequencesBinned consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                     {
                         if (!assetCats.Contains(consequenceResult.AssetCategory))
                         {
@@ -75,7 +75,7 @@ namespace HEC.FDA.Model.metrics
             {
                 foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in ResultsList)
                 {
-                    foreach (ConsequenceDistributionResult consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                    foreach (AggregatedConsequencesBinned consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                     {
                         if (!damCats.Contains(consequenceResult.DamageCategory))
                         {
@@ -128,7 +128,7 @@ namespace HEC.FDA.Model.metrics
             double consequenceValue = 0;
             foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList.Cast<ImpactAreaScenarioResults>())
             {
-                foreach (ConsequenceDistributionResult consequenceResult in impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                foreach (AggregatedConsequencesBinned consequenceResult in impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                 {
                     if (damageCategory == null && assetCategory == null && impactAreaID == utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
                     {
@@ -204,7 +204,7 @@ namespace HEC.FDA.Model.metrics
             double consequenceValue = 0;
             foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList.Cast<ImpactAreaScenarioResults>())
             {
-                foreach (ConsequenceDistributionResult consequenceResult in impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                foreach (AggregatedConsequencesBinned consequenceResult in impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                 {
                     if (damageCategory == null && assetCategory == null && impactAreaID == utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
                     {
@@ -279,7 +279,7 @@ namespace HEC.FDA.Model.metrics
 
             foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList.Cast<ImpactAreaScenarioResults>())
             {
-                foreach (ConsequenceDistributionResult consequenceResult in impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
+                foreach (AggregatedConsequencesBinned consequenceResult in impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                 {
                     if (damageCategory == null && assetCategory == null && impactAreaID == utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
                     {

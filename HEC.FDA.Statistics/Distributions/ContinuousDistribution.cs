@@ -38,7 +38,7 @@ namespace Statistics
         }
         public XElement ToXML()
         {
-            XElement element = new XElement(this.GetType().Name);
+            XElement element = new(this.GetType().Name);
             PropertyInfo[] propertyList = this.GetType().GetProperties();
             foreach (PropertyInfo propertyInfo in propertyList)
             {
@@ -140,7 +140,7 @@ namespace Statistics
                 //y values in increasing order 
                 y[i] = InverseCDF(prob);
             }
-            Tuple<double[],double[]> rtn = new Tuple<double[], double[]>(x,y);
+            Tuple<double[],double[]> rtn = new(x,y);
             return rtn;
 
         }

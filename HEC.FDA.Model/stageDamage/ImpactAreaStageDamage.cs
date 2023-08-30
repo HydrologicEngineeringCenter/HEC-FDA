@@ -274,10 +274,10 @@ namespace HEC.FDA.Model.stageDamage
 
                     //There will be one ConsequenceDistributionResults object for each stage in the stage-damage function
                     //Each ConsequenceDistributionResults object holds a ConsequenceDistributionResult for each asset cat
-                    List<ConsequenceDistributionResults> consequenceDistributionResults = ComputeDamageWithUncertaintyAllCoordinates(damageCategory, randomProvider, inventoryAndWaterTupled, wsesAtEachStructureByProfile.Item1);
+                    List<StudyAreaConsequencesBinned> consequenceDistributionResults = ComputeDamageWithUncertaintyAllCoordinates(damageCategory, randomProvider, inventoryAndWaterTupled, wsesAtEachStructureByProfile.Item1);
 
                     //there should be four UncertainPairedData objects - one for each asset cat of the given dam cat level compute 
-                    List<UncertainPairedData> tempResultsList = ConsequenceDistributionResults.ToUncertainPairedData(_StagesAtIndexLocation.ToList(), consequenceDistributionResults, ImpactAreaID);
+                    List<UncertainPairedData> tempResultsList = StudyAreaConsequencesBinned.ToUncertainPairedData(_StagesAtIndexLocation.ToList(), consequenceDistributionResults, ImpactAreaID);
                     results.AddRange(tempResultsList);
                     //clear data
                 }
@@ -285,11 +285,11 @@ namespace HEC.FDA.Model.stageDamage
             }
         }
 
-        private List<ConsequenceDistributionResults> ComputeDamageWithUncertaintyAllCoordinates(string damageCategory, IProvideRandomNumbers randomProvider, (Inventory, List<float[]>) inventoryAndWaterTupled, List<double> profileProbabilities)
+        private List<StudyAreaConsequencesBinned> ComputeDamageWithUncertaintyAllCoordinates(string damageCategory, IProvideRandomNumbers randomProvider, (Inventory, List<float[]>) inventoryAndWaterTupled, List<double> profileProbabilities)
         {
 
             //damage for each stage
-            List<ConsequenceDistributionResults> consequenceDistributionResults = CreateConsequenceDistributionResults(damageCategory);
+            List<StudyAreaConsequencesBinned> consequenceDistributionResults = CreateConsequenceDistributionResults(damageCategory);
 
             int iterations = 1;
             if (_ConvergenceCriteria.MinIterations >= 100)
@@ -328,28 +328,28 @@ namespace HEC.FDA.Model.stageDamage
             return consequenceDistributionResults;
         }
 
-        private static void DumpDataIntoDistributions(ref List<ConsequenceDistributionResults> consequenceDistributionResultsList)
+        private static void DumpDataIntoDistributions(ref List<StudyAreaConsequencesBinned> consequenceDistributionResultsList)
         {
-            foreach (ConsequenceDistributionResults consequenceDistributionResults in consequenceDistributionResultsList)
+            foreach (StudyAreaConsequencesBinned consequenceDistributionResults in consequenceDistributionResultsList)
             {
                 consequenceDistributionResults.PutDataIntoHistograms();
             }
         }
 
-        private List<ConsequenceDistributionResults> CreateConsequenceDistributionResults(string damageCategory)
+        private List<StudyAreaConsequencesBinned> CreateConsequenceDistributionResults(string damageCategory)
         {
-            List<ConsequenceDistributionResults> consequenceDistributionResultsList = new();
+            List<StudyAreaConsequencesBinned> consequenceDistributionResultsList = new();
 
             for (int i = 0; i < _StagesAtIndexLocation.Length; i++)
             {
-                List<ConsequenceDistributionResult> consequenceDistributionResultList = new()
+                List<AggregatedConsequencesBinned> consequenceDistributionResultList = new()
                 {
                     new(damageCategory, utilities.StringGlobalConstants.STRUCTURE_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID),
                     new(damageCategory, utilities.StringGlobalConstants.CONTENT_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID),
                     new(damageCategory, utilities.StringGlobalConstants.OTHER_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID),
                     new(damageCategory, utilities.StringGlobalConstants.VEHICLE_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID)
                 };
-                ConsequenceDistributionResults consequenceDistributionResults = new(consequenceDistributionResultList);
+                StudyAreaConsequencesBinned consequenceDistributionResults = new(consequenceDistributionResultList);
                 consequenceDistributionResultsList.Add(consequenceDistributionResults);
             }
             return consequenceDistributionResultsList;
@@ -404,11 +404,11 @@ namespace HEC.FDA.Model.stageDamage
 
         }
 
-        private static bool IsTheFunctionNotConverged(List<ConsequenceDistributionResults> consequenceDistributionResults)
+        private static bool IsTheFunctionNotConverged(List<StudyAreaConsequencesBinned> consequenceDistributionResults)
         {
             double lowerProb = 0.025;
             double upperProb = 0.975;
-            foreach (ConsequenceDistributionResults consequences in consequenceDistributionResults)
+            foreach (StudyAreaConsequencesBinned consequences in consequenceDistributionResults)
             {
                 bool isConverged = consequences.ResultsAreConverged(upperProb, lowerProb);
                 if (!isConverged)
@@ -422,7 +422,7 @@ namespace HEC.FDA.Model.stageDamage
         /// <summary>
         /// This method computes damage at stages lower than the most frequent profile 
         /// </summary>
-        private void ComputeLowerStageDamage(ref List<ConsequenceDistributionResults> parallelConsequenceResultCollection, string damageCategory, List<DeterministicOccupancyType> deterministicOccTypes, (Inventory, List<float[]>) inventoryAndWaterCoupled, List<double> profileProbabilities, int iterationIndex)
+        private void ComputeLowerStageDamage(ref List<StudyAreaConsequencesBinned> parallelConsequenceResultCollection, string damageCategory, List<DeterministicOccupancyType> deterministicOccTypes, (Inventory, List<float[]>) inventoryAndWaterCoupled, List<double> profileProbabilities, int iterationIndex)
         {
 
             float interval = CalculateLowerIncrementOfStages(profileProbabilities);
@@ -468,7 +468,7 @@ namespace HEC.FDA.Model.stageDamage
         /// <summary>
         /// This method calculates a stage damage function within the hydraulic profiles 
         /// </summary>
-        private void ComputeMiddleStageDamage(ref List<ConsequenceDistributionResults> parallelConsequenceResultCollection, string damageCategory, List<DeterministicOccupancyType> deterministicOccTypes, (Inventory, List<float[]>) inventoryAndWaterCoupled, List<double> profileProbabilities, int iterationIndex)
+        private void ComputeMiddleStageDamage(ref List<StudyAreaConsequencesBinned> parallelConsequenceResultCollection, string damageCategory, List<DeterministicOccupancyType> deterministicOccTypes, (Inventory, List<float[]>) inventoryAndWaterCoupled, List<double> profileProbabilities, int iterationIndex)
         {
             int numProfiles = profileProbabilities.Count;
             int stageIndex = _NumExtrapolatedStagesToCompute + 1;
@@ -480,7 +480,7 @@ namespace HEC.FDA.Model.stageDamage
         }
 
 
-        private void InterpolateBetweenProfiles(ref List<ConsequenceDistributionResults> parallelConsequenceResultCollection, List<DeterministicOccupancyType> occTypes, float[] previousHydraulicProfile, float[] currentHydraulicProfile, string damageCategory, Inventory inventory, int stageIndex, int iterationIndex)
+        private void InterpolateBetweenProfiles(ref List<StudyAreaConsequencesBinned> parallelConsequenceResultCollection, List<DeterministicOccupancyType> occTypes, float[] previousHydraulicProfile, float[] currentHydraulicProfile, string damageCategory, Inventory inventory, int stageIndex, int iterationIndex)
         {
             float[] intervalsAtStructures = CalculateIntervals(previousHydraulicProfile, currentHydraulicProfile);
             List<float[]> stagesAllStructuresAllStages = new();
@@ -520,7 +520,7 @@ namespace HEC.FDA.Model.stageDamage
         /// <summary>
         /// this method calculates the stage damage function for stages higher than the least frequent profile 
         /// </summary>
-        private void ComputeUpperStageDamage(ref List<ConsequenceDistributionResults> parallelConsequenceResultCollection, string damageCategory, List<DeterministicOccupancyType> deterministicOccTypes, (Inventory, List<float[]>) inventoryAndWaterCoupled, List<double> profileProbabilities, int iterationIndex)
+        private void ComputeUpperStageDamage(ref List<StudyAreaConsequencesBinned> parallelConsequenceResultCollection, string damageCategory, List<DeterministicOccupancyType> deterministicOccTypes, (Inventory, List<float[]>) inventoryAndWaterCoupled, List<double> profileProbabilities, int iterationIndex)
         {
             //the probability of a profile is an EXCEEDANCE probability but in the model we use NONEXCEEDANCE PROBABILITY
             int stageIndex = _NumExtrapolatedStagesToCompute + _NumInterpolatedStagesToCompute * (profileProbabilities.Count - 1);
