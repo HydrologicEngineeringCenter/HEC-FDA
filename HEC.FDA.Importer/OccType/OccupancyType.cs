@@ -69,7 +69,7 @@ namespace Importer
             logger.Log("\tDescription: ", this.Description);
             logger.Log("\tCategory Name: ", this.CategoryName);
             logger.Log("\tUses Direct Dollar: ", this.UsesDollar.ToString());
-            double contToStructRatio = this._ErrorDistribution[2].GetCentralValue();
+            double contToStructRatio = this._ErrorDistribution[2].CentralValue;
             if(contToStructRatio == -901)
             {
                 logger.Log("\tContent-To-Structure Value Ratio:", "");
@@ -79,7 +79,7 @@ namespace Importer
                 logger.Log("\tContent-To-Structure Value Ratio: ", contToStructRatio.ToString());
             }
 
-            double otherToStrucRatio = this._ErrorDistribution[3].GetCentralValue();
+            double otherToStrucRatio = this._ErrorDistribution[3].CentralValue;
             if(otherToStrucRatio == -901)
             {
                 logger.Log($"\tOther-To-Structure Value Ratio:", "");
@@ -89,7 +89,7 @@ namespace Importer
                 logger.Log($"\tOther-To-Structure Value Ratio: ", otherToStrucRatio.ToString());
             }
 
-            double carToStrctRatio = this._ErrorDistribution[4].GetCentralValue();
+            double carToStrctRatio = this._ErrorDistribution[4].CentralValue;
             if(carToStrctRatio == -901)
             {
                 logger.Log($"\tAutomobile-To-Structure Value Ratio:", "");
@@ -148,9 +148,9 @@ namespace Importer
             wr.WriteLine($"\tCategory Name: {this.CategoryName}");
             wr.WriteLine($"\tCategory ID: {CategoryId}");
             wr.WriteLine($"\tUses Direct Dollar: {this.UsesDollar}");
-            wr.WriteLine($"\tContent-To-Structure Value Ratio: {this._ErrorDistribution[2].GetCentralValue()}");
-            wr.WriteLine($"\tOther-To-Structure Value Ratio: {this._ErrorDistribution[3].GetCentralValue()}");
-            wr.WriteLine($"\tAutomobile-To-Structure Value Ratio: {this._ErrorDistribution[4].GetCentralValue()}");
+            wr.WriteLine($"\tContent-To-Structure Value Ratio: {this._ErrorDistribution[2].CentralValue}");
+            wr.WriteLine($"\tOther-To-Structure Value Ratio: {this._ErrorDistribution[3].CentralValue}");
+            wr.WriteLine($"\tAutomobile-To-Structure Value Ratio: {this._ErrorDistribution[4].CentralValue}");
 
             //Depth-Damage Functions
             for (int itype = 0; itype < 4; itype++)
@@ -533,21 +533,21 @@ namespace Importer
             wr.Write("Struct");
             for (int i = 0; i < 5; i++)
             {
-                double centralValue = _ErrorDistribution[i].GetCentralValue();
-                double stdDev = _ErrorDistribution[i].GetStdDev();
-                double upper = _ErrorDistribution[i].GetUpper();
+                double centralValue = _ErrorDistribution[i].CentralValue;
+                double stdDev = _ErrorDistribution[i].StandardDeviationOrMin;
+                double upper = _ErrorDistribution[i].Maximum;
 
-                wr.Write($"{delimt}{_ErrorDistribution[i].GetErrorTypeCode()}");
+                wr.Write($"{delimt}{_ErrorDistribution[i].ErrorTypeCode}");
                 if (i > 1 && !Study.IsBadNumber(centralValue))
-                    wr.Write($"{delimt}{_ErrorDistribution[i].GetCentralValue()}");
+                    wr.Write($"{delimt}{_ErrorDistribution[i].CentralValue}");
                 else
                     wr.Write($"{delimt}");
                 if (!Study.IsBadNumber(stdDev))
-                    wr.Write($"{delimt}{_ErrorDistribution[i].GetStdDev()}");
+                    wr.Write($"{delimt}{_ErrorDistribution[i].StandardDeviationOrMin}");
                 else
                     wr.Write($"{delimt}");
                 if (!Study.IsBadNumber(upper))
-                    wr.Write($"{delimt}{_ErrorDistribution[i].GetUpper()}");
+                    wr.Write($"{delimt}{_ErrorDistribution[i].Maximum}");
                 else
                     wr.Write($"{delimt}");
             }
