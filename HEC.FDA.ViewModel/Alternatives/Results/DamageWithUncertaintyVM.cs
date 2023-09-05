@@ -185,7 +185,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             {
                 double exceedenceProbability = 1 - empirical.CumulativeProbabilities[i];
                 double zScore = Normal.StandardNormalInverseCDF(exceedenceProbability);
-                points[i] = new NormalDataPoint(exceedenceProbability, zScore, empirical.ObservationValues[i]);
+                points[i] = new NormalDataPoint(exceedenceProbability, zScore, empirical.Quantiles[i]);
             }
             lineSeries.ItemsSource = points;
             MyPlot.Series.Add(lineSeries);

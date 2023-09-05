@@ -14,9 +14,9 @@ namespace HEC.FDA.Model.alternativeComparisonReport
     public class AlternativeComparisonReport: ValidationErrorLogger, IProgressReport
     {
         #region Fields
-        private List<ManyEmpiricalDistributionsOfConsequences> _AAEqResults;
-        private List<ManyEmpiricalDistributionsOfConsequences> _BaseYearEADResults;
-        private List<ManyEmpiricalDistributionsOfConsequences> _FutureYearEADResults;
+        private List<StudyAreaConsequencesByQuantile> _AAEqResults;
+        private List<StudyAreaConsequencesByQuantile> _BaseYearEADResults;
+        private List<StudyAreaConsequencesByQuantile> _FutureYearEADResults;
         #endregion
 
         #region Properties
@@ -50,34 +50,34 @@ namespace HEC.FDA.Model.alternativeComparisonReport
         private  void ComputeDistributionOfAAEQDamageReduced(AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
         {
             //We calculate a list of many empirical distributions of consequences - one for each with-project alternative 
-            List<ManyEmpiricalDistributionsOfConsequences> damagesReducedAllAlternatives = new();
+            List<StudyAreaConsequencesByQuantile> damagesReducedAllAlternatives = new();
 
             foreach (AlternativeResults withProjectAlternativeResults in withProjectAlternativesResults)
             {
                 
-                ManyEmpiricalDistributionsOfConsequences damageReducedOneAlternative = new(withProjectAlternativeResults.AlternativeID);
+                StudyAreaConsequencesByQuantile damageReducedOneAlternative = new(withProjectAlternativeResults.AlternativeID);
 
-                List<SingleEmpiricalDistributionOfConsequences> withoutProjectConsequenceDistList = new();
-                foreach (SingleEmpiricalDistributionOfConsequences consequenceDistributionResult in withoutProjectAlternativeResults.AAEQDamageResults.ConsequenceResultList)
+                List<AggregatedConsequencesByQuantile> withoutProjectConsequenceDistList = new();
+                foreach (AggregatedConsequencesByQuantile consequenceDistributionResult in withoutProjectAlternativeResults.AAEQDamageResults.ConsequenceResultList)
                 {
                     withoutProjectConsequenceDistList.Add(consequenceDistributionResult);
                 }
 
-                foreach (SingleEmpiricalDistributionOfConsequences withProjectDamageResult in withProjectAlternativeResults.AAEQDamageResults.ConsequenceResultList)
+                foreach (AggregatedConsequencesByQuantile withProjectDamageResult in withProjectAlternativeResults.AAEQDamageResults.ConsequenceResultList)
                 {
-                    SingleEmpiricalDistributionOfConsequences withoutProjectDamageResult = withoutProjectAlternativeResults.AAEQDamageResults.GetConsequenceResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, withProjectDamageResult.RegionID); //GetAAEQDamageHistogram;
+                    AggregatedConsequencesByQuantile withoutProjectDamageResult = withoutProjectAlternativeResults.AAEQDamageResults.GetConsequenceResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, withProjectDamageResult.RegionID); //GetAAEQDamageHistogram;
                     withoutProjectConsequenceDistList.Remove(withoutProjectDamageResult);
 
 
-                    SingleEmpiricalDistributionOfConsequences damageReducedResult = IterateOnConsequenceDistributionResult(withProjectDamageResult, withoutProjectDamageResult, true);
+                    AggregatedConsequencesByQuantile damageReducedResult = IterateOnConsequenceDistributionResult(withProjectDamageResult, withoutProjectDamageResult, true);
                     damageReducedOneAlternative.AddExistingConsequenceResultObject(damageReducedResult);
                 }
                 if (withoutProjectConsequenceDistList.Count > 0)
                 {
-                    foreach (SingleEmpiricalDistributionOfConsequences withoutProjectDamageResult in withoutProjectConsequenceDistList)
+                    foreach (AggregatedConsequencesByQuantile withoutProjectDamageResult in withoutProjectConsequenceDistList)
                     {
-                        SingleEmpiricalDistributionOfConsequences withProjectDamageResult = withProjectAlternativeResults.AAEQDamageResults.GetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID);
-                        SingleEmpiricalDistributionOfConsequences damageReducedResult = IterateOnConsequenceDistributionResult(withProjectDamageResult, withoutProjectDamageResult, false);
+                        AggregatedConsequencesByQuantile withProjectDamageResult = withProjectAlternativeResults.AAEQDamageResults.GetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID);
+                        AggregatedConsequencesByQuantile damageReducedResult = IterateOnConsequenceDistributionResult(withProjectDamageResult, withoutProjectDamageResult, false);
                         damageReducedOneAlternative.AddExistingConsequenceResultObject(damageReducedResult);
                     }
                 }
@@ -86,7 +86,7 @@ namespace HEC.FDA.Model.alternativeComparisonReport
             _AAEqResults = damagesReducedAllAlternatives;
         }
 
-        private static SingleEmpiricalDistributionOfConsequences IterateOnConsequenceDistributionResult(SingleEmpiricalDistributionOfConsequences withProjectDamageResult, SingleEmpiricalDistributionOfConsequences withoutProjectDamageResult, bool iterateOnWithProject = true)
+        private static AggregatedConsequencesByQuantile IterateOnConsequenceDistributionResult(AggregatedConsequencesByQuantile withProjectDamageResult, AggregatedConsequencesByQuantile withoutProjectDamageResult, bool iterateOnWithProject = true)
         {
             List<Empirical> empiricalList = new()
             {
@@ -94,17 +94,17 @@ namespace HEC.FDA.Model.alternativeComparisonReport
                 withProjectDamageResult.ConsequenceDistribution
             };
             Empirical empirical = Empirical.StackEmpiricalDistributions(empiricalList, Empirical.Subtract);
-            SingleEmpiricalDistributionOfConsequences singleEmpiricalDistributionOfConsequences = new();
+            AggregatedConsequencesByQuantile singleEmpiricalDistributionOfConsequences = new();
 
 
             if (iterateOnWithProject)
             {
-                singleEmpiricalDistributionOfConsequences = new SingleEmpiricalDistributionOfConsequences(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, empirical, withProjectDamageResult.RegionID);
+                singleEmpiricalDistributionOfConsequences = new AggregatedConsequencesByQuantile(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, empirical, withProjectDamageResult.RegionID);
 
             }
             else
             {
-                singleEmpiricalDistributionOfConsequences = new SingleEmpiricalDistributionOfConsequences(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, empirical, withoutProjectDamageResult.RegionID);
+                singleEmpiricalDistributionOfConsequences = new AggregatedConsequencesByQuantile(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, empirical, withoutProjectDamageResult.RegionID);
 
             }
             return singleEmpiricalDistributionOfConsequences;
@@ -112,40 +112,40 @@ namespace HEC.FDA.Model.alternativeComparisonReport
 
         private void ComputeDistributionEADReducedBaseYear(AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
         {
-            List<ManyEmpiricalDistributionsOfConsequences> damageReducedAllAlternatives = new();
+            List<StudyAreaConsequencesByQuantile> damageReducedAllAlternatives = new();
             foreach (AlternativeResults withProjectResults in withProjectAlternativesResults)
             {
-                ManyEmpiricalDistributionsOfConsequences damageReducedAlternative = new(withProjectResults.AlternativeID);
+                StudyAreaConsequencesByQuantile damageReducedAlternative = new(withProjectResults.AlternativeID);
 
                 foreach (ImpactAreaScenarioResults withProjectIAS in withProjectResults.BaseYearScenarioResults.ResultsList.Cast<ImpactAreaScenarioResults>())
                 {
                     //TODO at this level, we have assumed that there are results for a given impact area in both with and without conditions 
                     ImpactAreaScenarioResults withoutProjectIAS = withoutProjectAlternativeResults.BaseYearScenarioResults.GetResults(withProjectIAS.ImpactAreaID);
-                    ConsequenceDistributionResults withprojectDamageResults = withProjectIAS.ConsequenceResults;
-                    ConsequenceDistributionResults withoutProjectDamageResults = withoutProjectIAS.ConsequenceResults;
+                    StudyAreaConsequencesBinned withprojectDamageResults = withProjectIAS.ConsequenceResults;
+                    StudyAreaConsequencesBinned withoutProjectDamageResults = withoutProjectIAS.ConsequenceResults;
 
-                    List<ConsequenceDistributionResult> withoutProjectDamageResultsList = new();
+                    List<AggregatedConsequencesBinned> withoutProjectDamageResultsList = new();
 
-                    foreach (ConsequenceDistributionResult withoutProjectDistributionResult in withoutProjectDamageResults.ConsequenceResultList)
+                    foreach (AggregatedConsequencesBinned withoutProjectDistributionResult in withoutProjectDamageResults.ConsequenceResultList)
                     {
                         withoutProjectDamageResultsList.Add(withoutProjectDistributionResult);
                     }
 
-                    foreach (ConsequenceDistributionResult withProjectDamageResult in withprojectDamageResults.ConsequenceResultList)
+                    foreach (AggregatedConsequencesBinned withProjectDamageResult in withprojectDamageResults.ConsequenceResultList)
                     {
-                        ConsequenceDistributionResult withoutProjectDamageResult = withoutProjectDamageResults.GetConsequenceResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, withProjectDamageResult.RegionID);
+                        AggregatedConsequencesBinned withoutProjectDamageResult = withoutProjectDamageResults.GetConsequenceResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, withProjectDamageResult.RegionID);
                         withoutProjectDamageResultsList.Remove(withoutProjectDamageResult);
 
-                        SingleEmpiricalDistributionOfConsequences damageReducedResult = IterateOnConsequenceDistributionResult(ConsequenceDistributionResult.ConvertToSingleEmpiricalDistributionOfConsequences(withProjectDamageResult), ConsequenceDistributionResult.ConvertToSingleEmpiricalDistributionOfConsequences(withoutProjectDamageResult), true);
+                        AggregatedConsequencesByQuantile damageReducedResult = IterateOnConsequenceDistributionResult(AggregatedConsequencesBinned.ConvertToSingleEmpiricalDistributionOfConsequences(withProjectDamageResult), AggregatedConsequencesBinned.ConvertToSingleEmpiricalDistributionOfConsequences(withoutProjectDamageResult), true);
                         damageReducedAlternative.AddExistingConsequenceResultObject(damageReducedResult);
                     }
                     if (withoutProjectDamageResultsList.Count > 0)
                     {
-                        foreach (ConsequenceDistributionResult withoutProjectDamageResult in withoutProjectDamageResultsList)
+                        foreach (AggregatedConsequencesBinned withoutProjectDamageResult in withoutProjectDamageResultsList)
                         {
-                            ConsequenceDistributionResult withProjectDamageResult = withprojectDamageResults.GetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID);
+                            AggregatedConsequencesBinned withProjectDamageResult = withprojectDamageResults.GetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID);
                             //I have to be able to handle null with-project results here 
-                            SingleEmpiricalDistributionOfConsequences damageReducedResult = IterateOnConsequenceDistributionResult(ConsequenceDistributionResult.ConvertToSingleEmpiricalDistributionOfConsequences(withProjectDamageResult), ConsequenceDistributionResult.ConvertToSingleEmpiricalDistributionOfConsequences(withoutProjectDamageResult), false);
+                            AggregatedConsequencesByQuantile damageReducedResult = IterateOnConsequenceDistributionResult(AggregatedConsequencesBinned.ConvertToSingleEmpiricalDistributionOfConsequences(withProjectDamageResult), AggregatedConsequencesBinned.ConvertToSingleEmpiricalDistributionOfConsequences(withoutProjectDamageResult), false);
                             damageReducedAlternative.AddExistingConsequenceResultObject(damageReducedResult);
                         }
                     }
@@ -158,10 +158,10 @@ namespace HEC.FDA.Model.alternativeComparisonReport
 
         private void ComputeDistributionEADReducedFutureYear(AlternativeResults withoutProjectAlternativeResults, List<AlternativeResults> withProjectAlternativesResults)
         {
-            List<ManyEmpiricalDistributionsOfConsequences> damageReducedAlternatives = new();
+            List<StudyAreaConsequencesByQuantile> damageReducedAlternatives = new();
             foreach (AlternativeResults alternative in withProjectAlternativesResults)
             {
-                ManyEmpiricalDistributionsOfConsequences damageReducedAlternative = new(alternative.AlternativeID);
+                StudyAreaConsequencesByQuantile damageReducedAlternative = new(alternative.AlternativeID);
                 MessageEventArgs beginComputeMessageArgs = new(new Message($"Compute of the distribution of AAEQ damage reduced for alternative ID {damageReducedAlternative.AlternativeID} has been initiated." + Environment.NewLine));
                 ReportMessage(this, beginComputeMessageArgs);
 
@@ -169,30 +169,30 @@ namespace HEC.FDA.Model.alternativeComparisonReport
                 {
                     //TODO at this level, we have assumed that there are results for a given impact area in both with and without conditions 
                     ImpactAreaScenarioResults withoutProjectResults = withoutProjectAlternativeResults.FutureYearScenarioResults.GetResults(withProjectResults.ImpactAreaID);
-                    ConsequenceDistributionResults withprojectDamageResults = withProjectResults.ConsequenceResults;
-                    ConsequenceDistributionResults withoutProjectDamageResults = withoutProjectResults.ConsequenceResults;
+                    StudyAreaConsequencesBinned withprojectDamageResults = withProjectResults.ConsequenceResults;
+                    StudyAreaConsequencesBinned withoutProjectDamageResults = withoutProjectResults.ConsequenceResults;
 
-                    List<ConsequenceDistributionResult> withoutProjectDamageResultsList = new();
+                    List<AggregatedConsequencesBinned> withoutProjectDamageResultsList = new();
 
-                    foreach (ConsequenceDistributionResult withoutProjectDistributionResult in withoutProjectDamageResults.ConsequenceResultList)
+                    foreach (AggregatedConsequencesBinned withoutProjectDistributionResult in withoutProjectDamageResults.ConsequenceResultList)
                     {
                         withoutProjectDamageResultsList.Add(withoutProjectDistributionResult);
                     }
 
-                    foreach (ConsequenceDistributionResult withProjectDamageResult in withprojectDamageResults.ConsequenceResultList)
+                    foreach (AggregatedConsequencesBinned withProjectDamageResult in withprojectDamageResults.ConsequenceResultList)
                     {
-                        ConsequenceDistributionResult withoutProjectDamageResult = withoutProjectDamageResults.GetConsequenceResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, withProjectDamageResult.RegionID);
+                        AggregatedConsequencesBinned withoutProjectDamageResult = withoutProjectDamageResults.GetConsequenceResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, withProjectDamageResult.RegionID);
                         withoutProjectDamageResultsList.Remove(withoutProjectDamageResult);
 
-                        SingleEmpiricalDistributionOfConsequences damageReducedResult = IterateOnConsequenceDistributionResult(ConsequenceDistributionResult.ConvertToSingleEmpiricalDistributionOfConsequences(withProjectDamageResult), ConsequenceDistributionResult.ConvertToSingleEmpiricalDistributionOfConsequences(withoutProjectDamageResult), true);
+                        AggregatedConsequencesByQuantile damageReducedResult = IterateOnConsequenceDistributionResult(AggregatedConsequencesBinned.ConvertToSingleEmpiricalDistributionOfConsequences(withProjectDamageResult), AggregatedConsequencesBinned.ConvertToSingleEmpiricalDistributionOfConsequences(withoutProjectDamageResult), true);
                         damageReducedAlternative.AddExistingConsequenceResultObject(damageReducedResult);
                     }
                     if (withoutProjectDamageResultsList.Count > 0)
                     {
-                        foreach (ConsequenceDistributionResult withoutProjectDamageResult in withoutProjectDamageResultsList)
+                        foreach (AggregatedConsequencesBinned withoutProjectDamageResult in withoutProjectDamageResultsList)
                         {
-                            ConsequenceDistributionResult withProjectDamageResult = withprojectDamageResults.GetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID);
-                            SingleEmpiricalDistributionOfConsequences damageReducedResult = IterateOnConsequenceDistributionResult(ConsequenceDistributionResult.ConvertToSingleEmpiricalDistributionOfConsequences(withProjectDamageResult), ConsequenceDistributionResult.ConvertToSingleEmpiricalDistributionOfConsequences(withoutProjectDamageResult), false);
+                            AggregatedConsequencesBinned withProjectDamageResult = withprojectDamageResults.GetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID);
+                            AggregatedConsequencesByQuantile damageReducedResult = IterateOnConsequenceDistributionResult(AggregatedConsequencesBinned.ConvertToSingleEmpiricalDistributionOfConsequences(withProjectDamageResult), AggregatedConsequencesBinned.ConvertToSingleEmpiricalDistributionOfConsequences(withoutProjectDamageResult), false);
                             damageReducedAlternative.AddExistingConsequenceResultObject(damageReducedResult);
                         }
                     }

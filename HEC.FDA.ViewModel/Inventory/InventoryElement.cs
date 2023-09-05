@@ -226,9 +226,9 @@ namespace HEC.FDA.ViewModel.Inventory
                     valueUncertainty = new ValueRatioWithUncertainty(IDistributionEnum.LogNormal, logNormalStDev, logNormalMean);
                     break;
                 case IDistributionEnum.Triangular:
-                    double triMostLikely = ((Triangular)ordinate).MostLikely;
                     double triMin = ((Triangular)ordinate).Min;
                     double triMax = ((Triangular)ordinate).Max;
+                    double triMostLikely = ((Triangular)ordinate).MostLikely;
                     valueUncertainty = new ValueRatioWithUncertainty(IDistributionEnum.Triangular, triMin, triMostLikely, triMax);
                     break;
                 case IDistributionEnum.Uniform:
@@ -307,6 +307,7 @@ namespace HEC.FDA.ViewModel.Inventory
         }
 
         public static OccupancyType CreateModelOcctypeFromVMOcctype(OccupancyTypes.OccupancyType ot)
+
         {
             UncertainPairedData structureUPD = ot.StructureItem.Curve.SelectedItemToPairedData();
             UncertainPairedData contentUPD = ot.ContentItem.Curve.SelectedItemToPairedData();
@@ -364,8 +365,10 @@ namespace HEC.FDA.ViewModel.Inventory
 
         private Dictionary<string, OccupancyType> CreateModelOcctypesMapping()
         {
+
             Dictionary<string, OccupancyType> occtypesMapping = new();
             foreach(KeyValuePair< string, OccupancyTypes.OcctypeReference> entry in _OcctypeMapping)
+
             {
                 OccupancyType ot = CreateModelOcctype(entry.Value);              
                 //todo: log ot error messages?
