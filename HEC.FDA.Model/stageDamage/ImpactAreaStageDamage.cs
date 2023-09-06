@@ -560,9 +560,9 @@ namespace HEC.FDA.Model.stageDamage
         internal List<string> ProduceImpactAreaStructureDetails()
         {
             //this list will be the size of the number of structures + 1 where the first string is the header
-            List<string> structureDetails = Inventory.StructureDetails();
             List<DeterministicOccupancyType> deterministicOccupancyTypes = Inventory.SampleOccupancyTypes(new compute.MedianRandomProvider());
-            //DeterministicInventory deterministicInventory = .Sample(, computeIsDeterministic: true);
+            List<string> structureDetails = Inventory.StructureDetails(deterministicOccupancyTypes);
+            //here I need to add to structure details: occ types, impact area,
             StagesToStrings(ref structureDetails);
             DepthsToStrings(ref structureDetails);
             DamagesToStrings(StringGlobalConstants.STRUCTURE_ASSET_CATEGORY, deterministicOccupancyTypes, ref structureDetails);

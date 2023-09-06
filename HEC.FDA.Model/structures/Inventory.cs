@@ -186,13 +186,22 @@ namespace HEC.FDA.Model.structures
                 double val_vehic = GetRowValueForColumn<double>(row, map.VehicleValueCol, 0);
                 double val_other = GetRowValueForColumn<double>(row, map.OtherValueCol, 0);
                 string cbfips = GetRowValueForColumn(row, map.CBFips, "NA");
-                double beginningDamage = GetRowValueForColumn<double>(row, map.BeginningDamageDepthCol, 0);
+                double beginningDamage = GetRowValueForColumn<double>(row, map.BeginningDamageDepthCol, defaultMissingValue);
+                if (beginningDamage == defaultMissingValue)
+                {
+                    if (found_ht != defaultMissingValue)
+                    {
+                        beginningDamage = -found_ht;
+                    }
+                }
                 int numStructures = GetRowValueForColumn(row, map.NumberOfStructuresCol, 1);
                 int yearInService = GetRowValueForColumn(row, map.YearInConstructionCol, defaultMissingValue);
                 //TODO: handle number 
                 int impactAreaID = GetImpactAreaFID(point, impactAreas);
+                string notes = GetRowValueForColumn(row, map.NotesCol, "No Notes Provided");
+                string description = GetRowValueForColumn(row, map.DescriptionCol, "No Description Provided");
                 Structures.Add(new Structure(fid, point, ff_elev, val_struct, st_damcat, occtype, impactAreaID, val_cont,
-                    val_vehic, val_other, cbfips, beginningDamage, ground_elv, found_ht, yearInService, numStructures));
+                    val_vehic, val_other, cbfips, beginningDamage, ground_elv, found_ht, yearInService, numStructures, notes, description));
             }
         }
         public static float[] GetGroundElevationFromRASTerrain(PointFeatureLayer pointLayer, TerrainLayer terrain, Projection studyProjection)
@@ -315,13 +324,13 @@ namespace HEC.FDA.Model.structures
             }
             return -9999;
         }
-        internal List<string> StructureDetails()
+        internal List<string> StructureDetails(List<DeterministicOccupancyType> deterministicOccupancyTypes)
         {
-            string header = "StructureID,YearInService,DamageCategory,OccupancyType,X_Coordinate,Y_Coordinate,StructureValueInDatabase,StructureValueInflated,ContentValue,ContentValueInflated,OtherValue,OtherValueInflated,VehicleValue,VehicleValueInflated,TotalValue,TotalValueInflated,NumberOfStructures,FirstFloorElevation,GroundElevation,FoundationHeight,DepthBeginningDamage,";
+            string header = Structure.ProduceDetailsHeader();
             List<string> structureDetails = new() { header };
             foreach (Structure structure in Structures)
             {
-                structureDetails.Add(structure.ProduceDetails(PriceIndex));
+                structureDetails.Add(structure.ProduceDetails(deterministicOccupancyTypes, PriceIndex));
             }
             return structureDetails;
         }

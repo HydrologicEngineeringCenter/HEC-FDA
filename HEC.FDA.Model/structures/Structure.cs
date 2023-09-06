@@ -5,11 +5,13 @@ using RasMapperLib;
 using HEC.FDA.Model.metrics;
 using System.Collections.Generic;
 using System;
+using HEC.FDA.Model.paireddata;
 
 namespace HEC.FDA.Model.structures
 {
     public class Structure: Validation 
     {
+
         #region Properties 
         //TODO: How are we going to handle missing data?
         //For now, we won't allow missing data 
@@ -29,10 +31,12 @@ namespace HEC.FDA.Model.structures
         internal double FoundationHeight { get; }
         internal int YearInService { get; }
         internal int NumberOfStructures { get; }
+        internal string Notes { get; }
+        internal string Description { get; }
         #endregion
 
         #region Constructors 
-        public Structure(int fid, PointM point, double firstFloorElevation, double val_struct, string st_damcat, string occtype, int impactAreaID, double val_cont =0, double val_vehic = 0, double val_other = 0, string cbfips = "unassigned", double beginDamage = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, double groundElevation = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, double foundationHeight = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, int year = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, int numStructures = 1)
+        public Structure(int fid, PointM point, double firstFloorElevation, double val_struct, string st_damcat, string occtype, int impactAreaID, double val_cont =0, double val_vehic = 0, double val_other = 0, string cbfips = "unassigned", double beginDamage = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, double groundElevation = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, double foundationHeight = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, int year = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, int numStructures = 1, string notes = "", string description = "")
 
         {
             Fid = fid;
@@ -52,7 +56,8 @@ namespace HEC.FDA.Model.structures
             NumberOfStructures = numStructures;
             BeginningDamageDepth = beginDamage;
             AddRules();
-
+            Notes = notes;
+            Description = description;
         }
         #endregion
         #region Methods 
@@ -70,26 +75,13 @@ namespace HEC.FDA.Model.structures
         public ConsequenceResult ComputeDamage(float waterSurfaceElevation, List<DeterministicOccupancyType> deterministicOccupancyTypeList, double priceIndex = 1, int analysisYear = 9999)
         {
             //Create a default deterministic occupancy type 
-            DeterministicOccupancyType deterministicOccupancyType = null;
-            bool occTypeFound = false;
-            //see if we can match an occupancy type from the provided list to the structure occ type name 
-            foreach (DeterministicOccupancyType deterministicOccupancy in deterministicOccupancyTypeList)
-            {
-                if (deterministicOccupancy.OccupancyTypeName == OccTypeName)
-                {
-                    deterministicOccupancyType = deterministicOccupancy;
-                    occTypeFound = true;
-                    break;
-                }
-            }
-            if (!occTypeFound)
-            {
-                deterministicOccupancyType = new DeterministicOccupancyType();
-            }
+            DeterministicOccupancyType deterministicOccupancyType = FindOccType(deterministicOccupancyTypeList);
+
             ConsequenceResult consequenceResult = new(DamageCatagory);
 
             //TODO: We need a way to make sure that the sampled first floor elevation is reasonable 
             //that is hard when we throw away the foundation height 
+            //det depth begin damage equal to foundation height 
             double sampledFFE;
             if (deterministicOccupancyType.IsFirstFloorElevationLogNormal)
             {
@@ -107,7 +99,7 @@ namespace HEC.FDA.Model.structures
             if (analysisYear > YearInService)
             {
                 //Beginning damage depth is relative to the first floor elevation and so a beginning damage depth of -1 means that damage begins 1 foot below the first floor elevation
-
+                //if not defined by the user, the beginning damage depth is equal to the negative of foundation height
                 if (BeginningDamageDepth <= depthabovefoundHeight)
                 {
                     //Structure
@@ -218,11 +210,70 @@ namespace HEC.FDA.Model.structures
 
             return consequenceResult;
         }
-        internal string ProduceDetails(double priceIndex)
+
+        private DeterministicOccupancyType FindOccType(List<DeterministicOccupancyType> deterministicOccupancyTypeList)
         {
-            string details = $"{Fid},{YearInService},{DamageCatagory},{OccTypeName},{Point.X},{Point.Y},{InventoriedStructureValue},{InventoriedStructureValue*priceIndex},{InventoriedContentValue},{InventoriedContentValue * priceIndex},{InventoriedOtherValue},{InventoriedOtherValue * priceIndex},{InventoriedVehicleValue},{InventoriedVehicleValue * priceIndex},{InventoriedStructureValue+InventoriedContentValue+InventoriedOtherValue+InventoriedStructureValue},{(InventoriedStructureValue + InventoriedContentValue + InventoriedOtherValue + InventoriedStructureValue) * priceIndex},{NumberOfStructures},{FirstFloorElevation},{GroundElevation},{FoundationHeight},{BeginningDamageDepth},";
+            DeterministicOccupancyType deterministicOccupancyType = null;
+            bool occTypeFound = false;
+            //see if we can match an occupancy type from the provided list to the structure occ type name 
+            foreach (DeterministicOccupancyType deterministicOccupancy in deterministicOccupancyTypeList)
+            {
+                if (deterministicOccupancy.OccupancyTypeName == OccTypeName)
+                {
+                    deterministicOccupancyType = deterministicOccupancy;
+                    occTypeFound = true;
+                    break;
+                }
+            }
+            if (!occTypeFound)
+            {
+                deterministicOccupancyType = new DeterministicOccupancyType();
+            }
+            return deterministicOccupancyType;
+        }
+        internal static string ProduceDetailsHeader()
+        {
+            string details = $"Structure {nameof(Fid)},Impact Area Row Number in Impact Area Set ,{nameof(YearInService)},{nameof(DamageCatagory)},{nameof(OccTypeName)},";
+            details += $"X Coordinate,Y Coordinate,{nameof(InventoriedStructureValue)},{nameof(InventoriedStructureValue)} by Price Index and Quantity of Structures,";
+            details += $"{nameof(InventoriedContentValue)},{nameof(InventoriedContentValue)} by Price Index and Quantity of Structures,";
+            details += $"{nameof(InventoriedOtherValue)} , {nameof(InventoriedOtherValue)}  by Price Index and Quantity of Structures,";
+            details += $"{nameof(InventoriedVehicleValue)} , {nameof(InventoriedVehicleValue)}  by Price Index and Quantity of Structures,";
+            details += $"Total Value, Total Value by Price Index and Quantity of Structures,";
+            details += $"{nameof(NumberOfStructures)} , {nameof(FirstFloorElevation)} , {nameof(GroundElevation)} , {nameof(FoundationHeight)},";
+            details += $"{nameof(BeginningDamageDepth)},HighestDepthZeroDamage, UseCSVR, UseOSVR, {nameof(Notes)}, {nameof(Description)},";
             return details;
         }
-        #endregion 
+
+        internal string ProduceDetails(List<DeterministicOccupancyType> deterministicOccupancyTypes, double priceIndex)
+        {
+            DeterministicOccupancyType deterministicOccupancyType = FindOccType(deterministicOccupancyTypes);
+            double depthZeroDamage = CalculateDepthZeroDamage(deterministicOccupancyType);
+            string details = $"{Fid},{ImpactAreaID}, {YearInService},{DamageCatagory},{OccTypeName},";
+            details += $"{Point.X},{Point.Y},{InventoriedStructureValue},{InventoriedStructureValue * priceIndex * NumberOfStructures},";
+            details += $"{InventoriedContentValue},{InventoriedContentValue * priceIndex * NumberOfStructures},";
+            details += $"{InventoriedOtherValue},{InventoriedOtherValue * priceIndex * NumberOfStructures},";
+            details += $"{InventoriedVehicleValue},{InventoriedVehicleValue * priceIndex * NumberOfStructures},";
+            details += $"{InventoriedStructureValue + InventoriedContentValue + InventoriedOtherValue + InventoriedStructureValue},";
+            details += $"{(InventoriedStructureValue + InventoriedContentValue + InventoriedOtherValue + InventoriedStructureValue) * priceIndex * NumberOfStructures},";
+            details += $"{NumberOfStructures},{FirstFloorElevation},{GroundElevation},{FoundationHeight},";
+            details += $"{BeginningDamageDepth},{depthZeroDamage}, {deterministicOccupancyType.UseCSVR}, {deterministicOccupancyType.UseOSVR},";
+            details += $"{Notes}, {Description},";
+            return details;
+        }
+
+        private double CalculateDepthZeroDamage(DeterministicOccupancyType deterministicOccupancyType)
+        {
+            double highestDepthZeroPercentDamage = FindHighestDepthZeroPercentDamage(deterministicOccupancyType.StructPercentDamagePairedData);
+            double depthZeroDamage = Math.Max(highestDepthZeroPercentDamage, BeginningDamageDepth);
+            return depthZeroDamage;
+        }
+
+        private double FindHighestDepthZeroPercentDamage(IPairedData structPercentDamagePairedData)
+        {
+            double percentDamage = Double.Epsilon;
+            double depth = structPercentDamagePairedData.f_inverse(percentDamage);
+            return depth;
+        }
+        #endregion
     }
 }
