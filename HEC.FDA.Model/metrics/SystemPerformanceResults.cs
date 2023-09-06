@@ -153,12 +153,18 @@ namespace HEC.FDA.Model.metrics
             return GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram.InverseCDF(0.5);
         }
 
-        public double AssuranceOfAEP(double exceedanceProbability)
+        internal double AEPWithGivenAssurance(double assurance)
+        {
+            double aepWithGivenAssurance = GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram.InverseCDF(assurance);
+            return aepWithGivenAssurance;
+        }
+
+        internal double AssuranceOfAEP(double exceedanceProbability)
         {   //assurance of AEP is a non-exceedance probability so we use CDF as is 
             double assuranceOfAEP = GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram.CDF(exceedanceProbability);
             return assuranceOfAEP;
         }
-        public bool AssuranceIsConverged()
+        internal bool AssuranceIsConverged()
         {
             double standardNonExceedanceProbability = 0.98;
             Histogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;

@@ -30,7 +30,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                 int thresholdID = threshold.ThresholdID;
                 Mean = iasResult.MeanAEP(impactAreaID, thresholdID);
                 Median = iasResult.MedianAEP(impactAreaID, thresholdID);
-
+                NinetyPercentAssurance = iasResult.AEPWithGivenAssurance(impactAreaID, assurance:0.9, thresholdID);
                 List<IPerformanceRowItem> rows = new List<IPerformanceRowItem>();
                 //get the table values
                 List<double> xVals = new List<double>() { .1, .04, .02, .01, .004, .002 };

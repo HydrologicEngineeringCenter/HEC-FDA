@@ -48,6 +48,9 @@ namespace HEC.FDA.Model.metrics
         {
             return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.MedianAEP();
         }
+        public double AEPWithGivenAssurance(int thresholdID, double assurance) {
+            return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.AEPWithGivenAssurance(assurance);
+        }
         public double AssuranceOfAEP(int thresholdID, double exceedanceProbability)
         {
             return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.AssuranceOfAEP(exceedanceProbability);

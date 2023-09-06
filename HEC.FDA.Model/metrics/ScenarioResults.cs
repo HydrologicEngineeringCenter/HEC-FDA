@@ -104,6 +104,10 @@ namespace HEC.FDA.Model.metrics
         {
             return GetResults(impactAreaID).AssuranceOfAEP(thresholdID, exceedanceProbability);
         }
+        public double AEPWithGivenAssurance(int impactAreaID, double assurance, int thresholdID = 0)
+        {
+            return GetResults(impactAreaID).AEPWithGivenAssurance(thresholdID, assurance);
+        }
         public double LongTermExceedanceProbability(int impactAreaID, int years, int thresholdID = 0)
         {
             return GetResults(impactAreaID).LongTermExceedanceProbability(thresholdID, years);
