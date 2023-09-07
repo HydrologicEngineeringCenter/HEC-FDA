@@ -270,7 +270,7 @@ namespace HEC.FDA.ModelTest.unittests
             //Act
             //This compute should return a list with count of 0 stage-damage functions - we didnt provide any H&H summary relationships 
             //so cannot calculate stage frequency, and the compute should check for that 
-            List<UncertainPairedData> nullStageDamage = impactAreaStageDamage.Compute(randomProvider);
+            List<UncertainPairedData> nullStageDamage = impactAreaStageDamage.Compute(randomProvider).Item1;
 
             //Assert
             Assert.Equal(0, nullStageDamage.Count);
@@ -304,7 +304,7 @@ namespace HEC.FDA.ModelTest.unittests
         }
 
         [Fact]
-        public void ProduceReasonableResults()
+        public void ProduceNonNullResults()
         {
             ConvergenceCriteria convergenceCriteriaDeterministic = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
             Inventory inventory = CreateInventory();
@@ -312,7 +312,7 @@ namespace HEC.FDA.ModelTest.unittests
             List<ImpactAreaStageDamage> impactAreaStageDamages = new List<ImpactAreaStageDamage>();
             impactAreaStageDamages.Add(impactAreaStageDamage);
             ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(new List<ImpactAreaStageDamage>(impactAreaStageDamages));
-            List<UncertainPairedData> results = scenarioStageDamage.Compute(new MedianRandomProvider());
+            List<UncertainPairedData> results = scenarioStageDamage.Compute(new MedianRandomProvider()).Item1;
 
             Assert.NotNull(results);
 

@@ -248,10 +248,10 @@ namespace HEC.FDA.Model.stageDamage
             return null;
         }
 
-        public List<UncertainPairedData> Compute(IProvideRandomNumbers randomProvider)
+        public (List<UncertainPairedData>, List<UncertainPairedData>) Compute(IProvideRandomNumbers randomProvider)
         {
             Validate();
-            List<UncertainPairedData> results = new();
+            (List<UncertainPairedData>, List<UncertainPairedData>) results = new(new List<UncertainPairedData>(), new List<UncertainPairedData>());
             if (ErrorLevel >= ErrorLevel.Major)
             {
                 string message = "At least one component of the stage-damage compute has a major error or worse. The compute has been aborted. Empty stage-damage functions have been returned";
@@ -277,8 +277,9 @@ namespace HEC.FDA.Model.stageDamage
                     List<StudyAreaConsequencesBinned> consequenceDistributionResults = ComputeDamageWithUncertaintyAllCoordinates(damageCategory, randomProvider, inventoryAndWaterTupled, wsesAtEachStructureByProfile.Item1);
 
                     //there should be four UncertainPairedData objects - one for each asset cat of the given dam cat level compute 
-                    List<UncertainPairedData> tempResultsList = StudyAreaConsequencesBinned.ToUncertainPairedData(_StagesAtIndexLocation.ToList(), consequenceDistributionResults, ImpactAreaID);
-                    results.AddRange(tempResultsList);
+                    (List<UncertainPairedData>, List<UncertainPairedData>) tempResultsList = StudyAreaConsequencesBinned.ToUncertainPairedData(_StagesAtIndexLocation.ToList(), consequenceDistributionResults, ImpactAreaID);
+                    results.Item1.AddRange(tempResultsList.Item1);
+                    results.Item2.AddRange(tempResultsList.Item2);
                     //clear data
                 }
                 return results;

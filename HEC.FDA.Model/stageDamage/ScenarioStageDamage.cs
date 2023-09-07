@@ -23,16 +23,14 @@ namespace HEC.FDA.Model.stageDamage
         #endregion
 
         #region Methods 
-        public List<UncertainPairedData> Compute(IProvideRandomNumbers randomProvider)
+        public (List<UncertainPairedData>, List<UncertainPairedData>) Compute(IProvideRandomNumbers randomProvider)
         {
-            List<UncertainPairedData> scenarioStageDamageResults = new List<UncertainPairedData>();
+            (List<UncertainPairedData>, List<UncertainPairedData>) scenarioStageDamageResults = new(new List<UncertainPairedData>(), new List<UncertainPairedData>());
             foreach (ImpactAreaStageDamage impactAreaStageDamage in _ImpactAreaStageDamage)
             {
-                List<UncertainPairedData> impactAreaStageDamageResults = impactAreaStageDamage.Compute(randomProvider);
-                foreach (UncertainPairedData uncertainPairedData in impactAreaStageDamageResults)
-                {
-                    scenarioStageDamageResults.Add(uncertainPairedData);
-                }
+                (List<UncertainPairedData>, List<UncertainPairedData>) impactAreaStageDamageResults = impactAreaStageDamage.Compute(randomProvider);
+                scenarioStageDamageResults.Item1.AddRange(impactAreaStageDamageResults.Item1);
+                scenarioStageDamageResults.Item2.AddRange(impactAreaStageDamageResults.Item2);
             }
             return scenarioStageDamageResults;
         }

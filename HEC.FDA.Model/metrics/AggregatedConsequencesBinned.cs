@@ -46,6 +46,7 @@ namespace HEC.FDA.Model.metrics
             DamagedElementQuantityHistogram = new Histogram();
             IsNull = true;
             _TempResults = new double[ConvergenceCriteria.IterationCount];
+            _TempCounts = new double[ConvergenceCriteria.IterationCount];
             MessageHub.Register(this);
 
         }
@@ -57,6 +58,7 @@ namespace HEC.FDA.Model.metrics
             IsNull = false;
             RegionID = impactAreaID;
             _TempResults = new double[ConvergenceCriteria.IterationCount];
+            _TempCounts = new double[ConvergenceCriteria.IterationCount];
             _HistogramNotConstructed = true;
             MessageHub.Register(this);
 
@@ -69,7 +71,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="assetCategory"></param>
         /// <param name="histogram"></param>
         /// <param name="impactAreaID"></param>
-        private AggregatedConsequencesBinned(string damageCategory, string assetCategory, IHistogram histogram, int impactAreaID)
+        public AggregatedConsequencesBinned(string damageCategory, string assetCategory, IHistogram histogram, int impactAreaID)
         {
             DamageCategory = damageCategory;
             AssetCategory = assetCategory;
@@ -79,6 +81,8 @@ namespace HEC.FDA.Model.metrics
             IsNull = false;
             MessageHub.Register(this);
             _TempResults = new double[ConvergenceCriteria.IterationCount];
+            _TempCounts = new double[ConvergenceCriteria.IterationCount];
+
         }
         #endregion
 
