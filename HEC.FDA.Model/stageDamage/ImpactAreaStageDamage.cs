@@ -23,7 +23,7 @@ namespace HEC.FDA.Model.stageDamage
         #region Hard Coded Compute Settings
         private const double MIN_PROBABILITY = 0.0001;
         private const double MAX_PROBABILITY = 0.9999;
-        private readonly ConvergenceCriteria _ConvergenceCriteria = new(minIterations: 10000, maxIterations: 50000);
+        private readonly ConvergenceCriteria _ConvergenceCriteria = new(minIterations: 500, maxIterations: 5000);
         #endregion
 
         #region Fields 
