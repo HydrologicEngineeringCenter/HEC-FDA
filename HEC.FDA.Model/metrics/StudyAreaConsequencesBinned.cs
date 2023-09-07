@@ -71,18 +71,20 @@ namespace HEC.FDA.Model.metrics
                 ConsequenceResultList.Add(consequenceResultToAdd);
             }
         }
+        //This approach is used in binning EAD results
         internal void AddConsequenceRealization(double damageEstimate, string damageCategory, string assetCategory, int impactAreaID, long iteration)
         {
             AggregatedConsequencesBinned damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
             damageResult.AddConsequenceRealization(damageEstimate, iteration);
 
         }
+        //This approach is used in binning stage damage results 
         internal void AddConsequenceRealization(ConsequenceResult consequenceResult, string damageCategory, int impactAreaID, int iteration)
         {
-            GetConsequenceResult(damageCategory, utilities.StringGlobalConstants.STRUCTURE_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.StructureDamage, iteration);
-            GetConsequenceResult(damageCategory, utilities.StringGlobalConstants.CONTENT_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.ContentDamage, iteration);
-            GetConsequenceResult(damageCategory, utilities.StringGlobalConstants.VEHICLE_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.VehicleDamage, iteration);
-            GetConsequenceResult(damageCategory, utilities.StringGlobalConstants.OTHER_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.OtherDamage, iteration);
+            GetConsequenceResult(damageCategory, utilities.StringGlobalConstants.STRUCTURE_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.StructureDamage, iteration, consequenceResult.DamagedStructuresQuantity);
+            GetConsequenceResult(damageCategory, utilities.StringGlobalConstants.CONTENT_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.ContentDamage, iteration, consequenceResult.DamagedContentsQuantity);
+            GetConsequenceResult(damageCategory, utilities.StringGlobalConstants.VEHICLE_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.VehicleDamage, iteration, consequenceResult.DamagedVehiclesQuantity);
+            GetConsequenceResult(damageCategory, utilities.StringGlobalConstants.OTHER_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.OtherDamage, iteration, consequenceResult.DamagedOthersQuantity);
         }
         public void PutDataIntoHistograms()
         {

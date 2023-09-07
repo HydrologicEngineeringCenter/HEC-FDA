@@ -16,6 +16,7 @@ namespace HEC.FDA.Model.metrics
     {
         #region Fields
         private readonly double[] _TempResults;
+        private readonly double[] _TempCounts;
         private bool _HistogramNotConstructed = false;
         #endregion
 
@@ -23,6 +24,7 @@ namespace HEC.FDA.Model.metrics
         public event MessageReportedEventHandler MessageReport;
         public event ProgressReportedEventHandler ProgressReport;
         public IHistogram ConsequenceHistogram { get; private set; }
+        public IHistogram DamagedElementQuantityHistogram { get; private set; }
         public string DamageCategory { get; }
         public string AssetCategory { get; }
         public int RegionID { get; } = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE;
@@ -32,24 +34,21 @@ namespace HEC.FDA.Model.metrics
 
         #region Constructors
         /// <summary>
-        /// This constructor builds a ThreadsafeInlineHistogram. Only use for parallel computes. 
+        /// This constructor is only used for handling errors. 
         /// </summary>
         public AggregatedConsequencesBinned()
         {
-            DamageCategory = "unassigned";
-            AssetCategory = "unassigned";
+            DamageCategory = "unassigned - this is a dummy object";
+            AssetCategory = "unassigned - this is a dummy object";
             RegionID = 0;
             ConvergenceCriteria = new ConvergenceCriteria();
-            ConsequenceHistogram = new ThreadsafeInlineHistogram();
+            ConsequenceHistogram = new Histogram();
+            DamagedElementQuantityHistogram = new Histogram();
             IsNull = true;
             _TempResults = new double[ConvergenceCriteria.IterationCount];
             MessageHub.Register(this);
 
         }
-        /// <summary>
-        /// This constructor builds a ThreadsafeInlineHistogram. Only use for parallel computes. 
-        /// This constructor is used only for simulation compute and does not track impact area ID
-        /// </summary>
         public AggregatedConsequencesBinned(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID)
         {
             DamageCategory = damageCategory;
@@ -62,16 +61,6 @@ namespace HEC.FDA.Model.metrics
             MessageHub.Register(this);
 
         }
-        public AggregatedConsequencesBinned(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, List<double> consequences, int impactAreaID)
-        {
-            DamageCategory = damageCategory;
-            AssetCategory = assetCategory;
-            ConvergenceCriteria = convergenceCriteria;
-            ConsequenceHistogram = new Histogram(consequences, convergenceCriteria);
-            RegionID = impactAreaID;
-            _TempResults = new double[ConvergenceCriteria.IterationCount];
-
-        }
         /// <summary>
         /// This constructor can accept wither a Histogram or a ThreadsageInlineHistogram
         /// as such can be used for both compute types
@@ -80,7 +69,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="assetCategory"></param>
         /// <param name="histogram"></param>
         /// <param name="impactAreaID"></param>
-        public AggregatedConsequencesBinned(string damageCategory, string assetCategory, IHistogram histogram, int impactAreaID)
+        private AggregatedConsequencesBinned(string damageCategory, string assetCategory, IHistogram histogram, int impactAreaID)
         {
             DamageCategory = damageCategory;
             AssetCategory = assetCategory;
@@ -94,7 +83,7 @@ namespace HEC.FDA.Model.metrics
         #endregion
 
         #region Methods
-        public void PutDataIntoHistogram()
+        internal void PutDataIntoHistogram()
         {
             if(_HistogramNotConstructed)
             {
@@ -105,15 +94,19 @@ namespace HEC.FDA.Model.metrics
                     binWidth = 1;
                 }
                 ConsequenceHistogram = new Histogram(binWidth, ConvergenceCriteria);
+                DamagedElementQuantityHistogram = new Histogram(binWidth:1, ConvergenceCriteria);
                 _HistogramNotConstructed = false;
             }
             ConsequenceHistogram.AddObservationsToHistogram(_TempResults);
+            DamagedElementQuantityHistogram.AddObservationsToHistogram(_TempCounts);
             Array.Clear(_TempResults);
         }
 
-        internal void AddConsequenceRealization(double damageRealization, long iteration = 1)
+        internal void AddConsequenceRealization(double damageRealization, long iteration = 1, int damagedElementsCount = 0)
         {
              _TempResults[iteration] = (damageRealization);
+            _TempCounts[iteration] = (damagedElementsCount);
+
         }
 
         internal double MeanExpectedAnnualConsequences()
@@ -124,11 +117,18 @@ namespace HEC.FDA.Model.metrics
         internal double ConsequenceExceededWithProbabilityQ(double exceedanceProbability)
         {
             double nonExceedanceProbability = 1 - exceedanceProbability;
-            double quartile = ConsequenceHistogram.InverseCDF(nonExceedanceProbability);
-            return quartile;
+            double quantile = ConsequenceHistogram.InverseCDF(nonExceedanceProbability);
+            return quantile;
         }
 
-        public bool Equals(AggregatedConsequencesBinned damageResult)
+        internal double QuantityExceededWithProbabilityQ(double exceedanceProbability)
+        {
+            double nonExceedanceProbability = 1- exceedanceProbability;
+            double quantile = DamagedElementQuantityHistogram.InverseCDF(nonExceedanceProbability);
+            return quantile;
+        }
+
+        internal bool Equals(AggregatedConsequencesBinned damageResult)
         {
             bool histogramsMatch = ConsequenceHistogram.Equals(damageResult.ConsequenceHistogram);
             if (!histogramsMatch)
