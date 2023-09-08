@@ -88,9 +88,9 @@ namespace HEC.FDA.Model.metrics
 
             return damCats;
         }
-        public IHistogram AEPHistogram(int impactAreaID, int thresholdID = 0)
+        public IHistogram GetAEPHistogramForPlotting(int impactAreaID, int thresholdID = 0)
         {
-            return GetResults(impactAreaID).GetAEPHistogram(thresholdID);
+            return GetResults(impactAreaID).GetAEPHistogramForPlotting(thresholdID);
         }
         public double MeanAEP(int impactAreaID, int thresholdID = 0)
         {
