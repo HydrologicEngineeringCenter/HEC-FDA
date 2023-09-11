@@ -198,6 +198,17 @@ namespace HEC.FDA.Model.metrics
         {
             Histogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
             IPairedData medianLeveeCurve = _SystemResponseFunction.SamplePairedData(0.5);
+
+            //if the user defined sysstem reponse function does not have certain failure defined, then define it
+            if (medianLeveeCurve.Yvals[^1] < 1) {
+                double epsilon = 0.001;
+                double largestX = medianLeveeCurve.Xvals[^1];
+                List<double> xVals = medianLeveeCurve.Xvals.ToList();
+                List<double> yVals = medianLeveeCurve.Yvals.ToList();
+                xVals.Add(largestX + epsilon);
+                yVals.Add(1);
+                medianLeveeCurve = new PairedData(xVals.ToArray(), yVals.ToArray());
+            }
             assuranceHistogram.ForceDeQueue();
             double stageStep = assuranceHistogram.BinWidth;
             double[] stages = _SystemResponseFunction.Xvals;
