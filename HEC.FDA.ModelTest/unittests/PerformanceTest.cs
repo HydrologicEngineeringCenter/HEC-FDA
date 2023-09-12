@@ -21,7 +21,7 @@ namespace HEC.FDA.ModelTest.unittests
         static double[] Flows = { 0, 100000 };
         static double[] Stages = { 0, 2 };
         static double[] StageForNonLeveeFailureProbs = { .5000, .8000, .9000, .9600, .9800, .9900, .9960, .9980 };
-        static double[] ProbLeveeFailure = { .01, .02, .05, .1, .2, .3, .4, 1 };
+        static double[] ProbLeveeFailure = { .01, .02, .05, .1, .2, .3, .4, .996 };
         static string xLabel = "x label";
         static string yLabel = "y label";
         static string name = "name";
@@ -259,8 +259,8 @@ namespace HEC.FDA.ModelTest.unittests
         {
             double elev = Elevation;
             double _FailureMargin = 0.001;
-            double[] xs = new double[] { elev, elev + _FailureMargin };
-            IDistribution[] ys = new IDistribution[] { new Deterministic(0), new Deterministic(1) };
+            double[] xs = new double[] {elev - _FailureMargin, elev, elev + _FailureMargin };
+            IDistribution[] ys = new IDistribution[] {new Deterministic(0), new Deterministic(0), new Deterministic(.996)};
             CurveMetaData curveMetaData = new CurveMetaData(xlabel: "Stages", ylabel: "Damage", name: "Stage-Damage");
             return new UncertainPairedData(xs, ys, curveMetaData);
         }
