@@ -21,7 +21,7 @@ namespace HEC.FDA.Model.metrics
         private const string AEP_ASSURANCE_FOR_PLOTTING = "AEP_PLOT";
         private const double AEP_BIN_WIDTH = 0.0002;
         private const double STAGE_BIN_WIDTH = 0.001;
-        private const double AEP_FOR_PLOTTING_BIN_WIDTH = 0.01;
+        private const double AEP_FOR_PLOTTING_BIN_WIDTH = 0.02;
         private readonly bool _CalculatePerformanceForLevee;
         private readonly UncertainPairedData _SystemResponseFunction;
         private readonly ConvergenceCriteria _ConvergenceCriteria;
@@ -117,7 +117,7 @@ namespace HEC.FDA.Model.metrics
         /// This method is only used to get the histogram for plotting purposes. 
         /// </summary>
         /// <returns></returns>
-        public Histogram GetAEPHistogram()
+        public Histogram GetAEPHistogramForPlotting()
         {
             Histogram aepHistogram = GetAssurance(AEP_ASSURANCE_FOR_PLOTTING).AssuranceHistogram;
             return aepHistogram;

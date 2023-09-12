@@ -277,7 +277,7 @@ namespace HEC.FDA.ModelTest.unittests
         }
 
         [Theory]
-        [InlineData(5)]
+        [InlineData(6)]
         public void StructureDetailsShould(double expectedLength)
         {
             //Arrange

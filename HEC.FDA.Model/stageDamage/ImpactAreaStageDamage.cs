@@ -93,7 +93,8 @@ namespace HEC.FDA.Model.stageDamage
             //this preserves the level of information content 
             double feetPerCoordinate = 0.5;
             double range = _MaxStageForArea - _MinStageForArea;
-            int coordinateQuantity = Convert.ToInt32(Math.Ceiling((range / feetPerCoordinate)) / 10);
+            int setsOfCoordinatesBetweenProfiles = 10;
+            int coordinateQuantity = Convert.ToInt32(Math.Ceiling((range / feetPerCoordinate)/ setsOfCoordinatesBetweenProfiles));
 
             //require at least two coordinates to interpolate and extrapolate 
             if (coordinateQuantity < 4)
@@ -101,14 +102,6 @@ namespace HEC.FDA.Model.stageDamage
                 coordinateQuantity = 4;
             }
             _NumExtrapolatedStagesToCompute = coordinateQuantity;
-
-
-            //if there are sufficiently many, we can reduce resolution in between 
-            //space between profiles requires fewer coordinates than space outside profiles 
-            if (coordinateQuantity >= 4)
-            {
-                coordinateQuantity = Convert.ToInt32((coordinateQuantity / 2));
-            }
             _NumInterpolatedStagesToCompute = coordinateQuantity;
 
         }
