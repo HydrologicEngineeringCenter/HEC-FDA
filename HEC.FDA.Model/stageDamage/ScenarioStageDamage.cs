@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using Statistics;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.interfaces;
-using Microsoft.VisualBasic;
+using System;
 
 namespace HEC.FDA.Model.stageDamage
 {
@@ -39,7 +38,7 @@ namespace HEC.FDA.Model.stageDamage
         public List<string> ProduceStructureDetails()
         {
             List<string> structureDetails = new List<string>();
-            string generalHeader = $"Structure Details for Stage Damage Compute at {DateAndTime.Now}";
+            string generalHeader = $"Structure Details for Stage Damage Compute at {DateTime.Now}";
             structureDetails.Add(generalHeader);
             foreach (ImpactAreaStageDamage impactAreaStageDamage in _ImpactAreaStageDamage)
             {
