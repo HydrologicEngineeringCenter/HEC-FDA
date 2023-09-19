@@ -706,53 +706,6 @@ namespace HEC.FDA.Model.compute
         {
             return new SimulationBuilder(new ImpactAreaScenarioSimulation(impactAreaID));
         }
-
-        private bool LeveeIsValid()
-        {
-            if (_SystemResponseFunction.CurveMetaData.IsNull) return false;
-            if (_SystemResponseFunction.Yvals.Last().Type != IDistributionEnum.Deterministic)
-            {
-                string message = $"There must exist a stage in the fragility curve with a certain probability of failure specified as a deterministic distribution but was not found for the impact area with ID {_ImpactAreaID}" + Environment.NewLine;
-                ErrorMessage errorMessage = new(message, ErrorLevel.Fatal);
-                ReportMessage(this, new MessageEventArgs(errorMessage));
-                return false;
-            }
-            else if (_SystemResponseFunction.Yvals.Last().InverseCDF(0.5) != 1) //we should be given a deterministic distribution at the end where prob(failure) = 1
-            { //the determinstic distribution could be normal with zero standard deviation, triangular or uniform with min and max = 1, doesn't matter
-              //distributions where the user specifies zero variability should be passed to the model as a deterministic distribution 
-              //this has been communicated 
-                string message = $"There must exist a stage in the fragility curve with a certain probability of failure specified as a deterministic distribution for the impact area with ID {_ImpactAreaID}" + Environment.NewLine;
-                ErrorMessage errorMessage = new(message, ErrorLevel.Fatal);
-                ReportMessage(this, new MessageEventArgs(errorMessage)); return false;
-            }
-            else
-            {   //right here or somewhere we need to do validation to handle a top of levee elevation above all stages 
-                //how would that play in with a fragility function?
-                //
-                TopOfLeveehasCertainFailure();
-                return true;
-            }
-        }
-
-        private void TopOfLeveehasCertainFailure()
-        {
-            int index = Array.BinarySearch(_SystemResponseFunction.Xvals, _TopOfLeveeElevation);
-            if (index > 0)
-            {
-                if (_SystemResponseFunction.Yvals[index].InverseCDF(0.5) != 1)
-                {//top of levee elevation has some probability other than 1
-                    string message = $"The top of levee elevation of {_TopOfLeveeElevation} in the fragility function does not have certain probability of failure specified as a deterministic distribution for the impact area with ID {_ImpactAreaID}" + Environment.NewLine;
-                    ErrorMessage errorMessage = new(message, ErrorLevel.Major);
-                    ReportMessage(this, new MessageEventArgs(errorMessage));
-                }
-            }
-            else
-            {   //top of levee elevation is not included in the fragility curve
-                string message = $"The top of levee elevation of {_TopOfLeveeElevation} in the fragility function does not have a certain probability of failure specified as a deterministic distribution for the impact area with ID {_ImpactAreaID}" + Environment.NewLine;
-                ErrorMessage errorMessage = new(message, ErrorLevel.Major);
-                ReportMessage(this, new MessageEventArgs(errorMessage));
-            }
-        }
         private static IPairedData EnsureBottomAndTopHaveCorrectProbabilities(IPairedData systemResponseFunction)
         {
             List<double> tempXvals = new(); //xvals are stages
@@ -1016,7 +969,6 @@ namespace HEC.FDA.Model.compute
             }
             public SimulationBuilder WithLevee(UncertainPairedData uncertainPairedData, double topOfLeveeElevation)
             {
-                _Simulation.AddSinglePropertyRule("levee", new Rule(() => _Simulation.LeveeIsValid(), $"The levee is invalid  for the impact area with ID {_Simulation._ImpactAreaID}."));
                 _Simulation._SystemResponseFunction = uncertainPairedData;
                 _Simulation._TopOfLeveeElevation = topOfLeveeElevation;
                 return new SimulationBuilder(_Simulation);
