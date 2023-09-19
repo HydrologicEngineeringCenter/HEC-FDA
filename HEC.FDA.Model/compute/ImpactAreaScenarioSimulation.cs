@@ -362,8 +362,7 @@ namespace HEC.FDA.Model.compute
                 }
                 else
                 {
-                    if (_LeveeIsValid)
-                    {
+
                         IPairedData systemResponse_sample = _SystemResponseFunction.SamplePairedData(randomProvider.NextRandom(), computeIsDeterministic); //needs to be a random number
                                                                                                                                                            //IPairedData frequency_stage_withLevee = frequency_stage.multiply(levee_curve_sample);
                         if (computeWithDamage)
@@ -379,7 +378,7 @@ namespace HEC.FDA.Model.compute
                         {
                             ComputeLeveePerformance(frequency_stage, systemResponse_sample, Convert.ToInt32(iteration));
                         }
-                    }
+                    
 
                 }
 
@@ -399,8 +398,6 @@ namespace HEC.FDA.Model.compute
                 }
                 else
                 {
-                    if (_LeveeIsValid)
-                    {
                         IPairedData systemResponse_sample = _SystemResponseFunction.SamplePairedData(randomProvider.NextRandom(), computeIsDeterministic); //needs to be a random number
                                                                                                                                                            //IPairedData frequency_floodplainstage_withLevee = frequency_floodplainstage.multiply(_levee_curve_sample);
                         if (computeWithDamage)
@@ -416,8 +413,6 @@ namespace HEC.FDA.Model.compute
                         {
                             ComputeLeveePerformance(frequency_stage, systemResponse_sample, Convert.ToInt32(iteration));
                         }
-                    }
-
                 }
 
             }
@@ -749,11 +744,6 @@ namespace HEC.FDA.Model.compute
             {
                 return false;
             }
-            bool leveeValidityMatches = _LeveeIsValid.Equals(incomingImpactAreaScenarioSimulation._LeveeIsValid);
-            if (!leveeValidityMatches)
-            {
-                return false;
-            }
             bool frequenceDischargeMatches = _FrequencyDischarge.Equals(incomingImpactAreaScenarioSimulation._FrequencyDischarge);
             if (!frequenceDischargeMatches)
             {
@@ -814,7 +804,6 @@ namespace HEC.FDA.Model.compute
         {
             XElement mainElement = new("ImpactAreaScenarioSimulation");
 
-            mainElement.SetAttributeValue("LeveeIsValid", _LeveeIsValid);
             mainElement.SetAttributeValue("TopOfLeveeElevation", _TopOfLeveeElevation);
             mainElement.SetAttributeValue("ImpactAreaID", _ImpactAreaID);
             bool frequencyDischargeIsNull = ((Statistics.Distributions.LogPearson3)_FrequencyDischarge).IsNull;
@@ -899,7 +888,6 @@ namespace HEC.FDA.Model.compute
                 .WithFrequencyStage(frequencyStage)
                 .WithInteriorExterior(interiorExterior)
                 .Build();
-            impactAreaScenarioSimulation._LeveeIsValid = leveeIsValid;
             impactAreaScenarioSimulation._ImpactAreaScenarioResults = (ImpactAreaScenarioResults)impactAreaScenarioResults;
             return impactAreaScenarioSimulation;
 
