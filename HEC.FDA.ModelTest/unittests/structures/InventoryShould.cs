@@ -75,7 +75,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
         [Fact]
         public void GetGroundElevationFromTerrain()
         {
-            float[] groundelevs = Inventory.GetGroundElevationFromRASTerrain(new PointFeatureLayer("ThisNameIsNotUsed",pathToNSIShapefile), new TerrainLayer("ThisNameIsNotUsed",pathToTerrainHDF),Projection.FromFile(pathToMuncieProjection));
+            float[] groundelevs = Model.structures.RASHelper.GetGroundElevationFromRASTerrain(new PointFeatureLayer("ThisNameIsNotUsed",pathToNSIShapefile), new TerrainLayer("ThisNameIsNotUsed",pathToTerrainHDF),Projection.FromFile(pathToMuncieProjection));
             Assert.Equal(682, groundelevs.Length);
             Assert.Equal(946.5, groundelevs[0], 1);
         }
@@ -106,7 +106,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
         public void ReturnProjectionFromVector()
         {
             //Act
-            Projection proj = Inventory.GetVectorProjection(new PointFeatureLayer("unusedName",pathToNSIShapefile));
+            Projection proj = Model.structures.RASHelper.GetVectorProjection(new PointFeatureLayer("unusedName",pathToNSIShapefile));
             //Assert
             Assert.NotNull(proj);
         }
@@ -116,11 +116,11 @@ namespace HEC.FDA.ModelTest.unittests.structures
             //These projections are VERY Slightly different.
             //It's enough to show that reprojection changes coords though, and lets us not add another file to the repo. 
             //Arrange 
-            Projection projPnt = Inventory.GetVectorProjection(new PointFeatureLayer("unusedName", pathToNSIShapefile));
+            Projection projPnt = Model.structures.RASHelper.GetVectorProjection(new PointFeatureLayer("unusedName", pathToNSIShapefile));
             Projection projTerr = Projection.FromFile(pathToAlternativeProjection);
             PointM pnt= new PointM(0,0);
             //Act
-            PointM newPnt = Inventory.ReprojectPoint(pnt, projTerr, projPnt);
+            PointM newPnt = Model.structures.RASHelper.ReprojectPoint(pnt, projTerr, projPnt);
             //Assert
             Assert.NotEqual(pnt.X, newPnt.X);
         }

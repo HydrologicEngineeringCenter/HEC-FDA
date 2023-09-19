@@ -265,7 +265,7 @@ namespace HEC.FDA.ViewModel.Inventory
             List<StructureMissingDataRowItem> missingDataRows = new List<StructureMissingDataRowItem>();
             int badElevationNumber = -9999;
             _StructureElevations.Clear();
-            _StructureElevations.AddRange(Model.structures.Inventory.GetGroundElevationFromRASTerrain(new PointFeatureLayer("ThisNameIsNotUsed",Path), new TerrainLayer("ThisNameIsNotUsed",getTerrainFile()),Projection.FromFile(Storage.Connection.Instance.ProjectionFile)));
+            _StructureElevations.AddRange(Model.structures.RASHelper.GetGroundElevationFromRASTerrain(new PointFeatureLayer("ThisNameIsNotUsed",Path), new TerrainLayer("ThisNameIsNotUsed",getTerrainFile()),Projection.FromFile(Storage.Connection.Instance.ProjectionFile)));
             List<int> idsWithNoElevation = new List<int>();
             for (int i = 0; i < _StructureElevations.Count(); i++)
             {
