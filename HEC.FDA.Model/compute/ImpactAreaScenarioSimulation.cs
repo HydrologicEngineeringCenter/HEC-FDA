@@ -36,7 +36,6 @@ namespace HEC.FDA.Model.compute
         private List<UncertainPairedData> _DamageCategoryStageDamage;
         private int _ImpactAreaID;
         private ImpactAreaScenarioResults _ImpactAreaScenarioResults;
-        private bool _LeveeIsValid = false;
         private readonly double[] _RequiredExceedanceProbabilities = { 0.99900, 0.99000, 0.95000, 0.90000, 0.85000, 0.80000, 0.75000, 0.70000,
             0.65000, 0.60000,0.55000, 0.50000, 0.47500, 0.45000, 0.42500, 0.40000, 0.37500, 0.35000, 0.32500, 0.30000, 0.29000, 0.28000, 0.27000, 0.26000,
             0.25000, 0.24000,0.23000, 0.22000, 0.21000, 0.20000, 0.19500, 0.19000, 0.18500, 0.18000, 0.17500, 0.17000, 0.16500, 0.16000, 0.15500, 0.15000,
@@ -104,8 +103,6 @@ namespace HEC.FDA.Model.compute
             {
                 masterseed = randomProvider.Seed;
             }
-            //TODO: levee is valid is not used
-            _LeveeIsValid = true;
             bool computeWithDamage = true;
 
             if (_DamageCategoryStageDamage.Count == 0)
