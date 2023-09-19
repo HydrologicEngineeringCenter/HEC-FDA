@@ -9,6 +9,8 @@ using Statistics.Distributions;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.compute;
+using System.Diagnostics.Contracts;
+using System.Threading;
 
 namespace HEC.FDA.ModelTest.unittests
 {
@@ -397,78 +399,62 @@ namespace HEC.FDA.ModelTest.unittests
             Assert.True(relativeDifference < tolerance);
         }
 
+
         [Theory]
-        [InlineData(1234, 50000)]
-        public void RandomnessShouldBeControlledWithSeed(int seed, int iterations)
+        [InlineData(81324)]
+        public void TotalRiskShould(double expected)
         {
-            //Arrange
-            ContinuousDistribution flow_frequency = new LogPearson3(mean: 3.6, standardDeviation: 0.45, skew: 0.075, sampleSize: 40);
-            //create a stage distribution
-            IDistribution[] stages = new IDistribution[2];
-            for (int i = 0; i < 2; i++)
+            string damCat = "RES";
+            string assetCat = "Structure";
+            CurveMetaData curveMetaData = new CurveMetaData(damageCategory: damCat, assetCategory: assetCat);
+            //trick the software into drawing a straight line with 5 points between 0 and 1
+            ContinuousDistribution flowFrequency = new Uniform(-50, 1050, 5);
+            double[] flows = new double[] { 0, 250, 500, 750, 1000 };
+            double[] stages = new double[] { 10, 11, 13, 17, 17.5 };
+            IDistribution[] stageDistributions = new IDistribution[stages.Length];
+            for (int i = 0; i < stages.Length; i++)
             {
-                stages[i] = new Triangular(0, 0.3*30*i, 30*i) ;
+                stageDistributions[i] = new Triangular(stages[i] - 1, stages[i], stages[i] + 1);
             }
-            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, metaData);
-            //create a damage distribution
-            IDistribution[] damages = new IDistribution[3]
+            UncertainPairedData flowStage = new UncertainPairedData(flows, stageDistributions, curveMetaData);
+            double[] failureDamage = new double[] { 0, 0, 14000, 150000, 500000 };
+            IDistribution[] failureDamageDistributions = new IDistribution[stages.Length];
+            for (int i = 0; i < failureDamage.Length; i++)
             {
-                    new Normal(1000, 100),
-                    new Normal(34735984.75983, 1000),
-                    new Normal(549584098.509458, 10000)
-            };
-            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, metaData);
-            List<UncertainPairedData> upd = new List<UncertainPairedData>();
-            upd.Add(stage_damage);
-
+                failureDamageDistributions[i] = new Normal(failureDamage[i], failureDamage[i]);
+            }
+            UncertainPairedData stageFailureDamage = new UncertainPairedData(stages, failureDamageDistributions, curveMetaData);
+            List<UncertainPairedData> stageFailureDamageList = new List<UncertainPairedData>() { stageFailureDamage };
+            double[] nonFailureDamage = new double[] { 0, 6000, 8000, 80000, 500000 };
+            IDistribution[] nonFailureDamageDistributions = new IDistribution[stages.Length];
+            for (int i = 0; i < nonFailureDamage.Length; i++)
+            {
+                nonFailureDamageDistributions[i] = new Normal(nonFailureDamage[i], stages[i]);
+            }
+            UncertainPairedData stageNonFailureDamage = new UncertainPairedData(stages, nonFailureDamageDistributions, curveMetaData);
+            List<UncertainPairedData> stageNonFailureDamageList = new List<UncertainPairedData>() { stageNonFailureDamage };
+            double[] failureProbs = new double[] { 0, 0, 0.1, 0.8, 1 };
+            IDistribution[] failureProbDistributions = new IDistribution[stages.Length];
+            for (int i = 0; i < failureProbs.Length; i++)
+            {
+                failureProbDistributions[i] = new Deterministic(failureProbs[i]);
+            }
+            UncertainPairedData systemResponse = new UncertainPairedData(stages, failureProbDistributions, curveMetaData);
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(id)
-                .WithFlowFrequency(flow_frequency)
-                .WithFlowStage(flow_stage)
-                .WithStageDamages(upd)
+                .WithFlowFrequency(flowFrequency)
+                .WithFlowStage(flowStage)
+                .WithStageDamages(stageFailureDamageList)
+                .WithNonFailureStageDamage(stageNonFailureDamageList)
+                .WithLevee(systemResponse, topOfLeveeElevation: 16)
                 .Build();
 
-            ImpactAreaScenarioSimulation simulation2 = ImpactAreaScenarioSimulation.Builder(id)
-                .WithFlowFrequency(flow_frequency)
-                .WithFlowStage(flow_stage)
-                .WithStageDamages(upd)
-                .Build();
-
-            RandomProvider randomProvider = new RandomProvider(seed);
-            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 10000, maxIterations: iterations);
-
-
-            //Act
-            ImpactAreaScenarioResults results_one = simulation.Compute(randomProvider, convergenceCriteria);
-            ImpactAreaScenarioResults results_two = simulation2.Compute(randomProvider, convergenceCriteria);
-
-
-            //Assert 
-            ////Mean EAD
-            Assert.Equal(results_one.MeanExpectedAnnualConsequences(), results_two.MeanExpectedAnnualConsequences());
-
-            ////EAD Distribution
-            Assert.Equal(results_one.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.25), results_two.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.25));
-            Assert.Equal(results_one.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.50), results_two.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.5));
-            Assert.Equal(results_one.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.75), results_two.ConsequencesExceededWithProbabilityQ(exceedanceProbability: 0.75));
-
-            //Mean and Median AEP
-            Assert.Equal(results_one.MeanAEP(thresholdID: 0), results_two.MeanAEP(thresholdID: 0));
-            Assert.Equal(results_one.MedianAEP(thresholdID: 0), results_two.MedianAEP(thresholdID: 0));
-
-            //AEP Distribution - Assurance of AEP
-            Assert.Equal(results_one.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.10), results_two.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.10));
-            Assert.Equal(results_one.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.04), results_two.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.04));
-            Assert.Equal(results_one.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.02), results_two.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.02));
-            Assert.Equal(results_one.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.004), results_two.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.004));
-            Assert.Equal(results_one.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.002), results_two.AssuranceOfAEP(thresholdID: 0, exceedanceProbability: 0.002));
-
-            //Assurance of Threshold 
-            Assert.Equal(results_one.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.90), results_two.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.90));
-            Assert.Equal(results_one.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.96), results_two.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.96));
-            Assert.Equal(results_one.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.98), results_two.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.98));
-            Assert.Equal(results_one.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.996), results_two.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.996));
-            Assert.Equal(results_one.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.998), results_two.AssuranceOfEvent(thresholdID: 0, standardNonExceedanceProbability: 0.998));
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
+            MedianRandomProvider medianRandomProvider = new MedianRandomProvider();
+            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(medianRandomProvider, convergenceCriteria, new CancellationToken(), computeIsDeterministic: true); ;
+            double actual = impactAreaScenarioResults.MeanExpectedAnnualConsequences(id, damCat, assetCat);
+            double relativeTolerance = Math.Abs(expected - actual) / actual;
+            Assert.True(relativeTolerance < 0.01);
         }
     }
 }
-;
+

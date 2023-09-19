@@ -126,7 +126,7 @@ namespace HEC.FDA.Model.paireddata
         /// <summary>
         /// compose implements the IComposable interface on PairedData, which allows a PairedData object to take the input y values as the x value (to determine the commensurate y value) from the subject function. Ultimately it creates a composed function with the Y from the subject, and the commensurate x from the input.
         /// </summary>
-        public IPairedData compose(IPairedData inputPairedData)
+        public PairedData compose(IPairedData inputPairedData)
         {
             int count = inputPairedData.Xvals.Length;
             double[] x = new double[count];
@@ -223,7 +223,7 @@ namespace HEC.FDA.Model.paireddata
         /// Appropriate when subject is a stage damage curve, and the input is a fragility curve. 
         /// multiply multiplies a stage damage curve by a fragility curve. All damages below the curve are considered 0.
         /// </summary>
-        public IPairedData multiply(IPairedData systemResponseFunction)
+        public PairedData multiply(IPairedData systemResponseFunction)
         {
             List<double> newXvals = new List<double>(); //xvals are stages in the stage-damage function
             List<double> newYvals = new List<double>(); //yvals are damage*prob(failure)
@@ -320,6 +320,7 @@ namespace HEC.FDA.Model.paireddata
             }
             Yvals = update;
         }
+
         #endregion
     }
 }
