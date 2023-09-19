@@ -198,20 +198,19 @@ namespace HEC.FDA.Model.compute
             {
                 return true;
             }
-
             if (ErrorLevel >= ErrorLevel.Fatal)
             {
                 ReportMessage(this, new MessageEventArgs(new Message($"The simulation for impact area {_ImpactAreaID} contains errors. The compute has been aborted." + Environment.NewLine)));
                 canCompute = false;
             }
-
             LogSimulationErrors();
-            //TODO if convergence criteria is not valid, we don't have a way of saying HasErrors = true 
-            //nor is there relevant messaging
             convergenceCriteria.Validate();
             if (convergenceCriteria.HasErrors)
             {
                 canCompute = false;
+                string message = $"The convergence criteria established in study properties are not valid: {convergenceCriteria.GetErrorMessages}";
+                ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
+                ReportMessage(this, new MessageEventArgs(errorMessage));
             }
             return canCompute;
 
