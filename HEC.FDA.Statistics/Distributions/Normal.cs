@@ -28,17 +28,17 @@ namespace Statistics.Distributions
             //for reflection;
             Mean = 0;
             StandardDeviation = 1.0;
-            addRules();
+            AddRules();
         }
         public Normal(double mean, double sd, int sampleSize = 1)
         {
             Mean = mean;
             StandardDeviation = sd;
             SampleSize = sampleSize;
-            addRules();
+            AddRules();
 
         }
-        private void addRules()
+        private void AddRules()
         {
             AddSinglePropertyRule(nameof(StandardDeviation),
                 new Rule(() =>
@@ -218,7 +218,7 @@ namespace Statistics.Distributions
  *         found using the Newton method
  *         This method is not guarantee to converge
  */
-        private double invCDFNewton(double p, double valGuess, double tolP, int maxIter)
+        private double InvCDFNewton(double p, double valGuess, double tolP, int maxIter)
         {
             double x = valGuess;
             double testY = CDF(x) - p;

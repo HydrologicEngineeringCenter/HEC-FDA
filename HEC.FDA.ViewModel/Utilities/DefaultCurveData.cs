@@ -10,18 +10,18 @@ namespace HEC.FDA.ViewModel.Utilities
     public static class DefaultData
     {
         #region Private Default Curve Data
-        private static double minFlow = 900;
-        private static double maxFlow = 10000;
-        private static double minStage = 463;
-        private static double maxStage = 482;
-        private static double minDepth = -2;
-        private static double maxDepth = 8;
-        private static double minDamage = 0;
-        private static double maxDamage = 2500;
-        private static int coordinateQuantity = 10;
+        private static readonly double minFlow = 900;
+        private static readonly double maxFlow = 10000;
+        private static readonly double  minStage = 463;
+        private static readonly double maxStage = 482;
+        private static readonly double minDepth = -2;
+        private static readonly double maxDepth = 8;
+        private static readonly double minDamage = 0;
+        private static readonly double maxDamage = 2500;
+        private static readonly int coordinateQuantity = 10;
 
-        private static List<double> _GraphicalXValues = new List<double>() {.99, .5, .2, .1, .04, .02, .01, .004, .002 };
-        private static List<IDistribution> _GraphicalYValues = new List<IDistribution>()
+        private static readonly List<double> _GraphicalXValues = new() {.99, .5, .2, .1, .04, .02, .01, .004, .002 };
+        private static readonly List<IDistribution> _GraphicalYValues = new()
         {
             new Deterministic(1200),
             new Deterministic(1500),
@@ -34,8 +34,8 @@ namespace HEC.FDA.ViewModel.Utilities
             new Deterministic(9680)
         };
 
-        private static List<double> _GraphicalStageFreqXValues = new List<double>() { .999, .5, .2, .1, .04, .02, .01, .004, .002 };
-        private static List<IDistribution> _GraphicalStageFreqYValues = new List<IDistribution>()
+        private static readonly List<double> _GraphicalStageFreqXValues = new() { .999, .5, .2, .1, .04, .02, .01, .004, .002 };
+        private static readonly List<IDistribution> _GraphicalStageFreqYValues = new()
         {
             new Deterministic(458),
             new Deterministic(468.33),
@@ -47,8 +47,8 @@ namespace HEC.FDA.ViewModel.Utilities
             new Deterministic(475.11),
             new Deterministic(477.4)
         };
-        private static List<double> _FailureXValues = new List<double>() { 458, 468, 470, 471, 472, 473, 474, 475 };
-        private static List<IDistribution> _FailureYValues = new List<IDistribution>()
+        private static readonly List<double> _FailureXValues = new() { 458, 468, 470, 471, 472, 473, 474, 475 };
+        private static readonly List<IDistribution> _FailureYValues = new()
         {
             new Deterministic(0),
             new Deterministic(.01),
@@ -79,10 +79,10 @@ namespace HEC.FDA.ViewModel.Utilities
         public static double ValueUncertaintyNormalStandardDeviation = 10;
         public static double ValueUncertaintyMin = 10;
         public static double ValueUncertaintyMax = 20;
-        public static Deterministic ValueRatioUncertaintyDeterministic = new Deterministic(50);
-        public static Normal ValueRatioUncertaintyNormal = new Normal(50, 5);
-        public static Triangular ValueRatioUncertaintyTriangular = new Triangular(45, 50, 60);
-        public static Uniform ValueRatioUncertaintyUniform = new Uniform(45, 60);
+        public static Deterministic ValueRatioUncertaintyDeterministic = new(50);
+        public static Normal ValueRatioUncertaintyNormal = new(50, 5);
+        public static Triangular ValueRatioUncertaintyTriangular = new(45, 50, 60);
+        public static Uniform ValueRatioUncertaintyUniform = new(45, 60);
         public static double FirstFloorUncertaintyNormalStandardDeviation = .5;
         public static double FirstFloorUncertaintyMin = .5;
         //TODO where should this be used 
@@ -96,7 +96,7 @@ namespace HEC.FDA.ViewModel.Utilities
         #region Default Curve Component VMs
         public static CurveComponentVM RatingComputeComponent()
         {
-            CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.STAGE_DISCHARGE, StringConstants.DISCHARGE, StringConstants.STAGE);
+            CurveComponentVM curveComponentVM = new(StringConstants.STAGE_DISCHARGE, StringConstants.DISCHARGE, StringConstants.STAGE);
             curveComponentVM.SetPairedData(StageDischargeDefaultCurve(IDistributionEnum.Normal));
             curveComponentVM.SetPairedData(StageDischargeDefaultCurve(IDistributionEnum.Triangular));
             curveComponentVM.SetPairedData(StageDischargeDefaultCurve(IDistributionEnum.Uniform));
@@ -106,7 +106,7 @@ namespace HEC.FDA.ViewModel.Utilities
         }
         public static CurveComponentVM UnregulatedRegulatedComputeComponent()
         {
-            CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.REGULATED_UNREGULATED, StringConstants.UNREGULATED, StringConstants.REGULATED);
+            CurveComponentVM curveComponentVM = new(StringConstants.REGULATED_UNREGULATED, StringConstants.UNREGULATED, StringConstants.REGULATED);
             curveComponentVM.SetPairedData(RegulatedUnregulatedDefaultCurve(IDistributionEnum.Normal));
             curveComponentVM.SetPairedData(RegulatedUnregulatedDefaultCurve(IDistributionEnum.Uniform));
             curveComponentVM.SetPairedData(RegulatedUnregulatedDefaultCurve(IDistributionEnum.LogNormal));
@@ -116,7 +116,7 @@ namespace HEC.FDA.ViewModel.Utilities
         }
         public static CurveComponentVM ExteriorInteriorComputeComponent()
         {
-            CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.EXT_INT, StringConstants.EXT_STAGE, StringConstants.INT_STAGE);
+            CurveComponentVM curveComponentVM = new(StringConstants.EXT_INT, StringConstants.EXT_STAGE, StringConstants.INT_STAGE);
             curveComponentVM.SetPairedData(ExteriorInteriorDefaultCurve(IDistributionEnum.Normal));
             curveComponentVM.SetPairedData(ExteriorInteriorDefaultCurve(IDistributionEnum.Uniform));
             curveComponentVM.SetPairedData(ExteriorInteriorDefaultCurve(IDistributionEnum.LogNormal));
@@ -126,7 +126,7 @@ namespace HEC.FDA.ViewModel.Utilities
         }
         public static CurveComponentVM StageDamageCurveComputeComponent()
         {
-            CurveComponentVM curveComponentVM = new CurveComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
+            CurveComponentVM curveComponentVM = new(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE);
             curveComponentVM.SetPairedData(StageDamageDefaultCurve(IDistributionEnum.Normal));
             curveComponentVM.SetPairedData(StageDamageDefaultCurve(IDistributionEnum.Uniform));
             curveComponentVM.SetPairedData(StageDamageDefaultCurve(IDistributionEnum.LogNormal));
@@ -136,7 +136,7 @@ namespace HEC.FDA.ViewModel.Utilities
         }
         public static CurveComponentVM DefaultLeveeComputeComponent()
         {
-            CurveComponentVM defaultCurve = new CurveComponentVM(StringConstants.SYSTEM_RESPONSE_CURVE, StringConstants.STAGE, 
+            CurveComponentVM defaultCurve = new(StringConstants.SYSTEM_RESPONSE_CURVE, StringConstants.STAGE, 
                 StringConstants.FAILURE_FREQUENCY, distOptions:DistributionOptions.DETERMINISTIC_ONLY);
             defaultCurve.SetPairedData(DefaultData.FailureDefaultCurve());
             defaultCurve.SetMinMaxValues(0, 1);
@@ -151,20 +151,20 @@ namespace HEC.FDA.ViewModel.Utilities
         }
         public static UncertainPairedData GraphicalFlowFreqDefaultCurve()
         {
-            CurveMetaData curveMetaData = new CurveMetaData(StringConstants.FREQUENCY, StringConstants.DISCHARGE, StringConstants.GRAPHICAL_FREQUENCY);
+            CurveMetaData curveMetaData = new(StringConstants.FREQUENCY, StringConstants.DISCHARGE, StringConstants.GRAPHICAL_FREQUENCY);
             return new UncertainPairedData(_GraphicalXValues.ToArray(), _GraphicalYValues.ToArray(), curveMetaData);
         }
         public static UncertainPairedData GraphicalStageFreqDefaultCurve()
         {
-            CurveMetaData curveMetaData = new CurveMetaData(StringConstants.FREQUENCY, StringConstants.DISCHARGE, StringConstants.GRAPHICAL_STAGE_FREQUENCY);
+            CurveMetaData curveMetaData = new(StringConstants.FREQUENCY, StringConstants.DISCHARGE, StringConstants.GRAPHICAL_STAGE_FREQUENCY);
             return new UncertainPairedData(_GraphicalStageFreqXValues.ToArray(), _GraphicalStageFreqYValues.ToArray(), curveMetaData);
         }
         //TODO how to use this with the new argument 
         private static UncertainPairedData RegulatedUnregulatedDefaultCurve(IDistributionEnum distributionEnum = IDistributionEnum.Deterministic)
         {
-            CurveMetaData curveMetaData = new CurveMetaData(StringConstants.UNREGULATED, StringConstants.REGULATED, StringConstants.REGULATED_UNREGULATED);
-            List<double> xValues = new List<double>();
-            List<IDistribution> yValues = new List<IDistribution>();
+            CurveMetaData curveMetaData = new(StringConstants.UNREGULATED, StringConstants.REGULATED, StringConstants.REGULATED_UNREGULATED);
+            List<double> xValues = new();
+            List<IDistribution> yValues = new();
             double greatestDiffIndex = 4.5;
             for (int i = 0; i < coordinateQuantity; i++)
             {
@@ -202,9 +202,9 @@ namespace HEC.FDA.ViewModel.Utilities
         }
         private static UncertainPairedData StageDischargeDefaultCurve(IDistributionEnum distributionEnum = IDistributionEnum.Deterministic)
         {
-            CurveMetaData curveMetaData = new CurveMetaData(StringConstants.STAGE, StringConstants.DISCHARGE, StringConstants.STAGE_DISCHARGE);
-            List<double> xValues = new List<double>();
-            List<IDistribution> yValues = new List<IDistribution>();
+            CurveMetaData curveMetaData = new(StringConstants.STAGE, StringConstants.DISCHARGE, StringConstants.STAGE_DISCHARGE);
+            List<double> xValues = new();
+            List<IDistribution> yValues = new();
             for (int i = 0; i < coordinateQuantity; i++)
             {
                 IDistribution stageDistribution = new Normal();
@@ -242,9 +242,9 @@ namespace HEC.FDA.ViewModel.Utilities
         }
         private static UncertainPairedData ExteriorInteriorDefaultCurve(IDistributionEnum distributionEnum = IDistributionEnum.Deterministic)
         {
-            CurveMetaData curveMetaData = new CurveMetaData(StringConstants.EXT_STAGE, StringConstants.INT_STAGE, StringConstants.EXT_INT);
-            List<double> xValues = new List<double>();
-            List<IDistribution> yValues = new List<IDistribution>();
+            CurveMetaData curveMetaData = new(StringConstants.EXT_STAGE, StringConstants.INT_STAGE, StringConstants.EXT_INT);
+            List<double> xValues = new();
+            List<IDistribution> yValues = new();
             for (int i = 0; i < coordinateQuantity; i++)
             {
                 IDistribution interiorStageDistribution = new Normal();
@@ -287,14 +287,14 @@ namespace HEC.FDA.ViewModel.Utilities
         }
         private static UncertainPairedData FailureDefaultCurve()
         {
-            CurveMetaData curveMetaData = new CurveMetaData(StringConstants.STAGE, StringConstants.FREQUENCY, StringConstants.FAILURE_FREQUENCY);
+            CurveMetaData curveMetaData = new(StringConstants.STAGE, StringConstants.FREQUENCY, StringConstants.FAILURE_FREQUENCY);
             return new UncertainPairedData(_FailureXValues.ToArray(), _FailureYValues.ToArray(), curveMetaData);
         }
         public static UncertainPairedData DepthPercentDamageDefaultCurve(IDistributionEnum distributionEnum = IDistributionEnum.Deterministic)
         {
-            CurveMetaData curveMetaData = new CurveMetaData(StringConstants.OCCTYPE_DEPTH, StringConstants.OCCTYPE_PERCENT_DAMAGE, StringConstants.OCCUPANCY_TYPES);
-            List<double> xValues = new List<double>();
-            List<IDistribution> yValues = new List<IDistribution>();
+            CurveMetaData curveMetaData = new(StringConstants.OCCTYPE_DEPTH, StringConstants.OCCTYPE_PERCENT_DAMAGE, StringConstants.OCCUPANCY_TYPES);
+            List<double> xValues = new();
+            List<IDistribution> yValues = new();
             for (int i = 0; i < coordinateQuantity; i++)
             {
                 IDistribution percentDamageDistribution = new Normal();
@@ -331,9 +331,9 @@ namespace HEC.FDA.ViewModel.Utilities
         }
         private static UncertainPairedData StageDamageDefaultCurve(IDistributionEnum distributionEnum = IDistributionEnum.Deterministic)
         {
-            CurveMetaData curveMetaData = new CurveMetaData(StringConstants.STAGE, StringConstants.DAMAGE, StringConstants.STAGE_DAMAGE);
-            List<double> xValues = new List<double>();
-            List<IDistribution> yValues = new List<IDistribution>();
+            CurveMetaData curveMetaData = new(StringConstants.STAGE, StringConstants.DAMAGE, StringConstants.STAGE_DAMAGE);
+            List<double> xValues = new();
+            List<IDistribution> yValues = new();
             for (int i = 0; i < coordinateQuantity; i++)
             {
                 IDistribution damageDistribution = new Normal();

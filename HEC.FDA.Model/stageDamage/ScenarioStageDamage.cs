@@ -8,7 +8,7 @@ namespace HEC.FDA.Model.stageDamage
     public class ScenarioStageDamage
     {
         #region Fields 
-        private List<ImpactAreaStageDamage> _ImpactAreaStageDamage;
+        private readonly List<ImpactAreaStageDamage> _ImpactAreaStageDamage;
         #endregion
         public List<ImpactAreaStageDamage> ImpactAreaStageDamages
         {
@@ -24,7 +24,7 @@ namespace HEC.FDA.Model.stageDamage
         #region Methods 
         public List<UncertainPairedData> Compute(IProvideRandomNumbers randomProvider)
         {
-            List<UncertainPairedData> scenarioStageDamageResults = new List<UncertainPairedData>();
+            List<UncertainPairedData> scenarioStageDamageResults = new();
             foreach (ImpactAreaStageDamage impactAreaStageDamage in _ImpactAreaStageDamage)
             {
                 List<UncertainPairedData> impactAreaStageDamageResults = impactAreaStageDamage.Compute(randomProvider);
@@ -39,7 +39,7 @@ namespace HEC.FDA.Model.stageDamage
 
         public List<string> ProduceStructureDetails()
         {
-            List<string> structureDetails = new List<string>();
+            List<string> structureDetails = new();
             foreach (ImpactAreaStageDamage impactAreaStageDamage in _ImpactAreaStageDamage)
             {
                 List<string> temp = impactAreaStageDamage.ProduceImpactAreaStructureDetails();

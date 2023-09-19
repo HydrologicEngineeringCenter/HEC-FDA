@@ -209,7 +209,7 @@ namespace HEC.FDA.Model.compute
             {
                 canCompute = false;
                 string message = $"The convergence criteria established in study properties are not valid: {convergenceCriteria.GetErrorMessages}";
-                ErrorMessage errorMessage = new ErrorMessage(message, ErrorLevel.Fatal);
+                ErrorMessage errorMessage = new(message, ErrorLevel.Fatal);
                 ReportMessage(this, new MessageEventArgs(errorMessage));
             }
             return canCompute;
@@ -873,7 +873,6 @@ namespace HEC.FDA.Model.compute
                 stageDamageList.Add(stageDamage);
             }
 
-            bool leveeIsValid = Convert.ToBoolean(xElement.Attribute("LeveeIsValid").Value);
             double topOfLeveeElevation = Convert.ToDouble(xElement.Attribute("TopOfLeveeElevation").Value);
             int impactAreaID = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
 
