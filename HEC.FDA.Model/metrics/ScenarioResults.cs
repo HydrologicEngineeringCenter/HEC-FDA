@@ -88,9 +88,9 @@ namespace HEC.FDA.Model.metrics
 
             return damCats;
         }
-        public IHistogram AEPHistogram(int impactAreaID, int thresholdID = 0)
+        public IHistogram GetAEPHistogramForPlotting(int impactAreaID, int thresholdID = 0)
         {
-            return GetResults(impactAreaID).GetAEPHistogram(thresholdID);
+            return GetResults(impactAreaID).GetAEPHistogramForPlotting(thresholdID);
         }
         public double MeanAEP(int impactAreaID, int thresholdID = 0)
         {
@@ -103,6 +103,10 @@ namespace HEC.FDA.Model.metrics
         public double AssuranceOfAEP(int impactAreaID, double exceedanceProbability, int thresholdID = 0)
         {
             return GetResults(impactAreaID).AssuranceOfAEP(thresholdID, exceedanceProbability);
+        }
+        public double AEPWithGivenAssurance(int impactAreaID, double assurance, int thresholdID = 0)
+        {
+            return GetResults(impactAreaID).AEPWithGivenAssurance(thresholdID, assurance);
         }
         public double LongTermExceedanceProbability(int impactAreaID, int years, int thresholdID = 0)
         {

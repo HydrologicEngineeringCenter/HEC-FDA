@@ -6,6 +6,10 @@
         #endregion
 
         #region Properties
+        public int DamagedStructuresQuantity { get; private set; } = 0;
+        public int DamagedContentsQuantity { get; private set; } = 0;
+        public int DamagedOthersQuantity { get; private set; } = 0;
+        public int DamagedVehiclesQuantity { get; private set; } = 0;
         public string DamageCategory { get; }
         public double OtherDamage { get; private set; } = 0;
         public double StructureDamage { get; private set; } = 0;
@@ -34,9 +38,13 @@
         public void IncrementConsequence(double structureDamage, double contentDamage = 0, double vehicleDamage = 0, double otherDamage = 0)
         {
             StructureDamage += structureDamage;
+            if (structureDamage > 0) { DamagedStructuresQuantity += 1; }
             ContentDamage += contentDamage;
+            if (contentDamage > 0) { DamagedContentsQuantity += 1; }
             OtherDamage += otherDamage;
+            if(otherDamage > 0) { DamagedOthersQuantity += 1; }
             VehicleDamage += vehicleDamage;
+            if (vehicleDamage > 0) { DamagedVehiclesQuantity += 1; }
         }
 
         internal bool Equals(ConsequenceResult damageResult)
