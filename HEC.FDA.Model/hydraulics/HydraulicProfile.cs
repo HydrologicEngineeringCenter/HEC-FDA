@@ -129,7 +129,7 @@ namespace HEC.FDA.Model.hydraulics
         }
         public XElement ToXML()
         {
-            XElement elem = new XElement(PROFILE);
+            XElement elem = new(PROFILE);
             elem.SetAttributeValue(PATH, FileName);
             elem.SetAttributeValue(PROB, Probability);
             elem.SetAttributeValue(PROFILE_NAME, ProfileName);

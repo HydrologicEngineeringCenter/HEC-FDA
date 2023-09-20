@@ -10,6 +10,7 @@ using HEC.MVVMFramework.Model.Messaging;
 using HEC.FDA.Model.metrics;
 using System.Threading.Tasks;
 using System.Threading;
+using Utilities;
 
 namespace HEC.FDA.Model.structures
 {
@@ -32,7 +33,11 @@ namespace HEC.FDA.Model.structures
             PriceIndex = priceIndex;
             //Projection.FromFile returns Null if the path is bad. We'll check for null before we reproject. 
             Projection studyProjection = Projection.FromFile(projectionFilePath);
-            TerrainLayer terrainLayer = new("ThisNameIsNotUsed", terrainPath);
+            TerrainLayer terrainLayer = null;
+            if (updateGroundElevFromTerrain)
+            {
+                terrainLayer = new("ThisNameIsNotUsed", terrainPath);
+            }
             PointFeatureLayer structureFeatureLayer = new("ThisNameIsNotUsed", pointShapefilePath);
             PolygonFeatureLayer impactAreaFeatureLayer = new("ThisNameIsNotUsed", impactAreaShapefilePath);
 
