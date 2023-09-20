@@ -31,7 +31,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         public bool HasNonFailureStageDamage
         {
             get { return _HasNonFailureStageDamage; }
-            set { _HasNonFailureStageDamage = value; NotifyPropertyChanged(); }
+            set { _HasNonFailureStageDamage = value; HasNonFailureStageDamageChanged(); NotifyPropertyChanged(); }
         }
         public List<SpecificIASEditorVM> ImpactAreaTabs { get; } = new List<SpecificIASEditorVM>();
         public ChildElementComboItem SelectedStageDamageElement
@@ -85,8 +85,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         {
             Initialize();
             FillForm(elem);
-
-
 
             //store the results so that we can attach them on the element that we save.
             _Results = elem.Results;
@@ -161,7 +159,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private void FillForm(IASElement elem)
         {
             Year = elem.AnalysisYear;
-            HasNonFailureStageDamage = elem.HasNonFailureStageDamage;
 
             //this is the list of current impact area rows in the study. They might not match the items
             //that were saved in the db for this IAS. The user might have deleted the old impact area set and brought in 
@@ -205,6 +202,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             {
                 NonFailureSelectedStageDamageElement = StageDamageElements[0];
             }
+
+            //setting this one after the specific ias editors have been created is important
+            //because it updates those editors as well. 
+            HasNonFailureStageDamage = elem.HasNonFailureStageDamage;
         }
 
         private void NotifyUserOfImpactAreasInError()
@@ -311,6 +312,17 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             {
                 specificIAS.StageDamageSelectionChanged(_SelectedStageDamageElement);
                 specificIAS.UpdateSufficientToCompute();
+            }
+        }
+
+        private void HasNonFailureStageDamageChanged()
+        {
+            foreach(SpecificIASEditorVM specificIAS in ImpactAreaTabs)
+            {
+                //pass the boolean value to the tab vm's so that they can flip
+                //their boolean and notify property changed so that the exterior interior
+                //option updates. 
+                specificIAS.HasNonFailureStageDamage = HasNonFailureStageDamage;
             }
         }
 
