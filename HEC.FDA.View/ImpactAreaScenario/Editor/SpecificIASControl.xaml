@@ -29,7 +29,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="142"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="110"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="110"/>
                         <ColumnDefinition Width="*"/>
@@ -56,7 +56,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="142"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="110"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="110"/>
                         <ColumnDefinition Width="*"/>
@@ -77,13 +77,13 @@
                     <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="142"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="110"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="110"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                    <CheckBox Grid.ColumnSpan="2" Content="Scenario Reflects Without Project Conditions" IsChecked="{Binding ScenarioReflectsWithoutProjCondition}" IsEnabled="{Binding ScenarioReflectsEnabled}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                    <CheckBox Grid.ColumnSpan="2" Content="Scenario Reflects Without Project Conditions" IsChecked="{Binding ScenarioReflectsWithoutProjCondition}" IsEnabled="{Binding ScenarioReflectsEnabled}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0" />
                 <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" >
                     <Label Grid.Column="2" Content="Threshold Stage:" HorizontalAlignment="Right"  />
                     <Label  Grid.Column="2" Content="*" Foreground="Red" HorizontalAlignment="Right" Padding="0,5,5,5" Visibility="{Binding DefaultStageRequired,Converter={StaticResource BoolToVisibilityConverter}}" />

@@ -477,7 +477,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         public void UpdateSufficientToCompute()
         {
-            FdaValidationResult result = GetPlotValidationResults();
+            FdaValidationResult result = GetValidationResults();
             IsSufficientForCompute = result.IsValid;
             if (IsSufficientForCompute)
             {
@@ -489,7 +489,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             }
         }
 
-        public FdaValidationResult GetPlotValidationResults()
+        public FdaValidationResult GetValidationResults()
         {
             FdaValidationResult vr = new();
 
@@ -644,7 +644,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         public void Plot()
         {
-            FdaValidationResult validationResult = GetPlotValidationResults();
+            FdaValidationResult validationResult = GetValidationResults();
             if (!validationResult.IsValid)
             {
                 MessageBox.Show(validationResult.ErrorMessage.ToString(), "Insufficient Data", MessageBoxButton.OK, MessageBoxImage.Exclamation);
