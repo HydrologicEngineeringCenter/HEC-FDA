@@ -28,10 +28,31 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         #region Properties
  
+        public string StageDamageText
+        {
+            get
+            {
+                if(HasNonFailureStageDamage)
+                {
+                    return "Failure\nStage-Damage";
+                }
+                else
+                {
+                    return "Stage-Damage";
+                }
+            }
+        }
+
         public bool HasNonFailureStageDamage
         {
             get { return _HasNonFailureStageDamage; }
-            set { _HasNonFailureStageDamage = value; HasNonFailureStageDamageChanged(); NotifyPropertyChanged(); }
+            set 
+            { 
+                _HasNonFailureStageDamage = value; 
+                HasNonFailureStageDamageChanged(); 
+                NotifyPropertyChanged("StageDamageText");
+                NotifyPropertyChanged();
+            }
         }
         public List<SpecificIASEditorVM> ImpactAreaTabs { get; } = new List<SpecificIASEditorVM>();
         public ChildElementComboItem SelectedStageDamageElement
