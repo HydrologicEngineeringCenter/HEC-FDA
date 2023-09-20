@@ -463,21 +463,12 @@ namespace HEC.FDA.Model.compute
                     }
                 }
                 PairedData frequency_damage = stageDamageSampledAndMultiplied.compose(frequency_stage);
-
-                string filePath = @"C:\Temp\HEC-FDA\frequency-damage.csv";
-                string frequencyFunction = "Frequency, Stage," + Environment.NewLine;
-                for (int i = 0; i < frequency_stage.Xvals.Length; i++)
-                {
-                    frequencyFunction += $"{frequency_stage.Xvals[i]} , {frequency_stage.Yvals[i]}" + Environment.NewLine;
-                }
-                File.AppendAllText(filePath, frequencyFunction);
                 double eadEstimate = frequency_damage.integrate();
                 _ImpactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadEstimate, stageUncertainDamage.CurveMetaData.DamageCategory, stageUncertainDamage.CurveMetaData.AssetCategory, _ImpactAreaID, iteration);
             }
 
         }
 
-        //TODO: Add NonBreach Logic with interior-exterior 
         private void ComputeDamagesFromStageFrequency_WithLeveeAndInteriorExterior(IProvideRandomNumbers randomProvider, PairedData exterior_interior, PairedData frequency_exteriorStage, PairedData systemResponse, long iteration, bool computeIsDeterministic)
         {
             foreach (UncertainPairedData stageUncertainDamage in _DamageCategoryStageDamage)
