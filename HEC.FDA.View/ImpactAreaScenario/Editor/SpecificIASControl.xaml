@@ -65,11 +65,14 @@
                     <Label  Grid.Column="0" Content="{x:Static utilVM:StringConstants.LATERAL_STRUCTURE_LABEL}" HorizontalAlignment="Right" />
                     <ComboBox  Grid.Column="1"  HorizontalAlignment="Stretch" ItemsSource="{Binding LeveeFeatureElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedLeveeFeatureElement}"/>
 
-                    <Label  Grid.Column="2" Content="{x:Static utilVM:StringConstants.EXT_INT_SHORT_LABEL}" HorizontalAlignment="Right" />
+                    <!--<Label  Grid.Column="2" Content="{x:Static utilVM:StringConstants.BREACH_LABEL}" HorizontalAlignment="Right" />
                     <ComboBox  Grid.Column="3"  HorizontalAlignment="Stretch" ItemsSource="{Binding ExteriorInteriorElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedExteriorInteriorElement}"/>
 
-                    
-                </Grid>
+                    <Label  Grid.Column="4" Content="{x:Static utilVM:StringConstants.NON_BREACH_LABEL}" HorizontalAlignment="Right" />
+                    <ComboBox  Grid.Column="5"  HorizontalAlignment="Stretch" ItemsSource="{Binding ExteriorInteriorElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedExteriorInteriorElement}"/>-->
+
+
+            </Grid>
 
                 <Grid Margin="0,5,5,0">
                     <Grid.ColumnDefinitions>

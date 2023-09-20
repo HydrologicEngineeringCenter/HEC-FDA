@@ -21,15 +21,41 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private SpecificIASEditorVM _SelectedEditorVM;
         private bool _HasImpactArea = true;
         private ChildElementComboItem _SelectedStageDamageElement;
+        private ChildElementComboItem _NonBreachSelectedStageDamageElement;
+        private bool _HasBreachAndNonBreach;
         private ScenarioResults _Results;
         #endregion
 
         #region Properties
+        public string BreachCheckboxText
+        {
+            get 
+            {
+                if(_HasBreachAndNonBreach)
+                {
+                    return "Breach AND Non-Breach Conditions Uniquely Modeled";
+                }
+                else
+                {
+                    return "Include Non-Breach Risk";
+                }
+            }
+        }
+        public bool HasBreachAndNonBreach
+        {
+            get { return _HasBreachAndNonBreach; }
+            set { _HasBreachAndNonBreach = value; NotifyPropertyChanged("BreachCheckboxText"); NotifyPropertyChanged(); }
+        }
         public List<SpecificIASEditorVM> ImpactAreaTabs { get; } = new List<SpecificIASEditorVM>();
         public ChildElementComboItem SelectedStageDamageElement
         {
             get { return _SelectedStageDamageElement; }
             set { _SelectedStageDamageElement = value; StageDamageSelectionChanged(); }
+        }
+        public ChildElementComboItem NonBreachSelectedStageDamageElement
+        {
+            get { return _NonBreachSelectedStageDamageElement; }
+            set { _NonBreachSelectedStageDamageElement = value; StageDamageSelectionChanged(); }
         }
 
         public CustomObservableCollection<ChildElementComboItem> StageDamageElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
