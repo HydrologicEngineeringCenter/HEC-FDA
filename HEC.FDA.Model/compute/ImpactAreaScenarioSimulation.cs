@@ -53,7 +53,7 @@ namespace HEC.FDA.Model.compute
             0.00030, 0.00025,0.00020, 0.00015, 0.00010 };
 
         public event ProgressReportedEventHandler ProgressReport;
-        public bool NonBreachRiskIncluded { get; private set; } = false;
+        public bool NonFailRiskIncluded { get; private set; } = false;
         public bool HasLevee
         {
             get
@@ -216,12 +216,26 @@ namespace HEC.FDA.Model.compute
             //TODO if convergence criteria is not valid, we don't have a way of saying HasErrors = true 
             //nor is there relevant messaging
             convergenceCriteria.Validate();
+            ValidateNonFail();
             if (convergenceCriteria.HasErrors)
             {
                 canCompute = false;
             }
             return canCompute;
 
+        }
+
+        private void ValidateNonFail()
+        {
+            if (NonFailRiskIncluded)
+            {
+                if (HasLevee.Equals(false))
+                {
+                    string errorMessage = $"The simulation for impact area with ID {ImpactAreaID} was configured to calculate nonfail risk but a levee was not specified, therefore nonfail risk will not be calculated.";
+                    ErrorMessage leveeMissing = new ErrorMessage(errorMessage, ErrorLevel.Major);
+                    ReportMessage(this, new MessageEventArgs(leveeMissing));
+                }
+            }
         }
 
         private void ComputeIterations(ConvergenceCriteria convergenceCriteria, IProvideRandomNumbers randomProvider, int masterseed, bool computeWithDamage, bool computeIsDeterministic, CancellationToken cancellationToken)
@@ -450,7 +464,7 @@ namespace HEC.FDA.Model.compute
                 PairedData validatedSystemResponse = EnsureBottomAndTopHaveCorrectProbabilities(systemResponse);
                 PairedData stageDamageSampledAndMultiplied = stageDamageSample.multiply(validatedSystemResponse);
 
-                if (NonBreachRiskIncluded)
+                if (NonFailRiskIncluded)
                 {
                     foreach (UncertainPairedData stageUncertainNonFailureDamage in _DamageCategoryStageNonFailureDamage)
                     {
@@ -1040,7 +1054,7 @@ namespace HEC.FDA.Model.compute
             public SimulationBuilder WithNonFailureStageDamage(List<UncertainPairedData> stageDamageFunctions)
             {
                 _Simulation._DamageCategoryStageNonFailureDamage = stageDamageFunctions;
-                _Simulation.NonBreachRiskIncluded = true;
+                _Simulation.NonFailRiskIncluded = true;
                 return new SimulationBuilder(_Simulation);
             }
         }
