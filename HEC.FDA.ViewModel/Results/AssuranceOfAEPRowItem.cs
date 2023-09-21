@@ -13,6 +13,7 @@ namespace HEC.FDA.ViewModel.Results
 
         public double Mean { get; set; }
         public double Median { get; set; }
+        public double NinetyPercentAssurance { get; set; }
 
         public double AEP1 { get; set; }
         public double AEP04 { get; set; }
@@ -36,6 +37,8 @@ namespace HEC.FDA.ViewModel.Results
 
             Mean = results.MeanAEP(iasID, thresholdID);
             Median = results.MedianAEP(iasID, thresholdID);
+
+            NinetyPercentAssurance = results.AEPWithGivenAssurance(iasID, assurance:0.9, thresholdID);
 
             AEP1 = results.AssuranceOfAEP(iasID, .1, thresholdID);
             AEP04 = results.AssuranceOfAEP(iasID, .04, thresholdID);

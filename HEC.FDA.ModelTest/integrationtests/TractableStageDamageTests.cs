@@ -173,12 +173,12 @@ namespace HEC.FDA.ModelTest.integrationtests
                 if (damageCategory == residentialDamAndOccType)
                 {
                     ImpactAreaStageDamage impactAreaStageDamage = new(impactAreaID, residentialStructureInventory, hydraulicDataset, "fakeHydroDir", graphicalFrequency: flowFrequency, dischargeStage: dischargeStage, unregulatedRegulated: unregReg, usingMockData: true);
-                    stageDamageFunctions = impactAreaStageDamage.Compute(new MedianRandomProvider());
+                    stageDamageFunctions = impactAreaStageDamage.Compute(new MedianRandomProvider()).Item1;
                 }
                 else
                 {
                     ImpactAreaStageDamage impactAreaStageDamage = new(impactAreaID, commercialStructureInventory, hydraulicDataset, "fakeHydroDir", graphicalFrequency: flowFrequency, dischargeStage: dischargeStage, unregulatedRegulated: unregReg, usingMockData: true);
-                    stageDamageFunctions = impactAreaStageDamage.Compute(new MedianRandomProvider());
+                    stageDamageFunctions = impactAreaStageDamage.Compute(new MedianRandomProvider()).Item1;
                 }
             } 
             else
@@ -186,12 +186,12 @@ namespace HEC.FDA.ModelTest.integrationtests
                 if (damageCategory == residentialDamAndOccType)
                 {
                     ImpactAreaStageDamage impactAreaStageDamage = new(impactAreaID, residentialStructureInventory, hydraulicDataset, "fakeHydroDir", graphicalFrequency: stageFrequency, usingMockData: true);
-                    stageDamageFunctions = impactAreaStageDamage.Compute(new MedianRandomProvider());
+                    stageDamageFunctions = impactAreaStageDamage.Compute(new MedianRandomProvider()).Item1;
                 }
                 else
                 {
                     ImpactAreaStageDamage impactAreaStageDamage = new(impactAreaID, commercialStructureInventory, hydraulicDataset, "fakeHydroDir", graphicalFrequency: stageFrequency, usingMockData: true);
-                    stageDamageFunctions = impactAreaStageDamage.Compute(new MedianRandomProvider());
+                    stageDamageFunctions = impactAreaStageDamage.Compute(new MedianRandomProvider()).Item1;
                 }
             }
                 
