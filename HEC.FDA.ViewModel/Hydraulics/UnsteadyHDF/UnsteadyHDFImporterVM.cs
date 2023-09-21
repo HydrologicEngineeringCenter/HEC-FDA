@@ -262,7 +262,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
                 string directoryName = Path.GetFileName(row.Name);
                 pathProbs.Add(new HydraulicProfile( row.Probability, directoryName));
 
-                File.Copy(row.Path, destinationDirectory + "\\" + row.Name);
+                File.Copy(row.Path, destinationDirectory + "\\" + Path.GetFileName(row.Path));
             }
 
             int id = GetElementID<HydraulicElement>();
