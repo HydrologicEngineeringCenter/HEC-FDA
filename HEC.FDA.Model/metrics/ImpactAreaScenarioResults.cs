@@ -48,13 +48,16 @@ namespace HEC.FDA.Model.metrics
         {
             return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.MedianAEP();
         }
+        public double AEPWithGivenAssurance(int thresholdID, double assurance) {
+            return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.AEPWithGivenAssurance(assurance);
+        }
         public double AssuranceOfAEP(int thresholdID, double exceedanceProbability)
         {
             return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.AssuranceOfAEP(exceedanceProbability);
         }
-        public Histogram GetAEPHistogram(int thresholdID)
+        public Histogram GetAEPHistogramForPlotting(int thresholdID)
         {
-            return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.GetAEPHistogramForMetrics();
+            return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.GetAEPHistogramForPlotting();
         }
         public double LongTermExceedanceProbability(int thresholdID, int years)
         {
@@ -215,15 +218,20 @@ namespace HEC.FDA.Model.metrics
                     }
                     else
                     {
-                        eadIterationsRemaining.Add(consequenceDistributionResult.ConsequenceHistogram.EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb));
+                        long itsRemaining = consequenceDistributionResult.ConsequenceHistogram.EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+                        eadIterationsRemaining.Add(itsRemaining);
                     }
                 }
+            } else
+            {
+                eadIterationsRemaining.Add(0);
             }
 
             List<long> performanceIterationsRemaining = new();
             foreach (var threshold in PerformanceByThresholds.ListOfThresholds)
             {
-                performanceIterationsRemaining.Add(threshold.SystemPerformanceResults.AssuranceRemainingIterations(upperConfidenceLimitProb, lowerConfidenceLimitProb));
+                long itsRemaining = threshold.SystemPerformanceResults.AssuranceRemainingIterations(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+                performanceIterationsRemaining.Add(itsRemaining);
             }
             return Math.Max(eadIterationsRemaining.Max(), performanceIterationsRemaining.Max());
         }

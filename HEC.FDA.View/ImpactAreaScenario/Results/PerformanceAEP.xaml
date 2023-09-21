@@ -23,15 +23,18 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Label Grid.Row="0" Grid.Column="0" Content="Mean:" HorizontalAlignment="Right" />
+            <Label Grid.Row="0" Grid.Column="0" Content="Mean:" HorizontalAlignment="Left" />
             <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Mean, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" VerticalAlignment="Center"/>
-            <Label Grid.Row="1" Grid.Column="0" Content="Median:" HorizontalAlignment="Right" />
+            <Label Grid.Row="1" Grid.Column="0" Content="Median:" HorizontalAlignment="Left" />
             <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Median, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" VerticalAlignment="Center"/>
+            <Label Grid.Row="2" Grid.Column="0" Content="AEP With 90% Assurance:" HorizontalAlignment="Left" />
+            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding NinetyPercentAssurance, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" VerticalAlignment="Center"/>
         </Grid>
 
         <controls:CopyPasteDataGrid Grid.Row="2" Grid.Column="0"  ItemsSource="{Binding Rows}" AutoGenerateColumns="False" 

@@ -48,19 +48,19 @@ namespace HEC.FDA.ModelTest.unittests
 
 
             //Act
-            List<UncertainPairedData> uncertainPairedData = StudyAreaConsequencesBinned.ToUncertainPairedData(stages, consequenceDistributionResultsList, impactAreaID_1);
+            List<UncertainPairedData> damageUncertainPairedData = StudyAreaConsequencesBinned.ToUncertainPairedData(stages, consequenceDistributionResultsList, impactAreaID_1).Item1;
             int expectedUPDs = 4;
             int expectedUPDLength = 20;
             double expectedMeanAllOver = mean + 0.5;
-            double actualMeanFirstUPDMiddleStage = uncertainPairedData[0].Yvals[9].InverseCDF(0.5);
-            IPairedData pairedData = uncertainPairedData[3].SamplePairedData(0.5, true);
+            double actualMeanFirstUPDMiddleStage = damageUncertainPairedData[0].Yvals[9].InverseCDF(0.5);
+            IPairedData pairedData = damageUncertainPairedData[3].SamplePairedData(0.5, true);
             double actualMeanLastUPDLastStage = pairedData.f(19);
             double relativeErrorMeanFirstUPDMiddleStage = Math.Abs(actualMeanFirstUPDMiddleStage - expectedMeanAllOver) / expectedMeanAllOver;
             double relativeErrorMeanLastUPDLastStage = Math.Abs(actualMeanLastUPDLastStage - expectedMeanAllOver) / expectedMeanAllOver;
             double tolerance = 0.05;
             //Assert
-            Assert.Equal(expectedUPDs, uncertainPairedData.Count);
-            Assert.Equal(expectedUPDLength, uncertainPairedData[0].Yvals.Length);
+            Assert.Equal(expectedUPDs, damageUncertainPairedData.Count);
+            Assert.Equal(expectedUPDLength, damageUncertainPairedData[0].Yvals.Length);
             Assert.True(relativeErrorMeanFirstUPDMiddleStage < tolerance);
             Assert.True(relativeErrorMeanLastUPDLastStage < tolerance);
         }
