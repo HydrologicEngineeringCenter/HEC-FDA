@@ -166,7 +166,7 @@ namespace HEC.FDA.ModelTest.integrationtests
             ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(impactAreas);
 
             //Act
-            List<UncertainPairedData> stageDamageFunctions = scenarioStageDamage.Compute(randomProvider);
+            List<UncertainPairedData> stageDamageFunctions = scenarioStageDamage.Compute(randomProvider).Item1;
 
             List<IPairedData> meanDamageFunctions = new List<IPairedData>();
             double meanProb = 0.5;

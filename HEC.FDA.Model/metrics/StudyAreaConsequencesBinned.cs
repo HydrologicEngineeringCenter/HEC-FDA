@@ -71,18 +71,20 @@ namespace HEC.FDA.Model.metrics
                 ConsequenceResultList.Add(consequenceResultToAdd);
             }
         }
+        //This approach is used in binning EAD results
         internal void AddConsequenceRealization(double damageEstimate, string damageCategory, string assetCategory, int impactAreaID, long iteration)
         {
             AggregatedConsequencesBinned damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
             damageResult.AddConsequenceRealization(damageEstimate, iteration);
 
         }
+        //This approach is used in binning stage damage results 
         internal void AddConsequenceRealization(ConsequenceResult consequenceResult, string damageCategory, int impactAreaID, int iteration)
         {
-            GetConsequenceResult(damageCategory, utilities.StringGlobalConstants.STRUCTURE_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.StructureDamage, iteration);
-            GetConsequenceResult(damageCategory, utilities.StringGlobalConstants.CONTENT_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.ContentDamage, iteration);
-            GetConsequenceResult(damageCategory, utilities.StringGlobalConstants.VEHICLE_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.VehicleDamage, iteration);
-            GetConsequenceResult(damageCategory, utilities.StringGlobalConstants.OTHER_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.OtherDamage, iteration);
+            GetConsequenceResult(damageCategory, utilities.StringGlobalConstants.STRUCTURE_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.StructureDamage, iteration, consequenceResult.DamagedStructuresQuantity);
+            GetConsequenceResult(damageCategory, utilities.StringGlobalConstants.CONTENT_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.ContentDamage, iteration, consequenceResult.DamagedContentsQuantity);
+            GetConsequenceResult(damageCategory, utilities.StringGlobalConstants.VEHICLE_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.VehicleDamage, iteration, consequenceResult.DamagedVehiclesQuantity);
+            GetConsequenceResult(damageCategory, utilities.StringGlobalConstants.OTHER_ASSET_CATEGORY, impactAreaID).AddConsequenceRealization(consequenceResult.OtherDamage, iteration, consequenceResult.DamagedOthersQuantity);
         }
         public void PutDataIntoHistograms()
         {
@@ -358,7 +360,7 @@ namespace HEC.FDA.Model.metrics
 
         }
 
-        public IHistogram GetSpecificHistogram(string damageCategory, string assetCategory, int impactAreaID)
+        public IHistogram GetSpecificHistogram(string damageCategory, string assetCategory, int impactAreaID, bool getQuantityHistogram = false)
         {
             IHistogram returnHistogram = null;
             foreach (AggregatedConsequencesBinned consequenceDistributionResult in ConsequenceResultList)
@@ -369,7 +371,13 @@ namespace HEC.FDA.Model.metrics
                     {
                         if (consequenceDistributionResult.RegionID == impactAreaID)
                         {
-                            returnHistogram = consequenceDistributionResult.ConsequenceHistogram;
+                            if (getQuantityHistogram)
+                            {
+                                returnHistogram = consequenceDistributionResult.DamagedElementQuantityHistogram;
+                            } else
+                            {
+                                returnHistogram = consequenceDistributionResult.ConsequenceHistogram;
+                            }
                         }
                     }
                 }
@@ -416,9 +424,9 @@ namespace HEC.FDA.Model.metrics
             }
             return allHistogramsAreConverged;
         }
-        public static List<UncertainPairedData> ToUncertainPairedData(List<double> xValues, List<StudyAreaConsequencesBinned> yValues, int impactAreaID)
+        public static (List<UncertainPairedData>, List<UncertainPairedData>) ToUncertainPairedData(List<double> xValues, List<StudyAreaConsequencesBinned> yValues, int impactAreaID)
         {
-            List<UncertainPairedData> uncertainPairedDataList = new();
+            (List<UncertainPairedData>, List<UncertainPairedData>) uncertainPairedDataList = new(new List<UncertainPairedData>(), new List<UncertainPairedData>());
             List<string> damageCategories = yValues[^1].GetDamageCategories();
             List<string> assetCategories = yValues[^1].GetAssetCategories();
    
@@ -427,18 +435,28 @@ namespace HEC.FDA.Model.metrics
                 {
                     foreach (string assetCategory in assetCategories)
                     {
-                        CurveMetaData curveMetaData = new("X Values", "Consequences", "Consequences Uncertain Paired Data", damageCategory, impactAreaID, assetCategory);
-                        List<IHistogram> histograms = new();
+                        CurveMetaData damageCurveMetaData = new("X Values", "Consequences", "Consequences Uncertain Paired Data", damageCategory, impactAreaID, assetCategory);
+                        List<IHistogram> damageHistograms = new();
+
+                        CurveMetaData quantityCurveMetaData = new("X Values", "Damaged Elements Quantity", "Damaged Elements Quantity Uncertain Paired Data", damageCategory, impactAreaID, assetCategory);
+                        List<IHistogram> quantityHistograms = new();
+
                         foreach (StudyAreaConsequencesBinned consequenceDistributions in yValues)
                         {
                             IHistogram histogram = consequenceDistributions.GetSpecificHistogram(damageCategory, assetCategory, impactAreaID);
-                            histograms.Add(histogram);
+                            damageHistograms.Add(histogram);
+
+                            IHistogram quantityHistogram = consequenceDistributions.GetSpecificHistogram(damageCategory, assetCategory, impactAreaID, getQuantityHistogram: true);
+                            quantityHistograms.Add(quantityHistogram);    
                         }
-                        UncertainPairedData uncertainPairedData = new(xValues.ToArray(), histograms.ToArray(), curveMetaData);
-                        uncertainPairedDataList.Add(uncertainPairedData);
+
+                        UncertainPairedData damageUncertainPairedData = new(xValues.ToArray(), damageHistograms.ToArray(), damageCurveMetaData);
+                        UncertainPairedData quantityUncertainPairedData = new(xValues.ToArray(), quantityHistograms.ToArray(), quantityCurveMetaData);
+                        
+                        uncertainPairedDataList.Item1.Add(damageUncertainPairedData);
+                        uncertainPairedDataList.Item2.Add(quantityUncertainPairedData);
                     }
                 }
-       
             return uncertainPairedDataList;
         }
 

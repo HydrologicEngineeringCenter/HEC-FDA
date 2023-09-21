@@ -23,7 +23,7 @@ namespace HEC.FDA.Model.stageDamage
         #region Hard Coded Compute Settings
         private const double MIN_PROBABILITY = 0.0001;
         private const double MAX_PROBABILITY = 0.9999;
-        private readonly ConvergenceCriteria _ConvergenceCriteria = new(minIterations: 10000, maxIterations: 50000);
+        private readonly ConvergenceCriteria _ConvergenceCriteria = new(minIterations: 500, maxIterations: 5000);
         #endregion
 
         #region Fields 
@@ -93,7 +93,8 @@ namespace HEC.FDA.Model.stageDamage
             //this preserves the level of information content 
             double feetPerCoordinate = 0.5;
             double range = _MaxStageForArea - _MinStageForArea;
-            int coordinateQuantity = Convert.ToInt32(Math.Ceiling((range / feetPerCoordinate)) / 10);
+            int setsOfCoordinatesBetweenProfiles = 10;
+            int coordinateQuantity = Convert.ToInt32(Math.Ceiling((range / feetPerCoordinate)/ setsOfCoordinatesBetweenProfiles));
 
             //require at least two coordinates to interpolate and extrapolate 
             if (coordinateQuantity < 4)
@@ -101,14 +102,6 @@ namespace HEC.FDA.Model.stageDamage
                 coordinateQuantity = 4;
             }
             _NumExtrapolatedStagesToCompute = coordinateQuantity;
-
-
-            //if there are sufficiently many, we can reduce resolution in between 
-            //space between profiles requires fewer coordinates than space outside profiles 
-            if (coordinateQuantity >= 4)
-            {
-                coordinateQuantity = Convert.ToInt32((coordinateQuantity / 2));
-            }
             _NumInterpolatedStagesToCompute = coordinateQuantity;
 
         }
@@ -248,10 +241,10 @@ namespace HEC.FDA.Model.stageDamage
             return null;
         }
 
-        public List<UncertainPairedData> Compute(IProvideRandomNumbers randomProvider)
+        public (List<UncertainPairedData>, List<UncertainPairedData>) Compute(IProvideRandomNumbers randomProvider)
         {
             Validate();
-            List<UncertainPairedData> results = new();
+            (List<UncertainPairedData>, List<UncertainPairedData>) results = new(new List<UncertainPairedData>(), new List<UncertainPairedData>());
             if (ErrorLevel >= ErrorLevel.Major)
             {
                 string message = "At least one component of the stage-damage compute has a major error or worse. The compute has been aborted. Empty stage-damage functions have been returned";
@@ -277,8 +270,9 @@ namespace HEC.FDA.Model.stageDamage
                     List<StudyAreaConsequencesBinned> consequenceDistributionResults = ComputeDamageWithUncertaintyAllCoordinates(damageCategory, randomProvider, inventoryAndWaterTupled, wsesAtEachStructureByProfile.Item1);
 
                     //there should be four UncertainPairedData objects - one for each asset cat of the given dam cat level compute 
-                    List<UncertainPairedData> tempResultsList = StudyAreaConsequencesBinned.ToUncertainPairedData(_StagesAtIndexLocation.ToList(), consequenceDistributionResults, ImpactAreaID);
-                    results.AddRange(tempResultsList);
+                    (List<UncertainPairedData>, List<UncertainPairedData>) tempResultsList = StudyAreaConsequencesBinned.ToUncertainPairedData(_StagesAtIndexLocation.ToList(), consequenceDistributionResults, ImpactAreaID);
+                    results.Item1.AddRange(tempResultsList.Item1);
+                    results.Item2.AddRange(tempResultsList.Item2);
                     //clear data
                 }
                 return results;
@@ -560,9 +554,9 @@ namespace HEC.FDA.Model.stageDamage
         internal List<string> ProduceImpactAreaStructureDetails()
         {
             //this list will be the size of the number of structures + 1 where the first string is the header
-            List<string> structureDetails = Inventory.StructureDetails();
             List<DeterministicOccupancyType> deterministicOccupancyTypes = Inventory.SampleOccupancyTypes(new compute.MedianRandomProvider());
-            //DeterministicInventory deterministicInventory = .Sample(, computeIsDeterministic: true);
+            List<string> structureDetails = Inventory.StructureDetails(deterministicOccupancyTypes);
+            //here I need to add to structure details: occ types, impact area,
             StagesToStrings(ref structureDetails);
             DepthsToStrings(ref structureDetails);
             DamagesToStrings(StringGlobalConstants.STRUCTURE_ASSET_CATEGORY, deterministicOccupancyTypes, ref structureDetails);

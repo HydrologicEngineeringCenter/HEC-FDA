@@ -92,7 +92,7 @@ namespace HEC.FDA.View.Study
 
         private void QuickStartGuide_Click(object sender, RoutedEventArgs e)
         {
-            string quickStartLink = "https://www.hec.usace.army.mil/confluence/display/FDAQSG/HEC-FDA+Quick+Start+Guide";
+            string quickStartLink = "https://www.hec.usace.army.mil/fwlink/?linkid=fda-qsg";
             ProcessStartInfo startInfo = new ProcessStartInfo(quickStartLink);
             startInfo.UseShellExecute = true;
             Process.Start(startInfo);
@@ -101,7 +101,7 @@ namespace HEC.FDA.View.Study
 
         private void Discourse_Click(object sender, RoutedEventArgs e)
         {
-            string discourseLink = "https://discourse.hecdev.net/c/fda/33";
+            string discourseLink = "https://www.hec.usace.army.mil/fwlink/?linkid=fda-discourse";
             ProcessStartInfo startInfo = new ProcessStartInfo(discourseLink);
             startInfo.UseShellExecute = true;
             Process.Start(startInfo); 

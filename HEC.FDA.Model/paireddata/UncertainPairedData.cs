@@ -9,6 +9,7 @@ using Statistics.Distributions;
 using HEC.FDA.Model.interfaces;
 using Statistics.Histograms;
 using HEC.MVVMFramework.Model.Messaging;
+using System.Collections.Generic;
 
 namespace HEC.FDA.Model.paireddata
 {
@@ -266,6 +267,52 @@ namespace HEC.FDA.Model.paireddata
                 return new UncertainPairedData(xValues, yValues, curveMetaData);
             }
 
+        }
+
+        public static List<string> ConvertToText(List<UncertainPairedData> quantityDamagedElementsUPD)
+        {
+            List<string> list = new();
+            string header = "Impact Area Row Number," +
+                " Damage Category," +
+                " Asset Category," +
+                " Stage," +
+                " Damaged Element Count 0.95 AEP," +
+                " Damaged Element Count 0.75 AEP," +
+                " Damaged Element Count 0.5 AEP," +
+                " Damaged Element Count 0.25 AEP," +
+                " Damaged Element Count 0.05 AEP, " +
+                "Damaged Element Count 0.01 AEP, " +
+                "Damaged Element Count 0.002 AEP";
+            list.Add(header);
+
+            foreach(UncertainPairedData upd in quantityDamagedElementsUPD)
+            {
+                List<string> quantilesToText = QuantilesToText(upd);
+                list.AddRange(quantilesToText);
+            }
+
+            return list;
+        }
+
+        private static List<string> QuantilesToText(UncertainPairedData upd)
+        {
+            List<string> returnStrings = new();
+            for (int i = 0; i < upd.Xvals.Length; i++)
+            {
+                string thisXValData = $"{upd.ImpactAreaID}," +
+                $"{upd.DamageCategory}," +
+                $"{upd.AssetCategory}," +
+                $"{upd.Xvals[i]}," +
+                $"{Math.Ceiling(upd.Yvals[i].InverseCDF(1-0.95))}," +
+                $"{Math.Ceiling(upd.Yvals[i].InverseCDF(1 - 0.5))}," +
+                $"{Math.Ceiling(upd.Yvals[i].InverseCDF(1 - 0.5))}," +
+                $"{Math.Ceiling(upd.Yvals[i].InverseCDF(1 - 0.25))}," +
+                $"{Math.Ceiling(upd.Yvals[i].InverseCDF(1 - 0.05))}," +
+                $"{Math.Ceiling(upd.Yvals[i].InverseCDF(1 - 0.01))}," +
+                $"{Math.Ceiling(upd.Yvals[i].InverseCDF(1 - 0.002))},";
+                returnStrings.Add(thisXValData);
+            }
+            return returnStrings;
         }
         #endregion
     }
