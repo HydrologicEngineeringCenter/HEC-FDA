@@ -44,7 +44,13 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private bool _ScenarioReflectsWithoutProjCondition = true;
         private double _DefaultStage;
         private bool _ScenarioReflectsEnabled;
+        private bool _HasNonFailureStageDamage;
 
+        public bool HasNonFailureStageDamage
+        {
+            get { return _HasNonFailureStageDamage; }
+            set { _HasNonFailureStageDamage = value; NotifyPropertyChanged(); }
+        }
         public bool ScenarioReflectsEnabled
         {
             get { return _ScenarioReflectsEnabled; }
@@ -471,7 +477,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         public void UpdateSufficientToCompute()
         {
-            FdaValidationResult result = GetPlotValidationResults();
+            FdaValidationResult result = GetValidationResults();
             IsSufficientForCompute = result.IsValid;
             if (IsSufficientForCompute)
             {
@@ -483,7 +489,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             }
         }
 
-        public FdaValidationResult GetPlotValidationResults()
+        public FdaValidationResult GetValidationResults()
         {
             FdaValidationResult vr = new();
 
@@ -638,7 +644,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         public void Plot()
         {
-            FdaValidationResult validationResult = GetPlotValidationResults();
+            FdaValidationResult validationResult = GetValidationResults();
             if (!validationResult.IsValid)
             {
                 MessageBox.Show(validationResult.ErrorMessage.ToString(), "Insufficient Data", MessageBoxButton.OK, MessageBoxImage.Exclamation);
@@ -690,9 +696,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
             List<ThresholdRowItem> thresholdRowItems = Thresholds;
 
-            SpecificIAS elementToSave = new(CurrentImpactArea.ID,
-            flowFreqID, inflowOutID,
-            ratingID, extIntID, latStructID, stageDamID, thresholdRowItems, ScenarioReflectsWithoutProjCondition, DefaultStage);
+            SpecificIAS elementToSave = new(CurrentImpactArea.ID,  flowFreqID, inflowOutID, ratingID, extIntID, 
+                latStructID, stageDamID, thresholdRowItems, ScenarioReflectsWithoutProjCondition, DefaultStage, HasNonFailureStageDamage);
             return elementToSave;
         }
 

@@ -17,10 +17,8 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="60"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -52,6 +50,37 @@
             <Label Grid.Row="0" Grid.Column="6" Content="*" Foreground="Red" HorizontalAlignment="Right" />
             <ComboBox  Grid.Column="7"  HorizontalAlignment="Stretch" ItemsSource="{Binding StageDamageElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedStageDamageElement}" />
         </Grid>
+        
+        <Grid Grid.Row="1" Margin="0,5,5,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+
+            <CheckBox Grid.Column="0" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Left" IsChecked="{Binding HasNonFailureStageDamage}">
+                <TextBlock Text="Non-Failure Scenario Modeled" TextWrapping="Wrap"/>
+            </CheckBox>
+
+            <TextBlock  Grid.Column="1" Text="{Binding StageDamageText}" VerticalAlignment="Center" HorizontalAlignment="Right"  Margin="0,0,15,0"/>
+            
+
+            <Label  Grid.Column="1" Content="*" Foreground="Red" HorizontalAlignment="Right" VerticalAlignment="Center" />
+            <ComboBox  Grid.Column="2" Height="26" HorizontalAlignment="Stretch" ItemsSource="{Binding StageDamageElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedStageDamageElement}" Margin="0,0,10,0" />
+
+            <TextBlock  Grid.Column="3" Visibility="{Binding HasNonFailureStageDamage,Converter={StaticResource BoolToVisibilityConverter}}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,15,0">
+                Non-Failure
+                <LineBreak/>
+                Stage-Damage
+            </TextBlock>
+
+            <Label  Grid.Column="3" Content="*" Visibility="{Binding HasNonFailureStageDamage,Converter={StaticResource BoolToVisibilityConverter}}" Foreground="Red" VerticalAlignment="Center" HorizontalAlignment="Right" />
+            <ComboBox  Grid.Column="4" Visibility="{Binding HasNonFailureStageDamage,Converter={StaticResource BoolToVisibilityConverter}}" Height="26" HorizontalAlignment="Stretch" ItemsSource="{Binding StageDamageElements}" DisplayMemberPath="Name" SelectedItem="{Binding NonFailureSelectedStageDamageElement}" />
+
+        </Grid>
 
         <TabControl Grid.Row="2" Margin="5" ItemsSource="{Binding ImpactAreaTabs}" SelectedIndex="0">
             <TabControl.ItemTemplate>
@@ -65,7 +94,7 @@
             </TabControl.ItemTemplate>
         </TabControl>
         
-        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
             <Utilities:SaveCloseControl VerticalAlignment="Bottom"/>
         </StackPanel>
     </Grid>

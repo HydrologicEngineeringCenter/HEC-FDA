@@ -116,7 +116,7 @@ namespace HEC.FDA.Model.paireddata
 
             string isNullTag = Serialization.GetXMLTagFromProperty(metaDataType, nameof(IsNull));
             if (!bool.TryParse(xElement.Attribute(isNullTag)?.Value, out bool isNull))
-                return new CurveMetaData();
+                isNull = true;
 
             CurveMetaData curveMetaData = new(xLabel, yLabel, name, damageCategory, assetCategory)
             {
