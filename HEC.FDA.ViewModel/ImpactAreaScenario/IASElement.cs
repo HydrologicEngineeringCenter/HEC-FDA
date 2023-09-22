@@ -22,9 +22,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         public const string YEAR = "Year";
         public const string LAST_EDIT_DATE = "LastEditDate";
         public const string STAGE_DAMAGE_ID = "StageDamageID";
+        public const string NON_FAILURE_STAGE_DAMAGE_ID = "NonFailureStageDamageID";
+        public const string HAS_NON_FAILURE_STAGE_DAMAGE = "HasNonFailureStageDamage";
 
         private string _AnalysisYear;
         private int _StageDamageID;
+        private int _NonFailureStageDamageID;
 
         #endregion
 
@@ -43,16 +46,27 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             get { return _StageDamageID; }
             set { _StageDamageID = value; NotifyPropertyChanged(); }
         }
+        public int NonFailureStageDamageID
+        {
+            get { return _NonFailureStageDamageID; }
+            set { _NonFailureStageDamageID = value; NotifyPropertyChanged(); }
+        }
+        public bool HasNonFailureStageDamage
+        {
+            get;set;
+        }
 
         public List<SpecificIAS> SpecificIASElements { get; } = new List<SpecificIAS>();
 
         #endregion
         #region Constructors
 
-        public IASElement(string name, string description, string creationDate, string year, int stageDamageElementID, List<SpecificIAS> elems, int id) 
+        public IASElement(string name, string description, string creationDate, string year, int stageDamageElementID, int nonFailureStageDamageID, bool hasNonFailureStageDamage, List<SpecificIAS> elems, int id) 
             : base(name, creationDate, description, id)
         {
             StageDamageID = stageDamageElementID;
+            NonFailureStageDamageID = nonFailureStageDamageID;
+            HasNonFailureStageDamage = hasNonFailureStageDamage;
             SpecificIASElements.AddRange( elems);
             AnalysisYear = year;
 
@@ -68,6 +82,18 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
             AnalysisYear = setElem.Attribute(YEAR).Value;
             StageDamageID = int.Parse(setElem.Attribute(STAGE_DAMAGE_ID).Value);
+            //the non-failure stuff is a new addition. Check that it exists first for backwards compatibility.
+            XAttribute nonFailureID = setElem.Attribute(NON_FAILURE_STAGE_DAMAGE_ID);
+            if(nonFailureID != null)
+            {
+                NonFailureStageDamageID = int.Parse(nonFailureID.Value);
+                HasNonFailureStageDamage = Boolean.Parse(setElem.Attribute(HAS_NON_FAILURE_STAGE_DAMAGE).Value);
+            }
+            else
+            {
+                NonFailureStageDamageID = -1;
+                HasNonFailureStageDamage = false;
+            }
 
             IEnumerable<XElement> iasElements = setElem.Elements("IAS");
             foreach(XElement elem in iasElements)
@@ -248,6 +274,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             XElement setElement = new(IAS_SET);
             setElement.SetAttributeValue(YEAR, AnalysisYear);
             setElement.SetAttributeValue(STAGE_DAMAGE_ID, StageDamageID);
+            setElement.SetAttributeValue(NON_FAILURE_STAGE_DAMAGE_ID, NonFailureStageDamageID);
+            setElement.SetAttributeValue(HAS_NON_FAILURE_STAGE_DAMAGE, HasNonFailureStageDamage);
 
             setElement.Add(CreateHeaderElement());
 
