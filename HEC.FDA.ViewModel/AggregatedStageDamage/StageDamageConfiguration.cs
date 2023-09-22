@@ -44,6 +44,16 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             {
                 vr.AddErrorMessage(SelectedStructures.AreMappingsValid().ErrorMessage);
             }
+            if(vr.IsValid)
+            {
+                Model.structures.Inventory inv = SelectedStructures.CreateModelInventory(SelectedImpactArea);
+                List<string> occtypeErrors = inv.AreOcctypesValid();
+                if(occtypeErrors.Count > 0)
+                {
+                    vr.AddErrorMessage("Unable to compute because of occupancy type errors:");
+                    vr.AddErrorMessages(occtypeErrors);
+                }
+            }
             return vr;
         }
 
