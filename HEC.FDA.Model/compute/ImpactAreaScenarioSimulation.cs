@@ -40,7 +40,6 @@ namespace HEC.FDA.Model.compute
         private List<UncertainPairedData> _DamageCategoryStageDamage;
         private int _ImpactAreaID;
         private ImpactAreaScenarioResults _ImpactAreaScenarioResults;
-        private bool _LeveeIsValid = false;
         #endregion
 
         #region Properties 
@@ -378,7 +377,7 @@ namespace HEC.FDA.Model.compute
                 }
                 else
                 {
-                        IPairedData systemResponse_sample = _SystemResponseFunction.SamplePairedData(randomProvider.NextRandom(), computeIsDeterministic); //needs to be a random number
+                        PairedData systemResponse_sample = _SystemResponseFunction.SamplePairedData(randomProvider.NextRandom(), computeIsDeterministic); //needs to be a random number
                                                                                                                                                            //IPairedData frequency_stage_withLevee = frequency_stage.multiply(levee_curve_sample);
 
                         if (computeWithDamage)
@@ -414,7 +413,7 @@ namespace HEC.FDA.Model.compute
                 }
                 else
                 {
-                        IPairedData systemResponse_sample = _SystemResponseFunction.SamplePairedData(randomProvider.NextRandom(), computeIsDeterministic); //needs to be a random number
+                        PairedData systemResponse_sample = _SystemResponseFunction.SamplePairedData(randomProvider.NextRandom(), computeIsDeterministic); //needs to be a random number
                                                                                                                                                            //IPairedData frequency_floodplainstage_withLevee = frequency_floodplainstage.multiply(_levee_curve_sample);
                         if (computeWithDamage)
                         {
