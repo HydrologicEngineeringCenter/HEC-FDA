@@ -34,8 +34,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+ 
             </Grid.ColumnDefinitions>
 
             <Label Grid.Row="0" Grid.Column="0" Content="Name:" HorizontalAlignment="Right" Margin="0,0,7,0"/>
@@ -46,10 +45,7 @@
             <Label Grid.Row="0" Grid.Column="4" Content="Year(s):" HorizontalAlignment="Right"  />
             <Utilities:YearField Grid.Row="0" Grid.Column="5"/>
             
-            <Label  Grid.Column="6" Content="{x:Static utilVM:StringConstants.STAGE_DAMAGE_LABEL}" HorizontalAlignment="Right" Margin="0,0,7,0"/>
-            <Label Grid.Row="0" Grid.Column="6" Content="*" Foreground="Red" HorizontalAlignment="Right" />
-            <ComboBox  Grid.Column="7"  HorizontalAlignment="Stretch" ItemsSource="{Binding StageDamageElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedStageDamageElement}" />
-        </Grid>
+              </Grid>
         
         <Grid Grid.Row="1" Margin="0,5,5,0">
             <Grid.ColumnDefinitions>
