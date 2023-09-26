@@ -12,13 +12,14 @@ namespace Importer
         #endregion
         #region Fields
         private ErrorDistribution[] _ErrorDistribution;
-        private SingleDamageFunction[] _SingleDamageFunction;
+
         #endregion
         #region Properties
+        private SingleDamageFunction[] _DamageFunctions;
         public SingleDamageFunction[] DamageFunctions
         {
-            get { return _SingleDamageFunction; }
-            set { _SingleDamageFunction = value; }
+            get { return _DamageFunctions; }
+            set { _DamageFunctions = value; }
         }
         public int CategoryId
         { get; set; }
@@ -31,8 +32,8 @@ namespace Importer
             _ErrorDistribution = new ErrorDistribution[5];
             for (int i = 0; i < 5; i++) _ErrorDistribution[i] = new ErrorDistribution();
 
-            _SingleDamageFunction = new SingleDamageFunction[5];
-            for (int i = 0; i < 5; i++) _SingleDamageFunction[i] = new SingleDamageFunction();
+            _DamageFunctions = new SingleDamageFunction[5];
+            for (int i = 0; i < 5; i++) _DamageFunctions[i] = new SingleDamageFunction();
         }
         #endregion
         #region Voids
@@ -44,13 +45,13 @@ namespace Importer
             for (int i = 0; i < 5; i++)
             {
                 _ErrorDistribution[i].Reset();
-                _SingleDamageFunction[i].Reset();
+                _DamageFunctions[i].Reset();
             }
         }
         public void SetSingleDamageFunction(StructureValueType typeValue, SingleDamageFunction singleDamageFunction)
         {
             int itype = (int)typeValue;
-            _SingleDamageFunction[itype] = ObjectCopier.Clone(singleDamageFunction);
+            _DamageFunctions[itype] = ObjectCopier.Clone(singleDamageFunction);
         }
         public void Print(AsyncLogger logger)
         {
@@ -69,7 +70,7 @@ namespace Importer
             //Depth-Damage Functions
             for (int itype = (int)StructureValueType.STRUCTURE; itype <= (int)StructureValueType.TOTAL; itype++)
             {
-                SingleDamageFunction sdf = _SingleDamageFunction[itype];
+                SingleDamageFunction sdf = _DamageFunctions[itype];
                 int numRows = sdf.GetNumRows();
                 if (numRows > 0)
                 {
@@ -143,7 +144,7 @@ namespace Importer
                 StructureValueType valueType = (StructureValueType)ixType;
                 SingleDamageFunction sdf = new SingleDamageFunction();
 
-                sdf = ObjectCopier.Clone(_SingleDamageFunction[ixType]);
+                sdf = ObjectCopier.Clone(_DamageFunctions[ixType]);
 
                 if (sdf == null)
                 {
@@ -234,13 +235,13 @@ namespace Importer
         public SingleDamageFunction GetSingleDamageFunction(StructureValueType typeValue, SingleDamageFunction singleDamageFunction)
         {
             int itype = (int)typeValue;
-            singleDamageFunction = ObjectCopier.Clone(_SingleDamageFunction[itype]);
+            singleDamageFunction = ObjectCopier.Clone(_DamageFunctions[itype]);
             return singleDamageFunction;
         }
         public SingleDamageFunction GetSingleDamageFunction(StructureValueType typeValue)
         {
             int itype = (int)typeValue;
-            return _SingleDamageFunction[itype];
+            return _DamageFunctions[itype];
         }
         protected string ExportGetParamCode(StructureValueType typeVal, ErrorType typeError, int iparam)
         {

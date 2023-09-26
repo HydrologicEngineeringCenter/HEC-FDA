@@ -306,7 +306,7 @@ namespace HEC.FDA.ViewModel.Utilities
         private static List<StageDamageCurve> CreateDamageCurves(AggregateDamageFunction function, 
             List<ImpactAreaElement> impactAreaElements, ref string messages)
         {
-            List<StageDamageCurve> curves = new List<StageDamageCurve>();
+            List<StageDamageCurve> curves = new();
 
             SingleDamageFunction structDamageFunc = function.DamageFunctions[(int)StructureValueType.STRUCTURE];
             StageDamageCurve stageDamageCurve = CreateStageDamageCurve(structDamageFunc, "Structure", function.DamageReachName, function.CategoryName, impactAreaElements, ref messages);
@@ -316,25 +316,29 @@ namespace HEC.FDA.ViewModel.Utilities
             }
 
             SingleDamageFunction contentDamageFunc = function.DamageFunctions[(int)StructureValueType.CONTENT];
-            stageDamageCurve = CreateStageDamageCurve(structDamageFunc, "Content", function.DamageReachName, function.CategoryName, impactAreaElements, ref messages);
+            stageDamageCurve = CreateStageDamageCurve(contentDamageFunc, "Content", function.DamageReachName, function.CategoryName, impactAreaElements, ref messages);
             if (stageDamageCurve != null)
             {
                 curves.Add(stageDamageCurve);
             }
 
             SingleDamageFunction otherDamageFunc = function.DamageFunctions[(int)StructureValueType.OTHER];
-            stageDamageCurve = CreateStageDamageCurve(structDamageFunc, "Other", function.DamageReachName, function.CategoryName, impactAreaElements, ref messages);
+            stageDamageCurve = CreateStageDamageCurve(otherDamageFunc, "Other", function.DamageReachName, function.CategoryName, impactAreaElements, ref messages);
             if (stageDamageCurve != null)
             {
                 curves.Add(stageDamageCurve);
             }
 
             SingleDamageFunction carDamageFunc = function.DamageFunctions[(int)StructureValueType.CAR];
-            stageDamageCurve = CreateStageDamageCurve(structDamageFunc, "Vehicle", function.DamageReachName, function.CategoryName, impactAreaElements, ref messages);
-            if (stageDamageCurve != null)
+            if(carDamageFunc.GetNumRows() >0)
             {
-                curves.Add(stageDamageCurve);
+                stageDamageCurve = CreateStageDamageCurve(carDamageFunc, "Vehicle", function.DamageReachName, function.CategoryName, impactAreaElements, ref messages);
+                if (stageDamageCurve != null)
+                {
+                    curves.Add(stageDamageCurve);
+                }
             }
+
 
             return curves;
         }
