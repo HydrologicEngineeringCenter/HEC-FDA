@@ -9,7 +9,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         private List<IPerformanceRowItem> _rows;
         private double _Mean;
         private double _Median;
-
+        private double _NinetyPctAssurance;
         public double Mean
         {
             get { return _Mean; }
@@ -22,6 +22,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             set { _Median = value; NotifyPropertyChanged(); }
         }
 
+        public double NinetyPercentAssurance
+        {
+            get { return _NinetyPctAssurance; }
+            set { _NinetyPctAssurance = value; NotifyPropertyChanged(); }
+        }
         public Dictionary<Threshold, List<IPerformanceRowItem>> MetricsToRows { get;} = new Dictionary<Threshold, List<IPerformanceRowItem>>();
         public List<IPerformanceRowItem> Rows
         {
@@ -31,7 +36,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
         public virtual void UpdateHistogram(ThresholdComboItem metric)
         {
-
+            //TODO
+            //Is there a reason that this is empty? 
         }
 
         public void updateSelectedMetric(ThresholdComboItem metric)

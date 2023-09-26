@@ -21,15 +21,49 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private SpecificIASEditorVM _SelectedEditorVM;
         private bool _HasImpactArea = true;
         private ChildElementComboItem _SelectedStageDamageElement;
+        private ChildElementComboItem _NonFailureSelectedStageDamageElement;
+        private bool _HasNonFailureStageDamage;
         private ScenarioResults _Results;
         #endregion
 
         #region Properties
+ 
+        public string StageDamageText
+        {
+            get
+            {
+                if(HasNonFailureStageDamage)
+                {
+                    return "Failure\nStage-Damage";
+                }
+                else
+                {
+                    return "Stage-Damage";
+                }
+            }
+        }
+
+        public bool HasNonFailureStageDamage
+        {
+            get { return _HasNonFailureStageDamage; }
+            set 
+            { 
+                _HasNonFailureStageDamage = value; 
+                HasNonFailureStageDamageChanged(); 
+                NotifyPropertyChanged("StageDamageText");
+                NotifyPropertyChanged();
+            }
+        }
         public List<SpecificIASEditorVM> ImpactAreaTabs { get; } = new List<SpecificIASEditorVM>();
         public ChildElementComboItem SelectedStageDamageElement
         {
             get { return _SelectedStageDamageElement; }
             set { _SelectedStageDamageElement = value; StageDamageSelectionChanged(); }
+        }
+        public ChildElementComboItem NonFailureSelectedStageDamageElement
+        {
+            get { return _NonFailureSelectedStageDamageElement; }
+            set { _NonFailureSelectedStageDamageElement = value; StageDamageSelectionChanged(); }
         }
 
         public CustomObservableCollection<ChildElementComboItem> StageDamageElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
@@ -73,11 +107,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             Initialize();
             FillForm(elem);
 
-            SelectedStageDamageElement = StageDamageElements.FirstOrDefault(stage => stage.ChildElement != null && stage.ChildElement.ID == elem.StageDamageID);
-            if (SelectedStageDamageElement == null)
-            {
-                SelectedStageDamageElement = StageDamageElements[0];
-            }
             //store the results so that we can attach them on the element that we save.
             _Results = elem.Results;
         }
@@ -180,6 +209,24 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                     RegisterChildViewModel(specificIASEditorVM);
                 }
             }
+
+            //select the correct stage damage curve
+            SelectedStageDamageElement = StageDamageElements.FirstOrDefault(stage => stage.ChildElement != null && stage.ChildElement.ID == elem.StageDamageID);
+            if (SelectedStageDamageElement == null && StageDamageElements.Count > 0)
+            {
+                SelectedStageDamageElement = StageDamageElements[0];
+            }
+
+            //select the correct non-failure stage damage curve. 
+            NonFailureSelectedStageDamageElement = StageDamageElements.FirstOrDefault(stage => stage.ChildElement != null && stage.ChildElement.ID == elem.NonFailureStageDamageID);
+            if (NonFailureSelectedStageDamageElement == null && StageDamageElements.Count > 0)
+            {
+                NonFailureSelectedStageDamageElement = StageDamageElements[0];
+            }
+
+            //setting this one after the specific ias editors have been created is important
+            //because it updates those editors as well. 
+            HasNonFailureStageDamage = elem.HasNonFailureStageDamage;
         }
 
         private void NotifyUserOfImpactAreasInError()
@@ -228,7 +275,13 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             {
                 stageDamageId = SelectedStageDamageElement.ChildElement.ID;
             }
-            IASElement elemToSave = new IASElement(Name, Description, DateTime.Now.ToString("G"), Year, stageDamageId, elementsToSave, id);
+
+            int nonBreachStageDamageId = -1;
+            if (NonFailureSelectedStageDamageElement != null && NonFailureSelectedStageDamageElement.ChildElement != null)
+            {
+                nonBreachStageDamageId = NonFailureSelectedStageDamageElement.ChildElement.ID;
+            }
+            IASElement elemToSave = new IASElement(Name, Description, DateTime.Now.ToString("G"), Year, stageDamageId,nonBreachStageDamageId,HasNonFailureStageDamage, elementsToSave, id);
 
             if (IsCreatingNewElement)
             {
@@ -280,6 +333,17 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             {
                 specificIAS.StageDamageSelectionChanged(_SelectedStageDamageElement);
                 specificIAS.UpdateSufficientToCompute();
+            }
+        }
+
+        private void HasNonFailureStageDamageChanged()
+        {
+            foreach(SpecificIASEditorVM specificIAS in ImpactAreaTabs)
+            {
+                //pass the boolean value to the tab vm's so that they can flip
+                //their boolean and notify property changed so that the exterior interior
+                //option updates. 
+                specificIAS.HasNonFailureStageDamage = HasNonFailureStageDamage;
             }
         }
 

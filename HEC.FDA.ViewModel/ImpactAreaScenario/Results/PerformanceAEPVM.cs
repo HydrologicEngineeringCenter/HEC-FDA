@@ -30,7 +30,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                 int thresholdID = threshold.ThresholdID;
                 Mean = iasResult.MeanAEP(impactAreaID, thresholdID);
                 Median = iasResult.MedianAEP(impactAreaID, thresholdID);
-
+                NinetyPercentAssurance = iasResult.AEPWithGivenAssurance(impactAreaID, assurance:0.9, thresholdID);
                 List<IPerformanceRowItem> rows = new List<IPerformanceRowItem>();
                 //get the table values
                 List<double> xVals = new List<double>() { .1, .04, .02, .01, .004, .002 };
@@ -52,7 +52,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
         private void LoadHistogramData(ScenarioResults scenarioResults, int impactAreaID, Threshold threshold)
         {            
-            IHistogram histogramOfAEPs = scenarioResults.AEPHistogram(impactAreaID, threshold.ThresholdID);
+            IHistogram histogramOfAEPs = scenarioResults.GetAEPHistogramForPlotting(impactAreaID, threshold.ThresholdID);
             long[] binCounts = histogramOfAEPs.BinCounts;
             double[] binsAsDoubles = binCounts.Select(x => (double)x / histogramOfAEPs.SampleSize).ToArray();
 

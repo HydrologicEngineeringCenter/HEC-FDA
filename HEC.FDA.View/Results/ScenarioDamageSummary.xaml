@@ -220,6 +220,8 @@
                                 <ColumnDefinition Width="{Binding ElementName=aepThresholdType, Path=ActualWidth}"/>
                                 <ColumnDefinition Width="{Binding ElementName=aepThresholdValue, Path=ActualWidth}"/>
 
+                                <ColumnDefinition Width="{Binding ElementName=perfNinety, Path=ActualWidth}"/>
+
                                 <ColumnDefinition Width="{Binding ElementName=aepProb1, Path=ActualWidth}"/>
                                 <ColumnDefinition Width="{Binding ElementName=aepProb04, Path=ActualWidth}"/>
                                 <ColumnDefinition Width="{Binding ElementName=aepProb02, Path=ActualWidth}"/>
@@ -235,8 +237,10 @@
                             <Border Grid.Column="3" Grid.ColumnSpan="2" BorderBrush="Gray"  BorderThickness="1">
                                 <Label HorizontalContentAlignment='Center'>Performance Parameters</Label>
                             </Border>
-
-                            <Border Grid.Column="5" Grid.ColumnSpan="6" BorderBrush="Gray"  BorderThickness="1">
+                            <Border Grid.Column="5" Grid.ColumnSpan="1" BorderBrush="Gray"  BorderThickness="1">
+                                <Label HorizontalContentAlignment='Center'>AEP With 90% Assurance</Label>
+                            </Border>
+                            <Border Grid.Column="6" Grid.ColumnSpan="6" BorderBrush="Gray"  BorderThickness="1">
                                 <Label HorizontalContentAlignment='Center'>Assurance of AEP</Label>
                             </Border>
                         </Grid>
@@ -252,6 +256,8 @@
                                 <DataGridTextColumn x:Name="aepThresholdType" Header="Threshold Type" Binding="{Binding ThresholdType, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
                                 <DataGridTextColumn x:Name="aepThresholdValue" Header="Threshold Value" Binding="{Binding ThresholdValue, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="110"/>
 
+                                <DataGridTextColumn x:Name="perfNinety" Header="AEP" Binding="{Binding NinetyPercentAssurance, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" Width="140"/>
+                                
                                 <DataGridTextColumn x:Name="aepProb1" Header="0.1" Binding="{Binding AEP1, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" Width="110"/>
                                 <DataGridTextColumn x:Name="aepProb04" Header="0.04" Binding="{Binding AEP04, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" Width="110"/>
                                 <DataGridTextColumn x:Name="aepProb02" Header="0.02" Binding="{Binding AEP02, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}" Width="110"/>

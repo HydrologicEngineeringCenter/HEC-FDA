@@ -133,17 +133,26 @@ namespace HEC.FDA.Model.structures
                     ff_elev = ground_elv + found_ht;
                 }
                 //optional parameters
-                double val_cont = RASHelper.GetRowValueForColumn<double>(row, map.ContentValueCol, 0);
-                double val_vehic = RASHelper.GetRowValueForColumn<double>(row, map.VehicleValueCol, 0);
-                double val_other = RASHelper.GetRowValueForColumn<double>(row, map.OtherValueCol, 0);
-                string cbfips = RASHelper.GetRowValueForColumn(row, map.CBFips, "NA");
-                double beginningDamage = RASHelper.GetRowValueForColumn<double>(row, map.BeginningDamageDepthCol, 0);
-                int numStructures = RASHelper.GetRowValueForColumn(row, map.NumberOfStructuresCol, 1);
-                int yearInService = RASHelper.GetRowValueForColumn(row, map.YearInConstructionCol, defaultMissingValue);
+                double val_cont = GetRowValueForColumn<double>(row, map.ContentValueCol, 0);
+                double val_vehic = GetRowValueForColumn<double>(row, map.VehicleValueCol, 0);
+                double val_other = GetRowValueForColumn<double>(row, map.OtherValueCol, 0);
+                string cbfips = GetRowValueForColumn(row, map.CBFips, "NA");
+                double beginningDamage = GetRowValueForColumn<double>(row, map.BeginningDamageDepthCol, defaultMissingValue);
+                if (beginningDamage == defaultMissingValue)
+                {
+                    if (found_ht != defaultMissingValue)
+                    {
+                        beginningDamage = -found_ht;
+                    }
+                }
+                int numStructures = GetRowValueForColumn(row, map.NumberOfStructuresCol, 1);
+                int yearInService = GetRowValueForColumn(row, map.YearInConstructionCol, defaultMissingValue);
                 //TODO: handle number 
-                int impactAreaID = RASHelper.GetImpactAreaFID(point, impactAreas);
+                int impactAreaID = GetImpactAreaFID(point, impactAreas);
+                string notes = GetRowValueForColumn(row, map.NotesCol, "No Notes Provided");
+                string description = GetRowValueForColumn(row, map.DescriptionCol, "No Description Provided");
                 Structures.Add(new Structure(fid, point, ff_elev, val_struct, st_damcat, occtype, impactAreaID, val_cont,
-                    val_vehic, val_other, cbfips, beginningDamage, ground_elv, found_ht, yearInService, numStructures));
+                    val_vehic, val_other, cbfips, beginningDamage, ground_elv, found_ht, yearInService, numStructures, notes, description));
             }
         }
         public Inventory GetInventoryTrimmedToImpactArea(int impactAreaFID)
@@ -207,14 +216,24 @@ namespace HEC.FDA.Model.structures
             }
             return points;
         }
-
-        internal List<string> StructureDetails()
+        public static int GetImpactAreaFID(PointM point, List<Polygon> ImpactAreas)
         {
-            string header = "StructureID,YearInService,DamageCategory,OccupancyType,X_Coordinate,Y_Coordinate,StructureValueInDatabase,StructureValueInflated,ContentValue,ContentValueInflated,OtherValue,OtherValueInflated,VehicleValue,VehicleValueInflated,TotalValue,TotalValueInflated,NumberOfStructures,FirstFloorElevation,GroundElevation,FoundationHeight,DepthBeginningDamage,";
+            for (int i = 0; i < ImpactAreas.Count; i++)
+            {
+                if (ImpactAreas[i].Contains(point))
+                {
+                    return i;
+                }
+            }
+            return -9999;
+        }
+        internal List<string> StructureDetails(List<DeterministicOccupancyType> deterministicOccupancyTypes)
+        {
+            string header = Structure.ProduceDetailsHeader();
             List<string> structureDetails = new() { header };
             foreach (Structure structure in Structures)
             {
-                structureDetails.Add(structure.ProduceDetails(PriceIndex));
+                structureDetails.Add(structure.ProduceDetails(deterministicOccupancyTypes, PriceIndex));
             }
             return structureDetails;
         }
