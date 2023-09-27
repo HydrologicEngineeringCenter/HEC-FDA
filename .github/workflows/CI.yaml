@@ -27,11 +27,8 @@ jobs:
       
     - name: Add Github and Nexus Source
       run:  |
-        dotnet nuget add source --name nuget "https://api.nuget.org/v3/index.json"
         dotnet nuget add source --username HydrologicEngineeringCenter --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/HydrologicEngineeringCenter/index.json"
         dotnet nuget add source --name fda-nuget "https://www.hec.usace.army.mil/nexus/repository/fda-nuget/"
-        dotnet nuget add source --username "fda-github-read" --password ${{ secrets.HEC_NEXUS_READ}}  --name hec-nexus "https://www.hec.usace.army.mil/nexus/repository/ras-nuget/"
-        dotnet nuget add source --name dss-nuget "https://www.hec.usace.army.mil/nexus/repository/dss-nuget/"
       
     - name: Install dependencies
       run: dotnet restore -v quiet
