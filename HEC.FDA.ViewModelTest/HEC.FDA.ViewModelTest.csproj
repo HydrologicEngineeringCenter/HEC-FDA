@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net7.0-windows</TargetFramework>
+		<TargetFramework>net6.0-windows</TargetFramework>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<IsPackable>false</IsPackable>
 		<WarningLevel>0</WarningLevel>
@@ -28,8 +28,8 @@
 	<ItemGroup>
 		<!--Even though GDAL Assist is available as a transative dependency through Ras.Mapper, it needs
 		to be directly referenced as well to ensure GDAL is copied into the output directory.-->
-		<PackageReference Include="Geospatial.GDALAssist" Version="1.0.644-beta" />
-		<PackageReference Include="Ras.Mapper" Version="1.0.644-beta" />
+		<PackageReference Include="Geospatial.GDALAssist" Version="1.0.24-beta-gf5955b1108" />
+		<PackageReference Include="Ras.Mapper" Version="1.0.24-beta-gf5955b1108" />
 	</ItemGroup>
 	
 </Project>
