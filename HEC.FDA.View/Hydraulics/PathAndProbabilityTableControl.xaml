@@ -13,7 +13,7 @@
                   VerticalAlignment="Top" CanUserReorderColumns="False"
                   CanUserSortColumns="false" Margin="5">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Name}" Width="*">
+                <DataGridTextColumn Binding="{Binding Name, Mode=OneWay}" Width="*" >
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Name" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
