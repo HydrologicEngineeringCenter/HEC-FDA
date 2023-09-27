@@ -62,7 +62,7 @@ namespace HEC.FDA.Model.hydraulics
             {
                 return new float[pts.Count];
             }
-            RasterPyramid<float> baseRaster = baseDs.AsRasterizer();
+            RasterPyramid<float> baseRaster = (RasterPyramid<float>)baseDs.AsRasterizer();
 
             List<Geospatial.Vectors.Point> geospatialpts = RasMapperLib.Utilities.Converter.Convert(pts);
             Memory<Geospatial.Vectors.Point> points = new Memory<Geospatial.Vectors.Point>(geospatialpts.ToArray());
