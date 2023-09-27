@@ -295,5 +295,19 @@ namespace HEC.FDA.Model.structures
             return aggregateConsequenceResults;
         }
         #endregion
+
+        public List<string> AreOcctypesValid()
+        {
+            List<string> errors = new List<string>();
+            foreach(KeyValuePair<string, OccupancyType> entry in OccTypes)
+            {
+                ErrorLevel errorLevel = entry.Value.ErrorLevel;
+                if(errorLevel>= ErrorLevel.Major)
+                {
+                    errors.Add("Occupancy Type: " + entry.Value.Name + " Error Level: " + errorLevel.ToString());
+                }
+            }
+            return errors;
+        }
     }
 }
