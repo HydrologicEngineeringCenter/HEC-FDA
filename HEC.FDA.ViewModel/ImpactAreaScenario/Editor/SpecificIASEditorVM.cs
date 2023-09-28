@@ -1,10 +1,7 @@
 ﻿using HEC.CS.Collections;
-using Statistics.Distributions;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
+using HEC.FDA.Model.compute;
+using HEC.FDA.Model.metrics;
+using HEC.FDA.Model.paireddata;
 using HEC.FDA.ViewModel.AggregatedStageDamage;
 using HEC.FDA.ViewModel.FlowTransforms;
 using HEC.FDA.ViewModel.FrequencyRelationships;
@@ -13,12 +10,14 @@ using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
-using Statistics;
 using HEC.MVVMFramework.Base.Events;
-using HEC.FDA.Model.paireddata;
-using HEC.FDA.Model.metrics;
-using HEC.FDA.Model.compute;
-using HEC.MVVMFramework.Base.Implementations;
+using Statistics;
+using Statistics.Distributions;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {
@@ -45,6 +44,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private double _DefaultStage;
         private bool _ScenarioReflectsEnabled;
         private bool _HasNonFailureStageDamage;
+        
+        public ChildElementComboItem NonFailureSelectedStageDamage { get; set; }
 
         public bool HasNonFailureStageDamage
         {
@@ -123,6 +124,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         {
             get { return _selectedAssetCategory; }
             set { _selectedAssetCategory = value; NotifyPropertyChanged(); }
+        }
+
+        public StageDamageCurve SelectedNonFailureDamageCurve
+        {
+            get;set;
         }
 
         public StageDamageCurve SelectedDamageCurve
@@ -460,15 +466,16 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             {
                 vr.AddErrorMessage("A Stage Damage is required. ");
             }
-            return vr;
-        }
-
-        private FdaValidationResult GetDamageCurveSelectedValidationResult()
-        {
-            FdaValidationResult vr = new();
-            if (SelectedDamageCurve == null)
+            else
             {
-                vr.AddErrorMessage("A damage category selection is required.");
+                List<StageDamageCurve> stageDamageCurves = GetStageDamageCurves();
+                if (stageDamageCurves.Count == 0)
+                {
+                    //todo: maybe get the impact area name for this message?
+                    //todo: this name exists in multiple places. look into it. 
+                    vr.AddErrorMessage("The aggregated stage damage element '" + _SelectedStageDamage().ChildElement.Name + "' did not contain any curves that are associated " +
+                        "with the impact area.");
+                }
             }
             return vr;
         }
@@ -489,6 +496,17 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             }
         }
 
+        private FdaValidationResult GetNonFailureValidationResult()
+        {
+            FdaValidationResult vr = new();
+            if (HasNonFailureStageDamage && (NonFailureSelectedStageDamage == null || NonFailureSelectedStageDamage.ChildElement == null))
+            {
+                //then a selection is required
+                vr.AddErrorMessage("A non failure stage-damage curve is required.");
+            }
+            return vr;
+        }
+
         public FdaValidationResult GetValidationResults()
         {
             FdaValidationResult vr = new();
@@ -496,26 +514,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             vr.AddErrorMessage(GetFrequencyRelationshipValidationResult().ErrorMessage);
             vr.AddErrorMessage(GetRatingCurveValidationResult().ErrorMessage);
             vr.AddErrorMessage(GetStageDamageValidationResult().ErrorMessage);
-            vr.AddErrorMessage(GetDamageCurveSelectedValidationResult().ErrorMessage);
-
-            if (!vr.IsValid)
-            {
-                vr.InsertMessage(0, "Errors in Impact Area: " + CurrentImpactArea.Name);
-            }
-            return vr;
-        }
-
-        /// <summary>
-        /// This method checks to see if this specific IAS is valid for both saving and plotting.
-        /// </summary>
-        /// <returns></returns>
-        public FdaValidationResult GetEditorValidationResult()
-        {
-            FdaValidationResult vr = new();
-
-            vr.AddErrorMessage(GetFrequencyRelationshipValidationResult().ErrorMessage);
-            vr.AddErrorMessage(GetRatingCurveValidationResult().ErrorMessage);
-            vr.AddErrorMessage(GetStageDamageValidationResult().ErrorMessage);
+            vr.AddErrorMessage(GetNonFailureValidationResult().ErrorMessage);
 
             if (!vr.IsValid)
             {

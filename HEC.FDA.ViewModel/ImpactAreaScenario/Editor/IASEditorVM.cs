@@ -63,7 +63,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         public ChildElementComboItem NonFailureSelectedStageDamageElement
         {
             get { return _NonFailureSelectedStageDamageElement; }
-            set { _NonFailureSelectedStageDamageElement = value; StageDamageSelectionChanged(); }
+            set { _NonFailureSelectedStageDamageElement = value; NonFailureStageDamageSelectionChanged(); }
         }
 
         public CustomObservableCollection<ChildElementComboItem> StageDamageElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
@@ -235,7 +235,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
             foreach (SpecificIASEditorVM vm in ImpactAreaTabs)
             {
-                FdaValidationResult result = vm.GetEditorValidationResult();
+                FdaValidationResult result = vm.GetValidationResults();
                 if(!result.IsValid)
                 {
                     vr.AddErrorMessage(result.ErrorMessage);
@@ -327,6 +327,14 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             StageDamageElements.Add(new ChildElementComboItem((ChildElement)e.Element));
         }
 
+        private void NonFailureStageDamageSelectionChanged()
+        {
+            foreach (SpecificIASEditorVM specificIAS in ImpactAreaTabs)
+            {
+                specificIAS.NonFailureSelectedStageDamage = _NonFailureSelectedStageDamageElement;
+                specificIAS.UpdateSufficientToCompute();
+            }
+        }
         private void StageDamageSelectionChanged()
         {
             foreach(SpecificIASEditorVM specificIAS in ImpactAreaTabs)
@@ -344,6 +352,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 //their boolean and notify property changed so that the exterior interior
                 //option updates. 
                 specificIAS.HasNonFailureStageDamage = HasNonFailureStageDamage;
+                specificIAS.UpdateSufficientToCompute();
+
             }
         }
 

@@ -34,8 +34,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+ 
             </Grid.ColumnDefinitions>
 
             <Label Grid.Row="0" Grid.Column="0" Content="Name:" HorizontalAlignment="Right" Margin="0,0,7,0"/>
@@ -45,7 +44,7 @@
             <Controls:TextBoxDescription Grid.Row="0" Grid.Column="3" Text="{Binding Description}" />
             <Label Grid.Row="0" Grid.Column="4" Content="Year(s):" HorizontalAlignment="Right"  />
             <Utilities:YearField Grid.Row="0" Grid.Column="5"/>
-            
+
 
         </Grid>
         
