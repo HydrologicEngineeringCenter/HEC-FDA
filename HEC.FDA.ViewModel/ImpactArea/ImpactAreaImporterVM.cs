@@ -1,4 +1,5 @@
-﻿using HEC.CS.Collections;
+﻿using Geospatial.IO;
+using HEC.CS.Collections;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using Utility.Extensions;
 
 namespace HEC.FDA.ViewModel.ImpactArea
 {
@@ -63,6 +65,10 @@ namespace HEC.FDA.ViewModel.ImpactArea
             {
                 return !string.IsNullOrEmpty(SelectedUniqueNameColumnHeader);
             }, "No unique name column header selected");
+            AddRule(nameof(SelectedPath), () =>
+            {
+            return ShapefileWriter.IsPolygonShapefile(SelectedPath);
+            }, "Not a polygon shapefile");
         }
 
         /// <summary>
@@ -81,9 +87,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
                 {
                     DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(Path.ChangeExtension(_Path, ".dbf"));
                     DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
-
                     List<string> uniqueNameList = dtv.ColumnNames.ToList();
-
                     UniqueNames = uniqueNameList;
                 }
             }
@@ -104,10 +108,20 @@ namespace HEC.FDA.ViewModel.ImpactArea
             {
                 if (dtv.ColumnNames[i] == SelectedUniqueNameColumnHeader)
                 {
-                    object[] col = dtv.GetColumn(i);
-                    ImpactAreaUniqueNameSet iauns = new ImpactAreaUniqueNameSet(dtv.ColumnNames[i], col);
-                    ListOfRows.Clear();
-                    ListOfRows.AddRange(iauns.RowItems);
+                    object[] colObjects = dtv.GetColumn(i);
+                    List<string> names = new();
+                    colObjects.ToList().ForEach(x => names.Add(x.ToString()));
+                    if (names.Count == names.Distinct().Count())
+                    {
+                        ImpactAreaUniqueNameSet iauns = new ImpactAreaUniqueNameSet(dtv.ColumnNames[i], colObjects);
+                        ListOfRows.Clear();
+                        ListOfRows.AddRange(iauns.RowItems);
+                    }
+                    else
+                    {
+                        System.Windows.MessageBox.Show("The names in the column identified were not unique", "Names not unique", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    }
+
                 }
             }
         }
