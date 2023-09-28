@@ -16,7 +16,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
     public class UnsteadyHDFImporterVM:BaseEditorVM
     {
         #region Fields
-        private List<string> _OriginalFileNames = new List<string>();
         private string _SelectedPath;
         #endregion
         #region Properties
@@ -41,30 +40,22 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
         public UnsteadyHDFImporterVM(HydraulicElement elem, EditorActionManager actionManager) : base(elem, actionManager)
         {
             SelectedPath = Connection.Instance.HydraulicsDirectory + "\\" + elem.Name;
-            foreach (HydraulicProfile pp in elem.DataSet.HydraulicProfiles)
+            foreach (HydraulicProfile pp in elem.DataSet.HydraulicProfiles.Cast<HydraulicProfile>())
             {
                 string path = Connection.Instance.HydraulicsDirectory + "\\" + pp.FileName;
-                string folderName = Path.GetFileName(pp.FileName);
-                _OriginalFileNames.Add(folderName);
-                AddRow(folderName, path, pp.Probability, false);
+                string filename = Path.GetFileName(pp.FileName);
+                AddRow(filename, path, pp.Probability, false);
             }
         }
         #endregion
         #region Voids
         public void AddRow(string name, string path, double probability, bool isEnabled = true)
         {
-            WaterSurfaceElevationRowItemVM newRow = new WaterSurfaceElevationRowItemVM(name, path, probability, isEnabled);
+            WaterSurfaceElevationRowItemVM newRow = new(name, path, probability, isEnabled);
             ListOfRows.Add(newRow);
         }
 
         #region copy files
-
-        private void Copy(string sourceDirectory, string targetDirectory)
-        {
-            DirectoryInfo diSource = new DirectoryInfo(sourceDirectory);
-            DirectoryInfo diTarget = new DirectoryInfo(targetDirectory);
-            CopyAll(diSource, diTarget);
-        }
 
         private void CopyAll(DirectoryInfo source, DirectoryInfo target)
         {
@@ -91,9 +82,9 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
         #region validation
         private FdaValidationResult ValidateImporter()
         {
-            FdaValidationResult vr = new FdaValidationResult();
+            FdaValidationResult vr = new();
 
-            List<double> probs = new List<double>();
+            List<double> probs = new();
             foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
             {
                 vr.AddErrorMessage(row.IsValid().ErrorMessage);
@@ -108,14 +99,14 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
 
         #endregion
 
-        private FdaValidationResult IsFileValid(string file)
+        private static FdaValidationResult IsFileValid(string file)
         {
-            FdaValidationResult vr = new FdaValidationResult();
+            FdaValidationResult vr = new();
             int firstPeriodIndex = file.IndexOf(".");
             if(firstPeriodIndex != -1)
             {
                 string substring = file.Substring(firstPeriodIndex + 1);
-                Regex r = new Regex("p??.hdf");
+                Regex r = new("p??.hdf");
                 if(!r.Match(substring).Success)
                 {
                     //failed
@@ -133,15 +124,15 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
 
         public void FileSelected(string fullpath)
         {
-            FdaValidationResult vrErrors = new FdaValidationResult();
-            FdaValidationResult vrWarnings = new FdaValidationResult();
+            FdaValidationResult vrErrors = new();
+            FdaValidationResult vrWarnings = new();
 
             if (fullpath != null && IsCreatingNewElement)
             {
                 ListOfRows.Clear();
 
                 string[] files = Directory.GetFiles(fullpath);
-                List<string> validFiles = new List<string>();
+                List<string> validFiles = new();
                 foreach(string file in files)
                 {
                     FdaValidationResult fileValidResult = IsFileValid(file);
@@ -170,7 +161,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
                 {
                     foreach (string file in validFiles)
                     {
-                        AddRow(getUnsteadyRASResultName(file), Path.GetFullPath(file), 0);
+                        AddRow(GetUnsteadyRASResultName(file), Path.GetFullPath(file), 0);
                     }
                 }
                 if(!vrWarnings.IsValid)
@@ -184,9 +175,9 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
             }
         }
 
-        private string getUnsteadyRASResultName(string file)
+        private static string GetUnsteadyRASResultName(string file)
         {
-            RasMapperLib.RASResults result = new RasMapperLib.RASResults(file);
+            RasMapperLib.RASResults result = new(file);
             if(result == null)
             {
                 return "INVALID";
@@ -226,27 +217,14 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
 
         private void SaveExisting()
         {
-            //the user can not change files when editing, so the only changes would be new names and probs.    
-            //if name is different then we need to update the directory name in the study hydraulics folder.
-
             RenameDirectoryInStudy();
-            //might have to rename the sub folders.
-            List<HydraulicProfile> newPathProbs = new List<HydraulicProfile>();
+            List<HydraulicProfile> newPathProbs = new();
             for (int i = 0; i < ListOfRows.Count; i++)
             {
-                string newName = ListOfRows[i].Name;
-                string originalName = _OriginalFileNames[i];
-                if (!newName.Equals(originalName))
-                {
-                    string sourceFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + originalName;
-                    string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + newName;
-                    Directory.Move(sourceFilePath, destinationFilePath);
-                    _OriginalFileNames[i] = newName;
-                }
-                newPathProbs.Add(new HydraulicProfile(ListOfRows[i].Probability, newName));
+                newPathProbs.Add(new HydraulicProfile(ListOfRows[i].Probability, ListOfRows[i].Name));
             }
 
-            HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, HydraulicDataSource.UnsteadyHDF, OriginalElement.ID);
+            HydraulicElement elementToSave = new(Name, Description, newPathProbs, HydraulicDataSource.UnsteadyHDF, OriginalElement.ID);
             base.Save(elementToSave);
         }
 
@@ -255,18 +233,17 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
             string destinationDirectory = Connection.Instance.HydraulicsDirectory + "\\" + Name;
             Directory.CreateDirectory(destinationDirectory);
 
-            List<HydraulicProfile> pathProbs = new List<HydraulicProfile>();
+            List<HydraulicProfile> pathProbs = new();
             foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
             {
-                _OriginalFileNames.Add(row.Name);
-                string directoryName = Path.GetFileName(row.Name);
-                pathProbs.Add(new HydraulicProfile( row.Probability, directoryName));
+                string filename = Path.GetFileName(row.Path);
+                pathProbs.Add(new HydraulicProfile( row.Probability, filename));
 
-                File.Copy(row.Path, destinationDirectory + "\\" + row.Name);
+                File.Copy(row.Path, destinationDirectory + "\\" + filename);
             }
 
             int id = GetElementID<HydraulicElement>();
-            HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, HydraulicDataSource.UnsteadyHDF, id);
+            HydraulicElement elementToSave = new(Name, Description, pathProbs, HydraulicDataSource.UnsteadyHDF, id);
             base.Save(elementToSave);
         }
         #endregion

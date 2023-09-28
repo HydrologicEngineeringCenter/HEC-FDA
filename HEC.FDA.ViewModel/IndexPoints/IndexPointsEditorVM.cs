@@ -1,6 +1,8 @@
-﻿using HEC.CS.Collections;
+﻿using Geospatial.IO;
+using HEC.CS.Collections;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
+using RasMapperLib;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -58,6 +60,11 @@ namespace HEC.FDA.ViewModel.IndexPoints
             {
                 return ListOfRows.Count > 0;
             }, "No index points have been defined.");
+
+            AddRule(nameof(SelectedPath), () =>
+            {
+                return ShapefileWriter.IsPointShapefile(SelectedPath);
+            }, "Not a point shapefile");
         }
 
         /// <summary>
@@ -70,25 +77,26 @@ namespace HEC.FDA.ViewModel.IndexPoints
             {
                 if (!File.Exists(Path.ChangeExtension(_Path, "dbf")))
                 {
-                    MessageBox.Show("This path has no associated *.dbf file.", "File Doesn't Exist", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    System.Windows.MessageBox.Show("This path has no associated *.dbf file.", "File Doesn't Exist", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 }
                 else
                 {
                     DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(Path.ChangeExtension(_Path, ".dbf"));
                     DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
-
                     List<string> uniqueNameList = dtv.ColumnNames.ToList();
-
                     UniqueFields = uniqueNameList;
                 }
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>True id's are unique, false if not</returns>
         public void LoadTheRows()
         {
             if (!File.Exists(Path.ChangeExtension(SelectedPath, "dbf")))
             {
-                MessageBox.Show("This path has no associated *.dbf file.", "No dbf File", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                System.Windows.MessageBox.Show("This path has no associated *.dbf file.", "No dbf File", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
             else
             {
@@ -103,8 +111,14 @@ namespace HEC.FDA.ViewModel.IndexPoints
                         object[] colObjects = dtv.GetColumn(i);
                         List<string> names = new List<string>();
                         colObjects.ToList().ForEach(x => names.Add(x.ToString()));
-                        List<string> uniqueNames = names.Distinct().ToList();
-                        ListOfRows.AddRange(uniqueNames);
+                        if (names.Count == names.Distinct().Count())
+                        {
+                            ListOfRows.AddRange(names);
+                        }
+                        else
+                        {
+                            System.Windows.MessageBox.Show("The names in the column identified were not unique", "Names not unique", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                        }
                     }
                 }
                 //we need to trigger the ListOfRows property rules to re-evaluate

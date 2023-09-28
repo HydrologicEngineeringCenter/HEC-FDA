@@ -4,6 +4,7 @@ using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.Watershed;
+using Microsoft.Extensions.Logging.Abstractions;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
@@ -160,6 +161,11 @@ namespace HEC.FDA.ViewModel.Inventory
 
         public bool NextButtonClicked()
         {
+            if(Storage.Connection.Instance.ProjectionFile == null)
+            {
+                MessageBox.Show("Please set your project projection in the study properties.", "Missing Projection", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
             bool isValid = false;
             if (CurrentView is InventoryColumnSelectionsVM)
             {

@@ -40,7 +40,6 @@ namespace HEC.FDA.Model.compute
         private List<UncertainPairedData> _DamageCategoryStageDamage;
         private int _ImpactAreaID;
         private ImpactAreaScenarioResults _ImpactAreaScenarioResults;
-        private bool _LeveeIsValid = false;
         #endregion
 
         #region Properties 
@@ -106,8 +105,6 @@ namespace HEC.FDA.Model.compute
             {
                 masterseed = randomProvider.Seed;
             }
-            //TODO: levee is valid is not used
-            _LeveeIsValid = true;
             bool computeWithDamage = true;
 
             if (_DamageCategoryStageDamage.Count == 0)
@@ -203,21 +200,20 @@ namespace HEC.FDA.Model.compute
             {
                 return true;
             }
-
             if (ErrorLevel >= ErrorLevel.Fatal)
             {
                 ReportMessage(this, new MessageEventArgs(new Message($"The simulation for impact area {_ImpactAreaID} contains errors. The compute has been aborted." + Environment.NewLine)));
                 canCompute = false;
             }
-
             LogSimulationErrors();
-            //TODO if convergence criteria is not valid, we don't have a way of saying HasErrors = true 
-            //nor is there relevant messaging
             convergenceCriteria.Validate();
             ValidateNonFail();
             if (convergenceCriteria.HasErrors)
             {
                 canCompute = false;
+                string message = $"The convergence criteria established in study properties are not valid: {convergenceCriteria.GetErrorMessages}";
+                ErrorMessage errorMessage = new(message, ErrorLevel.Fatal);
+                ReportMessage(this, new MessageEventArgs(errorMessage));
             }
             return canCompute;
 
@@ -381,10 +377,9 @@ namespace HEC.FDA.Model.compute
                 }
                 else
                 {
-                    if (_LeveeIsValid)
-                    {
                         PairedData systemResponse_sample = _SystemResponseFunction.SamplePairedData(randomProvider.NextRandom(), computeIsDeterministic); //needs to be a random number
-                                                                                                                                                           //PairedData frequency_stage_withLevee = frequency_stage.multiply(levee_curve_sample);
+                                                                                                                                                           //IPairedData frequency_stage_withLevee = frequency_stage.multiply(levee_curve_sample);
+
                         if (computeWithDamage)
                         {
                             ComputeDamagesFromStageFrequency_WithLevee(randomProvider, frequency_stage, systemResponse_sample, iteration, computeIsDeterministic);
@@ -398,7 +393,7 @@ namespace HEC.FDA.Model.compute
                         {
                             ComputeLeveePerformance(frequency_stage, systemResponse_sample, Convert.ToInt32(iteration));
                         }
-                    }
+                    
 
                 }
 
@@ -418,10 +413,8 @@ namespace HEC.FDA.Model.compute
                 }
                 else
                 {
-                    if (_LeveeIsValid)
-                    {
                         PairedData systemResponse_sample = _SystemResponseFunction.SamplePairedData(randomProvider.NextRandom(), computeIsDeterministic); //needs to be a random number
-                                                                                                                                                           //PairedData frequency_floodplainstage_withLevee = frequency_floodplainstage.multiply(_levee_curve_sample);
+                                                                                                                                                           //IPairedData frequency_floodplainstage_withLevee = frequency_floodplainstage.multiply(_levee_curve_sample);
                         if (computeWithDamage)
                         {
                             ComputeDamagesFromStageFrequency_WithLeveeAndInteriorExterior(randomProvider, _channelstage_floodplainstage_sample, frequency_stage, systemResponse_sample, iteration, computeIsDeterministic);
@@ -435,8 +428,6 @@ namespace HEC.FDA.Model.compute
                         {
                             ComputeLeveePerformance(frequency_stage, systemResponse_sample, Convert.ToInt32(iteration));
                         }
-                    }
-
                 }
 
             }
@@ -756,7 +747,6 @@ namespace HEC.FDA.Model.compute
             }
             else
             {
-
                 // make the fragility function begin with 0 prob failure and end with 1 prob failure 
                 List<double> tempXvals = new(); //xvals are stages
                 List<double> tempYvals = new(); //yvals are prob failure 
@@ -799,11 +789,6 @@ namespace HEC.FDA.Model.compute
             }
             bool sameImpactArea = _ImpactAreaID.Equals(incomingImpactAreaScenarioSimulation._ImpactAreaID);
             if (!sameImpactArea)
-            {
-                return false;
-            }
-            bool leveeValidityMatches = _LeveeIsValid.Equals(incomingImpactAreaScenarioSimulation._LeveeIsValid);
-            if (!leveeValidityMatches)
             {
                 return false;
             }
@@ -868,7 +853,6 @@ namespace HEC.FDA.Model.compute
         {
             XElement mainElement = new("ImpactAreaScenarioSimulation");
 
-            mainElement.SetAttributeValue("LeveeIsValid", _LeveeIsValid);
             mainElement.SetAttributeValue("TopOfLeveeElevation", _TopOfLeveeElevation);
             mainElement.SetAttributeValue("ImpactAreaID", _ImpactAreaID);
             bool frequencyDischargeIsNull = ((Statistics.Distributions.LogPearson3)_FrequencyDischarge).IsNull;
@@ -961,7 +945,6 @@ namespace HEC.FDA.Model.compute
                 stageDamageList.Add(stageDamage);
             }
 
-            bool leveeIsValid = Convert.ToBoolean(xElement.Attribute("LeveeIsValid").Value);
             double topOfLeveeElevation = Convert.ToDouble(xElement.Attribute("TopOfLeveeElevation").Value);
             int impactAreaID = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
 
@@ -976,7 +959,6 @@ namespace HEC.FDA.Model.compute
                 .WithInteriorExterior(interiorExterior)
                 .WithNonFailureStageDamage(nonFailtageDamageList)
                 .Build();
-            impactAreaScenarioSimulation._LeveeIsValid = leveeIsValid;
             impactAreaScenarioSimulation._ImpactAreaScenarioResults = (ImpactAreaScenarioResults)impactAreaScenarioResults;
             return impactAreaScenarioSimulation;
 

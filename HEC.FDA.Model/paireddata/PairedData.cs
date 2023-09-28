@@ -140,6 +140,7 @@ namespace HEC.FDA.Model.paireddata
             return new PairedData(x, y);
         }
 
+
         public PairedData SumYsForGivenX(IPairedData inputPairedData)
         {
             if (Xvals != null && Yvals != null)

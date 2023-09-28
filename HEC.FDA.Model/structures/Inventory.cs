@@ -1,21 +1,16 @@
 ﻿using Geospatial.GDALAssist;
-using Geospatial.GDALAssist.Vectors;
 using HEC.FDA.Model.interfaces;
 using RasMapperLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using RasMapperLib.Utilities;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Enumerations;
-using Geospatial.Terrain;
 using HEC.MVVMFramework.Model.Messaging;
-using Utilities;
 using HEC.FDA.Model.metrics;
 using System.Threading.Tasks;
-using System.Collections.Immutable;
 using System.Threading;
-using System.Collections.Concurrent;
+using Utilities;
 
 namespace HEC.FDA.Model.structures
 {
@@ -38,7 +33,11 @@ namespace HEC.FDA.Model.structures
             PriceIndex = priceIndex;
             //Projection.FromFile returns Null if the path is bad. We'll check for null before we reproject. 
             Projection studyProjection = Projection.FromFile(projectionFilePath);
-            TerrainLayer terrainLayer = new("ThisNameIsNotUsed", terrainPath);
+            TerrainLayer terrainLayer = null;
+            if (updateGroundElevFromTerrain)
+            {
+                terrainLayer = new("ThisNameIsNotUsed", terrainPath);
+            }
             PointFeatureLayer structureFeatureLayer = new("ThisNameIsNotUsed", pointShapefilePath);
             PolygonFeatureLayer impactAreaFeatureLayer = new("ThisNameIsNotUsed", impactAreaShapefilePath);
 
@@ -78,34 +77,6 @@ namespace HEC.FDA.Model.structures
             return uniqueDamageCategories;
         }
 
-        private static List<Polygon> LoadImpactAreasFromSourceFiles(PolygonFeatureLayer impactAreaSet, Projection studyProjection)
-        {
-            List<Polygon> polygons = impactAreaSet.Polygons().ToList();
-            Projection impactAreaPrj = GetVectorProjection(impactAreaSet);
-            if (studyProjection.IsNull())
-            {
-                return polygons;
-            }
-            if (impactAreaPrj.IsEqual(studyProjection))
-            {
-                return polygons;
-            }
-            else
-            {
-                return ReprojectPolygons(studyProjection, polygons, impactAreaPrj);
-            }
-        }
-
-        private static List<Polygon> ReprojectPolygons(Projection studyProjection, List<Polygon> polygons, Projection impactAreaPrj)
-        {
-            List<Polygon> ImpactAreas = new();
-            foreach (Polygon poly in polygons)
-            {
-                Polygon newPoly = ReprojectPolygon(poly, impactAreaPrj, studyProjection);
-                ImpactAreas.Add(newPoly);
-            }
-            return ImpactAreas;
-        }
         private void AddRules()
         {
             foreach (Structure structure in Structures)
@@ -118,38 +89,18 @@ namespace HEC.FDA.Model.structures
             }
             AddSinglePropertyRule(nameof(PriceIndex), new Rule(() => PriceIndex >= 1, $"The price index must be greater than or equal to 1 but was entered as {PriceIndex}", ErrorLevel.Major));
         }
-        private static T GetRowValueForColumn<T>(System.Data.DataRow row, string mappingColumnName, T defaultValue) where T : struct
-        {
-            T retval = defaultValue;
-            if (mappingColumnName != null && row.Table.Columns.Contains(mappingColumnName))
-            {
-                //column could have wrong data type, or be null, or dbnull
-                retval = TryGet<T>(row[mappingColumnName], defaultValue);
-            }
-            return retval;
-        }
-        private static string GetRowValueForColumn(System.Data.DataRow row, string mappingColumnName, string defaultValue)
-        {
-            string retval = defaultValue;
-            if (mappingColumnName != null && row.Table.Columns.Contains(mappingColumnName))
-            {
-                //column could have wrong data type, or be null, or dbnull
-                retval = TryGetObj<string>(row[mappingColumnName], defaultValue);
-            }
-            return retval;
-        }
 
         private void LoadStructuresFromSourceFiles(PointFeatureLayer structureFeatureLayer, StructureSelectionMapping map, TerrainLayer terrainLayer, bool updateGroundElevFromTerrain,
             PolygonFeatureLayer ImpactAreaShapefilePath, Projection studyProjection)
         {
-            List<Polygon> impactAreas = LoadImpactAreasFromSourceFiles(ImpactAreaShapefilePath, studyProjection);
+            List<Polygon> impactAreas = RASHelper.LoadImpactAreasFromSourceFiles(ImpactAreaShapefilePath, studyProjection);
             float[] groundelevs = Array.Empty<float>();
             int defaultMissingValue = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE;
             PointMs pointMs = new(structureFeatureLayer.Points().Select(p => p.PointM()));
 
             if (updateGroundElevFromTerrain)
             {
-                groundelevs = GetGroundElevationFromRASTerrain(structureFeatureLayer, terrainLayer, studyProjection);
+                groundelevs = RASHelper.GetGroundElevationFromRASTerrain(structureFeatureLayer, terrainLayer, studyProjection);
             }
 
             for (int i = 0; i < structureFeatureLayer.FeatureCount(); i++)
@@ -157,16 +108,16 @@ namespace HEC.FDA.Model.structures
                 //required parameters
                 PointM point = pointMs[i];
                 System.Data.DataRow row = structureFeatureLayer.FeatureRow(i);
-                int fid = GetRowValueForColumn(row, map.StructureIDCol, defaultMissingValue);
-                double val_struct = GetRowValueForColumn<double>(row, map.StructureValueCol, defaultMissingValue);
-                string occtype = GetRowValueForColumn(row, map.OccTypeCol, "NA");
+                int fid = RASHelper.GetRowValueForColumn(row, map.StructureIDCol, defaultMissingValue);
+                double val_struct = RASHelper.GetRowValueForColumn<double>(row, map.StructureValueCol, defaultMissingValue);
+                string occtype = RASHelper.GetRowValueForColumn(row, map.OccTypeCol, "NA");
                 string st_damcat = "NA";
                 if (OccTypes.ContainsKey(occtype))
                 {
                     st_damcat = OccTypes[occtype].DamageCategory;
                 }
                 //semi-required. We'll either have ff_elev given to us, or both ground elev and found_ht
-                double found_ht = GetRowValueForColumn<double>(row, map.FoundationHeightCol, defaultMissingValue); //not gauranteed
+                double found_ht = RASHelper.GetRowValueForColumn<double>(row, map.FoundationHeightCol, defaultMissingValue); //not gauranteed
                 double ground_elv;
                 if (updateGroundElevFromTerrain)
                 {
@@ -174,19 +125,19 @@ namespace HEC.FDA.Model.structures
                 }
                 else
                 {
-                    ground_elv = GetRowValueForColumn<double>(row, map.GroundElevCol, defaultMissingValue); //not gauranteed
+                    ground_elv = RASHelper.GetRowValueForColumn<double>(row, map.GroundElevCol, defaultMissingValue); //not gauranteed
                 }
-                double ff_elev = GetRowValueForColumn<double>(row, map.FirstFloorElevCol, defaultMissingValue); // not gauranteed  
+                double ff_elev = RASHelper.GetRowValueForColumn<double>(row, map.FirstFloorElevCol, defaultMissingValue); // not gauranteed  
                 if (ff_elev == defaultMissingValue)
                 {
                     ff_elev = ground_elv + found_ht;
                 }
                 //optional parameters
-                double val_cont = GetRowValueForColumn<double>(row, map.ContentValueCol, 0);
-                double val_vehic = GetRowValueForColumn<double>(row, map.VehicleValueCol, 0);
-                double val_other = GetRowValueForColumn<double>(row, map.OtherValueCol, 0);
-                string cbfips = GetRowValueForColumn(row, map.CBFips, "NA");
-                double beginningDamage = GetRowValueForColumn<double>(row, map.BeginningDamageDepthCol, defaultMissingValue);
+                double val_cont = RASHelper.GetRowValueForColumn<double>(row, map.ContentValueCol, 0);
+                double val_vehic = RASHelper.GetRowValueForColumn<double>(row, map.VehicleValueCol, 0);
+                double val_other = RASHelper.GetRowValueForColumn<double>(row, map.OtherValueCol, 0);
+                string cbfips = RASHelper.GetRowValueForColumn(row, map.CBFips, "NA");
+                double beginningDamage = RASHelper.GetRowValueForColumn<double>(row, map.BeginningDamageDepthCol, defaultMissingValue);
                 if (beginningDamage == defaultMissingValue)
                 {
                     if (found_ht != defaultMissingValue)
@@ -194,64 +145,16 @@ namespace HEC.FDA.Model.structures
                         beginningDamage = -found_ht;
                     }
                 }
-                int numStructures = GetRowValueForColumn(row, map.NumberOfStructuresCol, 1);
-                int yearInService = GetRowValueForColumn(row, map.YearInConstructionCol, defaultMissingValue);
+                int numStructures = RASHelper.GetRowValueForColumn(row, map.NumberOfStructuresCol, 1);
+                int yearInService = RASHelper.GetRowValueForColumn(row, map.YearInConstructionCol, defaultMissingValue);
                 //TODO: handle number 
                 int impactAreaID = GetImpactAreaFID(point, impactAreas);
-                string notes = GetRowValueForColumn(row, map.NotesCol, "No Notes Provided");
-                string description = GetRowValueForColumn(row, map.DescriptionCol, "No Description Provided");
+                string notes = RASHelper.GetRowValueForColumn(row, map.NotesCol, "No Notes Provided");
+                string description = RASHelper.GetRowValueForColumn(row, map.DescriptionCol, "No Description Provided");
                 Structures.Add(new Structure(fid, point, ff_elev, val_struct, st_damcat, occtype, impactAreaID, val_cont,
                     val_vehic, val_other, cbfips, beginningDamage, ground_elv, found_ht, yearInService, numStructures, notes, description));
             }
         }
-        public static float[] GetGroundElevationFromRASTerrain(PointFeatureLayer pointLayer, TerrainLayer terrain, Projection studyProjection)
-        {
-            Projection siProjection = GetVectorProjection(pointLayer);
-            PointMs pointMs = new(pointLayer.Points().Select(p => p.PointM()));
-            if (!studyProjection.IsNull())
-            {
-                if (!studyProjection.IsEqual(siProjection))
-                {
-                    pointMs = ReprojectPoints(studyProjection, siProjection, pointMs);
-                }
-            }
-            return terrain.ComputePointElevations(pointMs);
-        }
-
-        public static PointMs ReprojectPoints(Projection studyProjection, Projection siProjection, PointMs pointMs)
-        {
-            PointMs reprojPointMs = new();
-            foreach (PointM pt in pointMs)
-            {
-                reprojPointMs.Add(ReprojectPoint(pt, studyProjection, siProjection));
-            }
-            return reprojPointMs;
-
-        }
-        #region Projection
-        public static PointM ReprojectPoint(PointM point, Projection newProjection, Projection currentProjection)
-        {
-
-            Geospatial.Vectors.Point p = Converter.Convert(point);
-            Geospatial.Vectors.Point newp = VectorExtensions.Reproject(p, currentProjection, newProjection);
-            return Converter.ConvertPtM(newp);
-        }
-        public static Polygon ReprojectPolygon(Polygon polygon, Projection newProjection, Projection currentProjection)
-        {
-            Geospatial.Vectors.Polygon poly = Converter.Convert(polygon);
-            Geospatial.Vectors.Polygon reprojPoly = VectorExtensions.Reproject(poly, currentProjection, newProjection);
-            return Converter.Convert(reprojPoly);
-
-        }
-        public static Projection GetVectorProjection(FeatureLayer featureLayer)
-        {
-            string siFilename = featureLayer.SourceFilename;
-            VectorDataset vector = new(siFilename);
-            VectorLayer vectorLayer = vector.GetLayer(0);
-            Projection projection = vectorLayer.GetProjection();
-            return projection;
-        }
-        #endregion
         public Inventory GetInventoryTrimmedToImpactArea(int impactAreaFID)
         {
             List<Structure> filteredStructureList = new();
@@ -391,42 +294,6 @@ namespace HEC.FDA.Model.structures
             }
             return aggregateConsequenceResults;
         }
-        #endregion
-
-        #region Utilities
-        public static T TryGet<T>(object value, T defaultValue = default)
-            where T : struct
-        {
-            if (value == null)
-                return defaultValue;
-            else if (value == DBNull.Value)
-                return defaultValue;
-            else
-            {
-                var retn = value as T?;
-                if (retn.HasValue)
-                    return retn.Value;
-                else
-                    return defaultValue;
-            }
-        }
-        public static T TryGetObj<T>(object value, T defaultValue = default)
-            where T : class
-        {
-            if (value == null)
-                return defaultValue;
-            else if (value == DBNull.Value)
-                return defaultValue;
-            else
-            {
-                if (value is T retn)
-                    return retn;
-                else
-                    return defaultValue;
-            }
-        }
-
-
         #endregion
 
         public List<string> AreOcctypesValid()

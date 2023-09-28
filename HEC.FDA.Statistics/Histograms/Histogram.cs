@@ -22,8 +22,6 @@ namespace Statistics.Histograms
                 return IsZeroValued();
             }
         }
-
-
         public bool HistogramIsSingleValued
         {
             get
