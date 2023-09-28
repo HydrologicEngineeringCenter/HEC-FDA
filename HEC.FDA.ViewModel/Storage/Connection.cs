@@ -105,7 +105,15 @@ namespace HEC.FDA.ViewModel.Storage
         }
         public string ProjectionFile
         {
-            get { return Directory.GetFiles(ProjectionDirectory)[0]; }
+            get
+            {
+                string[] projContents = Directory.GetFiles(ProjectionDirectory);
+                if (projContents.Length > 0)
+                {
+                    return projContents[0];
+                }
+                else { return null; }
+            }
         }
         public string ImpactAreaDirectory
         {
