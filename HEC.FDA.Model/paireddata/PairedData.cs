@@ -80,10 +80,10 @@ namespace HEC.FDA.Model.paireddata
             {
                 //This is the next LARGER value.
                 index = ~index;
+                int len = Xvals.Length;
+                if (index == len) return Yvals[len-1];
 
-                if (index == Xvals.Count()) { return Yvals[Xvals.Length - 1]; }
-
-                if (index == 0) { return Yvals[0]; }
+                if (index == 0) return Yvals[0]; 
 
                 //Ok. Interpolate Y=mx+b
                 double yIndexMinus1 = Yvals[index - 1];
