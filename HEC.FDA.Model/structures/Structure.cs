@@ -82,7 +82,21 @@ namespace HEC.FDA.Model.structures
 
             return consequenceResult;
         }
-
+        /// <summary>
+        /// Begins the final (innermost) calculation of the Scenario Stage Damage Compute. 
+        /// Scenario SD 
+        /// Impact Area SD 
+        /// Damage Catagory 
+        /// Compute Chunk 
+        /// Iteration
+        /// Structure
+        /// W.S.Profile <--
+        /// </summary>
+        /// <param name="waterSurfaceElevation"></param>
+        /// <param name="deterministicOccupancyType"></param>
+        /// <param name="priceIndex"></param>
+        /// <param name="analysisYear"></param>
+        /// <returns></returns>
         public (double, double, double, double) ComputeDamage(float waterSurfaceElevation, DeterministicOccupancyType deterministicOccupancyType, double priceIndex = 1, int analysisYear = 9999)
         {
             //TODO: We need a way to make sure that the sampled first floor elevation is reasonable 

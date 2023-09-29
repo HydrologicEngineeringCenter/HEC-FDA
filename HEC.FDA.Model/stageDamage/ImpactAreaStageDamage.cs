@@ -240,7 +240,18 @@ namespace HEC.FDA.Model.stageDamage
             }
             return null;
         }
-
+        /// <summary>
+        /// Begins the second loop of the Scenario Stage Damage Compute. 
+        /// Scenario SD 
+        /// Impact Area SD <--
+        /// Damage Catagory 
+        /// Compute Chunk
+        /// Iteration
+        /// Structure
+        /// W.S.Profile
+        /// </summary>
+        /// <param name="randomProvider"></param>
+        /// <returns></returns>
         public (List<UncertainPairedData>, List<UncertainPairedData>) Compute(IProvideRandomNumbers randomProvider)
         {
             Validate();
@@ -278,7 +289,21 @@ namespace HEC.FDA.Model.stageDamage
                 return results;
             }
         }
-
+        /// <summary>
+        /// Begins the third loop of the Scenario Stage Damage Compute. 
+        /// Scenario SD 
+        /// Impact Area SD 
+        /// Damage Catagory <--
+        /// Compute Chunk
+        /// Iteration
+        /// Structure
+        /// W.S.Profile
+        /// </summary>
+        /// <param name="damageCategory"></param>
+        /// <param name="randomProvider"></param>
+        /// <param name="inventoryAndWaterTupled"></param>
+        /// <param name="profileProbabilities"></param>
+        /// <returns></returns>
         private List<StudyAreaConsequencesBinned> ComputeDamageWithUncertaintyAllCoordinates(string damageCategory, IProvideRandomNumbers randomProvider, (Inventory, List<float[]>) inventoryAndWaterTupled, List<double> profileProbabilities)
         {
 
@@ -295,11 +320,24 @@ namespace HEC.FDA.Model.stageDamage
             while (stageDamageFunctionsAreNotConverged)
             {
 
-                //InitializeParallelArrays(ref parallelConsequenceResultCollection);
+                /// Begins the fourth loop of the Scenario Stage Damage Compute. 
+                /// Scenario SD 
+                /// Impact Area SD 
+                /// Damage Catagory 
+                /// Compute Chunk <--
+                /// Iteration
+                /// Structure
+                /// W.S.Profile
                 for (int j = 0; j < computeChunks; j++)
                 {
-                    //Parallel.For(0, iterations, i =>
-                    //{
+                    /// Begins the fifth loop of the Scenario Stage Damage Compute. 
+                    /// Scenario SD 
+                    /// Impact Area SD 
+                    /// Damage Catagory 
+                    /// Compute Chunk 
+                    /// Iteration <--
+                    /// Structure
+                    /// W.S.Profile
                     for (int i = 0; i < iterations; i++)
                     {
                         List<DeterministicOccupancyType> deterministicOccTypes = Inventory.SampleOccupancyTypes(randomProvider);
@@ -307,8 +345,6 @@ namespace HEC.FDA.Model.stageDamage
                         ComputeMiddleStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, i);
                         ComputeUpperStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, i);
                     }
-                    //);
-
                     DumpDataIntoDistributions(ref consequenceDistributionResults);
                 }
                 stageDamageFunctionsAreNotConverged = IsTheFunctionNotConverged(consequenceDistributionResults);

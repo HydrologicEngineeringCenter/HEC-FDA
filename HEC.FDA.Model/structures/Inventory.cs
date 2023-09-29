@@ -254,6 +254,21 @@ namespace HEC.FDA.Model.structures
         private double[,] _otherParallelCollection;
         private double[,] _vehicleParallelCollection;
         private int[] _occTypeIndices;
+        /// <summary>
+        /// Begins the sixth loop of the Scenario Stage Damage Compute. 
+        /// Scenario SD 
+        /// Impact Area SD 
+        /// Damage Catagory 
+        /// Compute Chunk 
+        /// Iteration
+        /// Structure <--
+        /// W.S.Profile
+        /// </summary>
+        /// <param name="wses"></param>
+        /// <param name="analysisYear"></param>
+        /// <param name="damageCategory"></param>
+        /// <param name="deterministicOccupancyType"></param>
+        /// <returns></returns>
         public List<ConsequenceResult> ComputeDamages(List<float[]> wses, int analysisYear, string damageCategory, List<DeterministicOccupancyType> deterministicOccupancyType)
         {
 
