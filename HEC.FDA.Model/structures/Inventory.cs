@@ -8,9 +8,6 @@ using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Model.Messaging;
 using HEC.FDA.Model.metrics;
-using System.Threading.Tasks;
-using System.Threading;
-using Utilities;
 
 namespace HEC.FDA.Model.structures
 {
@@ -256,7 +253,7 @@ namespace HEC.FDA.Model.structures
         private double[,] _contentParallelCollection;
         private double[,] _otherParallelCollection;
         private double[,] _vehicleParallelCollection;
-
+        private int[] _occTypeIndices;
         public List<ConsequenceResult> ComputeDamages(List<float[]> wses, int analysisYear, string damageCategory, List<DeterministicOccupancyType> deterministicOccupancyType)
         {
 
@@ -280,11 +277,6 @@ namespace HEC.FDA.Model.structures
                 }
             }
 
-            //var structureParallelCollection = new double[wses.Count, Structures.Count];
-            //var contentParallelCollection = new double[wses.Count, Structures.Count];
-            //var otherParallelCollection = new double[wses.Count, Structures.Count];
-            //var vehicleParallelCollection = new double[wses.Count, Structures.Count];
-
             if (_strucParallelCollection == null || _strucParallelCollection.GetLength(0) != nPf || _strucParallelCollection.GetLength(1) != nStruc)
             {
                 _strucParallelCollection = new double[nPf, nStruc];
@@ -302,22 +294,46 @@ namespace HEC.FDA.Model.structures
                 _vehicleParallelCollection = new double[nPf, nStruc];
             }
 
-
-            Parallel.For(0, Structures.Count, i =>
+            if (_occTypeIndices == null || _occTypeIndices.Length != nStruc )
             {
-                for (int j = 0; j < nPf; j++)
+                _occTypeIndices = new int[nStruc];
+                for (int i = 0; i < nStruc; i++)
                 {
-                    float wse = _invertedWSEL[i, j];
-                    if (wse != -9999)
+                    var struc = Structures[i];
+                    int occc = struc.FindOccTypeIndex(deterministicOccupancyType);
+                    _occTypeIndices[i] = occc;
+                }
+            }
+
+            Utility.Parallel.SmartFor(nStruc, (start, end) =>
+            {
+                for (int i = start; i <= end; i++)
+                {
+                    DeterministicOccupancyType dt = null;
+                    var dtIdx = _occTypeIndices[i];
+                    if (dtIdx == -1)
                     {
-                        ConsequenceResult consequenceResult = Structures[i].ComputeDamage(wse, deterministicOccupancyType, PriceIndex, analysisYear);
-                        _strucParallelCollection[j, i] = (consequenceResult.StructureDamage);
-                        _contentParallelCollection[j, i] = (consequenceResult.ContentDamage);
-                        _otherParallelCollection[j, i] = (consequenceResult.OtherDamage);
-                        _vehicleParallelCollection[j, i] = (consequenceResult.VehicleDamage);
+                        // Shouldnt create a new one, but repros prior bevehaior
+                        dt = new DeterministicOccupancyType();
+                    }
+                    else
+                    {
+                        dt = deterministicOccupancyType[dtIdx];
+                    }
+                    for (int j = 0; j < nPf; j++)
+                    {
+                        float wse = _invertedWSEL[i, j];
+                        if (wse != -9999)
+                        {
+                            var (structDamage, contDamage, vehicleDamage, otherDamage) = Structures[i].ComputeDamage(wse, dt, PriceIndex, analysisYear);
+                            _strucParallelCollection[j, i] = (structDamage);
+                            _contentParallelCollection[j, i] = (contDamage);
+                            _otherParallelCollection[j, i] = (vehicleDamage);
+                            _vehicleParallelCollection[j, i] = (otherDamage);
+                        }
                     }
                 }
-            });
+            }, 256);
             return AggregateResults(wses, damageCategory, aggregateConsequenceResults, _strucParallelCollection, _contentParallelCollection, _otherParallelCollection, _vehicleParallelCollection);
         }
 
