@@ -94,6 +94,7 @@ namespace HEC.MVVMFramework.Base.Implementations
         /// <returns></returns>
         public String GetErrorMessages()
         {
+            Validate();
             StringBuilder errorsBuilder = new StringBuilder();
             foreach (IErrorMessage err in _Errors)
             {
