@@ -69,8 +69,8 @@ namespace Importer
 
         internal void ConvertRatioParametersFromVersion1ToVersion2()
         {
-            StandardDeviationOrMin = StandardDeviationOrMin * CentralValue;
-            Maximum = Maximum * CentralValue;
+            StandardDeviationOrMin = StandardDeviationOrMin/100 * CentralValue;
+            Maximum = Maximum/100 * CentralValue;
         }
         #endregion
     }
