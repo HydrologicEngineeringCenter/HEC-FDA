@@ -457,7 +457,8 @@ namespace HEC.FDA.Model.compute
                 {
                     foreach (UncertainPairedData stageUncertainNonFailureDamage in DamageCategoryStageNonFailureDamage)
                     {
-                        if (stageUncertainNonFailureDamage.DamageCategory == stageUncertainDamage.DamageCategory && stageUncertainNonFailureDamage.AssetCategory == stageUncertainDamage.AssetCategory)
+                        if (stageUncertainNonFailureDamage.DamageCategory == stageUncertainDamage.DamageCategory 
+                            && stageUncertainNonFailureDamage.AssetCategory == stageUncertainDamage.AssetCategory)
                         {
                             PairedData inverseOfSystemResponse = CalculateFailureProbComplement(validatedSystemResponse);
                             PairedData stageNonFailureDamageSampledAndMultiplied = stageUncertainNonFailureDamage.SamplePairedData(randomProvider.NextRandom(), computeIsDeterministic).multiply(inverseOfSystemResponse);

@@ -81,6 +81,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         public bool ScenarioReflectsWithoutProj {get;set;}
         public double DefaultStage { get; set; }
         public bool HasNonFailureStageDamage { get; set; }
+        public int NonFailureStageDamageID { get; set; }
+
 
         #endregion
         #region Constructors
@@ -98,9 +100,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// <param name="thresholds"></param>
         public SpecificIAS(int impactAreaID, int flowFreqID, int inflowOutflowID, int ratingID, int extIntID, 
             int leveeFailureID, int stageDamageID, List<ThresholdRowItem> thresholds, bool scenarioReflectsWithoutProj, 
-            double defaultStage, bool hasNonFailureStageDamage) : base()
+            double defaultStage, bool hasNonFailureStageDamage, int nonFailureStageDamageID) : base()
         {
             HasNonFailureStageDamage = hasNonFailureStageDamage;
+            NonFailureStageDamageID = nonFailureStageDamageID;
             DefaultStage = defaultStage;
             ScenarioReflectsWithoutProj = scenarioReflectsWithoutProj;
             ImpactAreaID = impactAreaID;
@@ -260,8 +263,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             ExteriorInteriorElement extIntElem = (ExteriorInteriorElement)StudyCache.GetChildElementOfType(typeof(ExteriorInteriorElement), ExtIntStageID);
             LateralStructureElement leveeElem = (LateralStructureElement)StudyCache.GetChildElementOfType(typeof(LateralStructureElement), LeveeFailureID);
             AggregatedStageDamageElement stageDamageElem = (AggregatedStageDamageElement)StudyCache.GetChildElementOfType(typeof(AggregatedStageDamageElement), StageDamageID);
+            AggregatedStageDamageElement nonFailureStageDamageElem = (AggregatedStageDamageElement)StudyCache.GetChildElementOfType(typeof(AggregatedStageDamageElement), NonFailureStageDamageID);
 
-            SimulationCreator sc = new SimulationCreator(freqElem, inOutElem, ratElem, extIntElem, leveeElem, stageDamageElem, ImpactAreaID);
+            SimulationCreator sc = new SimulationCreator(freqElem, inOutElem, ratElem, extIntElem, leveeElem, stageDamageElem, ImpactAreaID, 
+                HasNonFailureStageDamage, nonFailureStageDamageElem);
 
             int thresholdIndex = 1;
             foreach (ThresholdRowItem thresholdRow in Thresholds)

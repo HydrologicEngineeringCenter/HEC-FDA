@@ -26,11 +26,15 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private readonly bool _UseExtInt;
         private readonly bool _UseLevee;
         private readonly int _ImpactAreaID;
+        private readonly bool _HasNonFailureStageDamage;
+        private readonly AggregatedStageDamageElement _NonFailureStageDamageElem;
+
 
         private SimulationBuilder _SimulationBuilder;
 
         public SimulationCreator(FrequencyElement freqElem, InflowOutflowElement inOutElem, StageDischargeElement ratElem,
-            ExteriorInteriorElement extIntElem, LateralStructureElement levElem, AggregatedStageDamageElement stageDamElem, int currentImpactAreaID)
+            ExteriorInteriorElement extIntElem, LateralStructureElement levElem, AggregatedStageDamageElement stageDamElem,
+            int currentImpactAreaID, bool hasNonFailureStageDamage = false, AggregatedStageDamageElement nonFailureStageDamElem = null)
         {
             _FreqElem = freqElem;
             _InOutElem = inOutElem;
@@ -44,6 +48,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             _UseLevee = levElem != null;
 
             _ImpactAreaID = currentImpactAreaID;
+            _HasNonFailureStageDamage = hasNonFailureStageDamage;
+            _NonFailureStageDamageElem = nonFailureStageDamElem;
 
             LoadSimulationBuilder();
         }
@@ -51,6 +57,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         public FdaValidationResult IsConfigurationValid()
         {
             FdaValidationResult vr = IsStageDamageValid();
+            if(_HasNonFailureStageDamage)
+            {
+                vr.AddErrorMessage(IsNonFailureStageDamageValid().ErrorMessage);
+            }
             return vr;
         }
 
@@ -66,8 +76,26 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 List<StageDamageCurve> stageDamageCurves = _StageDamageElem.Curves.Where(curve => curve.ImpArea.ID == _ImpactAreaID).ToList();
                 if (stageDamageCurves.Count == 0)
                 {
-                    //todo: maybe get the impact area name for this message?
                     vr.AddErrorMessage("The aggregated stage damage element '" + _StageDamageElem.Name + "' did not contain any curves that are associated " +
+                        "with the impact area.");
+                }
+            }
+            return vr;
+        }
+
+        private FdaValidationResult IsNonFailureStageDamageValid()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            if (_NonFailureStageDamageElem == null)
+            {
+                vr.AddErrorMessage("The selected non-failure stage damage element no longer exists. Edit the senario and select a new one.");
+            }
+            else
+            {
+                List<StageDamageCurve> stageDamageCurves = _NonFailureStageDamageElem.Curves.Where(curve => curve.ImpArea.ID == _ImpactAreaID).ToList();
+                if (stageDamageCurves.Count == 0)
+                {
+                    vr.AddErrorMessage("The non-failure stage damage element '" + _NonFailureStageDamageElem.Name + "' did not contain any curves that are associated " +
                         "with the impact area.");
                 }
             }
@@ -76,9 +104,15 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private void LoadSimulationBuilder()
         {
+
             _SimulationBuilder = ImpactAreaScenarioSimulation.Builder(_ImpactAreaID)
-            .WithStageDamages(GetStageDamagesAsPairedData());
-             
+            .WithStageDamages(GetStageDamagesAsPairedData(_StageDamageElem));
+
+            if (_HasNonFailureStageDamage)
+            {
+                _SimulationBuilder.WithNonFailureStageDamage(GetStageDamagesAsPairedData(_NonFailureStageDamageElem));
+            }
+
             if (_FreqElem.IsAnalytical)
             {
                 _SimulationBuilder.WithFlowFrequency(GetFrequencyDistribution());
@@ -122,20 +156,20 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             return _FreqElem.LPIII;
         }
 
-        private List<StageDamageCurve> GetStageDamageCurves()
+        private List<StageDamageCurve> GetStageDamageCurves(AggregatedStageDamageElement stageDamageElement)
         {
             List<StageDamageCurve> stageDamageCurves = new List<StageDamageCurve>();
-            if (_StageDamageElem != null)
+            if (stageDamageElement != null)
             {
-                stageDamageCurves = _StageDamageElem.Curves.Where(curve => curve.ImpArea.ID == _ImpactAreaID).ToList();
+                stageDamageCurves = stageDamageElement.Curves.Where(curve => curve.ImpArea.ID == _ImpactAreaID).ToList();
             }
             return stageDamageCurves;
         }
 
-        private List<UncertainPairedData> GetStageDamagesAsPairedData()
+        private List<UncertainPairedData> GetStageDamagesAsPairedData(AggregatedStageDamageElement stageDamageElement)
         {
             List<UncertainPairedData> stageDamages = new List<UncertainPairedData>();
-            List<StageDamageCurve> stageDamageCurves = GetStageDamageCurves();
+            List<StageDamageCurve> stageDamageCurves = GetStageDamageCurves(stageDamageElement);
             foreach (StageDamageCurve curve in stageDamageCurves)
             {
                 bool allZeroes = IsCurveYValuesAllZero(curve);
