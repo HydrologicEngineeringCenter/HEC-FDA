@@ -94,10 +94,26 @@ namespace HEC.MVVMFramework.Base.Implementations
         /// <returns></returns>
         public String GetErrorMessages()
         {
+            return GetErrorMessages(ErrorLevel.Unassigned);
+        }
+
+
+        /// <summary>
+        /// To be used in property rules where we want a single string message that contains all the errors.
+        /// </summary>
+        /// <param name="errorLevelSeverityThreshold"></param>
+        /// <returns> Errors which have a severity greater than or equal to the input value, as a single string</returns>
+        public String GetErrorMessages(ErrorLevel errorLevelSeverityThreshold)
+        {
+            Validate();
             StringBuilder errorsBuilder = new StringBuilder();
             foreach (IErrorMessage err in _Errors)
             {
-                errorsBuilder.AppendLine(string.Format("Error Level: {0} Error: {1}", ErrorLevel, err.Message));
+                if( err.ErrorLevel >= errorLevelSeverityThreshold)
+                {
+                    errorsBuilder.AppendLine(string.Format("Error Level: {0} Error: {1}", ErrorLevel, err.Message));
+                }
+                
             }
             return errorsBuilder.ToString();
         }
