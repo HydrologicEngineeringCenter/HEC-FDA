@@ -304,7 +304,7 @@ namespace HEC.FDA.Model.structures
                 ErrorLevel errorLevel = entry.Value.ErrorLevel;
                 if(errorLevel>= ErrorLevel.Major)
                 {
-                    errors.Add(entry.Value.GetErrorMessages()) ;
+                    errors.Add(entry.Value.GetErrorMessages(ErrorLevel.Major)) ;
                 }
             }
             return errors;
