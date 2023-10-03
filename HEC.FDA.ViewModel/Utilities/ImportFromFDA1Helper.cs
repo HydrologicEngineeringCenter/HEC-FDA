@@ -482,8 +482,10 @@ namespace HEC.FDA.ViewModel.Utilities
             bool isAnalytical = true;
             bool isStandard = true;//This boolean says whether it is "fit to params" or "fit to flows". True = "fit to params"
 
-            FrequencyEditorVM vm = new();
-            vm.IsGraphical = !isAnalytical;
+            FrequencyEditorVM vm = new()
+            {
+                IsGraphical = !isAnalytical
+            };
             vm.AnalyticalVM.IsFitToFlows = !isStandard;
             vm.AnalyticalVM.ParameterEntryVM.LP3Distribution = new LogPearson3(mean,stDev, skew, por);
 
@@ -504,8 +506,10 @@ namespace HEC.FDA.ViewModel.Utilities
             }
             else if (pf.ProbabilityFunctionTypeId == FrequencyFunctionType.GRAPHICAL)
             {
-                FrequencyEditorVM vm = new();
-                vm.IsGraphical = true;
+                FrequencyEditorVM vm = new()
+                {
+                    IsGraphical = true
+                };
                 ((GraphicalVM)vm.GraphicalVM.CurveComponentVM).LoadFromProbabilityFunction(pf);
                 elem = new FrequencyElement(pf.Name, DateTime.Now.ToString(), pf.Description, elemID,vm);
             }
@@ -836,11 +840,8 @@ namespace HEC.FDA.ViewModel.Utilities
                 }
 
                 //the coordinates function will be null if it was not able to be created
-                if (function == null)
-                {
-                    //create an empty coord function?
-                    function = CreateEmptyFunction();
-                }
+                //create an empty coord function?
+                function ??= CreateEmptyFunction();
 
                 coordinatesFunctions.Add(function);
             }
@@ -994,8 +995,10 @@ namespace HEC.FDA.ViewModel.Utilities
             //so now we have all the indexes of constant values.
             //if there are any then we know we need to do a linked function
             //add the first point to a list
-            List<int> currentConstantFunction = new();
-            currentConstantFunction.Add(indexOfConstants[0]);
+            List<int> currentConstantFunction = new()
+            {
+                indexOfConstants[0]
+            };
             for (int i = 0; i < indexOfConstants.Count - 1; i++)
             {
                 int currentIndex = indexOfConstants[i];
@@ -1010,8 +1013,10 @@ namespace HEC.FDA.ViewModel.Utilities
                     //these two indexes are not next to each other
                     //add the current list to master and start a new one
                     masterListOfConstantIndexes.Add(currentConstantFunction);
-                    currentConstantFunction = new List<int>();
-                    currentConstantFunction.Add(nextIndex);
+                    currentConstantFunction = new List<int>
+                    {
+                        nextIndex
+                    };
                 }
             }
             //the factory that makes the linked function will sort the functions by the min x value of each function
