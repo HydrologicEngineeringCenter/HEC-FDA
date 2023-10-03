@@ -211,7 +211,7 @@ namespace HEC.FDA.Model.compute
             if (convergenceCriteria.HasErrors)
             {
                 canCompute = false;
-                string message = $"The convergence criteria established in study properties are not valid: {convergenceCriteria.GetErrorMessages}";
+                string message = $"The convergence criteria established in study properties are not valid: {convergenceCriteria.GetErrorMessages()}";
                 ErrorMessage errorMessage = new(message, ErrorLevel.Fatal);
                 ReportMessage(this, new MessageEventArgs(errorMessage));
             }
