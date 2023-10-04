@@ -533,9 +533,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             ExteriorInteriorElement extIntElem = SelectedExteriorInteriorElement.ChildElement as ExteriorInteriorElement;
             LateralStructureElement leveeElem = SelectedLeveeFeatureElement.ChildElement as LateralStructureElement;
             AggregatedStageDamageElement stageDamageElem = selectedStageDamage.ChildElement as AggregatedStageDamageElement;
+            AggregatedStageDamageElement nonFailureStageDamageElem = NonFailureSelectedStageDamage.ChildElement as AggregatedStageDamageElement;
 
             SimulationCreator sc = new(freqElem, inOutElem, ratElem, extIntElem, leveeElem,
-                stageDamageElem, CurrentImpactArea.ID);
+                stageDamageElem, CurrentImpactArea.ID, _HasNonFailureStageDamage, nonFailureStageDamageElem);
 
             foreach (ThresholdRowItem thresholdRow in Thresholds)
             {
@@ -678,7 +679,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         #endregion
 
         /// <summary>
-        /// This method is used to convert the values in the editor into an SpecificIAS object. This object gets passed to the
+        /// This method is used to convert the values in the editor into a SpecificIAS object. This object gets passed to the
         /// saving manager to save. Before calling this method make sure to check if it is valid.
         /// </summary>
         /// <returns></returns>
@@ -692,11 +693,13 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             int extIntID = GetComboElementID(SelectedExteriorInteriorElement);
             int latStructID = GetComboElementID(SelectedLeveeFeatureElement);
             int stageDamID = GetComboElementID(selectedStageDamage);
+            int nonFailureStageDamID = GetComboElementID(NonFailureSelectedStageDamage);
 
             List<ThresholdRowItem> thresholdRowItems = Thresholds;
 
             SpecificIAS elementToSave = new(CurrentImpactArea.ID,  flowFreqID, inflowOutID, ratingID, extIntID, 
-                latStructID, stageDamID, thresholdRowItems, ScenarioReflectsWithoutProjCondition, DefaultStage, HasNonFailureStageDamage);
+                latStructID, stageDamID, thresholdRowItems, ScenarioReflectsWithoutProjCondition, DefaultStage, 
+                HasNonFailureStageDamage, nonFailureStageDamID);
             return elementToSave;
         }
 

@@ -211,7 +211,7 @@ namespace HEC.FDA.Model.compute
             if (convergenceCriteria.HasErrors)
             {
                 canCompute = false;
-                string message = $"The convergence criteria established in study properties are not valid: {convergenceCriteria.GetErrorMessages}";
+                string message = $"The convergence criteria established in study properties are not valid: {convergenceCriteria.GetErrorMessages()}";
                 ErrorMessage errorMessage = new(message, ErrorLevel.Fatal);
                 ReportMessage(this, new MessageEventArgs(errorMessage));
             }
@@ -457,7 +457,8 @@ namespace HEC.FDA.Model.compute
                 {
                     foreach (UncertainPairedData stageUncertainNonFailureDamage in DamageCategoryStageNonFailureDamage)
                     {
-                        if (stageUncertainNonFailureDamage.DamageCategory == stageUncertainDamage.DamageCategory && stageUncertainNonFailureDamage.AssetCategory == stageUncertainDamage.AssetCategory)
+                        if (stageUncertainNonFailureDamage.DamageCategory == stageUncertainDamage.DamageCategory 
+                            && stageUncertainNonFailureDamage.AssetCategory == stageUncertainDamage.AssetCategory)
                         {
                             PairedData inverseOfSystemResponse = CalculateFailureProbComplement(validatedSystemResponse);
                             PairedData stageNonFailureDamageSampledAndMultiplied = stageUncertainNonFailureDamage.SamplePairedData(randomProvider.NextRandom(), computeIsDeterministic).multiply(inverseOfSystemResponse);

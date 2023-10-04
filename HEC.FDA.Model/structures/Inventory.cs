@@ -78,11 +78,11 @@ namespace HEC.FDA.Model.structures
         {
             foreach (Structure structure in Structures)
             {
-                AddSinglePropertyRule("Structure " + structure.Fid, new Rule(() => { structure.Validate(); return !structure.HasErrors; }, $"Structure {structure.Fid} has the following errors: " + structure.GetErrors().ToString(), structure.ErrorLevel));
+                AddSinglePropertyRule("Structure " + structure.Fid, new Rule(() => { structure.Validate(); return !structure.HasErrors; }, $"Structure {structure.Fid} has the following errors: " + structure.GetErrorMessages(), structure.ErrorLevel));
             }
             foreach (OccupancyType occupancyType in OccTypes.Values)
             {
-                AddSinglePropertyRule("Occupancy Type " + occupancyType.Name, new Rule(() => { occupancyType.Validate(); return !occupancyType.HasErrors; }, $"Occupancy Type {occupancyType.Name} has the following errors: " + occupancyType.GetErrors().ToString(), occupancyType.ErrorLevel));
+                AddSinglePropertyRule("Occupancy Type " + occupancyType.Name, new Rule(() => { occupancyType.Validate(); return !occupancyType.HasErrors; }, $"Occupancy Type {occupancyType.Name} has the following errors: " + occupancyType.GetErrorMessages(), occupancyType.ErrorLevel));
             }
             AddSinglePropertyRule(nameof(PriceIndex), new Rule(() => PriceIndex >= 1, $"The price index must be greater than or equal to 1 but was entered as {PriceIndex}", ErrorLevel.Major));
         }
@@ -376,7 +376,7 @@ namespace HEC.FDA.Model.structures
                 ErrorLevel errorLevel = entry.Value.ErrorLevel;
                 if(errorLevel>= ErrorLevel.Major)
                 {
-                    errors.Add("Occupancy Type: " + entry.Value.Name + " Error Level: " + errorLevel.ToString());
+                    errors.Add(entry.Value.GetErrorMessages(ErrorLevel.Major)) ;
                 }
             }
             return errors;
