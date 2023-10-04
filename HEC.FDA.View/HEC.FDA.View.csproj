@@ -18,7 +18,6 @@
 		<Platform>Any CPU</Platform>
 		<PublishDir>..\Build\publish\FDA2.0\</PublishDir>
 		<PublishProtocol>FileSystem</PublishProtocol>
-		<TargetFramework>net7.0-windows</TargetFramework>
 		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
 		<SelfContained>true</SelfContained>
 		<PublishSingleFile>false</PublishSingleFile>
