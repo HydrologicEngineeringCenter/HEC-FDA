@@ -75,16 +75,19 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             {
                 case HydraulicDataSource.WSEGrid:
                     GriddedImporterVM vm = new GriddedImporterVM(this, actionManager);
+                    vm.RequestNavigation += Navigate;
                     DynamicTabVM tab = new DynamicTabVM(header, vm, "EditWatSurfElevGridded" + Name);
                     Navigate(tab, false, false);
                     break;
                 case HydraulicDataSource.SteadyHDF:
                     SteadyHDFImporterVM steadyImporter = new SteadyHDFImporterVM(this, actionManager);
+                    steadyImporter.RequestNavigation += Navigate;
                     DynamicTabVM steadyTab = new DynamicTabVM(header, steadyImporter, "EditWatSurfElevSteady" + Name);
                     Navigate(steadyTab, false, false);
                     break;
                 case HydraulicDataSource.UnsteadyHDF:
                     UnsteadyHDFImporterVM unsteadyVM = new UnsteadyHDFImporterVM(this, actionManager);
+                    unsteadyVM.RequestNavigation += Navigate;
                     DynamicTabVM unsteadyTab = new DynamicTabVM(header, unsteadyVM, "EditWatSurfElevUnsteady" + Name);
                     Navigate(unsteadyTab, false, false);
                     break;

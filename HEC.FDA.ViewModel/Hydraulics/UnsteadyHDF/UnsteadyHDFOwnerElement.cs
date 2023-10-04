@@ -52,7 +52,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
                .WithSiblingRules(this);
 
             UnsteadyHDFImporterVM vm = new UnsteadyHDFImporterVM(actionManager);
-
+            vm.RequestNavigation += Navigate;
             string header = StringConstants.IMPORT_HYDRAULICS_HEADER;
             DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_HYDRAULICS_HEADER + "Unsteady");
             Navigate(tab, false, false);
