@@ -8,8 +8,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <DataGrid Grid.Row="4" Grid.ColumnSpan="2"  ItemsSource="{Binding ListOfRows}" AutoGenerateColumns="False" 
-                   HorizontalAlignment="Left" CanUserAddRows="False" CanUserDeleteRows="False"
+        <DataGrid Grid.Row="4" Grid.ColumnSpan="2"  ItemsSource="{Binding ListOfRows}" CanUserDeleteRows="True" AutoGenerateColumns="False" 
+                   HorizontalAlignment="Left" CanUserAddRows="False"
                   VerticalAlignment="Top" CanUserReorderColumns="False"
                   CanUserSortColumns="false" Margin="5">
             <DataGrid.Columns>
