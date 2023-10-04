@@ -22,6 +22,18 @@ namespace HEC.FDA.Model.stageDamage
         #endregion
 
         #region Methods 
+        /// <summary>
+        /// Begins the outermost loop of the Scenario Stage Damage Compute. 
+        /// Scenario SD <--
+        /// Impact Area SD
+        /// Damage Catagory 
+        /// Compute Chunk
+        /// Iteration
+        /// Structure
+        /// W.S.Profile
+        /// </summary>
+        /// <param name="randomProvider"></param>
+        /// <returns></returns>
         public (List<UncertainPairedData>, List<UncertainPairedData>) Compute(IProvideRandomNumbers randomProvider)
         {
 

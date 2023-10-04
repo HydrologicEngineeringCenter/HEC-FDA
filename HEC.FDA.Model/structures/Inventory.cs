@@ -8,9 +8,6 @@ using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Model.Messaging;
 using HEC.FDA.Model.metrics;
-using System.Threading.Tasks;
-using System.Threading;
-using Utilities;
 
 namespace HEC.FDA.Model.structures
 {
@@ -250,38 +247,113 @@ namespace HEC.FDA.Model.structures
             return deterministicOccupancyTypes;
         }
 
-
+        // POC - not safe to invoke in parallel. Can guard with ThreadLocal<float[,]>
+        private float[,] _invertedWSEL; // [struc, pf]
+        private double[,] _strucParallelCollection;
+        private double[,] _contentParallelCollection;
+        private double[,] _otherParallelCollection;
+        private double[,] _vehicleParallelCollection;
+        private int[] _occTypeIndices;
+        /// <summary>
+        /// Begins the sixth loop of the Scenario Stage Damage Compute. 
+        /// Scenario SD 
+        /// Impact Area SD 
+        /// Damage Catagory 
+        /// Compute Chunk 
+        /// Iteration
+        /// Structure <--
+        /// W.S.Profile
+        /// </summary>
+        /// <param name="wses"></param>
+        /// <param name="analysisYear"></param>
+        /// <param name="damageCategory"></param>
+        /// <param name="deterministicOccupancyType"></param>
+        /// <returns></returns>
         public List<ConsequenceResult> ComputeDamages(List<float[]> wses, int analysisYear, string damageCategory, List<DeterministicOccupancyType> deterministicOccupancyType)
         {
 
             List<ConsequenceResult> aggregateConsequenceResults = new();
             //assume each structure has a corresponding index to the depth
-            var structureParallelCollection = new double[wses.Count, Structures.Count];
-            var contentParallelCollection = new double[wses.Count, Structures.Count];
-            var otherParallelCollection = new double[wses.Count, Structures.Count];
-            var vehicleParallelCollection = new double[wses.Count, Structures.Count];
 
-            Parallel.For(0, Structures.Count, i =>
+            int nPf = wses.Count;
+            int nStruc = wses[0].Length;
+            // NOT SAFE TO CALL THIS METHOD IN PARALLEL
+            if(_invertedWSEL == null || _invertedWSEL.GetLength(0) != nStruc || _invertedWSEL.GetLength(1) != nPf)
             {
-                float[] wse = wses.Select(array => array[i]).ToArray();
+                _invertedWSEL = new float[nStruc, nPf];
+            }
 
-                for (int j = 0; j < wse.Length; j++)
+            for(int i = 0; i < nPf; i++)
+            {
+                var pf = wses[i];
+                for(int j = 0; j <  nStruc; j++)
                 {
-                    if (wse[j] != -9999)
+                    _invertedWSEL[j,i] = pf[j]; 
+                }
+            }
+
+            if (_strucParallelCollection == null || _strucParallelCollection.GetLength(0) != nPf || _strucParallelCollection.GetLength(1) != nStruc)
+            {
+                _strucParallelCollection = new double[nPf, nStruc];
+            }
+            if (_contentParallelCollection == null || _contentParallelCollection.GetLength(0) != nPf || _contentParallelCollection.GetLength(1) != nStruc)
+            {
+                _contentParallelCollection = new double[nPf, nStruc];
+            }
+            if (_otherParallelCollection == null || _otherParallelCollection.GetLength(0) != nPf || _otherParallelCollection.GetLength(1) != nStruc)
+            {
+                _otherParallelCollection = new double[nPf, nStruc];
+            }
+            if (_vehicleParallelCollection == null || _vehicleParallelCollection.GetLength(0) != nPf || _vehicleParallelCollection.GetLength(1) != nStruc)
+            {
+                _vehicleParallelCollection = new double[nPf, nStruc];
+            }
+
+            if (_occTypeIndices == null || _occTypeIndices.Length != nStruc )
+            {
+                _occTypeIndices = new int[nStruc];
+                for (int i = 0; i < nStruc; i++)
+                {
+                    var struc = Structures[i];
+                    int occc = struc.FindOccTypeIndex(deterministicOccupancyType);
+                    _occTypeIndices[i] = occc;
+                }
+            }
+
+            Utility.Parallel.SmartFor(nStruc, (start, end) =>
+            {
+                for (int i = start; i <= end; i++)
+                {
+                    DeterministicOccupancyType dt = null;
+                    var dtIdx = _occTypeIndices[i];
+                    if (dtIdx == -1)
                     {
-                        ConsequenceResult consequenceResult = Structures[i].ComputeDamage(wse[j], deterministicOccupancyType, PriceIndex, analysisYear);
-                        structureParallelCollection[j, i] = (consequenceResult.StructureDamage);
-                        contentParallelCollection[j, i] = (consequenceResult.ContentDamage);
-                        otherParallelCollection[j, i] = (consequenceResult.OtherDamage);
-                        vehicleParallelCollection[j, i] = (consequenceResult.VehicleDamage);
+                        // Shouldnt create a new one, but repros prior bevehaior
+                        dt = new DeterministicOccupancyType();
+                    }
+                    else
+                    {
+                        dt = deterministicOccupancyType[dtIdx];
+                    }
+                    for (int j = 0; j < nPf; j++)
+                    {
+                        float wse = _invertedWSEL[i, j];
+                        if (wse != -9999)
+                        {
+                            var (structDamage, contDamage, vehicleDamage, otherDamage) = Structures[i].ComputeDamage(wse, dt, PriceIndex, analysisYear);
+                            _strucParallelCollection[j, i] = (structDamage);
+                            _contentParallelCollection[j, i] = (contDamage);
+                            _otherParallelCollection[j, i] = (vehicleDamage);
+                            _vehicleParallelCollection[j, i] = (otherDamage);
+                        }
                     }
                 }
-                Thread.Sleep(0);
-            });
-            return AggregateResults(wses, damageCategory, aggregateConsequenceResults, structureParallelCollection, contentParallelCollection, otherParallelCollection, vehicleParallelCollection);
+            }, 256);
+            return AggregateResults(wses, damageCategory, aggregateConsequenceResults, _strucParallelCollection, _contentParallelCollection, _otherParallelCollection, _vehicleParallelCollection);
         }
 
-        private List<ConsequenceResult> AggregateResults(List<float[]> wses, string damageCategory, List<ConsequenceResult> aggregateConsequenceResults, double[,] structureParallelCollection, double[,] contentParallelCollection, double[,] otherParallelCollection, double[,] vehicleParallelCollection)
+        private List<ConsequenceResult> AggregateResults(List<float[]> wses, string damageCategory, List<ConsequenceResult> aggregateConsequenceResults, double[,] structureParallelCollection, 
+            double[,] contentParallelCollection, double[,] otherParallelCollection, double[,] vehicleParallelCollection)
         {
             for (int j = 0; j < wses.Count; j++)
             {

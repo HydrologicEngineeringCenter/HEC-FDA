@@ -72,13 +72,33 @@ namespace HEC.FDA.Model.structures
             AddSinglePropertyRule(nameof(OccTypeName), new Rule(() => OccTypeName != null && OccTypeName != "", $"The occupancy type should not be null but appears null for Structure {Fid}", ErrorLevel.Fatal));
         }
 
-        public ConsequenceResult ComputeDamage(float waterSurfaceElevation, List<DeterministicOccupancyType> deterministicOccupancyTypeList, double priceIndex = 1, int analysisYear = 9999)
+        public ConsequenceResult ComputeDamage(float waterSurfaceElevation, List<DeterministicOccupancyType> deterministicOccupancyType, double priceIndex = 1, int analysisYear = 9999)
         {
-            //Create a default deterministic occupancy type 
-            DeterministicOccupancyType deterministicOccupancyType = FindOccType(deterministicOccupancyTypeList);
+            var (structDamage, contDamage, vehicleDamage, otherDamage) = ComputeDamage(waterSurfaceElevation, FindOccType(deterministicOccupancyType), priceIndex, analysisYear);
 
             ConsequenceResult consequenceResult = new(DamageCatagory);
 
+            consequenceResult.IncrementConsequence(structDamage, contDamage, vehicleDamage, otherDamage);
+
+            return consequenceResult;
+        }
+        /// <summary>
+        /// Begins the final (innermost) calculation of the Scenario Stage Damage Compute. 
+        /// Scenario SD 
+        /// Impact Area SD 
+        /// Damage Catagory 
+        /// Compute Chunk 
+        /// Iteration
+        /// Structure
+        /// W.S.Profile <--
+        /// </summary>
+        /// <param name="waterSurfaceElevation"></param>
+        /// <param name="deterministicOccupancyType"></param>
+        /// <param name="priceIndex"></param>
+        /// <param name="analysisYear"></param>
+        /// <returns></returns>
+        public (double, double, double, double) ComputeDamage(float waterSurfaceElevation, DeterministicOccupancyType deterministicOccupancyType, double priceIndex = 1, int analysisYear = 9999)
+        {
             //TODO: We need a way to make sure that the sampled first floor elevation is reasonable 
             //that is hard when we throw away the foundation height 
             //det depth begin damage equal to foundation height 
@@ -206,31 +226,31 @@ namespace HEC.FDA.Model.structures
                     }
                 }
             }
-            consequenceResult.IncrementConsequence(structDamage, contDamage, vehicleDamage, otherDamage);
-
-            return consequenceResult;
+            return (structDamage, contDamage, vehicleDamage, otherDamage);
         }
 
-        private DeterministicOccupancyType FindOccType(List<DeterministicOccupancyType> deterministicOccupancyTypeList)
+        public DeterministicOccupancyType FindOccType(List<DeterministicOccupancyType> deterministicOccupancyTypeList)
         {
-            DeterministicOccupancyType deterministicOccupancyType = null;
-            bool occTypeFound = false;
+            int index = FindOccTypeIndex(deterministicOccupancyTypeList);
+            if(index >= 0) { 
+                return deterministicOccupancyTypeList[index];
+            }
+            return new DeterministicOccupancyType();
+        }
+
+        public int FindOccTypeIndex(List<DeterministicOccupancyType> deterministicOccupancyTypeList)
+        {
             //see if we can match an occupancy type from the provided list to the structure occ type name 
-            foreach (DeterministicOccupancyType deterministicOccupancy in deterministicOccupancyTypeList)
+            for( int i =0; i<deterministicOccupancyTypeList.Count; i++)
             {
-                if (deterministicOccupancy.OccupancyTypeName == OccTypeName)
+                if (deterministicOccupancyTypeList[i].OccupancyTypeName == OccTypeName)
                 {
-                    deterministicOccupancyType = deterministicOccupancy;
-                    occTypeFound = true;
-                    break;
+                    return i;
                 }
             }
-            if (!occTypeFound)
-            {
-                deterministicOccupancyType = new DeterministicOccupancyType();
-            }
-            return deterministicOccupancyType;
+            return -1;
         }
+
         internal static string ProduceDetailsHeader()
         {
             string details = $"Structure {nameof(Fid)},Impact Area Row Number in Impact Area Set ,{nameof(YearInService)},{nameof(DamageCatagory)},{nameof(OccTypeName)},";

@@ -92,6 +92,12 @@ namespace HEC.FDA.Model.hydraulics
             elem.Add(profiles);
             return elem;
         }
+        /// <summary>
+        /// Gets hydraulic data for every structure in the inventory and corrects no data values (-9999s) to realistic elevations based on the logic in cref="SomeOtherClass 
+        /// </summary>
+        /// <param name="inventory"></param>
+        /// <param name="hydraulicParentDirectory"></param>
+        /// <returns> A tuple of list of double (the exceedence probabilities releated to the WSPs) and a list of float arrays (The water surface elevations for every structure in the inventory</returns>
         public (List<double>, List<float[]>) GetHydraulicDatasetInFloatsWithProbabilities(Inventory inventory, string hydraulicParentDirectory)
         {
             List<float[]> waterData = new List<float[]>();

@@ -15,10 +15,6 @@ namespace Importer
 
     public class AsciiImportExport
     {
-        #region Notes
-        // Created By: q0hecrdc
-        // Created Date: Nov2017
-        #endregion
         #region Fields
 
         #region enums
@@ -251,17 +247,14 @@ namespace Importer
         protected AggregateDamageFunction _AggregateDamageFunction = new AggregateDamageFunction();
 
         #endregion
-        #region Properties
-        #endregion
+
         #region Constructors
         public AsciiImportExport()
         {
             TheImportCode t = TheImportCode.NO_KEY;
         }
         #endregion
-        #region Voids
-        #endregion
-        #region Functions
-        #endregion
+
+
     }
 }
