@@ -50,7 +50,7 @@
       <frameworkControls:TextBoxFolderBrowserControl  Path="{Binding SelectedPath}" IsEnabled="{Binding IsCreatingNewElement}" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3" />
     </Grid>
 
-    <local:PathAndProbabilityTableControl Grid.Row="3" />
+    <local:PathAndProbabilityTableControl Grid.Row="3" IsEnabled="{Binding IsCreatingNewElement}" />
 
     <Button Grid.Row="4" Margin="5" Content=" Set Study Projection " Command="{Binding OpenStudyPropertiesActionCommand}" HorizontalAlignment="Left"/>
     <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" >
