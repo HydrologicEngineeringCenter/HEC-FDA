@@ -54,9 +54,9 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
             }
         }
         #endregion
-        #region Actions
+        #region Commands
         [RelayCommand]
-        private void OpenStudyPropertiesAction()
+        private void OpenStudyProperties()
         {
             StudyPropertiesElement propertiesElement = StudyCache.GetStudyPropertiesElement();
             PropertiesVM vm = new(propertiesElement);

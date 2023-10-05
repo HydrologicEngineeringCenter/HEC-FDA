@@ -1,8 +1,10 @@
-﻿using HEC.FDA.Model.hydraulics;
+﻿using CommunityToolkit.Mvvm.Input;
+using HEC.FDA.Model.hydraulics;
 using HEC.FDA.Model.hydraulics.enums;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Storage;
+using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,14 +15,14 @@ using System.Windows;
 namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 {
     //[Author(q0heccdm, 9 / 1 / 2017 8:31:13 AM)]
-    public class GriddedImporterVM : BaseEditorVM
+    public partial class GriddedImporterVM : BaseEditorVM
     {
         #region Notes
         // Created By: q0heccdm
         // Created Date: 9/1/2017 8:31:13 AM
         #endregion
         #region Fields
-        private List<string> _OriginalFolderNames = new List<string>();
+        private List<string> _OriginalFolderNames = new();
         private string _SelectedPath;
 
         #endregion
@@ -55,18 +57,28 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             }
         }
         #endregion
+        #region Commands
+        [RelayCommand]
+        private void OpenStudyProperties()
+        {
+            StudyPropertiesElement propertiesElement = StudyCache.GetStudyPropertiesElement();
+            PropertiesVM vm = new(propertiesElement);
+            DynamicTabVM tab = new(StringConstants.STUDY_PROPERTIES, vm, StringConstants.PROPERTIES);
+            Navigate(tab, false, false);
+        }
+        #endregion
         #region Voids
         public void AddRow(string name, string path, double probability, bool isEnabled = true)
         {
-            WaterSurfaceElevationRowItemVM newRow = new WaterSurfaceElevationRowItemVM(name, path, probability, isEnabled);
+            WaterSurfaceElevationRowItemVM newRow = new(name, path, probability, isEnabled);
             ListOfRows.Add(newRow);
         }
 
         #region validation
         private FdaValidationResult ValidateImporter()
         {
-            FdaValidationResult vr = new FdaValidationResult();
-            List<double> probs = new List<double>();
+            FdaValidationResult vr = new();
+            List<double> probs = new();
             foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
             {
                 vr.AddErrorMessage(row.IsValid().ErrorMessage);
@@ -81,8 +93,8 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 
         private FdaValidationResult ContainsTif(string directoryPath)
         {
-            FdaValidationResult vr = new FdaValidationResult();
-            List<string> tifFiles = new List<string>();
+            FdaValidationResult vr = new();
+            List<string> tifFiles = new();
 
             string[] fileList = Directory.GetFiles(directoryPath);
             foreach (string file in fileList)
@@ -99,7 +111,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 
         private FdaValidationResult ValidateTIFFiles(List<string> tifFiles, string directoryName)
         {
-            FdaValidationResult vr = new FdaValidationResult();
+            FdaValidationResult vr = new();
             if (tifFiles.Count == 0)
             {
                 vr.AddErrorMessage("Directory " + directoryName + ": No .tif files found.");
@@ -113,7 +125,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         {
             if (fullpath != null && IsCreatingNewElement)
             {
-                FdaValidationResult importResult = new FdaValidationResult();
+                FdaValidationResult importResult = new();
                 ListOfRows.Clear();
                 //clear out any already existing rows
                 if (!Directory.Exists(fullpath))
@@ -121,7 +133,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                     return;
                 }
 
-                List<string> validDirectories = new List<string>();
+                List<string> validDirectories = new();
                 string[] directories = Directory.GetDirectories(fullpath);
                 foreach (string directory in directories)
                 {
@@ -186,7 +198,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             //if name is different then we need to update the directory name in the study hydraulics folder.
             RenameDirectoryInTheStudy();
             //might have to rename the sub folders.
-            List<HydraulicProfile> newPathProbs = new List<HydraulicProfile>();
+            List<HydraulicProfile> newPathProbs = new();
             for (int i = 0; i < ListOfRows.Count; i++)
             {
                 string newName = ListOfRows[i].Name;
@@ -202,7 +214,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                 newPathProbs.Add(new HydraulicProfile(ListOfRows[i].Probability, fileNameFromChildElementDir));
             }
 
-            HydraulicElement elementToSave = new HydraulicElement(Name, Description, newPathProbs, HydraulicDataSource.WSEGrid, OriginalElement.ID);
+            HydraulicElement elementToSave = new(Name, Description, newPathProbs, HydraulicDataSource.WSEGrid, OriginalElement.ID);
             base.Save(elementToSave);
         }
 
@@ -210,7 +222,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         {
             string destinationDirectory = Connection.Instance.HydraulicsDirectory + "\\" + Name;
             Directory.CreateDirectory(destinationDirectory);
-            List<HydraulicProfile> pathProbs = new List<HydraulicProfile>();
+            List<HydraulicProfile> pathProbs = new();
             foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
             {
                 _OriginalFolderNames.Add(row.Name);
@@ -220,7 +232,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             }
 
             int id = GetElementID<HydraulicElement>();
-            HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, HydraulicDataSource.WSEGrid, id);
+            HydraulicElement elementToSave = new(Name, Description, pathProbs, HydraulicDataSource.WSEGrid, id);
             base.Save(elementToSave);
         }
 

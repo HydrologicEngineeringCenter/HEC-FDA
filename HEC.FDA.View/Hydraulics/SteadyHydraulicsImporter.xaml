@@ -51,8 +51,8 @@
         </Grid>
 
     <local:PathAndProbabilityTableControl Grid.Row="3" IsEnabled="{Binding IsCreatingNewElement}" />
-       
-            <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" >
+    <Button Grid.Row="4" Margin="5" Content=" Set Study Projection " Command="{Binding OpenStudyPropertiesActionCommand}" HorizontalAlignment="Left"/>
+    <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" >
                 <Util:SaveCloseControl VerticalAlignment="Bottom"/>
             </StackPanel>
         </Grid>
