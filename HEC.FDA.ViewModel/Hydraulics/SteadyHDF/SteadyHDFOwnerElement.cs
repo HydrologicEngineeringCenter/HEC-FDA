@@ -14,12 +14,16 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             CustomTreeViewHeader = new CustomHeaderVM(Name);
             IsBold = false;
 
-            NamedAction import = new NamedAction();
-            import.Header = StringConstants.IMPORT_HYDRAULICS_MENU;
-            import.Action = ImportWaterSurfaceElevations;
+            NamedAction import = new()
+            {
+                Header = StringConstants.IMPORT_HYDRAULICS_MENU,
+                Action = ImportWaterSurfaceElevations
+            };
 
-            List<NamedAction> localActions = new List<NamedAction>();
-            localActions.Add(import);
+            List<NamedAction> localActions = new()
+            {
+                import
+            };
             Actions = localActions;
 
             StudyCache.WaterSurfaceElevationAdded += AddWaterSurfaceElevationElement;
@@ -51,11 +55,10 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
         {
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                .WithSiblingRules(this);
-
-            SteadyHDFImporterVM vm = new SteadyHDFImporterVM(actionManager);
-
+            SteadyHDFImporterVM vm = new(actionManager);
+            vm.RequestNavigation += Navigate;
             string header = StringConstants.IMPORT_HYDRAULICS_HEADER;
-            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_HYDRAULICS_HEADER + "Steady");
+            DynamicTabVM tab = new(header, vm, StringConstants.IMPORT_HYDRAULICS_HEADER + "Steady");
             Navigate(tab, false, false);
         }
 

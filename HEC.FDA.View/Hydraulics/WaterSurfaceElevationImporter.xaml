@@ -6,7 +6,10 @@
              xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=HEC.FDA.UserControls"
              xmlns:local="clr-namespace:HEC.FDA.View.Hydraulics"
              xmlns:Util="clr-namespace:HEC.FDA.View.Utilities"
-             xmlns:frameworkControls="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=HEC.MVVMFramework.View"
+             xmlns:frameworkControls="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=HEC.MVVMFramework.View" 
+             xmlns:griddeddata="clr-namespace:HEC.FDA.ViewModel.Hydraulics.GriddedData;assembly=HEC.FDA.ViewModel"
+             d:DataContext="{d:DesignInstance Type=griddeddata:GriddedImporterVM}"
+             d:Background="AliceBlue"
              Loaded="UserControl_Loaded"
              mc:Ignorable="d"
              d:DesignHeight="520" d:DesignWidth="550">
@@ -49,7 +52,7 @@
         </Grid>
     <local:PathAndProbabilityTableControl Grid.Row="3" IsEnabled="{Binding IsCreatingNewElement}"/>
 
-    <Button Grid.Row="4" Margin="5" Content=" Set Study Projection " Command="{Binding OpenStudyPropertiesActionCommand}" HorizontalAlignment="Left"/>
+    <Button Grid.Row="4" Margin="5" Content=" Set Study Projection " Command="{Binding OpenStudyPropertiesCommand}" HorizontalAlignment="Left"/>
         <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" >
             <Util:SaveCloseControl VerticalAlignment="Bottom"/>
         </StackPanel>

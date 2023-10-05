@@ -50,8 +50,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             foreach (IHydraulicProfile pp in elem.DataSet.HydraulicProfiles)
             {
                 string path = Connection.Instance.HydraulicsDirectory + "\\" + pp.FileName;
-                string folderName = Path.GetFileName(pp.FileName);
-                AddRow(folderName, path, pp.Probability, false);
+                AddRow(pp.ProfileName, path, pp.Probability, false);
             }
         }
         #endregion
@@ -129,7 +128,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
                     string[] profileNames = GetProfileNamesFromFilePath(fullpath);
                     foreach (string name in profileNames)
                     {
-                        AddRow(Path.GetFileName(name), Path.GetFullPath(name), 0);
+                        AddRow(name, Path.GetFullPath(name), 0);
                     }
                     if (!vr.IsValid)
                     {
