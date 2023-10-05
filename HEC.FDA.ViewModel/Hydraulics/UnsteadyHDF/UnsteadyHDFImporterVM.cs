@@ -48,9 +48,9 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
             SelectedPath = Connection.Instance.HydraulicsDirectory + "\\" + elem.Name;
             foreach (HydraulicProfile pp in elem.DataSet.HydraulicProfiles.Cast<HydraulicProfile>())
             {
-                string path = Connection.Instance.HydraulicsDirectory + "\\" + pp.FileName;
-                string filename = Path.GetFileName(pp.FileName);
-                AddRow(filename, path, pp.Probability, false);
+                string path = SelectedPath + "\\" + pp.FileName;
+                string name = GetUnsteadyRASResultName(path);
+                AddRow(name, path, pp.Probability, false);
             }
         }
         #endregion
