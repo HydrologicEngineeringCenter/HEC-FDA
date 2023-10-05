@@ -226,7 +226,7 @@ namespace HEC.FDA.Model.compute
                 if (HasLevee.Equals(false))
                 {
                     string errorMessage = $"The simulation for impact area with ID {ImpactAreaID} was configured to calculate nonfail risk but a levee was not specified, therefore nonfail risk will not be calculated.";
-                    ErrorMessage leveeMissing = new ErrorMessage(errorMessage, ErrorLevel.Major);
+                    ErrorMessage leveeMissing = new(errorMessage, ErrorLevel.Major);
                     ReportMessage(this, new MessageEventArgs(leveeMissing));
                 }
             }
@@ -488,14 +488,14 @@ namespace HEC.FDA.Model.compute
 
         }
 
-        private PairedData CalculateFailureProbComplement(PairedData validatedSystemResponse)
+        private static PairedData CalculateFailureProbComplement(PairedData validatedSystemResponse)
         {
             double[] probabilityOfNonFailure = new double[validatedSystemResponse.Yvals.Length];
             for (int i = 0; i < probabilityOfNonFailure.Length; i++)
             {
                 probabilityOfNonFailure[i] = 1 - (validatedSystemResponse.Yvals[i]);
             }
-            PairedData complementOfSystemResponse = new PairedData(validatedSystemResponse.Xvals, probabilityOfNonFailure);
+            PairedData complementOfSystemResponse = new(validatedSystemResponse.Xvals, probabilityOfNonFailure);
             return complementOfSystemResponse;
         }
         //TODO: Opportunity for refactor: move performance functions to system performance statistics

@@ -78,7 +78,7 @@ namespace HEC.FDA.Model.alternatives
             if (computedResultsBaseYear.Equals(computedResultsFutureYear))
             {
                 alternativeResults.ScenariosAreIdentical = true;
-                alternativeResults.AAEQDamageResults = ScenarioResults.ConvertToStudyAreaConsequencesByQuantile(computedResultsBaseYear, analysisYears, periodOfAnalysis, alternativeResultsID, scenariosAreIdentical: true);
+                alternativeResults.AAEQDamageResults = ScenarioResults.ConvertToStudyAreaConsequencesByQuantile(computedResultsBaseYear);
             }
             else
             {

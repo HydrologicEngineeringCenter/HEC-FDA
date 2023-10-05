@@ -373,15 +373,15 @@ namespace HEC.FDA.Model.metrics
             return dummyResults;
         }
 
-        public static StudyAreaConsequencesByQuantile ConvertToStudyAreaConsequencesByQuantile(ScenarioResults results, List<int> analysisYears, int periodOfAnalysis, int alternativeID, bool scenariosAreIdentical)
+        public static StudyAreaConsequencesByQuantile ConvertToStudyAreaConsequencesByQuantile(ScenarioResults results)
         {
             List<AggregatedConsequencesByQuantile> aggregatedConsequencesByQuantiles = new();
-            foreach (ImpactAreaScenarioResults impactAreaScenarioResults in results.ResultsList)
+            foreach (ImpactAreaScenarioResults impactAreaScenarioResults in results.ResultsList.Cast<ImpactAreaScenarioResults>())
             {
                 StudyAreaConsequencesByQuantile studyAreaConsequencesByQuantile = StudyAreaConsequencesBinned.ConvertToStudyAreaConsequencesByQuantile(impactAreaScenarioResults.ConsequenceResults);
                 aggregatedConsequencesByQuantiles.AddRange(studyAreaConsequencesByQuantile.ConsequenceResultList);
             }
-            StudyAreaConsequencesByQuantile allImpactAreas = new StudyAreaConsequencesByQuantile(aggregatedConsequencesByQuantiles);
+            StudyAreaConsequencesByQuantile allImpactAreas = new(aggregatedConsequencesByQuantiles);
             return allImpactAreas;
 
         }

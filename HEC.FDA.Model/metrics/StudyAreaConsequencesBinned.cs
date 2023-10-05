@@ -494,7 +494,7 @@ namespace HEC.FDA.Model.metrics
                 AggregatedConsequencesByQuantile aggregatedConsequencesByQuantile = AggregatedConsequencesBinned.ConvertToSingleEmpiricalDistributionOfConsequences(aggregatedConsequencesBinned);
                 aggregatedConsequencesByQuantiles.Add(aggregatedConsequencesByQuantile);    
             }
-            StudyAreaConsequencesByQuantile studyAreaConsequencesByQuantile = new StudyAreaConsequencesByQuantile(aggregatedConsequencesByQuantiles);
+            StudyAreaConsequencesByQuantile studyAreaConsequencesByQuantile = new(aggregatedConsequencesByQuantiles);
             return studyAreaConsequencesByQuantile;
         }
 
