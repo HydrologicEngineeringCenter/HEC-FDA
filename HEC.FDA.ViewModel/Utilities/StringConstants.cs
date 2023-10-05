@@ -195,6 +195,8 @@
         public static readonly string EAD_DISTRIBUTION = "EAD Distribution";
         public static readonly string DAMAGE_REDUCED = "Damage Reduced Distribution";
         public static readonly string AAEQ_DAMAGE_DISTRIBUTION = "AAEQ Damage Distribution";
+        public static readonly string STUDY_PROPERTIES = "Study Properties";
+        public static readonly string PROPERTIES = "Properties";
 
 
         #endregion

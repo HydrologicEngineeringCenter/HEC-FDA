@@ -1,8 +1,11 @@
-﻿using HEC.FDA.Model.hydraulics;
+﻿using CommunityToolkit.Mvvm.Input;
+using HEC.FDA.Model.hydraulics;
 using HEC.FDA.Model.hydraulics.enums;
+using HEC.FDA.Model.hydraulics.Interfaces;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.Storage;
+using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
@@ -14,7 +17,7 @@ using System.Windows;
 
 namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
 {
-    public class SteadyHDFImporterVM:BaseEditorVM
+    public partial class SteadyHDFImporterVM : BaseEditorVM
     {
         #region Fields
         private string _SelectedPath;
@@ -44,27 +47,36 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             SelectedPath = Connection.Instance.HydraulicsDirectory + "\\" + elem.Name;
             Name = elem.Name;
             Description = elem.Description;
-            foreach (HydraulicProfile pp in elem.DataSet.HydraulicProfiles)
+            foreach (IHydraulicProfile pp in elem.DataSet.HydraulicProfiles)
             {
                 string path = Connection.Instance.HydraulicsDirectory + "\\" + pp.FileName;
-                string folderName = Path.GetFileName(pp.FileName);
-                AddRow(folderName, path, pp.Probability, false);
+                AddRow(pp.ProfileName, path, pp.Probability, false);
             }
+        }
+        #endregion
+        #region Commands
+        [RelayCommand]
+        private void OpenStudyProperties()
+        {
+            StudyPropertiesElement propertiesElement = StudyCache.GetStudyPropertiesElement();
+            PropertiesVM vm = new(propertiesElement);
+            DynamicTabVM tab = new(StringConstants.STUDY_PROPERTIES, vm, StringConstants.PROPERTIES);
+            Navigate(tab, false, false);
         }
         #endregion
         #region Voids
         public void AddRow(string name, string path, double probability, bool isEnabled = true)
         {
-            WaterSurfaceElevationRowItemVM newRow = new WaterSurfaceElevationRowItemVM(name, path, probability, isEnabled);
+            WaterSurfaceElevationRowItemVM newRow = new(name, path, probability, isEnabled);
             ListOfRows.Add(newRow);
         }
 
         #region validation
         private FdaValidationResult ValidateImporter()
         {
-            FdaValidationResult vr = new FdaValidationResult();
+            FdaValidationResult vr = new();
 
-            List<double> probs = new List<double>();
+            List<double> probs = new();
             foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
             {
                 vr.AddErrorMessage(row.IsValid().ErrorMessage);
@@ -79,14 +91,14 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
 
         #endregion
 
-        private FdaValidationResult IsFileValid(string file)
+        private static FdaValidationResult IsFileValid(string file)
         {
-            FdaValidationResult vr = new FdaValidationResult();
+            FdaValidationResult vr = new();
             int firstPeriodIndex = file.IndexOf(".");
             if (firstPeriodIndex != -1)
             {
                 string substring = file.Substring(firstPeriodIndex + 1);
-                Regex r = new Regex("p??.hdf");
+                Regex r = new("p??.hdf");
                 if (!r.Match(substring).Success)
                 {
                     //failed
@@ -104,7 +116,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
 
         public void PopulateRows(string fullpath)
         {
-            FdaValidationResult vr = new FdaValidationResult();
+            FdaValidationResult vr = new();
             if (fullpath != null && IsCreatingNewElement)
             {
                 ListOfRows.Clear();
@@ -116,7 +128,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
                     string[] profileNames = GetProfileNamesFromFilePath(fullpath);
                     foreach (string name in profileNames)
                     {
-                        AddRow(Path.GetFileName(name), Path.GetFullPath(name), 0);
+                        AddRow(name, Path.GetFullPath(name), 0);
                     }
                     if (!vr.IsValid)
                     {
@@ -132,12 +144,12 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             }
         }
 
-        private string[] GetProfileNamesFromFilePath(string fullpath)
+        private static string[] GetProfileNamesFromFilePath(string fullpath)
         {
             string[] profileNames = null;
             try
             {
-                RasMapperLib.RASResults result = new RasMapperLib.RASResults(fullpath);
+                RasMapperLib.RASResults result = new(fullpath);
                 profileNames = result.ProfileNames;
             }
             catch (Exception e)
@@ -189,14 +201,14 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
         {
             CopyFileToStudyDirectory();
 
-            List<HydraulicProfile> pathProbs = new List<HydraulicProfile>();
+            List<HydraulicProfile> pathProbs = new();
             foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
             {
                 pathProbs.Add(new HydraulicProfile( row.Probability, Path.GetFileName(SelectedPath), row.Name));
             }
 
             int id = GetElementID<HydraulicElement>();
-            HydraulicElement elementToSave = new HydraulicElement(Name, Description, pathProbs, HydraulicDataSource.SteadyHDF, id);
+            HydraulicElement elementToSave = new(Name, Description, pathProbs, HydraulicDataSource.SteadyHDF, id);
             base.Save(elementToSave);            
         }
 
@@ -206,12 +218,12 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             //if name is different then we need to update the directory name in the study hydraulics folder.
             RenameDirectoryInStudy();
 
-            List<HydraulicProfile> newPathProbs = new List<HydraulicProfile>();
+            List<HydraulicProfile> newPathProbs = new();
             for (int i = 0; i < ListOfRows.Count; i++)
             {
                 newPathProbs.Add(new HydraulicProfile( ListOfRows[i].Probability, Path.GetFileName(SelectedPath), ListOfRows[i].Name));
             }
-            HydraulicElement elemToSave = new HydraulicElement(Name, Description, newPathProbs, HydraulicDataSource.SteadyHDF, OriginalElement.ID);
+            HydraulicElement elemToSave = new(Name, Description, newPathProbs, HydraulicDataSource.SteadyHDF, OriginalElement.ID);
             base.Save(elemToSave);
         }
 

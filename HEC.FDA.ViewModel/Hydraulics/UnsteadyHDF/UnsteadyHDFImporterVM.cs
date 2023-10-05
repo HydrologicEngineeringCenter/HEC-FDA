@@ -1,19 +1,23 @@
-﻿using HEC.FDA.Model.hydraulics;
+﻿using CommunityToolkit.Mvvm.Input;
+using HEC.FDA.Model.hydraulics;
 using HEC.FDA.Model.hydraulics.enums;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.Storage;
+using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.ServiceModel.Dispatcher;
 using System.Text.RegularExpressions;
 using System.Windows;
+using Utilities;
 
 namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
 {
-    public class UnsteadyHDFImporterVM:BaseEditorVM
+    public partial class UnsteadyHDFImporterVM : BaseEditorVM
     {
         #region Fields
         private string _SelectedPath;
@@ -24,6 +28,8 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
             get { return _SelectedPath; }
             set { _SelectedPath = value; FileSelected(value); NotifyPropertyChanged(); }
         }
+
+
 
         public ObservableCollection<WaterSurfaceElevationRowItemVM> ListOfRows { get; } = new ObservableCollection<WaterSurfaceElevationRowItemVM>();
         #endregion
@@ -42,12 +48,24 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
             SelectedPath = Connection.Instance.HydraulicsDirectory + "\\" + elem.Name;
             foreach (HydraulicProfile pp in elem.DataSet.HydraulicProfiles.Cast<HydraulicProfile>())
             {
-                string path = Connection.Instance.HydraulicsDirectory + "\\" + pp.FileName;
-                string filename = Path.GetFileName(pp.FileName);
-                AddRow(filename, path, pp.Probability, false);
+                string path = SelectedPath + "\\" + pp.FileName;
+                string name = GetUnsteadyRASResultName(path);
+                AddRow(name, path, pp.Probability, false);
             }
         }
         #endregion
+        #region Commands
+        [RelayCommand]
+        private void OpenStudyProperties()
+        {
+            StudyPropertiesElement propertiesElement = StudyCache.GetStudyPropertiesElement();
+            PropertiesVM vm = new(propertiesElement);
+            DynamicTabVM tab = new(StringConstants.STUDY_PROPERTIES, vm, StringConstants.PROPERTIES);
+            Navigate(tab, false, false);
+        }
+        #endregion
+
+
         #region Voids
         public void AddRow(string name, string path, double probability, bool isEnabled = true)
         {
@@ -103,15 +121,15 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
         {
             FdaValidationResult vr = new();
             int firstPeriodIndex = file.IndexOf(".");
-            if(firstPeriodIndex != -1)
+            if (firstPeriodIndex != -1)
             {
                 string substring = file.Substring(firstPeriodIndex + 1);
                 Regex r = new("p??.hdf");
-                if(!r.Match(substring).Success)
+                if (!r.Match(substring).Success)
                 {
                     //failed
                     vr.AddErrorMessage("Ignoring file that did not match the pattern of '*.p##.hdf'. " + file);
-                }         
+                }
             }
             else
             {
@@ -133,10 +151,10 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
 
                 string[] files = Directory.GetFiles(fullpath);
                 List<string> validFiles = new();
-                foreach(string file in files)
+                foreach (string file in files)
                 {
                     FdaValidationResult fileValidResult = IsFileValid(file);
-                    if(fileValidResult.IsValid)
+                    if (fileValidResult.IsValid)
                     {
                         validFiles.Add(file);
                     }
@@ -148,7 +166,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
 
                 //warn users that these directories were ignored.
                 string[] directories = Directory.GetDirectories(fullpath);
-                if(directories.Length > 0)
+                if (directories.Length > 0)
                 {
                     vrWarnings.AddErrorMessage("Ignoring subdirectories.");
                 }
@@ -156,7 +174,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
                 if (validFiles.Count == 0)
                 {
                     vrErrors.AddErrorMessage("No valid hdf files were detected. You must select a directory that contains files that match pattern '*.p##.hdf'.");
-                }     
+                }
                 else
                 {
                     foreach (string file in validFiles)
@@ -164,7 +182,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
                         AddRow(GetUnsteadyRASResultName(file), Path.GetFullPath(file), 0);
                     }
                 }
-                if(!vrWarnings.IsValid)
+                if (!vrWarnings.IsValid)
                 {
                     MessageBox.Show(vrWarnings.ErrorMessage, "Warnings", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
@@ -178,7 +196,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
         private static string GetUnsteadyRASResultName(string file)
         {
             RasMapperLib.RASResults result = new(file);
-            if(result == null)
+            if (result == null)
             {
                 return "INVALID";
             }
@@ -237,7 +255,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
             foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
             {
                 string filename = Path.GetFileName(row.Path);
-                pathProbs.Add(new HydraulicProfile( row.Probability, filename));
+                pathProbs.Add(new HydraulicProfile(row.Probability, filename));
 
                 File.Copy(row.Path, destinationDirectory + "\\" + filename);
             }

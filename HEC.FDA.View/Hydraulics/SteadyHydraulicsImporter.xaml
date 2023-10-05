@@ -6,7 +6,9 @@
              xmlns:Util="clr-namespace:HEC.FDA.View.Utilities"
              xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=HEC.FDA.UserControls"
              xmlns:frameworkControls="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=HEC.MVVMFramework.View"
-             xmlns:local="clr-namespace:HEC.FDA.View.Hydraulics"
+             xmlns:local="clr-namespace:HEC.FDA.View.Hydraulics" xmlns:steadyhdf="clr-namespace:HEC.FDA.ViewModel.Hydraulics.SteadyHDF;assembly=HEC.FDA.ViewModel" 
+             d:DataContext="{d:DesignInstance Type=steadyhdf:SteadyHDFImporterVM}"
+             d:Background="AliceBlue"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
         <UserControl.Resources>
@@ -50,9 +52,9 @@
             <frameworkControls:TextBoxFileBrowserControl FileDialogTitle="Select File" Filter="*.hdf |*.hdf"  Path="{Binding SelectedPath}" IsEnabled="{Binding IsCreatingNewElement}" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3" />
         </Grid>
 
-        <local:PathAndProbabilityTableControl Grid.Row="3" />
-       
-            <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" >
+    <local:PathAndProbabilityTableControl Grid.Row="3" IsEnabled="{Binding IsCreatingNewElement}" />
+    <Button Grid.Row="4" Margin="5" Content=" Set Study Projection " Command="{Binding OpenStudyPropertiesCommand}" HorizontalAlignment="Left"/>
+    <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" >
                 <Util:SaveCloseControl VerticalAlignment="Bottom"/>
             </StackPanel>
         </Grid>
