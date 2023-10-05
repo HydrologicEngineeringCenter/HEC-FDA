@@ -13,7 +13,7 @@ namespace HEC.FDA.Model.metrics
         #region Properties
         internal bool ScenariosAreIdentical { get; set; } = false;
         public int AlternativeID {get;}
-        public StudyAreaConsequencesByQuantile AAEQDamageResults { get; }
+        public StudyAreaConsequencesByQuantile AAEQDamageResults { get; internal set; }
         public List<int> AnalysisYears { get; }
         public int PeriodOfAnalysis { get; }
         public event ProgressReportedEventHandler ProgressReport;
@@ -46,10 +46,10 @@ namespace HEC.FDA.Model.metrics
             AnalysisYears = analysisYears;
             AddRules();
         }
-        internal AlternativeResults(int id, List<int> analysisYears, int periodOfAnalysis, bool isNull)
+        internal AlternativeResults(StudyAreaConsequencesByQuantile studyAreaConsequencesByQuantile, int id, List<int> analysisYears, int periodOfAnalysis, bool isNull)
         {
             AlternativeID = id;
-            AAEQDamageResults = new StudyAreaConsequencesByQuantile(id);
+            AAEQDamageResults = studyAreaConsequencesByQuantile;
             IsNull = isNull;
             AnalysisYears = analysisYears;
             PeriodOfAnalysis = periodOfAnalysis;
