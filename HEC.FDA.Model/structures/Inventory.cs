@@ -370,7 +370,7 @@ namespace HEC.FDA.Model.structures
 
         public List<string> AreOcctypesValid()
         {
-            List<string> errors = new List<string>();
+            List<string> errors = new();
             foreach(KeyValuePair<string, OccupancyType> entry in OccTypes)
             {
                 ErrorLevel errorLevel = entry.Value.ErrorLevel;
