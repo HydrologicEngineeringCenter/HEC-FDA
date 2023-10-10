@@ -282,13 +282,13 @@ namespace HEC.FDA.Model.structures
             {
                 _invertedWSEL = new float[nStruc, nPf];
                 for (int i = 0; i < nPf; i++)
-            {
-                var pf = wses[i];
-                    for (int j = 0; j < nStruc; j++)
                 {
+                    var pf = wses[i];
+                    for (int j = 0; j < nStruc; j++)
+                    {
                         _invertedWSEL[j, i] = pf[j];
+                    }
                 }
-            }
             }
             if (_strucParallelCollection == null || _strucParallelCollection.GetLength(0) != nPf || _strucParallelCollection.GetLength(1) != nStruc)
             {
@@ -336,18 +336,18 @@ namespace HEC.FDA.Model.structures
                     for (int j = 0; j < nPf; j++)
                     {
                         float wse = _invertedWSEL[i, j];
-                        var (structDamage, contDamage, vehicleDamage, otherDamage) = Structures[i].ComputeDamage(wse, deterministicOccType, PriceIndex,j);
-                            _strucParallelCollection[j, i] = (structDamage);
-                            _contentParallelCollection[j, i] = (contDamage);
-                            _otherParallelCollection[j, i] = (vehicleDamage);
-                            _vehicleParallelCollection[j, i] = (otherDamage);
-                        }
+                        var (structDamage, contDamage, vehicleDamage, otherDamage) = Structures[i].ComputeDamage(wse, deterministicOccType, PriceIndex);
+                        _strucParallelCollection[j, i] = (structDamage);
+                        _contentParallelCollection[j, i] = (contDamage);
+                        _otherParallelCollection[j, i] = (vehicleDamage);
+                        _vehicleParallelCollection[j, i] = (otherDamage);
                     }
+                }
             }, 256);
             return AggregateResults(wses, damageCategory, aggregateConsequenceResults, _strucParallelCollection, _contentParallelCollection, _otherParallelCollection, _vehicleParallelCollection);
         }
 
-        private List<ConsequenceResult> AggregateResults(List<float[]> wses, string damageCategory, List<ConsequenceResult> aggregateConsequenceResults, double[,] structureParallelCollection, 
+        private List<ConsequenceResult> AggregateResults(List<float[]> wses, string damageCategory, List<ConsequenceResult> aggregateConsequenceResults, double[,] structureParallelCollection,
             double[,] contentParallelCollection, double[,] otherParallelCollection, double[,] vehicleParallelCollection)
         {
             for (int j = 0; j < wses.Count; j++)
@@ -366,12 +366,12 @@ namespace HEC.FDA.Model.structures
         public List<string> AreOcctypesValid()
         {
             List<string> errors = new List<string>();
-            foreach(KeyValuePair<string, OccupancyType> entry in OccTypes)
+            foreach (KeyValuePair<string, OccupancyType> entry in OccTypes)
             {
                 ErrorLevel errorLevel = entry.Value.ErrorLevel;
-                if(errorLevel>= ErrorLevel.Major)
+                if (errorLevel >= ErrorLevel.Major)
                 {
-                    errors.Add(entry.Value.GetErrorMessages(ErrorLevel.Major)) ;
+                    errors.Add(entry.Value.GetErrorMessages(ErrorLevel.Major));
                 }
             }
             return errors;
