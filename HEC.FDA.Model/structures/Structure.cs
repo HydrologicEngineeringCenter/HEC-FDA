@@ -33,7 +33,7 @@ namespace HEC.FDA.Model.structures
         internal int NumberOfStructures { get; }
         internal string Notes { get; }
         internal string Description { get; }
-        public int WSPforDamageCompute { get; set; }
+        private int LastWSPStageDamageSegmentTopIndex = 1;
         #endregion
 
         #region Constructors 
@@ -124,7 +124,8 @@ namespace HEC.FDA.Model.structures
             if (BeginningDamageDepth <= depthabovefoundHeight)
             {
                 //Structure
-                double structDamagepercent = deterministicOccupancyType.StructPercentDamagePairedData.f(depthabovefoundHeight);
+                double structDamagepercent = deterministicOccupancyType.StructPercentDamagePairedData.f(depthabovefoundHeight,ref LastWSPStageDamageSegmentTopIndex);
+                //double structDamagepercent = deterministicOccupancyType.StructPercentDamagePairedData.f(depthabovefoundHeight); //Binary Search
                 if (structDamagepercent > 100)
                 {
                     structDamagepercent = 100;
@@ -146,7 +147,8 @@ namespace HEC.FDA.Model.structures
                 //Content
                 if (deterministicOccupancyType.ComputeContentDamage)
                 {
-                    double contentDamagePercent = deterministicOccupancyType.ContentPercentDamagePairedData.f(depthabovefoundHeight);
+                    double contentDamagePercent = deterministicOccupancyType.ContentPercentDamagePairedData.f(depthabovefoundHeight, ref LastWSPStageDamageSegmentTopIndex);
+                    //double contentDamagePercent = deterministicOccupancyType.ContentPercentDamagePairedData.f(depthabovefoundHeight); //Binary Search
                     if (contentDamagePercent > 100)
                     {
                         contentDamagePercent = 100;
@@ -177,7 +179,8 @@ namespace HEC.FDA.Model.structures
                 //Vehicle
                 if (deterministicOccupancyType.ComputeVehicleDamage)
                 {
-                    double vehicleDamagePercent = deterministicOccupancyType.VehiclePercentDamagePairedData.f(depthabovefoundHeight);
+                    double vehicleDamagePercent = deterministicOccupancyType.VehiclePercentDamagePairedData.f(depthabovefoundHeight, ref LastWSPStageDamageSegmentTopIndex);
+                    //double vehicleDamagePercent = deterministicOccupancyType.VehiclePercentDamagePairedData.f(depthabovefoundHeight); //Binary Search
                     if (vehicleDamagePercent > 100)
                     {
                         vehicleDamagePercent = 100;
@@ -200,7 +203,8 @@ namespace HEC.FDA.Model.structures
                 //Other
                 if (deterministicOccupancyType.ComputeOtherDamage)
                 {
-                    double otherDamagePercent = deterministicOccupancyType.OtherPercentDamagePairedData.f(depthabovefoundHeight);
+                    double otherDamagePercent = deterministicOccupancyType.OtherPercentDamagePairedData.f(depthabovefoundHeight, ref LastWSPStageDamageSegmentTopIndex);
+                    //double otherDamagePercent = deterministicOccupancyType.OtherPercentDamagePairedData.f(depthabovefoundHeight);//Binary Search
                     if (otherDamagePercent > 100)
                     {
                         otherDamagePercent = 100;

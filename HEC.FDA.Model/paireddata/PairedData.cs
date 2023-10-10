@@ -99,6 +99,16 @@ namespace HEC.FDA.Model.paireddata
         /// </summary>
         public double f(double x,  ref int indexOfPreviousTopOfSegment)
         {
+            //We're above the curve
+            if (x > Xvals[^1])
+            {
+                return Yvals[^1];
+            }
+            //We're below the curve
+            if (x < Xvals[0])
+            {
+                return 0;
+            }
             //If we've got it right on
             if (Xvals[indexOfPreviousTopOfSegment] == x)
             {
