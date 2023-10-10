@@ -100,12 +100,12 @@ namespace HEC.FDA.Model.structures
                 return new DeterministicOccupancyType();
             }
             //damage functions
-            IPairedData structDamagePairedData = _StructureDepthPercentDamageFunction.SamplePairedData(randomNumbers.NextRandom(), computeIsDeterministic);
+            PairedData structDamagePairedData = _StructureDepthPercentDamageFunction.SamplePairedData(randomNumbers.NextRandom(), computeIsDeterministic);
             //This hack is here because we need to create these functions before assigning their value;
             //This hack feels less hacky than having an empty paired data constructor with the same junk 
-            IPairedData contentDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 });
-            IPairedData vehicleDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 });
-            IPairedData otherDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 });
+            PairedData contentDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 });
+            PairedData vehicleDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 });
+            PairedData otherDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 });
 
             //parameters
             double firstFloorElevationOffsetSampled = _FirstFloorElevationError.Sample(randomNumbers.NextRandom(), computeIsDeterministic);
