@@ -173,7 +173,7 @@ namespace HEC.FDA.Model.structures
         /// <param name="damageCategory"></param>
         /// <param name="wsesAtEachStructureByProfile"></param>
         /// <returns></returns>
-        public (Inventory, List<float[]>) GetInventoryAndWaterTrimmedToDamageCategory(string damageCategory, List<float[]> wsesAtEachStructureByProfile)
+        public (Inventory, List<float[]>) GetInventoryAndWaterTrimmedToDamageCategory(string damageCategory, List<float[]> wsesAtEachStructureByProfile, double analysisYear)
         {
             //set up list for filtered structures 
             List<Structure> filteredStructureList = new();
@@ -187,7 +187,7 @@ namespace HEC.FDA.Model.structures
             }
             for (int i = 0; i < Structures.Count; i++)
             {
-                if (Structures[i].DamageCatagory == damageCategory)
+                if (Structures[i].DamageCatagory == damageCategory && Structures[i].YearInService < analysisYear)
                 {
                     filteredStructureList.Add(Structures[i]);
                     //add WSEs for structure i for each profile j 

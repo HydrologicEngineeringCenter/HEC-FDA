@@ -94,7 +94,7 @@ namespace HEC.FDA.Model.stageDamage
             double feetPerCoordinate = 0.5;
             double range = _MaxStageForArea - _MinStageForArea;
             int setsOfCoordinatesBetweenProfiles = 10;
-            int coordinateQuantity = Convert.ToInt32(Math.Ceiling((range / feetPerCoordinate)/ setsOfCoordinatesBetweenProfiles));
+            int coordinateQuantity = Convert.ToInt32(Math.Ceiling((range / feetPerCoordinate) / setsOfCoordinatesBetweenProfiles));
 
             //require at least two coordinates to interpolate and extrapolate 
             if (coordinateQuantity < 4)
@@ -273,7 +273,7 @@ namespace HEC.FDA.Model.stageDamage
                 foreach (string damageCategory in damCats)
                 {
 
-                    (Inventory, List<float[]>) inventoryAndWaterTupled = Inventory.GetInventoryAndWaterTrimmedToDamageCategory(damageCategory, wsesAtEachStructureByProfile.Item2);
+                    (Inventory, List<float[]>) inventoryAndWaterTupled = Inventory.GetInventoryAndWaterTrimmedToDamageCategory(damageCategory, wsesAtEachStructureByProfile.Item2, _AnalysisYear);
 
 
                     //There will be one ConsequenceDistributionResults object for each stage in the stage-damage function
@@ -523,7 +523,7 @@ namespace HEC.FDA.Model.stageDamage
             List<ConsequenceResult> consequenceResults = inventory.ComputeDamages(stagesAllStructuresAllStages, _AnalysisYear, damageCategory, occTypes);
             foreach (ConsequenceResult consequenceResult in consequenceResults)
             {
-                parallelConsequenceResultCollection[stageIndex + i].AddConsequenceRealization(consequenceResult,damageCategory, ImpactAreaID, iterationIndex);
+                parallelConsequenceResultCollection[stageIndex + i].AddConsequenceRealization(consequenceResult, damageCategory, ImpactAreaID, iterationIndex);
                 i++;
             }
         }
