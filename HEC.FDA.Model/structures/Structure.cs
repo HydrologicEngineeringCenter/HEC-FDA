@@ -33,6 +33,7 @@ namespace HEC.FDA.Model.structures
         internal int NumberOfStructures { get; }
         internal string Notes { get; }
         internal string Description { get; }
+        public int WSPforDamageCompute { get; set; }
         #endregion
 
         #region Constructors 
@@ -72,9 +73,9 @@ namespace HEC.FDA.Model.structures
             AddSinglePropertyRule(nameof(OccTypeName), new Rule(() => OccTypeName != null && OccTypeName != "", $"The occupancy type should not be null but appears null for Structure {Fid}", ErrorLevel.Fatal));
         }
 
-        public ConsequenceResult ComputeDamage(float waterSurfaceElevation, List<DeterministicOccupancyType> deterministicOccupancyType, double priceIndex = 1, int analysisYear = 9999)
+        public ConsequenceResult ComputeDamage(float waterSurfaceElevation, List<DeterministicOccupancyType> deterministicOccupancyType, double priceIndex = 1)
         {
-            var (structDamage, contDamage, vehicleDamage, otherDamage) = ComputeDamage(waterSurfaceElevation, FindOccType(deterministicOccupancyType), priceIndex, analysisYear);
+            var (structDamage, contDamage, vehicleDamage, otherDamage) = ComputeDamage(waterSurfaceElevation, FindOccType(deterministicOccupancyType), priceIndex );
 
             ConsequenceResult consequenceResult = new(DamageCatagory);
 
@@ -97,7 +98,7 @@ namespace HEC.FDA.Model.structures
         /// <param name="priceIndex"></param>
         /// <param name="analysisYear"></param>
         /// <returns></returns>
-        public (double, double, double, double) ComputeDamage(float waterSurfaceElevation, DeterministicOccupancyType deterministicOccupancyType, double priceIndex = 1, int analysisYear = 9999)
+        public (double, double, double, double) ComputeDamage(float waterSurfaceElevation, DeterministicOccupancyType deterministicOccupancyType, double priceIndex = 1)
         {
             //TODO: We need a way to make sure that the sampled first floor elevation is reasonable 
             //that is hard when we throw away the foundation height 
@@ -116,112 +117,111 @@ namespace HEC.FDA.Model.structures
             double contDamage = 0;
             double vehicleDamage = 0;
             double otherDamage = 0;
-            if (analysisYear > YearInService)
+
+
+            //Beginning damage depth is relative to the first floor elevation and so a beginning damage depth of -1 means that damage begins 1 foot below the first floor elevation
+            //if not defined by the user, the beginning damage depth is equal to the negative of foundation height
+            if (BeginningDamageDepth <= depthabovefoundHeight)
             {
-                //Beginning damage depth is relative to the first floor elevation and so a beginning damage depth of -1 means that damage begins 1 foot below the first floor elevation
-                //if not defined by the user, the beginning damage depth is equal to the negative of foundation height
-                if (BeginningDamageDepth <= depthabovefoundHeight)
+                //Structure
+                double structDamagepercent = deterministicOccupancyType.StructPercentDamagePairedData.f(depthabovefoundHeight);
+                if (structDamagepercent > 100)
                 {
-                    //Structure
-                    double structDamagepercent = deterministicOccupancyType.StructPercentDamagePairedData.f(depthabovefoundHeight);
-                    if (structDamagepercent > 100)
-                    {
-                        structDamagepercent = 100;
-                    }
-                    if (structDamagepercent < 0)
-                    {
-                        structDamagepercent = 0;
-                    }
-                    if (deterministicOccupancyType.IsStructureValueLogNormal)
-                    {
+                    structDamagepercent = 100;
+                }
+                if (structDamagepercent < 0)
+                {
+                    structDamagepercent = 0;
+                }
+                if (deterministicOccupancyType.IsStructureValueLogNormal)
+                {
                         sampledStructureValue = Math.Pow((deterministicOccupancyType.StructureValueOffset), Math.Log(InventoriedStructureValue))*(InventoriedStructureValue);
-                        structDamage = (structDamagepercent / 100) * priceIndex * NumberOfStructures * sampledStructureValue;
+                    structDamage = (structDamagepercent / 100) * priceIndex * NumberOfStructures * sampledStructureValue;
+                } else
+                {
+                    sampledStructureValue = InventoriedStructureValue * (deterministicOccupancyType.StructureValueOffset);
+                    structDamage = (structDamagepercent / 100) * priceIndex * NumberOfStructures * sampledStructureValue;
+                }
+
+                //Content
+                if (deterministicOccupancyType.ComputeContentDamage)
+                {
+                    double contentDamagePercent = deterministicOccupancyType.ContentPercentDamagePairedData.f(depthabovefoundHeight);
+                    if (contentDamagePercent > 100)
+                    {
+                        contentDamagePercent = 100;
+                    }
+                    if (contentDamagePercent < 0)
+                    {
+                        contentDamagePercent = 0;
+                    }
+                    if (deterministicOccupancyType.UseCSVR)
+                    {
+                        contDamage = (contentDamagePercent / 100) * priceIndex * NumberOfStructures * (deterministicOccupancyType.ContentToStructureValueRatio / 100) * sampledStructureValue;
+                    }
+                    else
+                    {
+                        if (deterministicOccupancyType.IsContentValueLogNormal)
+                        {
+                            double sampledContentValue = Math.Pow(deterministicOccupancyType.ContentValueOffset, Math.Log(InventoriedContentValue)) * (InventoriedContentValue);
+                                contDamage = (contentDamagePercent/100) * priceIndex * NumberOfStructures * (sampledContentValue);
+                        } else
+                        {
+                            double sampledContentValue = (InventoriedContentValue * (deterministicOccupancyType.ContentValueOffset));
+                            contDamage = (contentDamagePercent / 100) * priceIndex * NumberOfStructures * sampledContentValue;
+
+                        }
+                    }
+                }
+
+                //Vehicle
+                if (deterministicOccupancyType.ComputeVehicleDamage)
+                {
+                    double vehicleDamagePercent = deterministicOccupancyType.VehiclePercentDamagePairedData.f(depthabovefoundHeight);
+                    if (vehicleDamagePercent > 100)
+                    {
+                        vehicleDamagePercent = 100;
+                    }
+                    if (vehicleDamagePercent < 0)
+                    {
+                        vehicleDamagePercent = 0;
+                    }
+                    if (deterministicOccupancyType.IsVehicleValueLogNormal)
+                    {
+                            double sampledVehicleValue = Math.Pow(deterministicOccupancyType.VehicleValueOffset, Math.Log(InventoriedVehicleValue))*(InventoriedVehicleValue);
+                        vehicleDamage = (vehicleDamagePercent / 100) * priceIndex * NumberOfStructures * sampledVehicleValue;
                     } else
                     {
-                        sampledStructureValue = InventoriedStructureValue * (deterministicOccupancyType.StructureValueOffset);
-                        structDamage = (structDamagepercent / 100) * priceIndex * NumberOfStructures * sampledStructureValue;
-                    }
-
-                    //Content
-                    if (deterministicOccupancyType.ComputeContentDamage)
-                    {
-                        double contentDamagePercent = deterministicOccupancyType.ContentPercentDamagePairedData.f(depthabovefoundHeight);
-                        if (contentDamagePercent > 100)
-                        {
-                            contentDamagePercent = 100;
-                        }
-                        if (contentDamagePercent < 0)
-                        {
-                            contentDamagePercent = 0;
-                        }
-                        if (deterministicOccupancyType.UseCSVR)
-                        {
-                            contDamage = (contentDamagePercent / 100) * priceIndex * NumberOfStructures * (deterministicOccupancyType.ContentToStructureValueRatio / 100) * sampledStructureValue;
-                        }
-                        else
-                        {
-                            if (deterministicOccupancyType.IsContentValueLogNormal)
-                            {
-                                double sampledContentValue = Math.Pow(deterministicOccupancyType.ContentValueOffset, Math.Log(InventoriedContentValue)) * (InventoriedContentValue);
-                                contDamage = (contentDamagePercent/100) * priceIndex * NumberOfStructures * (sampledContentValue);
-                            } else
-                            {
-                                double sampledContentValue = (InventoriedContentValue * (deterministicOccupancyType.ContentValueOffset));
-                                contDamage = (contentDamagePercent / 100) * priceIndex * NumberOfStructures * sampledContentValue;
-
-                            }
-                        }
-                    }
-
-                    //Vehicle
-                    if (deterministicOccupancyType.ComputeVehicleDamage)
-                    {
-                        double vehicleDamagePercent = deterministicOccupancyType.VehiclePercentDamagePairedData.f(depthabovefoundHeight);
-                        if (vehicleDamagePercent > 100)
-                        {
-                            vehicleDamagePercent = 100;
-                        }
-                        if (vehicleDamagePercent < 0)
-                        {
-                            vehicleDamagePercent = 0;
-                        }
-                        if (deterministicOccupancyType.IsVehicleValueLogNormal)
-                        {
-                            double sampledVehicleValue = Math.Pow(deterministicOccupancyType.VehicleValueOffset, Math.Log(InventoriedVehicleValue))*(InventoriedVehicleValue);
-                            vehicleDamage = (vehicleDamagePercent / 100) * priceIndex * NumberOfStructures * sampledVehicleValue;
-                        } else
-                        {
-                            double sampledVehicleValue = InventoriedVehicleValue * (deterministicOccupancyType.VehicleValueOffset);
+                        double sampledVehicleValue = InventoriedVehicleValue * (deterministicOccupancyType.VehicleValueOffset);
                             vehicleDamage = (vehicleDamagePercent / 100) * priceIndex * NumberOfStructures* sampledVehicleValue;
-                        }
                     }
+                }
 
-                    //Other
-                    if (deterministicOccupancyType.ComputeOtherDamage)
+                //Other
+                if (deterministicOccupancyType.ComputeOtherDamage)
+                {
+                    double otherDamagePercent = deterministicOccupancyType.OtherPercentDamagePairedData.f(depthabovefoundHeight);
+                    if (otherDamagePercent > 100)
                     {
-                        double otherDamagePercent = deterministicOccupancyType.OtherPercentDamagePairedData.f(depthabovefoundHeight);
-                        if (otherDamagePercent > 100)
+                        otherDamagePercent = 100;
+                    }
+                    if (otherDamagePercent < 0)
+                    {
+                        otherDamagePercent = 0;
+                    }
+                    if (deterministicOccupancyType.UseOSVR)
+                    {
+                        otherDamage = (otherDamagePercent / 100) * priceIndex * NumberOfStructures * (sampledStructureValue) * (deterministicOccupancyType.OtherToStructureValueRatio / 100);
+                    } else
+                    {
+                        if (deterministicOccupancyType.IsOtherValueLogNormal)
                         {
-                            otherDamagePercent = 100;
-                        }
-                        if (otherDamagePercent < 0)
-                        {
-                            otherDamagePercent = 0;
-                        }
-                        if (deterministicOccupancyType.UseOSVR)
-                        {
-                            otherDamage = (otherDamagePercent / 100) * priceIndex * NumberOfStructures * (sampledStructureValue) * (deterministicOccupancyType.OtherToStructureValueRatio / 100);
+                            double sampledOtherValue = Math.Pow(deterministicOccupancyType.OtherValueOffset, Math.Log(InventoriedOtherValue)) * (InventoriedOtherValue);
+                            otherDamage = (otherDamagePercent / 100) * priceIndex * NumberOfStructures * sampledOtherValue;
                         } else
                         {
-                            if (deterministicOccupancyType.IsOtherValueLogNormal)
-                            {
-                                double sampledOtherValue = Math.Pow(deterministicOccupancyType.OtherValueOffset, Math.Log(InventoriedOtherValue)) * (InventoriedOtherValue);
-                                otherDamage = (otherDamagePercent / 100) * priceIndex * NumberOfStructures * sampledOtherValue;
-                            } else
-                            {
-                                double sampledOtherValue = (InventoriedOtherValue) * (deterministicOccupancyType.OtherValueOffset);
-                                otherDamage = (otherDamagePercent / 100) * priceIndex * NumberOfStructures*sampledOtherValue;
-                            }
+                            double sampledOtherValue = (InventoriedOtherValue) * (deterministicOccupancyType.OtherValueOffset);
+                            otherDamage = (otherDamagePercent / 100) * priceIndex * NumberOfStructures * sampledOtherValue;
                         }
                     }
                 }
