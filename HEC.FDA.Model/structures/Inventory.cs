@@ -322,16 +322,16 @@ namespace HEC.FDA.Model.structures
             {
                 for (int i = start; i <= end; i++)
                 {
-                    DeterministicOccupancyType dt = null;
+                    DeterministicOccupancyType deterministicOccType = null;
                     var dtIdx = _occTypeIndices[i];
                     if (dtIdx == -1)
                     {
                         // Shouldnt create a new one, but repros prior bevehaior
-                        dt = new DeterministicOccupancyType();
+                        deterministicOccType = new DeterministicOccupancyType();
                     }
                     else
                     {
-                        dt = deterministicOccupancyType[dtIdx];
+                        deterministicOccType = deterministicOccupancyType[dtIdx];
                     }
                     for (int j = 0; j < nPf; j++)
                     {
