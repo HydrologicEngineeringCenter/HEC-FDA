@@ -486,6 +486,18 @@ namespace HEC.FDA.Model.metrics
             return damageCategories;
         }
 
+        public static StudyAreaConsequencesByQuantile ConvertToStudyAreaConsequencesByQuantile(StudyAreaConsequencesBinned studyAreaConsequencesBinned)
+        {
+            List<AggregatedConsequencesByQuantile> aggregatedConsequencesByQuantiles = new();
+            foreach ( AggregatedConsequencesBinned aggregatedConsequencesBinned in studyAreaConsequencesBinned.ConsequenceResultList)
+            {
+                AggregatedConsequencesByQuantile aggregatedConsequencesByQuantile = AggregatedConsequencesBinned.ConvertToSingleEmpiricalDistributionOfConsequences(aggregatedConsequencesBinned);
+                aggregatedConsequencesByQuantiles.Add(aggregatedConsequencesByQuantile);    
+            }
+            StudyAreaConsequencesByQuantile studyAreaConsequencesByQuantile = new(aggregatedConsequencesByQuantiles);
+            return studyAreaConsequencesByQuantile;
+        }
+
         public XElement WriteToXML()
         {
             XElement masterElem = new("EAD_Results");

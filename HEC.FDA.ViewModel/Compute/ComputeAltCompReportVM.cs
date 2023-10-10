@@ -12,8 +12,8 @@ namespace HEC.FDA.ViewModel.Compute
 {
     public class ComputeAltCompReportVM:ComputeWithProgressAndMessagesBase
     {
-        private readonly List<AlternativeResults> AllResults = new List<AlternativeResults>();
-        private int _TotalProgressCount;
+        private readonly List<AlternativeResults> AllResults = new();
+        private readonly int _TotalProgressCount;
         private int _CurrentProgressCount;
 
         public ComputeAltCompReportVM(AlternativeElement withoutAlt, List<AlternativeElement> withProjAlts, Action<AlternativeComparisonReportResults> callback) : base()
@@ -21,12 +21,12 @@ namespace HEC.FDA.ViewModel.Compute
             _TotalProgressCount = withProjAlts.Count + 2;
             ProgressLabel = StringConstants.ALTERNATIVE_PROGRESS_LABEL;
 
-            List<AlternativeElement> allAlts = new List<AlternativeElement>(withProjAlts);
+            List<AlternativeElement> allAlts = new(withProjAlts);
             allAlts.Add(withoutAlt);
 
             List<Task> tasks = CreateAlternativeComputeTasks(allAlts);
 
-            Model.alternativeComparisonReport.AlternativeComparisonReport altCompReport = new Model.alternativeComparisonReport.AlternativeComparisonReport();
+            Model.alternativeComparisonReport.AlternativeComparisonReport altCompReport = new();
             altCompReport.ProgressReport += Alt_ProgressReport;
             MessageVM.InstanceHash.Add(altCompReport.GetHashCode());
 
@@ -42,7 +42,7 @@ namespace HEC.FDA.ViewModel.Compute
                 AllResults.Remove(withoutResult);
 
                 int seed = 99;
-                RandomProvider randomProvider = new RandomProvider(seed);
+                RandomProvider randomProvider = new(seed);
                 ConvergenceCriteria cc = StudyCache.GetStudyPropertiesElement().GetStudyConvergenceCriteria();
 
                 AlternativeComparisonReportResults results = altCompReport.ComputeAlternativeComparisonReport(withoutResult, AllResults);
@@ -66,7 +66,7 @@ namespace HEC.FDA.ViewModel.Compute
 
         private List<Task> CreateAlternativeComputeTasks(List<AlternativeElement> allAlts)
         {
-            List<Task> tasks = new List<Task>();
+            List<Task> tasks = new();
 
             foreach (AlternativeElement elem in allAlts)
             {
