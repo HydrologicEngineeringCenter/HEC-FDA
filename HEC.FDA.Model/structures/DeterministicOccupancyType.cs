@@ -13,10 +13,10 @@ namespace HEC.FDA.Model.structures
         public bool UseOSVR { get; }
         public string OccupancyTypeName { get; }
         public string OccupancyTypeDamageCategory { get; }
-        public IPairedData StructPercentDamagePairedData { get; }
-        public IPairedData ContentPercentDamagePairedData { get; }
-        public IPairedData VehiclePercentDamagePairedData { get; }
-        public IPairedData OtherPercentDamagePairedData { get; }
+        public PairedData StructPercentDamagePairedData { get; }
+        public PairedData ContentPercentDamagePairedData { get; }
+        public PairedData VehiclePercentDamagePairedData { get; }
+        public PairedData OtherPercentDamagePairedData { get; }
         public double FirstFloorElevationOffset { get; }
         public double StructureValueOffset { get; }
         public double ContentValueOffset { get; }
@@ -33,7 +33,7 @@ namespace HEC.FDA.Model.structures
         #endregion
 
         #region Constructor 
-        public DeterministicOccupancyType(string occupancyTypeName, string occupancyTypeDamageCategory, IPairedData structPercentDamagePairedData, double sampledFirstFloorElevation, double sampledStructureValue, bool computeContentDamage, bool computeVehicleDamage, bool computeOtherDamage, IPairedData contentPercentDamagePairedData, double sampledContentValue, bool useCSVR, double csvr, IPairedData vehiclePercentDamagePairedData, double sampledVehicleValue, IPairedData otherPercentDamagePairedData, double sampledOtherValue, bool useOSVR, double osvr, bool isStructureValueLogNormal = false, bool isContentValueLogNormal = false, bool isOtherValueLogNormal = false, bool isVehicleValueLogNormal = false, bool isFirstFloorElevationLogNormal = false)
+        public DeterministicOccupancyType(string occupancyTypeName, string occupancyTypeDamageCategory, PairedData structPercentDamagePairedData, double sampledFirstFloorElevation, double sampledStructureValue, bool computeContentDamage, bool computeVehicleDamage, bool computeOtherDamage, PairedData contentPercentDamagePairedData, double sampledContentValue, bool useCSVR, double csvr, PairedData vehiclePercentDamagePairedData, double sampledVehicleValue, PairedData otherPercentDamagePairedData, double sampledOtherValue, bool useOSVR, double osvr, bool isStructureValueLogNormal = false, bool isContentValueLogNormal = false, bool isOtherValueLogNormal = false, bool isVehicleValueLogNormal = false, bool isFirstFloorElevationLogNormal = false)
         {
             OccupancyTypeName = occupancyTypeName;
             OccupancyTypeDamageCategory = occupancyTypeDamageCategory;
