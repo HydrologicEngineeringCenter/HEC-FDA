@@ -95,6 +95,35 @@ namespace HEC.FDA.Model.paireddata
             }
         }
         /// <summary>
+        /// Created to provide a method for searching paired data without using binary search. 
+        /// </summary>
+        public double f(double x,  ref int indexOfPreviousTopOfSegment)
+        {
+            //If we've got it right on
+            if (Xvals[indexOfPreviousTopOfSegment] == x)
+            {
+                return Yvals[indexOfPreviousTopOfSegment];
+            }
+            else // x is greater than the last top of segment
+            {
+                while (x > Xvals[indexOfPreviousTopOfSegment])
+                {
+                    indexOfPreviousTopOfSegment++;
+                }
+                return InterpolateYs(x, indexOfPreviousTopOfSegment);
+            }
+        }
+        private double InterpolateYs(double x, int index)
+        {
+            double yAtIndexMinus1 = Yvals[index - 1];
+            double xAtIndexMinus1 = Xvals[index - 1];
+            double m = (Yvals[index] - yAtIndexMinus1) / (Xvals[index] - xAtIndexMinus1);
+            double b = yAtIndexMinus1;
+            double dx = x - xAtIndexMinus1;
+            return m * dx + b;
+        }
+
+        /// <summary>
         /// f_inverse implements ISample on PairedData, for a given input double y f_inverse produces an output double that represents the linearly interoplated value for x given y.
         /// </summary>
         public double f_inverse(double y)
