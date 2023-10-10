@@ -336,16 +336,13 @@ namespace HEC.FDA.Model.structures
                     for (int j = 0; j < nPf; j++)
                     {
                         float wse = _invertedWSEL[i, j];
-                        if (wse != -9999)
-                        {
-                            var (structDamage, contDamage, vehicleDamage, otherDamage) = Structures[i].ComputeDamage(wse, dt, PriceIndex, analysisYear);
+                        var (structDamage, contDamage, vehicleDamage, otherDamage) = Structures[i].ComputeDamage(wse, deterministicOccType, PriceIndex,j);
                             _strucParallelCollection[j, i] = (structDamage);
                             _contentParallelCollection[j, i] = (contDamage);
                             _otherParallelCollection[j, i] = (vehicleDamage);
                             _vehicleParallelCollection[j, i] = (otherDamage);
                         }
                     }
-                }
             }, 256);
             return AggregateResults(wses, damageCategory, aggregateConsequenceResults, _strucParallelCollection, _contentParallelCollection, _otherParallelCollection, _vehicleParallelCollection);
         }
