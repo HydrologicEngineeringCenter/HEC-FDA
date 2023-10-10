@@ -278,20 +278,18 @@ namespace HEC.FDA.Model.structures
             int nPf = wses.Count;
             int nStruc = wses[0].Length;
             // NOT SAFE TO CALL THIS METHOD IN PARALLEL
-            if(_invertedWSEL == null || _invertedWSEL.GetLength(0) != nStruc || _invertedWSEL.GetLength(1) != nPf)
+            if (_invertedWSEL == null || _invertedWSEL.GetLength(0) != nStruc || _invertedWSEL.GetLength(1) != nPf)
             {
                 _invertedWSEL = new float[nStruc, nPf];
-            }
-
-            for(int i = 0; i < nPf; i++)
+                for (int i = 0; i < nPf; i++)
             {
                 var pf = wses[i];
-                for(int j = 0; j <  nStruc; j++)
+                    for (int j = 0; j < nStruc; j++)
                 {
-                    _invertedWSEL[j,i] = pf[j]; 
+                        _invertedWSEL[j, i] = pf[j];
                 }
             }
-
+            }
             if (_strucParallelCollection == null || _strucParallelCollection.GetLength(0) != nPf || _strucParallelCollection.GetLength(1) != nStruc)
             {
                 _strucParallelCollection = new double[nPf, nStruc];
