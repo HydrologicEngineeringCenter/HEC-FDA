@@ -4,5 +4,6 @@ namespace HEC.FDA.Model.paireddata
     {
         double f(double x);
         double f_inverse(double y);
+        double f(double x, ref int index);
     }
 }
