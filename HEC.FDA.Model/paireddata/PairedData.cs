@@ -114,6 +114,11 @@ namespace HEC.FDA.Model.paireddata
             {
                 return Yvals[indexOfPreviousTopOfSegment];
             }
+            //We're on the same segment
+            if (x < Xvals[indexOfPreviousTopOfSegment])
+            {
+                return InterpolateYs(x, indexOfPreviousTopOfSegment);
+            }
             else // x is greater than the last top of segment
             {
                 while (x > Xvals[indexOfPreviousTopOfSegment])
