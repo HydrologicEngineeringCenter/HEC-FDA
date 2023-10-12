@@ -114,19 +114,11 @@ namespace HEC.FDA.Model.compute
             else
             {
                 List<(CurveMetaData, PairedData)> damageFrequencyFunctions = ComputeDamageFrequency(computeIsDeterministic);
+                _ImpactAreaScenarioResults.DamageFrequencyFunctions = damageFrequencyFunctions;
                 CreateEADHistograms(convergenceCriteria, damageFrequencyFunctions);
                 if (computeDefaultThreshold == true)
                 {//I am not sure if there is a better way to add the default threshold
                     _ImpactAreaScenarioResults.PerformanceByThresholds.AddThreshold(ComputeDefaultThreshold(convergenceCriteria, computeWithDamage, damageFrequencyFunctions));
-                }
-                //this is where we message out the damage frequency functions
-                if (giveMeADamageFrequency)
-                {
-                    foreach ((CurveMetaData, PairedData) damCatDamageFrequency in damageFrequencyFunctions)
-                    {
-                        ReportMessage(this, new MessageEventArgs(new FrequencyDamageMessage(damCatDamageFrequency.Item2, damCatDamageFrequency.Item1.DamageCategory, damCatDamageFrequency.Item1.AssetCategory)));
-
-                    }
                 }
             }
 
@@ -705,12 +697,12 @@ namespace HEC.FDA.Model.compute
                     if (_ChannelStageFloodplainStage.IsNull)
                     {
 
-                        damageFrequency.Add((stageDamageFunction.CurveMetaData, (PairedData)stageDamage.compose(new PairedData(xs, ys))));
+                        damageFrequency.Add((stageDamageFunction.CurveMetaData, (PairedData)stageDamage.compose(frequencyStage)));
                     }
                     else
                     {
                         PairedData exteriorInterior = _ChannelStageFloodplainStage.SamplePairedData(meanRandomProvider.NextRandom(), computeIsDeterministic);
-                        PairedData frequencyInteriorStage = exteriorInterior.compose(new PairedData(xs, ys));
+                        PairedData frequencyInteriorStage = exteriorInterior.compose(frequencyStage);
                         damageFrequency.Add((stageDamageFunction.CurveMetaData, (PairedData)stageDamage.compose(frequencyInteriorStage)));
                     }
 

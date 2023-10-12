@@ -548,9 +548,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             if (configurationValidationResult.IsValid)
             {
                 ImpactAreaScenarioSimulation simulation = sc.BuildSimulation();
-                simulation.MessageReport += MyMessageHandler;
-                MedianRandomProvider randomProvider = new();
-                ConvergenceCriteria cc = StudyCache.GetStudyPropertiesElement().GetStudyConvergenceCriteria();
                 ImpactAreaScenarioResults result = simulation.PreviewCompute();
                 if (result == null)
                 {
@@ -559,26 +556,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 else
                 {
                     EAD = result.ConsequenceResults.MeanDamage(_selectedDamageCurve.DamCat, _selectedAssetCategory, CurrentImpactArea.ID);
+                    _DamageFrequencyCurve = result.GetDamageFrequency(_selectedDamageCurve.DamCat, _selectedAssetCategory);
                 }
             }
 
-        }
-
-        public void MyMessageHandler(object sender, MessageEventArgs e)
-        {
-            //The following 3 messages are coming into here.
-            //default
-            //Ead message
-            //total
-
-            if (e.Message is FrequencyDamageMessage damageMessage)
-            {
-                //todo: not sure that this is correct. Maybe we want the "total" one, but in the current case the "total" has no values?
-                if (e.Message.Message.Equals("FrequencyDamage"))
-                {
-                    _DamageFrequencyCurve = damageMessage.FrequencyDamage;
-                }
-            }
         }
 
         #region PlotCurves
