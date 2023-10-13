@@ -227,7 +227,7 @@
     <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
     <PackageReference Include="OxyPlot.Wpf" Version="2.1.2" />
     <PackageReference Include="PlottingLibrary2D" Version="1.0.0-beta-gdc08aa8621" />
-    <PackageReference Include="SciChart" Version="7.0.2.27161" />
+    <PackageReference Include="SciChart" Version="6.1.0.13075" />
     <PackageReference Include="WpfAnimatedGif" Version="2.0.0" />
   </ItemGroup>
 
