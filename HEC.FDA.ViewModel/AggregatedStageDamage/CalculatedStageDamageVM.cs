@@ -665,14 +665,14 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                         WriteDetailsCsvFile(scenarioStageDamage, quantityDamagedElementsUPD);
                     }
                 }
-            }
+        }
             catch (Exception ex)
             {
                 MessageBox.Show("An error occured while trying to compute stage damages:\n" + ex.Message, "Compute Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
-            //maybe i need to validate everything?
-            string msg = vg.GetErrorMessages();
+    //maybe i need to validate everything?
+    string msg = vg.GetErrorMessages();
 
             return stageDamageFunctions;
         }
