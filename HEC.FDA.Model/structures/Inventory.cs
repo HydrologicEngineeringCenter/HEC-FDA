@@ -8,6 +8,8 @@ using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Model.Messaging;
 using HEC.FDA.Model.metrics;
+using System.IO;
+using Utilities;
 
 namespace HEC.FDA.Model.structures
 {
@@ -28,17 +30,20 @@ namespace HEC.FDA.Model.structures
         {
             OccTypes = occTypes;
             PriceIndex = priceIndex;
-            //Projection.FromFile returns Null if the path is bad. We'll check for null before we reproject. 
-            Projection studyProjection = Projection.FromFile(projectionFilePath);
-            TerrainLayer terrainLayer = null;
-            if (updateGroundElevFromTerrain)
+            Projection studyProjection;
+            //Only use the user specified projection if they don't have a terrain. Otherwise force them to use that projection. 
+            if (terrainPath.IsNullOrEmpty())
             {
-                terrainLayer = new("ThisNameIsNotUsed", terrainPath);
+                studyProjection = Projection.FromFile(projectionFilePath);
             }
-            PointFeatureLayer structureFeatureLayer = new("ThisNameIsNotUsed", pointShapefilePath);
+            else
+            {
+                studyProjection = RASHelper.GetProjectionFromTerrain(terrainPath);
+            }
+            //Projection.FromFile returns Null if the path is bad. We'll check for null before we reproject. 
+            
             PolygonFeatureLayer impactAreaFeatureLayer = new("ThisNameIsNotUsed", impactAreaShapefilePath);
-
-            LoadStructuresFromSourceFiles(structureFeatureLayer, map, terrainLayer, updateGroundElevFromTerrain, impactAreaFeatureLayer, studyProjection);
+            LoadStructuresFromSourceFiles(pointShapefilePath, map, terrainPath, updateGroundElevFromTerrain, impactAreaFeatureLayer, studyProjection);
             AddRules();
         }
 
@@ -87,17 +92,17 @@ namespace HEC.FDA.Model.structures
             AddSinglePropertyRule(nameof(PriceIndex), new Rule(() => PriceIndex >= 1, $"The price index must be greater than or equal to 1 but was entered as {PriceIndex}", ErrorLevel.Major));
         }
 
-        private void LoadStructuresFromSourceFiles(PointFeatureLayer structureFeatureLayer, StructureSelectionMapping map, TerrainLayer terrainLayer, bool updateGroundElevFromTerrain,
+        private void LoadStructuresFromSourceFiles(string pointShapefilePath, StructureSelectionMapping map, string terrrainFilePath, bool updateGroundElevFromTerrain,
             PolygonFeatureLayer ImpactAreaShapefilePath, Projection studyProjection)
         {
             List<Polygon> impactAreas = RASHelper.LoadImpactAreasFromSourceFiles(ImpactAreaShapefilePath, studyProjection);
             float[] groundelevs = Array.Empty<float>();
             int defaultMissingValue = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE;
+            PointFeatureLayer structureFeatureLayer = new("ThisNameIsNotUsed", pointShapefilePath);
             PointMs pointMs = new(structureFeatureLayer.Points().Select(p => p.PointM()));
-
             if (updateGroundElevFromTerrain)
             {
-                groundelevs = RASHelper.GetGroundElevationFromRASTerrain(structureFeatureLayer, terrainLayer, studyProjection);
+                groundelevs = RASHelper.SamplePointsFromRaster(pointShapefilePath, terrrainFilePath, studyProjection);
             }
 
             for (int i = 0; i < structureFeatureLayer.FeatureCount(); i++)
@@ -278,17 +283,17 @@ namespace HEC.FDA.Model.structures
             int nPf = wses.Count;
             int nStruc = wses[0].Length;
             // NOT SAFE TO CALL THIS METHOD IN PARALLEL
-            if(_invertedWSEL == null || _invertedWSEL.GetLength(0) != nStruc || _invertedWSEL.GetLength(1) != nPf)
+            if (_invertedWSEL == null || _invertedWSEL.GetLength(0) != nStruc || _invertedWSEL.GetLength(1) != nPf)
             {
                 _invertedWSEL = new float[nStruc, nPf];
             }
 
-            for(int i = 0; i < nPf; i++)
+            for (int i = 0; i < nPf; i++)
             {
                 var pf = wses[i];
-                for(int j = 0; j <  nStruc; j++)
+                for (int j = 0; j < nStruc; j++)
                 {
-                    _invertedWSEL[j,i] = pf[j]; 
+                    _invertedWSEL[j, i] = pf[j];
                 }
             }
 
@@ -309,7 +314,7 @@ namespace HEC.FDA.Model.structures
                 _vehicleParallelCollection = new double[nPf, nStruc];
             }
 
-            if (_occTypeIndices == null || _occTypeIndices.Length != nStruc )
+            if (_occTypeIndices == null || _occTypeIndices.Length != nStruc)
             {
                 _occTypeIndices = new int[nStruc];
                 for (int i = 0; i < nStruc; i++)
@@ -352,7 +357,7 @@ namespace HEC.FDA.Model.structures
             return AggregateResults(wses, damageCategory, aggregateConsequenceResults, _strucParallelCollection, _contentParallelCollection, _otherParallelCollection, _vehicleParallelCollection);
         }
 
-        private List<ConsequenceResult> AggregateResults(List<float[]> wses, string damageCategory, List<ConsequenceResult> aggregateConsequenceResults, double[,] structureParallelCollection, 
+        private List<ConsequenceResult> AggregateResults(List<float[]> wses, string damageCategory, List<ConsequenceResult> aggregateConsequenceResults, double[,] structureParallelCollection,
             double[,] contentParallelCollection, double[,] otherParallelCollection, double[,] vehicleParallelCollection)
         {
             for (int j = 0; j < wses.Count; j++)
@@ -371,12 +376,12 @@ namespace HEC.FDA.Model.structures
         public List<string> AreOcctypesValid()
         {
             List<string> errors = new();
-            foreach(KeyValuePair<string, OccupancyType> entry in OccTypes)
+            foreach (KeyValuePair<string, OccupancyType> entry in OccTypes)
             {
                 ErrorLevel errorLevel = entry.Value.ErrorLevel;
-                if(errorLevel>= ErrorLevel.Major)
+                if (errorLevel >= ErrorLevel.Major)
                 {
-                    errors.Add(entry.Value.GetErrorMessages(ErrorLevel.Major)) ;
+                    errors.Add(entry.Value.GetErrorMessages(ErrorLevel.Major));
                 }
             }
             return errors;
