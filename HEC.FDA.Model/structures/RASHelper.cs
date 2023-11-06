@@ -71,7 +71,7 @@ public static class RASHelper
         {
             case ".hdf":
                 TerrainLayer terrain = new("ThisNameIsNotUSed", TerrainPath);
-                terrainTif = terrain.GetAllSourceFiles()[0];
+                terrainTif = terrain.GetAllSourceFiles()[1];
                 break;
             case ".tif":
                 terrainTif = TerrainPath;
