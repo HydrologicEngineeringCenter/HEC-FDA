@@ -108,7 +108,6 @@ public static class RASHelper
         Geospatial.Vectors.Point newp = VectorExtensions.Reproject(p, currentProjection, newProjection);
         return Converter.ConvertPtM(newp);
     }
-
     public static PointMs ReprojectPoints(Projection targetProjection, Projection originalProjection, PointMs pointMs)
     {
         if (targetProjection == null || targetProjection.IsEqual(originalProjection))
@@ -130,7 +129,6 @@ public static class RASHelper
         return Converter.Convert(reprojPoly);
 
     }
-
     public static T TryGet<T>(object value, T defaultValue = default)
 where T : struct
     {
@@ -182,7 +180,6 @@ where T : struct
         }
         return retval;
     }
-
     public static List<Polygon> LoadImpactAreasFromSourceFiles(PolygonFeatureLayer impactAreaSet, Projection studyProjection)
     {
         List<Polygon> polygons = impactAreaSet.Polygons().ToList();
@@ -200,7 +197,6 @@ where T : struct
             return ReprojectPolygons(studyProjection, polygons, impactAreaPrj);
         }
     }
-
     public static List<Polygon> ReprojectPolygons(Projection studyProjection, List<Polygon> polygons, Projection impactAreaPrj)
     {
         List<Polygon> ImpactAreas = new();
@@ -211,4 +207,28 @@ where T : struct
         }
         return ImpactAreas;
     }
+    public static List<string> GetTerrainComponentFiles(string terrainHDF, string extensionFilter)
+    {
+        TerrainLayer terrain = new("ThisNameIsNotUSed", terrainHDF);
+        List<string> allFiles = terrain.GetAllSourceFiles();
+        List<string> filteredFiles = new();
+        if (extensionFilter.IsNullOrEmpty())
+        {
+            filteredFiles = allFiles;
+        }
+        else
+        {
+            foreach (string file in allFiles)
+            {
+                if (System.IO.Path.GetExtension(file) == extensionFilter)
+                {
+                    filteredFiles.Add(file);
+                }
+            }
+        }
+        return filteredFiles;
+
+    }
+
+
 }
