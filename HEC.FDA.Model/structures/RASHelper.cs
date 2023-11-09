@@ -1,5 +1,8 @@
 ﻿using Geospatial.GDALAssist;
 using Geospatial.GDALAssist.Vectors;
+using Geospatial.IO;
+using Geospatial.Rasters;
+using Geospatial.Terrain;
 using RasMapperLib;
 using RasMapperLib.Utilities;
 using System;
@@ -11,18 +14,73 @@ namespace HEC.FDA.Model.structures;
 
 public static class RASHelper
 {
-    public static float[] GetGroundElevationFromRASTerrain(PointFeatureLayer pointLayer, TerrainLayer terrain, Projection studyProjection)
+    public static float[] SamplePointsFromRaster(string pointShapefilePath, string terrainLayerPath, Projection studyProjection)
     {
+        PointFeatureLayer pointLayer = new("thisNameIsntUsed", pointShapefilePath);
         Projection siProjection = GetVectorProjection(pointLayer);
         PointMs pointMs = new(pointLayer.Points().Select(p => p.PointM()));
-        if (!studyProjection.IsNull())
+        pointMs = ReprojectPoints(studyProjection, siProjection, pointMs);
+        string extension = System.IO.Path.GetExtension(terrainLayerPath);
+        float[] groundelevs;
+        switch (extension)
         {
-            if (!studyProjection.IsEqual(siProjection))
-            {
-                pointMs = ReprojectPoints(studyProjection, siProjection, pointMs);
-            }
+            case ".hdf":
+                TerrainLayer layer = new("thisNameIsNotUsed", terrainLayerPath);
+                groundelevs = layer.ComputePointElevations(pointMs);
+                break;
+            case ".tif":
+                groundelevs = SamplePointsOnTiff(pointMs, terrainLayerPath);
+                break;
+            default:
+                throw new Exception("The file type is invalid.");
         }
-        return terrain.ComputePointElevations(pointMs);
+        return groundelevs;
+
+        static PointMs ReprojectPoints(Projection targetProjection, Projection originalProjection, PointMs pointMs)
+        {
+
+            if (!targetProjection.IsNull())
+            {
+                if (!targetProjection.IsEqual(originalProjection))
+                {
+
+                }
+            }
+            return pointMs;
+        }
+    }
+    public static float[] SamplePointsOnTiff(PointMs pts, string filePath)
+    {
+        var baseDs = TiffDataSource<float>.TryLoad(filePath);
+        if (baseDs == null)
+        {
+            return new float[pts.Count];
+        }
+        RasterPyramid<float> baseRaster = baseDs.AsRasterizer();
+        List<Geospatial.Vectors.Point> geospatialpts = Converter.Convert(pts);
+        Memory<Geospatial.Vectors.Point> points = new(geospatialpts.ToArray());
+        float[] elevationData = new float[points.Length];
+        baseRaster.SamplePoints(points, elevationData);
+        return elevationData;
+    }
+    public static Projection GetProjectionFromTerrain(string TerrainPath)
+    {
+        string terrainExtension = System.IO.Path.GetExtension(TerrainPath);
+        string terrainTif;
+        switch (terrainExtension)
+        {
+            case ".hdf":
+                TerrainLayer terrain = new("ThisNameIsNotUSed", TerrainPath);
+                terrainTif = terrain.GetAllSourceFiles()[1];
+                break;
+            case ".tif":
+                terrainTif = TerrainPath;
+                break;
+            default:
+                throw new Exception("Unsupported File Type");
+        }
+        GDALRaster raster = new(terrainTif);
+        return raster.GetProjection();
     }
     public static int GetImpactAreaFID(PointM point, List<Polygon> ImpactAreas)
     {
@@ -50,13 +108,16 @@ public static class RASHelper
         Geospatial.Vectors.Point newp = VectorExtensions.Reproject(p, currentProjection, newProjection);
         return Converter.ConvertPtM(newp);
     }
-
-    public static PointMs ReprojectPoints(Projection studyProjection, Projection siProjection, PointMs pointMs)
+    public static PointMs ReprojectPoints(Projection targetProjection, Projection originalProjection, PointMs pointMs)
     {
+        if (targetProjection == null || targetProjection.IsEqual(originalProjection))
+        {
+            return pointMs;
+        }
         PointMs reprojPointMs = new();
         foreach (PointM pt in pointMs)
         {
-            reprojPointMs.Add(ReprojectPoint(pt, studyProjection, siProjection));
+            reprojPointMs.Add(ReprojectPoint(pt, targetProjection, originalProjection));
         }
         return reprojPointMs;
 
@@ -68,7 +129,6 @@ public static class RASHelper
         return Converter.Convert(reprojPoly);
 
     }
-
     public static T TryGet<T>(object value, T defaultValue = default)
 where T : struct
     {
@@ -120,7 +180,6 @@ where T : struct
         }
         return retval;
     }
-
     public static List<Polygon> LoadImpactAreasFromSourceFiles(PolygonFeatureLayer impactAreaSet, Projection studyProjection)
     {
         List<Polygon> polygons = impactAreaSet.Polygons().ToList();
@@ -138,7 +197,6 @@ where T : struct
             return ReprojectPolygons(studyProjection, polygons, impactAreaPrj);
         }
     }
-
     public static List<Polygon> ReprojectPolygons(Projection studyProjection, List<Polygon> polygons, Projection impactAreaPrj)
     {
         List<Polygon> ImpactAreas = new();
@@ -149,4 +207,28 @@ where T : struct
         }
         return ImpactAreas;
     }
+    public static List<string> GetTerrainComponentFiles(string terrainHDF, string extensionFilter)
+    {
+        TerrainLayer terrain = new("ThisNameIsNotUSed", terrainHDF);
+        List<string> allFiles = terrain.GetAllSourceFiles();
+        List<string> filteredFiles = new();
+        if (extensionFilter.IsNullOrEmpty())
+        {
+            filteredFiles = allFiles;
+        }
+        else
+        {
+            foreach (string file in allFiles)
+            {
+                if (System.IO.Path.GetExtension(file) == extensionFilter)
+                {
+                    filteredFiles.Add(file);
+                }
+            }
+        }
+        return filteredFiles;
+
+    }
+
+
 }

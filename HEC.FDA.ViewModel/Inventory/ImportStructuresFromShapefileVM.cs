@@ -161,7 +161,7 @@ namespace HEC.FDA.ViewModel.Inventory
 
         public bool NextButtonClicked()
         {
-            if(Storage.Connection.Instance.ProjectionFile == null)
+            if(Storage.Connection.Instance.ProjectionFile == null && ((TerrainElement)StudyCache.GetParentElementOfType<TerrainOwnerElement>().Elements[0] == null))
             {
                 MessageBox.Show("Please set your project projection in the study properties.", "Missing Projection", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;

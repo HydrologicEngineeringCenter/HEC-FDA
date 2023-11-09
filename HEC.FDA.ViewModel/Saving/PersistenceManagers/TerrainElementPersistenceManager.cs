@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.Storage;
+﻿using HEC.FDA.Model.structures;
+using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.Watershed;
 using System;
@@ -22,39 +23,23 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             string newDirectory = Path.GetDirectoryName(newPath);
             Directory.CreateDirectory(newDirectory);
             
-            bool isVRT = Path.GetExtension(element.FileName).Equals(".vrt");
-            bool isHDF = Path.GetExtension(element.FileName).Equals(".hdf");
-
-            if(isVRT)
+            string extension = Path.GetExtension(OriginalTerrainPath);
+            switch (extension)
             {
-                //then copy all the vrt and tif files
-                string originalDirName = Path.GetDirectoryName(OriginalTerrainPath);
-
-                string[] paths = Directory.GetFiles(originalDirName);
-                foreach(string path in paths)
-                {
-                    string extension = Path.GetExtension(path);
-                    if(extension.Equals(".vrt") || extension.Equals(".tif"))
+                case ".hdf":
+                    //copy all that terrain's files. 
+                    string originalDirName = Path.GetDirectoryName(OriginalTerrainPath);
+                    List<string> paths = RASHelper.GetTerrainComponentFiles(OriginalTerrainPath,null);
+                    foreach (string path in paths)
                     {
-                        await Task.Run(() => File.Copy(path, newDirectory + "\\"+ Path.GetFileName(path)));
+                        await Task.Run(() => File.Copy(path, newDirectory + "\\" + Path.GetFileName(path)));
                     }
-                }
-            }
-            else if(isHDF)
-            {
-                //copy all files at this level
-                string originalDirName = Path.GetDirectoryName(OriginalTerrainPath);
-
-                string[] paths = Directory.GetFiles(originalDirName);
-                foreach (string path in paths)
-                {
-                    await Task.Run(() => File.Copy(path, newDirectory + "\\" + Path.GetFileName(path)));
-                }
-            }
-            else
-            {
-                //.tifs and .flts i just copy the file.
-                await Task.Run(() => File.Copy(OriginalTerrainPath, newPath)); 
+                    break;
+                case ".tif":
+                    await Task.Run(() => File.Copy(OriginalTerrainPath, newPath));
+                    break;
+                default:
+                    throw new Exception("The file type is invalid.");
             }
 
             string name = element.Name;
@@ -89,10 +74,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                 MessageBox.Show("Could not delete terrain file: " + element.FileName + ":\n" + e.Message, "Error Deleting Terrain", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            StudyCacheForSaving.RemoveElement((TerrainElement)element);
+            StudyCacheForSaving.RemoveElement(element);
         }
 
-        private async void RenameTheTerrainFileOnBackgroundThread(ChildElement oldElement, ChildElement newElement)
+        private static async void RenameTheTerrainFileOnBackgroundThread(ChildElement oldElement, ChildElement newElement)
         {
             if (!newElement.Name.Equals(oldElement.Name))
             {

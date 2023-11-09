@@ -1,5 +1,4 @@
-﻿using HEC.FDA.Model.interfaces;
-using HEC.MVVMFramework.Base.Implementations;
+﻿using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Enumerations;
 using RasMapperLib;
 using HEC.FDA.Model.metrics;
