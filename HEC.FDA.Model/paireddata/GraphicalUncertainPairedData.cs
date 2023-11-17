@@ -93,7 +93,7 @@ namespace HEC.FDA.Model.paireddata
                 }
                 expandedStageOrLogFlowValues = tempArray;
             }
-            PairedData expandedPairedData = new PairedData(ExceedanceToNonExceedance(CombinedExceedanceProbabilities), expandedStageOrLogFlowValues);
+            PairedData expandedPairedData = new PairedData(ExceedanceToNonExceedance(CombinedExceedanceProbabilities), expandedStageOrLogFlowValues, CurveMetaData);
             return expandedPairedData;
         }
 
