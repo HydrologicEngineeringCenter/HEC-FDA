@@ -101,7 +101,8 @@
             <StackPanel Orientation="Horizontal" >
                 <Button Content="Preview Compute" Width="120" HorizontalAlignment="Left" Click="plotBtn_Click"/>
                 <Label Content="Damage Category:" />
-                <ComboBox ItemsSource="{Binding DamageCategories}" SelectedItem="{Binding SelectedDamageCurve}" DisplayMemberPath="DamCat" MinWidth="100" Width="Auto"/>
+
+                <ComboBox ItemsSource="{Binding DamCats}" SelectedItem="{Binding SelectedDamageCategory}" MinWidth="100" Width="Auto"/>
                 <Label Content="Asset Category:" />
                 <ComboBox ItemsSource="{Binding AssetCategories}" SelectedItem="{Binding SelectedAssetCategory}" Width="Auto" MinWidth="100"/>
                 <Label Content="EAD: " Visibility="{Binding ShowEAD,Converter={StaticResource BoolToVisibilityConverter}}"/>
