@@ -64,7 +64,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             Navigate(tab, false, false);
         }
 
-        public List<String> getUniqueDamageCategories()
+        public List<String> GetUniqueDamageCategories()
         {
             HashSet<String> dams = new HashSet<String>();
             foreach (OccupancyType ot in ListOfOccupancyTypes)

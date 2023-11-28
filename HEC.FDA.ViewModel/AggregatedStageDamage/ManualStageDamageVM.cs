@@ -60,10 +60,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private void LoadOccupancyTypes()
         {
             List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(OccupancyTypesElement));
-            //TODO: How do I access the occ type from the occ type element 
-            //cast as occ type element ans then get the list of occ types 
             OccupancyTypesElement occTypesElement = existingElems.First() as OccupancyTypesElement;
-            List<string> damageCategories = occTypesElement.getUniqueDamageCategories();
+            List<string> damageCategories = occTypesElement.GetUniqueDamageCategories();
             foreach (string damageCategory in damageCategories)
             {
                 _DamageCategories.Add(damageCategory);
@@ -118,21 +116,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
         }
 
-        private void LoadDamageCategories(List<StageDamageCurve> curves)
-        {
-            LoadDamageCategories();
-            //it is possible that the damcat that each curve has is not in the list of current occtypes
-            //so we add them here
-            foreach(StageDamageCurve curve in curves)
-            {
-                string damCat = curve.DamCat;
-                if(!_DamageCategories.Contains(damCat))
-                {
-                    _DamageCategories.Add(damCat);
-                }
-            }
-        }
-
         private void LoadDamageCategories()
         {
             List<OccupancyTypesElement> occupancyTypesElements = StudyCache.GetChildElementsOfType<OccupancyTypesElement>();
@@ -140,7 +123,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             HashSet<String> damCats = new HashSet<String>();
             foreach(OccupancyTypesElement elem in occupancyTypesElements)
             {
-                List<String> damageCategories = elem.getUniqueDamageCategories();
+                List<String> damageCategories = elem.GetUniqueDamageCategories();
                 foreach(string dc in damageCategories)
                 {
                     damCats.Add(dc);
