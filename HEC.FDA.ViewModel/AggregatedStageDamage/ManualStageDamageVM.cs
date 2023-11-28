@@ -41,7 +41,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public ManualStageDamageVM(List<StageDamageCurve> curves)
         {
             loadImpactAreas();
-            LoadOccupancyTypes();
+            LoadDamageCategories();
             int i = 1;
             foreach(StageDamageCurve curve in curves)
             {     
@@ -56,8 +56,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
         }
 
-
-        private void LoadOccupancyTypes()
+        private void LoadDamageCategories()
         {
             List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(OccupancyTypesElement));
             OccupancyTypesElement occTypesElement = existingElems.First() as OccupancyTypesElement;
@@ -113,25 +112,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 {
                     _ImpactAreas.Add(row);
                 }
-            }
-        }
-
-        private void LoadDamageCategories()
-        {
-            List<OccupancyTypesElement> occupancyTypesElements = StudyCache.GetChildElementsOfType<OccupancyTypesElement>();
-            _DamageCategories = new ObservableCollection<String>();
-            HashSet<String> damCats = new HashSet<String>();
-            foreach(OccupancyTypesElement elem in occupancyTypesElements)
-            {
-                List<String> damageCategories = elem.GetUniqueDamageCategories();
-                foreach(string dc in damageCategories)
-                {
-                    damCats.Add(dc);
-                }
-            }
-            foreach(string dc in damCats)
-            {
-                _DamageCategories.Add(dc);
             }
         }
 
