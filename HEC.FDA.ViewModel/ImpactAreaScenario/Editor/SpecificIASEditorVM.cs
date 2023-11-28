@@ -533,8 +533,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             ExteriorInteriorElement extIntElem = SelectedExteriorInteriorElement.ChildElement as ExteriorInteriorElement;
             LateralStructureElement leveeElem = SelectedLeveeFeatureElement.ChildElement as LateralStructureElement;
             AggregatedStageDamageElement stageDamageElem = selectedStageDamage.ChildElement as AggregatedStageDamageElement;
-            AggregatedStageDamageElement nonFailureStageDamageElem = NonFailureSelectedStageDamage.ChildElement as AggregatedStageDamageElement;
-
+            AggregatedStageDamageElement nonFailureStageDamageElem = null;
+            if (_HasNonFailureStageDamage)
+            {
+                nonFailureStageDamageElem = NonFailureSelectedStageDamage.ChildElement as AggregatedStageDamageElement;
+            }
             SimulationCreator sc = new(freqElem, inOutElem, ratElem, extIntElem, leveeElem,
                 stageDamageElem, CurrentImpactArea.ID, _HasNonFailureStageDamage, nonFailureStageDamageElem);
 
