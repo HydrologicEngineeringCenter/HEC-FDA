@@ -41,7 +41,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public ManualStageDamageVM(List<StageDamageCurve> curves)
         {
             loadImpactAreas();
-            LoadDamageCategories(curves);
+            LoadOccupancyTypes();
             int i = 1;
             foreach(StageDamageCurve curve in curves)
             {     
@@ -53,6 +53,20 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             if(Rows.Count > 0)
             {
                 SelectedRow = Rows[0];
+            }
+        }
+
+
+        private void LoadOccupancyTypes()
+        {
+            List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(OccupancyTypesElement));
+            //TODO: How do I access the occ type from the occ type element 
+            //cast as occ type element ans then get the list of occ types 
+            OccupancyTypesElement occTypesElement = existingElems.First() as OccupancyTypesElement;
+            List<string> damageCategories = occTypesElement.getUniqueDamageCategories();
+            foreach (string damageCategory in damageCategories)
+            {
+                _DamageCategories.Add(damageCategory);
             }
         }
 

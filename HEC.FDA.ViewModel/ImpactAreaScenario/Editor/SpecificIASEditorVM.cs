@@ -23,7 +23,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {
     public class SpecificIASEditorVM : BaseViewModel
     {
-        private StageDamageCurve _selectedDamageCurve;
         private string _selectedAssetCategory;
         private string _selectedDamageCategory;
         private ChildElementComboItem _selectedFrequencyRelationship;
@@ -113,9 +112,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         public int Year { get; set; } = DateTime.Now.Year;
         
-        //It seems really bad to call a collection of stage-damage curves damage categories while referring to a collection of strings as asset categories. 
-        //We need both a collection of StageDamageCurve and a collection of string dam cats because the StageDamageCurve collection does not provide a list of unique dam cats
-        public CustomObservableCollection<StageDamageCurve> DamageCategories { get; } = new CustomObservableCollection<StageDamageCurve>();
+        public CustomObservableCollection<StageDamageCurve> StageDamageCurves { get; } = new CustomObservableCollection<StageDamageCurve>();
 
         public CustomObservableCollection<string> DamCats { get; } = new CustomObservableCollection<string>();
         public CustomObservableCollection<string> AssetCategories { get; } = new CustomObservableCollection<string>();
@@ -138,14 +135,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             set { _selectedDamageCategory = value; NotifyPropertyChanged(); }
         }
 
-        public StageDamageCurve SelectedNonFailureDamageCurve
-        {
-            get;set;
-        }
-
-        //TODO: The SelectedDamageCurve needs to be decided based up the selected dam cat and selected asset cat
-        //currently, the selected damage curve is being set without asset category
-
         public StageDamageCurve SelectedDamageCurve
         {
             get { return GetSelectedDamageCurve(); }          
@@ -157,7 +146,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         {
 
             StageDamageCurve returnCurve = null;
-            List<StageDamageCurve> stageDamageCurves = DamageCategories.ToList();
+            List<StageDamageCurve> stageDamageCurves = StageDamageCurves.ToList();
             foreach (StageDamageCurve stageDamageCurve in stageDamageCurves)
             {
                 if (stageDamageCurve.AssetCategory == SelectedAssetCategory)
@@ -435,13 +424,13 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 LoadAssetCategories(stageDamageCurves);
                 LoadDamageCategories(stageDamageCurves);
 
-                DamageCategories.Clear();
-                DamageCategories.AddRange(stageDamageCurves);
+                StageDamageCurves.Clear();
+                StageDamageCurves.AddRange(stageDamageCurves);
             }
             else
             {
                 //the user selected the blank row. Clear the damage category combo
-                DamageCategories.Clear();
+                StageDamageCurves.Clear();
             }
         }
 
