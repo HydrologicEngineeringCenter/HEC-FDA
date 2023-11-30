@@ -557,12 +557,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private void PreviewCompute()
         {
             ChildElementComboItem selectedStageDamage = _SelectedStageDamage();
-
             FrequencyElement freqElem = SelectedFrequencyElement.ChildElement as FrequencyElement;
             InflowOutflowElement inOutElem = SelectedInflowOutflowElement.ChildElement as InflowOutflowElement;
             StageDischargeElement ratElem = SelectedRatingCurveElement.ChildElement as StageDischargeElement;
             ExteriorInteriorElement extIntElem = SelectedExteriorInteriorElement.ChildElement as ExteriorInteriorElement;
             LateralStructureElement leveeElem = SelectedLeveeFeatureElement.ChildElement as LateralStructureElement;
+            AggregatedStageDamageElement stageDamageElem = selectedStageDamage.ChildElement as AggregatedStageDamageElement;
             AggregatedStageDamageElement nonFailureStageDamageElem = null;
             if (_HasNonFailureStageDamage)
             {
