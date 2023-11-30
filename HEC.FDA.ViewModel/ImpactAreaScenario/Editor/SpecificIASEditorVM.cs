@@ -23,8 +23,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 {
     public class SpecificIASEditorVM : BaseViewModel
     {
-        private StageDamageCurve _selectedDamageCurve;
         private string _selectedAssetCategory;
+        private string _selectedDamageCategory;
         private ChildElementComboItem _selectedFrequencyRelationship;
         private bool _ratingRequired;
         private bool _DefaultStageRequired = false;
@@ -44,7 +44,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private double _DefaultStage;
         private bool _ScenarioReflectsEnabled;
         private bool _HasNonFailureStageDamage;
-        
+
         public ChildElementComboItem NonFailureSelectedStageDamage { get; set; }
 
         public bool HasNonFailureStageDamage
@@ -111,7 +111,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
 
         public int Year { get; set; } = DateTime.Now.Year;
-        public CustomObservableCollection<StageDamageCurve> DamageCategories { get; } = new CustomObservableCollection<StageDamageCurve>();
+        public CustomObservableCollection<StageDamageCurve> StageDamageCurves { get; } = new CustomObservableCollection<StageDamageCurve>();
+        public CustomObservableCollection<string> DamCats { get; } = new CustomObservableCollection<string>();
         public CustomObservableCollection<string> AssetCategories { get; } = new CustomObservableCollection<string>();
         public List<ThresholdRowItem> Thresholds { get; set; } = new List<ThresholdRowItem>();
         public CustomObservableCollection<ChildElementComboItem> FrequencyElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
@@ -126,16 +127,34 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             set { _selectedAssetCategory = value; NotifyPropertyChanged(); }
         }
 
-        public StageDamageCurve SelectedNonFailureDamageCurve
+        public string SelectedDamageCategory
         {
-            get;set;
+            get { return _selectedDamageCategory; }
+            set { _selectedDamageCategory = value; NotifyPropertyChanged(); }
         }
 
         public StageDamageCurve SelectedDamageCurve
         {
-            get { return _selectedDamageCurve; }
-            set { _selectedDamageCurve = value; NotifyPropertyChanged(); }
+            get { return GetSelectedDamageCurve(); }
         }
+
+        //the dam cats and asset cats come from the stage damage curves
+        //not possible to not find correct function 
+        private StageDamageCurve GetSelectedDamageCurve()
+        {
+            StageDamageCurve returnCurve = null;
+            List<StageDamageCurve> stageDamageCurves = StageDamageCurves.ToList();
+            foreach (StageDamageCurve stageDamageCurve in stageDamageCurves)
+            {
+                if (stageDamageCurve.AssetCategory == SelectedAssetCategory && stageDamageCurve.DamCat == SelectedDamageCategory)
+                {
+                    returnCurve = stageDamageCurve;
+                    break;
+                }
+            }
+            return returnCurve;
+        }
+
         public ChildElementComboItem SelectedFrequencyElement
         {
             get { return _selectedFrequencyRelationship; }
@@ -395,19 +414,31 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             if (selectedStageDamage != null && selectedStageDamage.ChildElement != null)
             {
                 List<StageDamageCurve> stageDamageCurves = GetStageDamageCurves();
-                LoadAssetCategories(stageDamageCurves);
 
-                DamageCategories.Clear();
-                DamageCategories.AddRange(stageDamageCurves);
-                if (DamageCategories.Count > 0)
-                {
-                    SelectedDamageCurve = DamageCategories[0];
-                }
+                LoadAssetCategories(stageDamageCurves);
+                LoadDamageCategories(stageDamageCurves);
+
+                StageDamageCurves.Clear();
+                StageDamageCurves.AddRange(stageDamageCurves);
             }
             else
             {
                 //the user selected the blank row. Clear the damage category combo
-                DamageCategories.Clear();
+                StageDamageCurves.Clear();
+            }
+        }
+
+        private void LoadDamageCategories(List<StageDamageCurve> stageDamageCurves)
+        {
+            List<string> damageCategories = new();
+            foreach (StageDamageCurve curve in stageDamageCurves)
+            {
+                damageCategories.Add(curve.DamCat);
+            }
+            DamCats.AddRange(damageCategories.Distinct());
+            if (DamCats.Count > 0)
+            {
+                SelectedDamageCategory = DamCats[0];
             }
         }
 
@@ -532,7 +563,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             StageDischargeElement ratElem = SelectedRatingCurveElement.ChildElement as StageDischargeElement;
             ExteriorInteriorElement extIntElem = SelectedExteriorInteriorElement.ChildElement as ExteriorInteriorElement;
             LateralStructureElement leveeElem = SelectedLeveeFeatureElement.ChildElement as LateralStructureElement;
-            AggregatedStageDamageElement stageDamageElem = selectedStageDamage.ChildElement as AggregatedStageDamageElement;
             AggregatedStageDamageElement nonFailureStageDamageElem = null;
             if (_HasNonFailureStageDamage)
             {
@@ -558,8 +588,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 }
                 else
                 {
-                    EAD = result.ConsequenceResults.MeanDamage(_selectedDamageCurve.DamCat, _selectedAssetCategory, CurrentImpactArea.ID);
-                    _DamageFrequencyCurve = result.GetDamageFrequency(_selectedDamageCurve.DamCat, _selectedAssetCategory);
+                    EAD = result.ConsequenceResults.MeanDamage(_selectedDamageCategory, _selectedAssetCategory, CurrentImpactArea.ID);
+                    _DamageFrequencyCurve = result.GetDamageFrequency(_selectedDamageCategory, _selectedAssetCategory);
                 }
             }
 
@@ -681,8 +711,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
             List<ThresholdRowItem> thresholdRowItems = Thresholds;
 
-            SpecificIAS elementToSave = new(CurrentImpactArea.ID,  flowFreqID, inflowOutID, ratingID, extIntID, 
-                latStructID, stageDamID, thresholdRowItems, ScenarioReflectsWithoutProjCondition, DefaultStage, 
+            SpecificIAS elementToSave = new(CurrentImpactArea.ID, flowFreqID, inflowOutID, ratingID, extIntID,
+                latStructID, stageDamID, thresholdRowItems, ScenarioReflectsWithoutProjCondition, DefaultStage,
                 HasNonFailureStageDamage, nonFailureStageDamID);
             return elementToSave;
         }

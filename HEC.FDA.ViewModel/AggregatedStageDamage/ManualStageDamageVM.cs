@@ -41,7 +41,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public ManualStageDamageVM(List<StageDamageCurve> curves)
         {
             loadImpactAreas();
-            LoadDamageCategories(curves);
+            LoadDamageCategories();
             int i = 1;
             foreach(StageDamageCurve curve in curves)
             {     
@@ -53,6 +53,17 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             if(Rows.Count > 0)
             {
                 SelectedRow = Rows[0];
+            }
+        }
+
+        private void LoadDamageCategories()
+        {
+            List<ChildElement> existingElems = StudyCache.GetChildElementsOfType(typeof(OccupancyTypesElement));
+            OccupancyTypesElement occTypesElement = existingElems.First() as OccupancyTypesElement;
+            List<string> damageCategories = occTypesElement.GetUniqueDamageCategories();
+            foreach (string damageCategory in damageCategories)
+            {
+                _DamageCategories.Add(damageCategory);
             }
         }
 
@@ -101,40 +112,6 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 {
                     _ImpactAreas.Add(row);
                 }
-            }
-        }
-
-        private void LoadDamageCategories(List<StageDamageCurve> curves)
-        {
-            LoadDamageCategories();
-            //it is possible that the damcat that each curve has is not in the list of current occtypes
-            //so we add them here
-            foreach(StageDamageCurve curve in curves)
-            {
-                string damCat = curve.DamCat;
-                if(!_DamageCategories.Contains(damCat))
-                {
-                    _DamageCategories.Add(damCat);
-                }
-            }
-        }
-
-        private void LoadDamageCategories()
-        {
-            List<OccupancyTypesElement> occupancyTypesElements = StudyCache.GetChildElementsOfType<OccupancyTypesElement>();
-            _DamageCategories = new ObservableCollection<String>();
-            HashSet<String> damCats = new HashSet<String>();
-            foreach(OccupancyTypesElement elem in occupancyTypesElements)
-            {
-                List<String> damageCategories = elem.getUniqueDamageCategories();
-                foreach(string dc in damageCategories)
-                {
-                    damCats.Add(dc);
-                }
-            }
-            foreach(string dc in damCats)
-            {
-                _DamageCategories.Add(dc);
             }
         }
 
