@@ -16,7 +16,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private TableWithPlotVM _TableWithPlot;
         private ManualStageDamageRowItem _SelectedRow;
         private ObservableCollection<ImpactAreaRowItem> _ImpactAreas;
-        private ObservableCollection<String> _DamageCategories;
+        private ObservableCollection<String> _DamageCategories = new ObservableCollection<string>();
         public ObservableCollection<ManualStageDamageRowItem> Rows { get; } = new ObservableCollection<ManualStageDamageRowItem>();
         public TableWithPlotVM TableWithPlot
         {
