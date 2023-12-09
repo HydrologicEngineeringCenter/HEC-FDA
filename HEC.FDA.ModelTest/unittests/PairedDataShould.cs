@@ -26,6 +26,15 @@ namespace HEC.FDA.ModelTest.unittests
         }
 
         [Theory]
+        [InlineData(new double[] { -1.1, -1, -0.5, 0, 0.5, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, new double[] { 0, 0.55192593, 0.651668523, 1.394744112, 7.678889007, 10.44977477, 13.97495583, 17.84208464, 22.68345023, 28.63414981, 32.20048078, 35.96039015, 39.6759527, 43.77432355, 46.39626234, 47.87619471 }, 0.458824670000012, 5.7666414157679)]
+        public void ReturnYGivenXExtensiveCases(double[] xvals, double[] yvals, double xGiven, double yExpected)
+        {
+            PairedData pairedData = new PairedData(xvals, yvals);
+            double yActual = pairedData.f(xGiven);
+            Assert.Equal(yExpected, yActual, .05);
+        }
+
+        [Theory]
         [InlineData(3, 1.5)]
         [InlineData(10, 5)]
         [InlineData(2, 1)]

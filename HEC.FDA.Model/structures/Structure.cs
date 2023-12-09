@@ -79,6 +79,7 @@ namespace HEC.FDA.Model.structures
         {
             var (structDamage, contDamage, vehicleDamage, otherDamage) = ComputeDamage(waterSurfaceElevation, FindOccType(deterministicOccupancyType), priceIndex, analysisYear);
 
+            //TODO: A lot of steps happen here that are probably not necessary to return 4 doubles.
             ConsequenceResult consequenceResult = new(DamageCatagory);
 
             consequenceResult.IncrementConsequence(structDamage, contDamage, vehicleDamage, otherDamage);
