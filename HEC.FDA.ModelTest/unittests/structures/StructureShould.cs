@@ -79,7 +79,6 @@ namespace HEC.FDA.ModelTest.unittests.structures
         [Fact]
         public void SELA_StructureDamage_Should()
         {
-            //CAVEAT: This data comes from the structure details report, so we're excluding some relevant logic from testing
             //1STY-PIER OccType
             double[] structureDepths = new double[] { -1.1, -1, -0.5, 0, 0.5, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
             double[] structurePercentDamageMin = new double[] { 0, 1.5, 1.5, 7.5, 18.8, 41.5, 41.6, 44.7, 44.8, 44.9, 46.3, 46.4, 46.5, 46.6, 68.3, 68.4, 77.6, 77.7, 77.8, 77.9, 78 };
