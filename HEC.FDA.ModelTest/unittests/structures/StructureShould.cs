@@ -42,7 +42,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
             .WithStructureValueUncertainty(_structureValueUncertainty)
             .WithContentToStructureValueRatio(_contentToStructureValueRatio)
             .Build();
-        private static int structureID = 44;
+        private static string structureID = "44";
         private static PointM pointM = new PointM();
         private static double firstFloorElevation = 100;
         private static double inventoriedStructureValue = 1000;
@@ -64,7 +64,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
         [Fact]
         public void ValidationShould()
         {
-            Structure badStructure = new Structure(fid: 1, pointM, firstFloorElevation: -304, val_struct: -10, st_damcat: "", occtype: "", impactAreaID, val_cont: -10, val_other: -10, val_vehic: -10);
+            Structure badStructure = new Structure(fid: "1", pointM, firstFloorElevation: -304, val_struct: -10, st_damcat: "", occtype: "", impactAreaID, val_cont: -10, val_other: -10, val_vehic: -10);
             badStructure.Validate();
             foreach (PropertyRule rule in badStructure.RuleMap.Values)
             {

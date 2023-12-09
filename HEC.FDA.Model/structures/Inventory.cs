@@ -98,6 +98,7 @@ namespace HEC.FDA.Model.structures
             List<Polygon> impactAreas = RASHelper.LoadImpactAreasFromSourceFiles(ImpactAreaShapefilePath, studyProjection);
             float[] groundelevs = Array.Empty<float>();
             int defaultMissingValue = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE;
+            string defaultMissingStringValue = "EMPTY";
             PointFeatureLayer structureFeatureLayer = new("ThisNameIsNotUsed", pointShapefilePath);
             PointMs pointMs = new(structureFeatureLayer.Points().Select(p => p.PointM()));
             if (updateGroundElevFromTerrain)
@@ -110,7 +111,7 @@ namespace HEC.FDA.Model.structures
                 //required parameters
                 PointM point = pointMs[i];
                 System.Data.DataRow row = structureFeatureLayer.FeatureRow(i);
-                int fid = RASHelper.GetRowValueForColumn(row, map.StructureIDCol, defaultMissingValue);
+                string fid = RASHelper.GetRowValueForColumn(row, map.StructureIDCol, defaultMissingStringValue);
                 double val_struct = RASHelper.GetRowValueForColumn<double>(row, map.StructureValueCol, defaultMissingValue);
                 string occtype = RASHelper.GetRowValueForColumn(row, map.OccTypeCol, "NA");
                 string st_damcat = "NA";

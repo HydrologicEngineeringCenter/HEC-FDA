@@ -14,7 +14,7 @@ namespace HEC.FDA.Model.structures
         #region Properties 
         //TODO: How are we going to handle missing data?
         //For now, we won't allow missing data 
-        public int Fid { get; }
+        public string Fid { get; }
         public PointM Point { get; set; }
         public double FirstFloorElevation { get; }
         public double GroundElevation { get; }
@@ -39,7 +39,7 @@ namespace HEC.FDA.Model.structures
         #endregion
 
         #region Constructors 
-        public Structure(int fid, PointM point, double firstFloorElevation, double val_struct, string st_damcat, string occtype, int impactAreaID, double val_cont =0, double val_vehic = 0, double val_other = 0, string cbfips = "unassigned", double beginDamage = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, double groundElevation = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, double foundationHeight = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, int year = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, int numStructures = 1, string notes = "", string description = "")
+        public Structure(string fid, PointM point, double firstFloorElevation, double val_struct, string st_damcat, string occtype, int impactAreaID, double val_cont =0, double val_vehic = 0, double val_other = 0, string cbfips = "unassigned", double beginDamage = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, double groundElevation = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, double foundationHeight = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, int year = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, int numStructures = 1, string notes = "", string description = "")
 
         {
             Fid = fid;

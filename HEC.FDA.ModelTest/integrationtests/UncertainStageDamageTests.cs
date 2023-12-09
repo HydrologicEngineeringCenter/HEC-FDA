@@ -119,17 +119,17 @@ namespace HEC.FDA.ModelTest.integrationtests
 
         //First impact area structures
         private static int impactAreaID_1 = 1;
-        private static Structure structure1 = new Structure(fid: 1, point: pointM, firstFloorElevation: 473, val_struct: 100, st_damcat: residentialDamCat, occtype: res2OccType, impactAreaID: impactAreaID_1);
-        private static Structure structure2 = new Structure(fid: 2, point: pointM, firstFloorElevation: 474, val_struct: 200, st_damcat: residentialDamCat, occtype: res2OccType, impactAreaID: impactAreaID_1);
-        private static Structure structure3 = new Structure(fid: 3, point: pointM, firstFloorElevation: 473.5, val_struct: 300, st_damcat: residentialDamCat, occtype: res1OccType, impactAreaID: impactAreaID_1);
-        private static Structure structure4 = new Structure(fid: 4, point: pointM, firstFloorElevation: 474.5, val_struct: 400, st_damcat: residentialDamCat, occtype: res1OccType, impactAreaID: impactAreaID_1);
+        private static Structure structure1 = new Structure(fid: "1", point: pointM, firstFloorElevation: 473, val_struct: 100, st_damcat: residentialDamCat, occtype: res2OccType, impactAreaID: impactAreaID_1);
+        private static Structure structure2 = new Structure(fid: "2", point: pointM, firstFloorElevation: 474, val_struct: 200, st_damcat: residentialDamCat, occtype: res2OccType, impactAreaID: impactAreaID_1);
+        private static Structure structure3 = new Structure(fid: "3", point: pointM, firstFloorElevation: 473.5, val_struct: 300, st_damcat: residentialDamCat, occtype: res1OccType, impactAreaID: impactAreaID_1);
+        private static Structure structure4 = new Structure(fid: "4", point: pointM, firstFloorElevation: 474.5, val_struct: 400, st_damcat: residentialDamCat, occtype: res1OccType, impactAreaID: impactAreaID_1);
 
         //Second impact area structures 
         private static int impactAreaID_2 = 2;
-        private static Structure structure5 = new Structure(fid: 5, point: pointM, firstFloorElevation: 473, val_struct: 100, st_damcat: residentialDamCat, occtype: res2OccType, impactAreaID: impactAreaID_2);
-        private static Structure structure6 = new Structure(fid: 6, point: pointM, firstFloorElevation: 474, val_struct: 200, st_damcat: residentialDamCat, occtype: res2OccType, impactAreaID: impactAreaID_2);
-        private static Structure structure7 = new Structure(fid: 7, point: pointM, firstFloorElevation: 473.5, val_struct: 300, st_damcat: residentialDamCat, occtype: res1OccType, impactAreaID: impactAreaID_2);
-        private static Structure structure8 = new Structure(fid: 8, point: pointM, firstFloorElevation: 474.5, val_struct: 400, st_damcat: residentialDamCat, occtype: res1OccType, impactAreaID: impactAreaID_2);
+        private static Structure structure5 = new Structure(fid: "5", point: pointM, firstFloorElevation: 473, val_struct: 100, st_damcat: residentialDamCat, occtype: res2OccType, impactAreaID: impactAreaID_2);
+        private static Structure structure6 = new Structure(fid: "6", point: pointM, firstFloorElevation: 474, val_struct: 200, st_damcat: residentialDamCat, occtype: res2OccType, impactAreaID: impactAreaID_2);
+        private static Structure structure7 = new Structure(fid: "7", point: pointM, firstFloorElevation: 473.5, val_struct: 300, st_damcat: residentialDamCat, occtype: res1OccType, impactAreaID: impactAreaID_2);
+        private static Structure structure8 = new Structure(fid: "8", point: pointM, firstFloorElevation: 474.5, val_struct: 400, st_damcat: residentialDamCat, occtype: res1OccType, impactAreaID: impactAreaID_2);
 
         private static StructureSelectionMapping map = new StructureSelectionMapping(false, false, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
