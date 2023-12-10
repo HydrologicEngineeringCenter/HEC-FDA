@@ -387,5 +387,13 @@ namespace HEC.FDA.Model.structures
             }
             return errors;
         }
+
+        internal void ResetStructureWaterIndexTracking()
+        {
+            foreach (Structure structure in Structures)
+            {
+                structure.ResetIndexTracking();
+            }
+        }
     }
 }

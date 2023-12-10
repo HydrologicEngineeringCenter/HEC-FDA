@@ -301,6 +301,14 @@ namespace HEC.FDA.Model.structures
             double depth = structPercentDamagePairedData.f_inverse(percentDamage);
             return depth;
         }
+
+        internal void ResetIndexTracking()
+        {
+            LastWSPStageDamageSegmentTopIndexStructure = 1;
+            LastWSPStageDamageSegmentTopIndexContent = 1;
+            LastWSPStageDamageSegmentTopIndexOther = 1;
+            LastWSPStageDamageSegmentTopIndexVehicle = 1;
+        }
         #endregion
     }
 }

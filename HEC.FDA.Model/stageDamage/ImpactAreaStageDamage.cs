@@ -344,6 +344,7 @@ namespace HEC.FDA.Model.stageDamage
                         ComputeLowerStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, i);
                         ComputeMiddleStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, i);
                         ComputeUpperStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, i);
+                        inventoryAndWaterTupled.Item1.ResetStructureWaterIndexTracking();
                     }
                     DumpDataIntoDistributions(ref consequenceDistributionResults);
                 }
