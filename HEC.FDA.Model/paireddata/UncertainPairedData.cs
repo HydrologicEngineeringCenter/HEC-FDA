@@ -94,7 +94,7 @@ namespace HEC.FDA.Model.paireddata
                     AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .9999, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .9999, (a, b) => a <= b), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {CurveMetaData.Name} at the upper bound.", ErrorLevel.Minor));
                     AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .0001, (a, b) => a <= b), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {CurveMetaData.Name} at the lower found.", ErrorLevel.Minor));
         }
-        private bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
+        private static bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
         {
             if (arrayOfData == null) return false;
             for (int i = 0; i < arrayOfData.Length - 1; i++)
@@ -106,7 +106,7 @@ namespace HEC.FDA.Model.paireddata
             }
             return true;
         }
-        private bool IsDistributionArrayValid(IDistribution[] arrayOfData, double prob, Func<double, double, bool> comparison)
+        private static bool IsDistributionArrayValid(IDistribution[] arrayOfData, double prob, Func<double, double, bool> comparison)
         {
             if (arrayOfData == null) return false;
             for (int i = 0; i < arrayOfData.Length - 1; i++)
@@ -137,7 +137,7 @@ namespace HEC.FDA.Model.paireddata
                 }
 
             }
-            PairedData pairedData = new PairedData(Xvals, y, CurveMetaData);//mutability leakage on xvals
+            PairedData pairedData = new(Xvals, y, CurveMetaData);//mutability leakage on xvals
             pairedData.ForceMonotonicity();
             return pairedData;
         }
@@ -180,12 +180,12 @@ namespace HEC.FDA.Model.paireddata
                 deterministicDistributions[i] = UncertainToDeterministicDistributionConverter.ConvertDistributionToDeterministic(uncertainPairedData.Yvals[i]);
                 i++;
             }
-            UncertainPairedData deterministicUncertainPairedData = new UncertainPairedData(uncertainPairedData.Xvals, deterministicDistributions, uncertainPairedData.CurveMetaData);
+            UncertainPairedData deterministicUncertainPairedData = new(uncertainPairedData.Xvals, deterministicDistributions, uncertainPairedData.CurveMetaData);
             return deterministicUncertainPairedData;
         }
         public XElement WriteToXML()
         {
-            XElement masterElement = new XElement("UncertainPairedData");
+            XElement masterElement = new("UncertainPairedData");
             XElement curveMetaDataElement = CurveMetaData.WriteToXML();
             curveMetaDataElement.Name = "CurveMetaData";
             masterElement.Add(curveMetaDataElement);
@@ -196,11 +196,11 @@ namespace HEC.FDA.Model.paireddata
             else
             {
                 masterElement.SetAttributeValue("Ordinate_Count", Xvals.Length);
-                XElement coordinatesElement = new XElement("Coordinates");
+                XElement coordinatesElement = new("Coordinates");
                 for (int i = 0; i < Xvals.Length; i++)
                 {
-                    XElement coordinateElement = new XElement("Coordinate");
-                    XElement xElement = new XElement("X");
+                    XElement coordinateElement = new("Coordinate");
+                    XElement xElement = new("X");
                     xElement.SetAttributeValue("Value", Xvals[i]);
                     XElement yElement = Yvals[i].ToXML();
                     coordinateElement.Add(xElement);
