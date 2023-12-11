@@ -271,17 +271,34 @@ namespace HEC.FDA.Model.structures
             return details;
         }
 
+        //TODO: TOTAL VALUE IS HANDLED IMPROPERLY
         internal string ProduceDetails(List<DeterministicOccupancyType> deterministicOccupancyTypes, double priceIndex)
         {
             DeterministicOccupancyType deterministicOccupancyType = FindOccType(deterministicOccupancyTypes);
             double depthZeroDamage = CalculateDepthZeroDamage(deterministicOccupancyType);
             string details = $"{Fid},{ImpactAreaID}, {YearInService},{DamageCatagory},{OccTypeName},";
             details += $"{Point.X},{Point.Y},{InventoriedStructureValue},{InventoriedStructureValue * priceIndex * NumberOfStructures},";
-            details += $"{InventoriedContentValue},{InventoriedContentValue * priceIndex * NumberOfStructures},";
-            details += $"{InventoriedOtherValue},{InventoriedOtherValue * priceIndex * NumberOfStructures},";
+            double contentValue;
+            double otherValue;
+            if (deterministicOccupancyType.UseCSVR)
+            {
+                contentValue = InventoriedStructureValue * deterministicOccupancyType.ContentToStructureValueRatio;
+            } else
+            {
+                contentValue = InventoriedContentValue;
+            }
+            if (deterministicOccupancyType.UseOSVR)
+            {
+                otherValue = InventoriedStructureValue * deterministicOccupancyType.OtherToStructureValueRatio;
+            } else
+            {
+                otherValue = InventoriedOtherValue;
+            }
+            details += $"{contentValue},{contentValue * priceIndex * NumberOfStructures},";
+            details += $"{otherValue},{otherValue * priceIndex * NumberOfStructures},";
             details += $"{InventoriedVehicleValue},{InventoriedVehicleValue * priceIndex * NumberOfStructures},";
-            details += $"{InventoriedStructureValue + InventoriedContentValue + InventoriedOtherValue + InventoriedStructureValue},";
-            details += $"{(InventoriedStructureValue + InventoriedContentValue + InventoriedOtherValue + InventoriedStructureValue) * priceIndex * NumberOfStructures},";
+            details += $"{InventoriedStructureValue + contentValue + otherValue + InventoriedVehicleValue},";
+            details += $"{(InventoriedStructureValue + contentValue + otherValue + InventoriedVehicleValue) * priceIndex * NumberOfStructures},";
             details += $"{NumberOfStructures},{FirstFloorElevation},{GroundElevation},{FoundationHeight},";
             details += $"{BeginningDamageDepth},{depthZeroDamage}, {deterministicOccupancyType.UseCSVR}, {deterministicOccupancyType.UseOSVR},";
             details += $"{Notes}, {Description},";

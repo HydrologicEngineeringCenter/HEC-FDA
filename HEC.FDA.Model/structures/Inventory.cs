@@ -241,12 +241,12 @@ namespace HEC.FDA.Model.structures
             return structureDetails;
         }
 
-        public List<DeterministicOccupancyType> SampleOccupancyTypes(IProvideRandomNumbers randomNumberProvider)
+        public List<DeterministicOccupancyType> SampleOccupancyTypes(IProvideRandomNumbers randomNumberProvider, bool computeIsDeterministic)
         {
             List<DeterministicOccupancyType> deterministicOccupancyTypes = new();
             foreach (OccupancyType occupancyType in OccTypes.Values)
             {
-                DeterministicOccupancyType deterministicOccupancyType = occupancyType.Sample(randomNumberProvider);
+                DeterministicOccupancyType deterministicOccupancyType = occupancyType.Sample(randomNumberProvider, computeIsDeterministic);
                 deterministicOccupancyTypes.Add(deterministicOccupancyType);
             }
 

@@ -309,7 +309,11 @@ namespace HEC.FDA.Model.stageDamage
 
             //damage for each stage
             List<StudyAreaConsequencesBinned> consequenceDistributionResults = CreateConsequenceDistributionResults(damageCategory);
-
+            bool computeIsDeterministic = false;
+            if (randomProvider is MedianRandomProvider)
+            {
+                computeIsDeterministic = true;
+            }
             int iterations = 1;
             if (_ConvergenceCriteria.MinIterations >= 100)
             {
@@ -340,7 +344,7 @@ namespace HEC.FDA.Model.stageDamage
                     /// W.S.Profile
                     for (int i = 0; i < iterations; i++)
                     {
-                        List<DeterministicOccupancyType> deterministicOccTypes = Inventory.SampleOccupancyTypes(randomProvider);
+                        List<DeterministicOccupancyType> deterministicOccTypes = Inventory.SampleOccupancyTypes(randomProvider, computeIsDeterministic);
                         ComputeLowerStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, i);
                         ComputeMiddleStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, i);
                         ComputeUpperStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, i);
@@ -591,7 +595,7 @@ namespace HEC.FDA.Model.stageDamage
         internal List<string> ProduceImpactAreaStructureDetails()
         {
             //this list will be the size of the number of structures + 1 where the first string is the header
-            List<DeterministicOccupancyType> deterministicOccupancyTypes = Inventory.SampleOccupancyTypes(new compute.MedianRandomProvider());
+            List<DeterministicOccupancyType> deterministicOccupancyTypes = Inventory.SampleOccupancyTypes(new compute.MedianRandomProvider(), computeIsDeterministic: true);
             List<string> structureDetails = Inventory.StructureDetails(deterministicOccupancyTypes);
             //here I need to add to structure details: occ types, impact area,
             StagesToStrings(ref structureDetails);
