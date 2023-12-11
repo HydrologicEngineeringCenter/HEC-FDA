@@ -271,7 +271,6 @@ namespace HEC.FDA.Model.structures
             return details;
         }
 
-        //TODO: TOTAL VALUE IS HANDLED IMPROPERLY
         internal string ProduceDetails(List<DeterministicOccupancyType> deterministicOccupancyTypes, double priceIndex)
         {
             DeterministicOccupancyType deterministicOccupancyType = FindOccType(deterministicOccupancyTypes);
