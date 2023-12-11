@@ -311,7 +311,7 @@ namespace HEC.FDA.Model.structures
             return depthZeroDamage;
         }
 
-        private double FindHighestDepthZeroPercentDamage(IPairedData structPercentDamagePairedData)
+        private static double FindHighestDepthZeroPercentDamage(IPairedData structPercentDamagePairedData)
         {
             double percentDamage = Double.Epsilon;
             double depth = structPercentDamagePairedData.f_inverse(percentDamage);

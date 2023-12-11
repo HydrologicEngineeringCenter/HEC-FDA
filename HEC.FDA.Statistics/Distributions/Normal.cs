@@ -232,7 +232,7 @@ namespace Statistics.Distributions
                     return x;
                 }
 
-                x = x - testY / dfdx;
+                x -= testY / dfdx;
                 testY = CDF(x) - p;
                 if (Math.Abs(testY) <= tolP)
                 {

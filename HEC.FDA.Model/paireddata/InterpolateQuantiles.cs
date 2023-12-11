@@ -15,7 +15,7 @@ namespace Statistics.Graphical
         public static double[] InterpolateOnX(double[] inputNonexceedanceProbabilities, double[] exceedanceProbabilitiesForWhichQuantilesAreRequired, double[] inputDataForInterpolation)
         {
 
-            Normal standardNormalDistribution = new Normal();
+            Normal standardNormalDistribution = new();
             double[] inputZs = new double[inputNonexceedanceProbabilities.Length];
             for (int i = 0; i < inputNonexceedanceProbabilities.Length; i++)
             {

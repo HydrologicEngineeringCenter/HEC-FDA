@@ -41,7 +41,7 @@ namespace HEC.FDA.Model.paireddata
             GraphicalDistributionWithLessSimple = new GraphicalDistribution(exceedanceProbabilities, flowOrStageValues, equivalentRecordLength, usingStagesNotFlows);
             CurveMetaData = curveMetaData;
             //combine required and input probabilities 
-            CombinedExceedanceProbabilities =  CombineInputAndRequiredExceedanceProbabilities(exceedanceProbabilities);
+            CombinedExceedanceProbabilities = CombineInputAndRequiredExceedanceProbabilities(exceedanceProbabilities);
         }
         private GraphicalUncertainPairedData(double[] combinedExceedanceProbabilities, GraphicalDistribution graphicalDistributionWithLessSimple, CurveMetaData curveMetaData)
         {
@@ -52,7 +52,7 @@ namespace HEC.FDA.Model.paireddata
         #endregion
 
         #region Methods
-        private double[] ExceedanceToNonExceedance(double[] exceedanceProbabilities)
+        private static double[] ExceedanceToNonExceedance(double[] exceedanceProbabilities)
         {
             double[] nonExceedanceProbabilities = new double[exceedanceProbabilities.Length];
             for (int i = 0; i < nonExceedanceProbabilities.Length; i++)
@@ -77,7 +77,7 @@ namespace HEC.FDA.Model.paireddata
                     y[i] = Math.Log(GraphicalDistributionWithLessSimple.StageOrLogFlowDistributions[i].InverseCDF(probability));
                 }
             }
-            PairedData pairedData = new PairedData(ExceedanceToNonExceedance(GraphicalDistributionWithLessSimple.ExceedanceProbabilities), y, CurveMetaData);
+            PairedData pairedData = new(ExceedanceToNonExceedance(GraphicalDistributionWithLessSimple.ExceedanceProbabilities), y, CurveMetaData);
             bool isMonotonicallyIncreasing = IsMonotonicallyIncreasing(pairedData);
             if (!isMonotonicallyIncreasing)
             {
@@ -93,11 +93,11 @@ namespace HEC.FDA.Model.paireddata
                 }
                 expandedStageOrLogFlowValues = tempArray;
             }
-            PairedData expandedPairedData = new PairedData(ExceedanceToNonExceedance(CombinedExceedanceProbabilities), expandedStageOrLogFlowValues, CurveMetaData);
+            PairedData expandedPairedData = new(ExceedanceToNonExceedance(CombinedExceedanceProbabilities), expandedStageOrLogFlowValues, CurveMetaData);
             return expandedPairedData;
         }
 
-        private bool IsMonotonicallyIncreasing(IPairedData pairedData)
+        private static bool IsMonotonicallyIncreasing(IPairedData pairedData)
         {
             for (int i = 1; i < pairedData.Yvals.Length; i++)
             {
@@ -140,7 +140,7 @@ namespace HEC.FDA.Model.paireddata
             return true;
         }
 
-        private double[] CombineInputAndRequiredExceedanceProbabilities(double[] inputExceedanceProbabilities)
+        private static double[] CombineInputAndRequiredExceedanceProbabilities(double[] inputExceedanceProbabilities)
         {
             List<double> allProbabilities = DoubleGlobalStatics.RequiredExceedanceProbabilities.ToList();
             foreach (double probability in inputExceedanceProbabilities)
@@ -158,7 +158,7 @@ namespace HEC.FDA.Model.paireddata
         #region XML Methods
         public XElement WriteToXML()
         {
-            XElement masterElement = new XElement("Graphical_Uncertain_Paired_Data");
+            XElement masterElement = new("Graphical_Uncertain_Paired_Data");
 
             XElement curveMetaDataElement = CurveMetaData.WriteToXML();
             curveMetaDataElement.Name = "CurveMetaData";
@@ -168,10 +168,10 @@ namespace HEC.FDA.Model.paireddata
             graphicalElement.Name = "Graphical";
             masterElement.Add(graphicalElement);
 
-            XElement probabilities = new XElement("Probabilities");
+            XElement probabilities = new("Probabilities");
             foreach (double probability in CombinedExceedanceProbabilities) 
             {
-                XElement rowElement = new XElement("Probability");
+                XElement rowElement = new("Probability");
                 rowElement.SetAttributeValue("Value", probability);
                 probabilities.Add(rowElement);
             }
@@ -191,7 +191,7 @@ namespace HEC.FDA.Model.paireddata
             {
                 GraphicalDistribution graphicalDistributionWithLessSimple = GraphicalDistribution.ReadFromXML(xElement.Element("Graphical"));
                 
-                List<double> combinedProbabilities = new List<double>();
+                List<double> combinedProbabilities = new();
                 foreach (XElement valueElement in xElement.Element("Probabilities").Elements())
                 {
                     double value = Convert.ToDouble(valueElement.Attribute("Value").Value);

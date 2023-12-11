@@ -105,7 +105,7 @@ namespace Statistics.GraphicalRelationships
                 AddSinglePropertyRule(nameof(exceedanceProbabilities), new Rule(() => IsArrayValid(exceedanceProbabilities, (a, b) => (a >= b)), "Exceedance Probabilities must be strictly monotonically decreasing"));
                 AddSinglePropertyRule(nameof(StageOrLoggedFlowValues), new Rule(() => IsArrayValid(StageOrLoggedFlowValues, (a, b) => (a <= b)), "Y must be strictly monotonically decreasing"));
         }
-        private bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
+        private static bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
         {
             if (arrayOfData == null) return false;
             for (int i = 0; i < arrayOfData.Length - 1; i++)
@@ -117,7 +117,7 @@ namespace Statistics.GraphicalRelationships
             }
             return true;
         }
-        private double[] LogFlows(double[] unloggedFlows)
+        private static double[] LogFlows(double[] unloggedFlows)
         {
             double[] loggedFlows = new double[unloggedFlows.Length];
             double minFlow = 0.01; //for log conversion not to fail 
@@ -142,9 +142,9 @@ namespace Statistics.GraphicalRelationships
             double maximumExceedanceProbability = 0.9999;
             double minimumExceedanceProbability = 0.0001;
 
-            List<double> finalFlowOrStageValues = new List<double>();
-            List<double> finalExceedanceProbabilities = new List<double>();
-            for (int i = 0; i < exceedanceProbabilities.Count(); i++)
+            List<double> finalFlowOrStageValues = new();
+            List<double> finalExceedanceProbabilities = new();
+            for (int i = 0; i < exceedanceProbabilities.Length; i++)
             {
                 finalFlowOrStageValues.Add(StageOrLoggedFlowValues[i]);
                 finalExceedanceProbabilities.Add(exceedanceProbabilities[i]);
@@ -180,13 +180,13 @@ namespace Statistics.GraphicalRelationships
             //less frequent end of the frequency curve
             if (finalExceedanceProbabilities.Last() - minimumExceedanceProbability > toleratedDifference)
             {
-                Distributions.Normal standardNormalDistribution = new Distributions.Normal();
-                double penultimateInputExceedanceProbability = finalExceedanceProbabilities[finalExceedanceProbabilities.Count - 2];
+                Distributions.Normal standardNormalDistribution = new();
+                double penultimateInputExceedanceProbability = finalExceedanceProbabilities[^2];
                 double lastInputExceedanceProbability = finalExceedanceProbabilities.Last();
                 double zValueOfMin = standardNormalDistribution.InverseCDF(minimumExceedanceProbability);
                 double zValueOfPenultimateInputProbability = standardNormalDistribution.InverseCDF(penultimateInputExceedanceProbability);
                 double zValueOfLastInputProbability = standardNormalDistribution.InverseCDF(lastInputExceedanceProbability);
-                double penultimateInputFlowOrStage = finalFlowOrStageValues[finalFlowOrStageValues.Count - 2];
+                double penultimateInputFlowOrStage = finalFlowOrStageValues[^2];
                 double lastInputFlowOrStage = finalFlowOrStageValues.Last();
                 double c = (zValueOfLastInputProbability - zValueOfPenultimateInputProbability) / (zValueOfMin - zValueOfPenultimateInputProbability); //TODO: figure out what c represents and give it a good name
                 double upperFlowOrStage = ((lastInputFlowOrStage - penultimateInputFlowOrStage) + c * penultimateInputFlowOrStage) / c;
@@ -216,7 +216,7 @@ namespace Statistics.GraphicalRelationships
             double diffHi = 0;
             double diffLo = 0;
             double p;
-            for (int i = 0; i < ExceedanceProbabilities.Count(); i++)
+            for (int i = 0; i < ExceedanceProbabilities.Length; i++)
             {
                 p = ExceedanceProbabilities[i];
                 diffHi = Math.Abs(p - lowerExceedanceProbabilityHoldStandardErrorConstant);
@@ -234,9 +234,9 @@ namespace Statistics.GraphicalRelationships
                 }
             }
 
-            double[] _scurve = new double[ExceedanceProbabilities.Count()];
+            double[] _scurve = new double[ExceedanceProbabilities.Length];
             
-            for (int i = 1; i < ExceedanceProbabilities.Count() - 1; i++)
+            for (int i = 1; i < ExceedanceProbabilities.Length - 1; i++)
             {
                 //p is a non-exceedance probability 
                 p = 1 - ExceedanceProbabilities[i];
@@ -251,7 +251,7 @@ namespace Statistics.GraphicalRelationships
 
                 }
                 //hold slope constant and calculate standard error for the last coordinate
-                if (i == ExceedanceProbabilities.Count()-2)
+                if (i == ExceedanceProbabilities.Length -2)
                 {
                     p = 1 - ExceedanceProbabilities[i + 1];
                     double standardErrorSquared = (p * (1 - p)) / (Math.Pow(1 / slope, 2.0D) * EquivalentRecordLength);
@@ -260,7 +260,7 @@ namespace Statistics.GraphicalRelationships
 
             }
             // Hold standard Error Constant
-                for (int i = ixSlopeHiConst; i < ExceedanceProbabilities.Count(); i++)
+                for (int i = ixSlopeHiConst; i < ExceedanceProbabilities.Length; i++)
                 {
                     _scurve[i] = _scurve[ixSlopeHiConst];
                 }
@@ -299,7 +299,7 @@ namespace Statistics.GraphicalRelationships
 
         public static double InterpolateNormally(double p, double p_minus, double q, double q_minus, double p_minusEpsilon)
         {
-            Normal standardNormal = new Normal();
+            Normal standardNormal = new();
 
 
             double z = standardNormal.InverseCDF(p);
@@ -352,7 +352,7 @@ namespace Statistics.GraphicalRelationships
         #region XML Methods
         public static GraphicalDistribution ReadFromXML(XElement xElement)
         {
-            GraphicalDistribution graphicalInError = new GraphicalDistribution();
+            GraphicalDistribution graphicalInError = new();
 
             Type graphicalDistributionType = typeof(GraphicalDistribution);
 
@@ -380,7 +380,7 @@ namespace Statistics.GraphicalRelationships
                if (!double.TryParse(exceedanceProbability.Attribute(probsTag)?.Value, out double prob))
                 {
                     //serves as null object to be returned in case of error
-                    GraphicalDistribution graphical = new GraphicalDistribution();
+                    GraphicalDistribution graphical = new();
                     return graphical;
                 }
                 exceedanceProbabilities.Add(prob);
@@ -407,7 +407,7 @@ namespace Statistics.GraphicalRelationships
                 if (!double.TryParse(stageOrFlowValue.Attribute(valsTag)?.Value, out double val))
                 {
                     //serves as null object to be returned in case of error
-                    GraphicalDistribution graphical = new GraphicalDistribution();
+                    GraphicalDistribution graphical = new();
                     return graphical;
                 }
                 inputStageFlowVals.Add(val);
@@ -418,7 +418,7 @@ namespace Statistics.GraphicalRelationships
         }
         public XElement WriteToXML()
         {
-            XElement masterElement = new XElement(GetType().Name);
+            XElement masterElement = new(GetType().Name);
 
             string lowerProbTag = Serialization.GetXMLTagFromProperty(GetType(), nameof(LowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant));
             masterElement.SetAttributeValue(lowerProbTag, LowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant);
@@ -433,28 +433,28 @@ namespace Statistics.GraphicalRelationships
             masterElement.SetAttributeValue(erlTag, EquivalentRecordLength);
 
             string probsTag = Serialization.GetXMLTagFromProperty(GetType(), nameof(ExceedanceProbabilities));
-            XElement exceedanceProbabilities = new XElement(probsTag);
+            XElement exceedanceProbabilities = new(probsTag);
             for (int i = 0; i < ExceedanceProbabilities.Length; i++)
             {
                 //the name of rowElement does not matter, only the name of the attribute does 
-                XElement rowElement = new XElement("Probability");
+                XElement rowElement = new("Probability");
                 rowElement.SetAttributeValue(probsTag, ExceedanceProbabilities[i]);
                 exceedanceProbabilities.Add(rowElement);
             }
             masterElement.Add(exceedanceProbabilities);
 
             string valsTag = Serialization.GetXMLTagFromProperty(GetType(), nameof(StageOrLoggedFlowValues));
-            XElement inputStageFlowValues = new XElement(valsTag);
+            XElement inputStageFlowValues = new(valsTag);
             for (int i = 0; i < StageOrLoggedFlowValues.Length; i++)
             {
-                XElement rowElement = new XElement("StageFlow");
+                XElement rowElement = new("StageFlow");
                 rowElement.SetAttributeValue(valsTag, StageOrLoggedFlowValues[i]);
                 inputStageFlowValues.Add(rowElement);
             }
             masterElement.Add(inputStageFlowValues);
 
             string distsTag = Serialization.GetXMLTagFromProperty(GetType(), nameof(StageOrLogFlowDistributions));
-            XElement stageOrLogFlowDistributions = new XElement(distsTag);
+            XElement stageOrLogFlowDistributions = new(distsTag);
             for (int i = 0; i < StageOrLogFlowDistributions.Length; i++)
             {
                 stageOrLogFlowDistributions.Add(StageOrLogFlowDistributions[i].ToXML());
