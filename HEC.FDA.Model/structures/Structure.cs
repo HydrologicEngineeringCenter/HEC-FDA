@@ -282,14 +282,14 @@ namespace HEC.FDA.Model.structures
             double otherValue;
             if (deterministicOccupancyType.UseCSVR)
             {
-                contentValue = InventoriedStructureValue * deterministicOccupancyType.ContentToStructureValueRatio;
+                contentValue = InventoriedStructureValue * deterministicOccupancyType.ContentToStructureValueRatio*(1/100);
             } else
             {
                 contentValue = InventoriedContentValue;
             }
             if (deterministicOccupancyType.UseOSVR)
             {
-                otherValue = InventoriedStructureValue * deterministicOccupancyType.OtherToStructureValueRatio;
+                otherValue = InventoriedStructureValue * deterministicOccupancyType.OtherToStructureValueRatio*(1/100);
             } else
             {
                 otherValue = InventoriedOtherValue;
