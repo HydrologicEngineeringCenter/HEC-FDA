@@ -145,8 +145,7 @@ where T : struct
                 return defaultValue;
         }
     }
-    public static T TryGetObj<T>(object value, T defaultValue = default)
-        where T : class
+    public static string TryGetObj(object value, string defaultValue)
     {
         if (value == null)
             return defaultValue;
@@ -154,10 +153,12 @@ where T : struct
             return defaultValue;
         else
         {
-            if (value is T retn)
-                return retn;
-            else
-                return defaultValue;
+            string ret = value.ToString();
+            if (ret.IsNullOrEmpty())
+            {
+                ret = defaultValue;
+            }
+            return ret;
         }
     }
     public static T GetRowValueForColumn<T>(System.Data.DataRow row, string mappingColumnName, T defaultValue) where T : struct
@@ -176,7 +177,7 @@ where T : struct
         if (mappingColumnName != null && row.Table.Columns.Contains(mappingColumnName))
         {
             //column could have wrong data type, or be null, or dbnull
-            retval = TryGetObj<string>(row[mappingColumnName], defaultValue);
+            retval = TryGetObj(row[mappingColumnName], defaultValue);
         }
         return retval;
     }

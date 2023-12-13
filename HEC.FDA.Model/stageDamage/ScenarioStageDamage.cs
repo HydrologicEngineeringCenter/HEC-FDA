@@ -51,7 +51,7 @@ namespace HEC.FDA.Model.stageDamage
 
         public List<string> ProduceStructureDetails()
         {
-            List<string> structureDetails = new List<string>();
+            List<string> structureDetails = new();
             string generalHeader = $"Structure Details for Stage Damage Compute at {DateTime.Now}";
             structureDetails.Add(generalHeader);
             foreach (ImpactAreaStageDamage impactAreaStageDamage in _ImpactAreaStageDamage)

@@ -144,10 +144,10 @@ namespace HEC.FDA.ModelTest.integrationtests
         private static readonly PointM pointM = new();
         private static readonly int impactAreaID = 34;
         private static readonly double groundElevation = 12;
-        private static readonly Structure structure1 = new(fid: 1, point: pointM, firstFloorElevation: 14, val_struct: 100, st_damcat: residentialDamAndOccType, occtype: residentialDamAndOccType, impactAreaID: impactAreaID, groundElevation: groundElevation);
-        private static readonly Structure structure2 = new(fid: 2, point: pointM, firstFloorElevation: 15, val_struct: 200, st_damcat: residentialDamAndOccType, occtype: residentialDamAndOccType, impactAreaID: impactAreaID, groundElevation: groundElevation);
-        private static readonly Structure structure3 = new(fid: 3, point: pointM, firstFloorElevation: 17, val_struct: 300, st_damcat: commercialDamAndOccType, occtype: commercialDamAndOccType, impactAreaID: impactAreaID, groundElevation: groundElevation);
-        private static readonly Structure structure4 = new(fid: 4, point: pointM, firstFloorElevation: 18, val_struct: 400, st_damcat: commercialDamAndOccType, occtype: commercialDamAndOccType, impactAreaID: impactAreaID, groundElevation: groundElevation);
+        private static readonly Structure structure1 = new(fid: "1", point: pointM, firstFloorElevation: 14, val_struct: 100, st_damcat: residentialDamAndOccType, occtype: residentialDamAndOccType, impactAreaID: impactAreaID, groundElevation: groundElevation);
+        private static readonly Structure structure2 = new(fid: "2", point: pointM, firstFloorElevation: 15, val_struct: 200, st_damcat: residentialDamAndOccType, occtype: residentialDamAndOccType, impactAreaID: impactAreaID, groundElevation: groundElevation);
+        private static readonly Structure structure3 = new(fid: "3", point: pointM, firstFloorElevation: 17, val_struct: 300, st_damcat: commercialDamAndOccType, occtype: commercialDamAndOccType, impactAreaID: impactAreaID, groundElevation: groundElevation);
+        private static readonly Structure structure4 = new(fid: "4", point: pointM, firstFloorElevation: 18, val_struct: 400, st_damcat: commercialDamAndOccType, occtype: commercialDamAndOccType, impactAreaID: impactAreaID, groundElevation: groundElevation);
         private static readonly List<Structure> residentialStructureList = new() { structure1, structure2 };
         private static readonly List<Structure> commercialStructureList = new() { structure3, structure4 };
         private static readonly Inventory residentialStructureInventory = new( occupancyTypes, residentialStructureList);

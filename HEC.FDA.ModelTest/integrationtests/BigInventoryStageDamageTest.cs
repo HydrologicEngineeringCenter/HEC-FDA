@@ -45,7 +45,7 @@ public class BigInventoryStageDamageTest
         List<Structure> structures = new List<Structure>();
         for (int i = 0; i < numberOfStructures; i++)
         {
-            Structure structure = new Structure((int)structureIDs[i], pointM, (double)firstFloorElevations[i], (double)structureValues[i], (string)damageCategories[i], (string)occupancyTypes[i], impactAreaID);
+            Structure structure = new Structure((string)structureIDs[i], pointM, (double)firstFloorElevations[i], (double)structureValues[i], (string)damageCategories[i], (string)occupancyTypes[i], impactAreaID);
             structures.Add(structure);
         }
         Dictionary<string, OccupancyType> occupancyTypesList = new Dictionary<string, OccupancyType>()

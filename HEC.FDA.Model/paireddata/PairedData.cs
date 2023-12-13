@@ -9,14 +9,10 @@ namespace HEC.FDA.Model.paireddata
     public class PairedData : IPairedData
     {
         #region Fields 
-        CurveMetaData _metadata;
         #endregion
 
         #region Properties 
-        public CurveMetaData MetaData
-        {
-            get { return _metadata; }
-        }
+        public CurveMetaData MetaData { get; }
         public double[] Xvals { get; }
         public double[] Yvals { get; private set; }
         public bool IsValidPerMetadata
@@ -47,13 +43,13 @@ namespace HEC.FDA.Model.paireddata
         {
             Xvals = xs;
             Yvals = ys;
-            _metadata = metadata;
+            MetaData = metadata;
         }
         #endregion
 
         #region Methods
 
-        private bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
+        private static bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
         {
             if (arrayOfData == null) return false;
             for (int i = 0; i < arrayOfData.Length - 1; i++)
@@ -156,7 +152,7 @@ namespace HEC.FDA.Model.paireddata
                 //This is the next LARGER value.
                 index = ~index;
 
-                if (index == Yvals.Count()) { return Xvals[Xvals.Length - 1]; }
+                if (index == Yvals.Length) { return Xvals[^1]; }
 
                 if (index == 0) { return Xvals[0]; }
 
@@ -209,7 +205,7 @@ namespace HEC.FDA.Model.paireddata
                         //if the x value from input is greater than all x values in subject
                         if (index == Xvals.Length)
                         {
-                            yValueFromSubject = Yvals[Yvals.Length - 1];
+                            yValueFromSubject = Yvals[^1];
                         }
 
                         //if the x value from the input is less than all x values in subject
@@ -270,11 +266,11 @@ namespace HEC.FDA.Model.paireddata
         /// </summary>
         public PairedData multiply(IPairedData systemResponseFunction)
         {
-            List<double> newXvals = new List<double>(); //xvals are stages in the stage-damage function
-            List<double> newYvals = new List<double>(); //yvals are damage*prob(failure)
+            List<double> newXvals = new(); //xvals are stages in the stage-damage function
+            List<double> newYvals = new(); //yvals are damage*prob(failure)
 
             // calculate damages for the range of the stage-damage function 
-            for (int i = 0; i < Xvals.Count(); i++)
+            for (int i = 0; i < Xvals.Length; i++)
             {
                 double stageFromStageDamage = Xvals[i];
                 double probabilityOfFailure = systemResponseFunction.f(stageFromStageDamage);

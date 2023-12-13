@@ -375,7 +375,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
                 foreach (ImpactAreaRowItem impactAreaRow in impactAreaRowsCollection)
                 {
-                    ImpactAreaFrequencyFunctionRowItem newRow = new ImpactAreaFrequencyFunctionRowItem(impactAreaRow, analyticalFrequencyElements, ratingCurveElements, inflowOutflowElements);
+                    ImpactAreaFrequencyFunctionRowItem newRow = new(impactAreaRow, analyticalFrequencyElements, ratingCurveElements, inflowOutflowElements);
                     //register for "HasChanges"
                     RegisterChildViewModel(newRow);
                     ImpactAreaFrequencyRows.Add(newRow);
@@ -388,8 +388,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             for(int i = 0; i < curves.Count; i++)
             {
                 //used cloned curve so that you do not modify the original data
-                StageDamageCurve curve = new StageDamageCurve(curves[i].WriteToXML());
-                CalculatedStageDamageRowItem newRow = new CalculatedStageDamageRowItem(i + 1, curve.ImpArea, curve.DamCat, curve.ComputeComponent, curve.AssetCategory, curve.ConstructionType);
+                StageDamageCurve curve = new(curves[i].WriteToXML());
+                CalculatedStageDamageRowItem newRow = new(i + 1, curve.ImpArea, curve.DamCat, curve.ComputeComponent, curve.AssetCategory, curve.ConstructionType);
                 Rows.Add(newRow);
             }
             if (Rows.Count > 0)
@@ -486,7 +486,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
             ImpactAreaElement impactAreaElement = impactAreaElements[0];
 
-            StageDamageConfiguration config = new StageDamageConfiguration(impactAreaElement, SelectedWaterSurfaceElevation, SelectedStructures,
+            StageDamageConfiguration config = new(impactAreaElement, SelectedWaterSurfaceElevation, SelectedStructures,
                 ImpactAreaFrequencyRows, AnalysisYear);
 
             FdaValidationResult vr = config.ValidateConfiguration();
@@ -518,7 +518,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             for(int i =0;i<computedCurves.Count;i++)
             {
                 UncertainPairedData upd = computedCurves[i];
-                CurveComponentVM computeComponent = new CurveComponentVM(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE,DistributionOptions.HISTOGRAM_ONLY);              
+                CurveComponentVM computeComponent = new(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE, DistributionOptions.HISTOGRAM_ONLY);
                 computeComponent.SetPairedData(upd);
                 //get the impact area from the id
                 int impactAreaID = upd.ImpactAreaID;
@@ -529,9 +529,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         }
 
-        private FdaValidationResult DoStructuresExist(ScenarioStageDamage scenarioStageDamage)
+        private static FdaValidationResult DoStructuresExist(ScenarioStageDamage scenarioStageDamage)
         {
-            FdaValidationResult vr = new FdaValidationResult();
+            FdaValidationResult vr = new();
             int totalStructureCount = 0;
             foreach (ImpactAreaStageDamage stageDamage in scenarioStageDamage.ImpactAreaStageDamages)
             {
@@ -547,30 +547,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             return vr;
         }
 
-        private FdaValidationResult DoStructuresExist(ImpactAreaStageDamage iasDamage)
+        private static List<ImpactAreaStageDamage> GetIAStageDamagesWithZeroStructures(ScenarioStageDamage scenarioStageDamage)
         {
-            FdaValidationResult vr = new FdaValidationResult();
-           
-            int iasStructureCount = iasDamage.Inventory.Structures.Count;
-            List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
-            string impactAreaName = impactAreaElements[0].GetImpactAreaRow(iasDamage.ImpactAreaID).Name;
-
-            if (iasStructureCount == 0)
-            {
-                vr.AddErrorMessage("No structures detected in impact area '" + impactAreaName +
-                    "'. This impact area will be ignored during the compute.");
-            }
-            else
-            {
-                vr.AddErrorMessage(iasStructureCount + " structures detected in impact area '" + impactAreaName +
-                    "'.");
-            }
-            return vr;
-        }
-
-        private List<ImpactAreaStageDamage> GetIAStageDamagesWithZeroStructures(ScenarioStageDamage scenarioStageDamage)
-        {
-            List<ImpactAreaStageDamage> withZeroStructs = new List<ImpactAreaStageDamage>();
+            List<ImpactAreaStageDamage> withZeroStructs = new();
             foreach (ImpactAreaStageDamage stageDamage in scenarioStageDamage.ImpactAreaStageDamages)
             {
                 if(stageDamage.Inventory.Structures.Count == 0)
@@ -581,9 +560,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             return withZeroStructs;
         }
 
-        private string GenerateNoStructuresMessage(List<ImpactAreaStageDamage> zeroStructuresImpactAreas)
+        private static string GenerateNoStructuresMessage(List<ImpactAreaStageDamage> zeroStructuresImpactAreas)
         {
-            FdaValidationResult vr = new FdaValidationResult();
+            FdaValidationResult vr = new();
             
             ImpactAreaElement impactAreaElement = StudyCache.GetChildElementsOfType<ImpactAreaElement>()[0];
             foreach(ImpactAreaStageDamage stageDamage in zeroStructuresImpactAreas)
@@ -596,7 +575,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             return vr.ErrorMessage;
         }
 
-        private bool ValidateStructureCount(ScenarioStageDamage scenarioStageDamage)
+        private static bool ValidateStructureCount(ScenarioStageDamage scenarioStageDamage)
         {
             bool canCompute = true;
             //check if we have any structures to compute
@@ -638,9 +617,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         /// <returns>The list of UPD curves created during the compute</returns>
         private List<UncertainPairedData> ComputeStageDamageFunctions(StageDamageConfiguration config)
         {
-            ValidationGroup vg = new ValidationGroup("Errors while trying to compute stage damage functions:");
+            ValidationGroup vg = new("Errors while trying to compute stage damage functions:");
 
-            List<UncertainPairedData> stageDamageFunctions = new List<UncertainPairedData>();
+            List<UncertainPairedData> stageDamageFunctions = new();
             try
             {
                 List<ImpactAreaStageDamage> impactAreaStageDamages = config.CreateStageDamages();
@@ -649,9 +628,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                     vg.ChildGroups.AddRange(area.ValidationGroups);
                 }
 
-                ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(impactAreaStageDamages);
+                ScenarioStageDamage scenarioStageDamage = new(impactAreaStageDamages);
                 int seed = 1234;
-                Model.compute.RandomProvider randomProvider = new Model.compute.RandomProvider(seed);
+                Model.compute.RandomProvider randomProvider = new(seed);
 
                 bool canCompute = ValidateStructureCount(scenarioStageDamage);
                 if(canCompute)
@@ -670,9 +649,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             {
                 MessageBox.Show("An error occured while trying to compute stage damages:\n" + ex.Message, "Compute Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-    //maybe i need to validate everything?
-    string msg = vg.GetErrorMessages();
+        
+        //TODO: WE NEED TO USE THIS MESSAGE. WRITE TO FILE?
+        //maybe i need to validate everything?
+        string msg = vg.GetErrorMessages();
 
             return stageDamageFunctions;
         }
@@ -685,7 +665,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         private void UpdateComputedCurvesModifiedLabel()
         {
-            List<int> editedRows = new List<int>();
+            List<int> editedRows = new();
             foreach(CalculatedStageDamageRowItem row in Rows)
             {
                 if(row.ConstructionType == StageDamageConstructionType.COMPUTED_EDITED)
@@ -705,7 +685,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         public FdaValidationResult ValidateForm()
         {
-            FdaValidationResult vr = new FdaValidationResult();
+            FdaValidationResult vr = new();
             if(AnalysisYear < 1900 || AnalysisYear > 3000)
             {
                 vr.AddErrorMessage("The analysis year must be greater than 1900 and less than 3000.");
@@ -732,12 +712,12 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         /// <returns></returns>
         public List<StageDamageCurve> GetStageDamageCurves()
         {
-            List<StageDamageCurve> curves = new List<StageDamageCurve>();
+            List<StageDamageCurve> curves = new();
             foreach (CalculatedStageDamageRowItem r in Rows)
             {
                 //in theory this call can throw an exception, but we handle that in the validation
                 //if we get here, then the curves should be constructable.
-                StageDamageCurve curve = new StageDamageCurve(r.ImpactArea, r.DamageCategory, r.ComputeComponent, r.AssetCategory, r.ConstructionType); 
+                StageDamageCurve curve = new(r.ImpactArea, r.DamageCategory, r.ComputeComponent, r.AssetCategory, r.ConstructionType);
                 curves.Add(curve);
             }
             return curves;

@@ -21,7 +21,7 @@ namespace HEC.FDA.ModelTest.unittests
     {
 
         //structure data
-        private static int[] structureIDs = new int[] { 0, 1, 2, 3 };
+        private static string[] structureIDs = new string[] { "0", "1", "2", "3" };
         private static PointM pointM = new PointM(); // These won't get used. We're gonna do some goofy stuff with fake hydraulics.
         private static double[] firstFloorElevations = new double[] { 5, 6, 7, 8 };
         private static double[] structureValues = new double[] { 500, 600, 700, 800 };
@@ -244,7 +244,7 @@ namespace HEC.FDA.ModelTest.unittests
             List<Structure> structures = new List<Structure>();
             for (int i = 0; i < structureIDs.Length; i++)
             {
-                Structure structure = new Structure(structureIDs[i], pointM, firstFloorElevations[i], structureValues[i], damageCategories[i], occupancyTypes[i], impactAreaID);
+                Structure structure = new Structure((string)structureIDs[i], pointM, firstFloorElevations[i], structureValues[i], damageCategories[i], occupancyTypes[i], impactAreaID);
                 structures.Add(structure);
             }
             Dictionary<string, OccupancyType> occupancyTypesList = new Dictionary<string, OccupancyType>()

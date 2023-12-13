@@ -16,88 +16,73 @@ namespace HEC.FDA.Model.paireddata
     public class UncertainPairedData : ValidationErrorLogger, IPairedDataProducer, ICanBeNull
     {
         #region Fields 
-        private double[] _xvals;
-        private IDistribution[] _yvals;
-        private CurveMetaData _metadata;
         #endregion
 
         #region Properties 
         public string XLabel
         {
-            get { return _metadata.XLabel; }
+            get { return CurveMetaData.XLabel; }
         }
 
         public string YLabel
         {
-            get { return _metadata.YLabel; }
+            get { return CurveMetaData.YLabel; }
         }
 
         public string Name
         {
-            get { return _metadata.Name; }
+            get { return CurveMetaData.Name; }
         }
 
         public string DamageCategory
         {
-            get { return _metadata.DamageCategory; }
+            get { return CurveMetaData.DamageCategory; }
         }
         public string AssetCategory
         {
-            get { return _metadata.AssetCategory; }
+            get { return CurveMetaData.AssetCategory; }
         }
         public int ImpactAreaID
         {
-            get { return _metadata.ImpactAreaID; }
+            get { return CurveMetaData.ImpactAreaID; }
         }
         public bool IsNull
         {
-            get { return _metadata.IsNull; }
+            get { return CurveMetaData.IsNull; }
         }
-        public CurveMetaData CurveMetaData
-        {
-            get
-            {
-                return _metadata;
-            }
-        }
-        public double[] Xvals
-        {
-            get { return _xvals; }
-        }
-        public IDistribution[] Yvals
-        {
-            get { return _yvals; }
-        }
+        public CurveMetaData CurveMetaData { get; }
+        public double[] Xvals { get; }
+        public IDistribution[] Yvals { get; }
 
         #endregion
 
         #region Constructors 
         public UncertainPairedData()
         {
-            _metadata = new CurveMetaData();
+            CurveMetaData = new CurveMetaData();
             AddRules();
         }
         [Obsolete("This constructor is deprecated. Construct a CurveMetaData, then inject into constructor")]
         public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name)
         {
-            _xvals = xs;
-            _yvals = ys;
-            _metadata = new CurveMetaData(xlabel, ylabel, name);
+            Xvals = xs;
+            Yvals = ys;
+            CurveMetaData = new CurveMetaData(xlabel, ylabel, name);
             AddRules();
         }
         [Obsolete("This constructor is deprecated. Construct a CurveMetaData, then inject into constructor")]
         public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name, string category)
         {
-            _xvals = xs;
-            _yvals = ys;
-            _metadata = new CurveMetaData(xlabel, ylabel, name, category);
+            Xvals = xs;
+            Yvals = ys;
+            CurveMetaData = new CurveMetaData(xlabel, ylabel, name, category);
             AddRules();
         }
         public UncertainPairedData(double[] xs, IDistribution[] ys, CurveMetaData metadata)
         {
-            _xvals = xs;
-            _yvals = ys;
-            _metadata = metadata;
+            Xvals = xs;
+            Yvals = ys;
+            CurveMetaData = metadata;
             AddRules();
         }
         #endregion
@@ -105,11 +90,11 @@ namespace HEC.FDA.Model.paireddata
         #region Methods 
         private void AddRules()
         {
-                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => !(IsArrayValid(Xvals, (a, b) => a == b) || IsArrayValid(Xvals, (a, b) => a < b)), $"X must be deterministic or strictly monotonically increasing but is not for the function named {_metadata.Name}.", ErrorLevel.Minor));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .9999, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .9999, (a, b) => a <= b), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {_metadata.Name} at the upper bound.", ErrorLevel.Minor));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .0001, (a, b) => a <= b), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {_metadata.Name} at the lower found.", ErrorLevel.Minor));
+                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => !(IsArrayValid(Xvals, (a, b) => a == b) || IsArrayValid(Xvals, (a, b) => a < b)), $"X must be deterministic or strictly monotonically increasing but is not for the function named {CurveMetaData.Name}.", ErrorLevel.Minor));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .9999, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .9999, (a, b) => a <= b), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {CurveMetaData.Name} at the upper bound.", ErrorLevel.Minor));
+                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .0001, (a, b) => a <= b), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {CurveMetaData.Name} at the lower found.", ErrorLevel.Minor));
         }
-        private bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
+        private static bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
         {
             if (arrayOfData == null) return false;
             for (int i = 0; i < arrayOfData.Length - 1; i++)
@@ -121,7 +106,7 @@ namespace HEC.FDA.Model.paireddata
             }
             return true;
         }
-        private bool IsDistributionArrayValid(IDistribution[] arrayOfData, double prob, Func<double, double, bool> comparison)
+        private static bool IsDistributionArrayValid(IDistribution[] arrayOfData, double prob, Func<double, double, bool> comparison)
         {
             if (arrayOfData == null) return false;
             for (int i = 0; i < arrayOfData.Length - 1; i++)
@@ -135,24 +120,24 @@ namespace HEC.FDA.Model.paireddata
         }
         public PairedData SamplePairedData(double probability, bool retrieveDeterministicRepresentation = false)
         {
-            double[] y = new double[_yvals.Length];
+            double[] y = new double[Yvals.Length];
             if (retrieveDeterministicRepresentation)
             {
-                for (int i = 0; i < _xvals.Length; i++)
+                for (int i = 0; i < Xvals.Length; i++)
                 {
-                    Deterministic deterministic = UncertainToDeterministicDistributionConverter.ConvertDistributionToDeterministic(_yvals[i]);
+                    Deterministic deterministic = UncertainToDeterministicDistributionConverter.ConvertDistributionToDeterministic(Yvals[i]);
                     y[i] = (deterministic.Value);
                 }
 
             } else
             {
-                for (int i = 0; i < _xvals.Length; i++)
+                for (int i = 0; i < Xvals.Length; i++)
                 {
-                    y[i] = _yvals[i].InverseCDF(probability);
+                    y[i] = Yvals[i].InverseCDF(probability);
                 }
 
             }
-            PairedData pairedData = new PairedData(_xvals, y, _metadata);//mutability leakage on xvals
+            PairedData pairedData = new(Xvals, y, CurveMetaData);//mutability leakage on xvals
             pairedData.ForceMonotonicity();
             return pairedData;
         }
@@ -169,10 +154,10 @@ namespace HEC.FDA.Model.paireddata
             {
                 return false;
             }
-            for (int i = 0; i < _xvals.Length; i++)
+            for (int i = 0; i < Xvals.Length; i++)
             {
-                bool probabilityIsTheSame = _xvals[i].Equals(incomingUncertainPairedData._xvals[i]);
-                bool distributionIsTheSame = _yvals[i].Equals(incomingUncertainPairedData._yvals[i]);
+                bool probabilityIsTheSame = Xvals[i].Equals(incomingUncertainPairedData.Xvals[i]);
+                bool distributionIsTheSame = Yvals[i].Equals(incomingUncertainPairedData.Yvals[i]);
                 if (!probabilityIsTheSame || !distributionIsTheSame)
                 {
                     return false;
@@ -195,29 +180,29 @@ namespace HEC.FDA.Model.paireddata
                 deterministicDistributions[i] = UncertainToDeterministicDistributionConverter.ConvertDistributionToDeterministic(uncertainPairedData.Yvals[i]);
                 i++;
             }
-            UncertainPairedData deterministicUncertainPairedData = new UncertainPairedData(uncertainPairedData.Xvals, deterministicDistributions, uncertainPairedData.CurveMetaData);
+            UncertainPairedData deterministicUncertainPairedData = new(uncertainPairedData.Xvals, deterministicDistributions, uncertainPairedData.CurveMetaData);
             return deterministicUncertainPairedData;
         }
         public XElement WriteToXML()
         {
-            XElement masterElement = new XElement("UncertainPairedData");
-            XElement curveMetaDataElement = _metadata.WriteToXML();
+            XElement masterElement = new("UncertainPairedData");
+            XElement curveMetaDataElement = CurveMetaData.WriteToXML();
             curveMetaDataElement.Name = "CurveMetaData";
             masterElement.Add(curveMetaDataElement);
-            if (_metadata.IsNull)
+            if (CurveMetaData.IsNull)
             {
                 return masterElement;
             }
             else
             {
-                masterElement.SetAttributeValue("Ordinate_Count", _xvals.Length);
-                XElement coordinatesElement = new XElement("Coordinates");
-                for (int i = 0; i < _xvals.Length; i++)
+                masterElement.SetAttributeValue("Ordinate_Count", Xvals.Length);
+                XElement coordinatesElement = new("Coordinates");
+                for (int i = 0; i < Xvals.Length; i++)
                 {
-                    XElement coordinateElement = new XElement("Coordinate");
-                    XElement xElement = new XElement("X");
-                    xElement.SetAttributeValue("Value", _xvals[i]);
-                    XElement yElement = _yvals[i].ToXML();
+                    XElement coordinateElement = new("Coordinate");
+                    XElement xElement = new("X");
+                    xElement.SetAttributeValue("Value", Xvals[i]);
+                    XElement yElement = Yvals[i].ToXML();
                     coordinateElement.Add(xElement);
                     coordinateElement.Add(yElement);
                     coordinatesElement.Add(coordinateElement);
