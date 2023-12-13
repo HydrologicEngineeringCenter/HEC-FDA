@@ -38,7 +38,11 @@ namespace HEC.FDA.Model.stageDamage
         private double _MinStageForArea;
         private double _MaxStageForArea;
 
+        //we have a way to figure out how many additional stages for which 
+        //to calculate damage (we start with about 8 points)
+        //these are the number of stages interpolated at the top of the stage damage function
         private int _MoreInterpolationPoints;
+        //these are the number of stages interpolated at the bottom and in the middle of the function
         private int _LessInterpolationPoints;
 
         private readonly string _HydraulicParentDirectory;
