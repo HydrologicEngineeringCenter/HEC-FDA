@@ -239,7 +239,7 @@ namespace HEC.FDA.ViewModel.Inventory
             return dtv;
         }
 
-        public static string getTerrainFile()
+        public static string GetTerrainFile()
         {
             string filePath = "";
             List<TerrainElement> terrainElements = StudyCache.GetChildElementsOfType<TerrainElement>();
@@ -249,7 +249,31 @@ namespace HEC.FDA.ViewModel.Inventory
                 TerrainElement elem = terrainElements[0];
                 filePath = Storage.Connection.Instance.TerrainDirectory + "\\" + elem.Name + "\\" + elem.FileName;
             }
-            return filePath;
+            if (!File.Exists(filePath))
+            {
+                return null;
+            }
+            if (System.IO.Path.GetExtension(filePath) == ".hdf")
+            {
+                string error = "";  
+                if(RASHelper.IsHDFTerrrainValid(filePath,ref error))
+                {
+                    return filePath;
+                }
+                else
+                {
+                    MessageBox.Show(error);
+                    return null;
+                }
+            }
+            else
+            {
+                if(File.Exists(filePath))
+                {
+                    return filePath;
+                }
+            }
+            return null;
         }
 
         #region Validation
@@ -265,7 +289,7 @@ namespace HEC.FDA.ViewModel.Inventory
             List<StructureMissingDataRowItem> missingDataRows = new();
             int badElevationNumber = -9999;
             _StructureElevations.Clear();
-            _StructureElevations.AddRange(RASHelper.SamplePointsFromRaster(Path,getTerrainFile(),RASHelper.GetProjectionFromTerrain(getTerrainFile())));
+            _StructureElevations.AddRange(RASHelper.SamplePointsFromRaster(Path,GetTerrainFile(),RASHelper.GetProjectionFromTerrain(GetTerrainFile())));
             List<int> idsWithNoElevation = new List<int>();
             for (int i = 0; i < _StructureElevations.Count(); i++)
             {

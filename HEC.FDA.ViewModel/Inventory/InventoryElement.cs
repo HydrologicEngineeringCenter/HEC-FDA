@@ -4,6 +4,7 @@ using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
+using RasMapperLib;
 using SixLabors.ImageSharp.Formats.Gif;
 using Statistics;
 using Statistics.Distributions;
@@ -146,25 +147,42 @@ namespace HEC.FDA.ViewModel.Inventory
 
         private static string GetImpactAreaShapefile(string impactAreaName)
         {
-            return Directory.GetFiles(GetImpactAreaDirectory(impactAreaName), "*.shp")[0];
+            //Check that the file exists, and that it is a valid shapefile before returning.
+            string shapefilePath = GetImpactAreaDirectory(impactAreaName) + "\\" + impactAreaName + ".shp";
+            string error = "";
+            if(RASHelper.ShapefileIsValid(shapefilePath,ref error))
+            {
+                return shapefilePath;
+            }
+            MessageBox.Show(error);
+            return null;
         }
+
 
         private string GetStructuresDirectory()
         {
             return Connection.Instance.InventoryDirectory + "\\" + Name;
         }
 
-        private string GetStructuresPointShapefile()
+        private string GetInventoryPointShapefile()
         {
-            return Directory.GetFiles(GetStructuresDirectory(), "*.shp")[0];
+            //Check that the file exists, and that it is a valid shapefile before returning.
+            string shapefilePath = GetStructuresDirectory() + "\\" + Name + ".shp";
+            string error = "";
+            if (RASHelper.ShapefileIsValid(shapefilePath, ref error))
+            {
+                return shapefilePath;
+            }
+            MessageBox.Show(error);
+            return null; 
         }
 
         public Model.structures.Inventory CreateModelInventory(ImpactAreaElement impactAreaElement)
         {
             Dictionary<string, OccupancyType> occtypeMappings = CreateModelOcctypesMapping();
-            string pointShapefilePath = GetStructuresPointShapefile();
+            string pointShapefilePath = GetInventoryPointShapefile();
             string impAreaShapefilePath = GetImpactAreaShapefile(impactAreaElement.Name);
-            string terrainPath = InventoryColumnSelectionsVM.getTerrainFile();
+            string terrainPath = InventoryColumnSelectionsVM.GetTerrainFile();
             StudyPropertiesElement studyProperties = StudyCache.GetStudyPropertiesElement();
             double priceIndex = studyProperties.UpdatedPriceIndex;
             Model.structures.Inventory inv = new(pointShapefilePath, impAreaShapefilePath,
