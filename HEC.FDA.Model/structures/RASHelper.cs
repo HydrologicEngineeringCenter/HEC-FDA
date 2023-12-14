@@ -7,6 +7,7 @@ using RasMapperLib;
 using RasMapperLib.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Utilities;
 
@@ -198,6 +199,29 @@ where T : struct
             return ReprojectPolygons(studyProjection, polygons, impactAreaPrj);
         }
     }
+
+    /// <summary>
+    /// Checks that a shapefile exists and has all it's mandatory component files
+    /// </summary>
+    /// <param name="shapefilePath"></param>
+    /// <returns>returns a bool incicating if valid, and a list<string> or error messages</returns>
+    public static bool ShapefileIsValid(string shapefilePath, ref string error)
+    {
+        if (!File.Exists(shapefilePath))
+        {
+            error = shapefilePath + " does not exist.";
+            return false;
+        }
+        else
+        {
+            if (!ShapefileStorage.IsValid(shapefilePath, ref error))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static List<Polygon> ReprojectPolygons(Projection studyProjection, List<Polygon> polygons, Projection impactAreaPrj)
     {
         List<Polygon> ImpactAreas = new();
@@ -229,6 +253,21 @@ where T : struct
         }
         return filteredFiles;
 
+    }
+    public static bool IsHDFTerrrainValid(string terrainHDF, ref string error)
+    {
+        if (!File.Exists(terrainHDF))
+        {
+            error = terrainHDF + " does not exist.";
+            return false;
+        }
+        TerrainLayer terrain = new("ThisNameIsNotUSed", terrainHDF);
+        if (!terrain.AllSourceFilesExist())
+        {
+            error = "Terrain HDF file is missing component files.";
+            return false;
+        }
+        return true;
     }
 
 
