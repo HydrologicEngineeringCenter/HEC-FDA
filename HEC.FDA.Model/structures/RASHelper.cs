@@ -269,6 +269,21 @@ where T : struct
         }
         return true;
     }
+    public static bool IsProjectionValid(string projectionFilePath, ref string error)
+    {
+        if (!File.Exists(projectionFilePath))
+        {
+            error = projectionFilePath + " does not exist.";
+            return false;
+        }
+        Projection projection = Projection.FromFile(projectionFilePath);
+        if (projection.IsNull())
+        {
+            error = "Projection file is invalid.";
+            return false;
+        }
+        return true;
+    }
 
 
 }
