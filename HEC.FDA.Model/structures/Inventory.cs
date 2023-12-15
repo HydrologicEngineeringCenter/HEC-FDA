@@ -32,7 +32,7 @@ namespace HEC.FDA.Model.structures
             PriceIndex = priceIndex;
             Projection studyProjection;
             //Only use the user specified projection if they don't have a terrain. Otherwise force them to use that projection. 
-            if (terrainPath.IsNullOrEmpty())
+            if (!updateGroundElevFromTerrain)
             {
                 studyProjection = Projection.FromFile(projectionFilePath);
             }
