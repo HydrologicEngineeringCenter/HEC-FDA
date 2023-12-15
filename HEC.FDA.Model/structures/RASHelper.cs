@@ -261,11 +261,20 @@ where T : struct
             error = terrainHDF + " does not exist.";
             return false;
         }
-        TerrainLayer terrain = new("ThisNameIsNotUSed", terrainHDF);
-        if (!terrain.AllSourceFilesExist())
+        try
         {
-            error = "Terrain HDF file is missing component files.";
+            TerrainLayer terrain = new("ThisNameIsNotUSed", terrainHDF);
+            if (!terrain.AllSourceFilesExist())
+            {
+                error = "Terrain HDF file is missing component files.";
+                return false;
+            }
+        }
+        catch
+        {
+            error = "Terrain HDF file is invalid.";
             return false;
+
         }
         return true;
     }
