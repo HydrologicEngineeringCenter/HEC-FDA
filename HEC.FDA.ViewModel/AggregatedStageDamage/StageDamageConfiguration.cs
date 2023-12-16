@@ -47,11 +47,18 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             if(vr.IsValid)
             {
                 Model.structures.Inventory inv = SelectedStructures.CreateModelInventory(SelectedImpactArea);
-                List<string> occtypeErrors = inv.AreOcctypesValid();
-                if(occtypeErrors.Count > 0)
+                if (inv == null)
                 {
-                    vr.AddErrorMessage("Unable to compute because of occupancy type errors:");
-                    vr.AddErrorMessages(occtypeErrors);
+                    vr.AddErrorMessage("Unable to compute because of structure inventory errors.");
+                }
+                else
+                {
+                    List<string> occtypeErrors = inv.AreOcctypesValid();
+                    if (occtypeErrors.Count > 0)
+                    {
+                        vr.AddErrorMessage("Unable to compute because of occupancy type errors:");
+                        vr.AddErrorMessages(occtypeErrors);
+                    }
                 }
             }
             return vr;
@@ -175,7 +182,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public List<ImpactAreaStageDamage> CreateStageDamages()
         {
             Model.structures.Inventory inv = SelectedStructures.CreateModelInventory(SelectedImpactArea);
-            
+            if(inv == null)
+            {
+                return null;
+            }
             string hydroParentDirectory = SelectedHydraulics.GetDirectoryInStudy();
 
             List<ImpactAreaStageDamage> stageDamages = new List<ImpactAreaStageDamage>();
