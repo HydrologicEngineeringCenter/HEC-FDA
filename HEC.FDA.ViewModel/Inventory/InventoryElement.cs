@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Xml.Linq;
+using Utilities;
 using static HEC.FDA.Model.structures.OccupancyType;
 
 namespace HEC.FDA.ViewModel.Inventory
@@ -176,7 +177,22 @@ namespace HEC.FDA.ViewModel.Inventory
             MessageBox.Show(error);
             return null; 
         }
-
+        private string GetProjectionFile()
+        {
+           var files = Directory.GetFiles(Connection.Instance.ProjectionDirectory, "*.prj");
+            if(files.Length > 0)
+            {
+                string file = files[0];
+                string error = "";
+                if(RASHelper.IsProjectionValid(file,ref error))
+                {
+                    return file;
+                }
+                MessageBox.Show(error);
+            }
+            MessageBox.Show("No projection file found in the projection directory.");
+            return null;
+        }
         public Model.structures.Inventory CreateModelInventory(ImpactAreaElement impactAreaElement)
         {
             Dictionary<string, OccupancyType> occtypeMappings = CreateModelOcctypesMapping();
@@ -184,12 +200,24 @@ namespace HEC.FDA.ViewModel.Inventory
             string impAreaShapefilePath = GetImpactAreaShapefile(impactAreaElement.Name);
             string terrainPath = InventoryColumnSelectionsVM.GetTerrainFile();
             StudyPropertiesElement studyProperties = StudyCache.GetStudyPropertiesElement();
+            string propertiesFile = "";
             double priceIndex = studyProperties.UpdatedPriceIndex;
+            if(pointShapefilePath.IsNullOrEmpty() || impAreaShapefilePath.IsNullOrEmpty())
+            {
+                return null;
+            }
+            if(terrainPath.IsNullOrEmpty() && SelectionMappings.IsUsingTerrainFile == true)
+            {
+                return null;
+            }
+            if (!SelectionMappings.IsUsingTerrainFile)
+            {
+                propertiesFile = GetProjectionFile();
+            }
             Model.structures.Inventory inv = new(pointShapefilePath, impAreaShapefilePath,
-                SelectionMappings, occtypeMappings, SelectionMappings.IsUsingTerrainFile,terrainPath, priceIndex);
+                SelectionMappings, occtypeMappings, SelectionMappings.IsUsingTerrainFile,terrainPath, priceIndex, propertiesFile);
             return inv;
         }
-
         public static FirstFloorElevationUncertainty CreateFirstFloorUncertainty(ContinuousDistribution ordinate)
         {
             FirstFloorElevationUncertainty elevationUncertainty = null;
