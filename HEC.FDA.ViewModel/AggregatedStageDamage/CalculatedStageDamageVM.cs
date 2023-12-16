@@ -623,6 +623,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             try
             {
                 List<ImpactAreaStageDamage> impactAreaStageDamages = config.CreateStageDamages();
+                if(impactAreaStageDamages == null)
+                {
+                    return null;
+                }
                 foreach(ImpactAreaStageDamage area in impactAreaStageDamages)
                 {
                     vg.ChildGroups.AddRange(area.ValidationGroups);
