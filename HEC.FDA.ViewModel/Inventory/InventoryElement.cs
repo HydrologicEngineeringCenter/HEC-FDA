@@ -142,13 +142,13 @@ namespace HEC.FDA.ViewModel.Inventory
 
         private static string GetImpactAreaDirectory(string impactAreaName)
         {
-            return Connection.Instance.ImpactAreaDirectory + "\\" + impactAreaName;
+            return Path.Combine(Connection.Instance.ImpactAreaDirectory, impactAreaName);
         }
 
         private static string GetImpactAreaShapefile(string impactAreaName)
         {
             //Check that the file exists, and that it is a valid shapefile before returning.
-            string shapefilePath = GetImpactAreaDirectory(impactAreaName) + "\\" + impactAreaName + ".shp";
+            string shapefilePath = Path.Combine(GetImpactAreaDirectory(impactAreaName), impactAreaName + ".shp");
             string error = "";
             if(RASHelper.ShapefileIsValid(shapefilePath,ref error))
             {
@@ -161,13 +161,13 @@ namespace HEC.FDA.ViewModel.Inventory
 
         private string GetStructuresDirectory()
         {
-            return Connection.Instance.InventoryDirectory + "\\" + Name;
+            return Path.Combine(Connection.Instance.InventoryDirectory, Name);
         }
 
         private string GetInventoryPointShapefile()
         {
             //Check that the file exists, and that it is a valid shapefile before returning.
-            string shapefilePath = GetStructuresDirectory() + "\\" + Name + ".shp";
+            string shapefilePath = Path.Combine(GetStructuresDirectory(), Name + ".shp");
             string error = "";
             if (RASHelper.ShapefileIsValid(shapefilePath, ref error))
             {
