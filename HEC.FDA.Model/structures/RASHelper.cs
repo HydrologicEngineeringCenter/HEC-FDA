@@ -3,11 +3,16 @@ using Geospatial.GDALAssist.Vectors;
 using Geospatial.IO;
 using Geospatial.Rasters;
 using Geospatial.Terrain;
+using Hec.Dss;
+using OSGeo.GDAL;
 using RasMapperLib;
 using RasMapperLib.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Xml;
+using System.Xml.Linq;
 using Utilities;
 
 namespace HEC.FDA.Model.structures;
@@ -71,7 +76,12 @@ public static class RASHelper
         {
             case ".hdf":
                 TerrainLayer terrain = new("ThisNameIsNotUSed", TerrainPath);
-                terrainTif = terrain.GetAllSourceFiles()[1];
+                if (!File.Exists(terrain.VRTFilename)) //This is a hack to get around a bug in RasMapper  which throws an exception trying to create a VRT
+                {
+                    CreateFakeVRTForTerrain(terrain);
+                }
+                //This will always return the hdf as index 0, the vrt at index 1, and the tif at index 2. I want that .tif. 
+                terrainTif = terrain.GetAllSourceFiles()[2];
                 break;
             case ".tif":
                 terrainTif = TerrainPath;
@@ -82,6 +92,15 @@ public static class RASHelper
         GDALRaster raster = new(terrainTif);
         return raster.GetProjection();
     }
+
+    private static void CreateFakeVRTForTerrain(TerrainLayer terrain)
+    {
+        using StreamWriter writer = new(terrain.VRTFilename);
+        writer.Write(vrtFileContents);
+        writer.Flush();
+    }
+
+
     public static int GetImpactAreaFID(PointM point, List<Polygon> ImpactAreas)
     {
         for (int i = 0; i < ImpactAreas.Count; i++)
@@ -230,6 +249,14 @@ where T : struct
         return filteredFiles;
 
     }
+
+    #region HACKS
+    ///This contains a workaround for an issue in RASMapper, where to query the component files of an HDF, RASMapper was generating a VRT using GDAL .exes that don't exist
+    ///in the version 7 build of GDAL
+    ///
+
+    private static string vrtFileContents = "<VRTDataset rasterXSize=\"512\" rasterYSize=\"512\">\r\n  <SRS dataAxisToSRSAxisMapping=\"1,2\">PROJCS[\"NAD83 / Indiana East (ftUS)\",GEOGCS[\"NAD83\",DATUM[\"North_American_Datum_1983\",SPHEROID[\"GRS 1980\",6378137,298.257222101004,AUTHORITY[\"EPSG\",\"7019\"]],AUTHORITY[\"EPSG\",\"6269\"]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4269\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",37.5],PARAMETER[\"central_meridian\",-85.6666666666667],PARAMETER[\"scale_factor\",0.999966666666667],PARAMETER[\"false_easting\",328083.333333333],PARAMETER[\"false_northing\",820208.333333333],UNIT[\"US survey foot\",0.304800609601219,AUTHORITY[\"EPSG\",\"9003\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH]]</SRS>\r\n  <GeoTransform>  4.0033784867792000e+05,  3.0000000000000000e+01,  0.0000000000000000e+00,  1.8115535402635999e+06,  0.0000000000000000e+00, -3.0000000000000000e+01</GeoTransform>\r\n  <VRTRasterBand dataType=\"Float32\" band=\"1\">\r\n    <Metadata>\r\n      <MDI key=\"STATISTICS_MAXIMUM\">980.65625</MDI>\r\n      <MDI key=\"STATISTICS_MEAN\">950.96604100505</MDI>\r\n      <MDI key=\"STATISTICS_MINIMUM\">910.6875</MDI>\r\n      <MDI key=\"STATISTICS_STDDEV\">10.26791635529</MDI>\r\n    </Metadata>\r\n    <NoDataValue>-9999</NoDataValue>\r\n    <ColorInterp>Gray</ColorInterp>\r\n    <Histograms>\r\n      <HistItem>\r\n        <HistMin>910.6875</HistMin>\r\n        <HistMax>980.65625</HistMax>\r\n        <BucketCount>256</BucketCount>\r\n        <IncludeOutOfRange>1</IncludeOutOfRange>\r\n        <Approximate>0</Approximate>\r\n        <HistCounts>14|12|12|12|20|21|19|18|23|25|40|20|32|26|44|31|36|42|36|30|36|53|49|39|45|30|45|32|34|29|42|29|31|19|29|27|29|30|30|27|32|47|38|27|60|49|50|49|57|64|52|55|78|94|132|113|150|172|239|214|311|257|263|251|291|333|373|452|471|518|467|562|591|602|532|754|800|860|780|851|890|839|773|885|816|832|781|980|1003|1043|951|1019|992|1060|997|1002|946|921|862|1025|1058|1104|1120|1260|1228|1309|1267|1406|1364|1406|1302|1610|1670|1537|1404|1564|1650|1762|1547|1872|1952|1856|1656|1849|1992|2093|1830|2104|2229|2076|2526|2706|2656|2284|2538|2473|2482|2225|2600|2549|2459|2248|2604|2678|2864|2471|2889|2949|2789|2303|2578|2449|2438|2109|2401|2376|2318|2048|2326|2355|2448|2081|2229|2218|2183|2111|2442|2567|2716|2277|2668|2834|2968|2621|3011|2886|2779|2535|2741|2461|2336|2004|2235|2458|2331|2051|2223|2311|2147|1795|1938|1924|1640|1898|1940|2093|1915|2032|1671|1532|1353|1400|1334|1224|1090|995|911|972|720|803|773|686|473|445|380|368|292|289|227|221|154|122|97|70|59|50|49|32|21|28|19|12|8|8|5|6|2|0|1|0|0|0|0|1|0|1|0|3|0|1|0|0|0|0|2|1</HistCounts>\r\n      </HistItem>\r\n    </Histograms>\r\n    <ComplexSource>\r\n      <SourceFilename relativeToVRT=\"1\">Terip.Resampled_clip.tif</SourceFilename>\r\n      <SourceBand>1</SourceBand>\r\n      <SourceProperties RasterXSize=\"512\" RasterYSize=\"512\" DataType=\"Float32\" BlockXSize=\"256\" BlockYSize=\"256\" />\r\n      <SrcRect xOff=\"0\" yOff=\"0\" xSize=\"512\" ySize=\"512\" />\r\n      <DstRect xOff=\"0\" yOff=\"0\" xSize=\"512\" ySize=\"512\" />\r\n      <NODATA>-9999</NODATA>\r\n    </ComplexSource>\r\n  </VRTRasterBand>\r\n</VRTDataset>";
+    #endregion
 
 
 }
