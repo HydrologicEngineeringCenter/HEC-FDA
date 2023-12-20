@@ -57,7 +57,7 @@ public static class RASHelper
         {
             return new float[pts.Count];
         }
-        RasterPyramid<float> baseRaster = baseDs.AsRasterizer();
+        RasterPyramid<float> baseRaster = (RasterPyramid<float>)baseDs.AsRasterizer();
         List<Geospatial.Vectors.Point> geospatialpts = Converter.Convert(pts);
         Memory<Geospatial.Vectors.Point> points = new(geospatialpts.ToArray());
         float[] elevationData = new float[points.Length];
@@ -264,10 +264,15 @@ where T : struct
         try
         {
             TerrainLayer terrain = new("ThisNameIsNotUSed", terrainHDF);
-            if (!terrain.AllSourceFilesExist())
+            //bool sourceFilesExist = terrain.AllSourceFilesExist(); There's a bug in this method. Returns true even if they don't exist
+            List<string> sourcefiles = terrain.GetAllSourceFiles();
+            foreach (string file in sourcefiles)
             {
-                error = "Terrain HDF file is missing component files.";
-                return false;
+                if (!File.Exists(file))
+                {
+                    error = $"Terrain HDF file is missing component files: {file}";
+                    return false;
+                }
             }
         }
         catch
