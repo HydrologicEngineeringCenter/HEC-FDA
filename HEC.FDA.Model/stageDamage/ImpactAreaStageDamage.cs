@@ -614,7 +614,7 @@ namespace HEC.FDA.Model.stageDamage
         }
 
         private void DamagesToStrings(string assetType, List<DeterministicOccupancyType> deterministicOccupancyType, ref List<string> structureDetails)
-        {
+ {
             foreach (IHydraulicProfile hydraulicProfile in _HydraulicDataset.HydraulicProfiles)
             {
                 float[] stagesAtStructures = hydraulicProfile.GetWSE(Inventory.GetPointMs(), _HydraulicDataset.DataSource, _HydraulicParentDirectory);
