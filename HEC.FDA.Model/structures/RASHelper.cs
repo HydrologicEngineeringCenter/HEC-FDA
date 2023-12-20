@@ -230,6 +230,10 @@ where T : struct
     public static List<string> GetTerrainComponentFiles(string terrainHDF, string extensionFilter)
     {
         TerrainLayer terrain = new("ThisNameIsNotUSed", terrainHDF);
+        if (!File.Exists(terrain.VRTFilename)) //This is a hack to get around a bug in RasMapper  which throws an exception trying to create a VRT
+        {
+            CreateFakeVRTForTerrain(terrain);
+        }
         List<string> allFiles = terrain.GetAllSourceFiles();
         List<string> filteredFiles = new();
         if (extensionFilter.IsNullOrEmpty())
