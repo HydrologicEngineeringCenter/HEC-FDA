@@ -118,6 +118,7 @@ namespace HEC.FDA.Model.structures
                 if (OccTypes.ContainsKey(occtype))
                 {
                     st_damcat = OccTypes[occtype].DamageCategory;
+                    occtype = OccTypes[occtype].Name;
                 }
                 //semi-required. We'll either have ff_elev given to us, or both ground elev and found_ht
                 double found_ht = RASHelper.GetRowValueForColumn<double>(row, map.FoundationHeightCol, defaultMissingValue); //not gauranteed
@@ -158,6 +159,7 @@ namespace HEC.FDA.Model.structures
                     val_vehic, val_other, cbfips, beginningDamage, ground_elv, found_ht, yearInService, numStructures, notes, description));
             }
         }
+
         public Inventory GetInventoryTrimmedToImpactArea(int impactAreaFID)
         {
             List<Structure> filteredStructureList = new();
