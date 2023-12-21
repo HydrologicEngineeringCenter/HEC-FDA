@@ -29,7 +29,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                 case ".hdf":
                     //copy all that terrain's files. 
                     string originalDirName = Path.GetDirectoryName(OriginalTerrainPath);
-                    List<string> paths = RASHelper.GetTerrainComponentFiles(OriginalTerrainPath,null);
+                    List<string> paths = RASHelper.GetTerrainComponentFiles(OriginalTerrainPath);
                     foreach (string path in paths)
                     {
                         await Task.Run(() => File.Copy(path, newDirectory + "\\" + Path.GetFileName(path)));
