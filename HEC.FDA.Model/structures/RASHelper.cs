@@ -218,19 +218,31 @@ where T : struct
     /// <summary>
     /// returns all the component files of the terrain. Does not gaurantee they exist, just that they should for the terrain to be complete. 
     /// </summary>
-    /// <param name="terrainHDF"></param>
+    /// <param name="terrainPath"></param>
     /// <returns></returns>
-    public static List<string> GetTerrainComponentFiles(string terrainHDF)
+    public static List<string> GetTerrainComponentFiles(string terrainPath)
     {
-        TerrainLayer terrain = new("ThisNameIsNotUSed", terrainHDF);
-        return GetAllSourceFilesFromTerrainSAFE(terrain);
+        string terrainExtension = System.IO.Path.GetExtension(terrainPath);
+        switch (terrainExtension)
+        {
+            case ".hdf":
+                TerrainLayer terrain = new("ThisNameIsNotUSed", terrainPath);
+                return GetAllSourceFilesFromTerrainSAFE(terrain);
+            case ".tif":
+                return new() { terrainPath };
+            default:
+                throw new Exception("Unsupported File Type");
+        }
+ 
     }
 
     #region HACKS
     ///This contains a workaround for an issue in RASMapper, where to query the component files of an HDF, RASMapper was generating a VRT using GDAL .exes that don't exist
-    ///in the version 7 build of GDAL
-    ///
-    public static List<string> GetAllSourceFilesFromTerrainSAFE(TerrainLayer terrain)
+    ///in the version 7 build of GDAL 
+
+   
+    
+    private static List<string> GetAllSourceFilesFromTerrainSAFE(TerrainLayer terrain)
     {
         List<string> sourcefiles;
         bool realVRTFileExists = File.Exists(terrain.VRTFilename);

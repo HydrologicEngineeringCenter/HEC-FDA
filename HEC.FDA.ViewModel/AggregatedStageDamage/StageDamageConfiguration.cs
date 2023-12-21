@@ -1,5 +1,6 @@
 ﻿using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.stageDamage;
+using HEC.FDA.Model.structures;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.ImpactArea;
@@ -7,6 +8,7 @@ using HEC.FDA.ViewModel.Inventory;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
 using System.Collections.Generic;
+using System.IO;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
@@ -46,12 +48,31 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
             if(vr.IsValid)
             {
+                vr.AddErrorMessage(GetIsTerrainValidResult().ErrorMessage);
+            }
+            if(vr.IsValid)
+            {
                 Model.structures.Inventory inv = SelectedStructures.CreateModelInventory(SelectedImpactArea);
                 List<string> occtypeErrors = inv.AreOcctypesValid();
                 if(occtypeErrors.Count > 0)
                 {
                     vr.AddErrorMessage("Unable to compute because of occupancy type errors:");
                     vr.AddErrorMessages(occtypeErrors);
+                }
+            }
+            return vr;
+        }
+
+        private FdaValidationResult GetIsTerrainValidResult()
+        {
+            FdaValidationResult vr = new();
+            string terrainFile = InventoryColumnSelectionsVM.getTerrainFile();
+            List<string> terrainComponentFiles = RASHelper.GetTerrainComponentFiles(terrainFile);
+            foreach(string file in terrainComponentFiles)
+            {
+                if(!File.Exists(file))
+                {
+                    vr.AddErrorMessage($"Terrain missing component files: {file}");
                 }
             }
             return vr;
