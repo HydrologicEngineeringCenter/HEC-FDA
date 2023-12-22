@@ -61,7 +61,16 @@ namespace HEC.FDA.ModelTest.unittests.structures
             //Empty (default) occupancy types
             OccupancyType occupancyType = OccupancyType.Builder().Build();
             Dictionary<string, OccupancyType> occupancyTypes = new Dictionary<string, OccupancyType>() { { "occtype", occupancyType } };
-            return new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, useTerrainFile, pathToTerrainHDF);
+            Inventory inv;
+            if (useTerrainFile)
+            {
+                inv = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, pathToTerrainHDF, 1);
+            }
+            else
+            {
+                inv = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, pathToTerrainHDF, 1);
+            }
+            return new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, 1, "");
         }
 
         [Fact]

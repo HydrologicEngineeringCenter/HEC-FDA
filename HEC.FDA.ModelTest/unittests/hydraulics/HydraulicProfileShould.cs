@@ -41,8 +41,15 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
             OccupancyType occupancyType = OccupancyType.Builder().Build();
             Dictionary<string, OccupancyType> occupancyTypes = new Dictionary<string, OccupancyType>() { { "occtype", occupancyType } };
 
-
-            Inventory inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, useTerrainFile, pathTerrain);
+            Inventory inventory;
+            if(useTerrainFile)
+            {
+                inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, pathTerrain, 1);
+            }
+            else
+            {
+                inventory = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, 1, "");
+            }
             float[] wses = profile.GetWSE(inventory.GetPointMs(), dataSource, parentDirectory);
             Assert.Equal(682, wses.Length); // All structures have a value
             Assert.True( wses[0] > 900); // first structure has value for WSE
