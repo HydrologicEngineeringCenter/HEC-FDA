@@ -27,7 +27,7 @@ namespace HEC.FDA.Model.hydraulics
         public string ProfileName { get; set; }
         #endregion
         #region Constructors
-        public HydraulicProfile(double probability, string fileName, string profileName = "MAX" )
+        public HydraulicProfile(double probability, string fileName, string profileName )
         {
             Probability = probability;
             FileName = fileName;
