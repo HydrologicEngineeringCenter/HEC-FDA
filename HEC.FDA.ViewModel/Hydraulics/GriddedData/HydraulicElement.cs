@@ -30,25 +30,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 
         #endregion
         #region Constructors
-        /// <summary>
-        /// TODO: We are not importing hydraulics from old fda. Could we delete this constructor? 
-        /// This constructor is only used when importing from old fda files. Old fda does not have paths to map layer files.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="description"></param>
-        /// <param name="isDepthGrids"></param>
-        public HydraulicElement(string name, string description,List<double> probabilites, HydraulicDataSource hydroType, int id)
-            :base(name, "", description,  id)
-        {
-            List<HydraulicProfile> pathAndProbs = new List<HydraulicProfile>();
-            foreach (double p in probabilites)
-            {
-                pathAndProbs.Add(new HydraulicProfile(p, "NA"));
-            }
-            DataSet = new HydraulicDataset(new (pathAndProbs), hydroType);
-            AddDefaultActions(EditElement, StringConstants.EDIT_HYDRAULICS_MENU);
-        }
-
         public HydraulicElement(string name, string description, List<HydraulicProfile> relativePathAndProbabilities, HydraulicDataSource hydroType, int id) 
             : base(name, "", description, id)
         {
