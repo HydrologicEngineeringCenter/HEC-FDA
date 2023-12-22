@@ -68,9 +68,9 @@ namespace HEC.FDA.ModelTest.unittests.structures
             }
             else
             {
-                inv = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, pathToTerrainHDF, 1);
+                inv = new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, 1, pathToMuncieProjection);
             }
-            return new Inventory(pathToNSIShapefile, pathToIAShapefile, map, occupancyTypes, 1, "");
+            return inv;
         }
 
         [Fact]
