@@ -211,7 +211,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                     _OriginalFolderNames[i] = newName;
                 }
                 string fileNameFromChildElementDir = getFilePathFromChildElement(ListOfRows[i]);
-                newPathProbs.Add(new HydraulicProfile(ListOfRows[i].Probability, fileNameFromChildElementDir));
+                newPathProbs.Add(new HydraulicProfile(ListOfRows[i].Probability, fileNameFromChildElementDir, null));
             }
 
             HydraulicElement elementToSave = new(Name, Description, newPathProbs, HydraulicDataSource.WSEGrid, OriginalElement.ID);
@@ -227,7 +227,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             {
                 _OriginalFolderNames.Add(row.Name);
                 string fileNameFromChildElementDir = getFilePathFromChildElement(row);
-                pathProbs.Add(new HydraulicProfile(row.Probability, fileNameFromChildElementDir));
+                pathProbs.Add(new HydraulicProfile(row.Probability, fileNameFromChildElementDir, null));
                 StudyFilesManager.CopyDirectory(row.Path, row.Name, destinationDirectory);
             }
 
