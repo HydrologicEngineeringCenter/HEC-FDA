@@ -54,7 +54,7 @@ namespace HEC.FDA.ViewModel.Watershed
                 switch (pathExtension)
                 {
                     case HDF:
-                        List<string> terrainCompFiles = RASHelper.GetTerrainComponentFiles(TerrainPath, null);
+                        List<string> terrainCompFiles = RASHelper.GetTerrainComponentFiles(TerrainPath);
                         if (!FilesExist(terrainCompFiles))
                         {
                             vr.AddErrorMessage("The file selected is missing it's component files.");

@@ -24,29 +24,53 @@ namespace HEC.FDA.Model.structures
         public List<ValidationGroup> ValidationGroups { get; } = new List<ValidationGroup>();
         #endregion
 
-        #region Constructors
-        public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureSelectionMapping map, Dictionary<string, OccupancyType> occTypes, bool updateGroundElevFromTerrain,
-            string terrainPath, double priceIndex = 1, string projectionFilePath = "")
+       #region Constructors
+
+        /// <summary>
+        /// Constructor for building an Inventory without a terrain
+        /// </summary>
+        /// <param name="pointShapefilePath"></param>
+        /// <param name="impactAreaShapefilePath"></param>
+        /// <param name="map"></param>
+        /// <param name="occTypes"></param>
+        /// <param name="priceIndex"></param>
+        /// <param name="projectionFilePath"></param>
+        public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureSelectionMapping map, Dictionary<string, OccupancyType> occTypes,
+             double priceIndex = 1, string projectionFilePath = "")
         {
             OccTypes = occTypes;
             PriceIndex = priceIndex;
-            Projection studyProjection;
-            //Only use the user specified projection if they don't have a terrain. Otherwise force them to use that projection. 
-            if (terrainPath.IsNullOrEmpty())
-            {
-                studyProjection = Projection.FromFile(projectionFilePath);
-            }
-            else
-            {
-                studyProjection = RASHelper.GetProjectionFromTerrain(terrainPath);
-            }
-            //Projection.FromFile returns Null if the path is bad. We'll check for null before we reproject. 
-            
-            PolygonFeatureLayer impactAreaFeatureLayer = new("ThisNameIsNotUsed", impactAreaShapefilePath);
-            LoadStructuresFromSourceFiles(pointShapefilePath, map, terrainPath, updateGroundElevFromTerrain, impactAreaFeatureLayer, studyProjection);
+            Projection studyProjection = Projection.FromFile(projectionFilePath);//Projection.FromFile returns Null if the path is bad. We'll check for null before we reproject. 
+            LoadStructuresFromSourceFiles(pointShapefilePath, map, null, false, impactAreaShapefilePath, studyProjection);
             AddRules();
         }
 
+        /// <summary>
+        /// Constructor for building an inventory with a terrain
+        /// </summary>
+        /// <param name="pointShapefilePath"></param>
+        /// <param name="impactAreaShapefilePath"></param>
+        /// <param name="map"></param>
+        /// <param name="occTypes"></param>
+        /// <param name="terrainPath"></param>
+        /// <param name="priceIndex"></param>
+        public Inventory(string pointShapefilePath, string impactAreaShapefilePath, StructureSelectionMapping map, Dictionary<string, OccupancyType> occTypes,
+    string terrainPath, double priceIndex = 1)
+        {
+            OccTypes = occTypes;
+            PriceIndex = priceIndex;
+            Projection studyProjection = RASHelper.GetProjectionFromTerrain(terrainPath);
+            LoadStructuresFromSourceFiles(pointShapefilePath, map, terrainPath, true, impactAreaShapefilePath, studyProjection);
+            AddRules();
+
+        }
+
+        /// <summary>
+        /// Builds a terrain from in-memory
+        /// </summary>
+        /// <param name="occTypes"></param>
+        /// <param name="structures"></param>
+        /// <param name="priceIndex"></param>
         public Inventory(Dictionary<string, OccupancyType> occTypes, List<Structure> structures, double priceIndex = 1)
         {
             OccTypes = occTypes;
@@ -93,9 +117,10 @@ namespace HEC.FDA.Model.structures
         }
 
         private void LoadStructuresFromSourceFiles(string pointShapefilePath, StructureSelectionMapping map, string terrrainFilePath, bool updateGroundElevFromTerrain,
-            PolygonFeatureLayer ImpactAreaShapefilePath, Projection studyProjection)
+            string ImpactAreaShapefilePath, Projection studyProjection)
         {
-            List<Polygon> impactAreas = RASHelper.LoadImpactAreasFromSourceFiles(ImpactAreaShapefilePath, studyProjection);
+            PolygonFeatureLayer impactAreaFeatureLayer = new("ThisNameIsNotUsed", ImpactAreaShapefilePath);
+            List<Polygon> impactAreas = RASHelper.LoadImpactAreasFromSourceFiles(impactAreaFeatureLayer, studyProjection);
             float[] groundelevs = Array.Empty<float>();
             int defaultMissingValue = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE;
             string defaultMissingStringValue = "EMPTY";

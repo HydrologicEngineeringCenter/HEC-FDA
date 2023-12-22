@@ -167,8 +167,17 @@ namespace HEC.FDA.ViewModel.Inventory
             string terrainPath = InventoryColumnSelectionsVM.getTerrainFile();
             StudyPropertiesElement studyProperties = StudyCache.GetStudyPropertiesElement();
             double priceIndex = studyProperties.UpdatedPriceIndex;
-            Model.structures.Inventory inv = new(pointShapefilePath, impAreaShapefilePath,
-                SelectionMappings, occtypeMappings, SelectionMappings.IsUsingTerrainFile,terrainPath, priceIndex);
+            string studyProjection = Connection.Instance.ProjectionFile;
+
+            Model.structures.Inventory inv;
+            if (SelectionMappings.IsUsingTerrainFile)
+            {
+                inv = new(pointShapefilePath, impAreaShapefilePath, SelectionMappings, occtypeMappings, terrainPath, priceIndex);
+            }
+            else
+            {
+                inv = new(pointShapefilePath, impAreaShapefilePath, SelectionMappings, occtypeMappings, priceIndex, studyProjection);
+            }
             return inv;
         }
 
