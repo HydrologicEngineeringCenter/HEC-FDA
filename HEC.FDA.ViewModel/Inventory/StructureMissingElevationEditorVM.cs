@@ -22,8 +22,6 @@ namespace HEC.FDA.ViewModel.Inventory
             set { _ElevsFromTerrainFile = value; NotifyPropertyChanged(); }
         }
 
-        public bool FromStructureFile { get; set; }
-
         public StructureMissingElevationEditorVM(StructuresMissingDataManager manager)
         {
             
