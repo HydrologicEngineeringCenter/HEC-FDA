@@ -8,8 +8,10 @@ namespace HEC.FDA.ViewModel.Inventory
     /// </summary>
     public class StructuresMissingDataManager
     {
+        //dictionary of row ID and row. Row ID is also carried in the row item, but having it in a dictionary makes it easier to know when to update rather than add to the list.
         private Dictionary<string, StructureMissingDataRowItem> _MissingDataRows = new Dictionary<string, StructureMissingDataRowItem>();
 
+        public List<string> ColumnsWithMissingData { get; private set; } 
         //there are three cases: First floor elev, from terrain file, from structure file
         public StructuresMissingDataManager()
         {
@@ -34,6 +36,39 @@ namespace HEC.FDA.ViewModel.Inventory
             {
                 _MissingDataRows.Add(row.ID, row);
             }
+        }
+
+        private void AddMissingDataColumnToNeededList(StructureMissingDataRowItem row)
+        {
+            if(row.IsMissingFirstFloorElevation)
+            {
+                ColumnsWithMissingData.Add("First Floor Elevation");
+            }
+            if(row.IsMissingStructureValue)
+            {
+                ColumnsWithMissingData.Add("Structure Value");
+            }
+            if(row.IsMissingGroundElevation)
+            {
+                ColumnsWithMissingData.Add("Ground Elevation");
+            }
+            if(row.IsMissingFoundationHt)
+            {
+                ColumnsWithMissingData.Add("Foundation Height");
+            }
+            if(row.IsMissingOcctype)
+            {
+                ColumnsWithMissingData.Add("Occupancy Type");
+            }
+            if(row.IsMissingTerrainElevation)
+            {
+                ColumnsWithMissingData.Add("Terrain Elevation");
+            }
+            if(row.IsMissingID)
+            {
+                ColumnsWithMissingData.Add("ID");
+            }
+            
         }
 
         private void UpdateRow(StructureMissingDataRowItem rowInDictionary, StructureMissingDataRowItem newRow)

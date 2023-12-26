@@ -24,27 +24,60 @@ namespace HEC.FDA.ViewModel.Inventory
 
         public bool FromStructureFile { get; set; }
 
-        public StructureMissingElevationEditorVM(List<StructureMissingDataRowItem> rows,  InventoryColumnSelectionsVM inventoryColumnSelectionsVM)
+        public StructureMissingElevationEditorVM(StructuresMissingDataManager manager)
         {
             
             MissingDataTable = new DataTable();
-            CS.Collections.CustomObservableCollection<InventoryColumnSelectionsRowItem> requiredRows = inventoryColumnSelectionsVM.RequiredRows;
-
-            foreach(InventoryColumnSelectionsRowItem item in requiredRows)
+            MissingDataTable.Columns.Add("ID");
+            foreach (string header in manager.ColumnsWithMissingData)
             {
-                MissingDataTable.Columns.Add(item.MissingValueColumnHeader);
+                MissingDataTable.Columns.Add(header);
             }
-            foreach (StructureMissingDataRowItem item in rows)
+            foreach (StructureMissingDataRowItem row in manager.GetRows())
             {
-                object[] rowVals = inventoryColumnSelectionsVM.GetRequiredRowValues(item.ID);
                 DataRow myRow = MissingDataTable.NewRow();
-                for(int i = 0;i<requiredRows.Count;i++)
+                myRow["ID"] = row.ID;
+                foreach (string header in manager.ColumnsWithMissingData)
                 {
-                    myRow[i] = rowVals[i];
+                    switch(header)
+                    {
+                        case "First Floor Elevation":
+                            myRow[header] = StringIfMissing(row.IsMissingFirstFloorElevation);
+                            break;
+                        case "Ground Elevation":
+                            myRow[header] = StringIfMissing(row.IsMissingGroundElevation);
+                            break;
+                        case "Foundation Height":
+                            myRow[header] = StringIfMissing(row.IsMissingFoundationHt);
+                            break;
+                        case "Structure Value":
+                            myRow[header] = StringIfMissing(row.IsMissingStructureValue);
+                            break;
+                        case "Occupancy Type":
+                            myRow[header] = StringIfMissing(row.IsMissingOcctype);
+                            break;
+                        case "Terrain Elevation":
+                            myRow[header] = StringIfMissing(row.IsMissingTerrainElevation);
+                            break;
+                        case "ID":
+                            myRow[header] = StringIfMissing(row.IsMissingID);
+                            break;
+                    }
                 }
                 MissingDataTable.Rows.Add(myRow);
             }
-    
+        }
+
+        private string StringIfMissing(bool foo)
+        {
+            if (foo)
+            {
+                return "Missing";
+            }
+            else
+            {
+                return "";
+            }
         }
     }
 }

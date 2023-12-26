@@ -3,7 +3,7 @@
     public class StructureMissingDataRowItem
     {      
         public string ID { get; set; }
-        public bool IsMissingID { get; set; }
+        public bool IsMissingID { get; set; } //if this is true, WTF is ID?
         public bool IsMissingFirstFloorElevation { get; set; }
         public bool IsMissingOcctype { get; set; }
         public bool IsMissingFoundationHt { get; set; }

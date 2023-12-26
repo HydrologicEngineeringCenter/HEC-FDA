@@ -142,7 +142,7 @@ namespace HEC.FDA.ViewModel.Inventory
             StructuresMissingDataManager missingDataManager = _ColumnSelections.Validate();
             if (missingDataManager.GetRows().Count > 0)
             {
-                StructureMissingElevationEditorVM vm = new(missingDataManager.GetRows(), _ColumnSelections);
+                StructureMissingElevationEditorVM vm = new(missingDataManager);
                 DynamicTabVM tab = new("Missing Data", vm, "missingData",false,false);
                 Navigate(tab);
                 missingValues = true;
