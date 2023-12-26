@@ -48,7 +48,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
             if(vr.IsValid)
             {
-                vr.AddErrorMessage(GetIsTerrainValidResult().ErrorMessage);
+                //validate the terrain only if we're using one
+                if (SelectedStructures.SelectionMappings.IsUsingTerrainFile)
+                {
+                    vr.AddErrorMessage(GetIsTerrainValidResult().ErrorMessage);
+                }
             }
             if(vr.IsValid)
             {

@@ -542,7 +542,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
                 string impactAreaName = impactAreaElements[0].Name;
                 vr.AddErrorMessage("The compute will not run because this scenario has zero structures inside the impact area set '" + impactAreaName + 
-                    "'. This might be the result of the structures and impact area having different projections.");
+                    ".'");
             }
             return vr;
         }

@@ -8,6 +8,7 @@ using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using System.IO;
 using System.Linq;
 using System.ServiceModel.Dispatcher;
@@ -239,7 +240,8 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
             List<HydraulicProfile> newPathProbs = new();
             for (int i = 0; i < ListOfRows.Count; i++)
             {
-                newPathProbs.Add(new HydraulicProfile(ListOfRows[i].Probability, ListOfRows[i].Name));
+                string filename = Path.GetFileName(ListOfRows[i].Path);
+                newPathProbs.Add(new HydraulicProfile(ListOfRows[i].Probability, filename, "MAX"));
             }
 
             HydraulicElement elementToSave = new(Name, Description, newPathProbs, HydraulicDataSource.UnsteadyHDF, OriginalElement.ID);
@@ -251,17 +253,17 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
             string destinationDirectory = Connection.Instance.HydraulicsDirectory + "\\" + Name;
             Directory.CreateDirectory(destinationDirectory);
 
-            List<HydraulicProfile> pathProbs = new();
+            List<HydraulicProfile> hydroProfiles = new();
             foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
             {
                 string filename = Path.GetFileName(row.Path);
-                pathProbs.Add(new HydraulicProfile(row.Probability, filename));
+                hydroProfiles.Add(new HydraulicProfile(row.Probability, filename, "MAX"));
 
                 File.Copy(row.Path, destinationDirectory + "\\" + filename);
             }
 
             int id = GetElementID<HydraulicElement>();
-            HydraulicElement elementToSave = new(Name, Description, pathProbs, HydraulicDataSource.UnsteadyHDF, id);
+            HydraulicElement elementToSave = new(Name, Description, hydroProfiles, HydraulicDataSource.UnsteadyHDF, id);
             base.Save(elementToSave);
         }
         #endregion
