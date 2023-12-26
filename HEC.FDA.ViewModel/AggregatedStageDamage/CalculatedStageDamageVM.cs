@@ -617,16 +617,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         /// <returns>The list of UPD curves created during the compute</returns>
         private List<UncertainPairedData> ComputeStageDamageFunctions(StageDamageConfiguration config)
         {
-            ValidationGroup vg = new("Errors while trying to compute stage damage functions:");
-
             List<UncertainPairedData> stageDamageFunctions = new();
             try
             {
                 List<ImpactAreaStageDamage> impactAreaStageDamages = config.CreateStageDamages();
-                foreach(ImpactAreaStageDamage area in impactAreaStageDamages)
-                {
-                    vg.ChildGroups.AddRange(area.ValidationGroups);
-                }
 
                 ScenarioStageDamage scenarioStageDamage = new(impactAreaStageDamages);
                 int seed = 1234;
@@ -650,9 +644,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 MessageBox.Show("An error occured while trying to compute stage damages:\n" + ex.Message, "Compute Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         
-        //TODO: WE NEED TO USE THIS MESSAGE. WRITE TO FILE?
-        //maybe i need to validate everything?
-        string msg = vg.GetErrorMessages();
+            //TODO: COMMUNICATE ERROR MESSAGES
 
             return stageDamageFunctions;
         }

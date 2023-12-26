@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace HEC.FDA.Model.stageDamage
 {
-    public class ImpactAreaStageDamage : ValidationErrorLogger, IContainValidationGroups
+    public class ImpactAreaStageDamage : ValidationErrorLogger
     {
         #region Hard Coded Compute Settings
         private const double MIN_PROBABILITY = 0.0001;
@@ -53,7 +53,6 @@ namespace HEC.FDA.Model.stageDamage
         #region Properties 
         public Inventory Inventory { get; }
         public int ImpactAreaID { get; }
-        public List<ValidationGroup> ValidationGroups { get; } = new List<ValidationGroup>();
         public event ProgressReportedEventHandler ProgressReport;
         #endregion
 
@@ -82,10 +81,6 @@ namespace HEC.FDA.Model.stageDamage
             SetCoordinateQuantity();
             _StageFrequency = CreateStageFrequency();
             AddRules();
-
-            ValidationGroup vg = new("Impact area stage damage with impact area id '" + ImpactAreaID + "' has the following errors:");
-            vg.ChildGroups.AddRange(Inventory.ValidationGroups);
-            ValidationGroups.Add(vg);
         }
         #endregion
 

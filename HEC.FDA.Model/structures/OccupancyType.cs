@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace HEC.FDA.Model.structures
 { //TODO: add messaging and validation 
-    public class OccupancyType: ValidationErrorLogger, IContainValidationGroups
+    public class OccupancyType: ValidationErrorLogger
     {
         #region Fields
         //fundamental traits
@@ -44,7 +44,6 @@ namespace HEC.FDA.Model.structures
         {
             get { return _OccupancyTypeName; }
         }
-        public List<ValidationGroup> ValidationGroups { get; } = new List<ValidationGroup>();
         public bool UseContentToStructureValueRatio { get; set; }
         public bool UseOtherToStructureValueRatio { get; set; }
         public bool ComputeContentDamage { get; set; }
@@ -69,24 +68,6 @@ namespace HEC.FDA.Model.structures
             _OtherValueError = new ValueUncertainty();
             _ContentToStructureValueRatio = new ValueRatioWithUncertainty();
             _OtherToStructureValueRatio = new ValueRatioWithUncertainty();
-
-
-            List<ValidationErrorLogger> validationObjects = new() 
-            { 
-                _StructureValueError,
-                _ContentValueError,
-                _VehicleValueError,
-                _OtherValueError
-            };
-            List<string> validationIntroMsgs = new() 
-            { 
-                "The structure value uncertainty has the following errors:",
-                "The structure value uncertainty has the following errors:",
-                "The structure value uncertainty has the following errors:",
-                "The structure value uncertainty has the following errors:",
-            };
-            ValidationGroup vg = new(validationObjects, validationIntroMsgs, "This occtype has the following errors:");
-            ValidationGroups.Add(vg);
 
         }
         #endregion
