@@ -238,13 +238,23 @@ where T : struct
     {
      return ShapefileStorage.IsValid(path, ref error);
     }
-    public static bool IsPolygonShapefile(string path)
+    public static bool IsPolygonShapefile(string path, ref string error )
     {
-        return ShapefileWriter.IsPolygonShapefile(path);
+        bool valid = ShapefileWriter.IsPolygonShapefile(path);
+        if (!valid)
+        {
+            error += " Not a polygon shapefile. ";
+        }
+        return valid;
     }
-    public static bool IsPointShapefile(string path)
+    public static bool IsPointShapefile(string path, ref string error)
     {
-        return  ShapefileWriter.IsPointShapefile(path);
+        bool valid = ShapefileWriter.IsPolygonShapefile(path);
+        if (!valid)
+        {
+            error += " Not a point shapefile. ";
+        }
+        return valid;
     }
 
     #region HACKS
