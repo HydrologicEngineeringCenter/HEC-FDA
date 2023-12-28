@@ -1,20 +1,23 @@
 ﻿using Geospatial.IO;
 using HEC.CS.Collections;
+using HEC.FDA.Model.structures;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
+using HEC.FDA.ViewModel.Utilities;
 using RasMapperLib;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using Utilities;
 
 namespace HEC.FDA.ViewModel.IndexPoints
 {
-    public class IndexPointsEditorVM: BaseEditorVM
+    public class IndexPointsEditorVM : BaseEditorVM
     {
         #region Fields
         private string _Path;
-        private List<string> _UniqueFields;
+        private List<string> _UniqueFields = new();
         private string _SelectedUniqueName;
         #endregion
         #region Properties
@@ -22,7 +25,7 @@ namespace HEC.FDA.ViewModel.IndexPoints
         public string SelectedPath
         {
             get { return _Path; }
-            set { _Path = value; LoadUniqueNames(); NotifyPropertyChanged(); }
+            set { _Path = value; UniqueFields = new() ; SelectedUniqueName = null; LoadUniqueNames(); NotifyPropertyChanged(); } // using new because Clear() doesn't hit the setter. 
         }
         public CustomObservableCollection<string> ListOfRows { get; } = new CustomObservableCollection<string>();
 
@@ -53,20 +56,6 @@ namespace HEC.FDA.ViewModel.IndexPoints
         }
         #endregion
         #region Voids
-        public override void AddValidationRules()
-        {
-            base.AddValidationRules();
-            AddRule(nameof(ListOfRows), () =>
-            {
-                return ListOfRows.Count > 0;
-            }, "No index points have been defined.");
-
-            AddRule(nameof(SelectedPath), () =>
-            {
-                return ShapefileWriter.IsPointShapefile(SelectedPath);
-            }, "Not a point shapefile");
-        }
-
         /// <summary>
         /// This method grabs all the column headers from the dbf and loads them into a unique name combobox.
         /// </summary>
@@ -75,62 +64,65 @@ namespace HEC.FDA.ViewModel.IndexPoints
         {
             if (IsCreatingNewElement)
             {
-                if (!File.Exists(Path.ChangeExtension(_Path, "dbf")))
+                string error = "";
+                bool validShapefile = RASHelper.ShapefileIsValid(SelectedPath, ref error);
+                bool isPoint = RASHelper.IsPointShapefile(SelectedPath, ref error);
+                if (!validShapefile || !isPoint)
                 {
-                    System.Windows.MessageBox.Show("This path has no associated *.dbf file.", "File Doesn't Exist", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    System.Windows.MessageBox.Show(error, "Invalid Shapefile", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    return;
                 }
                 else
                 {
-                    DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(Path.ChangeExtension(_Path, ".dbf"));
-                    DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
-                    List<string> uniqueNameList = dtv.ColumnNames.ToList();
-                    UniqueFields = uniqueNameList;
+                    PointFeatureLayer pfl = new("unused", SelectedPath);
+                    UniqueFields = pfl.ColumnNames();
                 }
             }
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>True id's are unique, false if not</returns>
+
         public void LoadTheRows()
         {
-            if (!File.Exists(Path.ChangeExtension(SelectedPath, "dbf")))
+            PointFeatureLayer pfl = new("ThisNameIsnotUsed", SelectedPath);
+            List<string> columnNames = pfl.ColumnNames();
+            List<object> columnVals = pfl.GetValuesFromColumn(SelectedUniqueName);
+
+            List<string> names = columnVals.Select(x => x.ToString()).ToList();
+            if (names.Count == names.Distinct().Count()) // if the names are unique
             {
-                System.Windows.MessageBox.Show("This path has no associated *.dbf file.", "No dbf File", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                ListOfRows.Clear();
+                ListOfRows.AddRange(names);
             }
             else
             {
-                ListOfRows.Clear();
-                DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(Path.ChangeExtension(SelectedPath, ".dbf"));
-                DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
-                
-                for (int i = 0; i < dtv.ColumnNames.Count(); i++)
-                {
-                    if (dtv.ColumnNames[i] == SelectedUniqueName)
-                    {
-                        object[] colObjects = dtv.GetColumn(i);
-                        List<string> names = new List<string>();
-                        colObjects.ToList().ForEach(x => names.Add(x.ToString()));
-                        if (names.Count == names.Distinct().Count())
-                        {
-                            ListOfRows.AddRange(names);
-                        }
-                        else
-                        {
-                            System.Windows.MessageBox.Show("The names in the column identified were not unique", "Names not unique", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                        }
-                    }
-                }
-                //we need to trigger the ListOfRows property rules to re-evaluate
-                NotifyPropertyChanged(nameof(ListOfRows));
+                System.Windows.MessageBox.Show("The names in the column identified were not unique", "Names not unique", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
         }
+
         #endregion
+        public override FdaValidationResult IsValid()
+        {
+            FdaValidationResult result = new();
+            //Previous validation dictates that the shapefiles is valid, the unique name column is selected, and the names are unique.
+            //if these rows are here. Then all that stuff is true too. 
+            if (ListOfRows.Count < 1)
+            {
+                result.AddErrorMessage("There are no rows in the table. Check your shapefile and import again.");
+            }
+            //also need to check that the names are not empty
+            foreach ( string name in ListOfRows)
+            {
+                if (name.IsNullOrEmpty())
+                {
+                    result.AddErrorMessage("The unique name cannot be blank. Modify your shapefile and import again.");
+                }
+            }
+            return result;
+        }
 
         public override void Save()
         {
             int id = GetElementID<IndexPointsElement>();
-            IndexPointsElement elementToSave = new IndexPointsElement(Name, Description, ListOfRows.ToList(), id);
+            IndexPointsElement elementToSave = new(Name, Description, ListOfRows.ToList(), id);
 
             if (IsCreatingNewElement)
             {

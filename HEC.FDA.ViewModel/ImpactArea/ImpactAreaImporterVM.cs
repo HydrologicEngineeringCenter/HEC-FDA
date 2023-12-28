@@ -18,18 +18,19 @@ namespace HEC.FDA.ViewModel.ImpactArea
     {
         #region Fields
         private string _selectedPath;
-        private List<string> _UniqueNames;
+        private List<string> _UniqueNames = new();
         private string _SelectedUniqueNameColumnHeader;
         #endregion
         #region Properties
         public string SelectedPath
         {
             get { return _selectedPath; }
-            set { _selectedPath = value; LoadUniqueNames(); NotifyPropertyChanged(); }
+            set { _selectedPath = value; UniqueNames = new(); SelectedUniqueNameColumnHeader = null; LoadUniqueNames(); NotifyPropertyChanged(); } // using new because Clear() doesn't hit the setter. 
         }
+    
         public CustomObservableCollection<ImpactAreaRowItem> ListOfRows { get; } = new CustomObservableCollection<ImpactAreaRowItem>();
 
-        public List<string> UniqueNames
+        public List<string> UniqueNames 
         {
             get { return _UniqueNames; }
             set { _UniqueNames = value; NotifyPropertyChanged(); }
@@ -115,11 +116,18 @@ namespace HEC.FDA.ViewModel.ImpactArea
         public override FdaValidationResult IsValid()
         {
             FdaValidationResult result = new();
+            //Previous validation dictates that the shapefiles is valid, the unique name column is selected, and the names are unique.
+            //if these rows are here. Then all that stuff is true too. 
+            if(ListOfRows.Count < 1)
+            {
+                result.AddErrorMessage("There are no rows in the table. Check your shapefile and import again.");
+            }
+            //also need to check that the names are not empty
             foreach (ImpactAreaRowItem row in ListOfRows)
             {
                 if (string.IsNullOrEmpty(row.Name))
                 {
-                    result.AddErrorMessage("The unique name cannot be blank. Modify your shapefile and import again.");
+                    result.AddErrorMessage("The unique name cannot be blank. Check your shapefile and import again.");
                 }
             }
             return result;

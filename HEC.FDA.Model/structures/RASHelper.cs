@@ -249,7 +249,7 @@ where T : struct
     }
     public static bool IsPointShapefile(string path, ref string error)
     {
-        bool valid = ShapefileWriter.IsPolygonShapefile(path);
+        bool valid = ShapefileWriter.IsPointShapefile(path);
         if (!valid)
         {
             error += " Not a point shapefile. ";
