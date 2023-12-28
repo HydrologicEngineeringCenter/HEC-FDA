@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reflection;
 using System.Text;
 
 namespace HEC.MVVMFramework.Base.Implementations
@@ -115,7 +116,48 @@ namespace HEC.MVVMFramework.Base.Implementations
                 }
                 
             }
-            return errorsBuilder.ToString();
+            string errors = errorsBuilder.ToString();
+            return errors;
+        }
+
+        
+        public String GetErrorMessages(ErrorLevel errorLevelSeverityThreshold, string objName)
+        {
+            Validate();
+            StringBuilder errorsBuilder = new StringBuilder();
+
+            //check if the properties implement Validation 
+
+            //If the properties of the inheriting class do not implement Validation, then 
+
+            PropertyInfo[] propertyList = this.GetType().GetProperties();
+            foreach (PropertyInfo propertyInfo in propertyList)
+            {
+                //look at the property
+                PropertyInfo property = propertyInfo;
+                //
+            }
+            {
+                foreach (IErrorMessage err in _Errors)
+                {
+                    if (err.ErrorLevel >= errorLevelSeverityThreshold)
+                    {
+                        errorsBuilder.AppendLine(objName + string.Format(" Error Level: {0} Error: {1}", ErrorLevel, err.Message));
+                    }
+
+                }
+
+            }
+            // else the properties implement Validation 
+            {
+                //Foreach (property in properties)
+                    // if properties of property do not implement then get the errors 
+                    // else foreach (props prop in property.properties) 
+                        //if properties of prop do not implement then get the errors 
+                        //else foreach (ps p in prop.properties)...
+            }
+            string errors = errorsBuilder.ToString();
+            return errors;
         }
 
         public void Validate()

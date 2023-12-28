@@ -14,16 +14,18 @@ using Utilities;
 namespace HEC.FDA.Model.structures
 {
     //TODO: Figure out how to set Occupany Type Set
-    public class Inventory : Validation
+    public class Inventory: IDontImplementValidationButMyPropertiesDo
     {
         #region Properties
         public List<Structure> Structures { get; } = new List<Structure>();
         //The string key is the occupancy type name 
         public Dictionary<string, OccupancyType> OccTypes { get; set; }
         public double PriceIndex { get; set; }
+        public bool HasErrors { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ErrorLevel ErrorLevel { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         #endregion
 
-       #region Constructors
+        #region Constructors
 
         /// <summary>
         /// Constructor for building an Inventory without a terrain
@@ -41,7 +43,6 @@ namespace HEC.FDA.Model.structures
             PriceIndex = priceIndex;
             Projection studyProjection = Projection.FromFile(projectionFilePath);//Projection.FromFile returns Null if the path is bad. We'll check for null before we reproject. 
             LoadStructuresFromSourceFiles(pointShapefilePath, map, null, false, impactAreaShapefilePath, studyProjection);
-            AddRules();
         }
 
         /// <summary>
@@ -60,7 +61,6 @@ namespace HEC.FDA.Model.structures
             PriceIndex = priceIndex;
             Projection studyProjection = RASHelper.GetProjectionFromTerrain(terrainPath);
             LoadStructuresFromSourceFiles(pointShapefilePath, map, terrainPath, true, impactAreaShapefilePath, studyProjection);
-            AddRules();
 
         }
 
@@ -75,7 +75,6 @@ namespace HEC.FDA.Model.structures
             OccTypes = occTypes;
             Structures = structures;
             PriceIndex = priceIndex;
-            AddRules();
         }
         #endregion
 
@@ -100,19 +99,6 @@ namespace HEC.FDA.Model.structures
                 }
             }
             return uniqueDamageCategories;
-        }
-
-        private void AddRules()
-        {
-            foreach (Structure structure in Structures)
-            {
-                AddSinglePropertyRule("Structure " + structure.Fid, new Rule(() => { structure.Validate(); return !structure.HasErrors; }, $"Structure {structure.Fid} has the following errors: " + structure.GetErrorMessages(), structure.ErrorLevel));
-            }
-            foreach (OccupancyType occupancyType in OccTypes.Values)
-            {
-                AddSinglePropertyRule("Occupancy Type " + occupancyType.Name, new Rule(() => { occupancyType.Validate(); return !occupancyType.HasErrors; }, $"Occupancy Type {occupancyType.Name} has the following errors: " + occupancyType.GetErrorMessages(), occupancyType.ErrorLevel));
-            }
-            AddSinglePropertyRule(nameof(PriceIndex), new Rule(() => PriceIndex >= 1, $"The price index must be greater than or equal to 1 but was entered as {PriceIndex}", ErrorLevel.Major));
         }
 
         private void LoadStructuresFromSourceFiles(string pointShapefilePath, StructureSelectionMapping map, string terrrainFilePath, bool updateGroundElevFromTerrain,
@@ -413,7 +399,16 @@ namespace HEC.FDA.Model.structures
             }
             return errors;
         }
+        public void Validate()
+        {
 
+        }
+        public string GetErrorsFromProperties()
+        {
+            string errors = null;
+
+            return errors;
+        }
         internal void ResetStructureWaterIndexTracking()
         {
             foreach (Structure structure in Structures)
