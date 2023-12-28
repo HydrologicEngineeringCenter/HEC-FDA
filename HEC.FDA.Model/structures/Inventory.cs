@@ -21,8 +21,8 @@ namespace HEC.FDA.Model.structures
         //The string key is the occupancy type name 
         public Dictionary<string, OccupancyType> OccTypes { get; set; }
         public double PriceIndex { get; set; }
-        public bool HasErrors { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ErrorLevel ErrorLevel { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public bool HasErrors { get; set; }
+        public ErrorLevel ErrorLevel { get; set; }
         #endregion
 
         #region Constructors
@@ -401,11 +401,42 @@ namespace HEC.FDA.Model.structures
         }
         public void Validate()
         {
-
+            HasErrors = false;
+            ErrorLevel = ErrorLevel.Unassigned;
+            foreach (OccupancyType occupancyType in OccTypes.Values)
+            {
+                occupancyType.Validate();
+                if (occupancyType.HasErrors)
+                {
+                    if (occupancyType.ErrorLevel > ErrorLevel)
+                    {
+                        ErrorLevel = occupancyType.ErrorLevel;
+                    }
+                    HasErrors = true;
+                }
+            }
+            foreach (Structure structure in Structures)
+            {
+                structure.Validate();
+                if (structure.HasErrors)
+                {
+                    if (structure.ErrorLevel > ErrorLevel) { ErrorLevel = structure.ErrorLevel; }
+                    HasErrors = true;
+                }
+            }
         }
         public string GetErrorsFromProperties()
         {
-            string errors = null;
+
+            string errors = "";
+            foreach (OccupancyType occupancyType in OccTypes.Values)
+            {
+                errors += occupancyType.GetErrorMessages(ErrorLevel.Unassigned, "Occupancy Type" + occupancyType.Name) + Environment.NewLine;
+            }
+            foreach (Structure structure in Structures)
+            {
+                errors += structure.GetErrorMessages(ErrorLevel.Unassigned, "Structure" + structure.Fid) + Environment.NewLine;
+            }
 
             return errors;
         }
