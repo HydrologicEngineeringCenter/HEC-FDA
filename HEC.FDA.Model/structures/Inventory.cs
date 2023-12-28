@@ -4,12 +4,9 @@ using RasMapperLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Model.Messaging;
 using HEC.FDA.Model.metrics;
-using System.IO;
-using Utilities;
 
 namespace HEC.FDA.Model.structures
 {
@@ -389,12 +386,12 @@ namespace HEC.FDA.Model.structures
         public List<string> AreOcctypesValid()
         {
             List<string> errors = new();
+
             foreach (KeyValuePair<string, OccupancyType> entry in OccTypes)
             {
-                ErrorLevel errorLevel = entry.Value.ErrorLevel;
-                if (errorLevel >= ErrorLevel.Major)
+                if (entry.Value.ErrorLevel > ErrorLevel.Unassigned);
                 {
-                    errors.Add(entry.Value.GetErrorMessages(ErrorLevel.Major));
+                    errors.Add(entry.Value.GetErrorsFromProperties());
                 }
             }
             return errors;
