@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
@@ -459,7 +460,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
         }
 
-        public void ComputeCurves()
+        public async Task ComputeCurvesAsync()
         {
             if (WriteDetailsFile)
             {
@@ -467,7 +468,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
                 if (name != null)
                 {
-                    RunCompute();
+                    await RunComputeAsync();
                 }
                 else
                 {
@@ -476,11 +477,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
             else
             {
-                RunCompute();
+                await RunComputeAsync();
             }
         }
 
-        private void RunCompute()
+        private async Task RunComputeAsync()
         {
             //we know that we have an impact area. We only allow one, so it will be the first one.
             List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
@@ -493,7 +494,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             if (vr.IsValid)
             {
                 Rows.Clear();
-                List<UncertainPairedData> stageDamageFunctions = ComputeStageDamageFunctions(config);
+                List<UncertainPairedData> stageDamageFunctions =  await ComputeStageDamageFunctionsAsync(config);
                 LoadComputedCurveRows(stageDamageFunctions);
 
                 if (Rows.Count > 0)
@@ -637,7 +638,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 {
                     List<UncertainPairedData> quantityDamagedElementsUPD = new();
                     //these are the rows in the computed table
-                    (stageDamageFunctions, quantityDamagedElementsUPD) = scenarioStageDamage.Compute(randomProvider);
+                    (stageDamageFunctions, quantityDamagedElementsUPD) =  scenarioStageDamage.Compute(randomProvider);
                     
                     if (WriteDetailsFile)
                     {   
@@ -653,6 +654,53 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         //TODO: WE NEED TO USE THIS MESSAGE. WRITE TO FILE?
         //maybe i need to validate everything?
         string msg = vg.GetErrorMessages();
+
+            return stageDamageFunctions;
+        }
+
+        /// <summary>
+        /// Runs the stage damage compute
+        /// </summary>
+        /// <param name="config"></param>
+        /// <returns>The list of UPD curves created during the compute</returns>
+        private async Task<List<UncertainPairedData>> ComputeStageDamageFunctionsAsync(StageDamageConfiguration config)
+        {
+            ValidationGroup vg = new("Errors while trying to compute stage damage functions:");
+
+            List<UncertainPairedData> stageDamageFunctions = new();
+            try
+            {
+                List<ImpactAreaStageDamage> impactAreaStageDamages = config.CreateStageDamages();
+                foreach (ImpactAreaStageDamage area in impactAreaStageDamages)
+                {
+                    vg.ChildGroups.AddRange(area.ValidationGroups);
+                }
+
+                ScenarioStageDamage scenarioStageDamage = new(impactAreaStageDamages);
+                int seed = 1234;
+                Model.compute.RandomProvider randomProvider = new(seed);
+
+                bool canCompute = ValidateStructureCount(scenarioStageDamage);
+                if (canCompute)
+                {
+                    List<UncertainPairedData> quantityDamagedElementsUPD = new();
+                    //these are the rows in the computed table
+                    (stageDamageFunctions, quantityDamagedElementsUPD) = await Task.Run(() => scenarioStageDamage.Compute(randomProvider));
+
+                    if (WriteDetailsFile)
+                    {
+                        WriteDetailsCsvFile(scenarioStageDamage, quantityDamagedElementsUPD);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occured while trying to compute stage damages:\n" + ex.Message, "Compute Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            //TODO: WE NEED TO USE THIS MESSAGE. WRITE TO FILE?
+            //maybe i need to validate everything?
+            string msg = vg.GetErrorMessages();
 
             return stageDamageFunctions;
         }

@@ -1,5 +1,6 @@
 ﻿using HEC.FDA.ViewModel.AggregatedStageDamage;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -16,11 +17,11 @@ namespace HEC.FDA.View.AggregatedStageDamage
             InitializeComponent();
         }
 
-        private void calculate_btn_Click(object sender, RoutedEventArgs e)
+        private async void calculate_btn_Click(object sender, RoutedEventArgs e)
         {
             if (DataContext is CalculatedStageDamageVM vm)
             {
-                vm.ComputeCurves();
+                await vm.ComputeCurvesAsync();
             }
         }
 
