@@ -385,20 +385,6 @@ namespace HEC.FDA.Model.structures
             return aggregateConsequenceResults;
         }
         #endregion
-
-        public List<string> AreOcctypesValid()
-        {
-            List<string> errors = new();
-
-            foreach (KeyValuePair<string, OccupancyType> entry in OccTypes)
-            {
-                if (entry.Value.ErrorLevel > ErrorLevel.Unassigned);
-                {
-                    errors.Add(entry.Value.GetErrorsFromProperties());
-                }
-            }
-            return errors;
-        }
         public void Validate()
         {
             HasErrors = false;
