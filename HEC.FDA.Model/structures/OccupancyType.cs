@@ -6,10 +6,12 @@ using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Model.Messaging;
 using System.Collections.Generic;
 using System;
+using System.Reflection;
+using HEC.MVVMFramework.Base.Interfaces;
 
 namespace HEC.FDA.Model.structures
 { //TODO: add messaging and validation 
-    public class OccupancyType: IDontImplementValidationButMyPropertiesDo
+    public class OccupancyType : IDontImplementValidationButMyPropertiesDo
     {
         #region Fields
         //fundamental traits
@@ -34,6 +36,8 @@ namespace HEC.FDA.Model.structures
         private bool _OtherValueIsLogNormal = false;
         private ValueRatioWithUncertainty _ContentToStructureValueRatio;
         private ValueRatioWithUncertainty _OtherToStructureValueRatio;
+
+        public event MessageReportedEventHandler MessageReport;
         #endregion
 
         #region Properties 
@@ -50,8 +54,8 @@ namespace HEC.FDA.Model.structures
         public bool ComputeContentDamage { get; set; }
         public bool ComputeVehicleDamage { get; set; }
         public bool ComputeOtherDamage { get; set; }
-        public bool HasErrors { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-        public ErrorLevel ErrorLevel { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public bool HasErrors { get; set; }
+        public ErrorLevel ErrorLevel { get; set; }
 
         #endregion
         #region Constructor
@@ -114,7 +118,7 @@ namespace HEC.FDA.Model.structures
             {
                 if (UseOtherToStructureValueRatio)
                 {
-                    otherValueRatioSampled = (_OtherToStructureValueRatio.Sample(randomNumbers.NextRandom(), computeIsDeterministic))/100;
+                    otherValueRatioSampled = (_OtherToStructureValueRatio.Sample(randomNumbers.NextRandom(), computeIsDeterministic)) / 100;
                 }
                 else
                 {
@@ -134,7 +138,9 @@ namespace HEC.FDA.Model.structures
 
         private void ReportMessage(OccupancyType occupancyType, MessageEventArgs messageEventArgs)
         {
-            throw new NotImplementedException();
+            MessageHub.Register(this);
+            MessageReport?.Invoke(occupancyType, messageEventArgs);
+            MessageHub.Unregister(this);
         }
 
         public static OccupancyTypeBuilder Builder()
@@ -144,12 +150,105 @@ namespace HEC.FDA.Model.structures
 
         public string GetErrorsFromProperties()
         {
-            throw new System.NotImplementedException();
+            string identifyingString = $"Occupancy Type {Name} ";
+            ErrorLevel minimumLevelToCheckForErrors = ErrorLevel.Unassigned;
+            string errors = "";
+            errors += _StructureDepthPercentDamageFunction.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_StructureDepthPercentDamageFunction) ) + Environment.NewLine;
+            errors += _StructureValueError.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_StructureValueError)) + Environment.NewLine;
+            errors += _FirstFloorElevationError.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_FirstFloorElevationError)) + Environment.NewLine;
+            if (ComputeContentDamage)
+            {
+                errors += _ContentDepthPercentDamageFunction.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_ContentDepthPercentDamageFunction)) + Environment.NewLine;
+                if (UseContentToStructureValueRatio)
+                {
+                    errors += _ContentToStructureValueRatio.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_ContentToStructureValueRatio)) + Environment.NewLine;
+                }
+                else
+                {
+                    errors += _ContentValueError.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_ContentValueError)) + Environment.NewLine;
+                }
+            }
+            if (ComputeOtherDamage)
+            {
+                errors += _OtherDepthPercentDamageFunction.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_OtherDepthPercentDamageFunction)) + Environment.NewLine;
+                if (UseContentToStructureValueRatio)
+                {
+                    errors += _OtherToStructureValueRatio.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_OtherToStructureValueRatio)) + Environment.NewLine;
+                }
+                else
+                {
+                    errors += _OtherValueError.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_OtherValueError)) + Environment.NewLine;
+                }
+            }
+            if (ComputeVehicleDamage)
+            {
+                errors += _VehicleDepthPercentDamageFunction.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_VehicleDepthPercentDamageFunction)) + Environment.NewLine;
+                errors += _VehicleValueError.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_VehicleValueError)) + Environment.NewLine;
+            }
+            return errors;
         }
 
         public void Validate()
         {
-            throw new System.NotImplementedException();
+            HasErrors = false;
+            ErrorLevel = ErrorLevel.Unassigned;
+
+            ValidateProperty(_StructureDepthPercentDamageFunction);
+            ValidateProperty(_FirstFloorElevationError);
+            ValidateProperty(_StructureValueError);
+            if (ComputeContentDamage)
+            {
+                ValidateProperty(_ContentDepthPercentDamageFunction);
+                if (UseContentToStructureValueRatio)
+                {
+                    ValidateProperty(_ContentToStructureValueRatio);
+                }
+                else
+                {
+                    ValidateProperty(_ContentValueError);
+                }
+            }
+            if (ComputeOtherDamage)
+            {
+                ValidateProperty(_OtherDepthPercentDamageFunction);
+                if (UseOtherToStructureValueRatio)
+                {
+                    ValidateProperty(_OtherToStructureValueRatio);
+                }
+                else
+                {
+                    ValidateProperty(_OtherValueError);
+                }
+            }
+            if (ComputeVehicleDamage)
+            {
+                ValidateProperty(_VehicleDepthPercentDamageFunction);
+
+                ValidateProperty(_VehicleValueError);
+
+            }
+        }
+        private void ValidateProperty(Validation validationErrorLogger)
+        {
+            validationErrorLogger.Validate();
+            if (validationErrorLogger.HasErrors)
+            {
+                ResetErrors(validationErrorLogger);
+            }
+        }
+
+        private void ResetErrors(Validation validationErrorLogger)
+        {
+            HasErrors = true;
+            if (ErrorLevel < validationErrorLogger.ErrorLevel)
+            {
+                ErrorLevel = validationErrorLogger.ErrorLevel;
+            }
+        }
+
+        public void ReportMessage(object sender, MessageEventArgs e)
+        {
+            throw new NotImplementedException();
         }
         #endregion
 
@@ -205,7 +304,7 @@ namespace HEC.FDA.Model.structures
             public OccupancyTypeBuilder WithStructureValueUncertainty(ValueUncertainty valueUncertainty)
             {
                 _OccupancyType._StructureValueError = valueUncertainty;
-                if(valueUncertainty.DistributionType == Statistics.IDistributionEnum.LogNormal)
+                if (valueUncertainty.DistributionType == Statistics.IDistributionEnum.LogNormal)
                 {
                     _OccupancyType._StructureValueIsLogNormal = true;
                 }

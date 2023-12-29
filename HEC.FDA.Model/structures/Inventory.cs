@@ -7,6 +7,8 @@ using System.Linq;
 using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Model.Messaging;
 using HEC.FDA.Model.metrics;
+using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Base.Implementations;
 
 namespace HEC.FDA.Model.structures
 {
@@ -269,6 +271,9 @@ namespace HEC.FDA.Model.structures
         private double[,] _otherParallelCollection;
         private double[,] _vehicleParallelCollection;
         private int[] _occTypeIndices;
+
+        public event MessageReportedEventHandler MessageReport;
+
         /// <summary>
         /// Begins the sixth loop of the Scenario Stage Damage Compute. 
         /// Scenario SD 
@@ -428,7 +433,7 @@ namespace HEC.FDA.Model.structures
             string errors = "";
             foreach (OccupancyType occupancyType in OccTypes.Values)
             {
-                errors += occupancyType.GetErrorMessages(ErrorLevel.Unassigned, "Occupancy Type" + occupancyType.Name) + Environment.NewLine;
+                errors += occupancyType.GetErrorsFromProperties() + Environment.NewLine;
             }
             foreach (Structure structure in Structures)
             {
@@ -443,6 +448,13 @@ namespace HEC.FDA.Model.structures
             {
                 structure.ResetIndexTracking();
             }
+        }
+
+        public void ReportMessage(object sender, MessageEventArgs e)
+        {
+            MessageHub.Register(this);
+            MessageReport?.Invoke(sender, e);
+            MessageHub.Unregister(this);
         }
     }
 }
