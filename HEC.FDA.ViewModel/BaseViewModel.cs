@@ -224,7 +224,8 @@ namespace HEC.FDA.ViewModel
             else
             {
                 HasChanges = true;
-                Validate();
+                Validate(); //This sucks. This means we are validating every rule every time a property changes.
+                            //We're throwing buckets of exceptions all over the place because it's validating fields that aren't entered yet. 
             }
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

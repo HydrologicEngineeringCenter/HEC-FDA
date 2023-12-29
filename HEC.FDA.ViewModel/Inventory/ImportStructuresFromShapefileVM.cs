@@ -73,7 +73,15 @@ namespace HEC.FDA.ViewModel.Inventory
             //the selected file has changed. I set the second page to null
             //so that it will grab everything fresh.
             _OcctypeLinking = null;
-            if (File.Exists(Path.ChangeExtension(SelectedPath, "dbf")))
+            string error = "";
+            bool validShapefile = RASHelper.ShapefileIsValid(SelectedPath, ref error);
+            bool isPoint = RASHelper.IsPointShapefile(SelectedPath, ref error);
+            if (!validShapefile || !isPoint)
+            {
+                MessageBox.Show(error, "Invalid Shapefile", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return;
+            } 
+            else
             {
                 _ColumnSelections.Path = SelectedPath;
             }
@@ -142,7 +150,7 @@ namespace HEC.FDA.ViewModel.Inventory
             StructuresMissingDataManager missingDataManager = _ColumnSelections.Validate();
             if (missingDataManager.GetRows().Count > 0)
             {
-                StructureMissingElevationEditorVM vm = new(missingDataManager.GetRows(), _ColumnSelections);
+                StructureMissingElevationEditorVM vm = new(missingDataManager);
                 DynamicTabVM tab = new("Missing Data", vm, "missingData",false,false);
                 Navigate(tab);
                 missingValues = true;
