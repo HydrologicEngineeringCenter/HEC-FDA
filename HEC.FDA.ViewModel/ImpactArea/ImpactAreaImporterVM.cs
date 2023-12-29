@@ -1,8 +1,11 @@
 ﻿using Geospatial.IO;
 using HEC.CS.Collections;
+using HEC.FDA.Model.structures;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
+using RasMapperLib;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,27 +14,23 @@ using Utility.Extensions;
 
 namespace HEC.FDA.ViewModel.ImpactArea
 {
-    //[Author("q0heccdm", "10 / 13 / 2016 11:38:36 AM")]
     public class ImpactAreaImporterVM : BaseEditorVM
     {
-        #region Notes
-        // Created By: q0heccdm
-        // Created Date: 10/13/2016 11:38:36 AM
-        #endregion
         #region Fields
-        private string _Path;
-        private List<string> _UniqueNames;
+        private string _selectedPath;
+        private List<string> _UniqueNames = new();
         private string _SelectedUniqueNameColumnHeader;
         #endregion
         #region Properties
         public string SelectedPath
         {
-            get { return _Path; }
-            set { _Path = value; LoadUniqueNames();  NotifyPropertyChanged();}
+            get { return _selectedPath; }
+            set { _selectedPath = value; UniqueNames = new(); SelectedUniqueNameColumnHeader = null; LoadUniqueNames(); NotifyPropertyChanged(); } // using new because Clear() doesn't hit the setter. 
         }
-        public CustomObservableCollection <ImpactAreaRowItem> ListOfRows { get; } = new CustomObservableCollection<ImpactAreaRowItem>();
+    
+        public CustomObservableCollection<ImpactAreaRowItem> ListOfRows { get; } = new CustomObservableCollection<ImpactAreaRowItem>();
 
-        public List<string> UniqueNames
+        public List<string> UniqueNames 
         {
             get { return _UniqueNames; }
             set { _UniqueNames = value; NotifyPropertyChanged(); }
@@ -43,17 +42,17 @@ namespace HEC.FDA.ViewModel.ImpactArea
         }
         #endregion
         #region Constructors
-        public ImpactAreaImporterVM(EditorActionManager actionManager):base(actionManager)
+        public ImpactAreaImporterVM(EditorActionManager actionManager) : base(actionManager)
         {
             AddValidationRules();
         }
 
-        public ImpactAreaImporterVM(ImpactAreaElement element, List<ImpactAreaRowItem> impactAreaRows, EditorActionManager actionManager) :base(element, actionManager)
+        public ImpactAreaImporterVM(ImpactAreaElement element, List<ImpactAreaRowItem> impactAreaRows, EditorActionManager actionManager) : base(element, actionManager)
         {
             Name = element.Name;
-            ListOfRows.AddRange( impactAreaRows);
-            Description = element.Description;
-            SelectedPath = Storage.Connection.Instance.ImpactAreaDirectory + "\\" + Name;
+            ListOfRows.AddRange(impactAreaRows);
+            Description = element.Description; 
+            SelectedPath = Path.Combine(Storage.Connection.Instance.ImpactAreaDirectory, Name);
             AddValidationRules();
         }
         #endregion
@@ -65,10 +64,6 @@ namespace HEC.FDA.ViewModel.ImpactArea
             {
                 return !string.IsNullOrEmpty(SelectedUniqueNameColumnHeader);
             }, "No unique name column header selected");
-            AddRule(nameof(SelectedPath), () =>
-            {
-            return ShapefileWriter.IsPolygonShapefile(SelectedPath);
-            }, "Not a polygon shapefile");
         }
 
         /// <summary>
@@ -79,62 +74,60 @@ namespace HEC.FDA.ViewModel.ImpactArea
         {
             if (IsCreatingNewElement)
             {
-                if (!File.Exists(Path.ChangeExtension(_Path, "dbf")))
+                string error = "";
+                bool validShapefile = RASHelper.ShapefileIsValid(SelectedPath, ref error);
+                bool isPolygon = RASHelper.IsPolygonShapefile(SelectedPath, ref error);
+                if (!validShapefile || !isPolygon)
                 {
-                    MessageBox.Show("This path has no associated *.dbf file.", "File Doesn't Exist", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    System.Windows.MessageBox.Show(error, "Invalid Shapefile", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    return;
                 }
                 else
                 {
-                    DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(Path.ChangeExtension(_Path, ".dbf"));
-                    DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
-                    List<string> uniqueNameList = dtv.ColumnNames.ToList();
-                    UniqueNames = uniqueNameList;
+                    PolygonFeatureLayer pfl = new("unused", _selectedPath);
+                    UniqueNames = pfl.ColumnNames();
                 }
             }
         }
 
         public void LoadTheRows()
         {
-            if (!File.Exists(Path.ChangeExtension(SelectedPath, "dbf")))
-            {
-                MessageBox.Show("This path has no associated *.dbf file.", "No dbf File", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                return;
-            }
+            PolygonFeatureLayer pfl = new("ThisNameIsnotUsed", SelectedPath);
+            List<string> columnNames = pfl.ColumnNames();
+            List<object> columnVals = pfl.GetValuesFromColumn(SelectedUniqueNameColumnHeader);
 
-            DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(Path.ChangeExtension(SelectedPath, ".dbf"));
-            DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
-
-            for (int i = 0; i < dtv.ColumnNames.Count(); i++)
+            List<string> names = columnVals.Select(x => x.ToString()).ToList();
+            if (names.Count == names.Distinct().Count()) // if the names are unique
             {
-                if (dtv.ColumnNames[i] == SelectedUniqueNameColumnHeader)
+                ListOfRows.Clear();
+                for (int i = 0; i < names.Count; i++)
                 {
-                    object[] colObjects = dtv.GetColumn(i);
-                    List<string> names = new();
-                    colObjects.ToList().ForEach(x => names.Add(x.ToString()));
-                    if (names.Count == names.Distinct().Count())
-                    {
-                        ImpactAreaUniqueNameSet iauns = new ImpactAreaUniqueNameSet(dtv.ColumnNames[i], colObjects);
-                        ListOfRows.Clear();
-                        ListOfRows.AddRange(iauns.RowItems);
-                    }
-                    else
-                    {
-                        System.Windows.MessageBox.Show("The names in the column identified were not unique", "Names not unique", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                    }
-
+                    ListOfRows.Add(new ImpactAreaRowItem(i, names[i]));
                 }
             }
+            else
+            {
+                System.Windows.MessageBox.Show("The names in the column identified were not unique", "Names not unique", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
         }
+
         #endregion
 
         public override FdaValidationResult IsValid()
         {
-            FdaValidationResult result = new FdaValidationResult();
-            foreach(ImpactAreaRowItem row in ListOfRows)
+            FdaValidationResult result = new();
+            //Previous validation dictates that the shapefiles is valid, the unique name column is selected, and the names are unique.
+            //if these rows are here. Then all that stuff is true too. 
+            if(ListOfRows.Count < 1)
             {
-                if(string.IsNullOrEmpty(row.Name))
+                result.AddErrorMessage("There are no rows in the table. Check your shapefile and import again.");
+            }
+            //also need to check that the names are not empty
+            foreach (ImpactAreaRowItem row in ListOfRows)
+            {
+                if (string.IsNullOrEmpty(row.Name))
                 {
-                    result.AddErrorMessage("The unique name cannot be blank. Modify your shapefile and import again.");
+                    result.AddErrorMessage("The unique name cannot be blank. Check your shapefile and import again.");
                 }
             }
             return result;
@@ -143,7 +136,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
         {
             int id = GetElementID<ImpactAreaElement>();
 
-            ImpactAreaElement elementToSave = new ImpactAreaElement(Name, Description, ListOfRows.ToList(), id, SelectedUniqueNameColumnHeader);
+            ImpactAreaElement elementToSave = new(Name, Description, ListOfRows.ToList(), id, SelectedUniqueNameColumnHeader);
 
             if (IsCreatingNewElement)
             {
