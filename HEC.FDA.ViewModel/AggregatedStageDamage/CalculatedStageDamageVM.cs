@@ -632,7 +632,15 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                     List<UncertainPairedData> quantityDamagedElementsUPD = new();
                     //these are the rows in the computed table
                     (stageDamageFunctions, quantityDamagedElementsUPD) = scenarioStageDamage.Compute(randomProvider);
-                    
+                    List<string> errors = scenarioStageDamage.GetErrorMessages();
+                    if (errors.Count > 0)
+                    {
+                        MessageBox.Show("The compute has completed, but there are errors in the data used to compute stage-damage. See the errors file in the structure stage damage details folder of this study directory.", "Data Errors", MessageBoxButton.OK, MessageBoxImage.Error);
+                    } else
+                    {
+                        MessageBox.Show("The compute has completed.", "Compute Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    WriteErrors(errors);
                     if (WriteDetailsFile)
                     {   
                         WriteDetailsCsvFile(scenarioStageDamage, quantityDamagedElementsUPD);
@@ -647,6 +655,22 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             //TODO: COMMUNICATE ERROR MESSAGES
 
             return stageDamageFunctions;
+        }
+
+        private void WriteErrors(List<string> list)
+        {
+            try
+            {
+                string structureStageDamageErrorsFileName = getName() + "StageDamageErrorMessages.csv";
+                string directory = Storage.Connection.Instance.GetStructureStageDamageDetailsDirectory;
+                Directory.CreateDirectory(directory);
+                string stageDamagePath = directory + "\\" + structureStageDamageErrorsFileName;
+                File.AppendAllLines(stageDamagePath, list);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occured while writing details file to path:\n" + ex.Message, "Details File Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void TableDataChanged(object sender, EventArgs e)

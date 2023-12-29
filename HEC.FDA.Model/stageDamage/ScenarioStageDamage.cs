@@ -2,6 +2,7 @@
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.interfaces;
 using System;
+using RasMapperLib;
 
 namespace HEC.FDA.Model.stageDamage
 {
@@ -63,6 +64,17 @@ namespace HEC.FDA.Model.stageDamage
                 }
             }
             return structureDetails;
+        }
+
+        public List<string> GetErrorMessages()
+        {
+            List<string> errorMessages = new();
+            foreach (ImpactAreaStageDamage impactAreaStageDamage in (_ImpactAreaStageDamage))
+            {
+                errorMessages.Add(impactAreaStageDamage.GetErrorsFromProperties());
+            }
+
+            return errorMessages;
         }
         #endregion
     }

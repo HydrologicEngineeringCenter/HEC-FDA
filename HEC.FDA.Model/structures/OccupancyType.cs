@@ -4,14 +4,11 @@ using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Model.Messaging;
-using System.Collections.Generic;
 using System;
-using System.Reflection;
-using HEC.MVVMFramework.Base.Interfaces;
 
 namespace HEC.FDA.Model.structures
 { //TODO: add messaging and validation 
-    public class OccupancyType : IDontImplementValidationButMyPropertiesDo
+    public class OccupancyType : PropertyValidationHelper, IDontImplementValidationButMyPropertiesDo
     {
         #region Fields
         //fundamental traits
@@ -54,8 +51,7 @@ namespace HEC.FDA.Model.structures
         public bool ComputeContentDamage { get; set; }
         public bool ComputeVehicleDamage { get; set; }
         public bool ComputeOtherDamage { get; set; }
-        public bool HasErrors { get; set; }
-        public ErrorLevel ErrorLevel { get; set; }
+        
 
         #endregion
         #region Constructor
@@ -228,23 +224,6 @@ namespace HEC.FDA.Model.structures
 
             }
         }
-        private void ValidateProperty(Validation validationErrorLogger)
-        {
-            validationErrorLogger.Validate();
-            if (validationErrorLogger.HasErrors)
-            {
-                ResetErrors(validationErrorLogger);
-            }
-        }
-
-        private void ResetErrors(Validation validationErrorLogger)
-        {
-            HasErrors = true;
-            if (ErrorLevel < validationErrorLogger.ErrorLevel)
-            {
-                ErrorLevel = validationErrorLogger.ErrorLevel;
-            }
-        }
 
         public void ReportMessage(object sender, MessageEventArgs e)
         {
@@ -261,7 +240,6 @@ namespace HEC.FDA.Model.structures
             }
             public OccupancyType Build()
             {
-                _OccupancyType.Validate();
                 return _OccupancyType;
             }
             public OccupancyTypeBuilder WithDamageCategory(string damageCategory)

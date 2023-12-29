@@ -13,15 +13,13 @@ using HEC.MVVMFramework.Base.Implementations;
 namespace HEC.FDA.Model.structures
 {
     //TODO: Figure out how to set Occupany Type Set
-    public class Inventory: IDontImplementValidationButMyPropertiesDo
+    public class Inventory: PropertyValidationHelper, IDontImplementValidationButMyPropertiesDo
     {
         #region Properties
         public List<Structure> Structures { get; } = new List<Structure>();
         //The string key is the occupancy type name 
         public Dictionary<string, OccupancyType> OccTypes { get; set; }
         public double PriceIndex { get; set; }
-        public bool HasErrors { get; set; }
-        public ErrorLevel ErrorLevel { get; set; }
         #endregion
 
         #region Constructors
@@ -408,14 +406,6 @@ namespace HEC.FDA.Model.structures
             foreach (OccupancyType occupancyType in OccTypes.Values)
             {
                 occupancyType.Validate();
-                if (occupancyType.HasErrors)
-                {
-                    if (occupancyType.ErrorLevel > ErrorLevel)
-                    {
-                        ErrorLevel = occupancyType.ErrorLevel;
-                    }
-                    HasErrors = true;
-                }
             }
             foreach (Structure structure in Structures)
             {
