@@ -616,59 +616,12 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         /// </summary>
         /// <param name="config"></param>
         /// <returns>The list of UPD curves created during the compute</returns>
-        private List<UncertainPairedData> ComputeStageDamageFunctions(StageDamageConfiguration config)
-        {
-            List<UncertainPairedData> stageDamageFunctions = new();
-            try
-            {
-                List<ImpactAreaStageDamage> impactAreaStageDamages = config.CreateStageDamages();
-
-                ScenarioStageDamage scenarioStageDamage = new(impactAreaStageDamages);
-                int seed = 1234;
-                Model.compute.RandomProvider randomProvider = new(seed);
-
-                bool canCompute = ValidateStructureCount(scenarioStageDamage);
-                if(canCompute)
-                {
-                    List<UncertainPairedData> quantityDamagedElementsUPD = new();
-                    //these are the rows in the computed table
-                    (stageDamageFunctions, quantityDamagedElementsUPD) =  scenarioStageDamage.Compute(randomProvider);
-                    
-                    if (WriteDetailsFile)
-                    {   
-                        WriteDetailsCsvFile(scenarioStageDamage, quantityDamagedElementsUPD);
-                    }
-                }
-        }
-            catch (Exception ex)
-            {
-                MessageBox.Show("An error occured while trying to compute stage damages:\n" + ex.Message, "Compute Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        
-        //TODO: WE NEED TO USE THIS MESSAGE. WRITE TO FILE?
-        //maybe i need to validate everything?
-        string msg = vg.GetErrorMessages();
-
-            return stageDamageFunctions;
-        }
-
-        /// <summary>
-        /// Runs the stage damage compute
-        /// </summary>
-        /// <param name="config"></param>
-        /// <returns>The list of UPD curves created during the compute</returns>
         private async Task<List<UncertainPairedData>> ComputeStageDamageFunctionsAsync(StageDamageConfiguration config)
         {
-            ValidationGroup vg = new("Errors while trying to compute stage damage functions:");
-
             List<UncertainPairedData> stageDamageFunctions = new();
             try
             {
                 List<ImpactAreaStageDamage> impactAreaStageDamages = config.CreateStageDamages();
-                foreach (ImpactAreaStageDamage area in impactAreaStageDamages)
-                {
-                    vg.ChildGroups.AddRange(area.ValidationGroups);
-                }
 
                 ScenarioStageDamage scenarioStageDamage = new(impactAreaStageDamages);
                 int seed = 1234;
