@@ -4,27 +4,25 @@ using RasMapperLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Model.Messaging;
 using HEC.FDA.Model.metrics;
-using System.IO;
-using Utilities;
+using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Base.Implementations;
 
 namespace HEC.FDA.Model.structures
 {
     //TODO: Figure out how to set Occupany Type Set
-    public class Inventory : Validation, IContainValidationGroups
+    public class Inventory: PropertyValidationHelper, IDontImplementValidationButMyPropertiesDo
     {
         #region Properties
         public List<Structure> Structures { get; } = new List<Structure>();
         //The string key is the occupancy type name 
         public Dictionary<string, OccupancyType> OccTypes { get; set; }
         public double PriceIndex { get; set; }
-        public List<ValidationGroup> ValidationGroups { get; } = new List<ValidationGroup>();
         #endregion
 
-       #region Constructors
+        #region Constructors
 
         /// <summary>
         /// Constructor for building an Inventory without a terrain
@@ -42,7 +40,6 @@ namespace HEC.FDA.Model.structures
             PriceIndex = priceIndex;
             Projection studyProjection = Projection.FromFile(projectionFilePath);//Projection.FromFile returns Null if the path is bad. We'll check for null before we reproject. 
             LoadStructuresFromSourceFiles(pointShapefilePath, map, null, false, impactAreaShapefilePath, studyProjection);
-            AddRules();
         }
 
         /// <summary>
@@ -61,7 +58,6 @@ namespace HEC.FDA.Model.structures
             PriceIndex = priceIndex;
             Projection studyProjection = RASHelper.GetProjectionFromTerrain(terrainPath);
             LoadStructuresFromSourceFiles(pointShapefilePath, map, terrainPath, true, impactAreaShapefilePath, studyProjection);
-            AddRules();
 
         }
 
@@ -76,7 +72,6 @@ namespace HEC.FDA.Model.structures
             OccTypes = occTypes;
             Structures = structures;
             PriceIndex = priceIndex;
-            AddRules();
         }
         #endregion
 
@@ -101,19 +96,6 @@ namespace HEC.FDA.Model.structures
                 }
             }
             return uniqueDamageCategories;
-        }
-
-        private void AddRules()
-        {
-            foreach (Structure structure in Structures)
-            {
-                AddSinglePropertyRule("Structure " + structure.Fid, new Rule(() => { structure.Validate(); return !structure.HasErrors; }, $"Structure {structure.Fid} has the following errors: " + structure.GetErrorMessages(), structure.ErrorLevel));
-            }
-            foreach (OccupancyType occupancyType in OccTypes.Values)
-            {
-                AddSinglePropertyRule("Occupancy Type " + occupancyType.Name, new Rule(() => { occupancyType.Validate(); return !occupancyType.HasErrors; }, $"Occupancy Type {occupancyType.Name} has the following errors: " + occupancyType.GetErrorMessages(), occupancyType.ErrorLevel));
-            }
-            AddSinglePropertyRule(nameof(PriceIndex), new Rule(() => PriceIndex >= 1, $"The price index must be greater than or equal to 1 but was entered as {PriceIndex}", ErrorLevel.Major));
         }
 
         private void LoadStructuresFromSourceFiles(string pointShapefilePath, StructureSelectionMapping map, string terrrainFilePath, bool updateGroundElevFromTerrain,
@@ -287,6 +269,9 @@ namespace HEC.FDA.Model.structures
         private double[,] _otherParallelCollection;
         private double[,] _vehicleParallelCollection;
         private int[] _occTypeIndices;
+
+        public event MessageReportedEventHandler MessageReport;
+
         /// <summary>
         /// Begins the sixth loop of the Scenario Stage Damage Compute. 
         /// Scenario SD 
@@ -400,27 +385,52 @@ namespace HEC.FDA.Model.structures
             return aggregateConsequenceResults;
         }
         #endregion
-
-        public List<string> AreOcctypesValid()
+        public void Validate()
         {
-            List<string> errors = new();
-            foreach (KeyValuePair<string, OccupancyType> entry in OccTypes)
+            HasErrors = false;
+            ErrorLevel = ErrorLevel.Unassigned;
+            foreach (OccupancyType occupancyType in OccTypes.Values)
             {
-                ErrorLevel errorLevel = entry.Value.ErrorLevel;
-                if (errorLevel >= ErrorLevel.Major)
+                occupancyType.Validate();
+            }
+            foreach (Structure structure in Structures)
+            {
+                structure.Validate();
+                if (structure.HasErrors)
                 {
-                    errors.Add(entry.Value.GetErrorMessages(ErrorLevel.Major));
+                    if (structure.ErrorLevel > ErrorLevel) { ErrorLevel = structure.ErrorLevel; }
+                    HasErrors = true;
                 }
             }
+        }
+        public string GetErrorsFromProperties()
+        {
+
+            string errors = "";
+            foreach (OccupancyType occupancyType in OccTypes.Values)
+            {
+                errors += occupancyType.GetErrorsFromProperties() + Environment.NewLine;
+            }
+            foreach (Structure structure in Structures)
+            {
+                errors += structure.GetErrorMessages(ErrorLevel.Unassigned, "Structure" + structure.Fid) + Environment.NewLine;
+            }
+
             return errors;
         }
-
         internal void ResetStructureWaterIndexTracking()
         {
             foreach (Structure structure in Structures)
             {
                 structure.ResetIndexTracking();
             }
+        }
+
+        public void ReportMessage(object sender, MessageEventArgs e)
+        {
+            MessageHub.Register(this);
+            MessageReport?.Invoke(sender, e);
+            MessageHub.Unregister(this);
         }
     }
 }
