@@ -112,8 +112,7 @@ public class GraphicalDataProvider : BaseDataProvider
     {
         foreach (var row in Data)
         {
-            ((GraphicalRow)row).Confidence975 = 0;
-            ((GraphicalRow)row).Confidence025 = 0;
+            ((GraphicalRow)row).SetConfidenceLimits(0,0);
         }
     }
 
