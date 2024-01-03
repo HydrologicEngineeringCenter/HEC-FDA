@@ -12,7 +12,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
     public class GraphicalVM : CurveComponentVM
     {
         private int _equivalentRecordLength = Utilities.DefaultData.PeriodOfRecord;
-        private bool _useFlow = true;
+        private bool _useFlow; 
         private NamedAction _confidenceLimits;
         public NamedAction ConfidenceLimits 
         { 
@@ -63,6 +63,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
             Options.Add(new GraphicalDataProvider(UseFlow));
             SelectedItem = Options[0];
             Initialize();
+            UseFlow = true;
         }
         public GraphicalVM(XElement vmEle)
         {
