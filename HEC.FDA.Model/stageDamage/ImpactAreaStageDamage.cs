@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace HEC.FDA.Model.stageDamage
 {
-    public class ImpactAreaStageDamage : ValidationErrorLogger, IContainValidationGroups
+    public class ImpactAreaStageDamage : PropertyValidationHelper, IDontImplementValidationButMyPropertiesDo
     {
         #region Hard Coded Compute Settings
         private const double MIN_PROBABILITY = 0.0001;
@@ -53,15 +53,15 @@ namespace HEC.FDA.Model.stageDamage
         #region Properties 
         public Inventory Inventory { get; }
         public int ImpactAreaID { get; }
-        public List<ValidationGroup> ValidationGroups { get; } = new List<ValidationGroup>();
+
         public event ProgressReportedEventHandler ProgressReport;
+        public event MessageReportedEventHandler MessageReport;
         #endregion
 
         #region Constructor
         public ImpactAreaStageDamage(int impactAreaID, Inventory inventory, HydraulicDataset hydraulicDataset, string hydroParentDirectory, int analysisYear = 9999, ContinuousDistribution analyticalFlowFrequency = null,
             GraphicalUncertainPairedData graphicalFrequency = null, UncertainPairedData dischargeStage = null, UncertainPairedData unregulatedRegulated = null, bool usingMockData = false)
         {
-            //TODO: Validate provided functions here
             _HydraulicParentDirectory = hydroParentDirectory;
             _AnalyticalFlowFrequency = analyticalFlowFrequency;
             _GraphicalFrequency = graphicalFrequency;
@@ -81,11 +81,6 @@ namespace HEC.FDA.Model.stageDamage
             SetMinAndMaxStage();
             SetCoordinateQuantity();
             _StageFrequency = CreateStageFrequency();
-            AddRules();
-
-            ValidationGroup vg = new("Impact area stage damage with impact area id '" + ImpactAreaID + "' has the following errors:");
-            vg.ChildGroups.AddRange(Inventory.ValidationGroups);
-            ValidationGroups.Add(vg);
         }
         #endregion
 
@@ -109,24 +104,7 @@ namespace HEC.FDA.Model.stageDamage
             _LessInterpolationPoints = coordinateQuantity;
 
         }
-        private void AddRules()
-        {
-            AddSinglePropertyRule(nameof(Inventory), new Rule(() => { Inventory.Validate(); return !Inventory.HasErrors; }, $"The structure inventory has errors: " + Inventory.GetErrors().ToString(), Inventory.ErrorLevel));
-            AddSinglePropertyRule(nameof(_ConvergenceCriteria), new Rule(() => { _ConvergenceCriteria.Validate(); return !_ConvergenceCriteria.HasErrors; }, $"Convergence criteria has errors: " + _ConvergenceCriteria.GetErrors().ToString(), _ConvergenceCriteria.ErrorLevel));
-            AddSinglePropertyRule(nameof(_StageFrequency), new Rule(() => _StageFrequency != null, $"The software was unable to calculate stage-frequency for the impact area with ID {ImpactAreaID}", ErrorLevel.Fatal));
-            if (_AnalyticalFlowFrequency != null)
-            {
-                AddSinglePropertyRule(nameof(_AnalyticalFlowFrequency), new Rule(() => { _AnalyticalFlowFrequency.Validate(); return !_AnalyticalFlowFrequency.HasErrors; }, $"The analytical flow-frequency function has errors: " + _AnalyticalFlowFrequency.GetErrors().ToString(), _AnalyticalFlowFrequency.ErrorLevel));
-            }
-            if (_GraphicalFrequency != null)
-            {
-                AddSinglePropertyRule(nameof(_GraphicalFrequency), new Rule(() => { _GraphicalFrequency.Validate(); return !_GraphicalFrequency.HasErrors; }, "The graphical frequency function has errors: " + _GraphicalFrequency.GetErrors().ToString(), _GraphicalFrequency.ErrorLevel));
-            }
-            if (_DischargeStage != null)
-            {
-                AddSinglePropertyRule(nameof(_DischargeStage), new Rule(() => { _DischargeStage.Validate(); return !_DischargeStage.HasErrors; }, "The stage-discharge function has errors: " + _DischargeStage.GetErrors().ToString(), _DischargeStage.ErrorLevel));
-            }
-        }
+
         /// <summary>
         /// This method is used to identify the minimum stage at the index location and the maximum stage at the index location for which we will calculate damage 
         /// </summary>
@@ -593,9 +571,13 @@ namespace HEC.FDA.Model.stageDamage
             }
             return extrapolatedStages;
         }
+        //TODO:
+        //Do something with this. 
         public void ReportProgress(object sender, ProgressReportEventArgs e)
         {
+            MessageHub.Register(this);
             ProgressReport?.Invoke(sender, e);
+            MessageHub.Unregister(this);
         }
         internal List<string> ProduceImpactAreaStructureDetails()
         {
@@ -697,6 +679,36 @@ namespace HEC.FDA.Model.stageDamage
                     structureDetails[i + 1] += $"{stagesAtStructures[i]},";
                 }
             }
+        }
+
+        public string GetErrorsFromProperties()
+        {
+            string errors = "";
+            ErrorLevel minErrorLevel = ErrorLevel.Unassigned;
+            if (_AnalyticalFlowFrequency != null) { errors += _AnalyticalFlowFrequency.GetErrorMessages(minErrorLevel, nameof(_AnalyticalFlowFrequency) + Environment.NewLine); }
+            if(_GraphicalFrequency != null) { errors += _GraphicalFrequency.GetErrorMessages(minErrorLevel, nameof(_GraphicalFrequency) + Environment.NewLine); }
+            if(_DischargeStage != null) { errors += _DischargeStage.GetErrorMessages(minErrorLevel, nameof(_DischargeStage) + Environment.NewLine); }
+            if(_UnregulatedRegulated != null) { errors += _UnregulatedRegulated.GetErrorMessages(minErrorLevel, nameof(_UnregulatedRegulated) + Environment.NewLine); }
+            errors += Inventory.GetErrorsFromProperties();
+            return errors;
+        }
+
+        public void Validate()
+        {
+            HasErrors = false;
+            ErrorLevel = ErrorLevel.Unassigned;
+            if(_AnalyticalFlowFrequency != null) { ValidateProperty(_AnalyticalFlowFrequency); }
+            if(_GraphicalFrequency !=  null) { ValidateProperty(_GraphicalFrequency);}
+            if(_DischargeStage != null) { ValidateProperty(_DischargeStage);}
+            if(_UnregulatedRegulated != null) { ValidateProperty(_UnregulatedRegulated);}
+            Inventory.Validate();
+        }
+
+        public void ReportMessage(object sender, MessageEventArgs e)
+        {
+            MessageHub.Register(this);
+            MessageReport?.Invoke(sender, e);
+            MessageHub.Unregister(this);
         }
         #endregion
     }
