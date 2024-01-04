@@ -26,8 +26,8 @@
             <v:NamedActionButton NamedAction="{Binding ConfidenceLimits}" Margin="5" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="2">
-            <RadioButton Content="Flow" IsChecked="{Binding UseFlow}" Margin="5" GroupName="FlowStageRadio"/>
-            <RadioButton Content="Stage" Margin="5" GroupName="FlowStageRadio"/>
+            <RadioButton Content="Flow" IsChecked="{Binding UseFlow}" Margin="5" GroupName="FlowStageRadio" x:Name="FlowRadioButton"/>
+            <RadioButton Content="Stage" Margin="5" GroupName="FlowStageRadio" x:Name="StageRadioButton"/>
         </StackPanel>
         <local:FdaDataGridControl DataContext="{Binding Path =SelectedItem }" Grid.Row="3"/>
     </Grid>
