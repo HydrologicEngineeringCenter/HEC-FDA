@@ -22,7 +22,6 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
                 NotifyPropertyChanged();
                 ((GraphicalRow)PreviousRow)?.NotifyPropertyChanged(nameof(X));
                 ((GraphicalRow)NextRow)?.NotifyPropertyChanged(nameof(X));
-                ClearConfidenceLimits();
             }
 
         }
@@ -39,7 +38,6 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
                 Y = new Deterministic(value);
                 ((GraphicalRow)PreviousRow)?.NotifyPropertyChanged(nameof(Value));
                 ((GraphicalRow)NextRow)?.NotifyPropertyChanged(nameof(Value));
-                ClearConfidenceLimits();
                 NotifyPropertyChanged();
             }
         }
@@ -51,10 +49,6 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             {
                 return _Confidence025;
             }
-            set
-            {
-                ClearConfidenceLimits();
-            }
         }
 
         [DisplayAsColumn("97.5% Confidence")]
@@ -63,10 +57,6 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             get
             {
                 return _Confidence975;
-            }
-            set
-            {
-                ClearConfidenceLimits();
             }
         }
 
@@ -89,35 +79,6 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
         {
             AddSinglePropertyRule(nameof(Value), new Rule(() => { if (NextRow == null) return true; return Value < ((GraphicalRow)NextRow).Value; }, "Y values are not increasing.", ErrorLevel.Severe));
             AddSinglePropertyRule(nameof(Value), new Rule(() => { if (PreviousRow == null) return true; return Value > ((GraphicalRow)PreviousRow).Value; }, "Y values are not increasing.", ErrorLevel.Severe));           
-        }
-
-        private void ClearConfidenceLimits()
-        {
-            GraphicalRow row = this;
-            //fix this row
-            row._Confidence025 = 0;
-            row._Confidence975 = 0;
-            row.NotifyPropertyChanged(nameof(Confidence025));
-            row.NotifyPropertyChanged(nameof(Confidence975));
-
-            //Check next rows
-            while(row.NextRow != null)
-            {
-                ((GraphicalRow)row.NextRow)._Confidence025 = 0;
-                ((GraphicalRow)row.NextRow)._Confidence975 = 0;
-                row = ((GraphicalRow)row.NextRow);
-                row.NotifyPropertyChanged(nameof(Confidence025));
-                row.NotifyPropertyChanged(nameof(Confidence975));
-            }
-            //Check prior rows
-            while(((GraphicalRow)row.PreviousRow) != null)
-            {
-                ((GraphicalRow)row.PreviousRow)._Confidence025 = 0;
-                ((GraphicalRow)row.PreviousRow)._Confidence975 = 0;
-                row = ((GraphicalRow)row.PreviousRow);
-                row.NotifyPropertyChanged(nameof(Confidence025));
-                row.NotifyPropertyChanged(nameof(Confidence975));
-            }
         }
 
         public void SetConfidenceLimits(double conf05, double conf95)

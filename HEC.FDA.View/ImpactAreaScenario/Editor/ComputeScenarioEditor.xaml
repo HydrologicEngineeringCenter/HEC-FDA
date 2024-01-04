@@ -6,7 +6,9 @@
              xmlns:mvvmView="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=HEC.MVVMFramework.View"
              xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
              xmlns:local="clr-namespace:HEC.FDA.View.ImpactAreaScenario.Editor"     
-             xmlns:cmds="clr-namespace:HEC.FDA.View.Commands"
+             xmlns:cmds="clr-namespace:HEC.FDA.View.Commands" xmlns:compute="clr-namespace:HEC.FDA.ViewModel.Compute;assembly=HEC.FDA.ViewModel" 
+             d:DataContext="{d:DesignInstance Type=compute:ComputeScenarioVM}" 
+             d:Background="AliceBlue"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>

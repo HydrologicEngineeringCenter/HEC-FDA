@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
@@ -459,7 +460,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
         }
 
-        public void ComputeCurves()
+        public async Task ComputeCurvesAsync()
         {
             if (WriteDetailsFile)
             {
@@ -467,7 +468,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
                 if (name != null)
                 {
-                    RunCompute();
+                    await RunComputeAsync();
                 }
                 else
                 {
@@ -476,11 +477,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
             else
             {
-                RunCompute();
+                await RunComputeAsync();
             }
         }
 
-        private void RunCompute()
+        private async Task RunComputeAsync()
         {
             //we know that we have an impact area. We only allow one, so it will be the first one.
             List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
@@ -493,7 +494,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             if (vr.IsValid)
             {
                 Rows.Clear();
-                List<UncertainPairedData> stageDamageFunctions = ComputeStageDamageFunctions(config);
+                List<UncertainPairedData> stageDamageFunctions =  await ComputeStageDamageFunctionsAsync(config);
                 LoadComputedCurveRows(stageDamageFunctions);
 
                 if (Rows.Count > 0)
@@ -615,7 +616,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         /// </summary>
         /// <param name="config"></param>
         /// <returns>The list of UPD curves created during the compute</returns>
-        private List<UncertainPairedData> ComputeStageDamageFunctions(StageDamageConfiguration config)
+        private async Task<List<UncertainPairedData>> ComputeStageDamageFunctionsAsync(StageDamageConfiguration config)
         {
             List<UncertainPairedData> stageDamageFunctions = new();
             try
@@ -627,11 +628,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 Model.compute.RandomProvider randomProvider = new(seed);
 
                 bool canCompute = ValidateStructureCount(scenarioStageDamage);
-                if(canCompute)
+                if (canCompute)
                 {
                     List<UncertainPairedData> quantityDamagedElementsUPD = new();
                     //these are the rows in the computed table
-                    (stageDamageFunctions, quantityDamagedElementsUPD) = scenarioStageDamage.Compute(randomProvider);
+                    (stageDamageFunctions, quantityDamagedElementsUPD) = await Task.Run(() => scenarioStageDamage.Compute(randomProvider));
                     List<string> errors = scenarioStageDamage.GetErrorMessages();
                     if (errors.Count > 0)
                     {
@@ -642,11 +643,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                     }
                     WriteErrors(errors);
                     if (WriteDetailsFile)
-                    {   
+                    {
                         WriteDetailsCsvFile(scenarioStageDamage, quantityDamagedElementsUPD);
                     }
                 }
-        }
+            }
             catch (Exception ex)
             {
                 MessageBox.Show("An error occured while trying to compute stage damages:\n" + ex.Message, "Compute Error", MessageBoxButton.OK, MessageBoxImage.Error);
