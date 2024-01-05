@@ -650,7 +650,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
             catch (Exception ex)
             {
-                MessageBox.Show("An error occured while trying to compute stage damages:\n" + ex.Message, "Compute Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("An error occured while trying to compute stage damages:\n" + ex.Message + " " + ex.StackTrace, "Compute Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         
             //TODO: COMMUNICATE ERROR MESSAGES
