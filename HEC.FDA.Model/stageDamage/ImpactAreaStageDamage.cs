@@ -264,7 +264,9 @@ namespace HEC.FDA.Model.stageDamage
 
                     //there should be four UncertainPairedData objects - one for each asset cat of the given dam cat level compute 
                     (List<UncertainPairedData>, List<UncertainPairedData>) tempResultsList = StudyAreaConsequencesBinned.ToUncertainPairedData(_StagesAtIndexLocation.ToList(), consequenceDistributionResults, ImpactAreaID);
+                    //damage
                     results.Item1.AddRange(tempResultsList.Item1);
+                    //quantity damaged elements
                     results.Item2.AddRange(tempResultsList.Item2);
                     //clear data
                 }
@@ -302,6 +304,7 @@ namespace HEC.FDA.Model.stageDamage
                 iterations = 100;
             }
             int computeChunks = Convert.ToInt32(_ConvergenceCriteria.MinIterations / iterations);
+            int sampleSize = 0;
             bool stageDamageFunctionsAreNotConverged = true;
             while (stageDamageFunctionsAreNotConverged)
             {
@@ -331,7 +334,10 @@ namespace HEC.FDA.Model.stageDamage
                         ComputeMiddleStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, i);
                         ComputeUpperStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, i);
                         inventoryAndWaterTupled.Item1.ResetStructureWaterIndexTracking();
+                        sampleSize += 1;
                     }
+                    double percentComplete = sampleSize / _ConvergenceCriteria.MaxIterations;
+                    ReportProgress(this, new ProgressReportEventArgs((int)percentComplete));
                     DumpDataIntoDistributions(ref consequenceDistributionResults);
                 }
                 stageDamageFunctionsAreNotConverged = IsTheFunctionNotConverged(consequenceDistributionResults);
