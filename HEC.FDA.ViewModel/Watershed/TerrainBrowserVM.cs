@@ -51,21 +51,17 @@ namespace HEC.FDA.ViewModel.Watershed
             else
             {
                 string pathExtension = Path.GetExtension(TerrainPath);
-                switch (pathExtension)
+                if (pathExtension.Equals(HDF) || pathExtension.Equals(TIF))
                 {
-                    case HDF:
-                        List<string> terrainCompFiles = RASHelper.GetTerrainComponentFiles(TerrainPath);
-                        if (!FilesExist(terrainCompFiles))
-                        {
-                            vr.AddErrorMessage("The file selected is missing it's component files.");
-                        }
-                        break;
-                    case TIF:
-                        // do nothing
-                        break;
-                    default:
-                        vr.AddErrorMessage("The file selected has an extension type of: '" + pathExtension + "'. Only .tif, and .hdf are supported.");
-                        break;
+                    string errorMessage = "";
+                    if(!RASHelper.TerrainIsValid(TerrainPath, ref errorMessage))
+                    {
+                        vr.AddErrorMessage(errorMessage);
+                    }
+                }
+                else
+                {
+                    vr.AddErrorMessage("The file selected has an extension type of: '" + pathExtension + "'. Only .tif, and .hdf are supported.");
                 }
             }
             return vr;
@@ -109,6 +105,23 @@ namespace HEC.FDA.ViewModel.Watershed
             {
                 MessageBox.Show(isValidResult.ErrorMessage, "Invalid File Path", MessageBoxButton.OK, MessageBoxImage.Information);
             }
+        }
+
+        /// <summary>
+        /// Checks to see if the study has a terrain and returns the full path to the terrain file.
+        /// </summary>
+        /// <returns>The full path to the terrain file if it's been imported, or an empty string if there is no terrain.</returns>
+        public static string GetTerrainFile()
+        {
+            string filePath = "";
+            List<TerrainElement> terrainElements = StudyCache.GetChildElementsOfType<TerrainElement>();
+            if (terrainElements.Count > 0)
+            {
+                //there can only be one terrain in the study
+                TerrainElement elem = terrainElements[0];
+                filePath = Storage.Connection.Instance.TerrainDirectory + "\\" + elem.Name + "\\" + elem.FileName;
+            }
+            return filePath;
         }
 
         #endregion

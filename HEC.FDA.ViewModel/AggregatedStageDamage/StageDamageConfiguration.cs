@@ -7,6 +7,7 @@ using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Inventory;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.Watershed;
 using System.Collections.Generic;
 using System.IO;
 
@@ -60,14 +61,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private FdaValidationResult GetIsTerrainValidResult()
         {
             FdaValidationResult vr = new();
-            string terrainFile = InventoryColumnSelectionsVM.getTerrainFile();
-            List<string> terrainComponentFiles = RASHelper.GetTerrainComponentFiles(terrainFile);
-            foreach(string file in terrainComponentFiles)
+            string terrainFile = TerrainBrowserVM.GetTerrainFile();
+            string error = "";
+            if(!RASHelper.TerrainIsValid(terrainFile, ref error))
             {
-                if(!File.Exists(file))
-                {
-                    vr.AddErrorMessage($"Terrain missing component files: {file}");
-                }
+                vr.AddErrorMessage(error);
             }
             return vr;
         }

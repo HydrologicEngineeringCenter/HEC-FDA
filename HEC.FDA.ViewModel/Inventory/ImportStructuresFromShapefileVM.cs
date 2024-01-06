@@ -169,11 +169,25 @@ namespace HEC.FDA.ViewModel.Inventory
 
         public bool NextButtonClicked()
         {
+            //Validation in this editor is a mess. I'm adding additional validations at the top here because I don't want to untangle the web and put them where they *should* be
+            //Check for projection up front if you need one
             if(Storage.Connection.Instance.ProjectionFile == null && ((TerrainElement)StudyCache.GetParentElementOfType<TerrainOwnerElement>().Elements[0] == null))
             {
                 MessageBox.Show("Please set your project projection in the study properties.", "Missing Projection", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
+            //Make sure that terrain is valid.
+            string terrainFileName = TerrainBrowserVM.GetTerrainFile();
+            string error = "";
+            if (!RASHelper.TerrainIsValid(terrainFileName, ref error))
+            {
+                MessageBox.Show(error, "Invalid Terrain", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+
+
+
+
             bool isValid = false;
             if (CurrentView is InventoryColumnSelectionsVM)
             {

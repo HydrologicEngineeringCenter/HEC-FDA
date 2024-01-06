@@ -239,19 +239,6 @@ namespace HEC.FDA.ViewModel.Inventory
             return dtv;
         }
 
-        public static string getTerrainFile()
-        {
-            string filePath = "";
-            List<TerrainElement> terrainElements = StudyCache.GetChildElementsOfType<TerrainElement>();
-            if (terrainElements.Count > 0)
-            {
-                //there can only be one terrain in the study
-                TerrainElement elem = terrainElements[0];
-                filePath = Storage.Connection.Instance.TerrainDirectory + "\\" + elem.Name + "\\" + elem.FileName;
-            }
-            return filePath;
-        }
-
         #region Validation
 
         /// <summary>
@@ -265,9 +252,11 @@ namespace HEC.FDA.ViewModel.Inventory
             List<StructureMissingDataRowItem> missingDataRows = new();
             int badElevationNumber = -9999;
             _StructureElevations.Clear();
-            _StructureElevations.AddRange(RASHelper.SamplePointsFromRaster(Path,getTerrainFile(),RASHelper.GetProjectionFromTerrain(getTerrainFile())));
-            List<int> idsWithNoElevation = new List<int>();
-            for (int i = 0; i < _StructureElevations.Count(); i++)
+            string terrainFilePath = TerrainBrowserVM.GetTerrainFile();
+            Projection terrainProjection = RASHelper.GetProjectionFromTerrain(terrainFilePath);
+            _StructureElevations.AddRange(RASHelper.SamplePointsFromRaster(Path, terrainFilePath, terrainProjection));
+            List<int> idsWithNoElevation = new();
+            for (int i = 0; i < _StructureElevations.Count; i++)
             {
                 if (_StructureElevations[i] == badElevationNumber)
                 {
@@ -279,7 +268,7 @@ namespace HEC.FDA.ViewModel.Inventory
             foreach (int i in idsWithNoElevation)
             {
                 string uniqueName = structureNames[i].ToString();
-                StructureMissingDataRowItem missingRow = new StructureMissingDataRowItem(uniqueName,GetRequiredRowValues(uniqueName), MissingDataType.TerrainElevation);
+                StructureMissingDataRowItem missingRow = new(uniqueName,GetRequiredRowValues(uniqueName), MissingDataType.TerrainElevation);
                 missingDataRows.Add(missingRow);
             }
             return missingDataRows;

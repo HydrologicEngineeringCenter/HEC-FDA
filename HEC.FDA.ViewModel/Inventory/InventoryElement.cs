@@ -4,6 +4,7 @@ using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.Watershed;
 using SixLabors.ImageSharp.Formats.Gif;
 using Statistics;
 using Statistics.Distributions;
@@ -164,7 +165,7 @@ namespace HEC.FDA.ViewModel.Inventory
             Dictionary<string, OccupancyType> occtypeMappings = CreateModelOcctypesMapping();
             string pointShapefilePath = GetStructuresPointShapefile();
             string impAreaShapefilePath = GetImpactAreaShapefile(impactAreaElement.Name);
-            string terrainPath = InventoryColumnSelectionsVM.getTerrainFile();
+            string terrainPath = TerrainBrowserVM.GetTerrainFile();
             StudyPropertiesElement studyProperties = StudyCache.GetStudyPropertiesElement();
             double priceIndex = studyProperties.UpdatedPriceIndex;
             string studyProjection = Connection.Instance.ProjectionFile;
