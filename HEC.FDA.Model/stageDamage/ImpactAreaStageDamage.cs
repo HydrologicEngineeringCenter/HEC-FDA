@@ -577,8 +577,6 @@ namespace HEC.FDA.Model.stageDamage
             }
             return extrapolatedStages;
         }
-        //TODO:
-        //Do something with this. 
         public void ReportProgress(object sender, ProgressReportEventArgs e)
         {
             MessageHub.Register(this);
