@@ -569,8 +569,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             foreach(ImpactAreaStageDamage stageDamage in zeroStructuresImpactAreas)
             {
                 string impactAreaName = impactAreaElement.GetImpactAreaRow(stageDamage.ImpactAreaID).Name;
-                vr.AddErrorMessage("No structures detected in impact area '" + impactAreaName +
-                    "'. This impact area will be ignored during the compute.");
+                vr.AddErrorMessage("No structures detected in impact area '" + impactAreaName);
             }
 
             return vr.ErrorMessage;
@@ -588,21 +587,14 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             }
             else
             {
+                //TODO: seems like passing around a lot of data when all we need is impact area names 
                 List<ImpactAreaStageDamage> zeroStructuresImpactAreas = GetIAStageDamagesWithZeroStructures(scenarioStageDamage);
-
                 if (zeroStructuresImpactAreas.Count > 0)
                 {
                     string zeroStructsMessage = GenerateNoStructuresMessage(zeroStructuresImpactAreas);
                     var Result = MessageBox.Show(zeroStructsMessage + Environment.NewLine +
                     Environment.NewLine + "Do you want to continue?", "Missing Structures", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                    if (Result == MessageBoxResult.Yes)
-                    {
-                        foreach (ImpactAreaStageDamage area in zeroStructuresImpactAreas)
-                        {
-                            scenarioStageDamage.ImpactAreaStageDamages.Remove(area);
-                        }
-                    }
-                    else
+                    if (Result != MessageBoxResult.Yes)
                     {
                         canCompute = false;
                     }

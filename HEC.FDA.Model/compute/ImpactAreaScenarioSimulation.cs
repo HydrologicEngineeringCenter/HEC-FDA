@@ -77,7 +77,7 @@ namespace HEC.FDA.Model.compute
             _DamageCategoryStageDamage = new List<UncertainPairedData>();//defaults to empty
             DamageCategoryStageNonFailureDamage = new List<UncertainPairedData>(); //empty 
             _ImpactAreaID = impactAreaID;
-            _ImpactAreaScenarioResults = new ImpactAreaScenarioResults(_ImpactAreaID);
+            _ImpactAreaScenarioResults = new ImpactAreaScenarioResults(_ImpactAreaID, true); //defaults to null
         }
 
         public ImpactAreaScenarioResults Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria)
@@ -100,6 +100,8 @@ namespace HEC.FDA.Model.compute
                 _ImpactAreaScenarioResults = new ImpactAreaScenarioResults(_ImpactAreaID, true); //I would like to just return regular Null here but I'm unsure who is relying on this behavior. BBB
                 return _ImpactAreaScenarioResults;
             }
+            //clear results for collection
+            _ImpactAreaScenarioResults = new ImpactAreaScenarioResults(ImpactAreaID);
             int masterseed = 0;
             if (randomProvider is RandomProvider)
             {
@@ -148,7 +150,7 @@ namespace HEC.FDA.Model.compute
             }
         }
 
-        private void LogSimulationErrors()
+        private void LogSimulationPropertyRuleErrors()
         {
 
             //get the highest error level. This is so that we can log the intro message at that error level so that the filter will either
@@ -188,16 +190,12 @@ namespace HEC.FDA.Model.compute
         private bool CanCompute(ConvergenceCriteria convergenceCriteria)
         {
             bool canCompute = true;
-            if (!HasErrors)
-            {
-                return true;
-            }
             if (ErrorLevel >= ErrorLevel.Fatal)
             {
                 ReportMessage(this, new MessageEventArgs(new Message($"The simulation for impact area {_ImpactAreaID} contains errors. The compute has been aborted." + Environment.NewLine)));
                 canCompute = false;
             }
-            LogSimulationErrors();
+            LogSimulationPropertyRuleErrors();
             convergenceCriteria.Validate();
             ValidateNonFail();
             if (convergenceCriteria.HasErrors)
@@ -206,6 +204,13 @@ namespace HEC.FDA.Model.compute
                 string message = $"The convergence criteria established in study properties are not valid: {convergenceCriteria.GetErrorMessages()}";
                 ErrorMessage errorMessage = new(message, ErrorLevel.Fatal);
                 ReportMessage(this, new MessageEventArgs(errorMessage));
+            }
+            if(_DamageCategoryStageDamage.Count == 0)
+            {
+                if (!HasLevee)
+                {
+                    canCompute = false;
+                }
             }
             return canCompute;
 

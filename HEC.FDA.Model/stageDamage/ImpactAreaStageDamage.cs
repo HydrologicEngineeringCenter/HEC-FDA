@@ -11,6 +11,8 @@ using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Model.Messaging;
 using Statistics;
+using Statistics.Distributions;
+using Statistics.Histograms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,7 +95,7 @@ namespace HEC.FDA.Model.stageDamage
             double feetPerCoordinate = 0.5;
             double range = _MaxStageForArea - _MinStageForArea;
             int setsOfCoordinatesBetweenProfiles = 10;
-            int coordinateQuantity = Convert.ToInt32(Math.Ceiling((range / feetPerCoordinate)/ setsOfCoordinatesBetweenProfiles));
+            int coordinateQuantity = Convert.ToInt32(Math.Ceiling((range / feetPerCoordinate) / setsOfCoordinatesBetweenProfiles));
 
             //require at least two coordinates to interpolate and extrapolate 
             if (coordinateQuantity < 4)
@@ -247,32 +249,67 @@ namespace HEC.FDA.Model.stageDamage
             }
             else
             {
-
                 List<string> damCats = Inventory.GetDamageCategories();
-                (List<double>, List<float[]>) wsesAtEachStructureByProfile = _HydraulicDataset.GetHydraulicDatasetInFloatsWithProbabilities(Inventory, _HydraulicParentDirectory);
-                _StagesAtIndexLocation = ComputeStagesAtIndexLocation(wsesAtEachStructureByProfile.Item1);
-                //Run the compute by dam cat to simplify data collection 
-                foreach (string damageCategory in damCats)
+                if (Inventory.Structures.Count == 0)
+                {
+                    results = (ProduceZeroDamageFunctions(damCats));
+                    return results;
+                }
+                else
                 {
 
-                    (Inventory, List<float[]>) inventoryAndWaterTupled = Inventory.GetInventoryAndWaterTrimmedToDamageCategory(damageCategory, wsesAtEachStructureByProfile.Item2);
+
+                    (List<double>, List<float[]>) wsesAtEachStructureByProfile = _HydraulicDataset.GetHydraulicDatasetInFloatsWithProbabilities(Inventory, _HydraulicParentDirectory);
+                    _StagesAtIndexLocation = ComputeStagesAtIndexLocation(wsesAtEachStructureByProfile.Item1);
+                    //Run the compute by dam cat to simplify data collection 
+                    foreach (string damageCategory in damCats)
+                    {
+
+                        (Inventory, List<float[]>) inventoryAndWaterTupled = Inventory.GetInventoryAndWaterTrimmedToDamageCategory(damageCategory, wsesAtEachStructureByProfile.Item2);
 
 
-                    //There will be one ConsequenceDistributionResults object for each stage in the stage-damage function
-                    //Each ConsequenceDistributionResults object holds a ConsequenceDistributionResult for each asset cat
-                    List<StudyAreaConsequencesBinned> consequenceDistributionResults = ComputeDamageWithUncertaintyAllCoordinates(damageCategory, randomProvider, inventoryAndWaterTupled, wsesAtEachStructureByProfile.Item1);
+                        //There will be one ConsequenceDistributionResults object for each stage in the stage-damage function
+                        //Each ConsequenceDistributionResults object holds a ConsequenceDistributionResult for each asset cat
+                        List<StudyAreaConsequencesBinned> consequenceDistributionResults = ComputeDamageWithUncertaintyAllCoordinates(damageCategory, randomProvider, inventoryAndWaterTupled, wsesAtEachStructureByProfile.Item1);
 
-                    //there should be four UncertainPairedData objects - one for each asset cat of the given dam cat level compute 
-                    (List<UncertainPairedData>, List<UncertainPairedData>) tempResultsList = StudyAreaConsequencesBinned.ToUncertainPairedData(_StagesAtIndexLocation.ToList(), consequenceDistributionResults, ImpactAreaID);
-                    //damage
-                    results.Item1.AddRange(tempResultsList.Item1);
-                    //quantity damaged elements
-                    results.Item2.AddRange(tempResultsList.Item2);
-                    //clear data
+                        //there should be four UncertainPairedData objects - one for each asset cat of the given dam cat level compute 
+                        (List<UncertainPairedData>, List<UncertainPairedData>) tempResultsList = StudyAreaConsequencesBinned.ToUncertainPairedData(_StagesAtIndexLocation.ToList(), consequenceDistributionResults, ImpactAreaID);
+                        //damage
+                        results.Item1.AddRange(tempResultsList.Item1);
+                        //quantity damaged elements
+                        results.Item2.AddRange(tempResultsList.Item2);
+                        //clear data
+                    }
+                    return results;
                 }
-                return results;
             }
         }
+
+        private (List<UncertainPairedData>, List<UncertainPairedData>) ProduceZeroDamageFunctions(List<string> damCats)
+        {
+            (List<UncertainPairedData>, List<UncertainPairedData>) zeroResults = new();
+            IHistogram[] deterministics = new IHistogram[_StageFrequency.Yvals.Length];
+            for (int i = 0; i < deterministics.Length; i++)
+            {
+                //this histogram is zero-valued
+                deterministics[i] = new Histogram();
+            }
+            string damcat = "NO STRUCTURES";
+            CurveMetaData structureMetaData = new CurveMetaData(name: "stage-damage function", xlabel: "stages", ylabel: "no structures", impactAreaID: ImpactAreaID, damageCategory: damcat, assetCategory: StringGlobalConstants.STRUCTURE_ASSET_CATEGORY);
+            CurveMetaData contentMetaData = new CurveMetaData(name: "stage-damage function", xlabel: "stages", ylabel: "no structures", impactAreaID: ImpactAreaID, damageCategory: damcat, assetCategory: StringGlobalConstants.CONTENT_ASSET_CATEGORY);
+            CurveMetaData otherMetaData = new CurveMetaData(name: "stage-damage function", xlabel: "stages", ylabel: "no structures", impactAreaID: ImpactAreaID, damageCategory: damcat, assetCategory: StringGlobalConstants.OTHER_ASSET_CATEGORY);
+            CurveMetaData vehicleMetaData = new CurveMetaData(name: "stage-damage function", xlabel: "stages", ylabel: "no structures", impactAreaID: ImpactAreaID, damageCategory: damcat, assetCategory: StringGlobalConstants.VEHICLE_ASSET_CATEGORY);
+
+            UncertainPairedData structure = new UncertainPairedData(_StageFrequency.Yvals, deterministics, structureMetaData);
+            UncertainPairedData content = new UncertainPairedData(_StageFrequency.Yvals, deterministics, contentMetaData);
+            UncertainPairedData other = new UncertainPairedData(_StageFrequency.Yvals, deterministics, otherMetaData);
+            UncertainPairedData vehicle = new UncertainPairedData(_StageFrequency.Yvals, deterministics, vehicleMetaData);
+            List<UncertainPairedData> zeros = new List<UncertainPairedData> { structure, content, other, vehicle };
+            zeroResults.Item1 = (zeros);
+            zeroResults.Item2 = (zeros);
+            return zeroResults;
+        }
+
         /// <summary>
         /// Begins the third loop of the Scenario Stage Damage Compute. 
         /// Scenario SD 
@@ -517,7 +554,7 @@ namespace HEC.FDA.Model.stageDamage
             List<ConsequenceResult> consequenceResults = inventory.ComputeDamages(stagesAllStructuresAllStages, _AnalysisYear, damageCategory, occTypes);
             foreach (ConsequenceResult consequenceResult in consequenceResults)
             {
-                parallelConsequenceResultCollection[stageIndex + i].AddConsequenceRealization(consequenceResult,damageCategory, ImpactAreaID, iterationIndex);
+                parallelConsequenceResultCollection[stageIndex + i].AddConsequenceRealization(consequenceResult, damageCategory, ImpactAreaID, iterationIndex);
                 i++;
             }
         }
@@ -600,7 +637,7 @@ namespace HEC.FDA.Model.stageDamage
         }
 
         private void DamagesToStrings(string assetType, List<DeterministicOccupancyType> deterministicOccupancyType, ref List<string> structureDetails)
- {
+        {
             foreach (IHydraulicProfile hydraulicProfile in _HydraulicDataset.HydraulicProfiles)
             {
                 float[] stagesAtStructures = hydraulicProfile.GetWSE(Inventory.GetPointMs(), _HydraulicDataset.DataSource, _HydraulicParentDirectory);
@@ -690,10 +727,10 @@ namespace HEC.FDA.Model.stageDamage
             string errors = "";
             ErrorLevel minErrorLevel = ErrorLevel.Unassigned;
             if (_AnalyticalFlowFrequency != null) { errors += _AnalyticalFlowFrequency.GetErrorMessages(minErrorLevel, nameof(_AnalyticalFlowFrequency) + Environment.NewLine); }
-            if(_GraphicalFrequency != null) { errors += _GraphicalFrequency.GetErrorMessages(minErrorLevel, nameof(_GraphicalFrequency) + Environment.NewLine); }
-            if(_DischargeStage != null) { errors += _DischargeStage.GetErrorMessages(minErrorLevel, nameof(_DischargeStage) + Environment.NewLine); }
-            if(_UnregulatedRegulated != null) { errors += _UnregulatedRegulated.GetErrorMessages(minErrorLevel, nameof(_UnregulatedRegulated) + Environment.NewLine); }
-            errors += Inventory.GetErrorsFromProperties();
+            if (_GraphicalFrequency != null) { errors += _GraphicalFrequency.GetErrorMessages(minErrorLevel, nameof(_GraphicalFrequency) + Environment.NewLine); }
+            if (_DischargeStage != null) { errors += _DischargeStage.GetErrorMessages(minErrorLevel, nameof(_DischargeStage) + Environment.NewLine); }
+            if (_UnregulatedRegulated != null) { errors += _UnregulatedRegulated.GetErrorMessages(minErrorLevel, nameof(_UnregulatedRegulated) + Environment.NewLine); }
+            errors += Inventory.GetErrorsFromProperties(ImpactAreaID);
             return errors;
         }
 
@@ -701,10 +738,10 @@ namespace HEC.FDA.Model.stageDamage
         {
             HasErrors = false;
             ErrorLevel = ErrorLevel.Unassigned;
-            if(_AnalyticalFlowFrequency != null) { ValidateProperty(_AnalyticalFlowFrequency); }
-            if(_GraphicalFrequency !=  null) { ValidateProperty(_GraphicalFrequency);}
-            if(_DischargeStage != null) { ValidateProperty(_DischargeStage);}
-            if(_UnregulatedRegulated != null) { ValidateProperty(_UnregulatedRegulated);}
+            if (_AnalyticalFlowFrequency != null) { ValidateProperty(_AnalyticalFlowFrequency); }
+            if (_GraphicalFrequency != null) { ValidateProperty(_GraphicalFrequency); }
+            if (_DischargeStage != null) { ValidateProperty(_DischargeStage); }
+            if (_UnregulatedRegulated != null) { ValidateProperty(_UnregulatedRegulated); }
             Inventory.Validate();
         }
 

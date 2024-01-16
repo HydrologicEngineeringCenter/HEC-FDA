@@ -402,8 +402,26 @@ namespace HEC.FDA.Model.structures
                     HasErrors = true;
                 }
             }
+            if (Structures.Count == 0)
+            {
+                HasErrors = true;
+                ErrorLevel = ErrorLevel.Minor;
+            }
         }
         public string GetErrorsFromProperties()
+        {
+            string errors = "";
+            foreach (OccupancyType occupancyType in OccTypes.Values)
+            {
+                errors += occupancyType.GetErrorsFromProperties() + Environment.NewLine;
+            }
+            foreach (Structure structure in Structures)
+            {
+                errors += structure.GetErrorMessages(ErrorLevel.Unassigned, "Structure" + structure.Fid) + Environment.NewLine;
+            }
+            return errors;
+        }
+        public string GetErrorsFromProperties(int impactAreaID)
         {
 
             string errors = "";
@@ -415,7 +433,10 @@ namespace HEC.FDA.Model.structures
             {
                 errors += structure.GetErrorMessages(ErrorLevel.Unassigned, "Structure" + structure.Fid) + Environment.NewLine;
             }
-
+            if (Structures.Count == 0)
+            {
+                errors += $"There are no structures found in the inventory that lie within impact area {impactAreaID}" + Environment.NewLine;
+            }
             return errors;
         }
         internal void ResetStructureWaterIndexTracking()
