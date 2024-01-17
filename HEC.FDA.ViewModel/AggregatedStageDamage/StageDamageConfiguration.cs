@@ -57,17 +57,15 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             return vr;
         }
 
-        private FdaValidationResult GetIsTerrainValidResult()
+        private static FdaValidationResult GetIsTerrainValidResult()
         {
             FdaValidationResult vr = new();
             string terrainFile = InventoryColumnSelectionsVM.getTerrainFile();
-            List<string> terrainComponentFiles = RASHelper.GetTerrainComponentFiles(terrainFile);
-            foreach(string file in terrainComponentFiles)
+            string error = "";
+            if(!RASHelper.TerrainIsValid(terrainFile, ref error))
             {
-                if(!File.Exists(file))
-                {
-                    vr.AddErrorMessage($"Terrain missing component files: {file}");
-                }
+                vr.AddErrorMessage(error);
+                return vr;
             }
             return vr;
         }
@@ -123,7 +121,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         private FdaValidationResult DoAllRequiredFilesExist()
         {
-            FdaValidationResult vr = new FdaValidationResult();
+            FdaValidationResult vr = new();
 
             vr.AddErrorMessage(GetImpactAreaFilesValidResult().ErrorMessage);
             vr.AddErrorMessage(GetHydroFilesValidResult().ErrorMessage);
@@ -138,48 +136,56 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         private FdaValidationResult GetImpactAreaFilesValidResult()
         {
-            //impact areas will only be of type *.shp
-            FdaValidationResult vr = new FdaValidationResult();
-            string impactAreaDirectoryPath = GetImpactAreaDirectory();
-            vr.AddErrorMessage(FileValidation.DirectoryHasOneFileMatchingPattern(impactAreaDirectoryPath, "*.shp").ErrorMessage);
-            //todo: do we need to check that a dbf exists?
-            vr.AddErrorMessage(FileValidation.DirectoryHasOneFileMatchingPattern(impactAreaDirectoryPath, "*.dbf").ErrorMessage);
-
-            if(!vr.IsValid)
+            FdaValidationResult vr = new();
+            string file = GetImpactAreaFile();
+            string error = "";
+            if (!RASHelper.ShapefileIsValid(file,ref error))
             {
-                vr.InsertMessage(0, "Failed to find required impact area file(s):");
+                vr.AddErrorMessage(error);
+                return vr;
             }
-
+            if(!RASHelper.IsPolygonShapefile(file, ref error))
+            {
+                vr.AddErrorMessage(error);
+                return vr;
+            }   
             return vr;
         }
 
         private FdaValidationResult GetStructureInventoryFilesValidResult()
         {
             //impact areas will only be of type *.shp
-            FdaValidationResult vr = new FdaValidationResult();
-            string structuresDirectory = GetStructuresDirectory();
-            vr.AddErrorMessage(FileValidation.DirectoryHasOneFileMatchingPattern(structuresDirectory, "*.shp").ErrorMessage);
-            vr.AddErrorMessage(FileValidation.DirectoryHasOneFileMatchingPattern(structuresDirectory, "*.dbf").ErrorMessage);
-
-            if (!vr.IsValid)
+            FdaValidationResult vr = new();
+            string error = "";
+            string file = GetStructuresShapefile();
+            if(!RASHelper.ShapefileIsValid(file, ref error))
             {
-                vr.InsertMessage(0, "Failed to find required structure inventory file(s):");
+                vr.AddErrorMessage(error);
+                return vr;
             }
-
+            if(!RASHelper.IsPointShapefile(file, ref error))
+            {
+                vr.AddErrorMessage(error);
+                return vr;
+            }
             return vr;
         }
 
         #endregion
 
 
-        private string GetImpactAreaDirectory()
+        private string GetImpactAreaFile()
         {
-            return Connection.Instance.ImpactAreaDirectory + "\\" + SelectedImpactArea.Name;
+            string directory = Path.Combine(Connection.Instance.ImpactAreaDirectory, SelectedImpactArea.Name);
+            string file = Directory.GetFiles(directory, "*.shp")[0]; //Should check that there's not more than 1 here
+            return file;
         }
 
-        private string GetStructuresDirectory()
+        private string GetStructuresShapefile()
         {
-            return Connection.Instance.InventoryDirectory + "\\" + SelectedStructures.Name;
+            string directory = Path.Combine(Connection.Instance.InventoryDirectory, SelectedStructures.Name);
+            string file = Directory.GetFiles(directory, "*.shp")[0]; //Should check that there's not more than 1 here   
+            return file;
         }
       
 

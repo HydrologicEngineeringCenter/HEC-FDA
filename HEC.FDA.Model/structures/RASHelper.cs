@@ -251,6 +251,42 @@ where T : struct
         }
         return valid;
     }
+    /// <summary>
+    /// Checks that the actual file and all component files exist. 
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public static bool TerrainIsValid(string path, ref string error)
+    {
+        if(!File.Exists(path))
+        {
+            error += $"File {path} does not exist. ";
+            return true;
+        }
+        string terrainExtension = System.IO.Path.GetExtension(path);
+        switch (terrainExtension)
+        {
+            case ".hdf":
+                TerrainLayer terrain = new("ThisNameIsNotUSed", path);
+                List<string> files = GetAllSourceFilesFromTerrainSAFE(terrain);
+                bool allFilesExist = true;
+                foreach(string file in files)
+                {
+                    if(!File.Exists(file))
+                    {
+                        error += $"File {file} does not exist. " + Environment.NewLine;
+                        allFilesExist = false;
+                    }
+                }
+                return allFilesExist;
+            case ".tif":
+                return File.Exists(path);
+            default:
+                error += $"Unsupported file type: {terrainExtension}";
+                return false;
+        }
+    }
 
     #region HACKS
     ///This contains a workaround for an issue in RASMapper, where to query the component files of an HDF, RASMapper was generating a VRT using GDAL .exes that don't exist
