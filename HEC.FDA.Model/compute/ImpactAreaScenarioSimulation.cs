@@ -77,7 +77,7 @@ namespace HEC.FDA.Model.compute
             _DamageCategoryStageDamage = new List<UncertainPairedData>();//defaults to empty
             DamageCategoryStageNonFailureDamage = new List<UncertainPairedData>(); //empty 
             _ImpactAreaID = impactAreaID;
-            _ImpactAreaScenarioResults = new ImpactAreaScenarioResults(_ImpactAreaID, true); //defaults to null
+            _ImpactAreaScenarioResults = new ImpactAreaScenarioResults(_ImpactAreaID); //defaults to null
         }
 
         public ImpactAreaScenarioResults Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria)
@@ -100,8 +100,6 @@ namespace HEC.FDA.Model.compute
                 _ImpactAreaScenarioResults = new ImpactAreaScenarioResults(_ImpactAreaID, true); //I would like to just return regular Null here but I'm unsure who is relying on this behavior. BBB
                 return _ImpactAreaScenarioResults;
             }
-            //clear results for collection
-            _ImpactAreaScenarioResults = new ImpactAreaScenarioResults(ImpactAreaID);
             int masterseed = 0;
             if (randomProvider is RandomProvider)
             {
@@ -112,6 +110,8 @@ namespace HEC.FDA.Model.compute
             if (_DamageCategoryStageDamage.Count == 0)
             {
                 computeWithDamage = false;
+                Threshold systemResponseThreshold = new(thresholdID: 0, _SystemResponseFunction, convergenceCriteria);
+                _ImpactAreaScenarioResults.PerformanceByThresholds.AddThreshold(systemResponseThreshold);
             }
             else
             {

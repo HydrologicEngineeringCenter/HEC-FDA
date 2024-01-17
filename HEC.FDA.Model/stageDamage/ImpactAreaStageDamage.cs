@@ -722,6 +722,7 @@ namespace HEC.FDA.Model.stageDamage
             }
         }
 
+        // Changes to this method should have coinciding changes in Validate()
         public string GetErrorsFromProperties()
         {
             string errors = "";
@@ -731,9 +732,18 @@ namespace HEC.FDA.Model.stageDamage
             if (_DischargeStage != null) { errors += _DischargeStage.GetErrorMessages(minErrorLevel, nameof(_DischargeStage) + Environment.NewLine); }
             if (_UnregulatedRegulated != null) { errors += _UnregulatedRegulated.GetErrorMessages(minErrorLevel, nameof(_UnregulatedRegulated) + Environment.NewLine); }
             errors += Inventory.GetErrorsFromProperties(ImpactAreaID);
+            if (_GraphicalFrequency == null)
+            {
+                if (_AnalyticalFlowFrequency == null)
+                {
+                    string errorMessage = "Insufficient Summary Relationships Were Provided." + Environment.NewLine;
+                    errors += errorMessage;
+                }
+            }
             return errors;
         }
 
+        // Changes to this method should have coinciding changes in GetErrorsFromProperties()
         public void Validate()
         {
             HasErrors = false;
@@ -742,7 +752,16 @@ namespace HEC.FDA.Model.stageDamage
             if (_GraphicalFrequency != null) { ValidateProperty(_GraphicalFrequency); }
             if (_DischargeStage != null) { ValidateProperty(_DischargeStage); }
             if (_UnregulatedRegulated != null) { ValidateProperty(_UnregulatedRegulated); }
+            if (_GraphicalFrequency == null)
+            {
+                if (_AnalyticalFlowFrequency == null)
+                {
+                    HasErrors = true;
+                    ErrorLevel = ErrorLevel.Fatal;
+                }
+            }
             Inventory.Validate();
+
         }
 
         public void ReportMessage(object sender, MessageEventArgs e)
