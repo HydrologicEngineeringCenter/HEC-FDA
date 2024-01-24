@@ -197,7 +197,8 @@ namespace HEC.FDA.ViewModel.Storage
             string returnValue = null;
             if (value != null)
             {
-                returnValue = value.ToString().Replace("'", "''");
+                string stringValue = value.ToString();
+                returnValue = stringValue.Replace("'", "''");
             }
             return returnValue;
         }
