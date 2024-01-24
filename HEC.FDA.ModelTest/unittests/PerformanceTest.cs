@@ -92,6 +92,7 @@ namespace HEC.FDA.ModelTest.unittests
 
         /// <summary>
         /// calculations for the below test can be obtained at https://docs.google.com/spreadsheets/d/1iSSQHjxlyKbtqfq1s3-RG_t4W19QZCiW/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
+        /// Observe that this test shows a compute without the need for stage damage 
         /// </summary>
         /// <param name="thresholdValue"></param>
         /// <param name="iterations"></param>
@@ -116,14 +117,12 @@ namespace HEC.FDA.ModelTest.unittests
             }
             UncertainPairedData leveeCurve = new UncertainPairedData(StageForNonLeveeFailureProbs, failureProbs, metaData);
 
-            int thresholdID = 1;
+            int thresholdID = 0;
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
-            Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.DefaultExteriorStage, thresholdValue);
 
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(id)
                 .WithFlowFrequency(flow_frequency)
                 .WithFlowStage(flow_stage)
-                .WithAdditionalThreshold(threshold)
                 .WithLevee(leveeCurve, thresholdValue)
                 .Build();
 
