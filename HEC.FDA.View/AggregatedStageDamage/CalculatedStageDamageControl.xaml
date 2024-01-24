@@ -51,7 +51,7 @@
                 <Label Grid.Row="0" Grid.Column="2" Content="Structures:" HorizontalAlignment="Right" />
                 <ComboBox Grid.Row="0" Grid.Column="3" HorizontalAlignment="Stretch" Margin="5"  ItemsSource="{Binding Structures}" SelectedItem="{Binding SelectedStructures}" DisplayMemberPath="Name"/>
                     
-                <Button Content="Compute Curves" Grid.Row="2" Grid.Column="0"  Width="100" HorizontalAlignment="Right" Height="22" Margin="5" Click="calculate_btn_Click" VerticalAlignment="Bottom"/>
+                <Button Content="Compute Curves" x:Name="computeButton" Grid.Row="2" Grid.Column="0"  Width="100" HorizontalAlignment="Right" Height="22" Margin="5" Click="calculate_btn_Click" VerticalAlignment="Bottom"/>
                 <CheckBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"  Content="Write Details to CSV" IsChecked="{Binding WriteDetailsFile}" VerticalAlignment="Bottom" Margin="5" 
                               ToolTip="Writes structure stage damage details to a csv file in your study directory. Path: yourStudy\StructureStageDamageDetails\[Name]StructureStageDamageDetails.csv" />
 
