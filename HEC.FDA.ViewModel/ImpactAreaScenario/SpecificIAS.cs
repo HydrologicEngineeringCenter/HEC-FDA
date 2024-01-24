@@ -175,7 +175,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         {
             FdaValidationResult vr = new FdaValidationResult();
             vr.AddErrorMessage(DoesScenarioChildElementsStillExist().ErrorMessage);
-            vr.AddErrorMessage(IsStageDamageValid().ErrorMessage);
             //insert the name of the impact area if not valid
             if(!vr.IsValid)
             {
@@ -234,24 +233,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             }
 
         
-            return vr;
-        }
-
-        private FdaValidationResult IsStageDamageValid()
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-            AggregatedStageDamageElement stageDamageElem = (AggregatedStageDamageElement)StudyCache.GetChildElementOfType(typeof(AggregatedStageDamageElement), StageDamageID);
-
-            if (stageDamageElem != null)
-            {
-                List<StageDamageCurve> stageDamageCurves = stageDamageElem.Curves.Where(curve => curve.ImpArea.ID == ImpactAreaID).ToList();
-                if (stageDamageCurves.Count == 0)
-                {
-                    //todo: maybe get the impact area name for this message?
-                    vr.AddErrorMessage("The aggregated stage damage element '" + stageDamageElem.Name + "' did not contain any curves that are associated " +
-                        "with the impact area.");
-                }
-            }
             return vr;
         }
 
