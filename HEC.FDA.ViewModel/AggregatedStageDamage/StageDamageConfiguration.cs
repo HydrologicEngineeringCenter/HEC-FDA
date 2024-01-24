@@ -53,10 +53,22 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 {
                     vr.AddErrorMessage(GetIsTerrainValidResult().ErrorMessage);
                 }
+                else
+                {
+                    vr.AddErrorMessage(GetIsProjectionFileSet().ErrorMessage);
+                }
             }
             return vr;
         }
-
+        private static FdaValidationResult GetIsProjectionFileSet()
+        {
+            FdaValidationResult vr = new();
+            if(!File.Exists(Connection.Instance.ProjectionFile))
+            {
+                vr.AddErrorMessage("The projection file has not been set.");
+            }
+            return vr;
+        }
         private static FdaValidationResult GetIsTerrainValidResult()
         {
             FdaValidationResult vr = new();

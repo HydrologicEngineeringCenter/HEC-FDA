@@ -112,7 +112,7 @@ namespace HEC.FDA.ViewModel.Storage
                 {
                     return projContents[0];
                 }
-                else { return null; }
+                else { return ""; }
             }
         }
         public string ImpactAreaDirectory
