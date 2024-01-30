@@ -1,12 +1,16 @@
 ﻿using HEC.FDA.Model.structures;
 using HEC.FDA.ModelTest.Resources;
+using RasMapperLib;
 using System.Collections.Generic;
+using Utilities;
 using Xunit;
 
 namespace HEC.FDA.ModelTest.unittests;
+[Collection("Serial")]
 public class RASHelperShould
 {
     [Fact]
+    [Trait("RunsOn", "Remote")]
     public void InvalidateInvalidShapefile()
     {
         string erorr = "";
@@ -15,11 +19,12 @@ public class RASHelperShould
     }
 
     [Fact]
+    [Trait("RunsOn", "Remote")]
     public void ReturnAllComponentFilesOfAnHDFTerrain()
     {
-       string terrainpath = Resources.StringResourcePaths.TerrainPath;
-       List<string> terrainComponentFiles = RASHelper.GetTerrainComponentFiles(terrainpath);
-        List<string> Freeport = RASHelper.GetTerrainComponentFiles(@"D:\FDA Data\Bugs\Freeport Run 1-4-24\Terrains\Freeport Terrain\NOAA_FPV04_LAS_GeotiffClipRes4_WOPv2.WOP.hdf");
-        Assert.Equal(terrainComponentFiles.Count, 3);
+        string error = "";
+        List<string> terrainComponentFiles = RASHelper.GetTerrainComponentFiles(Resources.StringResourcePaths.TerrainPath,ref error);
+        Assert.True(error.IsNullOrEmpty());
+        Assert.Equal(terrainComponentFiles.Count, 5); 
     }
 }

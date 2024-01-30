@@ -24,6 +24,6 @@ public class StringResourcePaths
     public const string IANameColumnHeader = "Name";
     public const string SteadyHydraulicProfileName = "500";
 
-    public const string TerrainPath = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieTerrain\Terrain (1)_30ft_clip.hdf";
+    public const string TerrainPath = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieTerrain\Terrain30ft.Clone.hdf";
 
 }

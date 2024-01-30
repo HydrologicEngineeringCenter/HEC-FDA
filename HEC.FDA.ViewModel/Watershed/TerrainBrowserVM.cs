@@ -44,6 +44,7 @@ namespace HEC.FDA.ViewModel.Watershed
         public override FdaValidationResult IsValid()
         {
             FdaValidationResult vr = new();
+            string error = "";
             if (TerrainPath.IsNullOrEmpty())
             {
                 vr.AddErrorMessage("A terrain file is required.");
@@ -54,7 +55,11 @@ namespace HEC.FDA.ViewModel.Watershed
                 switch (pathExtension)
                 {
                     case HDF:
-                        List<string> terrainCompFiles = RASHelper.GetTerrainComponentFiles(TerrainPath);
+                        List<string> terrainCompFiles = RASHelper.GetTerrainComponentFiles(TerrainPath,ref error);
+                        if(!error.IsNullOrEmpty())
+                        {
+                            vr.AddErrorMessage(error);
+                        }
                         if (!FilesExist(terrainCompFiles))
                         {
                             vr.AddErrorMessage("The file selected is missing it's component files.");

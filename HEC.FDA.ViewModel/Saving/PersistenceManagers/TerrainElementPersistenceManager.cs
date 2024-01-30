@@ -1,4 +1,5 @@
-﻿using HEC.FDA.Model.structures;
+﻿using Amazon.Runtime.Internal;
+using HEC.FDA.Model.structures;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.Watershed;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using Utilities;
 
 namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 {
@@ -22,6 +24,8 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             string newPath = Connection.Instance.TerrainDirectory + "\\" + element.Name + "\\" + element.FileName;
             string newDirectory = Path.GetDirectoryName(newPath);
             Directory.CreateDirectory(newDirectory);
+
+            string error = ""; 
             
             string extension = Path.GetExtension(OriginalTerrainPath);
             switch (extension)
@@ -29,7 +33,12 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                 case ".hdf":
                     //copy all that terrain's files. 
                     string originalDirName = Path.GetDirectoryName(OriginalTerrainPath);
-                    List<string> paths = RASHelper.GetTerrainComponentFiles(OriginalTerrainPath);
+                    List<string> paths = RASHelper.GetTerrainComponentFiles(OriginalTerrainPath,ref error);
+                    if(!error.IsNullOrEmpty())
+                    {
+                        MessageBox.Show("Could not copy terrain file: " + element.FileName + ":\n" + error, "Error Copying Terrain", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
                     foreach (string path in paths)
                     {
                         await Task.Run(() => File.Copy(path, newDirectory + "\\" + Path.GetFileName(path)));
