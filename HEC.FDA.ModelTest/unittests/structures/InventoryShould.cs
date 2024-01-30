@@ -17,7 +17,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
         private const string IANameColumnHeader = "Name";
         private const string pathToNSIShapefile = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieNSI\Muncie-SI_CRS2965.shp";
         private const string pathToIAShapefile = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieImpactAreas\ImpactAreas.shp";
-        private const string pathToTerrainHDF = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieTerrain\Terrain (1)_30ft_clip.hdf";
+        private const string pathToTerrainHDF = Resources.StringResourcePaths.TerrainPath;
         private const string pathToMuncieProjection = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieImpactAreas\ImpactAreas.prj";
         private const string pathToAlternativeProjection = @"..\..\..\HEC.FDA.ModelTest\Resources\Projections\26844.prj";
 
