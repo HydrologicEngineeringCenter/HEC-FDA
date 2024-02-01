@@ -26,7 +26,7 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
         private const string IANameColumnHeader = "Name";
         private const string SteadyHydraulicProfileName = "500";
 
-        private const string TerrainPath = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieTerrain\Terrain (1)_30ft_clip.hdf";
+        private const string TerrainPath = Resources.StringResourcePaths.TerrainPath;
 
 
         [Theory]

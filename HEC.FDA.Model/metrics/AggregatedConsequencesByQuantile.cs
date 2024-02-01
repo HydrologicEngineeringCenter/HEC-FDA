@@ -11,12 +11,10 @@ using Statistics.Distributions;
 
 namespace HEC.FDA.Model.metrics
 {
-    public class AggregatedConsequencesByQuantile: IReportMessage, IProgressReport
+    public class AggregatedConsequencesByQuantile
     {
 
         #region Properties
-        public event MessageReportedEventHandler MessageReport;
-        public event ProgressReportedEventHandler ProgressReport;
         public Empirical ConsequenceDistribution { get; }
         public string DamageCategory { get; }
         public string AssetCategory { get; }
@@ -35,7 +33,6 @@ namespace HEC.FDA.Model.metrics
             RegionID = 0;
             ConsequenceDistribution = new Empirical();
             IsNull = true;
-            MessageHub.Register(this);
 
         }
         /// <summary>
@@ -68,7 +65,6 @@ namespace HEC.FDA.Model.metrics
             ConsequenceDistribution = empirical;
             RegionID = impactAreaID;
             IsNull = false;
-            MessageHub.Register(this);
         }
         #endregion
 
@@ -105,16 +101,6 @@ namespace HEC.FDA.Model.metrics
             string assetCategory = xElement.Attribute("AssetCategory").Value;
             int id = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
             return new AggregatedConsequencesByQuantile(damageCategory, assetCategory, empirical, id);
-        }
-
-        public void ReportMessage(object sender, MessageEventArgs e)
-        {
-            MessageReport?.Invoke(sender, e);
-        }
-
-        public void ReportProgress(object sender, ProgressReportEventArgs e)
-        {
-            ProgressReport?.Invoke(sender, e);
         }
         #endregion
     }

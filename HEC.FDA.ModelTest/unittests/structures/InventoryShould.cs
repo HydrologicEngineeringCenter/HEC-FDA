@@ -17,7 +17,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
         private const string IANameColumnHeader = "Name";
         private const string pathToNSIShapefile = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieNSI\Muncie-SI_CRS2965.shp";
         private const string pathToIAShapefile = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieImpactAreas\ImpactAreas.shp";
-        private const string pathToTerrainHDF = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieTerrain\Terrain (1)_30ft_clip.hdf";
+        private const string pathToTerrainHDF = Resources.StringResourcePaths.TerrainPath;
         private const string pathToMuncieProjection = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieImpactAreas\ImpactAreas.prj";
         private const string pathToAlternativeProjection = @"..\..\..\HEC.FDA.ModelTest\Resources\Projections\26844.prj";
 
@@ -86,7 +86,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
         {
             float[] groundelevs = Model.structures.RASHelper.SamplePointsFromRaster(pathToNSIShapefile, pathToTerrainHDF,Projection.FromFile(pathToMuncieProjection));
             Assert.Equal(682, groundelevs.Length);
-            Assert.Equal(946.5, groundelevs[0], 1);
+            Assert.Equal(947.0004, groundelevs[0], 1);
         }
         [Fact]
         public void ConstructsWithTerrainGroundElevs()

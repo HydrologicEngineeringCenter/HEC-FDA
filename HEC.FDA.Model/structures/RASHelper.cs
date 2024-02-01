@@ -67,11 +67,16 @@ public static class RASHelper
     {
         string terrainExtension = System.IO.Path.GetExtension(TerrainPath);
         string terrainTif;
+        string error = "";
         switch (terrainExtension)
         {
             case ".hdf":
                 TerrainLayer terrain = new("ThisNameIsNotUSed", TerrainPath);
-                List<string> files = GetAllSourceFilesFromTerrainSAFE(terrain);
+                List<string> files = GetAllSourceFilesFromTerrainSAFE(terrain, ref error);
+                if(!error.IsNullOrEmpty())
+                {
+                    throw new Exception(error);
+                }
                 terrainTif = files[2]; //index 0 is always the hdf. 1 is the vrt. 2 is the first tif.  
                 break;
             case ".tif":
@@ -214,14 +219,15 @@ where T : struct
     /// </summary>
     /// <param name="terrainPath"></param>
     /// <returns></returns>
-    public static List<string> GetTerrainComponentFiles(string terrainPath)
+    public static List<string> GetTerrainComponentFiles(string terrainPath, ref string error)
     {
         string terrainExtension = System.IO.Path.GetExtension(terrainPath);
         switch (terrainExtension)
         {
             case ".hdf":
                 TerrainLayer terrain = new("ThisNameIsNotUSed", terrainPath);
-                return GetAllSourceFilesFromTerrainSAFE(terrain);
+                List<string> files = GetAllSourceFilesFromTerrainSAFE(terrain, ref error);
+                return files;
             case ".tif":
                 return new() { terrainPath };
             default:
@@ -251,23 +257,79 @@ where T : struct
         }
         return valid;
     }
+    /// <summary>
+    /// Checks that the actual file and all component files exist. 
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public static bool TerrainIsValid(string path, ref string error)
+    {
+        if(!File.Exists(path))
+        {
+            error += $"File {path} does not exist. ";
+            return true;
+        }
+        string terrainExtension = System.IO.Path.GetExtension(path);
+        switch (terrainExtension)
+        {
+            case ".hdf":
+                TerrainLayer terrain = new("ThisNameIsNotUSed", path);
+                List<string> files = GetAllSourceFilesFromTerrainSAFE(terrain,ref error);
+                bool allFilesExist = true;
+                foreach(string file in files)
+                {
+                    if(!File.Exists(file))
+                    {
+                        error += $"File {file} does not exist. " + Environment.NewLine;
+                        allFilesExist = false;
+                    }
+                }
+                return allFilesExist;
+            case ".tif":
+                return File.Exists(path);
+            default:
+                error += $"Unsupported file type: {terrainExtension}";
+                return false;
+        }
+    }
 
     #region HACKS
+
     ///This contains a workaround for an issue in RASMapper, where to query the component files of an HDF, RASMapper was generating a VRT using GDAL .exes that don't exist
-    ///in the version 7 build of GDAL 
-    private static List<string> GetAllSourceFilesFromTerrainSAFE(TerrainLayer terrain)
+    ///in the version 7 build of GDAL. It also protects against another issue where when specified with a relative path, GetDependency Files returns duplicate files, not recognizing 
+    /// that the relative path is the same as the absolute path.
+    private static List<string> GetAllSourceFilesFromTerrainSAFE(TerrainLayer terrain, ref string error)
     {
-        List<string> sourcefiles;
+        List<string> sourcefiles = new();
         bool realVRTFileExists = File.Exists(terrain.VRTFilename);
         if (!realVRTFileExists) //This is a hack to get around a bug in RasMapper  which throws an exception trying to create a VRT when we query the source files.
         {
             CreateFakeVRTForTerrain(terrain);
-            sourcefiles = terrain.GetAllSourceFiles();
-            File.Delete(terrain.VRTFilename);
         }
-        else
+        try
         {
-            sourcefiles = terrain.GetAllSourceFiles();
+            sourcefiles = terrain.GetDependencyFiles();
+        }
+        catch (Exception ex)
+        {
+            error += ex.Message;
+        }
+        finally
+        {
+            //delete that fake vrt. I don't want to store fake data to disk if I don't have to.
+            if (!realVRTFileExists)
+            {
+                File.Delete(terrain.VRTFilename);
+            }
+            //Get Dependency files returns duplicate files if the terrain layer is created with a relative path. There's matching relative and absolute paths for the same file.
+            //This is a hack to get around that.
+            HashSet<string> finalListFiles = new();
+            foreach (string file in sourcefiles)
+            {
+                finalListFiles.Add(System.IO.Path.GetFullPath(file));
+            }
+            sourcefiles = finalListFiles.ToList();
         }
         return sourcefiles;
     }

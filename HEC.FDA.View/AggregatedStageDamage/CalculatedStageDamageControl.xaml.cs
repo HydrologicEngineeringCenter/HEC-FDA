@@ -21,7 +21,9 @@ namespace HEC.FDA.View.AggregatedStageDamage
         {
             if (DataContext is CalculatedStageDamageVM vm)
             {
+                computeButton.IsEnabled = false;
                 await vm.ComputeCurvesAsync();
+                computeButton.IsEnabled = true;
             }
         }
 
