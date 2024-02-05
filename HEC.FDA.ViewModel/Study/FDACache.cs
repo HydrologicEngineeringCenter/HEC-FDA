@@ -113,14 +113,10 @@ namespace HEC.FDA.ViewModel.Study
         public AlternativeOwnerElement AlternativeParent { get; set; }
         public AlternativeComparisonReportOwnerElement AlternativeComparisonReportParent { get; set; }
         #endregion
-        #endregion
-        private FDACache()
-        {
-        }
 
-        public static FDACache Create()
+        #endregion
+        internal FDACache()
         {
-            return new FDACache();
         }
 
         #region Remove Elements
