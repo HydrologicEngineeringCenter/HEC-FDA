@@ -295,7 +295,7 @@ namespace HEC.FDA.ViewModel.Study
 
             if (StudyCache == null)
             {
-                FDACache cache = FDACache.Create();
+                FDACache cache = new();
                 StudyCache = cache;
                 PersistenceFactory.StudyCacheForSaving = cache;
 
