@@ -389,7 +389,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             for(int i = 0; i < curves.Count; i++)
             {
                 //used cloned curve so that you do not modify the original data
-                StageDamageCurve curve = new(curves[i].WriteToXML());
+                StageDamageCurve curve = curves[i];
                 CalculatedStageDamageRowItem newRow = new(i + 1, curve.ImpArea, curve.DamCat, curve.ComputeComponent, curve.AssetCategory, curve.ConstructionType);
                 Rows.Add(newRow);
             }
