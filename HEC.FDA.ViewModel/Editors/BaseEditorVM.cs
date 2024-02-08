@@ -69,7 +69,7 @@ namespace HEC.FDA.ViewModel.Editors
             Name = elem.Name;
             Description = elem.Description;
             IsCreatingNewElement = false;
-            OriginalElement = elem.CloneElement();
+            OriginalElement = elem; // this used to clone the element. I'm nervous this change will cause problems, but we can't handle that mem burden. 
 
             ActionManager = actionManager;
 
