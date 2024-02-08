@@ -75,6 +75,7 @@ namespace HEC.FDA.ViewModel.Utilities
                 _senderTypeFilter = value;
             }
         }
+        //TODO: What am I?
         private TextFileMessageSubscriber()
         {
             //start timer, action every 5 seconds call the flush method on SW. check if bwlistlock is locked an not isbusy. could
@@ -102,7 +103,7 @@ namespace HEC.FDA.ViewModel.Utilities
         {
             sw.Flush();
         }
-
+        //Phenomenally Fragile. Could crush memory if not careful.
         public void RecieveMessage(object sender, MessageEventArgs e)
         {
             _messages.Enqueue(e.Message);
