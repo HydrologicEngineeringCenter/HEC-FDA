@@ -143,15 +143,13 @@ namespace HEC.FDA.ModelTest.integrationtests
         #endregion
 
         #region Expected Values
-        //The modeling used to generate the expected values can be found at the below link. 
-        //https://drive.google.com/file/d/17IvI01PBXa0C97dlBOKLn0Z0odGTJ663/view?usp=share_link
-        //some of these stages were directly entered and others will be interpolated 
+        //These damage values were obtained from the computational engine on Feb 8 2024
         private static double[] stageAtWhichToCheckForDamage = new double[] { 472, 473, 477, 478, 479 };
 
-        private static double[] expected_mean_residentialDamage_A = new double[] { 2.13, 16.08, 471.53, 642.29, 814.11 }; 
-        private static double[] expected_standardDeviation_residentialDamage_A = new double[] { 6.17, 21.17, 97.83, 102.39, 104.30 };
-        private static double[] expected_mean_residentialDamage_B = new double[] { 2.13, 16.08, 471.53, 642.29, 814.11 };
-        private static double[] expected_standardDeviation_residentialDamage_B = new double[] { 6.17, 21.17, 97.83, 102.39, 106.31 };
+        private static double[] expected_mean_residentialDamage_A = new double[] { 2.095, 13.91, 462.49, 632.756, 803.59 }; 
+        private static double[] expected_conf95_damageDists_A = new double[] { 58.15, 79.41, 691, 877.51, 1066.27 };
+        private static double[] expected_mean_residentialDamage_B = new double[] { 1.86, 13.37, 459.51, 630.03, 801.14  };
+        private static double[] expected_conf95_damageDists_B = new double[] { 81.259, 81.39, 689.47, 875.40, 1064.83 };
 
         #endregion
 
@@ -223,65 +221,19 @@ namespace HEC.FDA.ModelTest.integrationtests
             }
 
             //Assert
-            double[] expected_conf95_damageDists_A = new double[stageAtWhichToCheckForDamage.Length];
-            double[] expected_conf95_damageDists_B = new double[stageAtWhichToCheckForDamage.Length];
-
-            for (int i = 0; i < stageAtWhichToCheckForDamage.Length; i++)
-            {
-                expected_conf95_damageDists_A[i] = new Normal(expected_mean_residentialDamage_A[i], expected_standardDeviation_residentialDamage_A[i]).InverseCDF(conf95Prob);
-                expected_conf95_damageDists_B[i] = new Normal(expected_mean_residentialDamage_B[i], expected_standardDeviation_residentialDamage_B[i]).InverseCDF(conf95Prob);
-            }
-
             for (int i = 0; i < stageAtWhichToCheckForDamage.Length; i++)
             {
 
                 //Impact Area A Assertion
-                Assert.True(AssertWithinTolerance(actual_meanDamages_A[i], expected_mean_residentialDamage_A[i]));
-                Assert.True(AssertWithinTolerance(actual_Conf95Damages_A[i], expected_conf95_damageDists_A[i]));
+                Assert.Equal(actual_meanDamages_A[i], expected_mean_residentialDamage_A[i], 1);
+                Assert.Equal(actual_Conf95Damages_A[i], expected_conf95_damageDists_A[i],1);
 
                 //Impact Area B Assertion 
-                Assert.True(AssertWithinTolerance(expected_mean_residentialDamage_B[i],actual_meanDamages_B[i]));
-                Assert.True(AssertWithinTolerance(expected_conf95_damageDists_B[i],actual_Conf95Damages_B[i]));
-
+                Assert.Equal(expected_mean_residentialDamage_B[i],actual_meanDamages_B[i], 1);
+                Assert.Equal(expected_conf95_damageDists_B[i],actual_Conf95Damages_B[i], 1);
 
             }
         }
-        //TODO: check magnitude of both values
-        private bool AssertWithinTolerance(double expectedValue, double actualValue)
-        {
-            double twoZeroTolerance = 14;
-            double threeZeroTolerance = 100;
-            double fourZeroTolerance = 120;
-            
-            bool expectedAndActualAreWithinAGivenTolerance = true;
-            double difference = Math.Abs(actualValue - expectedValue);
-
-            if (expectedValue < 100 || actualValue < 100)
-            {
-                if(difference > twoZeroTolerance)
-                {
-                    expectedAndActualAreWithinAGivenTolerance = false;
-                }
-            }
-            else if (expectedValue < 1000 || actualValue < 980)
-            {
-                if(difference > threeZeroTolerance)
-                {
-                    expectedAndActualAreWithinAGivenTolerance=false;
-                }
-            }
-            else if (expectedValue < 10000 || actualValue < 10000)
-            {
-                if (difference > fourZeroTolerance)
-                {
-                    expectedAndActualAreWithinAGivenTolerance = false;
-                }
-            }
-            else if (expectedValue < 100000 || actualValue < 100000)
-            {
-                expectedAndActualAreWithinAGivenTolerance = false;
-            }
-            return expectedAndActualAreWithinAGivenTolerance;
-        }
+       
     }
 }
