@@ -75,6 +75,7 @@ namespace HEC.FDA.ViewModel.Utilities
                 _senderTypeFilter = value;
             }
         }
+        //TODO: What am I?
         private TextFileMessageSubscriber()
         {
             FilterLevel = ErrorLevel.Unassigned;
@@ -95,7 +96,7 @@ namespace HEC.FDA.ViewModel.Utilities
         {
             sw.Flush();
         }
-
+        //Phenomenally Fragile. Could crush memory if not careful.
         public void RecieveMessage(object sender, MessageEventArgs e)
         {
             _messages.Enqueue(e.Message);

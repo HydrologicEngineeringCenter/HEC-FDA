@@ -63,7 +63,7 @@ public class FrequencyElement : ChildElement
     public FrequencyElement(string name, string lastEditDate, string desc, int id, FrequencyEditorVM vm) 
         : base(name, lastEditDate, desc, id)
     {
-        _frequencyEditorVM = new FrequencyEditorVM(vm.ToXML());
+        _frequencyEditorVM = vm;
         AddDefaultActions(EditFlowFreq, StringConstants.EDIT_FREQUENCY_FUNCTIONS_MENU);
     }
     //load from database
