@@ -77,13 +77,6 @@ namespace HEC.FDA.ViewModel.Utilities
         }
         private TextFileMessageSubscriber()
         {
-            //start timer, action every 5 seconds call the flush method on SW. check if bwlistlock is locked an not isbusy. could
-            //also look at if deque is >0.
-            _timer = new System.Timers.Timer();
-            _timer.Interval = 5000;
-            _timer.Elapsed += flushStringWriter;
-            _timer.Start();
-
             FilterLevel = ErrorLevel.Unassigned;
             _messages = new ConcurrentQueue<IMessage>();
             //register
