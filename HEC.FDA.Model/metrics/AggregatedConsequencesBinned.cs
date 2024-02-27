@@ -91,7 +91,8 @@ namespace HEC.FDA.Model.metrics
         {
             if(_HistogramNotConstructed)
             {
-                int initialBinQuantity = 500;
+                //this bin quantity only appears relevant for bin width 
+                int initialBinQuantity = 100;
                 double max = _TempResults.Max();
                 double min = _TempResults.Min();
                 double range = max - min;
@@ -104,6 +105,11 @@ namespace HEC.FDA.Model.metrics
                 else
                 {
                     binWidth = initialBinQuantity / range;
+                    //don't let the bin width get too small or the histo gets too big
+                    //if (binWidth < 0.5)
+                    //{
+                    //    binWidth = 0.5;
+                    //}
                 }
                 ConsequenceHistogram = new Histogram(binWidth, ConvergenceCriteria);
                 DamagedElementQuantityHistogram = new Histogram(binWidth:1, ConvergenceCriteria);
