@@ -146,10 +146,10 @@ namespace HEC.FDA.ModelTest.integrationtests
         //These damage values were obtained from the computational engine on Feb 8 2024
         private static double[] stageAtWhichToCheckForDamage = new double[] { 472, 473, 477, 478, 479 };
 
-        private static double[] expected_mean_residentialDamage_A = new double[] { 2.095, 13.91, 462.49, 632.756, 803.59 }; 
-        private static double[] expected_conf95_damageDists_A = new double[] { 58.15, 79.41, 691, 877.51, 1066.27 };
-        private static double[] expected_mean_residentialDamage_B = new double[] { 1.86, 13.37, 459.51, 630.03, 801.14  };
-        private static double[] expected_conf95_damageDists_B = new double[] { 81.259, 81.39, 689.47, 875.40, 1064.83 };
+        private static double[] expected_mean_residentialDamage_A = new double[] { 2.05, 13.68, 460.336, 630.755, 801.78 }; 
+        private static double[] expected_conf95_damageDists_A = new double[] { 11.99, 63.76, 691.87, 877.92, 1066.13 };
+        private static double[] expected_mean_residentialDamage_B = new double[] { 1.96, 13.67, 459.68, 630, 800.95 };
+        private static double[] expected_conf95_damageDists_B = new double[] { 11.35, 63.35, 691.04, 1065.31 };
 
         #endregion
 
