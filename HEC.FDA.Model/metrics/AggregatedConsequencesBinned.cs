@@ -104,6 +104,10 @@ namespace HEC.FDA.Model.metrics
                 else
                 {
                     binWidth = initialBinQuantity / range;
+                    if (binWidth < 0.1)
+                    {
+                        binWidth = 0.1;
+                    }
                 }
                 ConsequenceHistogram = new Histogram(binWidth, ConvergenceCriteria);
                 DamagedElementQuantityHistogram = new Histogram(binWidth:1, ConvergenceCriteria);
