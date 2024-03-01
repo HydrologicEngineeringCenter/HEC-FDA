@@ -13,7 +13,7 @@ namespace Statistics
         public int MaxIterations { get; }
         public double ZAlpha { get; }
         public double Tolerance { get; }
-        public int IterationCount { get; } = 1000;
+        public int IterationCount { get; } = 100;
         public ConvergenceCriteria(int minIterations = 50000, int maxIterations = 500000, double zAlpha = 1.96039491692543, double tolerance = .01)
         {
             MinIterations = minIterations;

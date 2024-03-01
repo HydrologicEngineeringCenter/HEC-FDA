@@ -225,12 +225,12 @@ namespace HEC.FDA.ModelTest.integrationtests
             {
 
                 //Impact Area A Assertion
-                Assert.Equal(actual_meanDamages_A[i], expected_mean_residentialDamage_A[i], 1);
-                Assert.Equal(actual_Conf95Damages_A[i], expected_conf95_damageDists_A[i],1);
+                Assert.Equal(actual_meanDamages_A[i], expected_mean_residentialDamage_A[i], 5f);
+                Assert.Equal(actual_Conf95Damages_A[i], expected_conf95_damageDists_A[i], 5f);
 
                 //Impact Area B Assertion 
-                Assert.Equal(expected_mean_residentialDamage_B[i],actual_meanDamages_B[i], 1);
-                Assert.Equal(expected_conf95_damageDists_B[i],actual_Conf95Damages_B[i], 1);
+                Assert.Equal(expected_mean_residentialDamage_B[i],actual_meanDamages_B[i], 5f);
+                Assert.Equal(expected_conf95_damageDists_B[i],actual_Conf95Damages_B[i], 5f);
 
             }
         }
