@@ -25,7 +25,7 @@ namespace HEC.FDA.Model.stageDamage
         #region Hard Coded Compute Settings
         private const double MIN_PROBABILITY = 0.0001;
         private const double MAX_PROBABILITY = 0.9999;
-        private readonly ConvergenceCriteria _ConvergenceCriteria = new(minIterations: 500, maxIterations: 5000);
+        private readonly ConvergenceCriteria _ConvergenceCriteria = new(minIterations: 1000, maxIterations: 5000);
         #endregion
 
         #region Fields 
@@ -335,11 +335,7 @@ namespace HEC.FDA.Model.stageDamage
             {
                 computeIsDeterministic = true;
             }
-            int iterations = 1;
-            if (_ConvergenceCriteria.MinIterations >= 100)
-            {
-                iterations = 100;
-            }
+            int iterations = _ConvergenceCriteria.IterationCount;
             int computeChunks = Convert.ToInt32(_ConvergenceCriteria.MinIterations / iterations);
             int sampleSize = 0;
             bool stageDamageFunctionsAreNotConverged = true;

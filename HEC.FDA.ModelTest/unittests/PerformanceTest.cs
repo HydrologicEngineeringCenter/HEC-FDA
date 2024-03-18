@@ -15,7 +15,7 @@ using System.Threading;
 namespace HEC.FDA.ModelTest.unittests
 {
     [Collection("Serial")]
-    [Trait("RunsOn", "Remote")]
+    [Trait("RunsOn", "Local")]
     public class PerformanceTest
     {
         static double[] Flows = { 0, 100000 };

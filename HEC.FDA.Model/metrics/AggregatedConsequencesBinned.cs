@@ -96,14 +96,18 @@ namespace HEC.FDA.Model.metrics
                 double min = _TempResults.Min();
                 double range = max - min;
                 double binWidth;
-                //deterministic result all falls into one bin, binWidth of 1 is sufficient 
-                if (range == 0)
+                //following if else restricts bin width to be between 1 and 100.
+                if (range < initialBinQuantity)
                 {
                     binWidth = 1;
                 }
                 else
                 {
-                    binWidth = initialBinQuantity / range;
+                    binWidth = range / initialBinQuantity;
+                    if (binWidth > 100)
+                    {
+                        binWidth = 100;
+                    }
                 }
                 ConsequenceHistogram = new Histogram(binWidth, ConvergenceCriteria);
                 DamagedElementQuantityHistogram = new Histogram(binWidth:1, ConvergenceCriteria);

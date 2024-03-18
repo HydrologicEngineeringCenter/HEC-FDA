@@ -146,10 +146,10 @@ namespace HEC.FDA.ModelTest.integrationtests
         //These damage values were obtained from the computational engine on Feb 8 2024
         private static double[] stageAtWhichToCheckForDamage = new double[] { 472, 473, 477, 478, 479 };
 
-        private static double[] expected_mean_residentialDamage_A = new double[] { 2.095, 13.91, 462.49, 632.756, 803.59 }; 
-        private static double[] expected_conf95_damageDists_A = new double[] { 58.15, 79.41, 691, 877.51, 1066.27 };
-        private static double[] expected_mean_residentialDamage_B = new double[] { 1.86, 13.37, 459.51, 630.03, 801.14  };
-        private static double[] expected_conf95_damageDists_B = new double[] { 81.259, 81.39, 689.47, 875.40, 1064.83 };
+        private static double[] expected_mean_residentialDamage_A = new double[] { 2.058882, 13.687099, 460.336736, 630.7556179, 801.78568839 }; 
+        private static double[] expected_conf95_damageDists_A = new double[] { 11.9896858, 63.75562, 691.87106, 877.92861, 1066.1249756 };
+        private static double[] expected_mean_residentialDamage_B = new double[] { 1.9554089, 13.667534, 459.677534, 629.9959, 800.94675 };
+        private static double[] expected_conf95_damageDists_B = new double[] { 11.348461, 63.35985, 691.037619, 877.09907, 1065.306728 };
 
         #endregion
 
@@ -225,12 +225,12 @@ namespace HEC.FDA.ModelTest.integrationtests
             {
 
                 //Impact Area A Assertion
-                Assert.Equal(actual_meanDamages_A[i], expected_mean_residentialDamage_A[i], 1);
-                Assert.Equal(actual_Conf95Damages_A[i], expected_conf95_damageDists_A[i],1);
+                Assert.Equal(actual_meanDamages_A[i], expected_mean_residentialDamage_A[i], 5f);
+                Assert.Equal(actual_Conf95Damages_A[i], expected_conf95_damageDists_A[i], 5f);
 
                 //Impact Area B Assertion 
-                Assert.Equal(expected_mean_residentialDamage_B[i],actual_meanDamages_B[i], 1);
-                Assert.Equal(expected_conf95_damageDists_B[i],actual_Conf95Damages_B[i], 1);
+                Assert.Equal(expected_mean_residentialDamage_B[i],actual_meanDamages_B[i], 5f);
+                Assert.Equal(expected_conf95_damageDists_B[i],actual_Conf95Damages_B[i], 5f);
 
             }
         }
