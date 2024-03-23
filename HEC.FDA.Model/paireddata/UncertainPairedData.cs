@@ -240,7 +240,7 @@ namespace HEC.FDA.Model.paireddata
                         }
                         else if (ordinateElements.Name.ToString().Equals("Histogram"))
                         {
-                            yValues[i] = Histogram.ReadFromXML(ordinateElements);
+                            yValues[i] = DynamicHistogram.ReadFromXML(ordinateElements);
                         }
                         else
                         {

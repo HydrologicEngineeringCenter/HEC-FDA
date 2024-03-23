@@ -24,7 +24,7 @@ namespace HEC.FDA.ModelTest.unittests
             double mean = 2;
             int impactAreaID_1 = 1;           
             StudyAreaConsequencesBinned consequenceDistributionResults = new(false);
-            Histogram histogram = FillHistogram(mean);
+            DynamicHistogram histogram = FillHistogram(mean);
 
             //Impact Area 1
             AggregatedConsequencesBinned residentialStructure_1 = new(residentialDamageCategory, structureAssetCategory, histogram, impactAreaID_1);
@@ -67,7 +67,7 @@ namespace HEC.FDA.ModelTest.unittests
 
 
 
-        private static Histogram FillHistogram(double mean)
+        private static DynamicHistogram FillHistogram(double mean)
         {
             ConvergenceCriteria convergenceCriteria = new();
             int seed = 1234;
@@ -80,7 +80,7 @@ namespace HEC.FDA.ModelTest.unittests
                 double sampledValue = normal.InverseCDF(random.NextDouble());
                 data.Add(sampledValue);
             }
-            Histogram histogram = new(data, convergenceCriteria);
+            DynamicHistogram histogram = new(data, convergenceCriteria);
             return histogram;
         }
 
@@ -91,7 +91,7 @@ namespace HEC.FDA.ModelTest.unittests
             StudyAreaConsequencesBinned expected = new StudyAreaConsequencesBinned();
             List<AggregatedConsequencesBinned> resultList = new();
             List<double> data = new() { 0, 1, 2, 3, 4 };
-            expected.AddExistingConsequenceResultObject(new AggregatedConsequencesBinned("DamCat", "AssetCat", new Histogram(data, new ConvergenceCriteria(69, 8008)), 0));
+            expected.AddExistingConsequenceResultObject(new AggregatedConsequencesBinned("DamCat", "AssetCat", new DynamicHistogram(data, new ConvergenceCriteria(69, 8008)), 0));
             XElement xElement = expected.WriteToXML();
 
             StudyAreaConsequencesBinned actual = StudyAreaConsequencesBinned.ReadFromXML(xElement);

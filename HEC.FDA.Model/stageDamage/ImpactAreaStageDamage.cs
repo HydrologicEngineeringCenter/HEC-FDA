@@ -292,7 +292,7 @@ namespace HEC.FDA.Model.stageDamage
             for (int i = 0; i < deterministics.Length; i++)
             {
                 //this histogram is zero-valued
-                deterministics[i] = new Histogram();
+                deterministics[i] = new DynamicHistogram();
             }
             string damcat = "NO STRUCTURES";
             CurveMetaData structureMetaData = new CurveMetaData(name: "stage-damage function", xlabel: "stages", ylabel: "no structures", impactAreaID: ImpactAreaID, damageCategory: damcat, assetCategory: StringGlobalConstants.STRUCTURE_ASSET_CATEGORY);

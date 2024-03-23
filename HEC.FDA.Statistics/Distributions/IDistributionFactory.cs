@@ -44,13 +44,13 @@ namespace Statistics
         /// <param name="sample"></param>
         /// <param name="nBins"></param>
         /// <returns></returns>
-        internal static Statistics.Histograms.Histogram Fit(IEnumerable<double> sample, int nBins)
+        internal static Statistics.Histograms.DynamicHistogram Fit(IEnumerable<double> sample, int nBins)
         {
             double min = sample.Min();
             double max = sample.Max();
             double binWidth = (min - max) / nBins;
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
-            Statistics.Histograms.Histogram histogram = new Statistics.Histograms.Histogram(binWidth, convergenceCriteria);
+            Statistics.Histograms.DynamicHistogram histogram = new Statistics.Histograms.DynamicHistogram(binWidth, convergenceCriteria);
             histogram.AddObservationsToHistogram(sample.ToArray());
             return histogram;
         }

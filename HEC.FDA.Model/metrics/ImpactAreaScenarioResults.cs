@@ -57,7 +57,7 @@ namespace HEC.FDA.Model.metrics
         {
             return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.AssuranceOfAEP(exceedanceProbability);
         }
-        public Histogram GetAEPHistogramForPlotting(int thresholdID)
+        public DynamicHistogram GetAEPHistogramForPlotting(int thresholdID)
         {
             return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.GetAEPHistogramForPlotting();
         }

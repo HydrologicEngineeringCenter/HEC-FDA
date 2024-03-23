@@ -28,10 +28,10 @@ namespace HEC.FDA.Model.extensions
 
         public static UncertainPairedData BootstrapToUncertainPairedData(this ContinuousDistribution continuousDistribution, IProvideRandomNumbers randomProvider, double[] ExceedanceProbabilities, int realizations = 10, double histogramBinWidth = 100)
         {
-            Histogram[] ys = new Histogram[ExceedanceProbabilities.Length];
+            DynamicHistogram[] ys = new DynamicHistogram[ExceedanceProbabilities.Length];
             for (int iterator = 0; iterator < ys.Length; iterator++)
             {
-                ys[iterator] = new Histogram(histogramBinWidth, new ConvergenceCriteria());
+                ys[iterator] = new DynamicHistogram(histogramBinWidth, new ConvergenceCriteria());
             }
 
             for (int i = 0; i < realizations; i++)

@@ -296,54 +296,54 @@ namespace HEC.FDA.Model.metrics
             {
                 if (damageCategory == null && assetCategory == null && impactAreaID == utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
                 {
-                    empiricalDistsToStack.Add(Histogram.ConvertToEmpiricalDistribution(consequenceResult.ConsequenceHistogram));
+                    empiricalDistsToStack.Add(DynamicHistogram.ConvertToEmpiricalDistribution(consequenceResult.ConsequenceHistogram));
                 }
                 if (damageCategory != null && assetCategory == null && impactAreaID == utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
                 {
                     if (damageCategory.Equals(consequenceResult.DamageCategory))
                     {
-                        empiricalDistsToStack.Add(Histogram.ConvertToEmpiricalDistribution(consequenceResult.ConsequenceHistogram));
+                        empiricalDistsToStack.Add(DynamicHistogram.ConvertToEmpiricalDistribution(consequenceResult.ConsequenceHistogram));
                     }
                 }
                 if (damageCategory == null && assetCategory != null && impactAreaID == utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
                 {
                     if (assetCategory.Equals(consequenceResult.AssetCategory))
                     {
-                        empiricalDistsToStack.Add(Histogram.ConvertToEmpiricalDistribution(consequenceResult.ConsequenceHistogram));
+                        empiricalDistsToStack.Add(DynamicHistogram.ConvertToEmpiricalDistribution(consequenceResult.ConsequenceHistogram));
                     }
                 }
                 if (damageCategory == null && assetCategory == null && impactAreaID != utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
                 {
                     if (impactAreaID.Equals(consequenceResult.RegionID))
                     {
-                        empiricalDistsToStack.Add(Histogram.ConvertToEmpiricalDistribution(consequenceResult.ConsequenceHistogram));
+                        empiricalDistsToStack.Add(DynamicHistogram.ConvertToEmpiricalDistribution(consequenceResult.ConsequenceHistogram));
                     }
                 }
                 if (damageCategory != null && assetCategory != null && impactAreaID == utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
                 {
                     if (damageCategory.Equals(consequenceResult.DamageCategory) && assetCategory.Equals(consequenceResult.AssetCategory))
                     {
-                        empiricalDistsToStack.Add(Histogram.ConvertToEmpiricalDistribution(consequenceResult.ConsequenceHistogram));
+                        empiricalDistsToStack.Add(DynamicHistogram.ConvertToEmpiricalDistribution(consequenceResult.ConsequenceHistogram));
                     }
                 }
                 if (damageCategory != null && assetCategory == null && impactAreaID != utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
                 {
                     if (damageCategory.Equals(consequenceResult.DamageCategory) && impactAreaID.Equals(consequenceResult.RegionID))
                     {
-                        empiricalDistsToStack.Add(Histogram.ConvertToEmpiricalDistribution(consequenceResult.ConsequenceHistogram));
+                        empiricalDistsToStack.Add(DynamicHistogram.ConvertToEmpiricalDistribution(consequenceResult.ConsequenceHistogram));
                     }
                 }
                 if (damageCategory == null && assetCategory != null && impactAreaID != utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
                 {
                     if (assetCategory.Equals(consequenceResult.AssetCategory) && impactAreaID.Equals(consequenceResult.RegionID))
                     {
-                        empiricalDistsToStack.Add(Histogram.ConvertToEmpiricalDistribution(consequenceResult.ConsequenceHistogram));
+                        empiricalDistsToStack.Add(DynamicHistogram.ConvertToEmpiricalDistribution(consequenceResult.ConsequenceHistogram));
                     }
                 }
                 if (damageCategory != null && assetCategory != null && impactAreaID != utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
                 {
                     AggregatedConsequencesBinned consequence = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
-                    return Histogram.ConvertToEmpiricalDistribution(consequence.ConsequenceHistogram);
+                    return DynamicHistogram.ConvertToEmpiricalDistribution(consequence.ConsequenceHistogram);
                 }
             }
             if (empiricalDistsToStack.Count == 0)
@@ -387,7 +387,7 @@ namespace HEC.FDA.Model.metrics
                 string message = "The requested damage category - asset category - impact area combination could not be found. An arbitrary object is being returned";
                 ErrorMessage errorMessage = new(message, MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
                 ReportMessage(this, new MessageEventArgs(errorMessage));
-                returnHistogram = new Histogram();
+                returnHistogram = new DynamicHistogram();
             }
             return returnHistogram;
         }

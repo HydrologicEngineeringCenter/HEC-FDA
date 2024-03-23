@@ -13,7 +13,7 @@ public class AssuranceResultStorage
 
     #region Properties
     public string AssuranceType { get; }
-    public Histogram AssuranceHistogram { get; }
+    public DynamicHistogram AssuranceHistogram { get; }
     public double StandardNonExceedanceProbability { get; }
     #endregion
 
@@ -21,7 +21,7 @@ public class AssuranceResultStorage
     internal AssuranceResultStorage(string dummyAsuranceType, double standardNonExceedanceProbability)
     {
         _TempResults = Array.Empty<double>();
-        AssuranceHistogram = new Histogram();
+        AssuranceHistogram = new DynamicHistogram();
         AssuranceType = dummyAsuranceType;
         StandardNonExceedanceProbability = standardNonExceedanceProbability;
     }
@@ -29,10 +29,10 @@ public class AssuranceResultStorage
     {
         StandardNonExceedanceProbability = standardNonExceedanceProbabilityForAssuranceOfTargetOrLevee;
         _TempResults = new double[convergenceCriteria.IterationCount];
-        AssuranceHistogram = new Histogram(binWidth, convergenceCriteria);
+        AssuranceHistogram = new DynamicHistogram(binWidth, convergenceCriteria);
         AssuranceType = assuranceType;
     }
-    private AssuranceResultStorage(string assuranceType, double standardNonExceedanceProbabilityForAssuranceOfTargetOrLevee, Histogram assuranceHistogram)
+    private AssuranceResultStorage(string assuranceType, double standardNonExceedanceProbabilityForAssuranceOfTargetOrLevee, DynamicHistogram assuranceHistogram)
     {
         AssuranceType = assuranceType;
         StandardNonExceedanceProbability = standardNonExceedanceProbabilityForAssuranceOfTargetOrLevee;
@@ -84,7 +84,7 @@ public class AssuranceResultStorage
     {
             string type = xElement.Attribute("Type")?.Value;
             double probability = Convert.ToDouble(xElement.Attribute("ExceedanceProbability").Value);
-            Histogram inlineHistogram = Histogram.ReadFromXML(xElement.Element("Histogram"));
+            DynamicHistogram inlineHistogram = DynamicHistogram.ReadFromXML(xElement.Element("Histogram"));
             return new AssuranceResultStorage(type, probability, inlineHistogram);
     }
 
