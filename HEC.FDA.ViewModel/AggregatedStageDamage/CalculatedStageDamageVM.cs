@@ -636,7 +636,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                     WriteErrors(errors);
                     if (WriteDetailsFile)
                     {
-                        WriteDetailsCsvFile(scenarioStageDamage, quantityDamagedElementsUPD);
+                        WriteDetailsCsvFile(scenarioStageDamage, quantityDamagedElementsUPD, stageDamageFunctions);
                     }
                 }
             }
@@ -749,20 +749,24 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         }
 
         //TODO: GET STRUCTURE COUNT DETAILS WRITTEN TO FILE
-        private void WriteDetailsCsvFile(ScenarioStageDamage scenarioStageDamage, List<UncertainPairedData> quantityDamagedElementsUPD)
+        private void WriteDetailsCsvFile(ScenarioStageDamage scenarioStageDamage, List<UncertainPairedData> quantityDamagedElementsUPD, List<UncertainPairedData> stageDamageFunctions)
         {
             try
             {
                 List<string> stageDamageDetails = scenarioStageDamage.ProduceStructureDetails();
-                List<string> damagedElementCounts = UncertainPairedData.ConvertToText(quantityDamagedElementsUPD);
+                List<string> damagedElementCounts = UncertainPairedData.ConvertDamagedElementCountToText(quantityDamagedElementsUPD);
+                List<string> stageDamageText = UncertainPairedData.ConvertFunctionsToText(stageDamageFunctions);
                 string structureStageDamageDetailsfileName = getName() + "StructureStageDamageDetails.csv";
                 string damagedElementsCountDetailsFileName = getName() + "DamagedElementCountsByStage.csv";
+                string functionsFileName = getName() + "Functions.csv";
                 string directory = Storage.Connection.Instance.GetStructureStageDamageDetailsDirectory;
                 Directory.CreateDirectory(directory);
                 string stageDamagePath = directory + "\\" + structureStageDamageDetailsfileName;
                 string damagedElementsCountPath = directory + "\\" + damagedElementsCountDetailsFileName;
+                string functionsPath = directory + "\\" + functionsFileName;
                 File.AppendAllLines(stageDamagePath, stageDamageDetails);
                 File.AppendAllLines(damagedElementsCountPath, damagedElementCounts);
+                File.AppendAllLines(functionsPath, stageDamageText);
         }
             catch (Exception ex)
             {
