@@ -147,7 +147,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 ScenarioReflectsWithoutProj = Convert.ToBoolean(iasElem.Element(SCENARIO_REFLECTS_WITHOUT_PROJ).Attribute("value").Value);
                 DefaultStage = double.Parse(iasElem.Element(DEFAULT_STAGE).Attribute("value").Value);
             }
-            Thresholds.AddRange( ReadThresholdsXML(iasElem.Element(THRESHOLDS)));
+            XElement thresholdElement = iasElem.Element(THRESHOLDS);
+            List<ThresholdRowItem> thresholdRowItems = ReadThresholdsXML(thresholdElement);
+            Thresholds.AddRange(thresholdRowItems);
         }
 
         #endregion
