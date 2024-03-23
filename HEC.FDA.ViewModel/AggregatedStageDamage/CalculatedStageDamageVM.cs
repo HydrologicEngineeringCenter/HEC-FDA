@@ -611,8 +611,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private async Task<List<UncertainPairedData>> ComputeStageDamageFunctionsAsync(StageDamageConfiguration config)
         {
             List<UncertainPairedData> stageDamageFunctions = new();
-            //try
-            //{
+            try
+            {
                 List<ImpactAreaStageDamage> impactAreaStageDamages = config.CreateStageDamages();
 
                 ScenarioStageDamage scenarioStageDamage = new(impactAreaStageDamages);
@@ -639,12 +639,12 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                         WriteDetailsCsvFile(scenarioStageDamage, quantityDamagedElementsUPD);
                     }
                 }
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show("An error occured while trying to compute stage damages:\n" + ex.Message + " " + ex.StackTrace, "Compute Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            //}
-        
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occured while trying to compute stage damages:\n" + ex.Message + " " + ex.StackTrace, "Compute Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
             //TODO: COMMUNICATE ERROR MESSAGES
 
             return stageDamageFunctions;
