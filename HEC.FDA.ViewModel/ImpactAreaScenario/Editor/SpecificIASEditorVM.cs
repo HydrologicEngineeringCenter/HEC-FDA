@@ -761,6 +761,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             {
                 DefaultStage = ((LateralStructureElement)SelectedLeveeFeatureElement.ChildElement).Elevation;
                 //disable the checkbox
+                ScenarioReflectsWithoutProjCondition = false;
                 ScenarioReflectsEnabled = false;
             }
             else
