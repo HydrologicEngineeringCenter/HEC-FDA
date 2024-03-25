@@ -435,6 +435,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             {
                 damageCategories.Add(curve.DamCat);
             }
+            DamCats.Clear();
             DamCats.AddRange(damageCategories.Distinct());
             if (DamCats.Count > 0)
             {
@@ -449,6 +450,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             {
                 assetCategories.Add(curve.AssetCategory);
             }
+            AssetCategories.Clear();
             AssetCategories.AddRange(assetCategories.Distinct());
             if (AssetCategories.Count > 0)
             {
