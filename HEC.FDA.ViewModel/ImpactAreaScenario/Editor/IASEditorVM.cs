@@ -18,7 +18,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
     {
         #region Fields
         private List<ImpactAreaRowItem> _ImpactAreaNames = new List<ImpactAreaRowItem>(); 
-        private SpecificIASEditorVM _SelectedEditorVM;
         private bool _HasImpactArea = true;
         private ChildElementComboItem _SelectedStageDamageElement;
         private ChildElementComboItem _NonFailureSelectedStageDamageElement;
@@ -79,12 +78,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         {
             get { return _ImpactAreaNames; }
             set { _ImpactAreaNames = value; NotifyPropertyChanged(); }
-        }
-
-        public SpecificIASEditorVM SelectedEditorVM
-        {
-            get { return _SelectedEditorVM; }
-            set { _SelectedEditorVM = value; NotifyPropertyChanged(); }
         }
 
         #endregion
@@ -318,7 +311,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             SpecificIASEditorVM.UpdateElement(StageDamageElements, SelectedStageDamageElement, e.NewElement);
             if(e.NewElement.ID == SelectedStageDamageElement.ID)
             {
-                _SelectedEditorVM.StageDamageSelectionChanged(_SelectedStageDamageElement);
+                foreach(SpecificIASEditorVM specificIAS in ImpactAreaTabs)
+                {
+                    specificIAS.StageDamageSelectionChanged(_SelectedStageDamageElement);
+                }
             }
         }
 

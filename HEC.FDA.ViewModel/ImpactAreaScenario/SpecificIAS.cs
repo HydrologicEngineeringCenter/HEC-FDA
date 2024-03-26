@@ -32,7 +32,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         private const string EXTERIOR_INTERIOR = "ExteriorInterior";
         private const string STAGE_DAMAGE = "StageDamage";
         private const string THRESHOLDS = "Thresholds";
-        private const string SCENARIO_REFLECTS_WITHOUT_PROJ = "ScenarioReflectsWithoutProject";
+        private const string SCENARIO_REFLECTS_WITHOUT_PROJ = "ScenarioReflectsWithoutProject"; //leaving this for backward compatability. This was renamed in ui to "Calculate Default Threshold" 
         private const string DEFAULT_STAGE = "DefaultStage";
 
 
@@ -147,7 +147,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 ScenarioReflectsWithoutProj = Convert.ToBoolean(iasElem.Element(SCENARIO_REFLECTS_WITHOUT_PROJ).Attribute("value").Value);
                 DefaultStage = double.Parse(iasElem.Element(DEFAULT_STAGE).Attribute("value").Value);
             }
-            Thresholds.AddRange( ReadThresholdsXML(iasElem.Element(THRESHOLDS)));
+            XElement thresholdElement = iasElem.Element(THRESHOLDS);
+            List<ThresholdRowItem> thresholdRowItems = ReadThresholdsXML(thresholdElement);
+            Thresholds.AddRange(thresholdRowItems);
         }
 
         #endregion

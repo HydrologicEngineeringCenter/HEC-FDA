@@ -41,7 +41,7 @@
                             <GridViewColumn Header="Damage Category" Width="150">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ComboBox Width="Auto" ItemsSource="{Binding DamageCategories}" SelectedItem="{Binding SelectedDamageCategory}"                  
+                                        <ComboBox Width="Auto" ItemsSource="{Binding DamageCategories, Mode=OneWay}" SelectedItem="{Binding SelectedDamCat, Mode=TwoWay}"                  
                                                   HorizontalAlignment="Stretch"   />
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>

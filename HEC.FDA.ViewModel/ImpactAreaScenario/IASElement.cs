@@ -79,7 +79,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// <param name="xml"></param>
         public IASElement(XElement setElem, int id) : base(setElem,id)
         {
-
+           
             AnalysisYear = setElem.Attribute(YEAR).Value;
             StageDamageID = int.Parse(setElem.Attribute(STAGE_DAMAGE_ID).Value);
             //the non-failure stuff is a new addition. Check that it exists first for backwards compatibility.
