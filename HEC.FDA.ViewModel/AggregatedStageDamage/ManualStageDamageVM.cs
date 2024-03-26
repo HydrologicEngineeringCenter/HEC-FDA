@@ -134,7 +134,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         {
             if(SelectedRow != null)
             {
-                int lastRowId = Rows[Rows.Count - 1].ID;
+                int lastRowId = Rows[^1].ID;
                 ManualStageDamageRowItem newRow = new ManualStageDamageRowItem(lastRowId+1, SelectedRow);
                 Rows.Add(newRow);
             }
@@ -233,10 +233,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             //The "!=" below weeds out the row that is itself
             if (row1 != row2)
             {
-                //check imp area and dam cat
-                if(row1.SelectedImpArea.Name.Equals(row2.SelectedImpArea.Name) &&
-                    row1.SelectedDamCat.Equals(row2.SelectedDamCat) && 
-                    row1.SelectedAssetCategory.Equals(row2.SelectedAssetCategory))
+                bool iaEqual = row1.SelectedImpArea.Name.Equals(row2.SelectedImpArea.Name);
+                bool dcEqual = row1.SelectedDamCat.Equals(row2.SelectedDamCat);
+                bool acEqual = row1.SelectedAssetCategory.Equals(row2.SelectedAssetCategory);
+                if (iaEqual && dcEqual && acEqual)
                 {
                     areEqual = true;
                 }
