@@ -7,7 +7,7 @@ using Statistics.Distributions;
 
 namespace Statistics.Histograms
 {
-    public class Histogram : IHistogram
+    public class DynamicHistogram : IHistogram
     {
         #region Fields
         private double _SampleVariance;
@@ -77,7 +77,7 @@ namespace Statistics.Histograms
         /// <summary>
         /// This histogram is an ARBITRARY histogram and should not be used to collect data
         /// </summary>
-        public Histogram()
+        public DynamicHistogram()
         {
             BinWidth = 1;
             _minHasNotBeenSet = true;
@@ -87,7 +87,7 @@ namespace Statistics.Histograms
                 AddObservationToHistogram(0);
             }
         }
-        public Histogram(double min, double binWidth, ConvergenceCriteria convergenceCriteria)
+        public DynamicHistogram(double min, double binWidth, ConvergenceCriteria convergenceCriteria)
         {
             BinWidth = binWidth;
             Min = min;
@@ -96,13 +96,13 @@ namespace Statistics.Histograms
             BinCounts = new Int64[numberOfBins];
             ConvergenceCriteria = convergenceCriteria;
         }
-        public Histogram(double binWidth, ConvergenceCriteria convergenceCriteria)
+        public DynamicHistogram(double binWidth, ConvergenceCriteria convergenceCriteria)
         {
             BinWidth = binWidth;
             _minHasNotBeenSet = true;
             ConvergenceCriteria = convergenceCriteria;
         }
-        public Histogram(List<double> dataList, ConvergenceCriteria convergenceCriteria)
+        public DynamicHistogram(List<double> dataList, ConvergenceCriteria convergenceCriteria)
         {
             double[] data = dataList.ToArray();
             ConvergenceCriteria = convergenceCriteria;
@@ -122,7 +122,7 @@ namespace Statistics.Histograms
             BinCounts = new long[quantityOfBins];
             AddObservationsToHistogram(data);
         }
-        private Histogram(double min, double max, double binWidth, Int64 sampleSize, Int64[] binCounts, ConvergenceCriteria convergenceCriteria)
+        private DynamicHistogram(double min, double max, double binWidth, Int64 sampleSize, Int64[] binCounts, ConvergenceCriteria convergenceCriteria)
         {
             Min = min;
             Max = max;
@@ -310,11 +310,31 @@ namespace Statistics.Histograms
             }
             else
             {
+                bool thereAreTooManyBins = BinCounts.Length > 2000;
+                if (thereAreTooManyBins)
+                {
+                    ResizeHistogram();
+                }
                 foreach (double x in data)
                 {
                     AddObservationToHistogram(x);
                 }
             }
+        }
+
+        private void ResizeHistogram()
+        {
+            double divisor = 4;
+            BinWidth = BinWidth * divisor;
+            int newBinCount = Convert.ToInt32(Math.Ceiling(BinCounts.Length / divisor));
+            long[] newBins = new long[newBinCount];
+            for (int i = 0; i < BinCounts.Length;i++)
+            {
+                int newBin = Convert.ToInt32(Math.Floor(i/divisor));
+                newBins[newBin] += BinCounts[i];
+            }
+            Max = Min + newBinCount*BinWidth;
+            BinCounts = newBins;
         }
 
         private void ShutHistogramDown()
@@ -539,7 +559,7 @@ namespace Statistics.Histograms
             return masterElem;
         }
 
-        public static Histogram ReadFromXML(XElement element)
+        public static DynamicHistogram ReadFromXML(XElement element)
         {
             string minString = element.Attribute("Min")?.Value;
             double min = Convert.ToDouble(minString);
@@ -587,7 +607,7 @@ namespace Statistics.Histograms
             bool convergedOnMax = Convert.ToBoolean(convergedOnMaxString);
             //as long as we have a min, the min is set
             bool minNotSet = false;
-            Histogram histogram = new(min, max, binWidth, sampleSize, binCounts, convergenceCriteria)
+            DynamicHistogram histogram = new(min, max, binWidth, sampleSize, binCounts, convergenceCriteria)
             {
                 Mean = sampleMean,
                 _SampleVariance = sampleVariance,
@@ -770,7 +790,7 @@ namespace Statistics.Histograms
 
         public IDistribution Fit(double[] data)
         {
-            return new Histogram(data.ToList(), this.ConvergenceCriteria);
+            return new DynamicHistogram(data.ToList(), this.ConvergenceCriteria);
         }
 
         private bool IsZeroValued()

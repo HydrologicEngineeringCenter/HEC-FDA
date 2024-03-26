@@ -165,7 +165,7 @@ namespace HEC.FDA.ModelTest.unittests
         {
             //Arrange
             int computePoints = 10;
-            Histogram[] histograms = new Histogram[computePoints];
+            DynamicHistogram[] histograms = new DynamicHistogram[computePoints];
             double[] stages = new double[computePoints];
             double[] expectedMeans = new double[computePoints];
             for (int i = 0; i < computePoints; i++)
@@ -193,7 +193,7 @@ namespace HEC.FDA.ModelTest.unittests
 
         }
 
-        private Histogram FillHistogram(int mean)
+        private DynamicHistogram FillHistogram(int mean)
         {
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
             int seed = 1234;
@@ -206,7 +206,7 @@ namespace HEC.FDA.ModelTest.unittests
                 double sampledValue = normal.InverseCDF(random.NextDouble());
                 data.Add(sampledValue);
             }
-            Histogram histogram = new Histogram(data, convergenceCriteria);
+            DynamicHistogram histogram = new DynamicHistogram(data, convergenceCriteria);
             return histogram;
         }
 

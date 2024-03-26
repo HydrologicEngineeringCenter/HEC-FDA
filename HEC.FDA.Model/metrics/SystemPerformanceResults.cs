@@ -117,19 +117,19 @@ namespace HEC.FDA.Model.metrics
         /// This method is only used to get the histogram for plotting purposes. 
         /// </summary>
         /// <returns></returns>
-        public Histogram GetAEPHistogramForPlotting()
+        public DynamicHistogram GetAEPHistogramForPlotting()
         {
-            Histogram aepHistogram = GetAssurance(AEP_ASSURANCE_FOR_PLOTTING).AssuranceHistogram;
+            DynamicHistogram aepHistogram = GetAssurance(AEP_ASSURANCE_FOR_PLOTTING).AssuranceHistogram;
             return aepHistogram;
         }
-        public Histogram GetAssuranceOfThresholdHistogram(double standardNonExceedanceProbability)
+        public DynamicHistogram GetAssuranceOfThresholdHistogram(double standardNonExceedanceProbability)
         {
-            Histogram stageHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
+            DynamicHistogram stageHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
             return stageHistogram;
         }
-        internal Histogram GetAEPHistogramForMetrics()
+        internal DynamicHistogram GetAEPHistogramForMetrics()
         {
-            Histogram aepHistogram = GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram;
+            DynamicHistogram aepHistogram = GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram;
             return aepHistogram;
         }
 
@@ -167,20 +167,20 @@ namespace HEC.FDA.Model.metrics
         internal bool AssuranceIsConverged()
         {
             double standardNonExceedanceProbability = 0.98;
-            Histogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
+            DynamicHistogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
             return assuranceHistogram.IsConverged;
         }
         public bool AssuranceTestForConvergence(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
         {
             double standardNonExceedanceProbability = 0.98;
-            Histogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
+            DynamicHistogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
             bool assuranceIsConverged = assuranceHistogram.IsHistogramConverged(upperConfidenceLimitProb, lowerConfidenceLimitProb);
             return assuranceIsConverged;
         }
         public long AssuranceRemainingIterations(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
         {
             double standardNonExceedanceProbability = 0.98;
-            Histogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
+            DynamicHistogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
             long iterationsRemaining = assuranceHistogram.EstimateIterationsRemaining(upperConfidenceLimitProb, lowerConfidenceLimitProb);
             return iterationsRemaining;
         }
@@ -193,7 +193,7 @@ namespace HEC.FDA.Model.metrics
             else
             {
                 GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram.ForceDeQueue();
-                Histogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
+                DynamicHistogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
                 double assurance = assuranceHistogram.CDF(thresholdValue);
                 return assurance;
             }
@@ -202,7 +202,7 @@ namespace HEC.FDA.Model.metrics
 
         private double CalculateAssuranceForLevee(double standardNonExceedanceProbability)
         {
-            Histogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
+            DynamicHistogram assuranceHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
             IPairedData medianLeveeCurve = _SystemResponseFunction.SamplePairedData(0.5);
 
             //if the user defined sysstem reponse function does not have certain failure defined, then define it

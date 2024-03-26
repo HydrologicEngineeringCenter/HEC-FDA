@@ -31,16 +31,16 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
         {
             IsStrictMonotonic = isStrictMonotonic;
             Name = "Empirical";
-            Data.Add(new HistogramRow(0.0d, new Histogram(0, new ConvergenceCriteria()), IsStrictMonotonic));
-            Data.Add(new HistogramRow(1.0d, new Histogram(1, new ConvergenceCriteria()), IsStrictMonotonic));
-            Data.Add(new HistogramRow(2.0d, new Histogram(2, new ConvergenceCriteria()), IsStrictMonotonic));
-            Data.Add(new HistogramRow(3.0d, new Histogram(3, new ConvergenceCriteria()), IsStrictMonotonic));
+            Data.Add(new HistogramRow(0.0d, new DynamicHistogram(0, new ConvergenceCriteria()), IsStrictMonotonic));
+            Data.Add(new HistogramRow(1.0d, new DynamicHistogram(1, new ConvergenceCriteria()), IsStrictMonotonic));
+            Data.Add(new HistogramRow(2.0d, new DynamicHistogram(2, new ConvergenceCriteria()), IsStrictMonotonic));
+            Data.Add(new HistogramRow(3.0d, new DynamicHistogram(3, new ConvergenceCriteria()), IsStrictMonotonic));
             LinkList();
         }
 
         override public void AddUnlinkedRow(int i)
         {
-            DataProviderExtensions.AddRow(this,i,new HistogramRow(0,new Histogram(), IsStrictMonotonic));
+            DataProviderExtensions.AddRow(this,i,new HistogramRow(0,new DynamicHistogram(), IsStrictMonotonic));
         }
     }
 }

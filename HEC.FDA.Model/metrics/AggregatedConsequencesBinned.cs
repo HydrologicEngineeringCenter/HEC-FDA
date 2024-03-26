@@ -42,8 +42,8 @@ namespace HEC.FDA.Model.metrics
             AssetCategory = "unassigned - this is a dummy object";
             RegionID = 0;
             ConvergenceCriteria = new ConvergenceCriteria();
-            ConsequenceHistogram = new Histogram();
-            DamagedElementQuantityHistogram = new Histogram();
+            ConsequenceHistogram = new DynamicHistogram();
+            DamagedElementQuantityHistogram = new DynamicHistogram();
             IsNull = true;
             _TempResults = new double[ConvergenceCriteria.IterationCount];
             _TempCounts = new double[ConvergenceCriteria.IterationCount];
@@ -109,8 +109,8 @@ namespace HEC.FDA.Model.metrics
                         binWidth = 100;
                     }
                 }
-                ConsequenceHistogram = new Histogram(binWidth, ConvergenceCriteria);
-                DamagedElementQuantityHistogram = new Histogram(binWidth:1, ConvergenceCriteria);
+                ConsequenceHistogram = new DynamicHistogram(binWidth, ConvergenceCriteria);
+                DamagedElementQuantityHistogram = new DynamicHistogram(binWidth:1, ConvergenceCriteria);
                 _HistogramNotConstructed = false;
             }
             ConsequenceHistogram.AddObservationsToHistogram(_TempResults);
@@ -155,7 +155,7 @@ namespace HEC.FDA.Model.metrics
         }
         public static AggregatedConsequencesByQuantile ConvertToSingleEmpiricalDistributionOfConsequences(AggregatedConsequencesBinned consequenceDistributionResult)
         {
-            Empirical empirical = Histogram.ConvertToEmpiricalDistribution(consequenceDistributionResult.ConsequenceHistogram);
+            Empirical empirical = DynamicHistogram.ConvertToEmpiricalDistribution(consequenceDistributionResult.ConsequenceHistogram);
             return new AggregatedConsequencesByQuantile(consequenceDistributionResult.DamageCategory, consequenceDistributionResult.AssetCategory, empirical, consequenceDistributionResult.RegionID);
         }
         public XElement WriteToXML()
@@ -172,7 +172,7 @@ namespace HEC.FDA.Model.metrics
 
         public static AggregatedConsequencesBinned ReadFromXML(XElement xElement)
         {
-            IHistogram damageHistogram = Histogram.ReadFromXML(xElement.Element("DamageHistogram"));
+            IHistogram damageHistogram = DynamicHistogram.ReadFromXML(xElement.Element("DamageHistogram"));
             string damageCategory = xElement.Attribute("DamageCategory").Value;
             string assetCategory = xElement.Attribute("AssetCategory").Value;
             int id = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);

@@ -934,7 +934,7 @@ namespace Statistics.Histograms
         
         public IDistribution Fit(double[] data)
         {//Unless we thought we would continue adding data multithreaded, then returning a regular histogram is best
-            return new Histogram(data.ToList(), this.ConvergenceCriteria);
+            return new DynamicHistogram(data.ToList(), this.ConvergenceCriteria);
         }
         #endregion
     }
