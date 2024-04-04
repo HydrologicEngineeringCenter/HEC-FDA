@@ -34,6 +34,17 @@ namespace HEC.FDA.Model.paireddata
         #endregion
 
         #region Constructors 
+        /// <summary>
+        /// Common paired data relationships in FDA follow these conventions:
+        /// System Response :  stages, probability of fail
+        /// Stage Freuqency : exceedance probabilities, stages
+        /// Flow Frequency : exceedance probabilities, flows
+        /// Stage Damage : stages, damages
+        /// Damage Frequency : damage, probabilities
+        /// Unreg Regulated: flow, flow
+        /// </summary>
+        /// <param name="xs"></param>
+        /// <param name="ys"></param>
         public PairedData(double[] xs, double[] ys)
         {
             Xvals = xs;
@@ -164,7 +175,12 @@ namespace HEC.FDA.Model.paireddata
             }
         }
         /// <summary>
-        /// compose implements the IComposable interface on PairedData, which allows a PairedData object to take the input y values as the x value (to determine the commensurate y value) from the subject function. Ultimately it creates a composed function with the Y from the subject, and the commensurate x from the input.
+        ///PairedData object to take the input y values as the x value (to determine the commensurate y value) from the subject function.
+        ///Ultimately it creates a composed function with the Y from the subject, and the commensurate x from the input.
+        ///Typical compose patterns:
+        ///Stage Damage compose Frequency Stage = Damage Frequency
+        ///System Response compose Frequency Stage = Failure Frequency
+        ///FlowStageSample compose Frequency Flow = Frequency Stage
         /// </summary>
         public PairedData compose(IPairedData inputPairedData)
         {
@@ -262,8 +278,11 @@ namespace HEC.FDA.Model.paireddata
 
         /// <summary>
         /// Appropriate when subject is a stage damage curve, and the input is a fragility curve. 
-        /// multiply multiplies a stage damage curve by a fragility curve. All damages below the curve are considered 0.
+        /// Assumes subject has stages as x values, and damage as y values. Assumes input has probability of failure as y values, and stages as x values.
+        /// multiply multiplies a stage damage curve by a fragility curve. All damages below the curve are considered 0. 
         /// </summary>
+        /// <param name="systemResponseFunction"></param>
+        /// <returns> Returns a paired data where x values are stages from the subject, and y vals are damage*prob</returns>
         public PairedData multiply(IPairedData systemResponseFunction)
         {
             List<double> newXvals = new(); //xvals are stages in the stage-damage function
