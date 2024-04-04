@@ -52,6 +52,19 @@ namespace HEC.FDA.Model.paireddata
             Xvals = xs;
             Yvals = ys;
         }
+        /// <summary>
+        /// X values must always be in increasing order.
+        /// X values are the independent variable, and Y values are the dependent variable.
+        /// Common paired data relationships in FDA follow these conventions:
+        /// System Response :  stages, probability of fail
+        /// Stage Freuqency : exceedance probabilities increasing, stages 
+        /// Flow Frequency : exceedance probabilities increasing, flows
+        /// Stage Damage : stages, damages
+        /// Damage Frequency : damage, probabilities
+        /// Unreg Regulated: flow, flow
+        /// </summary>
+        /// <param name="xs"></param>
+        /// <param name="ys"></param>
         public PairedData(double[] xs, double[] ys, CurveMetaData metadata)
         {
             Xvals = xs;
