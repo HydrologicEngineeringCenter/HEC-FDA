@@ -35,10 +35,12 @@ namespace HEC.FDA.Model.paireddata
 
         #region Constructors 
         /// <summary>
+        /// X values must always be in increasing order.
+        /// X values are the independent variable, and Y values are the dependent variable.
         /// Common paired data relationships in FDA follow these conventions:
         /// System Response :  stages, probability of fail
-        /// Stage Freuqency : exceedance probabilities, stages
-        /// Flow Frequency : exceedance probabilities, flows
+        /// Stage Freuqency : exceedance probabilities increasing, stages 
+        /// Flow Frequency : exceedance probabilities increasing, flows
         /// Stage Damage : stages, damages
         /// Damage Frequency : damage, probabilities
         /// Unreg Regulated: flow, flow
@@ -74,6 +76,8 @@ namespace HEC.FDA.Model.paireddata
         }
         /// <summary>
         /// f implements ISample on PairedData, for a given input double x f produces an output double that represents the linearly interoplated value for y given x.
+        /// Uses binary search to find the closest x value in the array, then interpolates between the two closest x values to find the y value.
+        /// Requires x vals to be sorted in increasing order.
         /// </summary>
         public double f(double x)
         {
