@@ -215,7 +215,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             {
                 ScenarioResultsVM resultViewer = new(results);
                 string header = "Results for " + Name;
-                DynamicTabVM tab = new(header, resultViewer, "resultViewer" + Name);
+                DynamicTabVM tab = new(header, resultViewer, "resultViewer" + Name + DateTime.Now); //this name has to be unique or else we'll just keep pulling the same tab every time even if we have recomputed results. Cost me 2 whole days. 
                 Navigate(tab, false, false);
             }
             else
