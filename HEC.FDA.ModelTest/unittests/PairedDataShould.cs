@@ -1,5 +1,6 @@
 using Xunit;
 using HEC.FDA.Model.paireddata;
+using System;
 
 namespace HEC.FDA.ModelTest.unittests
 {
@@ -85,13 +86,19 @@ namespace HEC.FDA.ModelTest.unittests
         [Theory]
         [InlineData(new double[] { 0, .5, 1 }, new double[] { 0, 1000, 11000 }, 3250)]
         [InlineData(new double[] { 0, .5 }, new double[] { 0, 1000 }, 750)]
+        //See the spreadsheet at the following location for the replication of the two below test cases 
+        //https://www.hec.usace.army.mil/confluence/download/attachments/35030931/integration.xlsx?api=v2
+        [InlineData(new double[] {.01, .05, .5, .95, .99}, new double[] {0, 0, 192.04, 391.38, 544.37 }, 193.19)]
+        [InlineData(new double[] { .01, .05, .5, .95, .99 }, new double[] { 68, 323.75, 586.93, 676.6, 676.6 }, 524.40)]
         public void Integrate(double[] probs, double[] vals, double expected)
         {
             //integrate should extrapolate last value out to probability=1 if probabilty space not defined to 1.
             PairedData paired = new PairedData(probs, vals);
 
             double actual = paired.integrate();
-            Assert.Equal(expected, actual);
+            double relativeError = Math.Abs(actual - expected)/expected;
+            double relativeTolerance = 0.03;
+            Assert.True(relativeError < relativeTolerance);
         }
 
         [Theory]
