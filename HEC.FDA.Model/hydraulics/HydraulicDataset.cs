@@ -42,7 +42,15 @@ namespace HEC.FDA.Model.hydraulics
 
             foreach (XElement elem in profileElems)
             {
-                HydraulicProfiles.Add(new HydraulicProfile(elem));
+                try
+                {
+                    HydraulicProfile newProfile = new(elem);
+                    HydraulicProfiles.Add(newProfile);
+                }
+                catch(Exception e)
+                {
+                    //TODO report this to the user in a meaningful way. 
+                }
             }
         }
         #endregion
