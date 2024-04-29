@@ -22,7 +22,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         // Created Date: 9/1/2017 8:31:13 AM
         #endregion
         #region Fields
-        private List<string> _OriginalFolderNames = new();
         private string _SelectedPath;
 
         #endregion
@@ -193,7 +192,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             List<HydraulicProfile> pathProbs = new();
             foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
             {
-                _OriginalFolderNames.Add(row.Name);
                 string fileNameFromChildElementDir = getFilePathFromChildElement(row);
                 pathProbs.Add(new HydraulicProfile(row.Probability, fileNameFromChildElementDir, "Grid"));
             }
@@ -208,7 +206,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             List<HydraulicProfile> pathProbs = new();
             foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
             {
-                _OriginalFolderNames.Add(row.Name);
                 string fileNameFromChildElementDir = getFilePathFromChildElement(row);
                 pathProbs.Add(
                     new HydraulicProfile(row.Probability, fileNameFromChildElementDir, "Grid"));
