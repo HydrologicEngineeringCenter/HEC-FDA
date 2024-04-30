@@ -46,6 +46,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             if (!success)
             {
                 //if we were able to get the dataSource, we use it. Else, it'll just be the default so it will show in the tree. 
+                DataSet.DataSource = HydraulicDataSource.SteadyHDF;
                 MessageBox.Show("Error loading hydraulic element from database.");
             }
             AddDefaultActions(EditElement, StringConstants.EDIT_HYDRAULICS_MENU);

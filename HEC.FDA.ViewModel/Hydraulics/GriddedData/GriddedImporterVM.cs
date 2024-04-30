@@ -193,7 +193,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
             {
                 string fileNameFromChildElementDir = getFilePathFromChildElement(row);
-                pathProbs.Add(new HydraulicProfile(row.Probability, fileNameFromChildElementDir, "Grid"));
+                pathProbs.Add(new HydraulicProfile(row.Probability, fileNameFromChildElementDir, null));
             }
             HydraulicElement elementToSave = new(Name, Description, pathProbs, HydraulicDataSource.WSEGrid, OriginalElement.ID);
             base.Save(elementToSave);
@@ -208,7 +208,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             {
                 string fileNameFromChildElementDir = getFilePathFromChildElement(row);
                 pathProbs.Add(
-                    new HydraulicProfile(row.Probability, fileNameFromChildElementDir, "Grid"));
+                    new HydraulicProfile(row.Probability, fileNameFromChildElementDir, null));
                 StudyFilesManager.CopyDirectory(row.Path, row.Name, destinationDirectory);
             }
 

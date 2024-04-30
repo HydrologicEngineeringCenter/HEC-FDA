@@ -24,6 +24,9 @@ namespace HEC.FDA.Model.hydraulics
         /// This is not the full path. This is just the file name with extension. You need to get the hydraulic element name to create the full path.
         /// </summary>
         public string FileName { get; set; }
+        /// <summary>
+        /// This really only matters for steady data. For Unsteady, we're always going to use "MAX" and Gridded data has no concept of profile name. 
+        /// </summary>
         public string ProfileName { get; set; }
         #endregion
         #region Constructors
@@ -37,7 +40,12 @@ namespace HEC.FDA.Model.hydraulics
         {
             Probability = Convert.ToDouble(elem.Attribute(PROB).Value);
             FileName = elem.Attribute(PATH).Value;
-            ProfileName = elem.Attribute(PROFILE_NAME).Value;
+            //Gridded Data doesn't need a profile name. 
+            var profileNameAttr = elem.Attribute(PROFILE_NAME);
+            if (profileNameAttr != null)
+            {
+                ProfileName = elem.Attribute(PROFILE_NAME).Value;
+            }
         }
         #endregion
         #region Methods
