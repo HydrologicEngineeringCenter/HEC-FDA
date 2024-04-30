@@ -8,6 +8,7 @@ using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace HEC.FDA.Model.hydraulics
@@ -31,28 +32,37 @@ namespace HEC.FDA.Model.hydraulics
             HydraulicProfiles = profiles;
             DataSource = dataSource;
         }
-        public HydraulicDataset(XElement xElement)
+        /// <summary>
+        /// Empty constructor for loading from XML. Allows the load form XML to fail, but still have an object to add to the tree to delete.
+        /// if we want to remove the dataset.
+        /// </summary>
+        public HydraulicDataset()
         {
-            string hydroType = xElement.Attribute(HYDRAULIC_TYPE_XML_TAG).Value;
-            Enum.TryParse(hydroType, out HydraulicDataSource myHydroType);
-            DataSource = myHydroType;
-
-            IEnumerable<XElement> profiles = xElement.Elements(PROFILES);
-            IEnumerable<XElement> profileElems = profiles.Elements();
-
-            foreach (XElement elem in profileElems)
+        }
+        public bool LoadFromXML(XElement xElement)
+        {
+            try
             {
-                try
+                string hydroType = xElement.Attribute(HYDRAULIC_TYPE_XML_TAG).Value;
+                Enum.TryParse(hydroType, out HydraulicDataSource myHydroType);
+                DataSource = myHydroType;
+
+                IEnumerable<XElement> profiles = xElement.Elements(PROFILES);
+                IEnumerable<XElement> profileElems = profiles.Elements();
+
+                foreach (XElement elem in profileElems)
                 {
                     HydraulicProfile newProfile = new(elem);
                     HydraulicProfiles.Add(newProfile);
                 }
-                catch(Exception e)
-                {
-                    //TODO report this to the user in a meaningful way. 
-                }
             }
+            catch
+            {
+                return false;
+            }
+            return true;
         }
+
         #endregion
         #region Methods
         public List<UncertainPairedData> GetGraphicalStageFrequency(string pointShapefileFilePath, string parentDirectory)
@@ -78,7 +88,7 @@ namespace HEC.FDA.Model.hydraulics
                     wses[i] = singleWSE[0];
                 }
                 IDistribution[] distributions = new IDistribution[wses.Length];
-                for( int i=0; i<wses.Length; i++)
+                for (int i = 0; i < wses.Length; i++)
                 {
                     distributions[i] = new Deterministic(wses[i]);
                 }
