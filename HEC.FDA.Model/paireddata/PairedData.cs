@@ -273,7 +273,7 @@ namespace HEC.FDA.Model.paireddata
 
             double triangle;
             double square;
-            double x1 = 1.0;
+            double x1 = 0.0;
             double y1 = 0.0;
             double ead = 0.0;
             for (int i = 0; i < Xvals.Length; i++)

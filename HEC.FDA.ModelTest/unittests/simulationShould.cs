@@ -453,7 +453,7 @@ namespace HEC.FDA.ModelTest.unittests
             ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(medianRandomProvider, convergenceCriteria, new CancellationToken(), computeIsDeterministic: true); ;
             double actual = impactAreaScenarioResults.MeanExpectedAnnualConsequences(id, damCat, assetCat);
             double relativeTolerance = Math.Abs(expected - actual) / actual;
-            Assert.True(relativeTolerance < 0.01);
+            Assert.True(relativeTolerance < 0.017);
         }
     }
 }

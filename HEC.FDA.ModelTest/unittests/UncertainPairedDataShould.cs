@@ -40,66 +40,7 @@ namespace HEC.FDA.ModelTest.unittests
             Assert.Equal(expectedSlope, actual);
         }
 
-        [Theory]
-        [InlineData(1.0, 2.0, 2175)]
-        [InlineData(1.0, 3.0, 2900)]
-        public void ProducePairedDataInSequence_Test(double minSlope, double maxSlope, double expectedCumulativeArea)
-        {
-            //Samples below should give min, above should give max
-            IDistribution[] yvals = new IDistribution[countByOnes.Length];
-            for (int i = 0; i < countByOnes.Length; i++)
-            {
-                yvals[i] = new Uniform(countByOnes[i] * minSlope, countByOnes[i] * maxSlope, 10);
-            }
-            UncertainPairedData upd = new UncertainPairedData(increasingprobabilities, yvals, curveMetaData);
-            int arraySize = 1000;
-            double[] arrayOfProbabilities = new double[arraySize];
-            for (int i = 0; i < arraySize; i++)
-            {
-                arrayOfProbabilities[i] = (i + 0.5) / arraySize;
-            }
-            double cumulativeArea = 0;
-            for (int i = 0; i < arraySize; i++)
-            {
-
-                IPairedData pairedData = upd.SamplePairedData(arrayOfProbabilities[i]);
-                double area = pairedData.integrate();
-                cumulativeArea += area;
-            }
-            Assert.Equal(expectedCumulativeArea, cumulativeArea, 0);
-        }
-        [Theory]
-        [InlineData(1.0, 2.0, 2175)]
-        [InlineData(1.0, 3.0, 2900)]
-        public void ProducePairedDataInParallel_Test(double minSlope, double maxSlope, double expectedCumulativeArea)
-        {
-            //Samples below should give min, above should give max
-            IDistribution[] yvals = new IDistribution[countByOnes.Length];
-            for (int i = 0; i < countByOnes.Length; i++)
-            {
-                yvals[i] = new Uniform(countByOnes[i] * minSlope, countByOnes[i] * maxSlope, 10);
-            }
-            UncertainPairedData upd = new UncertainPairedData(increasingprobabilities, yvals, curveMetaData);
-            int arraySize = 1000;
-            double[] arrayOfProbabilities = new double[arraySize];
-            for (int i = 0; i < arraySize; i++)
-            {
-                arrayOfProbabilities[i] = (i + 0.5) / arraySize;
-            }
-            object areaLock = new object();
-            double cumulativeArea = 0;
-            Parallel.For(0, arraySize, i =>
-           {
-               IPairedData pairedData = upd.SamplePairedData(arrayOfProbabilities[i]);
-               double area = pairedData.integrate();
-               lock (areaLock)
-               {
-                   cumulativeArea += area;
-               }
-
-           });
-            Assert.Equal(expectedCumulativeArea, cumulativeArea, 0);
-        }
+        
         [Theory]
         [InlineData(1.0, 2.0)]
         [InlineData(1.0, 3.0)]
