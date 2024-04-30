@@ -22,7 +22,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         // Created Date: 9/1/2017 8:31:13 AM
         #endregion
         #region Fields
-        private List<string> _OriginalFolderNames = new();
         private string _SelectedPath;
 
         #endregion
@@ -30,7 +29,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         public string SelectedPath
         {
             get { return _SelectedPath; }
-            set { _SelectedPath = value; FileSelected(value); NotifyPropertyChanged(); }
+            set { _SelectedPath = value; FolderSelected(value); NotifyPropertyChanged(); }
         }
 
         public ObservableCollection<WaterSurfaceElevationRowItemVM> ListOfRows { get; } = new ObservableCollection<WaterSurfaceElevationRowItemVM>();
@@ -48,13 +47,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         public GriddedImporterVM(HydraulicElement elem, EditorActionManager actionManager) : base(elem, actionManager)
         {
             SelectedPath = Connection.Instance.HydraulicsDirectory + "\\" + elem.Name;
-            foreach (HydraulicProfile pp in elem.DataSet.HydraulicProfiles)
-            {
-                string path = Connection.Instance.HydraulicsDirectory + "\\" + pp.FileName;
-                string folderName = Path.GetFileName(pp.FileName);
-                _OriginalFolderNames.Add(folderName);
-                AddRow(folderName, path, pp.Probability, false);
-            }
         }
         #endregion
         #region Commands
@@ -121,9 +113,9 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 
         #endregion
 
-        public void FileSelected(string fullpath)
+        public void FolderSelected(string fullpath)
         {
-            if (fullpath != null && IsCreatingNewElement)
+            if (fullpath != null)
             {
                 FdaValidationResult importResult = new();
                 ListOfRows.Clear();
@@ -147,20 +139,20 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                         importResult.AddErrorMessage(result.ErrorMessage);
                     }
                 }
-                    double prob = 0;
-                    foreach (string dir in validDirectories)
-                    {
-                        prob += .1;
-                        AddRow(Path.GetFileName(dir), Path.GetFullPath(dir), prob);
-                    }
-                    //we might have some message for the user?
-                    if (!importResult.IsValid)
-                    {
-                        importResult.InsertMessage(0, "The selected directory contains at least 1 valid subdirectory and will ignore the following:\n");
-                        MessageBox.Show(importResult.ErrorMessage, "Valid Selection", MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
+                double prob = 0;
+                foreach (string dir in validDirectories)
+                {
+                    prob += .1;
+                    AddRow(Path.GetFileName(dir), Path.GetFullPath(dir), prob);
+                }
+                //we might have some message for the user?
+                if (!importResult.IsValid)
+                {
+                    importResult.InsertMessage(0, "The selected directory contains at least 1 valid subdirectory and will ignore the following:\n");
+                    MessageBox.Show(importResult.ErrorMessage, "Valid Selection", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
+        }
 
         public override void Save()
         {
@@ -197,24 +189,13 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             //the user can not change files when editing, so the only changes would be new names and probs.    
             //if name is different then we need to update the directory name in the study hydraulics folder.
             RenameDirectoryInTheStudy();
-            //might have to rename the sub folders.
-            List<HydraulicProfile> newPathProbs = new();
-            for (int i = 0; i < ListOfRows.Count; i++)
+            List<HydraulicProfile> pathProbs = new();
+            foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
             {
-                string newName = ListOfRows[i].Name;
-                string originalName = _OriginalFolderNames[i];
-                if (!newName.Equals(originalName))
-                {
-                    string sourceFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + originalName;
-                    string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name + "\\" + newName;
-                    Directory.Move(sourceFilePath, destinationFilePath);
-                    _OriginalFolderNames[i] = newName;
-                }
-                string fileNameFromChildElementDir = getFilePathFromChildElement(ListOfRows[i]);
-                newPathProbs.Add(new HydraulicProfile(ListOfRows[i].Probability, fileNameFromChildElementDir, null));
+                string fileNameFromChildElementDir = getFilePathFromChildElement(row);
+                pathProbs.Add(new HydraulicProfile(row.Probability, fileNameFromChildElementDir, null));
             }
-
-            HydraulicElement elementToSave = new(Name, Description, newPathProbs, HydraulicDataSource.WSEGrid, OriginalElement.ID);
+            HydraulicElement elementToSave = new(Name, Description, pathProbs, HydraulicDataSource.WSEGrid, OriginalElement.ID);
             base.Save(elementToSave);
         }
 
@@ -225,9 +206,9 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             List<HydraulicProfile> pathProbs = new();
             foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
             {
-                _OriginalFolderNames.Add(row.Name);
                 string fileNameFromChildElementDir = getFilePathFromChildElement(row);
-                pathProbs.Add(new HydraulicProfile(row.Probability, fileNameFromChildElementDir, null));
+                pathProbs.Add(
+                    new HydraulicProfile(row.Probability, fileNameFromChildElementDir, null));
                 StudyFilesManager.CopyDirectory(row.Path, row.Name, destinationDirectory);
             }
 

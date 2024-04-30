@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
@@ -30,18 +32,26 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
 
         #endregion
         #region Constructors
-        public HydraulicElement(string name, string description, List<HydraulicProfile> relativePathAndProbabilities, HydraulicDataSource hydroType, int id) 
+        public HydraulicElement(string name, string description, List<HydraulicProfile> relativePathAndProbabilities, HydraulicDataSource hydroType, int id)
             : base(name, "", description, id)
         {
             DataSet = new HydraulicDataset(new List<IHydraulicProfile>(relativePathAndProbabilities), hydroType);
             AddDefaultActions(EditElement, StringConstants.EDIT_HYDRAULICS_MENU);
         }
 
-        public HydraulicElement(XElement childElement, int id):base(childElement, id)
+        public HydraulicElement(XElement childElement, int id) : base(childElement, id)
         {
-            DataSet = new HydraulicDataset(childElement.Element(HydraulicDataset.HYDRAULIC_DATA_SET));
+            DataSet = new HydraulicDataset();
+            bool success = DataSet.LoadFromXML(childElement.Element(HydraulicDataset.HYDRAULIC_DATA_SET));
+            if (!success)
+            {
+                //if we were able to get the dataSource, we use it. Else, it'll just be the default so it will show in the tree. 
+                DataSet.DataSource = HydraulicDataSource.SteadyHDF;
+                MessageBox.Show("Error loading hydraulic element from database.");
+            }
             AddDefaultActions(EditElement, StringConstants.EDIT_HYDRAULICS_MENU);
         }
+
 
         #endregion
         #region Voids
@@ -74,7 +84,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                     break;
             }
 
-        }            
+        }
         #endregion
         #region Functions
 
@@ -98,13 +108,13 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             {
                 isEqual = false;
             }
-            if(DataSet.HydraulicProfiles.Count != elem.DataSet.HydraulicProfiles.Count)
+            if (DataSet.HydraulicProfiles.Count != elem.DataSet.HydraulicProfiles.Count)
             {
                 isEqual = false;
             }
-            for(int i = 0;i< DataSet.HydraulicProfiles.Count;i++)
+            for (int i = 0; i < DataSet.HydraulicProfiles.Count; i++)
             {
-                if(!DataSet.HydraulicProfiles[i].Equals(elem.DataSet.HydraulicProfiles[i]))
+                if (!DataSet.HydraulicProfiles[i].Equals(elem.DataSet.HydraulicProfiles[i]))
                 {
                     isEqual = false;
                     break;
@@ -171,7 +181,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         {
             FdaValidationResult vr = new FdaValidationResult();
 
-            switch(DataSet.DataSource)
+            switch (DataSet.DataSource)
             {
                 case HydraulicDataSource.UnsteadyHDF:
                     {
@@ -188,12 +198,12 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                         vr.AddErrorMessage(AreSteadyFilesValid().ErrorMessage);
                         break;
                     }
-            }            
-            
+            }
+
             return vr;
         }
 
-        
+
 
         #endregion
     }
