@@ -47,6 +47,12 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             File.Copy(sourcePath, newFilePath);
         }
 
+        /// <summary>
+        /// This method copies the an entire directory into a new directory, not just the contents. Target directory becomes the new parent dir.
+        /// </summary>
+        /// <param name="sourceDirectoryPath"> The directory you wish to copy</param>
+        /// <param name="newDirectoryName"> The new name of your directory </param>
+        /// <param name="targetDirectoryPath"> The parent directory you want to copy your directory into</param>
         public static void CopyDirectory(string sourceDirectoryPath, string newDirectoryName, string targetDirectoryPath)
         {
             Directory.CreateDirectory(targetDirectoryPath);
