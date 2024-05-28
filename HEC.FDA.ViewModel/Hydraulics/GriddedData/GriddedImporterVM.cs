@@ -1,11 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using HEC.FDA.Model.hydraulics;
 using HEC.FDA.Model.hydraulics.enums;
+using HEC.FDA.Model.hydraulics.Interfaces;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -42,11 +44,15 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         /// <summary>
         /// Constructor used when editing an existing child node.
         /// </summary>
-        /// <param name="elem"></param>
-        /// <param name="actionManager"></param>
         public GriddedImporterVM(HydraulicElement elem, EditorActionManager actionManager) : base(elem, actionManager)
         {
-            SelectedPath = Connection.Instance.HydraulicsDirectory + "\\" + elem.Name;
+            IEnumerable<IHydraulicProfile> profiles = elem.DataSet.HydraulicProfiles.OrderBy(x => x.Probability);
+            ListOfRows.Clear();
+            foreach (IHydraulicProfile profile in profiles)
+            {
+                WaterSurfaceElevationRowItemVM newRow = CreateRowFromHydraulicProfile(profile, elem.Name);
+                ListOfRows.Add(newRow);
+            }
         }
         #endregion
         #region Commands
@@ -60,6 +66,8 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         }
         #endregion
         #region Voids
+        /// <param name="name"> The name visible to the UI</param>
+        /// <param name="path"> The absolute path to the file </param>
         public void AddRow(string name, string path, double probability, bool isEnabled = true)
         {
             WaterSurfaceElevationRowItemVM newRow = new(name, path, probability, isEnabled);
@@ -101,7 +109,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             return vr;
         }
 
-        private FdaValidationResult ValidateTIFFiles(List<string> tifFiles, string directoryName)
+        private static FdaValidationResult ValidateTIFFiles(List<string> tifFiles, string directoryName)
         {
             FdaValidationResult vr = new();
             if (tifFiles.Count == 0)
@@ -112,6 +120,17 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         }
 
         #endregion
+
+        /// <summary>
+        /// Creates a VM row from the HydraulicProfile. This is used when editing an existing element.
+        /// </summary>
+        private static WaterSurfaceElevationRowItemVM CreateRowFromHydraulicProfile(IHydraulicProfile profile, string elementName)
+        {
+            string name = Path.GetDirectoryName(profile.FileName); //name is what's shown to the UI. For Gridded data, we want the directory name, not the file name. 
+            string path = Path.Combine(Connection.Instance.HydraulicsDirectory, elementName, profile.FileName); //path is the full path to the file from the element root.
+            double prob = profile.Probability;
+            return new WaterSurfaceElevationRowItemVM(name, path, prob, false); //setting this to false means the user can't change anything meaningful about this dataset. 
+        }
 
         public void FolderSelected(string fullpath)
         {
@@ -139,11 +158,12 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
                         importResult.AddErrorMessage(result.ErrorMessage);
                     }
                 }
-                double prob = 0;
                 foreach (string dir in validDirectories)
                 {
-                    prob += .1;
-                    AddRow(Path.GetFileName(dir), Path.GetFullPath(dir), prob);
+                    string name = Path.GetFileName(dir);
+                    string[] tifFiles = Directory.GetFiles(dir, "*.tif");
+                    string tif = tifFiles[0]; //there should only be one, but if there are more, we'll just take the first one
+                    AddRow(name, tif, 0); //initialize to 0, user will have to change to valid probability. 
                 }
                 //we might have some message for the user?
                 if (!importResult.IsValid)
@@ -174,25 +194,25 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
             }
         }
 
+        /// <summary>
+        /// Checks whether the Name has changed in the UI and if so, renames the directory in the study.
+        /// </summary>
         private void RenameDirectoryInTheStudy()
         {
-            if (!Name.Equals(OriginalElement.Name))
-            {
-                string sourceFilePath = Connection.Instance.HydraulicsDirectory + "\\" + OriginalElement.Name;
-                string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name;
-                Directory.Move(sourceFilePath, destinationFilePath);
-            }
+            if (Name.Equals(OriginalElement.Name)) { return; }
+            string sourceFilePath = Connection.Instance.HydraulicsDirectory + "\\" + OriginalElement.Name;
+            string destinationFilePath = Connection.Instance.HydraulicsDirectory + "\\" + Name;
+            Directory.Move(sourceFilePath, destinationFilePath);
         }
 
         private void SaveExisting()
         {
-            //the user can not change files when editing, so the only changes would be new names and probs.    
-            //if name is different then we need to update the directory name in the study hydraulics folder.
+            //Currently all profiles are immutable, so the only thing that can change is the name of the element.
             RenameDirectoryInTheStudy();
             List<HydraulicProfile> pathProbs = new();
             foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
             {
-                string fileNameFromChildElementDir = getFilePathFromChildElement(row);
+                string fileNameFromChildElementDir = GetFilePathFromChildElementRoot(row);
                 pathProbs.Add(new HydraulicProfile(row.Probability, fileNameFromChildElementDir, null));
             }
             HydraulicElement elementToSave = new(Name, Description, pathProbs, HydraulicDataSource.WSEGrid, OriginalElement.ID);
@@ -203,26 +223,30 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         {
             string destinationDirectory = Connection.Instance.HydraulicsDirectory + "\\" + Name;
             Directory.CreateDirectory(destinationDirectory);
-            List<HydraulicProfile> pathProbs = new();
+            List<HydraulicProfile> hydraulicProfiles = new();
             foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
             {
-                string fileNameFromChildElementDir = getFilePathFromChildElement(row);
-                pathProbs.Add(
-                    new HydraulicProfile(row.Probability, fileNameFromChildElementDir, null));
-                StudyFilesManager.CopyDirectory(row.Path, row.Name, destinationDirectory);
+                string fileNameFromChildElementDir = GetFilePathFromChildElementRoot(row);
+                HydraulicProfile prof = new(row.Probability, fileNameFromChildElementDir, null);//profile name is not used for gridded data.
+                hydraulicProfiles.Add(prof);
+                string sourceDirectory = Directory.GetParent(row.Path).FullName;
+                StudyFilesManager.CopyDirectory(sourceDirectory, row.Name, destinationDirectory);
             }
 
             int id = GetElementID<HydraulicElement>();
-            HydraulicElement elementToSave = new(Name, Description, pathProbs, HydraulicDataSource.WSEGrid, id);
+            HydraulicElement elementToSave = new(Name, Description, hydraulicProfiles, HydraulicDataSource.WSEGrid, id);
             base.Save(elementToSave);
         }
 
-        private string getFilePathFromChildElement(WaterSurfaceElevationRowItemVM row)
+        /// <summary>
+        /// Gets the file path which corresponds to the FileName property of a Hydraulics Profile.
+        /// </summary>
+        private static string GetFilePathFromChildElementRoot(WaterSurfaceElevationRowItemVM row)
         {
-            string directoryNameForSpecificGrid = Path.GetFileName(row.Name);
-            string vrtFileWithPath = Directory.GetFiles(row.Path, "*.tif")[0];
-            string vrtFileOnly = Path.GetFileName(vrtFileWithPath);
-            return directoryNameForSpecificGrid + "\\" + vrtFileOnly;
+            string[] splitPathOnDirectories = row.Path.Split(Path.DirectorySeparatorChar);
+            string tifName = splitPathOnDirectories[^1];
+            string dirName = splitPathOnDirectories[^2];
+            return Path.Combine(dirName, tifName);
         }
         #endregion
     }

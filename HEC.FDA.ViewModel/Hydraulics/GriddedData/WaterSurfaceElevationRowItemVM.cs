@@ -16,6 +16,9 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         #endregion
         #region Properties
         public bool IsEnabled { get; }
+        /// <summary>
+        /// full, absolute path to the file
+        /// </summary>
         public string Path { get; set; }
         public double Probability
         {
@@ -29,6 +32,8 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         }
         #endregion
         #region Constructors
+        /// <param name="name"> The name visible to the UI</param>
+        /// <param name="path"> The absolute path to the file </param>
         public WaterSurfaceElevationRowItemVM(string name, string path, double probability, bool isEnabled)
         {
             IsEnabled = isEnabled;
