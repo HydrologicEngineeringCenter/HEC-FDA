@@ -10,6 +10,7 @@ using Statistics.Distributions;
 using System.Xml.Linq;
 using System.Diagnostics;
 using System.Threading;
+using System.Diagnostics.Metrics;
 
 namespace StatisticsTests.Histograms
 {
@@ -86,7 +87,7 @@ namespace StatisticsTests.Histograms
             //double err = Math.Abs((expected - actual) / expected);
             //double tol = 0.01;
             //Assert.True(err < tol);//this gives meaningless error reporting in stacktraces
-            Assert.Equal(expected, actual,3);//this gives much more meaningful error reporting
+            Assert.Equal(expected, actual, 3);//this gives much more meaningful error reporting
         }
         [Theory]
         [InlineData(1, 1.414214)]//verified in excel with =STDEV.P(data) incidentally =SQRT(VAR(data)) yeilds 1.581139 which can be achived by not backing out n-1/n when calcuating variance.
@@ -96,13 +97,13 @@ namespace StatisticsTests.Histograms
             DynamicHistogram histogram = new DynamicHistogram(binWidth, new ConvergenceCriteria());
             histogram.AddObservationsToHistogram(data);
             double actual = histogram.StandardDeviation;
-            Assert.Equal(expected,actual,5);//this gives much more meaningful error reporting
+            Assert.Equal(expected, actual, 5);//this gives much more meaningful error reporting
         }
         [Theory]
         [InlineData(1, 0.4, 2.25)]
         public void Histogram_InvCDF(double binWidth, double prob, double expected)
         {
-            double[] data = new double[14] {0,0,1,1,1,2,2,2,2,3,3,3,4,4};
+            double[] data = new double[14] { 0, 0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4 };
             DynamicHistogram histogram = new DynamicHistogram(binWidth, new ConvergenceCriteria());
             histogram.AddObservationsToHistogram(data);
             double actual = histogram.InverseCDF(prob);
@@ -122,7 +123,7 @@ namespace StatisticsTests.Histograms
             double err = Math.Abs((expected - actual) / expected);
             double tol = 0.01;
             Assert.True(err < tol);
-            
+
         }
 
         [Theory]
@@ -181,13 +182,14 @@ namespace StatisticsTests.Histograms
             IDistribution stdNormal = new Statistics.Distributions.Normal(0, 1);
             var rand = new Random(1234);
             double z = stdNormal.InverseCDF(.5 + .5 * .85);
-            var convergencecriteria = new ConvergenceCriteria(minIterations:minIter, maxIterations: maxiter, tolerance: 1, zAlpha: z);
+            var convergencecriteria = new ConvergenceCriteria(minIterations: minIter, maxIterations: maxiter, tolerance: 1, zAlpha: z);
             DynamicHistogram histogram = new DynamicHistogram(0, binWidth, convergencecriteria);
-            while(!histogram.IsConverged)
+            while (!histogram.IsConverged)
             {
                 histogram.AddObservationToHistogram(stdNormal.InverseCDF(rand.NextDouble()));
-                if (histogram.SampleSize%1000 == 0){
-                    histogram.IsHistogramConverged(quantile,1-quantile);
+                if (histogram.SampleSize % 1000 == 0)
+                {
+                    histogram.IsHistogramConverged(quantile, 1 - quantile);
                 }
             }
             double actual = histogram.CDF(value);
@@ -196,7 +198,7 @@ namespace StatisticsTests.Histograms
             Assert.True(histogram.ConvergedIteration <= maxiter);
             Assert.True(err < errTol);
         }
-       
+
         [Theory]
         [InlineData(10000, .1, .80)]
         public void HistogramReadsTheSameThingItWrites(int maxiter, double binWidth, double quantile)
@@ -221,8 +223,8 @@ namespace StatisticsTests.Histograms
         }
 
         [Theory]
-        [InlineData(2,3)]
-        [InlineData(3,4)]
+        [InlineData(2, 3)]
+        [InlineData(3, 4)]
         public void HistgramToEmpiricalAreEquivalentDistributions(double mean, double standardDeviation)
         {
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
@@ -230,7 +232,7 @@ namespace StatisticsTests.Histograms
             Normal normal = new Normal(mean, standardDeviation);
             List<double> resultCollection = new List<double>();
             Random random = new Random(Seed: 1234);
-            for  (int i = 0; i < sampleSize; i++)
+            for (int i = 0; i < sampleSize; i++)
             {
                 resultCollection.Add(normal.InverseCDF(random.NextDouble()));
             }
@@ -238,12 +240,12 @@ namespace StatisticsTests.Histograms
             Empirical empirical = DynamicHistogram.ConvertToEmpiricalDistribution(histogram);
             double meanDifference = Math.Abs(empirical.Mean - mean);
             double meanRelativeDifference = meanDifference / mean;
-            double standardDeviationDifference = Math.Abs( empirical.StandardDeviation - standardDeviation);
+            double standardDeviationDifference = Math.Abs(empirical.StandardDeviation - standardDeviation);
             double standardDeviationRelativeDifference = standardDeviationDifference / standardDeviation;
             double tolerance = 0.03;
             Assert.True(meanRelativeDifference < tolerance);
             Assert.True(standardDeviationRelativeDifference < tolerance);
-            
+
         }
 
         /*
@@ -395,19 +397,104 @@ namespace StatisticsTests.Histograms
             Random random = new Random(1234);
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
             List<double> data = new List<double>();
-            for (int i=0; i<iterations; i++)
+            for (int i = 0; i < iterations; i++)
             {
                 double randomObservation = normal.InverseCDF(random.NextDouble());
                 data.Add(randomObservation);
             }
 
-            DynamicHistogram histogram = new DynamicHistogram(data,convergenceCriteria);
+            DynamicHistogram histogram = new DynamicHistogram(data, convergenceCriteria);
             double actual = histogram.InverseCDF(.975);
 
             Assert.Equal(expected, actual, 1);
 
         }
 
+        [Fact]
+        public void RecreateDistributionsWithEnoughSamples()
+        {
+            int sampleSize = 10000000;
+            double binWidth = .01;
+            // Triangular distribution
+            double min = 0;
+            double max = 10;
+            double mode = 5;
+            Triangular triangularDistribution = new Triangular(min, max, mode);
+            List<double> samples = new List<double>();
+            Random random = new Random();
+            for (int i = 0; i < sampleSize; i++)
+            {
+                double sample = triangularDistribution.InverseCDF(random.NextDouble());
+                samples.Add(sample);
+            }
+            DynamicHistogram Trianglehistogram = new DynamicHistogram(min, binWidth, new ConvergenceCriteria());
+            Trianglehistogram.AddObservationsToHistogram(samples.ToArray());
 
+            // Normal distribution
+            Normal normalDistribution = new Normal(5, 2);
+            List<double> normalSamples = new List<double>();
+            Random normalRandom = new Random();
+            for (int i = 0; i < sampleSize; i++)
+            {
+                double sample = normalDistribution.InverseCDF(normalRandom.NextDouble());
+                normalSamples.Add(sample);
+            }
+            DynamicHistogram normalHistogram = new DynamicHistogram(min, binWidth, new ConvergenceCriteria());
+            normalHistogram.AddObservationsToHistogram(normalSamples.ToArray());
+
+            // Log-normal distribution
+            LogNormal logNormalDistribution = new LogNormal(1, 0.5);
+            List<double> logNormalSamples = new List<double>();
+            Random logNormalRandom = new Random();
+            for (int i = 0; i < sampleSize; i++)
+            {
+                double sample = logNormalDistribution.InverseCDF(logNormalRandom.NextDouble());
+                logNormalSamples.Add(sample);
+            }
+            DynamicHistogram logNormalHistogram = new DynamicHistogram(min, binWidth, new ConvergenceCriteria());
+            logNormalHistogram.AddObservationsToHistogram(logNormalSamples.ToArray());
+
+            // Uniform distribution
+            Uniform uniformDistribution = new Uniform(0, 10);
+            List<double> uniformSamples = new List<double>();
+            Random uniformRandom = new Random();
+            for (int i = 0; i < sampleSize; i++)
+            {
+                double sample = uniformDistribution.InverseCDF(uniformRandom.NextDouble());
+                uniformSamples.Add(sample);
+            }
+            DynamicHistogram uniformHistogram = new DynamicHistogram(min, binWidth, new ConvergenceCriteria());
+            uniformHistogram.AddObservationsToHistogram(uniformSamples.ToArray());
+
+            //Test
+            double[] probabilities = new double[] { .025, 0.25, 0.5, 0.75, .975 };
+            double tolerance = 0.05; // Define a tolerance for comparison
+
+            foreach (double probability in probabilities)
+            {
+                double triangleoriginalValue = triangularDistribution.InverseCDF(probability);
+                double trianglehistogramValue = Trianglehistogram.InverseCDF(probability);
+                double error = Math.Abs((triangleoriginalValue - trianglehistogramValue) / triangleoriginalValue);
+                Assert.True(error < tolerance);
+
+                double uniformoriginalValue = uniformDistribution.InverseCDF(probability);
+                double uniformhistogramValue = uniformHistogram.InverseCDF(probability);
+                error = Math.Abs((uniformoriginalValue - uniformhistogramValue) / uniformoriginalValue);
+                Assert.True(error < tolerance);
+
+                double logNormaloriginalValue = logNormalDistribution.InverseCDF(probability);
+                double logNormalhistogramValue = logNormalHistogram.InverseCDF(probability);
+                error = Math.Abs((logNormaloriginalValue - logNormalhistogramValue) / logNormaloriginalValue);
+                Assert.True(error < tolerance);
+
+                double normaloriginalValue = normalDistribution.InverseCDF(probability);
+                double normalhistogramValue = normalHistogram.InverseCDF(probability);
+                error = Math.Abs((normaloriginalValue - normalhistogramValue) / normaloriginalValue);
+                Assert.True(error < tolerance);
+            }
+        }
     }
 }
+
+
+
