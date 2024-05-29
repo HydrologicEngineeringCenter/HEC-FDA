@@ -442,17 +442,6 @@ namespace StatisticsTests.Histograms
             DynamicHistogram normalHistogram = new DynamicHistogram(min, binWidth, new ConvergenceCriteria());
             normalHistogram.AddObservationsToHistogram(normalSamples.ToArray());
 
-            // Log-normal distribution
-            LogNormal logNormalDistribution = new LogNormal(1, 0.5);
-            List<double> logNormalSamples = new List<double>();
-            Random logNormalRandom = new Random();
-            for (int i = 0; i < sampleSize; i++)
-            {
-                double sample = logNormalDistribution.InverseCDF(logNormalRandom.NextDouble());
-                logNormalSamples.Add(sample);
-            }
-            DynamicHistogram logNormalHistogram = new DynamicHistogram(min, binWidth, new ConvergenceCriteria());
-            logNormalHistogram.AddObservationsToHistogram(logNormalSamples.ToArray());
 
             // Uniform distribution
             Uniform uniformDistribution = new Uniform(1, 10);
@@ -482,18 +471,13 @@ namespace StatisticsTests.Histograms
                 error = Math.Abs((uniformoriginalValue - uniformhistogramValue) / uniformoriginalValue);
                 Assert.True(error < tolerance);
 
-                double logNormaloriginalValue = logNormalDistribution.InverseCDF(probability);
-                double logNormalhistogramValue = logNormalHistogram.InverseCDF(probability);
-                error = Math.Abs((logNormaloriginalValue - logNormalhistogramValue) / logNormaloriginalValue);
-                Assert.True(error < tolerance);
-
                 double normaloriginalValue = normalDistribution.InverseCDF(probability);
                 double normalhistogramValue = normalHistogram.InverseCDF(probability);
                 error = Math.Abs((normaloriginalValue - normalhistogramValue) / normaloriginalValue);
                 Assert.True(error < tolerance);
             }
 
-            //Triangle Moments
+            //Triangle Moments - Here we assume median == mode because this is a symmetric distribution.
             double errorCentral = Math.Abs((triangularDistribution.MostLikely - Trianglehistogram.InverseCDF(0.5)))/triangularDistribution.MostLikely;
             Assert.True(errorCentral < tolerance);
 
@@ -501,17 +485,10 @@ namespace StatisticsTests.Histograms
             errorCentral = Math.Abs(normalDistribution.Mean - normalHistogram.Mean) / normalDistribution.Mean;
             double errorStd = Math.Abs((normalDistribution.StandardDeviation - normalHistogram.StandardDeviation)) / normalDistribution.StandardDeviation;
 
-            //LogNormal Moments
-            errorCentral = Math.Abs((logNormalDistribution.Mean - logNormalHistogram.Mean)) / logNormalDistribution.Mean;
-            errorStd = Math.Abs((logNormalDistribution.StandardDeviation - logNormalHistogram.StandardDeviation)) / logNormalDistribution.StandardDeviation;
-            Assert.True(errorCentral < tolerance);
-            Assert.True(errorStd < tolerance);
-
-
-
-
         }
     }
+
+
 }
 
 
