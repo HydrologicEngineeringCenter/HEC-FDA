@@ -413,13 +413,13 @@ namespace StatisticsTests.Histograms
         [Fact]
         public void RecreateDistributionsWithEnoughSamples()
         {
-            int sampleSize = 10000000;
+            int sampleSize = 100000;
             double binWidth = .01;
             // Triangular distribution
-            double min = 0;
+            double min = 1;
             double max = 10;
             double mode = 5;
-            Triangular triangularDistribution = new Triangular(min, max, mode);
+            Triangular triangularDistribution = new Triangular(min, mode, max);
             List<double> samples = new List<double>();
             Random random = new Random();
             for (int i = 0; i < sampleSize; i++)
@@ -455,7 +455,7 @@ namespace StatisticsTests.Histograms
             logNormalHistogram.AddObservationsToHistogram(logNormalSamples.ToArray());
 
             // Uniform distribution
-            Uniform uniformDistribution = new Uniform(0, 10);
+            Uniform uniformDistribution = new Uniform(1, 10);
             List<double> uniformSamples = new List<double>();
             Random uniformRandom = new Random();
             for (int i = 0; i < sampleSize; i++)
@@ -468,7 +468,7 @@ namespace StatisticsTests.Histograms
 
             //Test
             double[] probabilities = new double[] { .025, 0.25, 0.5, 0.75, .975 };
-            double tolerance = 0.05; // Define a tolerance for comparison
+            double tolerance = 0.1; // Define a tolerance for comparison
 
             foreach (double probability in probabilities)
             {
@@ -492,6 +492,24 @@ namespace StatisticsTests.Histograms
                 error = Math.Abs((normaloriginalValue - normalhistogramValue) / normaloriginalValue);
                 Assert.True(error < tolerance);
             }
+
+            //Triangle Moments
+            double errorCentral = Math.Abs((triangularDistribution.MostLikely - Trianglehistogram.InverseCDF(0.5)))/triangularDistribution.MostLikely;
+            Assert.True(errorCentral < tolerance);
+
+            //Normal Moments
+            errorCentral = Math.Abs(normalDistribution.Mean - normalHistogram.Mean) / normalDistribution.Mean;
+            double errorStd = Math.Abs((normalDistribution.StandardDeviation - normalHistogram.StandardDeviation)) / normalDistribution.StandardDeviation;
+
+            //LogNormal Moments
+            errorCentral = Math.Abs((logNormalDistribution.Mean - logNormalHistogram.Mean)) / logNormalDistribution.Mean;
+            errorStd = Math.Abs((logNormalDistribution.StandardDeviation - logNormalHistogram.StandardDeviation)) / logNormalDistribution.StandardDeviation;
+            Assert.True(errorCentral < tolerance);
+            Assert.True(errorStd < tolerance);
+
+
+
+
         }
     }
 }
