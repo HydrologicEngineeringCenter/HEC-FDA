@@ -26,4 +26,6 @@ public class StringResourcePaths
 
     public const string TerrainPath = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieTerrain\Terrain30ft.Clone.hdf";
 
+    public const string PathToIndexPoints = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieIndexPoints\MuncieIndexPts.shp";
+
 }

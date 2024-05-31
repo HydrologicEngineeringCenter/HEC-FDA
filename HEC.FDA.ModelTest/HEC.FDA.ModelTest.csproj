@@ -7,7 +7,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Geospatial.GDALAssist" Version="0.1.0-localdev" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+		<PackageReference Include="Ras.Mapper" Version="0.1.0-localdev" />
 		<PackageReference Include="xunit" Version="2.4.2" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
 			<PrivateAssets>all</PrivateAssets>
@@ -17,13 +19,6 @@
 	
 	<ItemGroup>
 		<ProjectReference Include="..\HEC.FDA.Model\HEC.FDA.Model.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<!--Even though GDAL Assist is available as a transative dependency through Ras.Mapper, it needs
-		to be directly referenced as well to ensure GDAL is copied into the output directory.-->
-		<PackageReference Include="Geospatial.GDALAssist" Version="1.0.24-beta-gf5955b1108" />
-		<PackageReference Include="Ras.Mapper" Version="1.0.24-beta-gf5955b1108" />
 	</ItemGroup>
 
 </Project>
