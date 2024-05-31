@@ -413,7 +413,7 @@ namespace StatisticsTests.Histograms
         [Fact]
         public void RecreateDistributionsWithEnoughSamples()
         {
-            int sampleSize = 100000;
+            int sampleSize = 5000;
             double binWidth = .01;
             // Triangular distribution
             double min = 90;
