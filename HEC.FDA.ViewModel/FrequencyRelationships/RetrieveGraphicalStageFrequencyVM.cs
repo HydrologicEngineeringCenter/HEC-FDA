@@ -90,20 +90,15 @@ public class RetrieveGraphicalStageFrequencyVM : BaseViewModel
         string pointShapefile = GetShapefileFromDirectory(pointShapefileDirectory);
         string hydraulicParentDirectory = Storage.Connection.Instance.HydraulicsDirectory + "\\" + SelectedHydraulics.Name;
 
-        Projection studyProjection;
-        string userSetProjection = Storage.Connection.Instance.ProjectionFile;
-        if(userSetProjection.Equals(""))
+        Projection studyProjection = GetStudyProjection();
+        if(studyProjection == null)
         {
-            studyProjection = RASHelper.GetProjectionFromTerrain(GetTerrainFile());
+            MessageBox.Show("Failed to get projection from both study properties and terrain file");
+            return;
         }
-        else
-        {
-            studyProjection = Projection.FromFile(userSetProjection);
-        }
-        
 
         List<UncertainPairedData> freqCurves = SelectedHydraulics.DataSet.GetGraphicalStageFrequency(pointShapefile, hydraulicParentDirectory, studyProjection);
-        if(freqCurves == null)
+        if (freqCurves == null)
         {
             MessageBox.Show("Failed to create frequency curves");
         }
@@ -111,6 +106,21 @@ public class RetrieveGraphicalStageFrequencyVM : BaseViewModel
         {
             AddFrequencyRelationship(freqCurves[i], SelectedIndexPointSet.IndexPoints[i] + "|" + SelectedHydraulics.Name);
         }
+    }
+
+    private static Projection GetStudyProjection()
+    {
+        Projection studyProjection;
+        string userSetProjection = Storage.Connection.Instance.ProjectionFile;
+        if (userSetProjection.Equals(""))
+        {
+            studyProjection = RASHelper.GetProjectionFromTerrain(GetTerrainFile());
+        }
+        else
+        {
+            studyProjection = Projection.FromFile(userSetProjection);
+        }
+        return studyProjection;
     }
 
     public static string GetTerrainFile()

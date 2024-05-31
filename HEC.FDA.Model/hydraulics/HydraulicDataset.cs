@@ -65,6 +65,10 @@ namespace HEC.FDA.Model.hydraulics
 
         #endregion
         #region Methods
+
+        /// <summary>
+        /// Translates a point shapefile into points, reprojects those points according to the specified projection, samples each hydraulic profile at those points, and returns the results as a list of UncertainPairedData objects.
+        /// </summary>
         public List<UncertainPairedData> GetGraphicalStageFrequency(string pointShapefileFilePath, string parentDirectory, Projection studyProjection)
         {
             List<UncertainPairedData> ret = new();

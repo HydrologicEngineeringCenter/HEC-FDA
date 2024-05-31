@@ -24,15 +24,20 @@
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0-preview2" />
 		<PackageReference Include="CsvHelper" Version="30.0.0" />
-		<PackageReference Include="Geospatial.GDALAssist" Version="0.1.0-localdev" />
 		<PackageReference Include="PlottingLibrary2D" Version="1.0.0-beta-gdc08aa8621" />
-		<PackageReference Include="Ras.Mapper" Version="0.1.0-localdev" />
 		<PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
 		<PackageReference Include="System.Data.SQLite" Version="1.0.118" />
 		<PackageReference Include="System.ServiceModel.Duplex" Version="4.8.1" />
 		<PackageReference Include="System.ServiceModel.NetTcp" Version="4.8.1" />
 		<PackageReference Include="System.ServiceModel.Federation" Version="4.8.1" />
 		<PackageReference Include="OxyPlot.Wpf" Version="2.1.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!--Even though GDAL Assist is available as a transative dependency through Ras.Mapper, it needs
+		to be directly referenced as well to ensure GDAL is copied into the output directory.-->
+		<PackageReference Include="Geospatial.GDALAssist" Version="0.1.0-localdev" />
+		<PackageReference Include="Ras.Mapper" Version="0.1.0-localdev" />
 	</ItemGroup>
 
 </Project>
