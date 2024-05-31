@@ -1,4 +1,5 @@
-﻿using HEC.FDA.Model.hydraulics.enums;
+﻿using Geospatial.GDALAssist;
+using HEC.FDA.Model.hydraulics.enums;
 using HEC.FDA.Model.hydraulics.Interfaces;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.structures;
@@ -8,7 +9,6 @@ using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 
 namespace HEC.FDA.Model.hydraulics
@@ -65,21 +65,30 @@ namespace HEC.FDA.Model.hydraulics
 
         #endregion
         #region Methods
-        public List<UncertainPairedData> GetGraphicalStageFrequency(string pointShapefileFilePath, string parentDirectory)
+        public List<UncertainPairedData> GetGraphicalStageFrequency(string pointShapefileFilePath, string parentDirectory, Projection studyProjection)
         {
-            List<UncertainPairedData> ret = new List<UncertainPairedData>();
-            PointFeatureLayer indexPoint = new PointFeatureLayer("ThisNameIsNotUsedForAnythingHere", pointShapefileFilePath);
+            List<UncertainPairedData> ret = new();
+            PointFeatureLayer indexPoint = new("ThisNameIsNotUsedForAnythingHere", pointShapefileFilePath);
             if (!indexPoint.SourceFileExists)
             {
                 return null;
             }
-            PointMs indexPoints = new PointMs(indexPoint.Points().Select(p => p.PointM()));
+            PointMs indexPoints = new(indexPoint.Points().Select(p => p.PointM()));
+            
+            //reproject the point to the study projection. For GetWSE, all the reprojection is done in the Inventory class. We aren't using an inventory here, so we need to do it manually.
+            Projection pointProj = RASHelper.GetVectorProjection(indexPoint);
+            if (!pointProj.IsEqual(studyProjection))
+            {
+                indexPoints.Project(pointProj,studyProjection);
+            }
+            
             for (int j = 0; j < indexPoints.Count; j++)
             {
                 double[] probs = new double[HydraulicProfiles.Count];
                 float[] wses = new float[HydraulicProfiles.Count];
                 for (int i = 0; i < HydraulicProfiles.Count; i++)
                 {
+                    //Get WSE expects a PointMs, so we need to convert the PointM to a PointMs
                     PointM pt = indexPoints[j];
                     PointMs converted = new PointMs();
                     converted.Add(pt);
@@ -99,10 +108,10 @@ namespace HEC.FDA.Model.hydraulics
         }
         public XElement ToXML()
         {
-            XElement elem = new XElement(HYDRAULIC_DATA_SET);
+            XElement elem = new(HYDRAULIC_DATA_SET);
             elem.SetAttributeValue(HYDRAULIC_TYPE_XML_TAG, DataSource);
             //path and probs
-            XElement profiles = new XElement(PROFILES);
+            XElement profiles = new(PROFILES);
             foreach (HydraulicProfile profile in HydraulicProfiles)
             {
                 profiles.Add(profile.ToXML());
@@ -118,8 +127,8 @@ namespace HEC.FDA.Model.hydraulics
         /// <returns> A tuple of list of double (the exceedence probabilities releated to the WSPs) and a list of float arrays (The water surface elevations for every structure in the inventory</returns>
         public (List<double>, List<float[]>) GetHydraulicDatasetInFloatsWithProbabilities(Inventory inventory, string hydraulicParentDirectory)
         {
-            List<float[]> waterData = new List<float[]>();
-            List<double> profileProbabilities = new List<double>();
+            List<float[]> waterData = new();
+            List<double> profileProbabilities = new();
             foreach (IHydraulicProfile hydraulicProfile in HydraulicProfiles)
             {
                 float[] wsesAtStructures = hydraulicProfile.GetWSE(inventory.GetPointMs(), DataSource, hydraulicParentDirectory);

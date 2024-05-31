@@ -11,13 +11,8 @@ using Utilities;
 
 namespace HEC.FDA.ViewModel.Watershed
 {
-    //[Author("q0heccdm", "10 / 11 / 2016 11:13:25 AM")]
     public class TerrainBrowserVM:BaseEditorVM
     {
-        #region Notes
-        // Created By: q0heccdm
-        // Created Date: 10/11/2016 11:13:25 AM
-        #endregion
         #region Fields
         private const string FLT = ".flt";
         private const string TIF = ".tif";

@@ -7,6 +7,7 @@ using System.Linq;
 using HEC.FDA.Model.hydraulics.Interfaces;
 using HEC.FDA.Model.paireddata;
 using NuGet.Frameworks;
+using Geospatial.GDALAssist;
 
 namespace HEC.FDA.ModelTest.unittests.hydraulics
 {
@@ -17,6 +18,7 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
         private const string ParentDirectoryToSteadyResult = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieSteadyResult";
         private const string SteadyHDFFileName = @"Muncie.p10.hdf";
         private const string PathToIndexPointShapefile = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieIndexPoints\MuncieIndexPts.shp";
+        private const string PathToProjection = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieIndexPoints\MuncieIndexPts.prj";
         [Fact]
         void retreiveGraphicalFrequencyFunctionsAsPairedData()
         {
@@ -25,9 +27,10 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
             profiles.Add( new HydraulicProfile(0.50, SteadyHDFFileName, "2"));
             profiles.Add(new HydraulicProfile(0.002, SteadyHDFFileName, "500"));
             HydraulicDataset dataset = new HydraulicDataset(profiles, HydraulicDataSource.SteadyHDF);
+            Projection projection = Projection.FromFile(PathToProjection);
 
             //Act
-            List<UncertainPairedData> graphicalFreqCurves = dataset.GetGraphicalStageFrequency(PathToIndexPointShapefile, ParentDirectoryToSteadyResult);
+            List<UncertainPairedData> graphicalFreqCurves = dataset.GetGraphicalStageFrequency(PathToIndexPointShapefile, ParentDirectoryToSteadyResult, projection);
 
             //Assert
             Assert.Equal(graphicalFreqCurves.Count, 3);

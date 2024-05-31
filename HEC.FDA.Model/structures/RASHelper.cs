@@ -56,7 +56,7 @@ public static class RASHelper
         {
             return new float[pts.Count];
         }
-        RasterPyramid<float> baseRaster = baseDs.AsRasterizer();
+        RasterPyramid<float> baseRaster = (RasterPyramid<float>)baseDs.AsRasterizer();
         List<Geospatial.Vectors.Point> geospatialpts = Converter.Convert(pts);
         Memory<Geospatial.Vectors.Point> points = new(geospatialpts.ToArray());
         float[] elevationData = new float[points.Length];
