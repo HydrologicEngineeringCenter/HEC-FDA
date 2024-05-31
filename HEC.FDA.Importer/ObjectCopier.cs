@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.Json;
 
 /// <summary>
 /// Reference Article http://www.codeproject.com/KB/tips/SerializedObjectCloner.aspx
@@ -36,14 +37,8 @@ namespace Importer
                 return default(T);
             }
 
-            IFormatter formatter = new BinaryFormatter();
-            System.IO.Stream streamMem = new MemoryStream();
-            using (streamMem)
-            {
-                formatter.Serialize(streamMem, source);
-                streamMem.Seek(0, SeekOrigin.Begin);
-                return (T)formatter.Deserialize(streamMem);
-            }
+            var json = JsonSerializer.Serialize(source); // Serialize the object into JSON
+            return JsonSerializer.Deserialize<T>(json);
         }
     }
 }
