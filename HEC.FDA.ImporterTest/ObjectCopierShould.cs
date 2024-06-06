@@ -11,9 +11,37 @@ public class ObjectCopierShould
         {
             _ErrorDistribution = new ErrorDistribution[]
             {
-                new ErrorDistribution()
+                new()
                 {
                     ErrorType = ErrorType.NONE,
+                    CentralValue = Study.badNumber,
+                    StandardDeviationOrMin = Study.badNumber,
+                    Maximum = Study.badNumber,
+                },
+               new()
+                {
+                    ErrorType = ErrorType.NONE,
+                    CentralValue = Study.badNumber,
+                    StandardDeviationOrMin = Study.badNumber,
+                    Maximum = Study.badNumber,
+                },
+               new()
+                {
+                    ErrorType = ErrorType.UNIFORM,
+                    CentralValue = Study.badNumber,
+                    StandardDeviationOrMin = Study.badNumber,
+                    Maximum = Study.badNumber,
+                },
+                 new()
+                {
+                    ErrorType = ErrorType.NONE,
+                    CentralValue = Study.badNumber,
+                    StandardDeviationOrMin = Study.badNumber,
+                    Maximum = Study.badNumber,
+                },
+                 new()
+                {
+                    ErrorType = ErrorType.TRIANGULAR,
                     CentralValue = Study.badNumber,
                     StandardDeviationOrMin = Study.badNumber,
                     Maximum = Study.badNumber,
@@ -21,7 +49,7 @@ public class ObjectCopierShould
             },
             _SingleDamageFunction = new SingleDamageFunction[]
             {
-                new SingleDamageFunction()
+                new()
                 {
                     NumOrdinatesAlloc = 10,
                     NumOrdinates = 10,
@@ -31,7 +59,51 @@ public class ObjectCopierShould
                     Damage = new double[10],
                     StdDev = new double[10],
                     ErrHi = new double[10]
-                }
+                },
+                new()
+                {
+                    NumOrdinatesAlloc = 10,
+                    NumOrdinates = 10,
+                    ErrorType = ErrorType.NONE,
+                    DirectDollar = false,
+                    Depth = new double[10],
+                    Damage = new double[10],
+                    StdDev = new double[10],
+                    ErrHi = new double[10]
+                },
+                 new()
+                {
+                    NumOrdinatesAlloc = 10,
+                    NumOrdinates = 10,
+                    ErrorType = ErrorType.NONE,
+                    DirectDollar = false,
+                    Depth = new double[10],
+                    Damage = new double[10],
+                    StdDev = new double[10],
+                    ErrHi = new double[10]
+                },
+                 new()
+                {
+                    NumOrdinatesAlloc = 10,
+                    NumOrdinates = 10,
+                    ErrorType = ErrorType.NONE,
+                    DirectDollar = false,
+                    Depth = new double[10],
+                    Damage = new double[10],
+                    StdDev = new double[10],
+                    ErrHi = new double[10]
+                },
+                new()
+                {
+                    NumOrdinatesAlloc = 10,
+                    NumOrdinates = 10,
+                    ErrorType = ErrorType.NONE,
+                    DirectDollar = false,
+                    Depth = new double[10],
+                    Damage = new double[10],
+                    StdDev = new double[10],
+                    ErrHi = new double[10]
+                },
             },
             CategoryId = 4,
             CategoryName = null,
@@ -52,30 +124,34 @@ public class ObjectCopierShould
             MetaData = "Occupancy Type Metadata"
         };
 
-        // Populate Depth array with random doubles
-        Random random = new Random();
-        for (int i = 0; i < aOccType._SingleDamageFunction[0].Depth.Length; i++)
+        foreach(SingleDamageFunction sdf in aOccType._SingleDamageFunction)
         {
-            aOccType._SingleDamageFunction[0].Depth[i] = random.NextDouble();
-        }
+            // Populate Depth array with random doubles
+            Random random = new Random();
+            for (int i = 0; i < sdf.Depth.Length; i++)
+            {
+                sdf.Depth[i] = random.NextDouble();
+            }
 
-        // Populate Damage array with random doubles
-        for (int i = 0; i < aOccType._SingleDamageFunction[0].Damage.Length; i++)
-        {
-            aOccType._SingleDamageFunction[0].Damage[i] = random.NextDouble();
-        }
+            // Populate Damage array with random doubles
+            for (int i = 0; i < sdf.Damage.Length; i++)
+            {
+                sdf.Damage[i] = random.NextDouble();
+            }
 
-        // Populate StdDev array with random doubles
-        for (int i = 0; i < aOccType._SingleDamageFunction[0].StdDev.Length; i++)
-        {
-            aOccType._SingleDamageFunction[0].StdDev[i] = random.NextDouble();
-        }
+            // Populate StdDev array with random doubles
+            for (int i = 0; i < sdf.StdDev.Length; i++)
+            {
+                sdf.StdDev[i] = random.NextDouble();
+            }
 
-        // Populate ErrHi array with random doubles
-        for (int i = 0; i < aOccType._SingleDamageFunction[0].ErrHi.Length; i++)
-        {
-            aOccType._SingleDamageFunction[0].ErrHi[i] = random.NextDouble();
+            // Populate ErrHi array with random doubles
+            for (int i = 0; i < sdf.ErrHi.Length; i++)
+            {
+                sdf.ErrHi[i] = random.NextDouble();
+            }
         }
+       
         return aOccType;
     }
     [Fact]
