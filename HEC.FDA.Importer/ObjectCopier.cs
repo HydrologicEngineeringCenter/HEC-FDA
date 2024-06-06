@@ -31,8 +31,18 @@ namespace Importer
             {
                 return default(T);
             }
-            //Tried to use JSON instead, but it broke occupancy types for some reason. Will investigate later if we need to move forward in DOTNET version. 
-            JsonSerializerOptions options = new() 
+
+        //This includes all attributed fields and props, public or not. This is what we should use if we need to get at private fields
+        //This is the most flexible, but requires decorating every class and member we wish to serialize, so going to work with JSON till we cant.
+        https://learn.microsoft.com/en-us/dotnet/api/system.runtime.serialization.datamemberattribute?view=net-8.0
+            //using MemoryStream stream = new();
+            //DataContractSerializer dataContractSerializer = new(typeof(T));
+            //dataContractSerializer.WriteObject(stream, source);
+            //stream.Position = 0; //sets us back to the beginning, else we'll get an unexpected end of file exception. 
+            //var target = (T)dataContractSerializer.ReadObject(stream);
+            //return target;
+
+            JsonSerializerOptions options = new()
             {
                 IncludeFields = true
             };
