@@ -153,37 +153,6 @@ namespace Importer
         { NumOrdinates = numRows; }
         public ErrorType GetTypeError()
         { return ErrorType; }
-        public bool IsEqualTo(SingleDamageFunction other)
-        {
-            if (other == null)
-                return false;
-
-            if (NumOrdinatesAlloc != other.NumOrdinatesAlloc)
-                return false;
-
-            if (ErrorType != other.ErrorType)
-                return false;
-
-            if (DirectDollar != other.DirectDollar)
-                return false;
-
-            if (NumOrdinates != other.NumOrdinates)
-                return false;
-
-            if (!Enumerable.SequenceEqual(Depth, other.Depth))
-                return false;
-
-            if (!Enumerable.SequenceEqual(Damage, other.Damage))
-                return false;
-
-            if (!Enumerable.SequenceEqual(StdDev, other.StdDev))
-                return false;
-
-            if (!Enumerable.SequenceEqual(ErrHi, other.ErrHi))
-                return false;
-
-            return true;
-        }
         #endregion
     }
 }
