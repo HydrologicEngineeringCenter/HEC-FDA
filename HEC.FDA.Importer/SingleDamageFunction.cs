@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Importer
 {
@@ -145,34 +146,44 @@ namespace Importer
         }
         #endregion
         #region Functions
-        public bool IsSameAs(SingleDamageFunction df)
-        {
-            bool same = true;
-            if (df.NumOrdinates != this.NumOrdinates)
-                same = false;
-            if (df.ErrorType != this.ErrorType)
-                same = false;
-            if (df.DirectDollar != this.DirectDollar)
-                same = false;
-            for (int i = 0; i < this.NumOrdinates; i++)
-            {
-                if (df.Depth[i] != this.Depth[i])
-                    same = false;
-                if (df.Damage[i] != this.Damage[i])
-                    same = false;
-                if (df.StdDev[i] != this.StdDev[i])
-                    same = false;
-                if (df.ErrHi[i] != this.ErrHi[i])
-                    same = false;
-            }
-            return same;
-        }
+
         public int GetNumRows()
         { return NumOrdinates; }
         public void SetNumRows(int numRows)
         { NumOrdinates = numRows; }
         public ErrorType GetTypeError()
         { return ErrorType; }
+        public bool IsEqualTo(SingleDamageFunction other)
+        {
+            if (other == null)
+                return false;
+
+            if (NumOrdinatesAlloc != other.NumOrdinatesAlloc)
+                return false;
+
+            if (ErrorType != other.ErrorType)
+                return false;
+
+            if (DirectDollar != other.DirectDollar)
+                return false;
+
+            if (NumOrdinates != other.NumOrdinates)
+                return false;
+
+            if (!Enumerable.SequenceEqual(Depth, other.Depth))
+                return false;
+
+            if (!Enumerable.SequenceEqual(Damage, other.Damage))
+                return false;
+
+            if (!Enumerable.SequenceEqual(StdDev, other.StdDev))
+                return false;
+
+            if (!Enumerable.SequenceEqual(ErrHi, other.ErrHi))
+                return false;
+
+            return true;
+        }
         #endregion
     }
 }
