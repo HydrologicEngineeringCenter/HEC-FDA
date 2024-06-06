@@ -9,14 +9,7 @@ namespace Importer
     [Serializable]
     public class FdObjectData
     {
-        #region Notes
-        // Created By: q0hecrdc
-        // Created Date: Nov2017
         //enum FdaSizes { NAME_SIZE = 33, DESC_SIZE = 65};
-        #endregion
-        #region Fields
-        //Fields
-        #endregion
         #region Properties
         public long Id
         { get; set; }
@@ -73,6 +66,30 @@ namespace Importer
         }
         #endregion
         #region Functions
+        public bool IsEqualTo(FdObjectData other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
+            return Id == other.Id &&
+                   Name == other.Name &&
+                   NameShort == other.NameShort &&
+                   Description == other.Description &&
+                   SortOrder == other.SortOrder &&
+                   SortClass == other.SortClass &&
+                   New == other.New &&
+                   CalculationDate == other.CalculationDate &&
+                   IsValid == other.IsValid &&
+                   IsOutOfDate == other.IsOutOfDate &&
+                   MetaData == other.MetaData;
+        }
         #endregion
     }
 }

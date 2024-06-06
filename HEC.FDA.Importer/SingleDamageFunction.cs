@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Importer
 {
@@ -9,24 +10,19 @@ namespace Importer
         // Created By: q0hecrdc
         // Created Date: Nov2017
         #endregion
-        #region Fields
-
-        private int _NumOrdinates = 0;
-        private int _NumOrdiniatesAlloc = 0;
-        private ErrorType _ErrorType = ErrorType.NONE;
-        private bool _DirectDollar = false;
-        private double[] _Depth;
-        private double[] _Damage;
-        private double[] _StdDev;
-        private double[] _ErrHi;
-
-        #endregion
         #region Properties
-        public int NumOrdinates { get { return _NumOrdinates; } }
-        public double[] Depth { get => _Depth; set => _Depth = value; }
-        public double[] Damage { get => _Damage; set => _Damage = value; }
-        public double[] StdDev { get => _StdDev; set => _StdDev = value; }
-        public double[] ErrHi { get => _ErrHi; set => _ErrHi = value; }
+        //originally private. public for testing
+        public int NumOrdinatesAlloc { get; set; } = 0;
+        //originally private. public for testing
+        public ErrorType ErrorType { get; set; } = ErrorType.NONE;
+        //originally private. public for testing
+        public bool DirectDollar { get; set; } = false;
+        //originally private. public for testing
+        public int NumOrdinates { get; set; } = 0;
+        public double[] Depth { get; set; }
+        public double[] Damage { get; set; }
+        public double[] StdDev { get; set; }
+        public double[] ErrHi { get; set; }
 
         #endregion
         #region Constructors
@@ -42,34 +38,21 @@ namespace Importer
         #region Voids
         public void Reset(int kords = 50)
         {
-            _NumOrdinates = 0;
-            _NumOrdiniatesAlloc = kords;
-            _ErrorType = ErrorType.NONE;
-            _DirectDollar = false;
-            Depth = new double[_NumOrdiniatesAlloc];
-            Damage = new double[_NumOrdiniatesAlloc];
-            StdDev = new double[_NumOrdiniatesAlloc];
-            ErrHi = new double[_NumOrdiniatesAlloc];
-            for (int i = 0; i < _NumOrdiniatesAlloc; i++)
+            NumOrdinates = 0;
+            NumOrdinatesAlloc = kords;
+            ErrorType = ErrorType.NONE;
+            DirectDollar = false;
+            Depth = new double[NumOrdinatesAlloc];
+            Damage = new double[NumOrdinatesAlloc];
+            StdDev = new double[NumOrdinatesAlloc];
+            ErrHi = new double[NumOrdinatesAlloc];
+            for (int i = 0; i < NumOrdinatesAlloc; i++)
             {
                 Depth[i] = 0.0;
                 Damage[i] = 0.0;
                 StdDev[i] = 0.0;
                 ErrHi[i] = 0.0;
             }
-        }
-        public void ResetToZero()
-        {
-            _NumOrdinates = 0;
-            _ErrorType = ErrorType.NONE;
-            for (int i = 0; i < _NumOrdiniatesAlloc; i++)
-            {
-                Depth[i] = 0.0;
-                Damage[i] = 0.0;
-                StdDev[i] = 0.0;
-                ErrHi[i] = 0.0;
-            }
-
         }
         public void ReallocateWithoutSave(int numOrdsNew)
         {
@@ -77,20 +60,20 @@ namespace Importer
         }
         public void ReallocateWithSave(int numOrdsNew)
         {
-            if(numOrdsNew != _NumOrdiniatesAlloc)
+            if(numOrdsNew != NumOrdinatesAlloc)
             {
                 double[] depth = new double[numOrdsNew];
                 double[] damage = new double[numOrdsNew];
                 double[] stdDev = new double[numOrdsNew];
                 double[] errHi = new double[numOrdsNew];
-                for(int i = 0; i < _NumOrdinates; i++)
+                for(int i = 0; i < NumOrdinates; i++)
                 {
                     depth[i] = Depth[i];
                     damage[i] = Damage[i];
                     stdDev[i] = StdDev[i];
                     errHi[i] = ErrHi[i];
                 }
-                _NumOrdiniatesAlloc = numOrdsNew;
+                NumOrdinatesAlloc = numOrdsNew;
                 Depth = depth;
                 Damage = damage;
                 StdDev = stdDev;
@@ -103,19 +86,19 @@ namespace Importer
         }
         public void SetNumRows(int numOrdinates, ErrorType errorType)
         {
-            if (numOrdinates != _NumOrdiniatesAlloc)
+            if (numOrdinates != NumOrdinatesAlloc)
             {
                 ReallocateWithSave(numOrdinates);
             }
-            this._NumOrdinates = numOrdinates;
-            this._ErrorType = errorType;
+            this.NumOrdinates = numOrdinates;
+            this.ErrorType = errorType;
         }
         public void SetType(ErrorType errorType = ErrorType.NONE)
-        { this._ErrorType = errorType; }
+        { this.ErrorType = errorType; }
         public void SetDepth(double[] depth)
         {
             int numOrds = depth.Length;
-            if (numOrds > _NumOrdiniatesAlloc)
+            if (numOrds > NumOrdinatesAlloc)
                 ReallocateWithSave(numOrds);
             for (int i = 0; i < numOrds; i++)
                 this.Depth[i] = depth[i];
@@ -123,28 +106,28 @@ namespace Importer
         public void SetDamage(double[] damage)
         {
             int numOrds = damage.Length;
-            if (numOrds > _NumOrdiniatesAlloc)
+            if (numOrds > NumOrdinatesAlloc)
                 ReallocateWithSave(numOrds);
             for (int i = 0; i < numOrds; i++)
-                this._Damage[i] = damage[i];
+                this.Damage[i] = damage[i];
         }
         public void SetStdDev(double[] stdDev)
         {
             int numOrds = stdDev.Length;
-            if (numOrds > _NumOrdiniatesAlloc)
+            if (numOrds > NumOrdinatesAlloc)
                 ReallocateWithSave(numOrds);
             for (int i = 0; i < numOrds; i++)
-                this._StdDev[i] = stdDev[i];
+                this.StdDev[i] = stdDev[i];
         }
         public void SetTriangularLower(double[] errLo)
         { SetStdDev(errLo); }
         public void SetTriangularUpper(double[] errHi)
         {
             int numOrds = errHi.Length;
-            if (numOrds > _NumOrdiniatesAlloc)
+            if (numOrds > NumOrdinatesAlloc)
                 ReallocateWithSave(numOrds);
             for (int i = 0; i < numOrds; i++)
-                this._ErrHi[i] = errHi[i];
+                this.ErrHi[i] = errHi[i];
         }
         public void SetDamageFunction(int numOrds,
                                       ErrorType errorType,
@@ -163,14 +146,44 @@ namespace Importer
         }
         #endregion
         #region Functions
+
         public int GetNumRows()
-        { return _NumOrdinates; }
+        { return NumOrdinates; }
         public void SetNumRows(int numRows)
-        { _NumOrdinates = numRows; }
+        { NumOrdinates = numRows; }
         public ErrorType GetTypeError()
-        { return this._ErrorType; }
-        public bool DirectDollar
-        { get; set; }
+        { return ErrorType; }
+        public bool IsEqualTo(SingleDamageFunction other)
+        {
+            if (other == null)
+                return false;
+
+            if (NumOrdinatesAlloc != other.NumOrdinatesAlloc)
+                return false;
+
+            if (ErrorType != other.ErrorType)
+                return false;
+
+            if (DirectDollar != other.DirectDollar)
+                return false;
+
+            if (NumOrdinates != other.NumOrdinates)
+                return false;
+
+            if (!Enumerable.SequenceEqual(Depth, other.Depth))
+                return false;
+
+            if (!Enumerable.SequenceEqual(Damage, other.Damage))
+                return false;
+
+            if (!Enumerable.SequenceEqual(StdDev, other.StdDev))
+                return false;
+
+            if (!Enumerable.SequenceEqual(ErrHi, other.ErrHi))
+                return false;
+
+            return true;
+        }
         #endregion
     }
 }

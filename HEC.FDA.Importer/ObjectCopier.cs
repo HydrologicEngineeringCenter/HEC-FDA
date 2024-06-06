@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.Json.Nodes;
+using System.Text.Json;
 
 /// <summary>
 /// Reference Article http://www.codeproject.com/KB/tips/SerializedObjectCloner.aspx
@@ -36,14 +38,23 @@ namespace Importer
                 return default(T);
             }
 
-            IFormatter formatter = new BinaryFormatter();
-            System.IO.Stream streamMem = new MemoryStream();
-            using (streamMem)
+            //IFormatter formatter = new BinaryFormatter();
+            //System.IO.Stream streamMem = new MemoryStream();
+            //using (streamMem)
+            //{
+            //    formatter.Serialize(streamMem, source);
+            //    streamMem.Seek(0, SeekOrigin.Begin);
+            //    return (T)formatter.Deserialize(streamMem);
+            //}
+
+            //Tried to use JSON instead, but it broke occupancy types for some reason. Will investigate later if we need to move forward in DOTNET version. 
+            JsonSerializerOptions options = new JsonSerializerOptions
             {
-                formatter.Serialize(streamMem, source);
-                streamMem.Seek(0, SeekOrigin.Begin);
-                return (T)formatter.Deserialize(streamMem);
-            }
+                IncludeFields = true
+            };
+            var json = JsonSerializer.Serialize(source, options);
+            var obj = JsonSerializer.Deserialize<T>(json, options);
+            return obj;
         }
     }
 }
