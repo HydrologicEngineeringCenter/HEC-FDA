@@ -3,9 +3,9 @@ namespace HEC.FDA.ImporterTest;
 using Importer;
 using Xunit;
 
-public class ObjectCopierTests
+public class ObjectCopierShould
 {
-    private OccupancyType InitOccupancyType()
+    private static OccupancyType InitOccupancyType()
     {
         OccupancyType aOccType = new OccupancyType()
         {
