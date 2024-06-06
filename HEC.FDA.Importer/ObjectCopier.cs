@@ -38,19 +38,19 @@ namespace Importer
             }
 
             //This method of making a deep copy will be obsolete in Net 9.0 and this will break. 
-            IFormatter formatter = new BinaryFormatter();
-            System.IO.Stream streamMem = new MemoryStream();
-            using (streamMem)
-            {
-                formatter.Serialize(streamMem, source);
-                streamMem.Seek(0, SeekOrigin.Begin);
-                return (T)formatter.Deserialize(streamMem);
-            }
+            //IFormatter formatter = new BinaryFormatter();
+            //System.IO.Stream streamMem = new MemoryStream();
+            //using (streamMem)
+            //{
+            //    formatter.Serialize(streamMem, source);
+            //    streamMem.Seek(0, SeekOrigin.Begin);
+            //    return (T)formatter.Deserialize(streamMem);
+            //}
 
             //Tried to use JSON instead, but it broke occupancy types for some reason. Will investigate later if we need to move forward in DOTNET version. 
-            //var json = JsonSerializer.Serialize(source); // Serialize the object into JSON
-            //var obj = JsonSerializer.Deserialize<T>(json);
-            //return obj;
+            var json = JsonSerializer.Serialize(source); // Serialize the object into JSON
+            var obj = JsonSerializer.Deserialize<T>(json);
+            return obj;
         }
     }
 }
