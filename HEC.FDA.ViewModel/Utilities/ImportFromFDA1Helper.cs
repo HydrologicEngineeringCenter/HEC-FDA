@@ -858,7 +858,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
         private static bool IsEmptyFunction(SingleDamageFunction function)
         {
-            return function.NumOrdinates == 0;
+            return false;
         }
 
         private static UncertainPairedData CreateCoordinatesFunction(string name, SingleDamageFunction function, StructureValueType structureValueType, List<string> errors)

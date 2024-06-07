@@ -1,8 +1,11 @@
-﻿using HEC.FDA.Model.paireddata;
+﻿using Geospatial.GDALAssist;
+using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.structures;
 using HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.IndexPoints;
 using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Watershed;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -86,8 +89,16 @@ public class RetrieveGraphicalStageFrequencyVM : BaseViewModel
         string pointShapefileDirectory = Storage.Connection.Instance.IndexPointsDirectory + "\\" + SelectedIndexPointSet.Name + "\\";
         string pointShapefile = GetShapefileFromDirectory(pointShapefileDirectory);
         string hydraulicParentDirectory = Storage.Connection.Instance.HydraulicsDirectory + "\\" + SelectedHydraulics.Name;
-        List<UncertainPairedData> freqCurves = SelectedHydraulics.DataSet.GetGraphicalStageFrequency(pointShapefile, hydraulicParentDirectory);
-        if(freqCurves == null)
+
+        Projection studyProjection = GetStudyProjection();
+        if(studyProjection == null)
+        {
+            MessageBox.Show("Failed to get projection from both study properties and terrain file");
+            return;
+        }
+
+        List<UncertainPairedData> freqCurves = SelectedHydraulics.DataSet.GetGraphicalStageFrequency(pointShapefile, hydraulicParentDirectory, studyProjection);
+        if (freqCurves == null)
         {
             MessageBox.Show("Failed to create frequency curves");
         }
@@ -96,7 +107,36 @@ public class RetrieveGraphicalStageFrequencyVM : BaseViewModel
             AddFrequencyRelationship(freqCurves[i], SelectedIndexPointSet.IndexPoints[i] + "|" + SelectedHydraulics.Name);
         }
     }
-    private void AddFrequencyRelationship(UncertainPairedData upd, string name)
+
+    private static Projection GetStudyProjection()
+    {
+        Projection studyProjection;
+        string userSetProjection = Storage.Connection.Instance.ProjectionFile;
+        if (userSetProjection.Equals(""))
+        {
+            studyProjection = RASHelper.GetProjectionFromTerrain(GetTerrainFile());
+        }
+        else
+        {
+            studyProjection = Projection.FromFile(userSetProjection);
+        }
+        return studyProjection;
+    }
+
+    public static string GetTerrainFile()
+    {
+        string filePath = "";
+        List<TerrainElement> terrainElements = StudyCache.GetChildElementsOfType<TerrainElement>();
+        if (terrainElements.Count > 0)
+        {
+            //there can only be one terrain in the study
+            TerrainElement elem = terrainElements[0];
+            filePath = Storage.Connection.Instance.TerrainDirectory + "\\" + elem.Name + "\\" + elem.FileName;
+        }
+        return filePath;
+    }
+
+    private static void AddFrequencyRelationship(UncertainPairedData upd, string name)
     {
         string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
         int id = PersistenceFactory.GetElementManager<FrequencyElement>().GetNextAvailableId();

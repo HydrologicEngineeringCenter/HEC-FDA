@@ -64,7 +64,8 @@ namespace HEC.FDA.Model.hydraulics
         private float[] GetWSEFromGrids(PointMs pts, string parentDirectory)
         {
             //THIS IS A HACK TO KEEP IMPORT FROM GRIDS WORKING FOR TESTERS
-            var baseDs = TiffDataSource<float>.TryLoad(GetFilePath(parentDirectory));
+            string filePath = GetFilePath(parentDirectory);
+            var baseDs = TiffDataSource<float>.TryLoad(filePath);
 
             if (baseDs == null)
             {

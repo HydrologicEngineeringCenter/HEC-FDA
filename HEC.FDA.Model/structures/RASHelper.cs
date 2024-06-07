@@ -56,13 +56,19 @@ public static class RASHelper
         {
             return new float[pts.Count];
         }
-        RasterPyramid<float> baseRaster = baseDs.AsRasterizer();
+        RasterPyramid<float> baseRaster = (RasterPyramid<float>)baseDs.AsRasterizer();
         List<Geospatial.Vectors.Point> geospatialpts = Converter.Convert(pts);
         Memory<Geospatial.Vectors.Point> points = new(geospatialpts.ToArray());
         float[] elevationData = new float[points.Length];
         baseRaster.SamplePoints(points, elevationData);
         return elevationData;
     }
+    /// <summary>
+    /// Takes a file path, checks whether it has a .hdf or .tif extension, and returns the projection of the file.
+    /// </summary>
+    /// <param name="TerrainPath"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
     public static Projection GetProjectionFromTerrain(string TerrainPath)
     {
         string terrainExtension = System.IO.Path.GetExtension(TerrainPath);
@@ -233,7 +239,6 @@ where T : struct
             default:
                 throw new Exception("Unsupported File Type");
         }
-
     }
     public static bool ShapefileIsValid(string path, ref string error)
     {

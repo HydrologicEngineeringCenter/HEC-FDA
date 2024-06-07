@@ -7,6 +7,6 @@
 	  <WarningLevel>0</WarningLevel> <!--!This turns off all warnings!-->
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="USACE.HEC.FDA.Statistics" Version="1.1.0-alpha-2022-07-28-2121" />
+    <ProjectReference Include="..\HEC.FDA.Statistics\HEC.FDA.Statistics.csproj" />
   </ItemGroup>
 </Project>

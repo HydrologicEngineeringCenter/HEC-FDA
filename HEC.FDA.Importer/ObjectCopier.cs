@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.Json;
 
 /// <summary>
 /// Reference Article http://www.codeproject.com/KB/tips/SerializedObjectCloner.aspx
@@ -25,25 +26,29 @@ namespace Importer
         /// <returns>The copied object.</returns>
         public static T Clone<T>(T source)
         {
-            if (!typeof(T).IsSerializable)
-            {
-                throw new ArgumentException("The type must be serializable.", "source");
-            }
-
             // Don't serialize a null object, simply return the default for that object
             if (Object.ReferenceEquals(source, null))
             {
                 return default(T);
             }
 
-            IFormatter formatter = new BinaryFormatter();
-            System.IO.Stream streamMem = new MemoryStream();
-            using (streamMem)
+        //This includes all attributed fields and props, public or not. This is what we should use if we need to get at private fields
+        //This is the most flexible, but requires decorating every class and member we wish to serialize, so going to work with JSON till we cant.
+        https://learn.microsoft.com/en-us/dotnet/api/system.runtime.serialization.datamemberattribute?view=net-8.0
+            //using MemoryStream stream = new();
+            //DataContractSerializer dataContractSerializer = new(typeof(T));
+            //dataContractSerializer.WriteObject(stream, source);
+            //stream.Position = 0; //sets us back to the beginning, else we'll get an unexpected end of file exception. 
+            //var target = (T)dataContractSerializer.ReadObject(stream);
+            //return target;
+
+            JsonSerializerOptions options = new()
             {
-                formatter.Serialize(streamMem, source);
-                streamMem.Seek(0, SeekOrigin.Begin);
-                return (T)formatter.Deserialize(streamMem);
-            }
+                IncludeFields = true
+            };
+            var json = JsonSerializer.Serialize(source, options);
+            var obj = JsonSerializer.Deserialize<T>(json, options);
+            return obj;
         }
     }
 }

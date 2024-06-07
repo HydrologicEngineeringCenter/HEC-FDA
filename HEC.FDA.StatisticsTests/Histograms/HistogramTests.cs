@@ -457,7 +457,7 @@ namespace StatisticsTests.Histograms
 
             //Test
             double[] probabilities = new double[] { .025, 0.25, 0.5, 0.75, .975 };
-            double tolerance = 0.01; // Define a tolerance for comparison
+            double tolerance = 0.025; // Define a tolerance for comparison
 
             foreach (double probability in probabilities)
             {

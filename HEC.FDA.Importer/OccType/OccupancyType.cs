@@ -42,6 +42,7 @@ namespace Importer
         }
         #endregion
         #region Voids
+
         public new void Reset()
         {
             base.Reset();
@@ -639,7 +640,6 @@ namespace Importer
             }
             return theCode;
         }
-
         #endregion
     }
 }

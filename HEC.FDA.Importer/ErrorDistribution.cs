@@ -72,6 +72,27 @@ namespace Importer
             StandardDeviationOrMin = StandardDeviationOrMin/100 * CentralValue;
             Maximum = Maximum/100 * CentralValue;
         }
+        public bool IsEqualTo(ErrorDistribution other)
+        {
+            if (other == null)
+                return false;
+
+            if (ErrorType != other.ErrorType)
+                return false;
+
+            if (CentralValue != other.CentralValue)
+                return false;
+
+            if (StandardDeviationOrMin != other.StandardDeviationOrMin)
+                return false;
+
+            if (Maximum != other.Maximum)
+                return false;
+
+            return true;
+        }
+
+
         #endregion
     }
 }
