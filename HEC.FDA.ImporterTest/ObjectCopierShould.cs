@@ -3,6 +3,7 @@ namespace HEC.FDA.ImporterTest;
 using Importer;
 using Xunit;
 
+[Trait("RunsOn", "Remote")]
 public class ObjectCopierShould
 {
     private static OccupancyType InitOccupancyType()
@@ -158,45 +159,45 @@ public class ObjectCopierShould
     public void DeepCopyAnOccupancyType()
     {
         //arrange
-        OccupancyType aOccType = InitOccupancyType();
+        OccupancyType original = InitOccupancyType();
 
         //act
-        OccupancyType clone = ObjectCopier.Clone(aOccType);
+        OccupancyType clone = ObjectCopier.Clone(original);
 
         //assert
-        Assert.NotSame(aOccType, clone);
+        Assert.NotSame(original, clone);
 
         //OccupancyType Props
-        Assert.Equal(aOccType.CategoryId, clone.CategoryId);
-        Assert.Equal(aOccType.CategoryName, clone.CategoryName);
-        Assert.Equal(aOccType.UsesDollar, clone.UsesDollar);
-        Assert.Equal(aOccType.RatioContent, clone.RatioContent);
-        Assert.Equal(aOccType.RatioOther, clone.RatioOther);
-        Assert.Equal(aOccType.RatioCar, clone.RatioCar);
+        Assert.Equal(original.CategoryId, clone.CategoryId);
+        Assert.Equal(original.CategoryName, clone.CategoryName);
+        Assert.Equal(original.UsesDollar, clone.UsesDollar);
+        Assert.Equal(original.RatioContent, clone.RatioContent);
+        Assert.Equal(original.RatioOther, clone.RatioOther);
+        Assert.Equal(original.RatioCar, clone.RatioCar);
 
         //FdDataObject Props (OccupancyTypeParent)
-        Assert.Equal(aOccType.Id, clone.Id);
-        Assert.Equal(aOccType.Name, clone.Name);
-        Assert.Equal(aOccType.NameShort, clone.NameShort);
-        Assert.Equal(aOccType.Description, clone.Description);
-        Assert.Equal(aOccType.CalculationDate, clone.CalculationDate);
-        Assert.Equal(aOccType.New, clone.New);
-        Assert.Equal(aOccType.IsValid, clone.IsValid);
-        Assert.Equal(aOccType.IsOutOfDate, clone.IsOutOfDate);
-        Assert.Equal(aOccType.SortClass, clone.SortClass);
-        Assert.Equal(aOccType.SortOrder, clone.SortOrder);
-        Assert.Equal(aOccType.MetaData, clone.MetaData);
+        Assert.Equal(original.Id, clone.Id);
+        Assert.Equal(original.Name, clone.Name);
+        Assert.Equal(original.NameShort, clone.NameShort);
+        Assert.Equal(original.Description, clone.Description);
+        Assert.Equal(original.CalculationDate, clone.CalculationDate);
+        Assert.Equal(original.New, clone.New);
+        Assert.Equal(original.IsValid, clone.IsValid);
+        Assert.Equal(original.IsOutOfDate, clone.IsOutOfDate);
+        Assert.Equal(original.SortClass, clone.SortClass);
+        Assert.Equal(original.SortOrder, clone.SortOrder);
+        Assert.Equal(original.MetaData, clone.MetaData);
 
         //Damage Function Props
-        for (int i = 0; i < aOccType._SingleDamageFunction.Length; i++)
+        for (int i = 0; i < original._SingleDamageFunction.Length; i++)
         {
-            SingleDamageFunction damfunc = aOccType._SingleDamageFunction[i];
+            SingleDamageFunction damfunc = original._SingleDamageFunction[i];
             SingleDamageFunction cloneDamfunc = clone._SingleDamageFunction[i];
             Assert.Equal(damfunc.NumOrdinatesAlloc, cloneDamfunc.NumOrdinatesAlloc);
             Assert.Equal(damfunc.NumOrdinates, cloneDamfunc.NumOrdinates);
             Assert.Equal(damfunc.ErrorType, cloneDamfunc.ErrorType);
             Assert.Equal(damfunc.DirectDollar, cloneDamfunc.DirectDollar);
-            for (int j = 0; j < aOccType._SingleDamageFunction[i].Depth.Length; j++)
+            for (int j = 0; j < original._SingleDamageFunction[i].Depth.Length; j++)
             {
                 Assert.Equal(damfunc.Depth[j], cloneDamfunc.Depth[j]);
                 Assert.Equal(damfunc.Damage[j], cloneDamfunc.Damage[j]);
@@ -206,9 +207,9 @@ public class ObjectCopierShould
         }
 
         //Error Distribution Props
-        for (int i = 0; i < aOccType._ErrorDistribution.Length; i++)
+        for (int i = 0; i < original._ErrorDistribution.Length; i++)
         {
-            ErrorDistribution errDist = aOccType._ErrorDistribution[i];
+            ErrorDistribution errDist = original._ErrorDistribution[i];
             ErrorDistribution cloneErrDist = clone._ErrorDistribution[i];
             Assert.Equal(errDist.ErrorType, cloneErrDist.ErrorType);
             Assert.Equal(errDist.CentralValue, cloneErrDist.CentralValue);
