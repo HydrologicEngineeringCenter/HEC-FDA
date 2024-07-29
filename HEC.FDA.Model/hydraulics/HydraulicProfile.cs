@@ -7,6 +7,9 @@ using System;
 using System.Xml.Linq;
 using System.Collections.Generic;
 using HEC.FDA.Model.hydraulics.Interfaces;
+using Geospatial.GDALAssist;
+using Utility.Extensions;
+using Geospatial;
 
 namespace HEC.FDA.Model.hydraulics
 {
@@ -76,17 +79,18 @@ namespace HEC.FDA.Model.hydraulics
             List<Geospatial.Vectors.Point> geospatialpts = RasMapperLib.Utilities.Converter.Convert(pts);
             Memory<Geospatial.Vectors.Point> points = new Memory<Geospatial.Vectors.Point>(geospatialpts.ToArray());
             float[] elevationData = new float[points.Length];
+            elevationData.Fill(Constants.NoDataF);
 
             baseRaster.SamplePoints(points, elevationData);
             return elevationData;
             //END OF HACK
 
             //string vrtFile = GetFilePath(parentDirectory);
-            //GdalBandedRaster<float> resultsGrid = new GdalBandedRaster<float>(vrtFile);
+            //GdalBandedRaster<float> resultsGrid = new(vrtFile);
             //float[] wses = new float[pts.Count];
             ////We're using a different peice of the RAS Code to handle this part, so we have to switch to a different definition of Point in the RAS Library. 
             //List<Geospatial.Vectors.Point> geospatialpts = RasMapperLib.Utilities.Converter.Convert(pts);
-            //Memory<Geospatial.Vectors.Point> points = new Memory<Geospatial.Vectors.Point>(geospatialpts.ToArray());
+            //Memory<Geospatial.Vectors.Point> points = new(geospatialpts.ToArray());
             //resultsGrid.SamplePoints(points, 0, wses);
             //return wses;
         }
