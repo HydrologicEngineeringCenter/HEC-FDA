@@ -198,7 +198,6 @@ namespace HEC.FDA.Model.hydraulics
             List<float[]> wses = HydraulicDatasetInFloatsWithProbabilities.Item2;
             int numStructures = wses[0].Length;
             int numProfiles = wses.Count;
-            float[] wsesByStructure = new float[numStructures];
             for (int structIdx = 0; structIdx < numStructures; structIdx++)
             {
                 float previousWSE = wses[0][structIdx];
