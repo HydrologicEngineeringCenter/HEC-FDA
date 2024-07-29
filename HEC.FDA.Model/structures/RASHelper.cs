@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Utilities;
+using Utility.Extensions;
 
 namespace HEC.FDA.Model.structures;
 
@@ -54,12 +55,13 @@ public static class RASHelper
         var baseDs = TiffDataSource<float>.TryLoad(filePath);
         if (baseDs == null)
         {
-            return new float[pts.Count];
+            throw new Exception();
         }
         RasterPyramid<float> baseRaster = (RasterPyramid<float>)baseDs.AsRasterizer();
         List<Geospatial.Vectors.Point> geospatialpts = Converter.Convert(pts);
         Memory<Geospatial.Vectors.Point> points = new(geospatialpts.ToArray());
         float[] elevationData = new float[points.Length];
+        elevationData.Fill(Geospatial.Constants.NoDataF);
         baseRaster.SamplePoints(points, elevationData);
         return elevationData;
     }
@@ -299,6 +301,12 @@ where T : struct
         }
     }
 
+    public static PointMs GetPointMsFromShapefile(string path)
+    {
+        PointFeatureLayer pointLayer = new("thisNameIsntUsed", path);
+        PointMs pointMs = new(pointLayer.Points().Select(p => p.PointM()));
+        return pointMs;
+    }
     #region HACKS
 
     ///This contains a workaround for an issue in RASMapper, where to query the component files of an HDF, RASMapper was generating a VRT using GDAL .exes that don't exist
