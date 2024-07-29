@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using HEC.FDA.Model.hydraulics.enums;
 using HEC.FDA.Model.structures;
 using HEC.FDA.Model.hydraulics;
+using System.Linq;
 
 namespace HEC.FDA.ModelTest.unittests.hydraulics
 {
@@ -53,6 +54,8 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
             float[] wses = profile.GetWSE(inventory.GetPointMs(), dataSource, parentDirectory);
             Assert.Equal(682, wses.Length); // All structures have a value
             Assert.True( wses[0] > 900); // first structure has value for WSE
+            float min = wses.Min();
+            Assert.True(wses.Min() != 0); // this is to make sure we're using a proper no data value, not defaulting to 0. 
         }
     }
 }

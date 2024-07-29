@@ -78,14 +78,14 @@ namespace HEC.FDA.Model.hydraulics
                 return null;
             }
             PointMs indexPoints = new(indexPoint.Points().Select(p => p.PointM()));
-            
+
             //reproject the point to the study projection. For GetWSE, all the reprojection is done in the Inventory class. We aren't using an inventory here, so we need to do it manually.
             Projection pointProj = RASHelper.GetVectorProjection(indexPoint);
             if (!pointProj.IsEqual(studyProjection))
             {
                 indexPoints.Project(pointProj,studyProjection);
             }
-            
+
             for (int j = 0; j < indexPoints.Count; j++)
             {
                 double[] probs = new double[HydraulicProfiles.Count];
@@ -187,5 +187,44 @@ namespace HEC.FDA.Model.hydraulics
             return wsesToCorrect;
         }
         #endregion
+        #region Utils
+        //This should never have any references. It's only around for testing purposes.
+        public static bool AllStagesIncreaseWithDecreasingProbability((List<double>, List<float[]>) HydraulicDatasetInFloatsWithProbabilities)
+        {
+            List<float> discrepancy = new();
+            List<int> problemStructIdxs = new();
+            List<int> problemProfiles = new();
+            List<double> probabilities = HydraulicDatasetInFloatsWithProbabilities.Item1;
+            List<float[]> wses = HydraulicDatasetInFloatsWithProbabilities.Item2;
+            int numStructures = wses[0].Length;
+            int numProfiles = wses.Count;
+            float[] wsesByStructure = new float[numStructures];
+            for (int structIdx = 0; structIdx < numStructures; structIdx++)
+            {
+                float previousWSE = wses[0][structIdx];
+                for (int profileIdx = 1; profileIdx < numProfiles; profileIdx++)
+                {
+                    float nextWSE = wses[profileIdx][structIdx];
+                    //if the prior profile is greater than the next something has gone wrong. Profiles are increasing in event magnitude. 
+                    if (previousWSE > nextWSE)
+                    {
+                        discrepancy.Add(nextWSE - previousWSE);
+                        problemStructIdxs.Add(structIdx);
+                        problemProfiles.Add(profileIdx);
+                    }
+                    previousWSE = nextWSE;
+                }
+
+            }
+            var distinctProfiles = problemProfiles.Distinct().ToArray();
+            var distinctStructures = problemStructIdxs.Distinct().ToArray();
+            if (problemStructIdxs.Count > 0)
+            {
+                return false;
+            }
+            return true;
+        }
+        #endregion
     }
 }
+
