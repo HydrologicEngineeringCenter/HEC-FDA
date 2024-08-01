@@ -11,7 +11,7 @@ jobs:
     runs-on: windows-latest                         
     env:
       Solution_Name: Fda.sln                                  
-      dotnet-version: '6.0.x'
+      dotnet-version: '8.0.x'
 
     steps:
     - name: Checkout

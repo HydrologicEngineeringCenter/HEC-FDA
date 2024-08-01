@@ -3,7 +3,6 @@
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
-		<OutputPath>..\Build\FDA2.0</OutputPath>
 	</PropertyGroup>
 
 </Project>
