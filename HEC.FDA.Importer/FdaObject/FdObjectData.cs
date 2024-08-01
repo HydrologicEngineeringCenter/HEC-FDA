@@ -65,31 +65,5 @@ namespace Importer
             MetaData = "";
         }
         #endregion
-        #region Functions
-        public bool IsEqualTo(FdObjectData other)
-        {
-            if (other == null)
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
-
-            return Id == other.Id &&
-                   Name == other.Name &&
-                   NameShort == other.NameShort &&
-                   Description == other.Description &&
-                   SortOrder == other.SortOrder &&
-                   SortClass == other.SortClass &&
-                   New == other.New &&
-                   CalculationDate == other.CalculationDate &&
-                   IsValid == other.IsValid &&
-                   IsOutOfDate == other.IsOutOfDate &&
-                   MetaData == other.MetaData;
-        }
-        #endregion
     }
 }
