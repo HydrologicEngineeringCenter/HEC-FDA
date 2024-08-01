@@ -15,10 +15,16 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
     [Collection("Serial")]
     public class HydraulicDatasetShould
     {
-        private const string ParentDirectoryToSteadyResult = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieSteadyResult";
+        private const string ParentDirectoryToSteadyResult = @"..\..\..\..\HEC.FDA.ModelTest\Resources\MuncieSteadyResult";
         private const string SteadyHDFFileName = @"Muncie.p10.hdf";
-        private const string PathToIndexPointShapefile = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieIndexPoints\MuncieIndexPts.shp";
-        private const string PathToProjection = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieIndexPoints\MuncieIndexPts.prj";
+        private const string PathToIndexPointShapefile = @"..\..\..\..\HEC.FDA.ModelTest\Resources\MuncieIndexPoints\MuncieIndexPts.shp";
+        private const string PathToProjection = @"..\..\..\..\HEC.FDA.ModelTest\Resources\MuncieIndexPoints\MuncieIndexPts.prj";
+
+        public HydraulicDatasetShould()
+        {
+            Geospatial.GDALAssist.GDALSetup.InitializeMultiplatform();
+        }
+
         [Fact]
         void retreiveGraphicalFrequencyFunctionsAsPairedData()
         {

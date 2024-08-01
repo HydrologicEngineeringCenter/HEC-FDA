@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+﻿using HEC.FDA.ModelTest.Resources;
+using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
 using HEC.FDA.ViewModel.Utilities;
 using Importer;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources;
@@ -22,7 +23,7 @@ namespace HEC.FDA.ViewModelTest
         [Fact]
         public void ImportOccTypesFromASCII()
         {
-            string file = @"..\..\HEC.FDA.ModelTest\Resources\MuncieOccupancyTypes.txt";
+            string file = StringResourcePaths.PathToOccupancyTypes;
             var thing = Import(file);
             Assert.NotNull(thing);
         }

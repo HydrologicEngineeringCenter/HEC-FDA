@@ -7,6 +7,7 @@ using HEC.FDA.Model.compute;
 using Geospatial.GDALAssist;
 using System.IO;
 using System;
+using HEC.FDA.ModelTest.Resources;
 
 namespace HEC.FDA.ModelTest.unittests.structures
 {
@@ -15,11 +16,11 @@ namespace HEC.FDA.ModelTest.unittests.structures
     public class InventoryShould
     {
         private const string IANameColumnHeader = "Name";
-        private const string pathToNSIShapefile = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieNSI\Muncie-SI_CRS2965.shp";
-        private const string pathToIAShapefile = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieImpactAreas\ImpactAreas.shp";
-        private const string pathToTerrainHDF = Resources.StringResourcePaths.TerrainPath;
-        private const string pathToMuncieProjection = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieImpactAreas\ImpactAreas.prj";
-        private const string pathToAlternativeProjection = @"..\..\..\HEC.FDA.ModelTest\Resources\Projections\26844.prj";
+        private const string pathToNSIShapefile = StringResourcePaths.pathToNSIShapefile;
+        private const string pathToIAShapefile = StringResourcePaths.pathToIAShapefile;
+        private const string pathToTerrainHDF = StringResourcePaths.TerrainPath;
+        private const string pathToMuncieProjection = StringResourcePaths.pathToIAProjectionFile;
+        private const string pathToAlternativeProjection = StringResourcePaths.PathToAltProjection;
 
         //NSI Headers
         private const string StructureIDCol = "fd_id";
