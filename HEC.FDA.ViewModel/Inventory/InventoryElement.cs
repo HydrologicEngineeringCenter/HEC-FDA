@@ -220,7 +220,7 @@ namespace HEC.FDA.ViewModel.Inventory
             switch (ordType)
             {
                 case IDistributionEnum.Deterministic:
-                    valueUncertainty = new ValueRatioWithUncertainty();
+                    valueUncertainty = new ValueRatioWithUncertainty(ordinate.InverseCDF(.5));
                     break;
                 case IDistributionEnum.Normal:
                     double normalMean = ((Normal)ordinate).Mean;
