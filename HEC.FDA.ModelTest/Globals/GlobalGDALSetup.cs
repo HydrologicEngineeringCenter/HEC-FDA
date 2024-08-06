@@ -21,17 +21,7 @@ public class GlobalGDALSetup : IDisposable
 
     private void InitializeGDAL()
     {
-        using StreamWriter writer = new StreamWriter(@"C:\Temp\temp.txt");
-        if (GDALSetup.IsInitialized)
-        {
-            writer.WriteLine("I'm already initialized.");
-        }
-
         GDALSetup.InitializeMultiplatform(@"C:\Programs\7.x Development\GDAL");
-
-        writer.Write("I'm Running from " + Assembly.GetExecutingAssembly().Location);
-        writer.Write(GDALSetup.LoadedVersion + "\n");
-        writer.Write(GDALSetup.ToolDirectory + "\n");
     }
 
     public void Dispose()
