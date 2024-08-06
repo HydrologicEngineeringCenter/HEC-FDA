@@ -21,7 +21,7 @@ public class GlobalGDALSetup : IDisposable
 
     private void InitializeGDAL()
     {
-        GDALSetup.InitializeMultiplatform(@"C:\Programs\7.x Development\GDAL");
+        GDALSetup.InitializeMultiplatform();
     }
 
     public void Dispose()
