@@ -4,6 +4,9 @@ using HEC.FDA.Model.hydraulics.enums;
 using HEC.FDA.Model.structures;
 using HEC.FDA.Model.hydraulics;
 using System.Linq;
+using Geospatial.GDALAssist;
+using System.IO;
+using System.Reflection;
 
 namespace HEC.FDA.ModelTest.unittests.hydraulics
 {
@@ -28,11 +31,6 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
         private const string SteadyHydraulicProfileName = "500";
 
         private const string TerrainPath = Resources.StringResourcePaths.TerrainPath;
-
-        public HydraulicProfileShould()
-        {
-            Geospatial.GDALAssist.GDALSetup.InitializeMultiplatform();
-        }
 
         [Theory]
         [InlineData(ParentDirectoryToUnsteadyResult, UnsteadyHDFFileName, HydraulicDataSource.UnsteadyHDF, "Max",true,TerrainPath )]

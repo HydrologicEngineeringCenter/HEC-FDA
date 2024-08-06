@@ -8,6 +8,8 @@ using Geospatial.GDALAssist;
 using System.IO;
 using System;
 using HEC.FDA.ModelTest.Resources;
+using System.Reflection;
+using System.Diagnostics;
 
 namespace HEC.FDA.ModelTest.unittests.structures
 {
@@ -37,23 +39,6 @@ namespace HEC.FDA.ModelTest.unittests.structures
         private const string NotesCol = "";
         private const string DescriptionCol = "";
         private const string NumberOfStructuresCol = "";
-
-        public InventoryShould()
-        {
-            InitializeGDAL();
-        }
-        
-
-        private void InitializeGDAL()
-        {
-            string gdalPath = @"GDAL\";
-            if (!Directory.Exists(gdalPath))
-            {
-                Console.WriteLine("GDAL directory not found: " + gdalPath);
-                return;
-            }
-            GDALSetup.InitializeMultiplatform(gdalPath);
-        }
 
         private Inventory GetTestInventory(bool useTerrainFile)
         {
@@ -93,7 +78,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
         public void ConstructsWithTerrainGroundElevs()
         {
             Inventory inv = GetTestInventory(true);
-            Assert.Equal(682, inv.Structures.Count);//Was 696
+            Assert.Equal(682, inv.Structures.Count);
             Assert.True(inv.Structures[0].FirstFloorElevation > 900);
         }
         [Fact]
