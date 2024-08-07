@@ -4,12 +4,10 @@ using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
-using SixLabors.ImageSharp.Formats.Gif;
 using Statistics;
 using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Xml.Linq;
 using static HEC.FDA.Model.structures.OccupancyType;
@@ -222,7 +220,7 @@ namespace HEC.FDA.ViewModel.Inventory
             switch (ordType)
             {
                 case IDistributionEnum.Deterministic:
-                    valueUncertainty = new ValueRatioWithUncertainty();
+                    valueUncertainty = new ValueRatioWithUncertainty(ordinate.InverseCDF(.5));
                     break;
                 case IDistributionEnum.Normal:
                     double normalMean = ((Normal)ordinate).Mean;

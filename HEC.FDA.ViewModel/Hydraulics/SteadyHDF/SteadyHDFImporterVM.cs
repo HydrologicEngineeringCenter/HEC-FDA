@@ -150,6 +150,7 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             try
             {
                 RasMapperLib.RASResults result = new(fullpath);
+                if (!result.SourceFileExists) { throw new Exception(Path.GetFullPath(fullpath) + " does not exist."); }
                 profileNames = result.ProfileNames;
             }
             catch (Exception e)

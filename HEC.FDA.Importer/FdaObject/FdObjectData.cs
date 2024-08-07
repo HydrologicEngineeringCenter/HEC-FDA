@@ -9,14 +9,7 @@ namespace Importer
     [Serializable]
     public class FdObjectData
     {
-        #region Notes
-        // Created By: q0hecrdc
-        // Created Date: Nov2017
         //enum FdaSizes { NAME_SIZE = 33, DESC_SIZE = 65};
-        #endregion
-        #region Fields
-        //Fields
-        #endregion
         #region Properties
         public long Id
         { get; set; }
@@ -71,8 +64,6 @@ namespace Importer
             IsOutOfDate = false;
             MetaData = "";
         }
-        #endregion
-        #region Functions
         #endregion
     }
 }

@@ -1,160 +1,127 @@
-﻿<UserControl x:Class="HEC.FDA.View.Utilities.SplashScreen"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:HEC.FDA.View.Utilities"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+﻿<UserControl
+  x:Class="HEC.FDA.View.Utilities.SplashScreen"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:local="clr-namespace:HEC.FDA.View.Utilities"
+  mc:Ignorable="d"
+  d:DesignHeight="450"
+  d:DesignWidth="800">
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition
+        Width="*" />
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition
+        Height="Auto" />
+      <RowDefinition
+        Height="*" />
+      <RowDefinition
+        Height="Auto" />
 
-        </Grid.RowDefinitions>
-        
-        <Label Grid.Row="0" Content="Terms and Conditions for Use of HEC-FDA" FontSize="20" FontWeight="Bold"/>
-        <Separator Grid.Row="1" />
+    </Grid.RowDefinitions>
 
-
-        <RichTextBox Grid.Row="2" VerticalScrollBarVisibility="Visible" IsReadOnly="True">
-            <FlowDocument>
-                <Paragraph>
-                    The United States Government, US Army Corps of Engineers, Hydrologic Engineering Center
+    <Label
+      Grid.Row="0"
+      Content="Terms and Conditions for Use of HEC-FDA"
+      FontSize="20"
+      FontWeight="Bold" />
+    
+    <RichTextBox
+      Grid.Row="1"
+      VerticalScrollBarVisibility="Visible"
+      IsReadOnly="True">
+      <FlowDocument>
+        <Paragraph>
+          The United States Government, US Army Corps of Engineers, Hydrologic Engineering Center
 ("HEC") grants to the user the rights to install Flood Damage Reduction Analysis (HEC-FDA)
 "the Software" (either from a disk copy obtained from HEC, a distributor or another user
 or by downloading it from a network) and to use, copy and/or distribute copies of the
 Software to other users, subject to the following Terms and Conditions of Use:
-                </Paragraph>
-                <Paragraph>
+        </Paragraph>
+        <Paragraph>
 
-                    All copies of the Software received or reproduced by or for user pursuant to the authority
+          All copies of the Software received or reproduced by or for user pursuant to the authority
 of this Terms and Conditions of Use will be and remain the property of HEC.
-                </Paragraph>
-                <Paragraph>
-                    User may reproduce and distribute the Software provided that the recipient agrees to the
+        </Paragraph>
+        <Paragraph>
+          User may reproduce and distribute the Software provided that the recipient agrees to the
 Terms and Conditions for Use noted herein.
-                </Paragraph>
-                <Paragraph>
-                    HEC is solely responsible for the content of the Software. The Software may not be modified,
+        </Paragraph>
+        <Paragraph>
+          HEC is solely responsible for the content of the Software. The Software may not be modified,
 abridged, decompiled, disassembled, unobfuscated or reverse engineered. The user is solely
 responsible for the content, interactions, and effects of any and all amendments, if present,
 whether they be extension modules, language resource bundles, scripts or any other amendment.
-                </Paragraph>
-                <Paragraph>
-                    No part of this Terms and Conditions for Use may be modified, deleted or obliterated from
+        </Paragraph>
+        <Paragraph>
+          No part of this Terms and Conditions for Use may be modified, deleted or obliterated from
 the Software.
-                </Paragraph>
-                <Paragraph>
-                    No part of the Software may be exported or re-exported in contravention of U.S. export laws
+        </Paragraph>
+        <Paragraph>
+          No part of the Software may be exported or re-exported in contravention of U.S. export laws
 or regulations.
-                </Paragraph>
-                <Paragraph>
-                    Waiver of Warranty
-                </Paragraph>
-                <Paragraph>
-                    THE UNITED STATES GOVERNMENT AND ITS AGENCIES, OFFICIALS, REPRESENTATIVES, AND EMPLOYEES,
+        </Paragraph>
+        <Paragraph>
+          Waiver of Warranty
+        </Paragraph>
+        <Paragraph>
+          THE UNITED STATES GOVERNMENT AND ITS AGENCIES, OFFICIALS, REPRESENTATIVES, AND EMPLOYEES,
 INCLUDING ITS CONTRACTORS AND SUPPLIERS PROVIDE HEC-FDA "AS IS," WITHOUT ANY WARRANTY OR
 CONDITION, EXPRESS, IMPLIED OR STATUTORY, AND SPECIFICALLY DISCLAIM ANY IMPLIED WARRANTIES
 OF TITLE, MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. Depending
 on state law, the foregoing disclaimer may not apply to you, and you may also have other
 legal rights that vary from state to state.
-                </Paragraph>
-                <Paragraph>
-                    Limitation of Liability
-                </Paragraph>
-                <Paragraph>
-                    IN NO EVENT SHALL THE UNITED STATES GOVERNMENT AND ITS AGENCIES, OFFICIALS, REPRESENTATIVES,
+        </Paragraph>
+        <Paragraph>
+          Limitation of Liability
+        </Paragraph>
+        <Paragraph>
+          IN NO EVENT SHALL THE UNITED STATES GOVERNMENT AND ITS AGENCIES, OFFICIALS, REPRESENTATIVES,
 AND EMPLOYEES, INCLUDING ITS CONTRACTORS AND SUPPLIERS, BE LIABLE FOR LOST PROFITS OR ANY
 SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF OR IN CONNECTION WITH USE OF
-HEC-HMS REGARDLESS OF CAUSE, INCLUDING NEGLIGENCE.
-                </Paragraph>
-                <Paragraph>
-                    THE UNITED STATES GOVERNMENT’S LIABILITY, AND THE LIABILITY OF ITS AGENCIES, OFFICIALS,
+HEC-FDA REGARDLESS OF CAUSE, INCLUDING NEGLIGENCE.
+        </Paragraph>
+        <Paragraph>
+          THE UNITED STATES GOVERNMENT’S LIABILITY, AND THE LIABILITY OF ITS AGENCIES, OFFICIALS,
 REPRESENTATIVES, AND EMPLOYEES, INCLUDING ITS CONTRACTORS AND SUPPLIERS, TO YOU OR ANY THIRD
-PARTIES IN ANY CIRCUMSTANCE IS LIMITED TO THE REPLACEMENT OF CERTIFIED COPIES OF HEC-HMS WITH
+PARTIES IN ANY CIRCUMSTANCE IS LIMITED TO THE REPLACEMENT OF CERTIFIED COPIES OF HEC-FDA WITH
 IDENTIFIED ERRORS CORRECTED. Depending on state law, the above limitation or exclusion may
 not apply to you.
-                </Paragraph>
-                <Paragraph>
-                    Indemnity
-                </Paragraph>
-                <Paragraph>
-                    As a voluntary user of HEC-HMS you agree to indemnify and hold the United States Government,
+        </Paragraph>
+        <Paragraph>
+          Indemnity
+        </Paragraph>
+        <Paragraph>
+          As a voluntary user of HEC-FDA you agree to indemnify and hold the United States Government,
 and its agencies, officials, representatives, and employees, including its contractors and
 suppliers, harmless from any claim or demand, including reasonable attorneys' fees, made by
-any third party due to or arising out of your use of HEC-HMS or breach of this Agreement or
+any third party due to or arising out of your use of HEC-FDA or breach of this Agreement or
 your violation of any law or the rights of a third party.
-                </Paragraph>
-                <Paragraph>
-                    Assent
-                </Paragraph>
-                <Paragraph>
-                    By using this program you voluntarily accept these terms and conditions. If you do not
+        </Paragraph>
+        <Paragraph>
+          Assent
+        </Paragraph>
+        <Paragraph>
+          By using this program you voluntarily accept these terms and conditions. If you do not
 agree to these terms and conditions, uninstall the program and return any program materials
 to HEC (If you downloaded the program and do not have disk media, please delete all copies,
 and cease using the program).
-                </Paragraph>
-                
-            </FlowDocument>
-           
-        </RichTextBox>
+        </Paragraph>
 
-        <Label Grid.Row="3" Content="Non-disclosure agreement for testing HEC-FDA" FontSize="20" FontWeight="Bold"/>
-        <Separator Grid.Row="4" />
-        <RichTextBox Grid.Row="5" VerticalScrollBarVisibility="Visible" IsReadOnly="True" IsDocumentEnabled="True">
-            <FlowDocument>
-                <Paragraph>
-                    The Flood Damage Reduction Analysis (HEC-FDA) software is distributed publicly through the Hydrologic Engineering Center website (
-              
-                    <Hyperlink NavigateUri="https://www.hec.usace.army.mil" RequestNavigate="Hyperlink_RequestNavigate">www.hec.usace.army.mil</Hyperlink> 
-                
-             
-                    ) when it is determined to be ready for general use. Each new release is assigned a version number. The production of a new release begins with the specification of new features and proceeds through the development cycle stages of design, implementation, testing, documentation, release engineering, and certification. A new release that has not completed all of these stages is considered interim software and is indicated as such by appending a suffix like "alpha" or "beta" to the version number. Documentation that has not completed the technical review process is marked as "draft."
-                </Paragraph>
-                <Paragraph>
-                    The Hydrologic Engineering Center (HEC) works with software users during the software development cycle. Though every effort is made to release software with no errors, users may from time to time discover issues in the software that were not detected during the development cycle. HEC will engage with users to reproduce reported errors. Solutions will be designed, implemented, and tested. Interim software may be provided to the user as part of the testing process so that the user may verify that the solution is effective in resolving the error. Appropriate test cases based on the user's data set may be added to the standard validation test cases used to certify a new software release. It is important that interim software and draft documentation be kept confidential.
-                </Paragraph>
-                <Paragraph>
-                    HEC will provide interim software and draft documentation for a user with the following restrictions kept in place until the general release occurs:
-                </Paragraph>
-                <Paragraph>
-                    1. HEC and the software user will work collaboratively to achieve the shared goal of improving the next general release by eliminating errors from the software.
-                    The interim software and draft documentation are for the sole use of the user.
-                    <LineBreak/>
-                    2. The interim software and draft documentation should not be shared with others.
-                    <LineBreak/>
-                    3. The user will return comments to HEC on validation and verification testing of the interim software so that the software may be improved before general release.
-                    <LineBreak/>
-                    4. The user will return comments to HEC on the review of the draft documentation so that the documentation may be improved before general release.
-                </Paragraph>
-                <Paragraph>
-                    Interim software has not been subjected to the same level of testing as the general release. Therefore, the following activities are never permitted with interim software even after the general release occurs:
-                </Paragraph>
-                <Paragraph>
-                    1. Results produced with the interim software cannot ever be used in final engineering design studies or project reports.
-                    <LineBreak/>
-                    2. Results produced with the interim software cannot ever be used in final permit applications.
-                    <LineBreak/>
-                    3. Results produced with the interim software cannot ever be submitted to an academic or professional journal.
-                    <LineBreak/>
-                    4. Results produced with the interim software cannot ever be presented at a conference or workshop.
-                    <LineBreak/>
-                    5. Results produced with the interim software cannot ever be submitted as part of a final thesis or dissertation.
-                </Paragraph>
-                <Paragraph>
-                    Any work product developed with the interim software must be updated using the final released software.
-                </Paragraph>
-            </FlowDocument>
-        </RichTextBox>
-        <Button Grid.Row="6" Content="Close" Width="80" Height="22" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="Button_Click" Margin="5"/>
-    </Grid>
+      </FlowDocument>
+
+    </RichTextBox>
+    <Button
+      Grid.Row="2"
+      Content="Close"
+      Width="80"
+      Height="22"
+      HorizontalAlignment="Right"
+      VerticalAlignment="Bottom"
+      Click="Button_Click"
+      Margin="5" />
+  </Grid>
 </UserControl>

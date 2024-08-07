@@ -33,12 +33,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
             _Deterministic = new Deterministic(value);
             Value = value;
-
-            AddRule(nameof(Value), () =>
-            {
-                return Value <= 10 && Value >= 0;
-            }, "Deterministic value ratio must be between 0 and 10");
-
         }
 
         public ContinuousDistribution CreateOrdinate()

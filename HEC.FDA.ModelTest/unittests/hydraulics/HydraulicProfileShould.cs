@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using HEC.FDA.Model.hydraulics.enums;
 using HEC.FDA.Model.structures;
 using HEC.FDA.Model.hydraulics;
+using System.Linq;
+using Geospatial.GDALAssist;
+using System.IO;
+using System.Reflection;
 
 namespace HEC.FDA.ModelTest.unittests.hydraulics
 {
@@ -10,24 +14,23 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
     [Collection("Serial")]
     public class HydraulicProfileShould
     {
-        private const string pathToNSIShapefile = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieNSI\Muncie-SI_CRS2965.shp";
+        private const string pathToNSIShapefile = @"..\..\..\..\HEC.FDA.ModelTest\Resources\MuncieNSI\Muncie-SI_CRS2965.shp";
 
-        private const string pathToIAShapefile = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieImpactAreas\ImpactAreas.shp";
+        private const string pathToIAShapefile = @"..\..\..\..\HEC.FDA.ModelTest\Resources\MuncieImpactAreas\ImpactAreas.shp";
 
-        private const string ParentDirectoryToUnsteadyResult = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieResult";
+        private const string ParentDirectoryToUnsteadyResult = @"..\..\..\..\HEC.FDA.ModelTest\Resources\MuncieResult";
         private const string UnsteadyHDFFileName = @"Muncie.p04.hdf";
 
-        private const string ParentDirectoryToGrid = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieGrid";
+        private const string ParentDirectoryToGrid = @"..\..\..\..\HEC.FDA.ModelTest\Resources\MuncieGrid";
         private const string GridFileName = @"WSE (Max).Terrain.muncie_clip.tif";
 
-        private const string ParentDirectoryToSteadyResult = @"..\..\..\HEC.FDA.ModelTest\Resources\MuncieSteadyResult";
+        private const string ParentDirectoryToSteadyResult = @"..\..\..\..\HEC.FDA.ModelTest\Resources\MuncieSteadyResult";
         private const string SteadyHDFFileName = @"Muncie.p10.hdf";
 
         private const string IANameColumnHeader = "Name";
         private const string SteadyHydraulicProfileName = "500";
 
         private const string TerrainPath = Resources.StringResourcePaths.TerrainPath;
-
 
         [Theory]
         [InlineData(ParentDirectoryToUnsteadyResult, UnsteadyHDFFileName, HydraulicDataSource.UnsteadyHDF, "Max",true,TerrainPath )]
@@ -53,6 +56,8 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
             float[] wses = profile.GetWSE(inventory.GetPointMs(), dataSource, parentDirectory);
             Assert.Equal(682, wses.Length); // All structures have a value
             Assert.True( wses[0] > 900); // first structure has value for WSE
+            float min = wses.Min();
+            Assert.True(wses.Min() != 0); // this is to make sure we're using a proper no data value, not defaulting to 0. 
         }
     }
 }
