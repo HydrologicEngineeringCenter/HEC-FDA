@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace HEC.FDA.Model.structures
@@ -29,6 +30,8 @@ namespace HEC.FDA.Model.structures
         private const string NUMBER_OF_STRUCTURES = "NumberOfStructures";
 
         private const string VALUE = "Value";
+
+        private Dictionary<string, Type> _expectedTypes;
 
         public bool IsUsingFirstFloorElevation { get; }
         public bool IsUsingTerrainFile { get; }
@@ -94,14 +97,47 @@ namespace HEC.FDA.Model.structures
             BeginningDamageDepthCol = GetXMLValue(selections, BEG_DAMAGE_DEPTH);
             YearInConstructionCol = GetXMLValue(selections, YEAR_IN_CONSTRUCTION);
             NotesCol = GetXMLValue(selections, NOTES);
-            DescriptionCol = GetXMLValue(selections, DESCRIPTION);     
-            NumberOfStructuresCol = GetXMLValue(selections, NUMBER_OF_STRUCTURES); 
+            DescriptionCol = GetXMLValue(selections, DESCRIPTION);
+            NumberOfStructuresCol = GetXMLValue(selections, NUMBER_OF_STRUCTURES);
+        }
+
+        private void SetExpectedTypes()
+        {
+            _expectedTypes = new Dictionary<string, Type>()
+            {
+                { StructureIDCol, typeof(string) },
+                { OccTypeCol, typeof(string) },
+                { FirstFloorElevCol, typeof(double) },
+                { StructureValueCol, typeof(double) },
+                { FoundationHeightCol, typeof(double) },
+                { GroundElevCol, typeof(double) },
+                { ContentValueCol, typeof(double) },
+                { OtherValueCol, typeof(double) },
+                { VehicleValueCol, typeof(double) },
+                { BeginningDamageDepthCol, typeof(double) },
+                { YearInConstructionCol, typeof(int) },
+                { NotesCol, typeof(string) },
+                { DescriptionCol, typeof(string) },
+                { NumberOfStructuresCol, typeof(int) },
+                { DamageCatagory, typeof(string) },
+                { CBFips, typeof(string) }
+            };
+        }
+
+        public Type GetExpectedType(string columnName)
+        {
+            if (_expectedTypes == null)
+            {
+                SetExpectedTypes();
+            }
+            return _expectedTypes[columnName];
+
         }
 
         private static string GetXMLValue(XElement parentElem, string elemName)
         {
             string xmlValue = string.Empty;
-            if(parentElem.Element(elemName) != null && parentElem.Element(elemName).Attribute(VALUE) != null)
+            if (parentElem.Element(elemName) != null && parentElem.Element(elemName).Attribute(VALUE) != null)
             {
                 xmlValue = parentElem.Element(elemName).Attribute(VALUE).Value;
             }
@@ -140,7 +176,7 @@ namespace HEC.FDA.Model.structures
             XElement rowElem = new(elemName);
             rowElem.SetAttributeValue(VALUE, value);
             return rowElem;
-        }  
+        }
 
     }
 }

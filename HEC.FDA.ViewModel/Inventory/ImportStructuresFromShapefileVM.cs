@@ -5,9 +5,14 @@ using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.Watershed;
 using Microsoft.Extensions.Logging.Abstractions;
+using RasMapperLib;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Windows;
+using System.Windows.Forms;
+using Utility.ORM;
 
 namespace HEC.FDA.ViewModel.Inventory
 {
@@ -78,7 +83,7 @@ namespace HEC.FDA.ViewModel.Inventory
             bool isPoint = RASHelper.IsPointShapefile(SelectedPath, ref error);
             if (!validShapefile || !isPoint)
             {
-                MessageBox.Show(error, "Invalid Shapefile", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                System.Windows.MessageBox.Show(error, "Invalid Shapefile", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             } 
             else
@@ -171,17 +176,19 @@ namespace HEC.FDA.ViewModel.Inventory
         {
             if(Storage.Connection.Instance.ProjectionFile == null && ((TerrainElement)StudyCache.GetParentElementOfType<TerrainOwnerElement>().Elements[0] == null))
             {
-                MessageBox.Show("Please set your project projection in the study properties.", "Missing Projection", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show("Please set your project projection in the study properties.", "Missing Projection", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
             bool isValid = false;
             if (CurrentView is InventoryColumnSelectionsVM)
             {
                 //Run validation before moving on to the next screen
-                FdaValidationResult defineSIResults = ValidateDefineSIAttributes();
-                if (defineSIResults.IsValid)
+                FdaValidationResult validationResult = ValidateDefineSIAttributes();
+                CheckForCorrectDataTypes(validationResult);
+                if (validationResult.IsValid)
                 {
                     bool missingValues = CheckForMissingValues();
+                    //check value column types
                     if (!missingValues)
                     {
                         SwitchToOcctypeLinkingVM();
@@ -190,7 +197,7 @@ namespace HEC.FDA.ViewModel.Inventory
                 }  
                 else
                 {
-                    MessageBox.Show(defineSIResults.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    System.Windows.MessageBox.Show(validationResult.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             else if (CurrentView is InventoryOcctypeLinkingVM)
@@ -203,10 +210,58 @@ namespace HEC.FDA.ViewModel.Inventory
                 }
                 else
                 {
-                    MessageBox.Show(rowsValidResult.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    System.Windows.MessageBox.Show(rowsValidResult.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             return isValid;
+        }
+
+        private FdaValidationResult CheckForCorrectDataTypes(FdaValidationResult result)
+        {
+
+            PointFeatureLayer siPointLayer = new PointFeatureLayer("thisNameIsntUsed", SelectedPath);
+            var siPointLayerTable = siPointLayer.FeatureTable();
+
+            StructureSelectionMapping mapping = _ColumnSelections.CreateSelectionMapping();
+
+            CS.Collections.CustomObservableCollection<InventoryColumnSelectionsRowItem> optionalRows = _ColumnSelections.OptionalRows;
+            CS.Collections.CustomObservableCollection<InventoryColumnSelectionsRowItem> requiredRows = _ColumnSelections.RequiredRows;
+            foreach (InventoryColumnSelectionsRowItem rowItem in optionalRows)
+            {
+                ValidateDataTypeForRow(siPointLayerTable, mapping, rowItem, result);
+            }
+            foreach (InventoryColumnSelectionsRowItem rowItem in requiredRows)
+            {
+                ValidateDataTypeForRow(siPointLayerTable, mapping, rowItem, result);
+            }
+            return result;
+        }
+
+        private static void ValidateDataTypeForRow(DataTable siPointLayerTable, StructureSelectionMapping mapping, InventoryColumnSelectionsRowItem rowItem, FdaValidationResult result)
+        {
+            const string EXPECTED_TYPE_MISMATCH_ERROR = "The expected type for the column {0} is {1}, but the actual type is {2}.";
+            if (rowItem == null)
+            {
+                return;
+            }
+            // if the user hasn't selected a column, then we can't validate the data type. Not all colulmn types are required, so it's not necessary panic worthy. just skip it.
+            string columnName = rowItem.SelectedItem;
+            if (string.IsNullOrEmpty(columnName))
+            {
+                return;
+            }
+            //the expected type from mapping was created from the column names. If we can't find a match. Something really goofy is wrong. 
+            Type expectedType = mapping.GetExpectedType(columnName);
+            if (expectedType == null)
+            {
+                throw new Exception();
+            }
+            Type actualType = siPointLayerTable.Columns[columnName].DataType;
+            if (actualType != expectedType)
+            {
+                string formattedString = string.Format(EXPECTED_TYPE_MISMATCH_ERROR, columnName, expectedType.Name, actualType.Name);
+                result.AddErrorMessage(formattedString);
+            }
         }
 
         public override void Save()
