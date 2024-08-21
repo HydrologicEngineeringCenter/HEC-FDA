@@ -51,9 +51,6 @@ namespace HEC.FDA.Model.structures
         public string DescriptionCol { get; }
         public string NumberOfStructuresCol { get; }
 
-        public string DamageCatagory { get; }
-        public string CBFips { get; }
-
         public StructureSelectionMapping(bool FirstFloorElevationIsSelected, bool FromTerrainFileIsSelected, string structureIDRow,
             string occtype, string firstFloorElev, string structureValue, string foundHeight, string groundElev, string contentValue,
             string otherValue, string vehicleValue, string beginningDamageDepth, string yearInConstruction, string notes,
