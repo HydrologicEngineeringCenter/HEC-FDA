@@ -240,27 +240,26 @@ namespace HEC.FDA.ViewModel.Inventory
         private static void ValidateDataTypeForRow(DataTable siPointLayerTable, StructureSelectionMapping mapping, InventoryColumnSelectionsRowItem rowItem, FdaValidationResult result)
         {
             const string EXPECTED_TYPE_MISMATCH_ERROR = "The expected type for the column {0} is {1}, but the actual type is {2}.";
-            if (rowItem == null)
+            if (rowItem == null || string.IsNullOrWhiteSpace(rowItem.SelectedItem))
             {
                 return;
             }
-            // if the user hasn't selected a column, then we can't validate the data type. Not all colulmn types are required, so it's not necessary panic worthy. just skip it.
-            string columnName = rowItem.SelectedItem;
-            if (string.IsNullOrEmpty(columnName))
+            string fieldName = rowItem.Name;
+            string shapefileColumnName = rowItem.SelectedItem;
+            //the expected type from mapping was created from the column names. If we can't find a match. Something really goofy is wrong.
+            try
             {
-                return;
+                Type expectedType = mapping.GetExpectedType(fieldName); //throws an exception if the column name isn't found.
+                Type actualType = siPointLayerTable.Columns[shapefileColumnName].DataType;
+                if (actualType != expectedType)
+                {
+                    string formattedString = string.Format(EXPECTED_TYPE_MISMATCH_ERROR, fieldName, expectedType.Name, actualType.Name);
+                    result.AddErrorMessage(formattedString);
+                }
             }
-            //the expected type from mapping was created from the column names. If we can't find a match. Something really goofy is wrong. 
-            Type expectedType = mapping.GetExpectedType(columnName);
-            if (expectedType == null)
+            catch
             {
-                throw new Exception();
-            }
-            Type actualType = siPointLayerTable.Columns[columnName].DataType;
-            if (actualType != expectedType)
-            {
-                string formattedString = string.Format(EXPECTED_TYPE_MISMATCH_ERROR, columnName, expectedType.Name, actualType.Name);
-                result.AddErrorMessage(formattedString);
+                throw new ArgumentException();
             }
         }
 
