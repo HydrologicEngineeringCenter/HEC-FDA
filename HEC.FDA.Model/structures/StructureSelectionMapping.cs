@@ -72,7 +72,6 @@ namespace HEC.FDA.Model.structures
             NotesCol = notes;
             DescriptionCol = description;
             NumberOfStructuresCol = numberOfStructures;
-            BuildExpectedTypesDictionary();
         }
 
         public StructureSelectionMapping(XElement inventoryMappingElem)
@@ -97,88 +96,8 @@ namespace HEC.FDA.Model.structures
             NotesCol = GetXMLValue(selections, NOTES);
             DescriptionCol = GetXMLValue(selections, DESCRIPTION);
             NumberOfStructuresCol = GetXMLValue(selections, NUMBER_OF_STRUCTURES);
-            BuildExpectedTypesDictionary();
         }
 
-        private void BuildExpectedTypesDictionary()
-        {
-            _expectedTypes = new Dictionary<string, Type>();
-
-            if (!string.IsNullOrEmpty(StructureIDCol))
-            {
-                _expectedTypes.Add(STRUCTURE_ID, typeof(string));
-            }
-
-            if (!string.IsNullOrEmpty(OccTypeCol))
-            {
-                _expectedTypes.Add(OCCUPANCY_TYPE, typeof(string));
-            }
-
-            if (!string.IsNullOrEmpty(FirstFloorElevCol))
-            {
-                _expectedTypes.Add(FIRST_FLOOR_ELEV, typeof(double));
-            }
-
-            if (!string.IsNullOrEmpty(StructureValueCol))
-            {
-                _expectedTypes.Add(STRUCTURE_VALUE, typeof(double));
-            }
-
-            if (!string.IsNullOrEmpty(FoundationHeightCol))
-            {
-                _expectedTypes.Add(FOUNDATION_HEIGHT, typeof(double));
-            }
-
-            if (!string.IsNullOrEmpty(GroundElevCol))
-            {
-                _expectedTypes.Add(GROUND_ELEV, typeof(double));
-            }
-
-            if (!string.IsNullOrEmpty(ContentValueCol))
-            {
-                _expectedTypes.Add(CONTENT_VALUE, typeof(double));
-            }
-
-            if (!string.IsNullOrEmpty(OtherValueCol))
-            {
-                _expectedTypes.Add(OTHER_VALUE, typeof(double));
-            }
-
-            if (!string.IsNullOrEmpty(VehicleValueCol))
-            {
-                _expectedTypes.Add(VEHICLE_VALUE, typeof(double));
-            }
-
-            if (!string.IsNullOrEmpty(BeginningDamageDepthCol))
-            {
-                _expectedTypes.Add(BEG_DAMAGE_DEPTH, typeof(double));
-            }
-
-            if (!string.IsNullOrEmpty(YearInConstructionCol))
-            {
-                _expectedTypes.Add(YEAR_IN_CONSTRUCTION, typeof(int));
-            }
-
-            if (!string.IsNullOrEmpty(NotesCol))
-            {
-                _expectedTypes.Add(NOTES, typeof(string));
-            }
-
-            if (!string.IsNullOrEmpty(DescriptionCol))
-            {
-                _expectedTypes.Add(DESCRIPTION, typeof(string));
-            }
-
-            if (!string.IsNullOrEmpty(NumberOfStructuresCol))
-            {
-                _expectedTypes.Add(NUMBER_OF_STRUCTURES, typeof(int));
-            }
-        }
-
-        public Type GetExpectedType(string valueName)
-        {
-            return _expectedTypes[valueName];
-        }
 
         private static string GetXMLValue(XElement parentElem, string elemName)
         {

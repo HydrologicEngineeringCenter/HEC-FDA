@@ -16,7 +16,7 @@ using Utility.ORM;
 
 namespace HEC.FDA.ViewModel.Inventory
 {
-    public  class ImportStructuresFromShapefileVM:BaseEditorVM
+    public class ImportStructuresFromShapefileVM : BaseEditorVM
     {
         #region Notes
         // Created By: q0heccdm
@@ -52,7 +52,7 @@ namespace HEC.FDA.ViewModel.Inventory
         public bool SelectedPathEnabled { get; }
         #endregion
         #region Constructors
-        public ImportStructuresFromShapefileVM( EditorActionManager actionManager) :base(actionManager)
+        public ImportStructuresFromShapefileVM(EditorActionManager actionManager) : base(actionManager)
         {
             _ColumnSelections = new InventoryColumnSelectionsVM();
             CurrentViewIsEnabled = true;
@@ -85,7 +85,7 @@ namespace HEC.FDA.ViewModel.Inventory
             {
                 System.Windows.MessageBox.Show(error, "Invalid Shapefile", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
-            } 
+            }
             else
             {
                 _ColumnSelections.Path = SelectedPath;
@@ -144,7 +144,7 @@ namespace HEC.FDA.ViewModel.Inventory
             if (!terrainValidation.IsValid)
             {
                 vr.AddErrorMessage(terrainValidation.ErrorMessage);
-            }            
+            }
 
             return vr;
         }
@@ -156,7 +156,7 @@ namespace HEC.FDA.ViewModel.Inventory
             if (missingDataManager.GetRows().Count > 0)
             {
                 StructureMissingElevationEditorVM vm = new(missingDataManager);
-                DynamicTabVM tab = new("Missing Data", vm, "missingData",false,false);
+                DynamicTabVM tab = new("Missing Data", vm, "missingData", false, false);
                 Navigate(tab);
                 missingValues = true;
             }
@@ -165,7 +165,7 @@ namespace HEC.FDA.ViewModel.Inventory
 
         private void SwitchToOcctypeLinkingVM()
         {
-            _OcctypeLinking ??= new InventoryOcctypeLinkingVM(_SelectedPath,_ColumnSelections.OccupancyTypeRow.SelectedItem);
+            _OcctypeLinking ??= new InventoryOcctypeLinkingVM(_SelectedPath, _ColumnSelections.OccupancyTypeRow.SelectedItem);
             //when we switch to the occtype linking vm, we need to check if the user has switched the occtype column name.
             //if it is the same as it was before, then this call won't do anything.
             _OcctypeLinking.UpdateOcctypeColumnSelectionName(_ColumnSelections.OccupancyTypeRow.SelectedItem);
@@ -174,7 +174,7 @@ namespace HEC.FDA.ViewModel.Inventory
 
         public bool NextButtonClicked()
         {
-            if(string.IsNullOrWhiteSpace(Storage.Connection.Instance.ProjectionFile) && ((TerrainElement)StudyCache.GetParentElementOfType<TerrainOwnerElement>().Elements[0] == null))
+            if (string.IsNullOrWhiteSpace(Storage.Connection.Instance.ProjectionFile) && ((TerrainElement)StudyCache.GetParentElementOfType<TerrainOwnerElement>().Elements[0] == null))
             {
                 System.Windows.MessageBox.Show("Please set your project projection in the study properties.", "Missing Projection", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
@@ -194,7 +194,7 @@ namespace HEC.FDA.ViewModel.Inventory
                         SwitchToOcctypeLinkingVM();
                         isValid = true;
                     }
-                }  
+                }
                 else
                 {
                     System.Windows.MessageBox.Show(validationResult.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -222,22 +222,20 @@ namespace HEC.FDA.ViewModel.Inventory
             PointFeatureLayer siPointLayer = new PointFeatureLayer("thisNameIsntUsed", SelectedPath);
             var siPointLayerTable = siPointLayer.FeatureTable();
 
-            StructureSelectionMapping mapping = _ColumnSelections.CreateSelectionMapping();
-
             CS.Collections.CustomObservableCollection<InventoryColumnSelectionsRowItem> optionalRows = _ColumnSelections.OptionalRows;
             CS.Collections.CustomObservableCollection<InventoryColumnSelectionsRowItem> requiredRows = _ColumnSelections.RequiredRows;
             foreach (InventoryColumnSelectionsRowItem rowItem in optionalRows)
             {
-                ValidateDataTypeForRow(siPointLayerTable, mapping, rowItem, result);
+                ValidateDataTypeForRow(siPointLayerTable, rowItem, result);
             }
             foreach (InventoryColumnSelectionsRowItem rowItem in requiredRows)
             {
-                ValidateDataTypeForRow(siPointLayerTable, mapping, rowItem, result);
+                ValidateDataTypeForRow(siPointLayerTable, rowItem, result);
             }
             return result;
         }
 
-        private static void ValidateDataTypeForRow(DataTable siPointLayerTable, StructureSelectionMapping mapping, InventoryColumnSelectionsRowItem rowItem, FdaValidationResult result)
+        private static void ValidateDataTypeForRow(DataTable siPointLayerTable, InventoryColumnSelectionsRowItem rowItem, FdaValidationResult result)
         {
             const string EXPECTED_TYPE_MISMATCH_ERROR = "The expected type for the column {0} is {1}, but the actual type is {2}.";
             if (rowItem == null || string.IsNullOrWhiteSpace(rowItem.SelectedItem))
@@ -246,20 +244,21 @@ namespace HEC.FDA.ViewModel.Inventory
             }
             string fieldName = rowItem.Name;
             string shapefileColumnName = rowItem.SelectedItem;
-            //the expected type from mapping was created from the column names. If we can't find a match. Something really goofy is wrong.
-            try
+            Type expectedType = ShapefileLoader.ExpectedTypes[fieldName];
+            Type actualType = siPointLayerTable.Columns[shapefileColumnName].DataType;
+
+            //this short circuits and lets FID be either int or string. it's handled in the importer. 
+            if (fieldName == StructureSelectionMapping.STRUCTURE_ID)
             {
-                Type expectedType = mapping.GetExpectedType(fieldName); //throws an exception if the column name isn't found.
-                Type actualType = siPointLayerTable.Columns[shapefileColumnName].DataType;
-                if (actualType != expectedType)
+                if (actualType == typeof(int) || actualType == typeof(string))
                 {
-                    string formattedString = string.Format(EXPECTED_TYPE_MISMATCH_ERROR, fieldName, expectedType.Name, actualType.Name);
-                    result.AddErrorMessage(formattedString);
+                    return;
                 }
             }
-            catch
+            if (actualType != expectedType)
             {
-                throw new ArgumentException();
+                string formattedString = string.Format(EXPECTED_TYPE_MISMATCH_ERROR, fieldName, expectedType.Name, actualType.Name);
+                result.AddErrorMessage(formattedString);
             }
         }
 
