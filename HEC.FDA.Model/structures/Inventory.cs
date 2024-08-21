@@ -147,7 +147,7 @@ namespace HEC.FDA.Model.structures
                 double val_cont = RASHelper.GetRowValueForColumn<double>(row, map.ContentValueCol, 0);
                 double val_vehic = RASHelper.GetRowValueForColumn<double>(row, map.VehicleValueCol, 0);
                 double val_other = RASHelper.GetRowValueForColumn<double>(row, map.OtherValueCol, 0);
-                string cbfips = RASHelper.GetRowValueForColumn(row, map.CBFips, "NA");
+                string cbfips = "not implemented yet";
                 double beginningDamage = RASHelper.GetRowValueForColumn<double>(row, map.BeginningDamageDepthCol, defaultMissingValue);
                 if (beginningDamage == defaultMissingValue)
                 {
