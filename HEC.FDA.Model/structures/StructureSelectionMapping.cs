@@ -11,23 +11,23 @@ namespace HEC.FDA.Model.structures
         private const string INVENTORY_COLUMN_SELECTIONS = "InventoryColumnSelections";
         private const string FIRST_FLOOR_ELEV_SELECTED = "FirstFloorElevSelected";
         private const string FROM_TERRAIN_FILE = "FromTerrainFileSelected";
-        private const string STRUCTURE_ID = "StructureID";
-        private const string OCCUPANCY_TYPE = "OccupancyType";
+        public const string STRUCTURE_ID = "StructureID";
+        public const string OCCUPANCY_TYPE = "OccupancyType";
 
-        private const string FIRST_FLOOR_ELEV = "FirstFloorElev";
-        private const string STRUCTURE_VALUE = "StructureValue";
-        private const string FOUNDATION_HEIGHT = "FoundationHeight";
+        public const string FIRST_FLOOR_ELEV = "FirstFloorElev";
+        public const string STRUCTURE_VALUE = "StructureValue";
+        public const string FOUNDATION_HEIGHT = "FoundationHeight";
 
-        private const string GROUND_ELEV = "GroundElev";
-        private const string CONTENT_VALUE = "ContentValue";
-        private const string OTHER_VALUE = "OtherValue";
-        private const string VEHICLE_VALUE = "VehicleValue";
-        private const string BEG_DAMAGE_DEPTH = "BegDamDepth";
+        public const string GROUND_ELEV = "GroundElev";
+        public const string CONTENT_VALUE = "ContentValue";
+        public const string OTHER_VALUE = "OtherValue";
+        public const string VEHICLE_VALUE = "VehicleValue";
+        public const string BEG_DAMAGE_DEPTH = "BegDamDepth";
 
-        private const string YEAR_IN_CONSTRUCTION = "YearInConstruction";
-        private const string NOTES = "Notes";
-        private const string DESCRIPTION = "Description";
-        private const string NUMBER_OF_STRUCTURES = "NumberOfStructures";
+        public const string YEAR_IN_CONSTRUCTION = "YearInConstruction";
+        public const string NOTES = "Notes";
+        public const string DESCRIPTION = "Description";
+        public const string NUMBER_OF_STRUCTURES = "NumberOfStructures";
 
         private const string VALUE = "Value";
 
@@ -72,6 +72,7 @@ namespace HEC.FDA.Model.structures
             NotesCol = notes;
             DescriptionCol = description;
             NumberOfStructuresCol = numberOfStructures;
+            BuildExpectedTypesDictionary();
         }
 
         public StructureSelectionMapping(XElement inventoryMappingElem)
@@ -96,39 +97,87 @@ namespace HEC.FDA.Model.structures
             NotesCol = GetXMLValue(selections, NOTES);
             DescriptionCol = GetXMLValue(selections, DESCRIPTION);
             NumberOfStructuresCol = GetXMLValue(selections, NUMBER_OF_STRUCTURES);
+            BuildExpectedTypesDictionary();
         }
 
-        private void SetExpectedTypes()
+        private void BuildExpectedTypesDictionary()
         {
-            _expectedTypes = new Dictionary<string, Type>()
-            {
-                { StructureIDCol, typeof(string) },
-                { OccTypeCol, typeof(string) },
-                { FirstFloorElevCol, typeof(double) },
-                { StructureValueCol, typeof(double) },
-                { FoundationHeightCol, typeof(double) },
-                { GroundElevCol, typeof(double) },
-                { ContentValueCol, typeof(double) },
-                { OtherValueCol, typeof(double) },
-                { VehicleValueCol, typeof(double) },
-                { BeginningDamageDepthCol, typeof(double) },
-                { YearInConstructionCol, typeof(int) },
-                { NotesCol, typeof(string) },
-                { DescriptionCol, typeof(string) },
-                { NumberOfStructuresCol, typeof(int) },
-                { DamageCatagory, typeof(string) },
-                { CBFips, typeof(string) }
-            };
-        }
+            _expectedTypes = new Dictionary<string, Type>();
 
-        public Type GetExpectedType(string columnName)
-        {
-            if (_expectedTypes == null)
+            if (!string.IsNullOrEmpty(StructureIDCol))
             {
-                SetExpectedTypes();
+                _expectedTypes.Add(STRUCTURE_ID, typeof(string));
             }
-            return _expectedTypes[columnName];
 
+            if (!string.IsNullOrEmpty(OccTypeCol))
+            {
+                _expectedTypes.Add(OCCUPANCY_TYPE, typeof(string));
+            }
+
+            if (!string.IsNullOrEmpty(FirstFloorElevCol))
+            {
+                _expectedTypes.Add(FIRST_FLOOR_ELEV, typeof(double));
+            }
+
+            if (!string.IsNullOrEmpty(StructureValueCol))
+            {
+                _expectedTypes.Add(STRUCTURE_VALUE, typeof(double));
+            }
+
+            if (!string.IsNullOrEmpty(FoundationHeightCol))
+            {
+                _expectedTypes.Add(FOUNDATION_HEIGHT, typeof(double));
+            }
+
+            if (!string.IsNullOrEmpty(GroundElevCol))
+            {
+                _expectedTypes.Add(GROUND_ELEV, typeof(double));
+            }
+
+            if (!string.IsNullOrEmpty(ContentValueCol))
+            {
+                _expectedTypes.Add(CONTENT_VALUE, typeof(double));
+            }
+
+            if (!string.IsNullOrEmpty(OtherValueCol))
+            {
+                _expectedTypes.Add(OTHER_VALUE, typeof(double));
+            }
+
+            if (!string.IsNullOrEmpty(VehicleValueCol))
+            {
+                _expectedTypes.Add(VEHICLE_VALUE, typeof(double));
+            }
+
+            if (!string.IsNullOrEmpty(BeginningDamageDepthCol))
+            {
+                _expectedTypes.Add(BEG_DAMAGE_DEPTH, typeof(double));
+            }
+
+            if (!string.IsNullOrEmpty(YearInConstructionCol))
+            {
+                _expectedTypes.Add(YEAR_IN_CONSTRUCTION, typeof(int));
+            }
+
+            if (!string.IsNullOrEmpty(NotesCol))
+            {
+                _expectedTypes.Add(NOTES, typeof(string));
+            }
+
+            if (!string.IsNullOrEmpty(DescriptionCol))
+            {
+                _expectedTypes.Add(DESCRIPTION, typeof(string));
+            }
+
+            if (!string.IsNullOrEmpty(NumberOfStructuresCol))
+            {
+                _expectedTypes.Add(NUMBER_OF_STRUCTURES, typeof(int));
+            }
+        }
+
+        public Type GetExpectedType(string valueName)
+        {
+            return _expectedTypes[valueName];
         }
 
         private static string GetXMLValue(XElement parentElem, string elemName)
