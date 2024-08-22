@@ -385,13 +385,20 @@ namespace HEC.FDA.Model.structures
             return aggregateConsequenceResults;
         }
         #endregion
-        public void Validate()
+        public void Validate() 
         {
             HasErrors = false;
             ErrorLevel = ErrorLevel.Unassigned;
             foreach (OccupancyType occupancyType in OccTypes.Values)
             {
                 occupancyType.Validate();
+                if(occupancyType.HasErrors)
+                {
+                    if(ErrorLevel < occupancyType.ErrorLevel)
+                    {
+                        ErrorLevel = occupancyType.ErrorLevel;
+                    }
+                }
             }
             foreach (Structure structure in Structures)
             {
