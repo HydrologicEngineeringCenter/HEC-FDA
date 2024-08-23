@@ -67,11 +67,6 @@ namespace Importer
                 ErrorType = ErrorType.NONE;
         }
 
-        internal void ConvertRatioParametersFromVersion1ToVersion2()
-        {
-            StandardDeviationOrMin = StandardDeviationOrMin/100 * CentralValue;
-            Maximum = Maximum/100 * CentralValue;
-        }
         public bool IsEqualTo(ErrorDistribution other)
         {
             if (other == null)
