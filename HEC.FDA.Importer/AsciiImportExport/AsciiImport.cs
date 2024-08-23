@@ -819,7 +819,6 @@ namespace Importer
             {
                 //Process fields for structure information (Error in values, FF stage error)
                 DetermineOcctypeStructureParameters();
-                ConvertRatioParametersFromVersion1ToVersion2();
             }
             //Anything else is data
             else
@@ -855,13 +854,6 @@ namespace Importer
                 TransferDataToFunction(type);
 
             }
-        }
-
-        private void ConvertRatioParametersFromVersion1ToVersion2()
-        {
-            _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.CONTENT).ConvertRatioParametersFromVersion1ToVersion2();
-            _OccupancyType.GetErrorDistribution(OccTypeStrucComponent.OTHER).ConvertRatioParametersFromVersion1ToVersion2();
-
         }
 
         void DetermineOcctypeStructureParameters()
