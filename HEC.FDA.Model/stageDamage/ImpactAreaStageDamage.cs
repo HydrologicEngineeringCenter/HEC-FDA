@@ -624,64 +624,75 @@ namespace HEC.FDA.Model.stageDamage
             //here I need to add to structure details: occ types, impact area,
             StagesToStrings(ref structureDetails);
             DepthsToStrings(ref structureDetails);
-            DamagesToStrings(StringGlobalConstants.STRUCTURE_ASSET_CATEGORY, deterministicOccupancyTypes, ref structureDetails);
-            DamagesToStrings(StringGlobalConstants.CONTENT_ASSET_CATEGORY, deterministicOccupancyTypes, ref structureDetails);
-            DamagesToStrings(StringGlobalConstants.OTHER_ASSET_CATEGORY, deterministicOccupancyTypes, ref structureDetails);
-            DamagesToStrings(StringGlobalConstants.VEHICLE_ASSET_CATEGORY, deterministicOccupancyTypes, ref structureDetails);
+
+            List<List<ConsequenceResult>> consequencesAllHydraulicProfiles = new();
+
+            foreach (IHydraulicProfile hydraulicProfile in _HydraulicDataset.HydraulicProfiles)
+            {
+                float[] stagesAtStructures = hydraulicProfile.GetWSE(Inventory.GetPointMs(), _HydraulicDataset.DataSource, _HydraulicParentDirectory);
+ 
+
+                List<ConsequenceResult> consequenceResultList = new();
+                for (int i = 0; i < stagesAtStructures.Length; i++)
+                {
+                    ConsequenceResult consequenceResult = Inventory.Structures[i].ComputeDamage(stagesAtStructures[i], deterministicOccupancyTypes);
+                    consequenceResultList.Add(consequenceResult);
+                }
+                consequencesAllHydraulicProfiles.Add(consequenceResultList);
+            }
+
+            DamagesToStrings(StringGlobalConstants.STRUCTURE_ASSET_CATEGORY, consequencesAllHydraulicProfiles, ref structureDetails);
+            DamagesToStrings(StringGlobalConstants.CONTENT_ASSET_CATEGORY, consequencesAllHydraulicProfiles, ref structureDetails);
+            DamagesToStrings(StringGlobalConstants.OTHER_ASSET_CATEGORY, consequencesAllHydraulicProfiles, ref structureDetails);
+            DamagesToStrings(StringGlobalConstants.VEHICLE_ASSET_CATEGORY, consequencesAllHydraulicProfiles, ref structureDetails);
 
             return structureDetails;
         }
 
-        private void DamagesToStrings(string assetType, List<DeterministicOccupancyType> deterministicOccupancyType, ref List<string> structureDetails)
+        private void DamagesToStrings(string assetType, List<List<ConsequenceResult>> deterministicOccupancyType, ref List<string> structureDetails)
         {
-            foreach (IHydraulicProfile hydraulicProfile in _HydraulicDataset.HydraulicProfiles)
+            //going to need to do a for loop and go through the list and hydraulic profiles at the same time 
+            for (int i = 0; i < _HydraulicDataset.HydraulicProfiles.Count; i++)
             {
-                float[] stagesAtStructures = hydraulicProfile.GetWSE(Inventory.GetPointMs(), _HydraulicDataset.DataSource, _HydraulicParentDirectory);
                 //first, create the header with the probability information on the hydraulic profile 
                 //that will go in structureDetails[0]
+                structureDetails[0] += $"{assetType} Damage At {_HydraulicDataset.HydraulicProfiles[i].Probability}AEP,";
 
-                structureDetails[0] += $"{assetType} Damage At {hydraulicProfile.Probability}AEP,";
-                List<ConsequenceResult> consequenceResultList = new();
-
-                for (int i = 0; i < stagesAtStructures.Length; i++)
-                {
-                    ConsequenceResult consequenceResult = Inventory.Structures[i].ComputeDamage(stagesAtStructures[i], deterministicOccupancyType);
-                    consequenceResultList.Add(consequenceResult);
-                }
+                List < ConsequenceResult > consequenceResultList = deterministicOccupancyType[i];
 
                 if (assetType == StringGlobalConstants.STRUCTURE_ASSET_CATEGORY)
                 {
-                    for (int i = 0; i < stagesAtStructures.Length; i++)
+                    for (int j = 0; j < consequenceResultList.Count; j++)
                     {
-                        double structureDamage = consequenceResultList[i].StructureDamage;
-                        structureDetails[i + 1] += $"{structureDamage},";
+                        double structureDamage = consequenceResultList[j].StructureDamage;
+                        structureDetails[j + 1] += $"{structureDamage},";
                     }
 
                 }
                 else if (assetType == StringGlobalConstants.CONTENT_ASSET_CATEGORY)
                 {
-                    for (int i = 0; i < stagesAtStructures.Length; i++)
+                    for (int j = 0; j < consequenceResultList.Count; j++)
                     {
-                        double contentDamage = consequenceResultList[i].ContentDamage;
-                        structureDetails[i + 1] += $"{contentDamage},";
+                        double contentDamage = consequenceResultList[j].ContentDamage;
+                        structureDetails[j + 1] += $"{contentDamage},";
                     }
 
                 }
                 else if (assetType == StringGlobalConstants.VEHICLE_ASSET_CATEGORY)
                 {
-                    for (int i = 0; i < stagesAtStructures.Length; i++)
+                    for (int j = 0; j < consequenceResultList.Count; j++)
                     {
-                        double vehicleDamage = consequenceResultList[i].VehicleDamage;
-                        structureDetails[i + 1] += $"{vehicleDamage},";
+                        double vehicleDamage = consequenceResultList[j].VehicleDamage;
+                        structureDetails[j + 1] += $"{vehicleDamage},";
                     }
 
                 }
                 else
                 {
-                    for (int i = 0; i < stagesAtStructures.Length; i++)
+                    for (int j = 0; j < consequenceResultList.Count; j++)
                     {
-                        double otherDamage = consequenceResultList[i].OtherDamage;
-                        structureDetails[i + 1] += $"{otherDamage},";
+                        double otherDamage = consequenceResultList[j].OtherDamage;
+                        structureDetails[j + 1] += $"{otherDamage},";
                     }
                 }
 
