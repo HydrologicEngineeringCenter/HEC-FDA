@@ -5,13 +5,19 @@ using Statistics.Distributions;
 
 namespace HEC.FDA.Model.structures
 {
-    public class ValueRatioWithUncertainty: Validation 
+    public class ValueRatioWithUncertainty : Validation
     {
         #region Fields
         private readonly double _StandardDeviationOrMin;
         private readonly double _CentralTendency;
         private readonly double _Max;
         private readonly IDistributionEnum _DistributionType;
+
+        private const string DistributionErrorMessage = "Only Deterministic, Normal, Triangular, and Uniform distributions can be used for value ratio uncertainty";
+        private const string ValueRatioParameterErrorMessage = "Value ratio parameter values must be non-negative";
+        private const string MaxMinErrorMessage = "The max must be larger than the minimum";
+        private const string MaxCentralTendencyErrorMessage = "The max must be larger than the central tendency";
+        private const string MinCentralTendencyErrorMessage = "The min or standard deviation must be less than the central tendency";
         #endregion
 
         #region Constructor 
@@ -23,6 +29,7 @@ namespace HEC.FDA.Model.structures
             _DistributionType = IDistributionEnum.Deterministic;
             AddRules();
         }
+
         public ValueRatioWithUncertainty(IDistributionEnum distributionEnum, double standardDeviationOrMin, double centralTendency, double max = double.MaxValue)
         {
             _DistributionType = distributionEnum;
@@ -31,6 +38,7 @@ namespace HEC.FDA.Model.structures
             _Max = max;
             AddRules();
         }
+
         public ValueRatioWithUncertainty(double deterministicValueRatio)
         {
             _CentralTendency = deterministicValueRatio;
@@ -44,10 +52,13 @@ namespace HEC.FDA.Model.structures
         #region Methods
         private void AddRules()
         {
-            AddSinglePropertyRule(nameof(_DistributionType), new Rule(() => _DistributionType.Equals(IDistributionEnum.Normal) || _DistributionType.Equals(IDistributionEnum.Uniform) || _DistributionType.Equals(IDistributionEnum.Deterministic) || _DistributionType.Equals(IDistributionEnum.Triangular), "Only Deterministic, Normal, Triangular, and Uniform distributions can be used for value ratio uncertainty", ErrorLevel.Fatal));
-            AddSinglePropertyRule(nameof(_StandardDeviationOrMin), new Rule(() => _StandardDeviationOrMin >= 0 && _Max >= 0 && _CentralTendency >= 0, "Value ratio parameter values must be non-negative", ErrorLevel.Fatal));
-            AddSinglePropertyRule(nameof(_Max), new Rule(() => _Max >= _StandardDeviationOrMin, "The max must be larger than the minimum", ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(_DistributionType), new Rule(() => _DistributionType.Equals(IDistributionEnum.Normal) || _DistributionType.Equals(IDistributionEnum.Uniform) || _DistributionType.Equals(IDistributionEnum.Deterministic) || _DistributionType.Equals(IDistributionEnum.Triangular), DistributionErrorMessage, ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(_StandardDeviationOrMin), new Rule(() => _StandardDeviationOrMin >= 0 && _Max >= 0 && _CentralTendency >= 0, ValueRatioParameterErrorMessage, ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(_Max), new Rule(() => _Max >= _StandardDeviationOrMin, MaxMinErrorMessage, ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(_Max), new Rule(() => _Max >= _CentralTendency, MaxCentralTendencyErrorMessage, ErrorLevel.Fatal));
+            AddSinglePropertyRule(nameof(_StandardDeviationOrMin), new Rule(() => _StandardDeviationOrMin <= _CentralTendency, MinCentralTendencyErrorMessage, ErrorLevel.Fatal));
         }
+
         public double Sample(double probability, bool computeIsDeterministic)
         {
             double sampledValueRatio;
@@ -70,7 +81,8 @@ namespace HEC.FDA.Model.structures
                         break;
                 }
 
-            } else
+            }
+            else
             {
                 switch (_DistributionType)
                 {
@@ -95,11 +107,13 @@ namespace HEC.FDA.Model.structures
                         break;
                 }
             }
+
             //do not allow for negative value ratios
             if (sampledValueRatio < 0)
             {
                 sampledValueRatio = 0;
             }
+
             return sampledValueRatio;
         }
         #endregion

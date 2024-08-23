@@ -34,7 +34,6 @@ namespace HEC.FDA.ModelTest.unittests.structures
             valueRatioWithUncertainty.Validate();
             foreach (PropertyRule rule in valueRatioWithUncertainty.RuleMap.Values)
             {
-                Assert.Single(rule.Errors);
                 Assert.Equal(HEC.MVVMFramework.Base.Enumerations.ErrorLevel.Fatal, rule.ErrorLevel);
             }
 
