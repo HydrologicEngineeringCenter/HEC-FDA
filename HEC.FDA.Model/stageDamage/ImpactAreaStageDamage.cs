@@ -768,7 +768,10 @@ namespace HEC.FDA.Model.stageDamage
                 }
             }
             Inventory.Validate();
-
+            if(Inventory.ErrorLevel > ErrorLevel)
+            {
+                ErrorLevel = Inventory.ErrorLevel;
+            }
         }
 
         public void ReportMessage(object sender, MessageEventArgs e)

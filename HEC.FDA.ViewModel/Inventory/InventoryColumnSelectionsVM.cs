@@ -21,22 +21,23 @@ namespace HEC.FDA.ViewModel.Inventory
         private readonly List<float> _StructureElevations = new List<float>();
 
         //required rows
-        private InventoryColumnSelectionsRowItem _StructureIDRow = new InventoryColumnSelectionsRowItem("Structure ID:", "Structure ID");
-        private InventoryColumnSelectionsRowItem _OccupancyTypeRow = new InventoryColumnSelectionsRowItem("Occupancy Type:", "Occupancy Type");
-        private InventoryColumnSelectionsRowItem _FirstFloorElevRow = new InventoryColumnSelectionsRowItem("First Floor Elevation Value:", "First Floor Elevation Value");
-        private InventoryColumnSelectionsRowItem _StructureValueRow = new InventoryColumnSelectionsRowItem("Structure Value:", "Structure Value");
-        private InventoryColumnSelectionsRowItem _FoundationHeightRow = new InventoryColumnSelectionsRowItem("Foundation Height:", "Foundation Height");
-        private InventoryColumnSelectionsRowItem _GroundElevRow = new InventoryColumnSelectionsRowItem("Ground Elevation Value:", "Ground Elevation Value");
+        private InventoryColumnSelectionsRowItem _StructureIDRow = new InventoryColumnSelectionsRowItem(StructureSelectionMapping.STRUCTURE_ID, "Structure ID");
+        private InventoryColumnSelectionsRowItem _OccupancyTypeRow = new InventoryColumnSelectionsRowItem(StructureSelectionMapping.OCCUPANCY_TYPE, "Occupancy Type");
+        private InventoryColumnSelectionsRowItem _FirstFloorElevRow = new InventoryColumnSelectionsRowItem(StructureSelectionMapping.FIRST_FLOOR_ELEV, "First Floor Elevation Value");
+        private InventoryColumnSelectionsRowItem _StructureValueRow = new InventoryColumnSelectionsRowItem(StructureSelectionMapping.STRUCTURE_VALUE, "Structure Value");
+        private InventoryColumnSelectionsRowItem _FoundationHeightRow = new InventoryColumnSelectionsRowItem(StructureSelectionMapping.FOUNDATION_HEIGHT, "Foundation Height");
+        private InventoryColumnSelectionsRowItem _GroundElevRow = new InventoryColumnSelectionsRowItem(StructureSelectionMapping.GROUND_ELEV, "Ground Elevation Value");
 
         //optional rows
-        private InventoryColumnSelectionsRowItem _ContentValueRow = new InventoryColumnSelectionsRowItem("Content Value:");
-        private InventoryColumnSelectionsRowItem _OtherValueRow = new InventoryColumnSelectionsRowItem("Other Value:");
-        private InventoryColumnSelectionsRowItem _VehicleValueRow = new InventoryColumnSelectionsRowItem("Vehicle Value:");
-        private InventoryColumnSelectionsRowItem _BegDamDepthRow = new InventoryColumnSelectionsRowItem("Beginning Damage Depth:");
-        private InventoryColumnSelectionsRowItem _YearInConstructionRow = new InventoryColumnSelectionsRowItem("Year In Construction:");
-        private InventoryColumnSelectionsRowItem _NotesRow = new InventoryColumnSelectionsRowItem("Notes/Metadata:");
-        private InventoryColumnSelectionsRowItem _DescriptionRow = new InventoryColumnSelectionsRowItem("Description:");
-        private InventoryColumnSelectionsRowItem _NumberOfStructuresRow = new InventoryColumnSelectionsRowItem("Number Of Structures:");
+        private InventoryColumnSelectionsRowItem _ContentValueRow = new InventoryColumnSelectionsRowItem(StructureSelectionMapping.CONTENT_VALUE, "Content Value");
+        private InventoryColumnSelectionsRowItem _OtherValueRow = new InventoryColumnSelectionsRowItem(StructureSelectionMapping.OTHER_VALUE, "Other Value");
+        private InventoryColumnSelectionsRowItem _VehicleValueRow = new InventoryColumnSelectionsRowItem(StructureSelectionMapping.VEHICLE_VALUE, "Vehicle Value");
+        private InventoryColumnSelectionsRowItem _BegDamDepthRow = new InventoryColumnSelectionsRowItem(StructureSelectionMapping.BEG_DAMAGE_DEPTH, "Beginning Damage Depth");
+        private InventoryColumnSelectionsRowItem _YearInConstructionRow = new InventoryColumnSelectionsRowItem(StructureSelectionMapping.YEAR_IN_CONSTRUCTION, "Year In Construction");
+        private InventoryColumnSelectionsRowItem _NotesRow = new InventoryColumnSelectionsRowItem(StructureSelectionMapping.NOTES, "Notes");
+        private InventoryColumnSelectionsRowItem _DescriptionRow = new InventoryColumnSelectionsRowItem(StructureSelectionMapping.DESCRIPTION, "Description");
+        private InventoryColumnSelectionsRowItem _NumberOfStructuresRow = new InventoryColumnSelectionsRowItem(StructureSelectionMapping.NUMBER_OF_STRUCTURES, "Number Of Structures");
+
         #endregion
         #region Properties
         public InventoryColumnSelectionsRowItem OccupancyTypeRow

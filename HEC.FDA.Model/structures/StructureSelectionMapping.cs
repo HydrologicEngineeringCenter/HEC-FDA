@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace HEC.FDA.Model.structures
@@ -10,25 +11,27 @@ namespace HEC.FDA.Model.structures
         private const string INVENTORY_COLUMN_SELECTIONS = "InventoryColumnSelections";
         private const string FIRST_FLOOR_ELEV_SELECTED = "FirstFloorElevSelected";
         private const string FROM_TERRAIN_FILE = "FromTerrainFileSelected";
-        private const string STRUCTURE_ID = "StructureID";
-        private const string OCCUPANCY_TYPE = "OccupancyType";
+        public const string STRUCTURE_ID = "StructureID";
+        public const string OCCUPANCY_TYPE = "OccupancyType";
 
-        private const string FIRST_FLOOR_ELEV = "FirstFloorElev";
-        private const string STRUCTURE_VALUE = "StructureValue";
-        private const string FOUNDATION_HEIGHT = "FoundationHeight";
+        public const string FIRST_FLOOR_ELEV = "FirstFloorElev";
+        public const string STRUCTURE_VALUE = "StructureValue";
+        public const string FOUNDATION_HEIGHT = "FoundationHeight";
 
-        private const string GROUND_ELEV = "GroundElev";
-        private const string CONTENT_VALUE = "ContentValue";
-        private const string OTHER_VALUE = "OtherValue";
-        private const string VEHICLE_VALUE = "VehicleValue";
-        private const string BEG_DAMAGE_DEPTH = "BegDamDepth";
+        public const string GROUND_ELEV = "GroundElev";
+        public const string CONTENT_VALUE = "ContentValue";
+        public const string OTHER_VALUE = "OtherValue";
+        public const string VEHICLE_VALUE = "VehicleValue";
+        public const string BEG_DAMAGE_DEPTH = "BegDamDepth";
 
-        private const string YEAR_IN_CONSTRUCTION = "YearInConstruction";
-        private const string NOTES = "Notes";
-        private const string DESCRIPTION = "Description";
-        private const string NUMBER_OF_STRUCTURES = "NumberOfStructures";
+        public const string YEAR_IN_CONSTRUCTION = "YearInConstruction";
+        public const string NOTES = "Notes";
+        public const string DESCRIPTION = "Description";
+        public const string NUMBER_OF_STRUCTURES = "NumberOfStructures";
 
         private const string VALUE = "Value";
+
+        private Dictionary<string, Type> _expectedTypes;
 
         public bool IsUsingFirstFloorElevation { get; }
         public bool IsUsingTerrainFile { get; }
@@ -47,9 +50,6 @@ namespace HEC.FDA.Model.structures
         public string NotesCol { get; }
         public string DescriptionCol { get; }
         public string NumberOfStructuresCol { get; }
-
-        public string DamageCatagory { get; }
-        public string CBFips { get; }
 
         public StructureSelectionMapping(bool FirstFloorElevationIsSelected, bool FromTerrainFileIsSelected, string structureIDRow,
             string occtype, string firstFloorElev, string structureValue, string foundHeight, string groundElev, string contentValue,
@@ -94,14 +94,15 @@ namespace HEC.FDA.Model.structures
             BeginningDamageDepthCol = GetXMLValue(selections, BEG_DAMAGE_DEPTH);
             YearInConstructionCol = GetXMLValue(selections, YEAR_IN_CONSTRUCTION);
             NotesCol = GetXMLValue(selections, NOTES);
-            DescriptionCol = GetXMLValue(selections, DESCRIPTION);     
-            NumberOfStructuresCol = GetXMLValue(selections, NUMBER_OF_STRUCTURES); 
+            DescriptionCol = GetXMLValue(selections, DESCRIPTION);
+            NumberOfStructuresCol = GetXMLValue(selections, NUMBER_OF_STRUCTURES);
         }
+
 
         private static string GetXMLValue(XElement parentElem, string elemName)
         {
             string xmlValue = string.Empty;
-            if(parentElem.Element(elemName) != null && parentElem.Element(elemName).Attribute(VALUE) != null)
+            if (parentElem.Element(elemName) != null && parentElem.Element(elemName).Attribute(VALUE) != null)
             {
                 xmlValue = parentElem.Element(elemName).Attribute(VALUE).Value;
             }
@@ -140,7 +141,7 @@ namespace HEC.FDA.Model.structures
             XElement rowElem = new(elemName);
             rowElem.SetAttributeValue(VALUE, value);
             return rowElem;
-        }  
+        }
 
     }
 }
