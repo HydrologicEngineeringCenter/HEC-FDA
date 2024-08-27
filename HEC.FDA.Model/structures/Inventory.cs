@@ -39,7 +39,7 @@ namespace HEC.FDA.Model.structures
             OccTypes = occTypes;
             PriceIndex = priceIndex;
             Projection studyProjection = Projection.FromFile(projectionFilePath);//Projection.FromFile returns Null if the path is bad. We'll check for null before we reproject. 
-            LoadStructuresFromSourceFiles(pointShapefilePath, map, null, false, impactAreaShapefilePath, studyProjection);
+            Structures = ShapefileLoader.LoadStructuresFromSourceFiles(pointShapefilePath, map, null, false, impactAreaShapefilePath, studyProjection, OccTypes);
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace HEC.FDA.Model.structures
             OccTypes = occTypes;
             PriceIndex = priceIndex;
             Projection studyProjection = RASHelper.GetProjectionFromTerrain(terrainPath);
-            LoadStructuresFromSourceFiles(pointShapefilePath, map, terrainPath, true, impactAreaShapefilePath, studyProjection);
+            Structures = ShapefileLoader.LoadStructuresFromSourceFiles(pointShapefilePath, map, terrainPath, true, impactAreaShapefilePath, studyProjection, OccTypes);
 
         }
 
@@ -96,75 +96,6 @@ namespace HEC.FDA.Model.structures
                 }
             }
             return uniqueDamageCategories;
-        }
-
-        private void LoadStructuresFromSourceFiles(string pointShapefilePath, StructureSelectionMapping map, string terrrainFilePath, bool updateGroundElevFromTerrain,
-            string ImpactAreaShapefilePath, Projection studyProjection)
-        {
-            PolygonFeatureLayer impactAreaFeatureLayer = new("ThisNameIsNotUsed", ImpactAreaShapefilePath);
-            List<Polygon> impactAreas = RASHelper.LoadImpactAreasFromSourceFiles(impactAreaFeatureLayer, studyProjection);
-            float[] groundelevs = Array.Empty<float>();
-            int defaultMissingValue = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE;
-            string defaultMissingStringValue = "EMPTY";
-            PointFeatureLayer structureFeatureLayer = new("ThisNameIsNotUsed", pointShapefilePath);
-            PointMs pointMs = new(structureFeatureLayer.Points().Select(p => p.PointM()));
-            if (updateGroundElevFromTerrain)
-            {
-                groundelevs = RASHelper.SamplePointsFromRaster(pointShapefilePath, terrrainFilePath, studyProjection);
-            }
-
-            for (int i = 0; i < structureFeatureLayer.FeatureCount(); i++)
-            {
-                //required parameters
-                PointM point = pointMs[i];
-                System.Data.DataRow row = structureFeatureLayer.FeatureRow(i);
-                string fid = RASHelper.GetRowValueForColumn(row, map.StructureIDCol, defaultMissingStringValue);
-                double val_struct = RASHelper.GetRowValueForColumn<double>(row, map.StructureValueCol, defaultMissingValue);
-                string occtype = RASHelper.GetRowValueForColumn(row, map.OccTypeCol, "NA");
-                string st_damcat = "NA";
-                if (OccTypes.ContainsKey(occtype))
-                {
-                    st_damcat = OccTypes[occtype].DamageCategory;
-                    occtype = OccTypes[occtype].Name;
-                }
-                //semi-required. We'll either have ff_elev given to us, or both ground elev and found_ht
-                double found_ht = RASHelper.GetRowValueForColumn<double>(row, map.FoundationHeightCol, defaultMissingValue); //not gauranteed
-                double ground_elv;
-                if (updateGroundElevFromTerrain)
-                {
-                    ground_elv = groundelevs[i];
-                }
-                else
-                {
-                    ground_elv = RASHelper.GetRowValueForColumn<double>(row, map.GroundElevCol, defaultMissingValue); //not gauranteed
-                }
-                double ff_elev = RASHelper.GetRowValueForColumn<double>(row, map.FirstFloorElevCol, defaultMissingValue); // not gauranteed  
-                if (ff_elev == defaultMissingValue)
-                {
-                    ff_elev = ground_elv + found_ht;
-                }
-                //optional parameters
-                double val_cont = RASHelper.GetRowValueForColumn<double>(row, map.ContentValueCol, 0);
-                double val_vehic = RASHelper.GetRowValueForColumn<double>(row, map.VehicleValueCol, 0);
-                double val_other = RASHelper.GetRowValueForColumn<double>(row, map.OtherValueCol, 0);
-                string cbfips = RASHelper.GetRowValueForColumn(row, map.CBFips, "NA");
-                double beginningDamage = RASHelper.GetRowValueForColumn<double>(row, map.BeginningDamageDepthCol, defaultMissingValue);
-                if (beginningDamage == defaultMissingValue)
-                {
-                    if (found_ht != defaultMissingValue)
-                    {
-                        beginningDamage = -found_ht;
-                    }
-                }
-                int numStructures = RASHelper.GetRowValueForColumn(row, map.NumberOfStructuresCol, 1);
-                int yearInService = RASHelper.GetRowValueForColumn(row, map.YearInConstructionCol, defaultMissingValue);
-                //TODO: handle number 
-                int impactAreaID = GetImpactAreaFID(point, impactAreas);
-                string notes = RASHelper.GetRowValueForColumn(row, map.NotesCol, "No Notes Provided");
-                string description = RASHelper.GetRowValueForColumn(row, map.DescriptionCol, "No Description Provided");
-                Structures.Add(new Structure(fid, point, ff_elev, val_struct, st_damcat, occtype, impactAreaID, val_cont,
-                    val_vehic, val_other, cbfips, beginningDamage, ground_elv, found_ht, yearInService, numStructures, notes, description));
-            }
         }
 
         public Inventory GetInventoryTrimmedToImpactArea(int impactAreaFID)
@@ -228,17 +159,7 @@ namespace HEC.FDA.Model.structures
             }
             return points;
         }
-        public static int GetImpactAreaFID(PointM point, List<Polygon> ImpactAreas)
-        {
-            for (int i = 0; i < ImpactAreas.Count; i++)
-            {
-                if (ImpactAreas[i].Contains(point))
-                {
-                    return i;
-                }
-            }
-            return -9999;
-        }
+
         internal List<string> StructureDetails(List<DeterministicOccupancyType> deterministicOccupancyTypes)
         {
             string header = Structure.ProduceDetailsHeader();
