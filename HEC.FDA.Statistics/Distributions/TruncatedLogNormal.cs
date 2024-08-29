@@ -13,7 +13,8 @@ namespace Statistics.Distributions
         private double _standardDeviation;
         private double _min;
         private double _max;
-        internal IRange<double> _ProbabilityRange;
+        private double _ProbabilityMin;
+        private double _ProbabilityMax;
 
         #region IDistribution Properties
         public override IDistributionEnum Type => IDistributionEnum.Normal;
@@ -36,7 +37,8 @@ namespace Statistics.Distributions
             //for reflection;
             Mean = 0;
             StandardDeviation = 1.0;
-            _ProbabilityRange = IRangeFactory.Factory(0.0, 1.0);
+            _ProbabilityMin = 0.0;
+            _ProbabilityMax = 1.0;
             Min = InverseCDF(0.0000000000001);
             Max = InverseCDF(1 - 0.0000000000001);
 
@@ -50,7 +52,8 @@ namespace Statistics.Distributions
             Min = minValue;
             Max = maxValue;
             Truncated = true;
-            _ProbabilityRange = IRangeFactory.Factory(0.0, 1.0);
+            _ProbabilityMin = 0.0;
+            _ProbabilityMax = 1.0;
             addRules();
 
         }
@@ -93,10 +96,10 @@ namespace Statistics.Distributions
         {
             if (Truncated)
             {
-                p = _ProbabilityRange.Min + (p) * (_ProbabilityRange.Max - _ProbabilityRange.Min);
+                p = _ProbabilityMin + (p) * (_ProbabilityMax - _ProbabilityMin);
             }
-            if (p <= _ProbabilityRange.Min) return Min;
-            if (p >= _ProbabilityRange.Max) return Max;
+            if (p <= _ProbabilityMin) return Min;
+            if (p >= _ProbabilityMax) return Max;
             //Normal sn = new Normal();
             return Math.Exp(Mean + Normal.StandardNormalInverseCDF(p) * StandardDeviation);
         }

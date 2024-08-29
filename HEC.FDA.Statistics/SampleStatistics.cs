@@ -50,7 +50,7 @@ namespace Statistics
         {
             get { return _skew; }
         }
-        public Utilities.IRange<double> Range { get; }
+
         public int SampleSize
         {
             get { return (int)_n; }
@@ -58,7 +58,6 @@ namespace Statistics
         public SampleStatistics(double[] data)
         {
             InitalizeStats(data);
-            Range = Utilities.IRangeFactory.Factory(_min, _max);
         }
         internal void InitalizeStats(IEnumerable<double> observations)
         {

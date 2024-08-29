@@ -11,7 +11,8 @@ namespace Statistics.Distributions
     public class TruncatedLogPearson3 : ContinuousDistribution
     {
 
-        internal IRange<double> _ProbabilityRange;
+        private double _ProbabilityMin;
+        private double _ProbabilityMax;
         private bool _Constructed;
 
         #region Properties
@@ -44,7 +45,8 @@ namespace Statistics.Distributions
             SampleSize = 1;
             Min = double.NegativeInfinity;
             Max = double.PositiveInfinity;
-            _ProbabilityRange = IRangeFactory.Factory(0D, 1D);
+            _ProbabilityMin = 0D;
+            _ProbabilityMax = 1D;
             addRules();
             BuildFromProperties();
             _Constructed = true;
@@ -151,7 +153,8 @@ namespace Statistics.Distributions
             //apparently we have done everything we need at this point.
             Max = max;
             Min = min;
-            _ProbabilityRange = IRangeFactory.Factory(pmin, pmax);
+            _ProbabilityMin = pmin;
+            _ProbabilityMax = pmax;
             //IsConstructed = true;
         }
         #region IDistribution Functions
@@ -170,8 +173,8 @@ namespace Statistics.Distributions
 
             if (_Constructed)
             {
-                if (x == Min) return _ProbabilityRange.Min;
-                if (x == Max) return _ProbabilityRange.Max;
+                if (x == Min) return _ProbabilityMin;
+                if (x == Max) return _ProbabilityMax;
             }
 
             if (x < Min) return 0;
@@ -190,7 +193,7 @@ namespace Statistics.Distributions
 
             if (Truncated && _Constructed)
             {
-                p = _ProbabilityRange.Min + (p) * (_ProbabilityRange.Max - _ProbabilityRange.Min);
+                p = _ProbabilityMin + (p) * (_ProbabilityMax - _ProbabilityMin);
             }
             if (!p.IsFinite())
             {
@@ -200,8 +203,8 @@ namespace Statistics.Distributions
             {
                 if (_Constructed) // object is constructed
                 {
-                    if (p <= _ProbabilityRange.Min) return Min;
-                    if (p >= _ProbabilityRange.Max) return Max;
+                    if (p <= _ProbabilityMin) return Min;
+                    if (p >= _ProbabilityMax) return Max;
                 }
             }
             PearsonIII d = new PearsonIII(Mean, StandardDeviation, Skewness, SampleSize);

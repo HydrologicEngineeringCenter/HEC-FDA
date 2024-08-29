@@ -26,7 +26,7 @@ namespace Utilities
         /// </summary>
         /// <param name="range"> The <see cref="IRange{T}"/> to be tested. </param>
         /// <returns> <see langword="true"/> if the specified <see cref="IRange{T}"/> contains finite numerical <see cref="IRange{T}.Min"/> and <see cref="IRange{T}.Max"/> values. <see langword="false"/> if the <see cref="IRange{T}.Min"/> or <see cref="IRange{T}.Max"/> values are <see cref="double.NaN"/>, <see cref="double.PositiveInfinity"/>, or <see cref="double.NegativeInfinity"/>. </returns>
-        public static bool IsFinite(this IRange<double> range) => range.Min.IsFinite() && range.Max.IsFinite();
+
         /// <summary>
         /// Tests an <see cref="IEnumerable{T}"/> for <see langword="null"/> or empty data sets.
         /// </summary>
@@ -139,14 +139,7 @@ namespace Utilities
         {
             return value.CompareTo(min) > (inclusiveMin ? -1 : 0) && value.CompareTo(max) < (inclusiveMax ? 1 : 0);
         }
-        public static bool IsOnRange<T>(this IRange<T> range, IRange<T> comparison)
-        {
-            //if ((double)range.Min).CompareTo((double)comparison.Min))
-            //{
 
-            //}
-            return true;
-        }
         /// <summary>
         /// Produces an <see cref="InvalidOperationException"/> message for objects implementing the <see cref="IValidate{T}"/> interface attempting an operation in an invalid state. (see: <seealso cref="IValidate{T}.IsValid"/>)
         /// </summary>
