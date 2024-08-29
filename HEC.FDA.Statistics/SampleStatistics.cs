@@ -16,6 +16,14 @@ namespace Statistics
         private double _skew;
         private int _n;
 
+        public double Min
+        {
+            get { return _min; }
+        }
+        public double Max
+        {
+            get { return _max; }
+        }
         public double Mean
         {
             get { return _mean; }

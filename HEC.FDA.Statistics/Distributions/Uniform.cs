@@ -104,10 +104,7 @@ namespace Statistics.Distributions
         public override double InverseCDF(double p){
             return Min +((Max-Min)*p);
         }
-        public override string Print(bool round = false) {
-           return "Uniform(range: {Min:"+Min+", Max:"+Max+"})";
-        }
-        public override string Requirements(bool printNotes) => RequiredParameterization(printNotes);
+
         public override bool Equals(IDistribution distribution){
             if (Type==distribution.Type){
                 Uniform dist = (Uniform)distribution;
@@ -131,7 +128,7 @@ namespace Statistics.Distributions
         public override IDistribution Fit(double[] sample)
         {
             ISampleStatistics stats = new SampleStatistics(sample);
-            return new Uniform(stats.Range.Min, stats.Range.Max, stats.SampleSize);
+            return new Uniform(stats.Min, stats.Max, stats.SampleSize);
         }
         #endregion
     }

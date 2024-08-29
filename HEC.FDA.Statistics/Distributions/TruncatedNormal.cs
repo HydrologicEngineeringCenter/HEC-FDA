@@ -128,8 +128,6 @@ namespace Statistics.Distributions
         }
 
 
-        public override string Print(bool round = false) => round ? Print(Mean, StandardDeviation, SampleSize) : $"Normal(mean: {Mean}, sd: {StandardDeviation}, sample size: {SampleSize})";
-        public override string Requirements(bool printNotes) => RequiredParameterization(printNotes);
         public override bool Equals(IDistribution distribution)
         {
             if (Type == distribution.Type)

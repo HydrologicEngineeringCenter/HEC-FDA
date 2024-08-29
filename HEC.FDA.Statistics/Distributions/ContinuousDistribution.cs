@@ -19,8 +19,6 @@ namespace Statistics
         public abstract bool Equals(IDistribution distribution);
         public abstract double InverseCDF(double p);
         public abstract double PDF(double x);
-        public abstract string Print(bool round = false);
-        public abstract string Requirements(bool printNotes);
         public abstract IDistribution Fit(double[] data);
         /// <summary>
         /// Generates a parametric bootstrap sample of the distribution.
@@ -31,7 +29,7 @@ namespace Statistics
         public IDistribution Sample(double[] packetOfRandomNumbers)
         {
 
-            if (packetOfRandomNumbers.Length < SampleSize) throw new ArgumentException($"The parametric bootstrap sample cannot be constructed using the {Print(true)} distribution. It requires at least {SampleSize} random value but only {packetOfRandomNumbers.Length} were provided.");
+            if (packetOfRandomNumbers.Length < SampleSize) throw new ArgumentException($"The parametric bootstrap sample cannot be constructed using the distribution. It requires at least {SampleSize} random value but only {packetOfRandomNumbers.Length} were provided.");
             double[] samples = new double[SampleSize];
             for (int i = 0; i < SampleSize; i++) samples[i] = this.InverseCDF(packetOfRandomNumbers[i]);
             return this.Fit(samples);

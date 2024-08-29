@@ -43,18 +43,6 @@ namespace Statistics
         /// <returns> The value from the distribution at the point of the non-exceedance probability <paramref name="p"/>.</returns>
         double InverseCDF(double p);
         /// <summary>
-        /// Prints a string describing the distribution.
-        /// </summary>
-        /// <param name="round"> <see langword="true"/> if some values should be rounded to produce a more readable string. </param>
-        /// <returns> A string in the form: <see cref="IDistribution.Type"/>(parameter1: value, parameter2: value, ...). </returns>
-        string Print(bool round = false);
-        /// <summary>
-        /// Prints a string describing the parameterization requirements for the distribution.
-        /// </summary>
-        /// <param name="printNotes"> Additional notes on the valid parameterization of the distribution, if any exist. </param>
-        /// <returns></returns>
-        string Requirements(bool printNotes);
-        /// <summary>
         /// Compares 2 distributions for <b>value</b> equality.
         /// </summary>
         /// <param name="distribution"> The distribution to be compared to the instance distribution. </param>

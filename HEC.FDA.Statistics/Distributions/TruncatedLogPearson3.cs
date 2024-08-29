@@ -207,10 +207,19 @@ namespace Statistics.Distributions
             PearsonIII d = new PearsonIII(Mean, StandardDeviation, Skewness, SampleSize);
             return Math.Pow(10, d.InverseCDF(p));
         }
-        public override string Print(bool round = false) => round ? Print(Mean, StandardDeviation, Skewness, SampleSize) : $"log PearsonIII(mean: {Mean}, sd: {StandardDeviation}, skew: {Skewness}, sample size: {SampleSize})";
-        public override string Requirements(bool printNotes) => RequiredParameterization(printNotes);
-        public override bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print(), StringComparison.InvariantCultureIgnoreCase) == 0 ? true : false;
         #endregion
+
+        public override bool Equals(IDistribution distribution)
+        {
+            if (!(distribution is TruncatedLogPearson3))
+            {
+                return false;
+            }
+            return ((TruncatedLogPearson3)distribution).Mean == Mean &&
+                   ((TruncatedLogPearson3)distribution).StandardDeviation == StandardDeviation &&
+                   ((TruncatedLogPearson3)distribution).Skewness == Skewness &&
+                   ((TruncatedLogPearson3)distribution).SampleSize == SampleSize;
+        }
 
         internal static string Print(double mean, double sd, double skew, Int64 n) => $"log PearsonIII(mean: {mean.Print()}, sd: {sd.Print()}, skew: {skew.Print()}, sample size: {Convert.ToDouble(n).Print()})";
         internal static string RequiredParameterization(bool printNotes = true)

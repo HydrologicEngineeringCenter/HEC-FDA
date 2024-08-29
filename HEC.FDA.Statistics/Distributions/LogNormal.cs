@@ -93,9 +93,16 @@ namespace Statistics.Distributions
             if (p >= 1) return double.PositiveInfinity;
             return Math.Exp(Mean+Normal.StandardNormalInverseCDF(p)*StandardDeviation);
         }
-        public override string Print(bool round = false) => round ? Print(Mean, StandardDeviation, SampleSize) : $"LogNormal(mean: {Mean}, sd: {StandardDeviation}, sample size: {SampleSize})";
-        public override string Requirements(bool printNotes) => RequiredParameterization(printNotes);
-        public override bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0;
+        public override bool Equals(IDistribution distribution)
+        {
+            if (!(distribution is LogNormal))
+            {
+                return false; 
+            }
+            return ((LogNormal)distribution).Mean == Mean &&
+                   ((LogNormal)distribution).StandardDeviation == StandardDeviation &&
+                   ((LogNormal)distribution).SampleSize == SampleSize;
+        }
         #endregion
 
         internal static string Print(double mean, double sd, Int64 n) => $"LogNormal(mean: {mean}, sd: {sd}, sample size: {n})";

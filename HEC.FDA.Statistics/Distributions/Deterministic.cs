@@ -72,16 +72,6 @@ namespace Statistics.Distributions
                 return 0;
             }
         }
-
-        public override string Print(bool round = false)
-        {
-            return $"The Value is {Value}";
-        }
-
-        public override string Requirements(bool printNotes)
-        {
-            return "A value is required";
-        }
         public override IDistribution Fit(double[] data)
         {
             ISampleStatistics stats = new SampleStatistics(data);

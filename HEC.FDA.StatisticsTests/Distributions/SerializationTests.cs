@@ -59,6 +59,15 @@ namespace StatisticsTests.Distributions
             Assert.True(d.Equals(d2));
         }
         [Theory]
+        [InlineData(2.33, .033d, .022, 1d, 4d, 1)]
+        public void SerializationRoundTrip_TruncatedLogPearsonIII(double mean, double sd, double skew, double min, double max, int n)
+        {
+            IDistribution d = new TruncatedLogPearson3(mean, sd, skew, min, max, n);
+            XElement ele = d.ToXML();
+            IDistribution d2 = ContinuousDistribution.FromXML(ele);
+            Assert.True(d.Equals(d2));
+        }
+        [Theory]
         [InlineData(3.4, 4.5, 1)]
         public void SerializationRoundTrip_Uniform(double min, double max, int n)
         {

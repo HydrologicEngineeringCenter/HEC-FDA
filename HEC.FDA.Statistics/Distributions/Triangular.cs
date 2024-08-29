@@ -157,10 +157,6 @@ namespace Statistics.Distributions
                 return Max;
             }
         }
-        public override string Print(bool round = false){
-           return "Tringular(parameters: {Min:"+Min+", Max:"+Max+", Mostlikely:"+MostLikely+"})";
-        }
-        public override string Requirements(bool printNotes) => RequiredParameterization(printNotes);
         public override bool Equals(IDistribution distribution){
             if (Type==distribution.Type){
                 Triangular dist = (Triangular)distribution;
@@ -180,7 +176,7 @@ namespace Statistics.Distributions
         public override IDistribution Fit(double[] sample)
         {
             ISampleStatistics stats = new SampleStatistics(sample);
-            return new Triangular(stats.Range.Min, stats.Mean, stats.Range.Max, stats.SampleSize);
+            return new Triangular(stats.Min, stats.Mean, stats.Max, stats.SampleSize);
         }
 
         #endregion

@@ -29,10 +29,8 @@ namespace Statistics
         /// The sample skewness or average cubbed deviation of the sample values from the mean - measuring asymmetry in the distribution of sample values, see https://en.wikipedia.org/wiki/Skewness.
         /// </summary>
         double Skewness { get; }
-        /// <summary>
-        /// The inclusive range of sample value, e.g. [min, max].
-        /// </summary>
-        Utilities.IRange<double> Range { get; }
+        double Max {  get; }
+        double Min { get; }
         /// <summary>
         /// The number of observations in the sample.
         /// </summary>
