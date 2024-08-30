@@ -148,7 +148,7 @@ namespace Statistics.Distributions
                 if (!min.IsFinite()) min = InverseCDF(pmin);
                 if (!max.IsFinite()) max = InverseCDF(pmax);
                 if (pmin > 0.25)
-                    throw new InvalidConstructorArgumentsException($"The log Pearson III object is not constructable because 50% or more of its distribution returns {double.NegativeInfinity} and {double.PositiveInfinity}.");
+                    throw new Exception($"The log Pearson III object is not constructable because 50% or more of its distribution returns {double.NegativeInfinity} and {double.PositiveInfinity}.");
             }
             //apparently we have done everything we need at this point.
             Max = max;
@@ -223,16 +223,6 @@ namespace Statistics.Distributions
                    ((TruncatedLogPearson3)distribution).Skewness == Skewness &&
                    ((TruncatedLogPearson3)distribution).SampleSize == SampleSize;
         }
-
-        internal static string Print(double mean, double sd, double skew, Int64 n) => $"log PearsonIII(mean: {mean.Print()}, sd: {sd.Print()}, skew: {skew.Print()}, sample size: {Convert.ToDouble(n).Print()})";
-        internal static string RequiredParameterization(bool printNotes = true)
-        {
-            string s = $"The log PearsonIII distribution requires the following parameterization: {Parameterization()}.";
-            if (printNotes) s += RequirementNotes();
-            return s;
-        }
-        internal static string Parameterization() => $"log PearsonIII(mean: (0, {Math.Log10(double.MaxValue).Print()}], sd: (0, {Math.Log10(double.MaxValue).Print()}], skew: [{(Math.Log10(double.MaxValue) * -1).Print()}, {Math.Log10(double.MaxValue).Print()}], sample size: > 0)";
-        internal static string RequirementNotes() => $"The distribution parameters are computed from log base 10 random numbers (e.g. the log Pearson III distribution is a distribution of log base 10 Pearson III distributed random values). Therefore the mean and standard deviation parameters must be positive finite numbers and while a large range of numbers are acceptable a relative small rate will produce meaningful results.";
 
         public override IDistribution Fit(double[] sample)
         {

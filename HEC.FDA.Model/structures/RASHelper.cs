@@ -40,7 +40,7 @@ public static class RASHelper
         static PointMs ReprojectPoints(Projection targetProjection, Projection originalProjection, PointMs pointMs)
         {
 
-            if (!targetProjection.IsNull())
+            if (!(targetProjection == null))
             {
                 if (!targetProjection.IsEqual(originalProjection))
                 {
@@ -199,7 +199,7 @@ where T : struct
     {
         List<Polygon> polygons = impactAreaSet.Polygons().ToList();
         Projection impactAreaPrj = GetVectorProjection(impactAreaSet);
-        if (studyProjection.IsNull())
+        if (studyProjection == null)
         {
             return polygons;
         }

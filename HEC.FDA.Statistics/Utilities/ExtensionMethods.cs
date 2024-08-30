@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
 using System.Text;
 
 namespace Utilities
@@ -9,89 +11,32 @@ namespace Utilities
     /// </summary>
     public static class ExtensionMethods
     {
-        const double _3 = 0.001;
-        const double _4 = 0.0001;
-        const double _5 = 0.00001;
-        const double _6 = 0.000001;
-        const double _7 = 0.0000001;
         /// <summary>
-        /// Checks <see cref="double"/> for value equality within 3 significant digits.
+        /// Extension function tests <see cref="double"/> variables for finite numerical values.
         /// </summary>
-        /// <param name="left"> The instance <see cref="double"/>. </param>
-        /// <param name="right"> The <see cref="double"/> to be compared to instance value. </param>
-        /// <returns> <see langword="true"/> if the values are equal, <see langword="false"/> otherwise. </returns>
-        public static bool Equals3DigitPrecision(this double left, double right)
-        {
-            return Math.Abs(left - right) < _3;
-        }
-
+        /// <param name="x"> The <see cref="double"/> value to be tested. </param>
+        /// <returns> <see langword="true"/> if the specified <see cref="double"/> a finite numerical value. <see langword="false"/> if the <see cref="double"/> value is <see cref="double.NaN"/>, <see cref="double.PositiveInfinity"/>, or <see cref="double.NegativeInfinity"/>. </returns>
+        public static bool IsFinite(this double x) => !double.IsNaN(x) && !double.IsInfinity(x) ? true : false;
         /// <summary>
-        /// Checks <see cref="double"/> for value equality within 4 significant digits.
+        /// Tests if the value is on the range specified by the <paramref name="min"/> and <paramref name="max"/> parameters.
         /// </summary>
-        /// <param name="left"> The instance <see cref="double"/>. </param>
-        /// <param name="right"> The <see cref="double"/> to be compared to instance value. </param>
-        /// <returns> <see langword="true"/> if the values are equal, <see langword="false"/> otherwise. </returns>
-        public static bool Equals4DigitPrecision(this double left, double right)
-        {
-            return Math.Abs(left - right) < _4;
-        }
-        /// <summary>
-        /// Checks <see cref="double"/> for value equality within 5 significant digits.
-        /// </summary>
-        /// <param name="left"> The instance <see cref="double"/>. </param>
-        /// <param name="right"> The <see cref="double"/> to be compared to instance value. </param>
-        /// <returns> <see langword="true"/> if the values are equal, <see langword="false"/> otherwise. </returns>
-        public static bool Equals5DigitPrecision(this double left, double right)
-        {
-            return Math.Abs(left - right) < _5;
-        }
-        /// <summary>
-        /// Checks <see cref="double"/> for value equality within 6 significant digits.
-        /// </summary>
-        /// <param name="left"> The instance <see cref="double"/>. </param>
-        /// <param name="right"> The <see cref="double"/> to be compared to instance value. </param>
-        /// <returns> <see langword="true"/> if the values are equal, <see langword="false"/> otherwise. </returns>
-        public static bool Equals6DigitPrecision(this double left, double right)
-        {
-            return Math.Abs(left - right) < _6;
-        }
-        /// <summary>
-        /// Checks <see cref="double"/> for value equality within 7 significant digits.
-        /// </summary>
-        /// <param name="left"> The instance <see cref="double"/>. </param>
-        /// <param name="right"> The <see cref="double"/> to be compared to instance value. </param>
-        /// <returns> <see langword="true"/> if the values are equal, <see langword="false"/> otherwise. </returns>
-        public static bool Equals7DigitPrecision(this double left, double right)
-        {
-            return Math.Abs(left - right) < _7;
-        }
-        /// <summary>
-        /// Converts a <see cref="long"/> value to an <see cref="int"/> value.
-        /// </summary>
+        /// <typeparam name="T"> A <see cref="Type"/> that implements the <see cref="IComparable"/> interface. </typeparam>
         /// <param name="value"></param>
-        /// <returns> An <see cref="int"/> value. Returns the <see cref="int.MaxValue"/> if the <see cref="long"/> value exceeds the <see cref="int.MaxValue"/>. </returns>
-        public static int CastToInt(this long value)
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <param name="inclusiveMin"> <see langword="true"/> if the <paramref name="min"/> is a valid part of the range, <see langword="false"/> otherwise. </param>
+        /// <param name="inclusiveMax"> <see langword="true"/> if the <paramref name="max"/> is a valid part of the range, <see langword="false"/> otherwise. </param>
+        /// <returns> <see langword="true"/> if the value is on the specified range, <see langword="false"/> otherwise. </returns>
+        public static bool IsOnRange<T>(this T value, T min, T max, bool inclusiveMin = true, bool inclusiveMax = true) where T : INumber<T>
         {
-            try
-            {
-                return Convert.ToInt32(value);
-            }
-            catch (OverflowException)
-            {
-                return int.MaxValue;
-            }
+            return value.CompareTo(min) > (inclusiveMin ? -1 : 0) && value.CompareTo(max) < (inclusiveMax ? 1 : 0);
         }
         /// <summary>
-        /// Provides a human readable representation of an <see cref="double"/> value, using rounding to reduce decimal values to 2 digits and rounding to shorten very small or large values.
+        /// Tests an <see cref="IEnumerable{T}"/> for <see langword="null"/> or empty data sets.
         /// </summary>
-        /// <param name="x"></param>
-        /// <returns></returns>
-        public static string Print(this double x) => x.IsOnRange(-1000000, 1000000, false, false) ? string.Format("{0:n}", x) : x.ToString("E2");
-        /// <summary>
-        /// Provides a human readable representation of an <see cref="int"/> value, using scientific notation to shorten the representation of very small or large values.
-        /// </summary>
-        /// <param name="x"></param>
-        /// <returns></returns>
-        public static string Print(this int x) => x.IsOnRange(-1000000, 1000000, false, false) ? string.Format("{0:n0}", x) : x.ToString("E2");
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data"> The <see cref="IEnumerable{T}"/> data to be tested. </param>
+        /// <returns> <see langword="true"/> if the specified <see cref="IEnumerable{T}"/> is not <see langword="null"/> and contains one or more elements, <see langword="false"/> otherwise. </returns>
+        public static bool IsNullOrEmpty<T>(this IEnumerable<T> data) => data == null || !data.Any() ? true : false;
     }
 }

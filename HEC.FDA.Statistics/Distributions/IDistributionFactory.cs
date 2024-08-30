@@ -13,31 +13,8 @@ namespace Statistics
         //TODO: Validate
         //TODO: Call other constructors with inputs and IDistributions Enum (may require switch case on enum values) 
         
-        /// <summary>
-        /// Prints a <see cref="string"/> describing the parameterization requirement for the specified <see cref="IDistributionEnum"/>.
-        /// </summary>
-        /// <param name="type"> The type of distribution to analyze. </param>
-        /// <returns> A <see cref="string"/> description. </returns>
-        public static string PrintParamaterizationRequirements(IDistributionEnum type)
-        {
-            switch (type) 
-            {
-
-                case IDistributionEnum.LogPearsonIII:
-                    return Distributions.LogPearson3.RequiredParameterization(true);
-                case IDistributionEnum.Normal:
-                    return Distributions.Normal.RequiredParameterization(true);
-                case IDistributionEnum.Triangular:
-                    return Distributions.Triangular.RequiredParameterization(true);
-                case IDistributionEnum.Uniform:
-                    return Distributions.Uniform.RequiredParameterization(true);
-                case IDistributionEnum.TruncatedNormal:
-                    //return Distributions.TruncatedDistribution.RequiredParameterization(true);
-                case IDistributionEnum.NotSupported:
-                default:
-                    throw new NotImplementedException();
-            }
-        }
+        
+    
         /// <summary>
         /// we have to keep this because of IDistribution
         /// </summary>

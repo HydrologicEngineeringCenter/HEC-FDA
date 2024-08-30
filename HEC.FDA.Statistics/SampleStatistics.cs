@@ -133,9 +133,5 @@ namespace Statistics
             _skew = ((nd) * SkewSums) / ((nd - 1.0) * (nd - 2.0) * (s*s*s));
             //_kurtosis = (ksums) - ((3.0 * (System.Math.Pow((nd - 1.0), 2.0))) / ((nd - 2.0) * (nd - 3.0)));
         }
-        public IMessageLevels Validate(Utilities.IValidator<ISampleStatistics> validator, out IEnumerable<IMessage> msgs)
-        {
-            return validator.IsValid(this, out msgs);
-        }
     }
 }
