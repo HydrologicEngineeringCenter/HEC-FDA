@@ -116,16 +116,6 @@ namespace Statistics.Distributions
         }
         #endregion
 
-        internal static string Print(double mean, double sd, Int64 n) => $"LogNormal(mean: {mean.Print()}, sd: {sd.Print()}, sample size: {Convert.ToDouble(n).Print()})";
-        public static string RequiredParameterization(bool printNotes)
-        {
-            string msg = $"The Log Normal distribution requires the following parameterization: {Parameterization()}.";
-            if (printNotes) msg += $" {RequirementNotes()}";
-            return msg;
-        }
-        private static string Parameterization() => $"LogNormal(mean: [{double.MinValue.Print()}, {double.MaxValue.Print()}], sd: [0, {double.MaxValue.Print()}], sample size: > 0)";
-        private static string RequirementNotes() => $"The parameters should reflect the log-scale random number values.";
-
         public override IDistribution Fit(double[] sample)
         {
             for (int i = 0; i < sample.Count(); i++)
