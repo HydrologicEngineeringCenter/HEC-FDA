@@ -2,6 +2,7 @@
 using HEC.MVVMFramework.Base.Enumerations;
 using Statistics;
 using Statistics.Distributions;
+using System;
 
 namespace HEC.FDA.Model.structures
 {
@@ -12,6 +13,7 @@ namespace HEC.FDA.Model.structures
         private readonly double _CentralTendency;
         private readonly double _Max;
         private readonly IDistributionEnum _DistributionType;
+
 
         private const string DistributionErrorMessage = "Only Deterministic, Normal, Triangular, and Uniform distributions can be used for value ratio uncertainty";
         private const string ValueRatioParameterErrorMessage = "Value ratio parameter values must be non-negative";
@@ -52,14 +54,32 @@ namespace HEC.FDA.Model.structures
         #region Methods
         private void AddRules()
         {
-            AddSinglePropertyRule(nameof(_DistributionType), new Rule(() => _DistributionType.Equals(IDistributionEnum.Normal) || _DistributionType.Equals(IDistributionEnum.Uniform) || _DistributionType.Equals(IDistributionEnum.Deterministic) || _DistributionType.Equals(IDistributionEnum.Triangular), DistributionErrorMessage, ErrorLevel.Fatal));
             AddSinglePropertyRule(nameof(_StandardDeviationOrMin), new Rule(() => _StandardDeviationOrMin >= 0 && _Max >= 0 && _CentralTendency >= 0, ValueRatioParameterErrorMessage, ErrorLevel.Fatal));
             AddSinglePropertyRule(nameof(_Max), new Rule(() => _Max >= _StandardDeviationOrMin, MaxMinErrorMessage, ErrorLevel.Fatal));
-            AddSinglePropertyRule(nameof(_Max), new Rule(() => _Max >= _CentralTendency, MaxCentralTendencyErrorMessage, ErrorLevel.Fatal));
-            AddSinglePropertyRule(nameof(_StandardDeviationOrMin), new Rule(() => _StandardDeviationOrMin <= _CentralTendency, MinCentralTendencyErrorMessage, ErrorLevel.Fatal));
+            Func<bool> validateMaxLargerThanCenter = MaxGreaterThanCentral;
+            AddSinglePropertyRule(nameof(_Max), new Rule(validateMaxLargerThanCenter, MaxCentralTendencyErrorMessage, ErrorLevel.Fatal));
+            Func<bool> validateMinLessThanCentral = MinLessThanCentral;
+            AddSinglePropertyRule(nameof(_StandardDeviationOrMin), new Rule(validateMinLessThanCentral, MinCentralTendencyErrorMessage, ErrorLevel.Fatal));
         }
 
-        public double Sample(double probability, bool computeIsDeterministic)
+        private bool MaxGreaterThanCentral()
+        {
+            if (_DistributionType.Equals(IDistributionEnum.Deterministic))
+            {
+                return true; //because this doesn't matter for deterministic
+            }
+            return _Max >= _CentralTendency;
+        }
+        private bool MinLessThanCentral()
+        {
+            if (_DistributionType.Equals(IDistributionEnum.Deterministic))
+            {
+                return true; //because this doesn't matter for deterministic
+            }
+            return _StandardDeviationOrMin <= _CentralTendency;
+        }
+
+            public double Sample(double probability, bool computeIsDeterministic)
         {
             double sampledValueRatio;
             if (computeIsDeterministic)
