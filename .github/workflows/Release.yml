@@ -5,6 +5,9 @@ on:
     tags:
       - "v*.*.*"
 
+env:
+  Project_Name: HEC.FDA.View/HEC.FDA.View.csproj
+
 jobs:
   Build:
     runs-on: windows-latest                                      
@@ -35,15 +38,20 @@ jobs:
         echo "VERSION=$VERSION" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       
     - name: Publish
-      run: dotnet publish -c Release -v quiet /p:Version=${{ env.VERSION }} HEC.FDA.View/HEC.FDA.View.csproj
+      shell: pwsh
+      run: |
+        $PUBLISH_OUT = $pwd/TO-PACKAGE/
+        echo $PUBLISH_OUT >> $GITHUB_ENV
+        dotnet publish -c Release -v quiet /p:Version=${{ env.VERSION }} -o $PUBLISH_OUT ${{ env.PROJECT_NAME }}
 
     - name: Zip Release Package
       shell: pwsh
       run: |
-        $root_path = Get-Location
-        Compress-Archive -Path "$root_path/HEC.FDA.View/bin/Any CPU/Release/net8.0/win-x64/" -DestinationPath "$root_path/HEC-FDA-${env:VERSION}.zip"
+        $ZIP_OUT = $pwd/PACKAGED/HEC-FDA-${{ env.VERSION }}.zip
+        echo $ZIP_OUT >> $GITHUB_ENV
+        Compress-Archive -Path ${{ env.PUBLISH_OUT }} -DestinationPath $ZIP_OUT
 
     - name: Release
       uses: softprops/action-gh-release@v2
       with:
-          files: "**/*.zip"
+          files: ${{ env.ZIP_OUT }}
