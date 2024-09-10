@@ -35,14 +35,14 @@ jobs:
       run: |
         $TAG = $env:GITHUB_REF -replace 'refs/tags/', ''
         $VERSION = $TAG -replace '^v', ''
-        echo "VERSION=$VERSION" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
       
     - name: Publish
       shell: pwsh
       run: |
         echo "The version is ${{ env.VERSION }}"
         $PUBLISH_OUT = "${pwd}/TO-PACKAGE/"
-        echo $PUBLISH_OUT >> $GITHUB_ENV
+        echo "PUBLISH_OUT=$PUBLISH_OUT" >> $GITHUB_ENV
         dotnet publish -c Release -v quiet /p:Version=${{ env.VERSION }} -o $PUBLISH_OUT ${{ env.PROJECT_NAME }}
 
     - name: Zip Release Package
@@ -50,7 +50,7 @@ jobs:
       run: |
         echo "Published to ${{ env.PUBLISH_OUT }}"
         $ZIP_OUT = "${pwd}/PACKAGED/HEC-FDA-${{ env.VERSION }}.zip"
-        echo $ZIP_OUT >> $GITHUB_ENV
+        echo "ZIP_OUT=$ZIP_OUT" >> $GITHUB_ENV
         Compress-Archive -Path ${{ env.PUBLISH_OUT }} -DestinationPath $ZIP_OUT
 
     - name: Release
