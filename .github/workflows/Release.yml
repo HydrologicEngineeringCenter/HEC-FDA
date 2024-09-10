@@ -36,23 +36,22 @@ jobs:
         $TAG = $env:GITHUB_REF -replace 'refs/tags/', ''
         $VERSION = $TAG -replace '^v', ''
         echo "VERSION=$VERSION" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-        echo "The version is " + ${{ env.VERSION }}
       
     - name: Publish
       shell: pwsh
       run: |
+        echo "The version is ${{ env.VERSION }}"
         $PUBLISH_OUT = "${pwd}/TO-PACKAGE/"
         echo $PUBLISH_OUT >> $GITHUB_ENV
         dotnet publish -c Release -v quiet /p:Version=${{ env.VERSION }} -o $PUBLISH_OUT ${{ env.PROJECT_NAME }}
-        echo "Published to " + ${{ env.PUBLISH_OUT }}
 
     - name: Zip Release Package
       shell: pwsh
       run: |
+        echo "Published to ${{ env.PUBLISH_OUT }}"
         $ZIP_OUT = "${pwd}/PACKAGED/HEC-FDA-${{ env.VERSION }}.zip"
         echo $ZIP_OUT >> $GITHUB_ENV
         Compress-Archive -Path ${{ env.PUBLISH_OUT }} -DestinationPath $ZIP_OUT
-        echo "Compressed to " + ${{ env.ZIP_OUT }}
 
     - name: Release
       uses: softprops/action-gh-release@v2
