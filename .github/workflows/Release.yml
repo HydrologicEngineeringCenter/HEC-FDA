@@ -40,14 +40,14 @@ jobs:
     - name: Publish
       shell: pwsh
       run: |
-        $PUBLISH_OUT = $pwd/TO-PACKAGE/
+        $PUBLISH_OUT = "${pwd}/TO-PACKAGE/"
         echo $PUBLISH_OUT >> $GITHUB_ENV
         dotnet publish -c Release -v quiet /p:Version=${{ env.VERSION }} -o $PUBLISH_OUT ${{ env.PROJECT_NAME }}
 
     - name: Zip Release Package
       shell: pwsh
       run: |
-        $ZIP_OUT = $pwd/PACKAGED/HEC-FDA-${{ env.VERSION }}.zip
+        $ZIP_OUT = "${pwd}/PACKAGED/HEC-FDA-${{ env.VERSION }}.zip"
         echo $ZIP_OUT >> $GITHUB_ENV
         Compress-Archive -Path ${{ env.PUBLISH_OUT }} -DestinationPath $ZIP_OUT
 
