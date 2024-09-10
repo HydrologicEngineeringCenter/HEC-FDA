@@ -41,7 +41,7 @@ jobs:
       shell: pwsh
       run: |
         $root_path = Get-Location
-        Compress-Archive -Path "$root_path/HEC.FDA.View/bin/Any CPU/Release/net8.0/win-x64/" -DestinationPath "$root_path/HEC-FDA-${env:VERSION}.zip
+        Compress-Archive -Path "$root_path/HEC.FDA.View/bin/Any CPU/Release/net8.0/win-x64/" -DestinationPath "$root_path/HEC-FDA-${env:VERSION}.zip"
 
     - name: Release
       uses: softprops/action-gh-release@v2
