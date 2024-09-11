@@ -15,8 +15,4 @@
     <ProjectReference Include="..\HEC.MVVMFramework.Model\HEC.MVVMFramework.Model.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Utilities\" />
-  </ItemGroup>
-
 </Project>
