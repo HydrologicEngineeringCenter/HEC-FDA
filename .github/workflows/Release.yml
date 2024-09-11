@@ -49,7 +49,7 @@ jobs:
       run: |
         $ZIP_OUT = "${pwd}/HEC-FDA-${{ env.VERSION }}.zip"
         echo "ZIP_OUT=$ZIP_OUT" >> $env:GITHUB_ENV
-        Compress-Archive -Path ${{ env.PUBLISH_OUT }} -DestinationPath $ZIP_OUT
+        Compress-Archive -Path "${{ env.PUBLISH_OUT }}/*" -DestinationPath $ZIP_OUT
 
     - name: Release
       uses: softprops/action-gh-release@v2
