@@ -35,7 +35,7 @@ jobs:
       run: |
         $TAG = $env:GITHUB_REF -replace 'refs/tags/', ''
         $VERSION = $TAG -replace '^v', ''
-        echo "VERSION=$VERSION" >> $GITHUB_ENV
+        echo "VERSION=$VERSION" >> $env:GITHUB_ENV
       
     - name: Publish
       shell: pwsh
