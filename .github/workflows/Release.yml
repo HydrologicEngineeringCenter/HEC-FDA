@@ -1,16 +1,16 @@
 name: Release
 
 on:
-  release:
-    types: [ created ]
+  push:
+    tags:
+      - "v*.*.*"
+
+env:
+  Project_Name: HEC.FDA.View/HEC.FDA.View.csproj
 
 jobs:
   Build:
-    runs-on: windows-latest      
-    permissions:
-        contents: write
-    env:
-      Solution_Name: Fda.sln                                  
+    runs-on: windows-latest                                      
 
     steps:
     - name: Checkout
@@ -22,34 +22,36 @@ jobs:
     - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
       uses: actions/setup-dotnet@v3.2.0
       with:
-          dotnet-version: '6.0.x'
+          dotnet-version: '8.0.x'
       
     - name: Add Github and Nexus Source
       run:  |
         dotnet nuget add source --username HydrologicEngineeringCenter --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/HydrologicEngineeringCenter/index.json"
         dotnet nuget add source --name fda-nuget "https://www.hec.usace.army.mil/nexus/repository/fda-nuget/"
         dotnet nuget add source --name dss "https://www.hec.usace.army.mil/nexus/repository/dss/"
-      
-    - name: Install dependencies
-      run: dotnet restore -v quiet
-        
-    - name: Build
-      run: dotnet build -v quiet --configuration Release --no-restore
+
+    - name: Create version number
+      shell: pwsh
+      run: |
+        $TAG = $env:GITHUB_REF -replace 'refs/tags/', ''
+        $VERSION = $TAG -replace '^v', ''
+        echo "VERSION=$VERSION" >> $env:GITHUB_ENV
       
     - name: Publish
-      run: dotnet publish -c Release -v quiet --no-build HEC.FDA.View/HEC.FDA.View.csproj
-      
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v3.1.2
-      with:
-        name: HEC-FDA-2.0-Snapshot
-        path: .\build\publish\fda2.0
+      shell: pwsh
+      run: |
+        $PUBLISH_OUT = "${pwd}/TO-PACKAGE/"
+        echo "PUBLISH_OUT=$PUBLISH_OUT" >> $env:GITHUB_ENV
+        dotnet publish -c Release -v quiet /p:Version=${{ env.VERSION }} -o $PUBLISH_OUT ${{ env.PROJECT_NAME }}
 
-    - name: Zip
-      run: 7z a HEC-FDA.7z D:\a\HEC-FDA\HEC-FDA\Build\publish\FDA2.0\ 
+    - name: Zip Release Package
+      shell: pwsh
+      run: |
+        $ZIP_OUT = "${pwd}/HEC-FDA-${{ env.VERSION }}.zip"
+        echo "ZIP_OUT=$ZIP_OUT" >> $env:GITHUB_ENV
+        Compress-Archive -Path "${{ env.PUBLISH_OUT }}/*" -DestinationPath $ZIP_OUT
 
-    - name: upload artifact to release
-      uses: shogo82148/actions-upload-release-asset@v1.6.2
+    - name: Release
+      uses: softprops/action-gh-release@v2
       with:
-         upload_url: ${{ github.event.release.upload_url }}
-         asset_path: HEC-FDA.7z
+          files: ${{ env.ZIP_OUT }}
