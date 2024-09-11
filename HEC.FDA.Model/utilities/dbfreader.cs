@@ -6,7 +6,7 @@
     using System.Linq;
     using System.Reflection;
 
-    public class dbfreader
+    public class Dbfreader
     {
         private FileStream _dbfstream;
         private BinaryReader _dbfreader;
@@ -29,7 +29,7 @@
         }
 
 
-        public dbfreader(string filepath)
+        public Dbfreader(string filepath)
         {
             if (Path.GetExtension(filepath).ToLower() != ".dbf")
                 throw new Exception("This is not a .dbf file");
