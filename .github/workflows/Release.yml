@@ -40,7 +40,6 @@ jobs:
     - name: Publish
       shell: pwsh
       run: |
-        echo "The version is ${{ env.VERSION }}"
         $PUBLISH_OUT = "${pwd}/TO-PACKAGE/"
         echo "PUBLISH_OUT=$PUBLISH_OUT" >> $env:GITHUB_ENV
         dotnet publish -c Release -v quiet /p:Version=${{ env.VERSION }} -o $PUBLISH_OUT ${{ env.PROJECT_NAME }}
@@ -48,8 +47,7 @@ jobs:
     - name: Zip Release Package
       shell: pwsh
       run: |
-        echo "Published to ${{ env.PUBLISH_OUT }}"
-        $ZIP_OUT = "${pwd}HEC-FDA-${{ env.VERSION }}.zip"
+        $ZIP_OUT = "${pwd}/HEC-FDA-${{ env.VERSION }}.zip"
         echo "ZIP_OUT=$ZIP_OUT" >> $env:GITHUB_ENV
         Compress-Archive -Path ${{ env.PUBLISH_OUT }} -DestinationPath $ZIP_OUT
 
