@@ -5,13 +5,13 @@ namespace HEC.FDA.ModelTest.integrationtests
 {
     [Trait("RunsOn", "Remote")]
     [Collection("Serial")]
-    public class dbftests
+    public class Dbftests
     {
         [Fact]
         public void ReadFile()
         {
             string filepath = @"..\..\..\..\HEC.FDA.ModelTest\Resources\ProbData.dbf";
-            dbfreader dbr = new dbfreader(filepath);
+            Dbfreader dbr = new Dbfreader(filepath);
             double mean = (double)dbr.GetCell("LOG_MEAN", 0);
             Assert.Equal(2.944761, mean);
             double stdev = (double)dbr.GetCell("STD_DEV", 0);

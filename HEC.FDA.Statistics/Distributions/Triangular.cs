@@ -7,12 +7,9 @@ namespace Statistics.Distributions
 {
     public class Triangular: ContinuousDistribution
     {
-        //TODO: Sample
-        #region Fields and Properties
         private double _min;
         private double _max;
         private double _mostlikely;
-        #region IDistribution Properties
         public override IDistributionEnum Type => IDistributionEnum.Triangular;
         [Stored(Name = "Min", type =typeof(double))]
         public double Min { get{return _min;} set{_min = value;} }
@@ -20,8 +17,7 @@ namespace Statistics.Distributions
         public double Max { get{return _max;} set{_max = value;} }
         [Stored(Name = "MostLikely", type = typeof(double))]
         public double MostLikely{ get{return _mostlikely;} set{_mostlikely = value;} }
-        #endregion
-        #endregion
+
 
         #region Constructor
         public Triangular()
@@ -39,7 +35,6 @@ namespace Statistics.Distributions
             Max = max;
             SampleSize = sampleSize;
             MostLikely = mode;
-            //if (!Validation.TriangularValidator.IsConstructable(MostLikely, min, max, out string error)) throw new InvalidConstructorArgumentsException(error);
             addRules();
         }
         private void addRules()
@@ -88,20 +83,7 @@ namespace Statistics.Distributions
                 ErrorLevel.Fatal));
         }
         #endregion
-
-        #region Functions
-
-        internal static string Print(double mode, double Min, double Max) => $"Triangular(mode: {mode}, range: [{Min}, {Max}])";
-        internal static string RequiredParameterization(bool printNotes)
-        {
-            string s = $"The Triangular distribution requires the following parameterization: {Parameterization()}.";
-            if (printNotes) s += RequirementNotes();
-            return s;
-        }
-        internal static string Parameterization() => $"Triangular(mode: range minimum \u2264 mode \u2264 range maximum, sample size: > 0)";
-        internal static string RequirementNotes() => "The mode parameter is also sometimes referred to as the most likely value.";
         
-        #region IDistribution Functions
         public override double PDF(double x){
             if (Max == Min)
             {
@@ -157,10 +139,6 @@ namespace Statistics.Distributions
                 return Max;
             }
         }
-        public override string Print(bool round = false){
-           return "Tringular(parameters: {Min:"+Min+", Max:"+Max+", Mostlikely:"+MostLikely+"})";
-        }
-        public override string Requirements(bool printNotes) => RequiredParameterization(printNotes);
         public override bool Equals(IDistribution distribution){
             if (Type==distribution.Type){
                 Triangular dist = (Triangular)distribution;
@@ -176,13 +154,10 @@ namespace Statistics.Distributions
             }
             return false;
         }
-        #endregion
         public override IDistribution Fit(double[] sample)
         {
             ISampleStatistics stats = new SampleStatistics(sample);
-            return new Triangular(stats.Range.Min, stats.Mean, stats.Range.Max, stats.SampleSize);
+            return new Triangular(stats.Min, stats.Mean, stats.Max, stats.SampleSize);
         }
-
-        #endregion
     }
 }

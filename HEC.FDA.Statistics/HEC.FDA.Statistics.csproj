@@ -12,10 +12,6 @@
 	</PropertyGroup>
 
   <ItemGroup>
-	<PackageReference Include="USACE.HEC.FDA.Utilities" Version="2.0.0-alpha-2022-7-25-2237" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\HEC.MVVMFramework.Model\HEC.MVVMFramework.Model.csproj" />
   </ItemGroup>
 

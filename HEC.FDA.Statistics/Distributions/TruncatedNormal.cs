@@ -15,7 +15,8 @@ namespace Statistics.Distributions
         private double _standardDeviation;
         private double _min;
         private double _max;
-        internal IRange<double> _ProbabilityRange;
+        private double _ProbabilityMin;
+        private double _ProbabilityMax;
 
         #region IDistribution Properties
         public override IDistributionEnum Type => IDistributionEnum.TruncatedNormal;
@@ -39,7 +40,8 @@ namespace Statistics.Distributions
             StandardDeviation = 1.0;
 
             //if (!Validation.NormalValidator.IsConstructable(Mean, StandardDeviation, SampleSize, out string msg)) throw new Utilities.InvalidConstructorArgumentsException(msg);
-            _ProbabilityRange = IRangeFactory.Factory(0.0, 1.0);
+            _ProbabilityMin = 0.0;
+            _ProbabilityMax = 1.0;
             Min = InverseCDF(0.0000000000001);
             Max = InverseCDF(1 - 0.0000000000001);
             //State = Validate(new Validation.NormalValidator(), out IEnumerable<Utilities.IMessage> msgs);
@@ -55,7 +57,7 @@ namespace Statistics.Distributions
             Max = maxValue;
             Truncated = true;
             //if (!Validation.NormalValidator.IsConstructable(Mean, StandardDeviation, SampleSize, out string msg)) throw new Utilities.InvalidConstructorArgumentsException(msg);
-            _ProbabilityRange = FiniteRange(Min, Max);
+            FiniteRange(Min, Max);
             // State = Validate(new Validation.NormalValidator(), out IEnumerable<Utilities.IMessage> msgs);
             //Messages = msgs;
             addRules();
@@ -78,7 +80,7 @@ namespace Statistics.Distributions
         #endregion
 
         #region Functions
-        private IRange<double> FiniteRange(double min, double max)
+        private void FiniteRange(double min, double max)
         {
             double pmin = 0;
             double pmax = 1 - pmin;
@@ -87,7 +89,8 @@ namespace Statistics.Distributions
                 pmin = CDF(min);
                 pmax = CDF(max);
             }
-            return IRangeFactory.Factory(pmin, pmax);
+            _ProbabilityMin = pmin;
+            _ProbabilityMax = pmax;
         }
 
         #region IDistribution Functions
@@ -119,17 +122,15 @@ namespace Statistics.Distributions
             if (Truncated)
             {
                 //https://en.wikipedia.org/wiki/Truncated_normal_distribution
-                p = _ProbabilityRange.Min + (p) * (_ProbabilityRange.Max - _ProbabilityRange.Min);
+                p = _ProbabilityMin + (p) * (_ProbabilityMax - _ProbabilityMin);
             }
-            if (p <= _ProbabilityRange.Min) return Min;
-            if (p >= _ProbabilityRange.Max) return Max;
+            if (p <= _ProbabilityMin) return Min;
+            if (p >= _ProbabilityMax) return Max;
             return Mean + Normal.StandardNormalInverseCDF(p)*StandardDeviation;
             //return invCDFNewton(p, Mean, 1e-10, 100);
         }
 
 
-        public override string Print(bool round = false) => round ? Print(Mean, StandardDeviation, SampleSize) : $"Normal(mean: {Mean}, sd: {StandardDeviation}, sample size: {SampleSize})";
-        public override string Requirements(bool printNotes) => RequiredParameterization(printNotes);
         public override bool Equals(IDistribution distribution)
         {
             if (Type == distribution.Type)
@@ -163,9 +164,7 @@ namespace Statistics.Distributions
         }
         #endregion
 
-        internal static string Print(double mean, double sd, int n) => $"TruncatedNormal(mean: {mean.Print()}, sd: {sd.Print()}, sample size: {n.Print()})";
-        public new static string RequiredParameterization(bool printNotes = false) => $"The TruncatedNormal distribution requires the following parameterization: {Parameterization()}.";
-        internal new static string Parameterization() => $"TruncatedNormal(mean: [{double.MinValue.Print()}, {double.MaxValue.Print()}], sd: [{double.MinValue.Print()}, {double.MaxValue.Print()}], sample size: > 0)";
+     
         public override IDistribution Fit(double[] sample)
         {
             ISampleStatistics stats = new SampleStatistics(sample);

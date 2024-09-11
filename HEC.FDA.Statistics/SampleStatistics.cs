@@ -16,6 +16,14 @@ namespace Statistics
         private double _skew;
         private int _n;
 
+        public double Min
+        {
+            get { return _min; }
+        }
+        public double Max
+        {
+            get { return _max; }
+        }
         public double Mean
         {
             get { return _mean; }
@@ -42,7 +50,7 @@ namespace Statistics
         {
             get { return _skew; }
         }
-        public Utilities.IRange<double> Range { get; }
+
         public int SampleSize
         {
             get { return (int)_n; }
@@ -50,7 +58,6 @@ namespace Statistics
         public SampleStatistics(double[] data)
         {
             InitalizeStats(data);
-            Range = Utilities.IRangeFactory.Factory(_min, _max);
         }
         internal void InitalizeStats(IEnumerable<double> observations)
         {
@@ -125,10 +132,6 @@ namespace Statistics
            // ksums = ksums * (nd * (nd + 1.0)) / ((nd - 1.0) * (nd - 2.0) * (nd - 3.0));
             _skew = ((nd) * SkewSums) / ((nd - 1.0) * (nd - 2.0) * (s*s*s));
             //_kurtosis = (ksums) - ((3.0 * (System.Math.Pow((nd - 1.0), 2.0))) / ((nd - 2.0) * (nd - 3.0)));
-        }
-        public IMessageLevels Validate(Utilities.IValidator<ISampleStatistics> validator, out IEnumerable<IMessage> msgs)
-        {
-            return validator.IsValid(this, out msgs);
         }
     }
 }

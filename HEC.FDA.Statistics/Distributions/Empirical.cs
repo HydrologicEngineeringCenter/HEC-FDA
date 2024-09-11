@@ -431,29 +431,7 @@ namespace Statistics.Distributions
         {
             return x1 - x2;
         }
-        public static string Print(double[] observationValues, double[] cumulativeProbabilities)
-        {   //refactor this to be something like Head in R
-            string returnString = "Empirical Distribution \n Observation Values | Cumulative Probabilities \n";
-            for (int i = 0; i < observationValues.Length; i++)
-            {
-                returnString += $"{observationValues[i]} | {cumulativeProbabilities[i]}";
-            }
-            return returnString;
-        }
-        public override string Print(bool round = false) => round ? Print(Quantiles, CumulativeProbabilities) : $"Empirical(Observation Values: {Quantiles}, Cumulative Probabilities {CumulativeProbabilities})";
-
-        public override string Requirements(bool printNotes)
-        {
-            return RequiredParameterization();
-        }
-        public static string RequiredParameterization()
-        {
-            return $"The empirical distribution requires the following parameterization: {Parameterization()}.";
-        }
-        internal static string Parameterization()
-        {
-            return $"Empirical(Observation Values: [{double.MinValue.Print()}, {double.MaxValue.Print()}], Cumulative Probabilities [0,1])";
-        }
+       
 
         public XElement WriteToXML()
         {

@@ -199,9 +199,17 @@ namespace Statistics.Distributions
                 return Math.Pow(10, logflow);
             }
         }
-        public override string Print(bool round = false) => round ? Print(Mean, StandardDeviation, Skewness, SampleSize) : $"log PearsonIII(mean: {Mean}, sd: {StandardDeviation}, skew: {Skewness}, sample size: {SampleSize})";
-        public override string Requirements(bool printNotes) => RequiredParameterization(printNotes);
-        public override bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print(), StringComparison.InvariantCultureIgnoreCase) == 0 ? true : false;
+        public override bool Equals(IDistribution distribution)
+        {
+            if (!(distribution is LogPearson3))
+            {
+                return false;
+            }
+            return ((LogPearson3)distribution).Mean == Mean &&
+                   ((LogPearson3)distribution).StandardDeviation == StandardDeviation &&
+                   ((LogPearson3)distribution).Skewness == Skewness &&
+                   ((LogPearson3)distribution).SampleSize == SampleSize;
+        }
         #endregion
 
         internal static string Print(double mean, double sd, double skew, Int64 n) => $"log PearsonIII(mean: {mean}, sd: {sd}, skew: {skew}, sample size: {n})";

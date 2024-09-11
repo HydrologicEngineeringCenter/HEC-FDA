@@ -180,8 +180,6 @@ namespace Statistics.Distributions
 
         }
         //TODO: It looks to me that this method does the same exact thing independent of the bool value 
-        public override string Print(bool round = false) => round ? Print(Mean, StandardDeviation, SampleSize) : $"Normal(mean: {Mean}, sd: {StandardDeviation}, sample size: {SampleSize})";
-        public override string Requirements(bool printNotes) => RequiredParameterization(printNotes);
         public override bool Equals(IDistribution distribution)
         {
             if (Type == distribution.Type)

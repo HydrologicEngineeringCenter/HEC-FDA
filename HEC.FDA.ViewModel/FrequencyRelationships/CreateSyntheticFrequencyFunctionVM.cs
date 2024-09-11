@@ -50,7 +50,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             }
             else
             {
-                dbfreader dbr = new dbfreader(Path);
+                Dbfreader dbr = new Dbfreader(Path);
 
                 ImportLog = "";
                 ElementsToImport.Clear();
