@@ -49,7 +49,7 @@ jobs:
       shell: pwsh
       run: |
         echo "Published to ${{ env.PUBLISH_OUT }}"
-        $ZIP_OUT = "${pwd}/PACKAGED/HEC-FDA-${{ env.VERSION }}.zip"
+        $ZIP_OUT = "${pwd}HEC-FDA-${{ env.VERSION }}.zip"
         echo "ZIP_OUT=$ZIP_OUT" >> $env:GITHUB_ENV
         Compress-Archive -Path ${{ env.PUBLISH_OUT }} -DestinationPath $ZIP_OUT
 
