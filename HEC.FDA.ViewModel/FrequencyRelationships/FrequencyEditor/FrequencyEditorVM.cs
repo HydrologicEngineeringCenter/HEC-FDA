@@ -9,7 +9,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
 	public class FrequencyEditorVM:BaseEditorVM
     {
         #region Fields
-        private AnalyticalVM _analyticalVM;
         private TableWithPlotVM _graphicalVM;
         private bool _isGraphical = false; //new windows open with analytical vm open
         #endregion
@@ -20,11 +19,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
             get;
             set;
         }
-        public AnalyticalVM AnalyticalVM // FUCK you. You're on the chopping block. 
-		{
-			get { return _analyticalVM; }
-			set { _analyticalVM = value; }
-		}
 		public TableWithPlotVM GraphicalVM
 		{
 			get { return _graphicalVM; }
@@ -44,7 +38,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         #region Constructors
         public FrequencyEditorVM(EditorActionManager actionManager) : base(actionManager)
         {
-            AnalyticalVM = new AnalyticalVM();
+            ParameterEntryVM = new();
             GraphicalVM = new TableWithPlotVM(new GraphicalVM(StringConstants.GRAPHICAL_FREQUENCY,StringConstants.EXCEEDANCE_PROBABILITY,StringConstants.DISCHARGE),true,true,true);
         }
         public FrequencyEditorVM(FrequencyElement elem, EditorActionManager actionManager) : base(elem, actionManager)
@@ -53,7 +47,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         }
         public FrequencyEditorVM() : base(null)
         {
-            AnalyticalVM = new AnalyticalVM();
+            ParameterEntryVM = new();
             GraphicalVM = new TableWithPlotVM(new GraphicalVM(StringConstants.GRAPHICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE), true, true, true);
         }
         public FrequencyEditorVM(XElement ele) : base(null)
