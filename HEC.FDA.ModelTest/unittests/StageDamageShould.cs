@@ -285,9 +285,11 @@ namespace HEC.FDA.ModelTest.unittests
             ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, inventory, hydraulicDataset, String.Empty, usingMockData: true);
             List<ImpactAreaStageDamage> impactAreaStageDamageList = new List<ImpactAreaStageDamage>() { impactAreaStageDamage };
             ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(impactAreaStageDamageList);
+            Dictionary<int, string> iaNames = new();
+            iaNames.Add(1, "Test Impact Area");
 
             //Act
-            List<string> structureDetails = scenarioStageDamage.ProduceStructureDetails();
+            List<string> structureDetails = scenarioStageDamage.ProduceStructureDetails(iaNames);
 
             //Assert
             Assert.Equal(expectedLength, structureDetails.Count);
