@@ -58,7 +58,7 @@
     <!--This is our Graphical Control inside a table with plot. It seemed like a good idea at the time to force everything into TableWithPlot, but later decided it was unnecessarily confusing.
     This control is a remnant of that design mistake.--> 
     <FEcontrols:GraphicalTableWithPlotControl Grid.Row="4" Visibility="{Binding ElementName=GraphicalButton, Path=IsChecked, Converter={StaticResource VisibleIfTrueConverter}}" DataContext="{Binding GraphicalVM}"/>
-    <FEcontrols:AnalyticalControl Grid.Row="4" Visibility="{Binding ElementName=AnalyticButton, Path=IsChecked, Converter={StaticResource VisibleIfTrueConverter}}" DataContext="{Binding AnalyticalVM}" />
+    <FEcontrols:ParameterEntryControl Grid.Row="4" Visibility="{Binding ElementName=AnalyticButton, Path=IsChecked, Converter={StaticResource VisibleIfTrueConverter}}" DataContext="{Binding ParameterEntryVM}" />
 
     <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right">
       <Utilities:SaveCloseControl Grid.Row="3" VerticalAlignment="Bottom"/>
