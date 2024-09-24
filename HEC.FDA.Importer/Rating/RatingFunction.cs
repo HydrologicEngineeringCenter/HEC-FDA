@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Importer
 {
@@ -79,6 +81,35 @@ namespace Importer
             _StdDevLow = new double[NumberOfPointsAllocated];
 
             Reset();
+        }
+        public static RatingFunction Clone(RatingFunction r)
+        {
+            return new RatingFunction()
+            {
+                Name = r.Name,
+                Description = r.Description,
+                PlanName = r.PlanName,
+                YearName = r.YearName,
+                StreamName = r.StreamName,
+                DamageReachName = r.DamageReachName,
+                ErrorTypesId = r.ErrorTypesId,
+                UsesGlobalError = r.UsesGlobalError,
+                NumberOfPoints = r.NumberOfPoints,
+                NumberOfPointsAllocated = r.NumberOfPointsAllocated,
+                BaseStage = r.BaseStage,
+                GlobalStdDev = r.GlobalStdDev,
+                GlobalStdDevLog = r.GlobalStdDevLog,
+                GlobalStdDevHigh = r.GlobalStdDevHigh,
+                GlobalStdDevLow = r.GlobalStdDevLow,
+
+                _Discharge = r._Discharge.ToArray(),
+                _Stage = r._Stage.ToArray(),
+                _StdDev = r._StdDev.ToArray(),
+                _StdDevLog = r._StdDevLog.ToArray(),
+                _StdDevHigh = r._StdDevHigh.ToArray(),
+                _StdDevLow = r._StdDevLow.ToArray()
+            };
+
         }
         #endregion
         #region Voids
