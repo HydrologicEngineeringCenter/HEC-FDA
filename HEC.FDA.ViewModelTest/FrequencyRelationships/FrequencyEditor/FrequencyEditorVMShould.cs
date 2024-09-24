@@ -16,8 +16,7 @@ namespace HEC.FDA.ViewModelTest.FrequencyRelationships.FrequencyEditor
             var ogVM = new FrequencyEditorVM();
             ogVM.IsGraphical = true;
             ogVM.GraphicalVM.CurveComponentVM.SelectedItem.Data.Add(new GraphicalRow(.001, 10000));
-            ogVM.AnalyticalVM.FitToFlowVM.Data.Add(new FlowDoubleWrapper(11000));
-            ogVM.AnalyticalVM.ParameterEntryVM.Mean = 4;
+            ogVM.ParameterEntryVM.Mean = 4;
 
             //Act
             var newVM = new FrequencyEditorVM(ogVM.ToXML());
@@ -29,12 +28,8 @@ namespace HEC.FDA.ViewModelTest.FrequencyRelationships.FrequencyEditor
 
             Assert.Equal(ogVM.IsGraphical, newVM.IsGraphical);
 
-            double expectedFlow = ((FlowDoubleWrapper)ogVM.AnalyticalVM.FitToFlowVM.Data.Last()).Flow;
-            double actualFlow = ((FlowDoubleWrapper)newVM.AnalyticalVM.FitToFlowVM.Data.Last()).Flow;
-            Assert.Equal(expectedFlow,actualFlow);
-
-            double expectedMean = ogVM.AnalyticalVM.ParameterEntryVM.Mean;
-            double actualMean = newVM.AnalyticalVM.ParameterEntryVM.Mean;
+            double expectedMean = ogVM.ParameterEntryVM.Mean;
+            double actualMean = newVM.ParameterEntryVM.Mean;
             Assert.Equal(expectedMean,actualMean);
         }
     }

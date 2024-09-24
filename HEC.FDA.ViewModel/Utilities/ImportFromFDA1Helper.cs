@@ -480,14 +480,12 @@ namespace HEC.FDA.ViewModel.Utilities
             int por = pf.EquivalentLengthOfRecord;
 
             bool isAnalytical = true;
-            bool isStandard = true;//This boolean says whether it is "fit to params" or "fit to flows". True = "fit to params"
 
             FrequencyEditorVM vm = new()
             {
                 IsGraphical = !isAnalytical
             };
-            vm.AnalyticalVM.IsFitToFlows = !isStandard;
-            vm.AnalyticalVM.ParameterEntryVM.LP3Distribution = new LogPearson3(mean,stDev, skew, por);
+            vm.ParameterEntryVM.LP3Distribution = new LogPearson3(mean,stDev, skew, por);
 
             return new FrequencyElement(pf.Name, editDate, CreatePYSRDescription(pf), elemID,vm);
 

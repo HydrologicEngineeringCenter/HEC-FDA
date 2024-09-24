@@ -20,22 +20,14 @@ public class FrequencyElement : ChildElement
     #region Properties  
     public XElement FrequencyEditorXML { get => _frequencyEditorVM.ToXML(); }
     public bool IsAnalytical { get => !_frequencyEditorVM.IsGraphical; }
-    public bool IsStandard { get => !_frequencyEditorVM.AnalyticalVM.IsFitToFlows;}
     public bool GraphicalUsesFlow { get => ((GraphicalVM)(_frequencyEditorVM.GraphicalVM.CurveComponentVM)).UseFlow; }
     public LogPearson3 LPIII
     {
         get
         {
-            if(IsAnalytical)
+            if (IsAnalytical)
             {
-                if (IsStandard)
-                {
-                    return _frequencyEditorVM.AnalyticalVM.ParameterEntryVM.LP3Distribution;
-                }
-                else
-                {
-                    return _frequencyEditorVM.AnalyticalVM.FitToFlowVM.LP3Distribution;
-                }
+                return _frequencyEditorVM.ParameterEntryVM.LP3Distribution;
             }
             return null;
         }
@@ -55,12 +47,11 @@ public class FrequencyElement : ChildElement
             }
         }
     }
-
     #endregion
 
     #region Constructors
     //fresh editor
-    public FrequencyElement(string name, string lastEditDate, string desc, int id, FrequencyEditorVM vm) 
+    public FrequencyElement(string name, string lastEditDate, string desc, int id, FrequencyEditorVM vm)
         : base(name, lastEditDate, desc, id)
     {
         _frequencyEditorVM = vm;
@@ -85,14 +76,11 @@ public class FrequencyElement : ChildElement
     {
         string IS_ANALYTICAL = "IsAnalytical";
         string ANALYTICAL_DATA = "AnalyticalData";
-        string USES_MOMENTS = "UsesMoments";
         string POR_XML_TAG = "POR";
         string MOMENTS = "Moments";
         string MEAN = "Mean";
         string ST_DEV = "StDev";
         string SKEW = "Skew";
-        string FIT_TO_FLOWS = "FitToFlows";
-        string FLOWS = "Flows";
 
         FrequencyEditorVM vm = new()
         {
@@ -100,26 +88,12 @@ public class FrequencyElement : ChildElement
         };
 
         XElement analyticalElem = flowFreqElem.Element(ANALYTICAL_DATA);
-        vm.AnalyticalVM.IsFitToFlows = !(bool)analyticalElem.Attribute(USES_MOMENTS);
-        vm.AnalyticalVM.ParameterEntryVM.SampleSize = (int)analyticalElem.Attribute(POR_XML_TAG);
+        vm.ParameterEntryVM.SampleSize = (int)analyticalElem.Attribute(POR_XML_TAG);
 
         XElement momentsElem = analyticalElem.Element(MOMENTS);
-        vm.AnalyticalVM.ParameterEntryVM.Mean = (double)momentsElem.Attribute(MEAN);
-        vm.AnalyticalVM.ParameterEntryVM.Standard_Deviation = (double)momentsElem.Attribute(ST_DEV);
-        vm.AnalyticalVM.ParameterEntryVM.Skew = (double)momentsElem.Attribute(SKEW);
-
-        XElement fitToFlowsElem = analyticalElem.Element(FIT_TO_FLOWS);
-        string flows = (string)fitToFlowsElem.Attribute(FLOWS);
-        if (!String.IsNullOrEmpty(flows))
-        {
-            string[] flowStrings = flows.Split(',');
-            double[] flowdoubles = flowStrings.Select(flowString => Convert.ToDouble(flowString)).ToArray();
-            vm.AnalyticalVM.FitToFlowVM.Data.Clear();
-            foreach (double flow in flowdoubles)
-            {
-                vm.AnalyticalVM.FitToFlowVM.Data.Add(new FlowDoubleWrapper(flow));
-            }
-        }
+        vm.ParameterEntryVM.Mean = (double)momentsElem.Attribute(MEAN);
+        vm.ParameterEntryVM.Standard_Deviation = (double)momentsElem.Attribute(ST_DEV);
+        vm.ParameterEntryVM.Skew = (double)momentsElem.Attribute(SKEW);
 
         XElement graphiclVMele = flowFreqElem.Element("GraphicalVM");
         if (graphiclVMele != null)

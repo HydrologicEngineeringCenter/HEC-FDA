@@ -154,17 +154,11 @@
     <DataTemplate DataType="{x:Type FrequencyEditorVMs:FrequencyEditorVM }" >
       <FrequencyEditorViews:FrequencyEditorControl/>
     </DataTemplate>
-    
-    <DataTemplate DataType="{x:Type FrequencyEditorVMs:AnalyticalVM }" >
-      <FrequencyEditorViews:AnalyticalControl/>
-    </DataTemplate>
-    
-    <DataTemplate DataType="{x:Type FrequencyEditorVMs:GraphicalVM }" >
-      <FrequencyEditorViews:GraphicalControl/>
-    </DataTemplate>
-    
-    <DataTemplate DataType="{x:Type FrequencyEditorVMs:FitToFlowVM }" >
-      <FrequencyEditorViews:FitToFlowsControl/>
+
+
+    <DataTemplate
+      DataType="{x:Type FrequencyEditorVMs:GraphicalVM }">
+      <FrequencyEditorViews:GraphicalControl />
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type FrequencyEditorVMs:ParameterEntryVM }" >
