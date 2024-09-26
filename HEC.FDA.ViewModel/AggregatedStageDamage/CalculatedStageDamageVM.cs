@@ -765,8 +765,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 }
                 
                 List<string> stageDamageDetails = scenarioStageDamage.ProduceStructureDetails(iaNames);
-                List<string> damagedElementCounts = UncertainPairedData.ConvertDamagedElementCountToText(quantityDamagedElementsUPD);
-                List<string> stageDamageText = UncertainPairedData.ConvertFunctionsToText(stageDamageFunctions);
+                List<string> damagedElementCounts = UncertainPairedData.ConvertDamagedElementCountToText(quantityDamagedElementsUPD, iaNames);
                 string structureStageDamageDetailsfileName = getName() + "StructureStageDamageDetails.csv";
                 string damagedElementsCountDetailsFileName = getName() + "DamagedElementCountsByStage.csv";
                 string functionsFileName = getName() + "Functions.csv";
@@ -774,10 +773,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 Directory.CreateDirectory(directory);
                 string stageDamagePath = directory + "\\" + structureStageDamageDetailsfileName;
                 string damagedElementsCountPath = directory + "\\" + damagedElementsCountDetailsFileName;
-                string functionsPath = directory + "\\" + functionsFileName;
                 File.AppendAllLines(stageDamagePath, stageDamageDetails);
                 File.AppendAllLines(damagedElementsCountPath, damagedElementCounts);
-                File.AppendAllLines(functionsPath, stageDamageText);
         }
             catch (Exception ex)
             {

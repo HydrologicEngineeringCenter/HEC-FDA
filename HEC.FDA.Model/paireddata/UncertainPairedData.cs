@@ -301,10 +301,10 @@ namespace HEC.FDA.Model.paireddata
             return returnStrings;
         }
 
-        public static List<string> ConvertDamagedElementCountToText(List<UncertainPairedData> quantityDamagedElementsUPD)
+        public static List<string> ConvertDamagedElementCountToText(List<UncertainPairedData> quantityDamagedElementsUPD, Dictionary<int,string> iaNames)
         {
             List<string> list = new();
-            string header = "Impact Area Row Number," +
+            string header = "Impact Area Name," +
                 " Damage Category," +
                 " Asset Category," +
                 " Stage," +
@@ -319,19 +319,19 @@ namespace HEC.FDA.Model.paireddata
 
             foreach(UncertainPairedData upd in quantityDamagedElementsUPD)
             {
-                List<string> quantilesToText = QuantilesToText(upd);
+                List<string> quantilesToText = QuantilesToText(upd, iaNames);
                 list.AddRange(quantilesToText);
             }
 
             return list;
         }
 
-        private static List<string> QuantilesToText(UncertainPairedData upd)
+        private static List<string> QuantilesToText(UncertainPairedData upd, Dictionary<int, string> iaNames)
         {
             List<string> returnStrings = new();
             for (int i = 0; i < upd.Xvals.Length; i++)
             {
-                string thisXValData = $"{upd.ImpactAreaID}," +
+                string thisXValData = $"{iaNames[upd.ImpactAreaID]}," +
                 $"{upd.DamageCategory}," +
                 $"{upd.AssetCategory}," +
                 $"{upd.Xvals[i]}," +
