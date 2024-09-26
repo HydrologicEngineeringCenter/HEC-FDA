@@ -9,7 +9,10 @@ using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Legends;
 using OxyPlot.Series;
+using Statistics;
 using Statistics.Distributions;
+using System;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.TableWithPlot.Base
@@ -63,9 +66,11 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Base
             LP3Distribution.Validate();
             if (!LP3Distribution.HasErrors)
             {
-                RandomProvider rp = new (1234);
+                RandomProvider rp = new(1234);
+                var inputFunction = LP3Distribution.ToCoordinates(exceedence: true);
+                UncertainPairedData inputLP3asUPD = ConvertTupleToUPD(inputFunction);
                 UncertainPairedData LP3asUPD = LP3Distribution.BootstrapToUncertainPairedData(rp, _ExceedenceProbs);
-                AddLineSeriesToPlot(LP3asUPD);
+                AddLineSeriesToPlot(inputLP3asUPD);
                 AddLineSeriesToPlot(LP3asUPD, 0.95, true);
                 AddLineSeriesToPlot(LP3asUPD, 0.05, true);
                 ConfidenceLimitsDataTable.Data.Clear();
@@ -75,6 +80,20 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Base
             NotifyPropertyChanged(nameof(ConfidenceLimitsDataTable));
             NotifyPropertyChanged(nameof(PlotModel));
         }
+
+        private static UncertainPairedData ConvertTupleToUPD(Tuple<double[], double[]> inputFunction)
+        {
+            double[] xs = inputFunction.Item1;
+            double[] ys = inputFunction.Item2;
+            Deterministic[] yDists = new Deterministic[ys.Length];
+            for (int i = 0; i < ys.Length; i++)
+            {
+                yDists[i] = new Deterministic(ys[i]);
+            }
+            UncertainPairedData inputLP3asUPD = new UncertainPairedData(inputFunction.Item1, yDists, new());
+            return inputLP3asUPD;
+        }
+
         private void AddLineSeriesToPlot(UncertainPairedData function, double probability = 0.5, bool isConfidenceLimit = false)
         {
             LineSeries lineSeries = new()
