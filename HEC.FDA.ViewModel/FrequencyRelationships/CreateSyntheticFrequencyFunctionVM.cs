@@ -117,8 +117,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
             string lastEditDate = DateTime.Now.ToString("G");
             FrequencyEditorVM vm = new();
             vm.IsGraphical = false;
-            vm.AnalyticalVM.IsFitToFlows = false;
-            vm.AnalyticalVM.ParameterEntryVM.LP3Distribution = new Statistics.Distributions.LogPearson3(mean, stDev, skew, por);
+            vm.ParameterEntryVM.LP3Distribution = new Statistics.Distributions.LogPearson3(mean, stDev, skew, por);
 
             FrequencyElement newFreqElem = new FrequencyElement(name, lastEditDate, description, id, vm);
             return newFreqElem; 

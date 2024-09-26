@@ -33,7 +33,7 @@ namespace Importer
         #region Voids
         public void Add(RatingFunction theFunc, AsyncLogger logger)
         {
-            RatingFunction aRatingFunc = Importer.ObjectCopier.Clone(theFunc);
+            RatingFunction aRatingFunc = RatingFunction.Clone(theFunc);
             _RatingFunctionListSort.Add(aRatingFunc.Name.Trim(), aRatingFunc);
             WriteLine($"Add Rating Function to SortList.  {aRatingFunc.Name}");
             if(logger != null)
@@ -57,18 +57,7 @@ namespace Importer
                 aFunc.Print(logger);
             }
         }
-        public void PrintToFile()
-        {
-            RatingFunction aFunc;
-            //Write("\n\n\n\n");
-            //for (int j = 0; j < 100; j++) Write("-");
-            WriteLine($"\nNumber of Rating Functions {_RatingFunctionListSort.Count}");
-            for (int i = 0; i < _RatingFunctionListSort.Count; i++)
-            {
-                aFunc = _RatingFunctionListSort.ElementAt(i).Value;
-                aFunc.PrintToFile();
-            }
-        }
+        
         public void Export(StreamWriter wr, char delimt)
         {
             RatingFunction aFunc;
@@ -81,24 +70,6 @@ namespace Importer
         }
         #endregion
         #region Functions
-        public long getNextId()
-        {
-            IdCurrent = GlobalVariables.mp_fdaStudy.GetNextIdMgr().getNextObjIdRatData();
-            return IdCurrent;
-        }
-        public long getCurrentId()
-        {
-            IdCurrent = GlobalVariables.mp_fdaStudy.GetNextIdMgr().getCurrentObjIdRatData();
-            return IdCurrent;
-        }
-
-        public RatingFunction GetRatingFunction(string nameRateFunc)
-        {
-            int ix = _RatingFunctionListSort.IndexOfKey(nameRateFunc);
-            _RatingFunction = _RatingFunctionListSort.ElementAt(ix).Value;
-            WriteLine($"Did I find the {nameRateFunc} Rating Function, name = {_RatingFunction.Name}");
-            return _RatingFunction;
-        }
         public string GetName(long theId)
         {
             string name = "";
