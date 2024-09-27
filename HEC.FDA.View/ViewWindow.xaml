@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:Utils="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
         mc:Ignorable="d"
-        Icon="FDA.ico"
+        Icon="Resources\FDA.ico"
         Closing="Window_Closing"
         ResizeMode="CanResize"
         Title="{Binding Title}" 
