@@ -616,11 +616,11 @@ namespace HEC.FDA.Model.stageDamage
             ProgressReport?.Invoke(sender, e);
             MessageHub.Unregister(this);
         }
-        internal List<string> ProduceImpactAreaStructureDetails()
+        internal List<string> ProduceImpactAreaStructureDetails(Dictionary<int, string> impactAreaNames)
         {
             //this list will be the size of the number of structures + 1 where the first string is the header
             List<DeterministicOccupancyType> deterministicOccupancyTypes = Inventory.SampleOccupancyTypes(new compute.MedianRandomProvider(), computeIsDeterministic: true);
-            List<string> structureDetails = Inventory.StructureDetails(deterministicOccupancyTypes);
+            List<string> structureDetails = Inventory.StructureDetails(deterministicOccupancyTypes, impactAreaNames);
             //here I need to add to structure details: occ types, impact area,
             StagesToStrings(ref structureDetails);
             DepthsToStrings(ref structureDetails);

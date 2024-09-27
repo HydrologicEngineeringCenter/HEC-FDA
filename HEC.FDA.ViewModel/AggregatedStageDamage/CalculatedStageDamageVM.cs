@@ -1,5 +1,6 @@
 ﻿using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.stageDamage;
+using HEC.FDA.Model.structures;
 using HEC.FDA.ViewModel.FlowTransforms;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
@@ -753,9 +754,18 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         {
             try
             {
-                List<string> stageDamageDetails = scenarioStageDamage.ProduceStructureDetails();
-                List<string> damagedElementCounts = UncertainPairedData.ConvertDamagedElementCountToText(quantityDamagedElementsUPD);
-                List<string> stageDamageText = UncertainPairedData.ConvertFunctionsToText(stageDamageFunctions);
+                //Its necessary for the details to be written with names for the impact areas, not FIDs. It helps users troubleshoot. I don't like this, but that's why the dictionary is passed in. to translate at the
+                //lowest level before it's written
+                Dictionary<int, string> iaNames = [];
+                ImpactAreaElement iaEle = StudyCache.GetChildElementsOfType<ImpactAreaElement>()[0];
+                List<ImpactAreaRowItem> iaRows = iaEle.ImpactAreaRows;
+                for(int i = 0; i < iaRows.Count; i++)
+                {
+                    iaNames[i] = iaRows[i].Name;
+                }
+                
+                List<string> stageDamageDetails = scenarioStageDamage.ProduceStructureDetails(iaNames);
+                List<string> damagedElementCounts = UncertainPairedData.ConvertDamagedElementCountToText(quantityDamagedElementsUPD, iaNames);
                 string structureStageDamageDetailsfileName = getName() + "StructureStageDamageDetails.csv";
                 string damagedElementsCountDetailsFileName = getName() + "DamagedElementCountsByStage.csv";
                 string functionsFileName = getName() + "Functions.csv";
@@ -763,10 +773,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 Directory.CreateDirectory(directory);
                 string stageDamagePath = directory + "\\" + structureStageDamageDetailsfileName;
                 string damagedElementsCountPath = directory + "\\" + damagedElementsCountDetailsFileName;
-                string functionsPath = directory + "\\" + functionsFileName;
                 File.AppendAllLines(stageDamagePath, stageDamageDetails);
                 File.AppendAllLines(damagedElementsCountPath, damagedElementCounts);
-                File.AppendAllLines(functionsPath, stageDamageText);
         }
             catch (Exception ex)
             {
