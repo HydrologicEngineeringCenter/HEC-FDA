@@ -164,6 +164,7 @@ namespace HEC.FDA.Model.paireddata
 
         /// <summary>
         /// f_inverse implements ISample on PairedData, for a given input double y f_inverse produces an output double that represents the linearly interoplated value for x given y.
+        /// binary search assumes y to be in increasing order. Will give shitty answers if not. 
         /// </summary>
         public double f_inverse(double y)
         {
@@ -396,6 +397,15 @@ namespace HEC.FDA.Model.paireddata
                 index++;
             }
             Yvals = update;
+        }
+
+        public void SortToIncreasingXVals()
+        {
+            Array.Sort(Xvals,Yvals);
+        }
+        public void SortToIncreasingYals()
+        {
+            Array.Sort(Xvals, Yvals);
         }
 
         #endregion
