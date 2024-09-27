@@ -92,7 +92,6 @@ namespace HEC.FDA.ViewModel
             {
                 string image = _CustomTreeViewHeader.ImageSource;
                 string decoration = _CustomTreeViewHeader.Decoration;
-                bool gifVisible = _CustomTreeViewHeader.GifVisible;
                 string tooltip = _CustomTreeViewHeader.Tooltip;
                 if(newTooltip != null)
                 {
@@ -103,7 +102,6 @@ namespace HEC.FDA.ViewModel
                 {
                     ImageSource = image,
                     Decoration = decoration,
-                    GifVisible = gifVisible,
                     Tooltip = tooltip
                 };
             }
