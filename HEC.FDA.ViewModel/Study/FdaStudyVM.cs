@@ -1,8 +1,10 @@
 ﻿using Geospatial.GDALAssist;
 using HEC.FDA.ViewModel.Tabs;
 using HEC.FDA.ViewModel.Utilities;
+using OxyPlot;
 using System;
 using System.IO;
+using System.Reflection;
 
 namespace HEC.FDA.ViewModel.Study
 {
@@ -27,6 +29,8 @@ namespace HEC.FDA.ViewModel.Study
             get { return _StudyElement; }
             set { _StudyElement = value; NotifyPropertyChanged(); }
         }
+
+        public string Version { get; set; } = "HEC-FDA " + Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         /// <summary>
         /// This needs to be here so that the UI has something to bind to.
