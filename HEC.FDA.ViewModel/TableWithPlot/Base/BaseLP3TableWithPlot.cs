@@ -69,7 +69,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Base
                 RandomProvider rp = new(1234);
                 var inputFunction = LP3Distribution.ToCoordinates(exceedence: true);
                 UncertainPairedData inputLP3asUPD = ConvertTupleToUPD(inputFunction);
-                UncertainPairedData LP3asUPD = LP3Distribution.BootstrapToUncertainPairedData(rp, _ExceedenceProbs);
+                int realizations = 100000;
+                UncertainPairedData LP3asUPD = LP3Distribution.BootstrapToUncertainPairedData(rp, _ExceedenceProbs, realizations);
                 AddLineSeriesToPlot(inputLP3asUPD);
                 AddLineSeriesToPlot(LP3asUPD, 0.95, true);
                 AddLineSeriesToPlot(LP3asUPD, 0.05, true);

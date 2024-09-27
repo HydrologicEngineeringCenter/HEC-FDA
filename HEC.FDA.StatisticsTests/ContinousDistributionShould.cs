@@ -39,7 +39,7 @@ namespace StatisticsTests
 
             xIncreasing = coordinatesNonExceedence.Item1[0] < coordinatesNonExceedence.Item1[1];
             yIncreasing = coordinatesNonExceedence.Item2[0] < coordinatesNonExceedence.Item2[1];
-            //x values should be decreasing and y values increasing 
+            //x values should be increasing and y values increasing 
             Assert.True(xIncreasing && yIncreasing);
         }
         private double[] NextRandomSequence(Int64 size, int seed)
