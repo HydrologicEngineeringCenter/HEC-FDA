@@ -1,9 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-	</PropertyGroup>
-
+	
 	<PropertyGroup>
 		<Description>A reference library providing core functionality for MVVM App Building</Description>
 	</PropertyGroup>
