@@ -9,6 +9,7 @@ using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.interfaces;
 using HEC.FDA.Model.compute;
 using System.Threading;
+using System.Reflection;
 
 namespace HEC.FDA.Model.scenarios
 {
@@ -56,6 +57,7 @@ namespace HEC.FDA.Model.scenarios
                 scenarioResults.AddResults(impactArea.Compute(randomProvider, convergenceCriteria, cancellationToken));
             }
             scenarioResults.ComputeDate = DateTime.Now.ToString("G");
+            scenarioResults.SoftwareVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             return scenarioResults;
         }
         public ImpactAreaScenarioSimulation GetImpactAreaScenarioSimulation(int impactAreaID)

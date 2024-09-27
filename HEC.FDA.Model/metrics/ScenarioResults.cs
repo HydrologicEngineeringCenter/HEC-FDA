@@ -14,8 +14,12 @@ namespace HEC.FDA.Model.metrics
 {
     public class ScenarioResults : ValidationErrorLogger
     {
+        private const string SCENARIO_RESULTS = "ScenarioResults";
+        private const string COMPUTE_DATE = "ComputeDate";
+        private const string SOFTWARE_VERSION = "SoftwareVersion";
         #region Properties 
         public string ComputeDate { get; set; }
+        public string SoftwareVersion { get; set; }
 
         public List<IContainImpactAreaScenarioResults> ResultsList { get; } = new List<IContainImpactAreaScenarioResults>();
 
@@ -402,8 +406,9 @@ namespace HEC.FDA.Model.metrics
         }
         public XElement WriteToXML()
         {
-            XElement mainElement = new("ScenarioResults");
-            mainElement.SetAttributeValue("ComputeDate", ComputeDate);
+            XElement mainElement = new(SCENARIO_RESULTS);
+            mainElement.SetAttributeValue(COMPUTE_DATE, ComputeDate);
+            mainElement.SetAttributeValue(SOFTWARE_VERSION, SoftwareVersion);
             foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList.Cast<ImpactAreaScenarioResults>())
             {
                 XElement impactAreaScenarioResultsElement = impactAreaScenarioResults.WriteToXml();
@@ -422,10 +427,16 @@ namespace HEC.FDA.Model.metrics
                 scenarioResults.AddResults(impactAreaScenarioResults);
             }
 
-            if(xElement.Attribute("ComputeDate") != null)
+            if(xElement.Attribute(COMPUTE_DATE) != null)
             {
-                string computeDate = xElement.Attribute("ComputeDate").Value;
+                string computeDate = xElement.Attribute(COMPUTE_DATE).Value;
                 scenarioResults.ComputeDate = computeDate;
+            }
+
+            if (xElement.Attribute(SOFTWARE_VERSION) != null)
+            {
+                string softwareVersion = xElement.Attribute(SOFTWARE_VERSION).Value;
+                scenarioResults.SoftwareVersion = softwareVersion;
             }
 
             return scenarioResults;
