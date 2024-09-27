@@ -44,14 +44,14 @@ jobs:
         echo "PUBLISH_OUT=$PUBLISH_OUT" >> $env:GITHUB_ENV
         dotnet publish -c Release -v quiet /p:Version=${{ env.VERSION }} -o $PUBLISH_OUT ${{ env.PROJECT_NAME }}
 
-    - name: Zip Release Package
+    - name: Create 7z SFX (self-extracting) archive
       shell: pwsh
       run: |
-        $ZIP_OUT = "${pwd}/HEC-FDA-${{ env.VERSION }}.zip"
-        echo "ZIP_OUT=$ZIP_OUT" >> $env:GITHUB_ENV
-        Compress-Archive -Path "${{ env.PUBLISH_OUT }}/*" -DestinationPath $ZIP_OUT
+        $7Z_OUT = "${pwd}/HEC-FDA-${{ env.VERSION }}.exe"
+        echo "7Z_OUT=$7Z_OUT" >> $env:GITHUB_ENV
+        7z a -sfx $7Z_OUT "${{ env.PUBLISH_OUT }}/*"
 
     - name: Release
       uses: softprops/action-gh-release@v2
       with:
-          files: ${{ env.ZIP_OUT }}
+          files: ${{ env.7Z_OUT }}
