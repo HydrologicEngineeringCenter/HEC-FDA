@@ -160,13 +160,13 @@ namespace HEC.FDA.Model.structures
             return points;
         }
 
-        internal List<string> StructureDetails(List<DeterministicOccupancyType> deterministicOccupancyTypes)
+        internal List<string> StructureDetails(List<DeterministicOccupancyType> deterministicOccupancyTypes, Dictionary<int, string> impactAreaNames)
         {
             string header = Structure.ProduceDetailsHeader();
             List<string> structureDetails = new() { header };
             foreach (Structure structure in Structures)
             {
-                structureDetails.Add(structure.ProduceDetails(deterministicOccupancyTypes, PriceIndex));
+                structureDetails.Add(structure.ProduceDetails(deterministicOccupancyTypes, PriceIndex, impactAreaNames));
             }
             return structureDetails;
         }

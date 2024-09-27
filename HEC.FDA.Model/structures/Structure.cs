@@ -279,11 +279,11 @@ namespace HEC.FDA.Model.structures
             return details;
         }
 
-        internal string ProduceDetails(List<DeterministicOccupancyType> deterministicOccupancyTypes, double priceIndex)
+        internal string ProduceDetails(List<DeterministicOccupancyType> deterministicOccupancyTypes, double priceIndex, Dictionary<int, string> impactAreaNames)
         {
             DeterministicOccupancyType deterministicOccupancyType = FindOccType(deterministicOccupancyTypes);
             double depthZeroDamage = CalculateDepthZeroDamage(deterministicOccupancyType);
-            string details = $"{Fid},{ImpactAreaID}, {YearInService},{DamageCatagory},{OccTypeName},";
+            string details = $"{Fid},{impactAreaNames[ImpactAreaID]}, {YearInService},{DamageCatagory},{OccTypeName},";
             details += $"{Point.X},{Point.Y},{InventoriedStructureValue},{InventoriedStructureValue * priceIndex * NumberOfStructures},";
             double contentValue;
             double otherValue;
