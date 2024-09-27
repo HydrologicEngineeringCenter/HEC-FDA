@@ -6,11 +6,13 @@
 		<RootNamespace>HEC.FDA.ViewModel</RootNamespace>
 	</PropertyGroup>
 
+	<!--All of these references are to keep DatabaseManager working. All on the chopping block. Shame refs.--> 
 	<ItemGroup>
 		<Reference Include="DatabaseManager">
 			<HintPath>..\lib\DatabaseManager.dll</HintPath>
 			<Private>true</Private>
 		</Reference>
+		<PackageReference Include="System.Data.SQLite" Version="1.0.118" />
 	</ItemGroup>
 	
 	<ItemGroup>
@@ -21,11 +23,6 @@
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0-preview2" />
 		<PackageReference Include="PlottingLibrary2D" Version="1.0.0-beta-gdc08aa8621" />
-		<PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
-		<PackageReference Include="System.Data.SQLite" Version="1.0.118" />
-		<PackageReference Include="System.ServiceModel.Duplex" Version="4.8.1" />
-		<PackageReference Include="System.ServiceModel.NetTcp" Version="4.8.1" />
-		<PackageReference Include="System.ServiceModel.Federation" Version="4.8.1" />
 		<PackageReference Include="OxyPlot.Wpf" Version="2.1.2" />
 	</ItemGroup>
 
