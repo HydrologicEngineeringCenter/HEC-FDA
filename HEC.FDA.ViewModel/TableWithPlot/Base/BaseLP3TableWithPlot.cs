@@ -3,6 +3,7 @@ using HEC.FDA.Model.extensions;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.TableWithPlot.Data;
+using HEC.FDA.ViewModel.TableWithPlot.Rows;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.MVVMFramework.ViewModel.Implementations;
 using OxyPlot;
@@ -44,7 +45,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Base
                 UpdatePlot();
             }
         }
-        public HistogramDataProvider ConfidenceLimitsDataTable{ get; } =  new HistogramDataProvider();
+        public LP3HistogramDataProvider ConfidenceLimitsDataTable{ get; } =  new LP3HistogramDataProvider();
         #endregion
 
         #region OxyPlot
@@ -76,6 +77,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Base
                 AddLineSeriesToPlot(LP3asUPD, 0.05, true);
                 ConfidenceLimitsDataTable.Data.Clear();
                 ConfidenceLimitsDataTable.UpdateFromUncertainPairedData(LP3asUPD);
+                ConfidenceLimitsDataTable.OverwriteInputFunctionVals(inputLP3asUPD);
             }
             PlotModel.InvalidatePlot(true);
             NotifyPropertyChanged(nameof(ConfidenceLimitsDataTable));
