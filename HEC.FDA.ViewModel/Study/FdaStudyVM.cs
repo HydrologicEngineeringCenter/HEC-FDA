@@ -5,6 +5,7 @@ using OxyPlot;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Text;
 
 namespace HEC.FDA.ViewModel.Study
 {
@@ -30,7 +31,23 @@ namespace HEC.FDA.ViewModel.Study
             set { _StudyElement = value; NotifyPropertyChanged(); }
         }
 
-        public string Version { get; set; } = "HEC-FDA " + Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        /// <summary>
+        /// Currently this is ugly but meets the mail. I will need to refactor this to be prettier in the UI. Microsoft throws a bunch of alphanumeris behind the version I wasn't expecting. 
+        /// Need to just show numeric version in title bar. Hide a bigger version elsewhere. 
+        /// </summary>
+        public string Version
+        {
+            get
+            {
+                Assembly assembly = Assembly.GetExecutingAssembly();
+                var versionAttribute = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
+                StringBuilder sb = new();
+                string fullVersion = versionAttribute.InformationalVersion;
+                sb.Append("HEC-FDA ");
+                sb.Append(fullVersion);
+                return sb.ToString();
+            }
+        }
 
         /// <summary>
         /// This needs to be here so that the UI has something to bind to.
@@ -70,8 +87,8 @@ namespace HEC.FDA.ViewModel.Study
                 return;
             }
             GDALSetup.InitializeMultiplatform(gdalPath);
-        }  
-        
+        }
+
         private void UpdateSaveStatus(object sender, EventArgs e)
         {
             SaveStatus = (string)sender;
@@ -81,7 +98,7 @@ namespace HEC.FDA.ViewModel.Study
         {
             SplashScreenVM vm = new SplashScreenVM();
             string header = "Terms and Conditions";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "splashscreen",true,false);
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "splashscreen", true, false);
             Navigate(tab, true, true);
         }
 

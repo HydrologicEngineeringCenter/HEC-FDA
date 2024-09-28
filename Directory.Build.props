@@ -5,8 +5,7 @@
 		<Title>$(MSBuildProjectName)</Title>
 		<Authors>US Army Corps of Engineers Hydrologic Engineering Center</Authors>
 		<TargetFramework>net8.0</TargetFramework>
-		<VersionPrefix>0.1.0</VersionPrefix>
-		<VersionSuffix>localdev</VersionSuffix>
+		<Version>2.0.0-Beta+LocalDev</Version>
 	</PropertyGroup>
 
 </Project>
