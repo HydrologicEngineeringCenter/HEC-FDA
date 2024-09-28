@@ -40,12 +40,8 @@ namespace HEC.FDA.ViewModel.Study
             get
             {
                 Assembly assembly = Assembly.GetExecutingAssembly();
-                var versionAttribute = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
-                StringBuilder sb = new();
-                string fullVersion = versionAttribute.InformationalVersion;
-                sb.Append("HEC-FDA ");
-                sb.Append(fullVersion);
-                return sb.ToString();
+                var version = assembly.GetName().Version;
+                return $"HEC-FDA {version.Major}.{version.Minor}.{version.Build}.{version.Revision}{(version.Revision > 0 ? " Beta" : "")}";
             }
         }
 
