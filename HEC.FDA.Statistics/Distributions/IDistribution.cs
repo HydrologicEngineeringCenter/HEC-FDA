@@ -8,7 +8,6 @@ namespace Statistics
     /// </summary>
     public interface IDistribution
     {
-        #region Properties
         /// <summary>
         /// The type of the statistical distribution (e.g. Normal, Triangular, etc.). 
         /// Supported distributions are listed in <see cref="IDistributionEnum"/> set of enumerated values.
@@ -20,10 +19,6 @@ namespace Statistics
         /// <remarks> If the distribution was not fit from a sample use the desired length of samples or <see cref="int.MaxValue"/> if the distribution is assumed to be a population distribution. </remarks>
         Int64 SampleSize { get; }
         bool Truncated { get; }
-        #endregion
-        #region Voids
-        #endregion
-        #region Functions
         /// <summary>
         /// Computes the density of the distribution at the point x.
         /// </summary>
@@ -51,7 +46,6 @@ namespace Statistics
         XElement ToXML();
         IDistribution Sample(double[] randomPacket);
         IDistribution Fit(double[] data);
-        #endregion
 
     }
 }

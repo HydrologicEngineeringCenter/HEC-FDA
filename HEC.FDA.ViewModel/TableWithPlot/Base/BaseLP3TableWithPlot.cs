@@ -3,13 +3,17 @@ using HEC.FDA.Model.extensions;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.TableWithPlot.Data;
+using HEC.FDA.ViewModel.TableWithPlot.Rows;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.MVVMFramework.ViewModel.Implementations;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Legends;
 using OxyPlot.Series;
+using Statistics;
 using Statistics.Distributions;
+using System;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.TableWithPlot.Base
@@ -41,7 +45,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Base
                 UpdatePlot();
             }
         }
-        public HistogramDataProvider ConfidenceLimitsDataTable{ get; } =  new HistogramDataProvider();
+        public LP3HistogramDataProvider ConfidenceLimitsDataTable{ get; } =  new LP3HistogramDataProvider();
         #endregion
 
         #region OxyPlot
@@ -63,18 +67,36 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Base
             LP3Distribution.Validate();
             if (!LP3Distribution.HasErrors)
             {
-                RandomProvider rp = new (1234);
-                UncertainPairedData LP3asUPD = LP3Distribution.BootstrapToUncertainPairedData(rp, _ExceedenceProbs);
-                AddLineSeriesToPlot(LP3asUPD);
+                RandomProvider rp = new(1234);
+                var inputFunction = LP3Distribution.ToCoordinates(exceedence: true);
+                UncertainPairedData inputLP3asUPD = ConvertTupleToUPD(inputFunction);
+                int realizations = 100000;
+                UncertainPairedData LP3asUPD = LP3Distribution.BootstrapToUncertainPairedData(rp, _ExceedenceProbs, realizations);
+                AddLineSeriesToPlot(inputLP3asUPD);
                 AddLineSeriesToPlot(LP3asUPD, 0.95, true);
                 AddLineSeriesToPlot(LP3asUPD, 0.05, true);
                 ConfidenceLimitsDataTable.Data.Clear();
                 ConfidenceLimitsDataTable.UpdateFromUncertainPairedData(LP3asUPD);
+                ConfidenceLimitsDataTable.OverwriteInputFunctionVals(inputLP3asUPD);
             }
             PlotModel.InvalidatePlot(true);
             NotifyPropertyChanged(nameof(ConfidenceLimitsDataTable));
             NotifyPropertyChanged(nameof(PlotModel));
         }
+
+        private static UncertainPairedData ConvertTupleToUPD(Tuple<double[], double[]> inputFunction)
+        {
+            double[] xs = inputFunction.Item1;
+            double[] ys = inputFunction.Item2;
+            Deterministic[] yDists = new Deterministic[ys.Length];
+            for (int i = 0; i < ys.Length; i++)
+            {
+                yDists[i] = new Deterministic(ys[i]);
+            }
+            UncertainPairedData inputLP3asUPD = new UncertainPairedData(inputFunction.Item1, yDists, new());
+            return inputLP3asUPD;
+        }
+
         private void AddLineSeriesToPlot(UncertainPairedData function, double probability = 0.5, bool isConfidenceLimit = false)
         {
             LineSeries lineSeries = new()
