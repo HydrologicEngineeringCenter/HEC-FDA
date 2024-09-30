@@ -102,7 +102,7 @@ namespace HEC.FDA.Model.stageDamage
             {
                 coordinateQuantity = 4;
             }
-            _MoreInterpolationPoints = coordinateQuantity * 4;
+            _MoreInterpolationPoints = coordinateQuantity * 6;
             _LessInterpolationPoints = coordinateQuantity;
 
         }
