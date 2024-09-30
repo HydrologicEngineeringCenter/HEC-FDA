@@ -194,7 +194,7 @@ namespace HEC.FDA.Model.stageDamage
             {
                 if (_DischargeStage != null)
                 {
-                    Tuple<double[], double[]> flowFreqAsTuple = _AnalyticalFlowFrequency.ToCoordinates();
+                    Tuple<double[], double[]> flowFreqAsTuple = _AnalyticalFlowFrequency.ToCoordinates(exceedence:false);
                     PairedData flowFrequencyPairedData = new(flowFreqAsTuple.Item1, flowFreqAsTuple.Item2);
                     if (_UnregulatedRegulated != null)
                     {

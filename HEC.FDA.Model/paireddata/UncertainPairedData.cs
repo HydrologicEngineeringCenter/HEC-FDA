@@ -15,8 +15,6 @@ namespace HEC.FDA.Model.paireddata
 {
     public class UncertainPairedData : ValidationErrorLogger, IPairedDataProducer, ICanBeNull
     {
-        #region Fields 
-        #endregion
 
         #region Properties 
         public string XLabel

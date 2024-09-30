@@ -8,12 +8,19 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
 {
     public abstract class SequentialRow : MVVMFramework.ViewModel.Implementations.ValidatingBaseViewModel
     {
+        private const string XDecreasingErrorMessage = "X values are not decreasing.";
+        private const string XIncreasingErrorMessage = "X values are not increasing.";
+        private const string XMaxErrorMessage = "X was greater than the maximum allowed value ";
+        private const string XMinErrorMessage = "X was smaller than the minimum allowed value ";
+        private const string YMinErrorMessage = "The .001 percentile of the Y distribution is less than the minimum allowable value of ";
+        private const string YMaxErrorMessage = "The 99.999 percentile of the Y distribution is greater than the maximum allowable value of ";
+
         public abstract void UpdateRow(int col, double x);
         protected abstract List<string> YMinProperties { get; }
         protected abstract List<string> YMaxProperties { get; }
         public abstract double X { get; set; }
         public IDistribution Y { get; set; }
-        public double ZScore { get{return Normal.StandardNormalInverseCDF(X);} }
+        public double ZScore { get { return Normal.StandardNormalInverseCDF(X); } }
         public SequentialRow PreviousRow { get; set; }
         public SequentialRow NextRow { get; set; }
         public bool IsStrictMonotonic { get; set; }
@@ -26,43 +33,43 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             {
                 if (isStrictMonotonic)
                 {
-                    AddSinglePropertyRule(nameof(X), new Rule(() => { if (PreviousRow == null) return true; return X > PreviousRow.X; }, "X values are not decreasing.", ErrorLevel.Severe));
-                    AddSinglePropertyRule(nameof(X), new Rule(() => { if (NextRow == null) return true; return X < NextRow.X; }, "X values are not decreasing.", ErrorLevel.Severe));
+                    AddSinglePropertyRule(nameof(X), new Rule(() => { if (PreviousRow == null) return true; return X > PreviousRow.X; }, XDecreasingErrorMessage, ErrorLevel.Severe));
+                    AddSinglePropertyRule(nameof(X), new Rule(() => { if (NextRow == null) return true; return X < NextRow.X; }, XDecreasingErrorMessage, ErrorLevel.Severe));
                 }
                 else
                 {
-                    AddSinglePropertyRule(nameof(X), new Rule(() => { if (NextRow == null) return true; return X >= NextRow.X; }, "X values are not decreasing.", ErrorLevel.Severe));
-                    AddSinglePropertyRule(nameof(X), new Rule(() => { if (PreviousRow == null) return true; return X <= PreviousRow.X; }, "X values are not decreasing.", ErrorLevel.Severe));
+                    AddSinglePropertyRule(nameof(X), new Rule(() => { if (NextRow == null) return true; return X >= NextRow.X; }, XDecreasingErrorMessage, ErrorLevel.Severe));
+                    AddSinglePropertyRule(nameof(X), new Rule(() => { if (PreviousRow == null) return true; return X <= PreviousRow.X; }, XDecreasingErrorMessage, ErrorLevel.Severe));
                 }
             }
             else
             {
                 if (isStrictMonotonic)
                 {
-                    AddSinglePropertyRule(nameof(X), new Rule(() => { if (PreviousRow == null) return true; return X < PreviousRow.X; }, "X values are not increasing.", ErrorLevel.Severe));
-                    AddSinglePropertyRule(nameof(X), new Rule(() => { if (NextRow == null) return true; return X > NextRow.X; }, "X values are not increasing.", ErrorLevel.Severe));
+                    AddSinglePropertyRule(nameof(X), new Rule(() => { if (PreviousRow == null) return true; return X < PreviousRow.X; }, XIncreasingErrorMessage, ErrorLevel.Severe));
+                    AddSinglePropertyRule(nameof(X), new Rule(() => { if (NextRow == null) return true; return X > NextRow.X; }, XIncreasingErrorMessage, ErrorLevel.Severe));
                 }
                 else
                 {
-                    AddSinglePropertyRule(nameof(X), new Rule(() => { if (NextRow == null) return true; return X <= NextRow.X; }, "X values are not increasing.", ErrorLevel.Severe));
-                    AddSinglePropertyRule(nameof(X), new Rule(() => { if (PreviousRow == null) return true; return X >= PreviousRow.X; }, "X values are not increasing.", ErrorLevel.Severe));
+                    AddSinglePropertyRule(nameof(X), new Rule(() => { if (NextRow == null) return true; return X <= NextRow.X; }, XIncreasingErrorMessage, ErrorLevel.Severe));
+                    AddSinglePropertyRule(nameof(X), new Rule(() => { if (PreviousRow == null) return true; return X >= PreviousRow.X; }, XIncreasingErrorMessage, ErrorLevel.Severe));
                 }
             }
         }
 
-        public void SetGlobalMaxRules(double xMax , double yMax , double xMin, double yMin)
+        public void SetGlobalMaxRules(double xMax, double yMax, double xMin, double yMin)
         {
             double maxProbability = .999999;
             double minProbability = .000001;
-            AddSinglePropertyRule(nameof(X), new Rule(() => { return X <= xMax; }, "X was greater than the maximum allowed value " + xMax, ErrorLevel.Severe));
-            AddSinglePropertyRule(nameof(X), new Rule(() => { return X >= xMin; }, "X was smaller than the minimum allowed value " + xMin, ErrorLevel.Severe));
-            foreach(string propName in YMinProperties)
+            AddSinglePropertyRule(nameof(X), new Rule(() => { return X <= xMax; }, XMaxErrorMessage + xMax, ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(X), new Rule(() => { return X >= xMin; }, XMinErrorMessage + xMin, ErrorLevel.Severe));
+            foreach (string propName in YMinProperties)
             {
-                AddSinglePropertyRule(propName, new Rule(() => { return Y.InverseCDF(minProbability) >= yMin; }, "The .001 percentile of the Y distribution is less than the minimum allowable value of " + yMin, ErrorLevel.Severe));
+                AddSinglePropertyRule(propName, new Rule(() => { return Y.InverseCDF(minProbability) >= yMin; }, YMinErrorMessage + yMin, ErrorLevel.Severe));
             }
             foreach (string propName in YMaxProperties)
             {
-                AddSinglePropertyRule(propName, new Rule(() => { return Y.InverseCDF(maxProbability) <= yMax; }, "The 99.999 percentile of the Y distribution is greater than the maximum allowable value of " + yMax,  ErrorLevel.Severe));
+                AddSinglePropertyRule(propName, new Rule(() => { return Y.InverseCDF(maxProbability) <= yMax; }, YMaxErrorMessage + yMax, ErrorLevel.Severe));
             }
 
         }
@@ -98,7 +105,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
                 {
                     return (pExtreme <= cExtreme);
                 }
-                
+
             }
 
             else if (NextRow == null && PreviousRow == null)
