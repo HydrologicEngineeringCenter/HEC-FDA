@@ -16,7 +16,7 @@ namespace HEC.FDA.View.Utilities
         public UncaughtExceptionWindow(object sender, Exception e)
         {
             InitializeComponent();
-            Title = StringConstants.FDA_VERSION + " - Uncaught Exception";
+            Title = "FDA" + " - Uncaught Exception";
             ErrorMsg.Text = e.Message;
             CallStack.Text = e.StackTrace;
         }

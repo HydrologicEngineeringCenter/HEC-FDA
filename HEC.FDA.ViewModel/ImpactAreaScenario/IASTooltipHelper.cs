@@ -1,10 +1,7 @@
 ﻿using HEC.FDA.ViewModel.Results;
 using HEC.FDA.ViewModel.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario
 {
@@ -25,6 +22,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 if (hasResults)
                 {
                     sb.AppendLine("Last Computed: " + GetComputeDate(elem));
+                    sb.AppendLine("Computed with: HEC-FDA " + GetComputeVersion(elem));
                 }
                 elem.CustomTreeViewHeader.Decoration = ImageSources.ERROR_IMAGE;
             }
@@ -38,6 +36,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                     {
                         string lastCompute = GetComputeDate(elem);
                         sb.AppendLine("Last Computed: " + lastCompute);
+                        sb.AppendLine("Computed with: HEC-FDA " + GetComputeVersion(elem));
 
                         DateTime lastEditDate = DateTime.Parse(elem.LastEditDate);
                         if (lastCompute != "NA")
@@ -77,6 +76,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 if (hasResults)
                 {
                     sb.AppendLine("Last Computed: " + GetComputeDate(elem));
+                    sb.AppendLine("Computed with: HEC-FDA " + GetComputeVersion(elem));
                 }
                 selectableElement.Decoration = ImageSources.ERROR_IMAGE;
             }
@@ -90,6 +90,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                     {
                         string lastCompute = GetComputeDate(elem);
                         sb.AppendLine("Last Computed: " + lastCompute);
+                        sb.AppendLine("Computed with: HEC-FDA " + GetComputeVersion(elem));
 
                         DateTime lastEditDate = DateTime.Parse(elem.LastEditDate);
                         DateTime computeDate = DateTime.Parse(lastCompute);
@@ -124,6 +125,18 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             }
             return computeDate;
         }
-
+        private static string GetComputeVersion(IASElement elem)
+        {
+            string versionString = null;
+            if (elem.Results != null)
+            {
+                versionString = elem.Results.SoftwareVersion;
+                if (versionString == null)
+                {
+                    versionString = "NA";
+                }
+            }
+            return versionString;
+        }
     }
 }

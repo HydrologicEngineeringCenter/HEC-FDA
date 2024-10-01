@@ -105,8 +105,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                     {
                         ImageSource = ImageSources.GetImage(typeof(TerrainElement)),
                         Tooltip = StringConstants.CreateLastEditTooltip(newElement.LastEditDate),
-                        Decoration = " -Renaming File",
-                        GifVisible = true
+                        Decoration = " -Renaming File"
                     };
 
                     try
@@ -146,8 +145,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             {
                 ImageSource = ImageSources.GetImage(typeof(TerrainElement)),
                 Tooltip = StringConstants.CreateLastEditTooltip(element.LastEditDate),
-                Decoration = " -Deleting",
-                GifVisible = true
+                Decoration = " -Deleting"
             };
 
             element.Actions.Clear();
