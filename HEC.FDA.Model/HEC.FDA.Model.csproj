@@ -1,14 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<PackageId>USACE.HEC.FDA.Model</PackageId>
-		<VersionPrefix>1.1.0</VersionPrefix>
-		<Description>A library for handling HEC-FDA Flood Risk Analysis computations</Description>
-		<Authors>Hydrologic Engineering Center</Authors>
-		<RepositoryUrl>https://github.com/HydrologicEngineeringCenter/fda-model</RepositoryUrl>
-		<DebugType>pdbonly</DebugType>
-		<DebugSymbols>true</DebugSymbols>
-		<TieredCompilation>false</TieredCompilation>
-	</PropertyGroup>
 
 	<ItemGroup>
 		<!--Even though GDAL Assist is available as a transative dependency through Ras.Mapper, it needs
@@ -18,7 +8,6 @@
 			<IncludeAssets>all</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
-
 
 	<ItemGroup>
 		<ProjectReference Include="..\HEC.FDA.Statistics\HEC.FDA.Statistics.csproj" />

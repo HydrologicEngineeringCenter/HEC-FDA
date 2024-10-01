@@ -55,7 +55,7 @@ namespace HEC.FDA.ViewModel.Utilities
                 StudyVM = new FdaStudyVM();
                 StudyVM.PropertyChanged += StudyVM_PropertyChanged;
                 CurrentView = StudyVM;
-                Title = StringConstants.FDA_VERSION;
+                Title = StudyVM.Version;
             
             }
         }
@@ -72,7 +72,7 @@ namespace HEC.FDA.ViewModel.Utilities
         {
             if (e.PropertyName.Equals("Name"))
             {
-                Title = StringConstants.FDA_VERSION + " - " + StudyVM.CurrentStudyElement.Name; ;
+                Title = StudyVM.Version + " - " + StudyVM.CurrentStudyElement.Name; ;
             }
         }
 

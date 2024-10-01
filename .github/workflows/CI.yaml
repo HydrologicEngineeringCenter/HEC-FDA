@@ -6,6 +6,9 @@ on:
   push:
     branches: [ main ]
 
+env:
+  Project_Name: HEC.FDA.View/HEC.FDA.View.csproj
+
 jobs:
   CI:
     runs-on: windows-latest                         
@@ -31,20 +34,24 @@ jobs:
         dotnet nuget add source --name fda-nuget "https://www.hec.usace.army.mil/nexus/repository/fda-nuget/"
         dotnet nuget add source --name dss "https://www.hec.usace.army.mil/nexus/repository/dss/"
       
-    - name: Install dependencies
-      run: dotnet restore -v quiet
-        
-    - name: Build
-      run: dotnet build -v quiet --configuration Release --no-restore
+    - name: Create version number
+      shell: pwsh
+      run: |
+        $VERSION = "0.0.0.${{ github. run_number }}-Beta"
+        echo "VERSION=$VERSION" >> $env:GITHUB_ENV
 
     - name: Test Solution
       run: dotnet test --nologo --no-build --filter RunsOn=Remote -c Release
       
     - name: Publish
-      run: dotnet publish -c Release -v quiet HEC.FDA.View/HEC.FDA.View.csproj
+      shell: pwsh
+      run: |
+        $PUBLISH_OUT = "${pwd}/TO-PACKAGE/"
+        echo "PUBLISH_OUT=$PUBLISH_OUT" >> $env:GITHUB_ENV
+        dotnet publish -c Release -v quiet /p:Version=${{ env.VERSION }} -o $PUBLISH_OUT ${{ env.PROJECT_NAME }}
       
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3.1.2
       with:
-        name: HEC-FDA-2.0-Snapshot
-        path: .\build\publish\fda2.0
+        name: HEC-FDA-${{ env.VERSION }}
+        path: ${{ env.PUBLISH_OUT }}

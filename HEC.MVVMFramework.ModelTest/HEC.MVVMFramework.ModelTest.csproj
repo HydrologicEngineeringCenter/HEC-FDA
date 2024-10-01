@@ -4,6 +4,7 @@
 	  <WarningLevel>0</WarningLevel>
 	  <!--!This turns off all warnings!-->
     <IsPackable>false</IsPackable>
+		<TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>

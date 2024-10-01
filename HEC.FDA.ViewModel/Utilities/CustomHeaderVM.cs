@@ -24,14 +24,6 @@
         }
 
         public string Name { get; set; }
-        /// <summary>
-        /// A wait gif can be shown at the end of the element name that indicates that it is doing an operation ie: saving, loading
-        /// </summary>
-        public bool GifVisible
-        {
-            get { return _GifVisible; }
-            set { _GifVisible = value; NotifyPropertyChanged(); }
-        }
 
         /// <summary>
         /// The decoration can be any string added to the end of the element name.
@@ -64,7 +56,6 @@
             Name = name;
             Decoration = decoration;
             ImageSource = imageSource;
-            GifVisible = gifVisible;
         }
         #endregion
       

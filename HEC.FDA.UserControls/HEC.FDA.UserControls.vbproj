@@ -2,9 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net8.0-windows</TargetFramework>
-		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<UseWPF>True</UseWPF>
-		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<RootNamespace>UserControls</RootNamespace>
 	</PropertyGroup>
 
