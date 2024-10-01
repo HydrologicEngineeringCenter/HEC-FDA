@@ -25,6 +25,14 @@ namespace HEC.FDA.Model.stageDamage
         #region Hard Coded Compute Settings
         private const double MIN_PROBABILITY = 0.0001;
         private const double MAX_PROBABILITY = 0.9999;
+        //this setting is used to identify the quantity of compute points 
+        //depth-percent damage functions typically defined at half-foot intervals
+        //0.25ft target more than preserves the level of information content 
+        private const double FEET_PER_COORDINATE = 0.25;
+        //require at least four coordinates of stages at which we'll calculate damage outside the events in the hydraulic profiles 
+        private const int MINIMUM_EXTRAPOLATION_COORDINATES = 4;
+        //require at least two coordinates of stages at which we'll calculate damage betweem the events in the hydraulic profiles 
+        private const int MINIMUM_INTERPOLATION_COORDINATES = 2;
         private readonly ConvergenceCriteria _ConvergenceCriteria = new(minIterations: 1000, maxIterations: 5000);
         #endregion
 
@@ -95,30 +103,26 @@ namespace HEC.FDA.Model.stageDamage
 
         private void SetCoordinateQuantity()
         {
-            //depth-percent damage functions typically defined at half-foot intervals
-            //0.25ft target more than preserves the level of information content 
-            double feetPerCoordinate = 0.25;
-
             //set bottom coordinate quantity 
             double stageAtAEPofMostFrequentHydraulicsProfile = _StageFrequency.f(_HydraulicDataset.HydraulicProfiles.First().Probability);
             double rangeOfStagesAtBottom = stageAtAEPofMostFrequentHydraulicsProfile - _MinStageForArea;
-            _BottomExtrapolationPoints = Convert.ToInt32(Math.Ceiling(rangeOfStagesAtBottom/feetPerCoordinate));
+            _BottomExtrapolationPoints = Convert.ToInt32(Math.Ceiling(rangeOfStagesAtBottom/FEET_PER_COORDINATE));
             //require at least 4 coordinates at the bottom
-            if (_BottomExtrapolationPoints < 4 ) { _BottomExtrapolationPoints = 4; }
+            if (_BottomExtrapolationPoints < MINIMUM_EXTRAPOLATION_COORDINATES) { _BottomExtrapolationPoints = MINIMUM_EXTRAPOLATION_COORDINATES; }
 
             //set middle coordinate quantity 
             double stageAtAEPofLeastFrequentHydraulicsProfile = _StageFrequency.f(_HydraulicDataset.HydraulicProfiles.Last().Probability);
             double middleRange = stageAtAEPofLeastFrequentHydraulicsProfile - stageAtAEPofMostFrequentHydraulicsProfile;
             //based upon the range of stages between most frequent and least frequent AEP in hydraulics and the number of intervals to be interpolated 
-            _CentralInterpolationPoints = Convert.ToInt32(Math.Ceiling((middleRange / feetPerCoordinate) / (_HydraulicDataset.HydraulicProfiles.Count() - 1)));
+            _CentralInterpolationPoints = Convert.ToInt32(Math.Ceiling((middleRange / FEET_PER_COORDINATE) / (_HydraulicDataset.HydraulicProfiles.Count() - 1)));
             //require at least two coordinates between profiles  
-            if (_CentralInterpolationPoints < 2) { _CentralInterpolationPoints = 2; }
+            if (_CentralInterpolationPoints < MINIMUM_INTERPOLATION_COORDINATES) { _CentralInterpolationPoints = MINIMUM_INTERPOLATION_COORDINATES; }
 
             //set top coordinate quantity
             double rangeOfStagesAtTop = _MaxStageForArea - stageAtAEPofLeastFrequentHydraulicsProfile;
-            _TopExtrapolationPoints = Convert.ToInt32(Math.Ceiling(rangeOfStagesAtTop/feetPerCoordinate));
+            _TopExtrapolationPoints = Convert.ToInt32(Math.Ceiling(rangeOfStagesAtTop/FEET_PER_COORDINATE));
             //require at least four coordinates at the top 
-            if ( _TopExtrapolationPoints < 4 ) { _TopExtrapolationPoints = 4; }
+            if ( _TopExtrapolationPoints < MINIMUM_EXTRAPOLATION_COORDINATES) { _TopExtrapolationPoints = MINIMUM_EXTRAPOLATION_COORDINATES; }
         }
 
         /// <summary>
