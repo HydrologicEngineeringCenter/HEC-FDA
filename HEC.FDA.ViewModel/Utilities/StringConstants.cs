@@ -205,9 +205,6 @@
         public const string OCCTYPE_DEPTH = "Depth";
         public const string OCCTYPE_PERCENT_DAMAGE = "Percent Damage";
 
-
-        public const string FDA_VERSION = "FDA 2.0";
-
         public const string DEFAULT_UNIT_FORMAT = "N2";
         public const string DETAILED_DECIMAL_FORMAT = "N4";
 
