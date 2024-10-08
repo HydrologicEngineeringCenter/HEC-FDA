@@ -1,4 +1,4 @@
-﻿using HEC.FDA.Model.Spatial;
+using HEC.FDA.Model.Spatial;
 using HEC.FDA.Model.structures;
 using HEC.FDA.ModelTest.Resources;
 using RasMapperLib;
@@ -8,7 +8,7 @@ using Xunit;
 
 namespace HEC.FDA.ModelTest.unittests;
 [Collection("Serial")]
-public class RASHelperShould
+public class ShapefileShould
 {
     [Fact]
     [Trait("RunsOn", "Remote")]
