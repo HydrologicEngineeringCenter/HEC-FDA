@@ -12,24 +12,21 @@ public static class StructureDataValidator
     /// <summary>
     /// Check that the given row has all the specified fields. out param returns the whole row as objects, and list of the column headers with missing data.
     /// </summary>
-    public static bool RowHasValuesForColumns(PointShapefile pointShapefile, int rowIndex, List<string> requiredFields, out object[] rowValues, out List<string> missingValues)
+    public static bool RowHasValuesForColumns(PointShapefile pointShapefile, int rowIndex, List<string> requiredFields, out List<string> missingValues)
     {
         bool valid = true;
-        missingValues = new List<string>();
-
+        missingValues = new();
         TableRow row = pointShapefile.Rows[rowIndex];
-        rowValues = new object[requiredFields.Count];
 
         for(int i = 0; i < requiredFields.Count; i++)
         {
             string fieldName = requiredFields[i];
             object val = row.Value(fieldName);
-            if(CellHasData(val))
+            if(CellIsEmpty(val))
             {
                 valid = false;
                 missingValues.Add(fieldName);
             }
-            rowValues[i] = val;
         }
         return valid;
     }
@@ -45,8 +42,8 @@ public static class StructureDataValidator
         var rows = pointShapefile.Rows;
         for (int i = 0; i < rows.Count; i++)
         {
-            object val = rows[i];
-            if (!CellHasData(val))
+            object val = rows[i].Value(field);
+            if (CellIsEmpty(val))
             {
                 rowsWithMissingData.Add(i);
                 valid = false;
@@ -69,8 +66,8 @@ public static class StructureDataValidator
 
         for (int i = 0; i < rows.Count; i++)
         {
-            object val = rows[i];
-            if (!CellHasData(val))
+            object val = rows[i].Value(columnName);
+            if (CellIsEmpty(val))
             {
                 continue;
             }
@@ -88,9 +85,9 @@ public static class StructureDataValidator
     }
     
 
-    private static bool CellHasData(object cellValue)
+    private static bool CellIsEmpty(object cellValue)
     {
-        return (cellValue == DBNull.Value || cellValue == null || string.IsNullOrWhiteSpace(cellValue as string));
+        return (cellValue == DBNull.Value || cellValue == null);
     }
 
 }
