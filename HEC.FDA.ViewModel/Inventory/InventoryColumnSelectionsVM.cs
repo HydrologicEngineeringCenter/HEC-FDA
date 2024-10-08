@@ -1,5 +1,4 @@
-﻿using DatabaseManager;
-using HEC.CS.Collections;
+﻿using HEC.CS.Collections;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
@@ -7,14 +6,13 @@ using System.IO;
 using System.Linq;
 using HEC.FDA.ViewModel.Watershed;
 using HEC.FDA.Model.structures;
-using RasMapperLib;
 using Geospatial.GDALAssist;
+using HEC.FDA.Model.Spatial;
 
 namespace HEC.FDA.ViewModel.Inventory
 {
     public class InventoryColumnSelectionsVM : BaseViewModel
     {
-        #region Fields
         private string _Path;
         private bool _FirstFloorElevationIsSelected = true;
         private bool _FromTerrainFileIsSelected;
@@ -38,8 +36,6 @@ namespace HEC.FDA.ViewModel.Inventory
         private InventoryColumnSelectionsRowItem _DescriptionRow = new InventoryColumnSelectionsRowItem(StructureSelectionMapping.DESCRIPTION, "Description");
         private InventoryColumnSelectionsRowItem _NumberOfStructuresRow = new InventoryColumnSelectionsRowItem(StructureSelectionMapping.NUMBER_OF_STRUCTURES, "Number Of Structures");
 
-        #endregion
-        #region Properties
         public InventoryColumnSelectionsRowItem OccupancyTypeRow
         {
             get { return _OccupancyTypeRow; }
@@ -68,8 +64,8 @@ namespace HEC.FDA.ViewModel.Inventory
         public List<InventoryColumnSelectionsRowItem> GroundElevationRows { get; } = new List<InventoryColumnSelectionsRowItem>();
         public List<InventoryColumnSelectionsRowItem> TerrainElevationRows { get; } = new List<InventoryColumnSelectionsRowItem>();
 
-        #endregion
-        #region Constructors
+        public PointShapefile PointShapefile { get; set; }
+
         public InventoryColumnSelectionsVM()
         {
             LoadRows();
@@ -104,8 +100,6 @@ namespace HEC.FDA.ViewModel.Inventory
             _NumberOfStructuresRow.SelectedItem = mappings.NumberOfStructuresCol;
         }
 
-        #endregion
-        #region Voids
         private void FromTerrainFileSelectionChanged()
         {
             RequiredRows.Clear();
@@ -169,7 +163,7 @@ namespace HEC.FDA.ViewModel.Inventory
 
         private void UpdateRows()
         {
-            List<string> allColumnNames = GetColumnNames();
+            string[] allColumnNames = GetColumnNames();
 
             //required rows
             _StructureIDRow.Items.Clear();
@@ -204,40 +198,14 @@ namespace HEC.FDA.ViewModel.Inventory
             _NumberOfStructuresRow.Items.AddRange(allColumnNames);
         }
 
-        private List<string> GetColumnNames()
+        private string[] GetColumnNames()
         {
-            DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(_Path, ".dbf"));
-            DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
-            List<string> columnNames = dtv.ColumnNames.ToList();
-            columnNames.Insert(0, "");
-            return columnNames;
+            return PointShapefile.ColumnNames;
         }
-
-        #endregion
-        #region Functions
-
 
         private object[] GetStructureNames()
         {
-            object[] structureNames = null;
-            DataTableView dtv = GetStructureInventoryTable();
-            if (dtv != null)
-            {
-                structureNames = dtv.GetColumn(_StructureIDRow.SelectedItem);
-            }
-            return structureNames;
-        }
-
-        private DataTableView GetStructureInventoryTable()
-        {
-            DataTableView dtv = null;
-            string dbfPath = System.IO.Path.ChangeExtension(_Path, "dbf");
-            if (File.Exists(dbfPath))
-            {
-                DbfReader dbf = new DbfReader(dbfPath);
-                dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
-            }
-            return dtv;
+            return PointShapefile.GetColumnValues(_StructureIDRow.SelectedItem);
         }
 
         public static string getTerrainFile()
@@ -252,8 +220,6 @@ namespace HEC.FDA.ViewModel.Inventory
             }
             return filePath;
         }
-
-        #region Validation
 
         /// <summary>
         /// Uses the terrain file and the structures shapefile to get elevations for each structure.
@@ -275,7 +241,7 @@ namespace HEC.FDA.ViewModel.Inventory
             {
                 throw;
             }
-            _StructureElevations.AddRange(RASHelper.SamplePointsFromRaster(Path,getTerrainFile(), projection));
+            _StructureElevations.AddRange(RASHelper.SamplePointsFromRaster(Path, getTerrainFile(), projection));
             List<int> idsWithNoElevation = new List<int>();
             for (int i = 0; i < _StructureElevations.Count(); i++)
             {
@@ -289,7 +255,7 @@ namespace HEC.FDA.ViewModel.Inventory
             foreach (int i in idsWithNoElevation)
             {
                 string uniqueName = structureNames[i].ToString();
-                StructureMissingDataRowItem missingRow = new StructureMissingDataRowItem(uniqueName,GetRequiredRowValues(uniqueName), MissingDataType.TerrainElevation);
+                StructureMissingDataRowItem missingRow = new (uniqueName, GetRequiredRowValues(i), MissingDataType.TerrainElevation);
                 missingDataRows.Add(missingRow);
             }
             return missingDataRows;
@@ -325,20 +291,10 @@ namespace HEC.FDA.ViewModel.Inventory
 
         private FdaValidationResult AreStructureIdsUnique()
         {
-            FdaValidationResult vr = new FdaValidationResult();
-
-            if (File.Exists(System.IO.Path.ChangeExtension(_Path, "dbf")))
+            FdaValidationResult vr = new();
+            if(StructureDataValidator.AllRowsHaveUniqueValueForColumn<string>(PointShapefile, _StructureIDRow.SelectedItem, out _))
             {
-                DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(Path, ".dbf"));
-                DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
-
-                object[] rows = dtv.GetColumn(_StructureIDRow.SelectedItem);
-                object[] distincRows = rows.Distinct().ToArray();
-                if (rows.Count() != distincRows.Count())
-                {
-                    //then there are duplicates
-                    vr.AddErrorMessage("Duplicate structure ID's were found. This is not allowed.");
-                }
+                vr.AddErrorMessage("Duplicate structure ID's were found. This is not allowed.");
             }
             return vr;
         }
@@ -383,25 +339,14 @@ namespace HEC.FDA.ViewModel.Inventory
         /// <returns></returns>
         private List<StructureMissingDataRowItem> AreAllStructureValuesDefinedForRow(InventoryColumnSelectionsRowItem row, MissingDataType missingType)
         {
-            List<StructureMissingDataRowItem> missingDataRows = new List<StructureMissingDataRowItem>();
-
-            if (File.Exists(System.IO.Path.ChangeExtension(_Path, "dbf")))
+            List<StructureMissingDataRowItem> missingDataRows = new();
+            StructureDataValidator.RowsHaveValueForColumn(PointShapefile, row.SelectedItem, out List<int> rowsWithMissingData);
+            string[] structureNames = GetStructureNames().Select((name) => name.ToString()).ToArray();
+            foreach(int i in rowsWithMissingData)
             {
-                DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(Path, ".dbf"));
-                DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
-
-                object[] rows = dtv.GetColumn(row.SelectedItem);
-                for (int i = 0; i < rows.Length; i++)
-                {
-                    if (rows[i] == DBNull.Value || rows[i].ToString() == "")
-                    {
-                        string structId = dtv.GetCell(_StructureIDRow.SelectedItem, i).ToString();
-                        StructureMissingDataRowItem missingDataRow = new StructureMissingDataRowItem(structId, GetRequiredRowValues(structId), missingType);
-                        missingDataRows.Add(missingDataRow);
-                    }
-                }
+                object[] rowValues = PointShapefile.GetRowValues(i, GetColumnNames());
+                missingDataRows.Add(new(structureNames[i], rowValues, missingType));
             }
-
             return missingDataRows;
         }
 
@@ -455,9 +400,6 @@ namespace HEC.FDA.ViewModel.Inventory
             return vr;
         }
 
-        #endregion
-        #endregion
-
         public StructureSelectionMapping CreateSelectionMapping()
         {
             return new StructureSelectionMapping(FirstFloorElevationIsSelected, FromTerrainFileIsSelected,
@@ -468,40 +410,14 @@ namespace HEC.FDA.ViewModel.Inventory
                 _DescriptionRow.SelectedItem, _NumberOfStructuresRow.SelectedItem);
         }
 
-        public object[] GetRequiredRowValues(string rowKey)
+        public object[] GetRequiredRowValues(int index)
         {
-            object[] rowValues = new object[0];
             List<string> selectedColumns = new List<string>();
-            foreach(InventoryColumnSelectionsRowItem selection in RequiredRows)
+            foreach (InventoryColumnSelectionsRowItem selection in RequiredRows)
             {
                 selectedColumns.Add(selection.SelectedItem);
             }
-            int keyIndex = GetKeyRowIndex(rowKey);
-            if (keyIndex != -1)
-            {
-                DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(_Path, ".dbf"));
-                dbf.Open();
-                DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
-                rowValues = dtv.GetRow(keyIndex, selectedColumns.ToArray());
-            }
-            return rowValues;
-        }
-
-        private int GetKeyRowIndex(string keyName)
-        {
-            int index = -1;
-            DataTableView dtv = GetStructureInventoryTable();
-            object[] keyColumn = dtv.GetColumn(_StructureIDRow.SelectedItem);
-            for(int i = 0; i < keyColumn.Length; i++)
-            {
-                
-                if(keyColumn[i].ToString().Equals(keyName))
-                {
-                    index = i;
-                    break;
-                }
-            }
-            return index;
+            return PointShapefile.GetRowValues(index, selectedColumns.ToArray());
         }
 
     }

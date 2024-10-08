@@ -3,9 +3,6 @@ using Geospatial.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Utility.Extensions;
 using Utility.Logging;
 using Utility.Memory;
 
@@ -31,15 +28,32 @@ public class PointShapefile
     /// <summary>
     /// Gets the row values as objects for the row of the specified id.
     /// </summary>
-    public object[] GetRowAsObjects(int id)
+    public object[] GetRowValues(int id, string[] columnNames)
     {
-        string[] columns = _pointCollection.AttributeTable.Columns.Select((c) => c.Name).ToArray();
         var row = Rows[id];
-        object[] rowValues = new object[columns.Length];
-        for (int i = 0; i < columns.Length; i++)
+        object[] rowValues = new object[columnNames.Length];
+        for (int i = 0; i < columnNames.Length; i++)
         {
-            rowValues[i] = row.Value(columns[i]);
+            rowValues[i] = row.Value(columnNames[i]);
         }
         return rowValues;
+    }
+
+    /// <summary>
+    /// Gets the column values as objects for all rows of the specified column.
+    /// </summary>
+    public object[] GetColumnValues(string columnName)
+    {
+        object[] columnvals = new object[Rows.Count];
+        for(int i=0;i<columnvals.Length;i++)
+        {
+            columnvals[i] = Rows[i].Value(columnName);
+        }
+        return columnvals;
+    }
+
+    public Type GetColumnType(string columnName)
+    {
+        return _pointCollection.AttributeTable.GetColumn(columnName).Type;
     }
 }

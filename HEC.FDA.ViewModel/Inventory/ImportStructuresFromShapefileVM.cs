@@ -86,6 +86,8 @@ namespace HEC.FDA.ViewModel.Inventory
             else
             {
                 _ColumnSelections.Path = SelectedPath;
+                //Migrating systems here. The above is RASMapper world, the below is the new world. We may be able to eliminate the above validation eventually and try/catch this.
+                _ColumnSelections.PointShapefile = new PointShapefile(SelectedPath);
             }
         }
 
