@@ -1,6 +1,6 @@
 ﻿using Geospatial.IO;
 using HEC.CS.Collections;
-using HEC.FDA.Model.structures;
+using HEC.FDA.Model.Spatial;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;

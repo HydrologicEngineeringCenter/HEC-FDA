@@ -1,5 +1,4 @@
-﻿using Amazon.Runtime.Internal;
-using HEC.FDA.Model.structures;
+﻿using HEC.FDA.Model.Spatial;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.Watershed;
