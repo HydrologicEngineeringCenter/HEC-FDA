@@ -10,7 +10,6 @@ namespace HEC.FDA.Model.Spatial;
 public class PointShapefile
 {
     private const string SHAPEFILE_LOAD_FAILED = "The point shapefile has not been loaded. Call LoadStructureShapefile() first";
-    private const string SHAPEFILE_CORRUPT = "The point shapefile failed to load correctly.";
     private PointFeatureCollection _pointCollection;
 
     public IReadOnlyList<TableRow> Rows { get => _pointCollection.AttributeTable.Rows; }
@@ -21,7 +20,7 @@ public class PointShapefile
         OperationResult res = ShapefileWriter.TryReadShapefile(pointShapefilePath, out _pointCollection);
         if (!res) 
         {
-            throw new Exception(SHAPEFILE_CORRUPT);
+            throw new Exception(res.GetConcatenatedMessages(","));
         }
     }
 
