@@ -1,4 +1,5 @@
 ﻿using Geospatial.GDALAssist;
+using HEC.FDA.Model.Spatial;
 using HEC.FDA.Model.hydraulics.enums;
 using HEC.FDA.Model.hydraulics.Interfaces;
 using HEC.FDA.Model.paireddata;

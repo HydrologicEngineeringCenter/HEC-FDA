@@ -4,15 +4,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using HEC.FDA.Model.utilities;
+using HEC.FDA.Model.structures;
 
-namespace HEC.FDA.Model.structures;
+namespace HEC.FDA.Model.Spatial;
 public class ShapefileLoader
 {
     private const string DEFAULT_MISSING_STRING_VALUE = "EMPTY";
     private const int DEFAULT_MISSING_NUMBER_VALUE = IntegerGlobalConstants.DEFAULT_MISSING_VALUE;
     private const string UNUSED_STRING_VALUE = "";
 
-    public static readonly Dictionary<string,Type> _expectedTypes = new()
+    public static readonly Dictionary<string, Type> _expectedTypes = new()
             {
                 { StructureSelectionMapping.STRUCTURE_ID, typeof(string)},
                 { StructureSelectionMapping.OCCUPANCY_TYPE, typeof(string) },
@@ -113,13 +114,13 @@ public class ShapefileLoader
     private static string GetFID(StructureSelectionMapping map, System.Data.DataRow row)
     {
         string name = RASHelper.GetRowValueForColumn(row, map.StructureIDCol, DEFAULT_MISSING_STRING_VALUE);
-        if( name == DEFAULT_MISSING_STRING_VALUE)
+        if (name == DEFAULT_MISSING_STRING_VALUE)
         {
             name = RASHelper.GetRowValueForColumn(row, map.StructureIDCol, DEFAULT_MISSING_NUMBER_VALUE).ToString();
         }
-        if( name == DEFAULT_MISSING_NUMBER_VALUE.ToString())
+        if (name == DEFAULT_MISSING_NUMBER_VALUE.ToString())
         {
-           name = DEFAULT_MISSING_STRING_VALUE;
+            name = DEFAULT_MISSING_STRING_VALUE;
         }
         return name;
     }
