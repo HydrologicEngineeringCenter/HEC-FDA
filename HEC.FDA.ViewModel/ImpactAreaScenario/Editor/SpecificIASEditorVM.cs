@@ -199,7 +199,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         public SpecificIASEditorVM(SpecificIAS elem, ImpactAreaRowItem rowItem, Func<ChildElementComboItem> getSelectedStageDamage)
         {
             _SelectedStageDamage = getSelectedStageDamage;
-            CurrentImpactArea = rowItem;
+            CurrentImpactArea = rowItem; //Maybe set default threshold here
+            DefaultStage = elem.DefaultStage;
             Initialize();
             FillForm(elem);
         }
@@ -768,7 +769,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             }
             else
             {
-                DefaultStage = 0;
                 //enable the checkbox
                 ScenarioReflectsEnabled = true;
             }

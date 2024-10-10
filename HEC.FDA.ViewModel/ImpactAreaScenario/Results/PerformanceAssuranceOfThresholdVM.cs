@@ -31,7 +31,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                     }
                     catch
                     {
-                        //todo: Getting the y value can throw an exception if the exceedanceProb isn't in the dictionary
+                        throw new Exception("exceedence probability not found)"); //TODO: handle this better. 
                     }
                 }
                 MetricsToRows.Add(thresholdComboItems[i].Metric, rows);
