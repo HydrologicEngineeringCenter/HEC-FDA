@@ -35,6 +35,7 @@ namespace HEC.FDA.ViewModel.Storage
             }
             set
             {
+                // doesn't need to be in if else
                 if (_SqliteReader == null)
                 {
                     if (!File.Exists(value))
@@ -73,6 +74,8 @@ namespace HEC.FDA.ViewModel.Storage
             EnforceFolderStructure(value);
             DatabaseManager.SQLiteManager.CreateSqLiteFile(value);         
         }
+
+        // value is the sqlite file path
         private void EnforceFolderStructure(string value)
         {
             _ProjectDirectory = Path.GetDirectoryName(value);
