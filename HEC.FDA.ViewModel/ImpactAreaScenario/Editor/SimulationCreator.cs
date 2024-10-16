@@ -209,13 +209,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             return _SimulationBuilder.Build();
         }
 
-        public void WithAdditionalThresholds(List<Threshold> additionalThresholds)
-        {
-            foreach (Threshold threshold in additionalThresholds)
-            {
-                _SimulationBuilder.WithAdditionalThreshold(threshold);
-            }
-        }
         public void WithAdditionalThreshold(Threshold additionalThreshold)
         {
             _SimulationBuilder.WithAdditionalThreshold(additionalThreshold);

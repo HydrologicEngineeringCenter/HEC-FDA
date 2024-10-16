@@ -5,7 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HEC.FDA.View.ImpactAreaScenario.Results"
              xmlns:utils="clr-namespace:HEC.FDA.View.Utilities"
-             mc:Ignorable="d" 
+  xmlns:results="clr-namespace:HEC.FDA.ViewModel.ImpactAreaScenario.Results;assembly=HEC.FDA.ViewModel"
+  d:DataContext="{d:DesignInstance Type=results:SpecificIASResultVM}"
+  mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
