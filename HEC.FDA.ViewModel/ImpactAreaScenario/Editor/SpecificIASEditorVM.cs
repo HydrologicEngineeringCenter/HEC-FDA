@@ -40,7 +40,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private readonly Func<ChildElementComboItem> _SelectedStageDamage;
         private bool _IsSufficientForCompute;
         private string _IsSufficientForComputeTooltip;
-        private bool _ScenarioReflectsWithoutProjCondition = true;
+        private bool _calculateDefualtThresholdChecked = true;
         private double _DefaultStage;
         private bool _ScenarioReflectsEnabled;
         private bool _HasNonFailureStageDamage;
@@ -62,10 +62,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             get { return _DefaultStage; }
             set { _DefaultStage = value; NotifyPropertyChanged(); }
         }
-        public bool ScenarioReflectsWithoutProjCondition
+        public bool CalculateDefaultThresholdChecked
         {
-            get { return _ScenarioReflectsWithoutProjCondition; }
-            set { _ScenarioReflectsWithoutProjCondition = value; UpdateDefaultStageRequired(); NotifyPropertyChanged(); }
+            get { return _calculateDefualtThresholdChecked; }
+            set { _calculateDefualtThresholdChecked = value; UpdateDefaultStageRequired(); NotifyPropertyChanged(); }
         }
 
         public string IsSufficientForComputeTooltip
@@ -319,7 +319,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private void FillForm(SpecificIAS elem)
         {
-            ScenarioReflectsWithoutProjCondition = elem.ScenarioReflectsWithoutProj;
+            CalculateDefaultThresholdChecked = elem.CalculateDefaultThreshold;
             DefaultStage = elem.DefaultStage;
             Thresholds.AddRange(elem.Thresholds);
             //all the available elements have been loaded into this editor. We now want to select
@@ -715,7 +715,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             List<ThresholdRowItem> thresholdRowItems = Thresholds;
 
             SpecificIAS elementToSave = new(CurrentImpactArea.ID, flowFreqID, inflowOutID, ratingID, extIntID,
-                latStructID, stageDamID, thresholdRowItems, ScenarioReflectsWithoutProjCondition, DefaultStage,
+                latStructID, stageDamID, thresholdRowItems, CalculateDefaultThresholdChecked, DefaultStage,
                 HasNonFailureStageDamage, nonFailureStageDamID);
             return elementToSave;
         }
@@ -756,7 +756,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         }
         public void UpdateDefaultStageRequired()
         {
-            DefaultStageRequired = !ScenarioReflectsWithoutProjCondition && !HasLeveeSelected();
+            DefaultStageRequired = !CalculateDefaultThresholdChecked && !HasLeveeSelected();
         }
         private void UpdateThresholdStageValue()
         {
@@ -764,7 +764,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             {
                 DefaultStage = ((LateralStructureElement)SelectedLeveeFeatureElement.ChildElement).Elevation;
                 //disable the checkbox
-                ScenarioReflectsWithoutProjCondition = false;
+                CalculateDefaultThresholdChecked = false;
                 ScenarioReflectsEnabled = false;
             }
             else

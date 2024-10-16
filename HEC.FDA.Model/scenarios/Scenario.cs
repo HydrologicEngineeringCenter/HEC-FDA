@@ -15,34 +15,18 @@ namespace HEC.FDA.Model.scenarios
 {
     public class Scenario : IReportMessage
     {
-        #region Fields 
         private readonly IList<ImpactAreaScenarioSimulation> _impactAreaSimulations;
-        #endregion
-        #region Properties 
-        public IList<ImpactAreaScenarioSimulation> ImpactAreaSimulations
-        {
-            get
-            {
-                return _impactAreaSimulations;
-            }
-        }
         public event MessageReportedEventHandler MessageReport;
 
-        public IList<ImpactAreaScenarioSimulation> ImpactAreas
-        {
-            get { return _impactAreaSimulations; }
-        }
-        #endregion
-        #region Constructors
         internal Scenario()
         {
-            _impactAreaSimulations = new List<ImpactAreaScenarioSimulation>();
+            _impactAreaSimulations = [];
         }
         public Scenario( IList<ImpactAreaScenarioSimulation> impactAreaSimulations)
         {
             _impactAreaSimulations = impactAreaSimulations;
         }
-        #endregion
+
         #region Methods
         public ScenarioResults Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria)
         {
