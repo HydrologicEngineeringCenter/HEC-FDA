@@ -78,8 +78,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
         public List<ThresholdRowItem> Thresholds { get; } = new List<ThresholdRowItem>();
 
-        public bool ScenarioReflectsWithoutProj {get;set;}
-        public double DefaultStage { get; set; }
+        public bool CalculateDefaultThreshold {get;set;}
+        public double DefaultStage { get; set; } = -999;
         public bool HasNonFailureStageDamage { get; set; }
         public int NonFailureStageDamageID { get; set; }
 
@@ -99,13 +99,13 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// <param name="stageDamageID"></param>
         /// <param name="thresholds"></param>
         public SpecificIAS(int impactAreaID, int flowFreqID, int inflowOutflowID, int ratingID, int extIntID, 
-            int leveeFailureID, int stageDamageID, List<ThresholdRowItem> thresholds, bool scenarioReflectsWithoutProj, 
+            int leveeFailureID, int stageDamageID, List<ThresholdRowItem> thresholds, bool calculateDefaultThreshold, 
             double defaultStage, bool hasNonFailureStageDamage, int nonFailureStageDamageID) : base()
         {
             HasNonFailureStageDamage = hasNonFailureStageDamage;
             NonFailureStageDamageID = nonFailureStageDamageID;
             DefaultStage = defaultStage;
-            ScenarioReflectsWithoutProj = scenarioReflectsWithoutProj;
+            CalculateDefaultThreshold = calculateDefaultThreshold;
             ImpactAreaID = impactAreaID;
             FlowFreqID = flowFreqID;
             InflowOutflowID = inflowOutflowID;
@@ -144,7 +144,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             //check if new elements exist before reading
             if (iasElem.Elements(SCENARIO_REFLECTS_WITHOUT_PROJ).Any())
             {
-                ScenarioReflectsWithoutProj = Convert.ToBoolean(iasElem.Element(SCENARIO_REFLECTS_WITHOUT_PROJ).Attribute("value").Value);
+                CalculateDefaultThreshold = Convert.ToBoolean(iasElem.Element(SCENARIO_REFLECTS_WITHOUT_PROJ).Attribute("value").Value);
                 DefaultStage = double.Parse(iasElem.Element(DEFAULT_STAGE).Attribute("value").Value);
             }
             XElement thresholdElement = iasElem.Element(THRESHOLDS);
@@ -248,10 +248,17 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             AggregatedStageDamageElement stageDamageElem = (AggregatedStageDamageElement)StudyCache.GetChildElementOfType(typeof(AggregatedStageDamageElement), StageDamageID);
             AggregatedStageDamageElement nonFailureStageDamageElem = (AggregatedStageDamageElement)StudyCache.GetChildElementOfType(typeof(AggregatedStageDamageElement), NonFailureStageDamageID);
 
-            SimulationCreator sc = new SimulationCreator(freqElem, inOutElem, ratElem, extIntElem, leveeElem, stageDamageElem, ImpactAreaID, 
-                HasNonFailureStageDamage, nonFailureStageDamageElem);
+            SimulationCreator sc = new(freqElem, inOutElem, ratElem, extIntElem, leveeElem, stageDamageElem, ImpactAreaID, HasNonFailureStageDamage, nonFailureStageDamageElem);
 
-            int thresholdIndex = 1;
+            //otherwise we'll calculate it ourselves in the model. 
+            if (!CalculateDefaultThreshold)
+            {
+                ConvergenceCriteria cc = StudyCache.GetStudyPropertiesElement().GetStudyConvergenceCriteria();
+                Threshold defaultThreshold = new(ImpactAreaScenarioSimulation.DEFAULT_THRESHOLD_ID, cc, ThresholdEnum.DefaultExteriorStage, DefaultStage);
+                sc.WithAdditionalThreshold(defaultThreshold);
+            }
+
+            int thresholdID = 1;
             foreach (ThresholdRowItem thresholdRow in Thresholds)
             {
                 double thresholdValue = 0;
@@ -260,9 +267,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                     thresholdValue = thresholdRow.ThresholdValue.Value;
                 }
                 ConvergenceCriteria cc = StudyCache.GetStudyPropertiesElement().GetStudyConvergenceCriteria();
-                Threshold threshold = new Threshold(thresholdIndex, cc, thresholdRow.ThresholdType.Metric, thresholdValue);
+                Threshold threshold = new Threshold(thresholdID, cc, thresholdRow.ThresholdType.Metric, thresholdValue);
                 sc.WithAdditionalThreshold(threshold);
-                thresholdIndex++;
+                thresholdID++;
             }
 
             return sc;
@@ -320,7 +327,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             iasElement.Add(stageDamageElem);
 
             XElement scenarioReflectsWithoutProjElem = new XElement(SCENARIO_REFLECTS_WITHOUT_PROJ);
-            scenarioReflectsWithoutProjElem.SetAttributeValue("value", ScenarioReflectsWithoutProj);
+            scenarioReflectsWithoutProjElem.SetAttributeValue("value", CalculateDefaultThreshold);
             iasElement.Add(scenarioReflectsWithoutProjElem);
 
             XElement defaultStageElem = new XElement(DEFAULT_STAGE);

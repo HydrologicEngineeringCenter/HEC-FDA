@@ -11,12 +11,10 @@ using HEC.MVVMFramework.Model.Messaging;
 using Statistics;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Utilities;
 
 namespace HEC.FDA.Model.compute
 {
@@ -25,10 +23,9 @@ namespace HEC.FDA.Model.compute
     {
         #region Fields 
         public const int IMPACT_AREA_SIM_COMPLETED = -1001;
-
         private const double THRESHOLD_DAMAGE_PERCENT = 0.05;
         private const double THRESHOLD_DAMAGE_RECURRENCE_INTERVAL = 0.99; //this is a non-exceedance probability 
-        private const int DEFAULT_THRESHOLD_ID = 0;
+        public const int DEFAULT_THRESHOLD_ID = 0;
         private ContinuousDistribution _FrequencyDischarge;
         private GraphicalUncertainPairedData _FrequencyDischargeGraphical;
         private UncertainPairedData _UnregulatedRegulated;
@@ -62,7 +59,6 @@ namespace HEC.FDA.Model.compute
                 return _ImpactAreaID;
             }
         }
-
         #endregion 
 
         internal ImpactAreaScenarioSimulation(int impactAreaID)
@@ -80,6 +76,9 @@ namespace HEC.FDA.Model.compute
             _ImpactAreaScenarioResults = new ImpactAreaScenarioResults(_ImpactAreaID); //defaults to null
         }
 
+        /// <summary>
+        /// This code path currently only used by tests. 
+        /// </summary>
         public ImpactAreaScenarioResults Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria)
         {
             return Compute(randomProvider, convergenceCriteria, new CancellationToken());
@@ -88,12 +87,7 @@ namespace HEC.FDA.Model.compute
         /// <summary>
         /// A simulation must be built with a stage damage function for compute default threshold to be true.
         /// </summary>
-        /// <param name="randomProvider"></param>
-        /// <param name="iterations"></param>
-        /// <param name="computeDefaultThreshold"></param>
-        /// <returns></returns>
-        public ImpactAreaScenarioResults Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, CancellationToken cancellationToken,
-            bool computeDefaultThreshold = true, bool giveMeADamageFrequency = false, bool computeIsDeterministic = false)
+        public ImpactAreaScenarioResults Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, CancellationToken cancellationToken, bool computeIsDeterministic = false)
         {
             if (!CanCompute(convergenceCriteria))
             {
@@ -118,7 +112,10 @@ namespace HEC.FDA.Model.compute
                 List<(CurveMetaData, PairedData)> damageFrequencyFunctions = ComputeDamageFrequency(computeIsDeterministic);
                 _ImpactAreaScenarioResults.DamageFrequencyFunctions = damageFrequencyFunctions;
                 CreateEADHistograms(convergenceCriteria, damageFrequencyFunctions);
-                if (computeDefaultThreshold == true)
+
+                //if the default threshold is user provided, we'll just move on. 
+                bool computeDefualtThreshold = !_ImpactAreaScenarioResults.PerformanceByThresholds.ListOfThresholds.Select(x => x.ThresholdID).Contains(0); // 0 is the threshold ID for the default threshold
+                if (computeDefualtThreshold)
                 {//I am not sure if there is a better way to add the default threshold
                     _ImpactAreaScenarioResults.PerformanceByThresholds.AddThreshold(ComputeDefaultThreshold(convergenceCriteria, computeWithDamage, damageFrequencyFunctions));
                 }
@@ -205,7 +202,7 @@ namespace HEC.FDA.Model.compute
                 ErrorMessage errorMessage = new(message, ErrorLevel.Fatal);
                 ReportMessage(this, new MessageEventArgs(errorMessage));
             }
-            if(_DamageCategoryStageDamage.Count == 0)
+            if (_DamageCategoryStageDamage.Count == 0)
             {
                 if (!HasLevee)
                 {
@@ -374,23 +371,23 @@ namespace HEC.FDA.Model.compute
                 }
                 else
                 {
-                        PairedData systemResponse_sample = _SystemResponseFunction.SamplePairedData(randomProvider.NextRandom(), computeIsDeterministic); //needs to be a random number
-                                                                                                                                                           //IPairedData frequency_stage_withLevee = frequency_stage.multiply(levee_curve_sample);
+                    PairedData systemResponse_sample = _SystemResponseFunction.SamplePairedData(randomProvider.NextRandom(), computeIsDeterministic); //needs to be a random number
+                                                                                                                                                      //IPairedData frequency_stage_withLevee = frequency_stage.multiply(levee_curve_sample);
 
-                        if (computeWithDamage)
-                        {
-                            ComputeDamagesFromStageFrequency_WithLevee(randomProvider, frequency_stage, systemResponse_sample, iteration, computeIsDeterministic);
-                        }
-                        //If the system response function is the default function 
-                        if (systemResponse_sample.Xvals.Length <= 2)
-                        {
-                            ComputePerformance(frequency_stage, Convert.ToInt32(iteration));
-                        }
-                        else
-                        {
-                            ComputeLeveePerformance(frequency_stage, systemResponse_sample, Convert.ToInt32(iteration));
-                        }
-                    
+                    if (computeWithDamage)
+                    {
+                        ComputeDamagesFromStageFrequency_WithLevee(randomProvider, frequency_stage, systemResponse_sample, iteration, computeIsDeterministic);
+                    }
+                    //If the system response function is the default function 
+                    if (systemResponse_sample.Xvals.Length <= 2)
+                    {
+                        ComputePerformance(frequency_stage, Convert.ToInt32(iteration));
+                    }
+                    else
+                    {
+                        ComputeLeveePerformance(frequency_stage, systemResponse_sample, Convert.ToInt32(iteration));
+                    }
+
 
                 }
 
@@ -410,21 +407,21 @@ namespace HEC.FDA.Model.compute
                 }
                 else
                 {
-                        PairedData systemResponse_sample = _SystemResponseFunction.SamplePairedData(randomProvider.NextRandom(), computeIsDeterministic); //needs to be a random number
-                                                                                                                                                           //IPairedData frequency_floodplainstage_withLevee = frequency_floodplainstage.multiply(_levee_curve_sample);
-                        if (computeWithDamage)
-                        {
-                            ComputeDamagesFromStageFrequency_WithLeveeAndInteriorExterior(randomProvider, _channelstage_floodplainstage_sample, frequency_stage, systemResponse_sample, iteration, computeIsDeterministic);
-                        }
-                        //If the system response function is the default function
-                        if (systemResponse_sample.Xvals.Length <= 2)
-                        {
-                            ComputePerformance(frequency_stage, Convert.ToInt32(iteration));
-                        }
-                        else
-                        {
-                            ComputeLeveePerformance(frequency_stage, systemResponse_sample, Convert.ToInt32(iteration));
-                        }
+                    PairedData systemResponse_sample = _SystemResponseFunction.SamplePairedData(randomProvider.NextRandom(), computeIsDeterministic); //needs to be a random number
+                                                                                                                                                      //IPairedData frequency_floodplainstage_withLevee = frequency_floodplainstage.multiply(_levee_curve_sample);
+                    if (computeWithDamage)
+                    {
+                        ComputeDamagesFromStageFrequency_WithLeveeAndInteriorExterior(randomProvider, _channelstage_floodplainstage_sample, frequency_stage, systemResponse_sample, iteration, computeIsDeterministic);
+                    }
+                    //If the system response function is the default function
+                    if (systemResponse_sample.Xvals.Length <= 2)
+                    {
+                        ComputePerformance(frequency_stage, Convert.ToInt32(iteration));
+                    }
+                    else
+                    {
+                        ComputeLeveePerformance(frequency_stage, systemResponse_sample, Convert.ToInt32(iteration));
+                    }
                 }
 
             }
@@ -454,7 +451,7 @@ namespace HEC.FDA.Model.compute
                 {
                     foreach (UncertainPairedData stageUncertainNonFailureDamage in DamageCategoryStageNonFailureDamage)
                     {
-                        if (stageUncertainNonFailureDamage.DamageCategory == stageUncertainDamage.DamageCategory 
+                        if (stageUncertainNonFailureDamage.DamageCategory == stageUncertainDamage.DamageCategory
                             && stageUncertainNonFailureDamage.AssetCategory == stageUncertainDamage.AssetCategory)
                         {
                             PairedData inverseOfSystemResponse = CalculateFailureProbComplement(validatedSystemResponse);
@@ -728,7 +725,7 @@ namespace HEC.FDA.Model.compute
 
             MedianRandomProvider meanRandomProvider = new();
             ConvergenceCriteria convergenceCriteria = new(minIterations: 1, maxIterations: 1);
-            ImpactAreaScenarioResults results = Compute(meanRandomProvider, convergenceCriteria, new CancellationTokenSource().Token, false, true, computeIsDeterministic: true);
+            ImpactAreaScenarioResults results = Compute(meanRandomProvider, convergenceCriteria, new CancellationTokenSource().Token, computeIsDeterministic: true);
             return results;
         }
         public static SimulationBuilder Builder(int impactAreaID)
@@ -847,36 +844,52 @@ namespace HEC.FDA.Model.compute
             return true;
         }
         //TODO: Finish out serialization refactor 
+        // Constants for XML element names
+        private const string FREQUENCY_DISCHARGE_GRAPHICAL_ELEMENT_NAME = "FrequencyDischargeGraphical";
+        private const string REGULATED_UNREGULATED_ELEMENT_NAME = "UnregulatedRegulated";
+        private const string DISCHARGE_STAGE_ELEMENT_NAME = "DischargeStage";
+        private const string FREQUENCY_STAGE_ELEMENT_NAME = "FrequencyStage";
+        private const string INTERIOR_EXTERIOR_ELEMENT_NAME = "InteriorExterior";
+        private const string SYSTEM_RESPONSE_ELEMENT_NAME = "SystemResponse";
+        private const string IMPACT_AREA_SCENARIO_RESULTS_ELEMENT_NAME = "ImpactAreaScenarioResults";
+        private const string STAGE_DAMAGE_LIST_ELEMENT_NAME = "stageDamageList";
+        private const string NON_FAIL_STAGE_DAMAGE_LIST_ELEMENT_NAME = "nonFailStageDamageList";
+        private const string IMPACT_AREA_ID_ELEMENT_NAME = "ImpactAreaID";
+        private const string TOP_OF_LEVEE_ELEVATION_ELEMENT_NAME = "TopOfLeveeElevation";
+        private const string FREQUENCY_DISCHARGE_IS_NULL_ELEMENT_NAME = "FrequencyDischargeIsNull";
+        private const string IMPACT_AREA_SCENARIO_SIMULATION = "ImpactAreaScenarioSimulation";
+        private const string LOG_PEARSON_3 = "LogPearson3";
+
         public XElement WriteToXML()
         {
-            XElement mainElement = new("ImpactAreaScenarioSimulation");
+            XElement mainElement = new(IMPACT_AREA_SCENARIO_SIMULATION);
 
-            mainElement.SetAttributeValue("TopOfLeveeElevation", _TopOfLeveeElevation);
-            mainElement.SetAttributeValue("ImpactAreaID", _ImpactAreaID);
+            mainElement.SetAttributeValue(TOP_OF_LEVEE_ELEVATION_ELEMENT_NAME, _TopOfLeveeElevation);
+            mainElement.SetAttributeValue(IMPACT_AREA_ID_ELEMENT_NAME, _ImpactAreaID);
             bool frequencyDischargeIsNull = ((Statistics.Distributions.LogPearson3)_FrequencyDischarge).IsNull;
-            mainElement.SetAttributeValue("FrequencyDischargeIsNull", frequencyDischargeIsNull);
+            mainElement.SetAttributeValue(FREQUENCY_DISCHARGE_IS_NULL_ELEMENT_NAME, frequencyDischargeIsNull);
             if (!frequencyDischargeIsNull)
             {
                 XElement frequenceDischarge = _FrequencyDischarge.ToXML();
-                frequenceDischarge.Name = "LogPearson3";
+                frequenceDischarge.Name = LOG_PEARSON_3;
                 mainElement.Add(frequenceDischarge);
             }
 
             XElement frequencyDischargeGraphical = _FrequencyDischargeGraphical.WriteToXML();
-            frequencyDischargeGraphical.Name = "FrequencyDischargeGraphical";
+            frequencyDischargeGraphical.Name = FREQUENCY_DISCHARGE_GRAPHICAL_ELEMENT_NAME;
             XElement regulatedUnregulated = _UnregulatedRegulated.WriteToXML();
-            regulatedUnregulated.Name = "UnregulatedRegulated";
+            regulatedUnregulated.Name = REGULATED_UNREGULATED_ELEMENT_NAME;
             XElement dischargeStage = _DischargeStage.WriteToXML();
-            dischargeStage.Name = "DischargeStage";
+            dischargeStage.Name = DISCHARGE_STAGE_ELEMENT_NAME;
             XElement frequencyStage = _FrequencyStage.WriteToXML();
-            frequencyStage.Name = "FrequencyStage";
+            frequencyStage.Name = FREQUENCY_STAGE_ELEMENT_NAME;
             XElement interiorExterior = _ChannelStageFloodplainStage.WriteToXML();
-            interiorExterior.Name = "InteriorExterior";
+            interiorExterior.Name = INTERIOR_EXTERIOR_ELEMENT_NAME;
             XElement systemResponse = _SystemResponseFunction.WriteToXML();
-            systemResponse.Name = "SystemResponse";
+            systemResponse.Name = SYSTEM_RESPONSE_ELEMENT_NAME;
             XElement impactAreaScenarioResults = _ImpactAreaScenarioResults.WriteToXml();
-            impactAreaScenarioResults.Name = "ImpactAreaScenarioResults";
-            XElement stageDamageList = new("stageDamageList");
+            impactAreaScenarioResults.Name = IMPACT_AREA_SCENARIO_RESULTS_ELEMENT_NAME;
+            XElement stageDamageList = new(STAGE_DAMAGE_LIST_ELEMENT_NAME);
 
             foreach (UncertainPairedData stageDamage in _DamageCategoryStageDamage)
             {
@@ -907,7 +920,6 @@ namespace HEC.FDA.Model.compute
         }
         public static ImpactAreaScenarioSimulation ReadFromXML(XElement xElement)
         {
-
             Type type = typeof(ImpactAreaScenarioSimulation);
 
             string nonFailStageDamageTag = Serialization.GetXMLTagFromProperty(type, nameof(DamageCategoryStageNonFailureDamage));
@@ -918,49 +930,48 @@ namespace HEC.FDA.Model.compute
                 nonFailtageDamageList.Add(stageDamage);
             }
 
-
-            bool frequencyDischargeIsNull = Convert.ToBoolean(xElement.Attribute("FrequencyDischargeIsNull").Value);
+            bool frequencyDischargeIsNull = Convert.ToBoolean(xElement.Attribute(FREQUENCY_DISCHARGE_IS_NULL_ELEMENT_NAME).Value);
             ContinuousDistribution frequencyDischarge;
             if (!frequencyDischargeIsNull)
             {
-                frequencyDischarge = (ContinuousDistribution)ContinuousDistribution.FromXML(xElement.Element("LogPearson3"));
+                frequencyDischarge = (ContinuousDistribution)ContinuousDistribution.FromXML(xElement.Element(LOG_PEARSON_3));
             }
             else
             {
                 frequencyDischarge = new Statistics.Distributions.LogPearson3();
             }
-            GraphicalUncertainPairedData frequencyDischargeGraphical = GraphicalUncertainPairedData.ReadFromXML(xElement.Element("FrequencyDischargeGraphical"));
-            UncertainPairedData regulatedUnregulated = UncertainPairedData.ReadFromXML(xElement.Element("UnregulatedRegulated"));
-            UncertainPairedData stageDischarge = UncertainPairedData.ReadFromXML(xElement.Element("DischargeStage"));
-            GraphicalUncertainPairedData frequencyStage = GraphicalUncertainPairedData.ReadFromXML(xElement.Element("FrequencyStage"));
-            UncertainPairedData interiorExterior = UncertainPairedData.ReadFromXML(xElement.Element("InteriorExterior"));
-            UncertainPairedData systemResponse = UncertainPairedData.ReadFromXML(xElement.Element("SystemResponse"));
-            IContainImpactAreaScenarioResults impactAreaScenarioResults = ImpactAreaScenarioResults.ReadFromXML(xElement.Element("ImpactAreaScenarioResults"));
+            GraphicalUncertainPairedData frequencyDischargeGraphical = GraphicalUncertainPairedData.ReadFromXML(xElement.Element(FREQUENCY_DISCHARGE_GRAPHICAL_ELEMENT_NAME));
+            UncertainPairedData regulatedUnregulated = UncertainPairedData.ReadFromXML(xElement.Element(REGULATED_UNREGULATED_ELEMENT_NAME));
+            UncertainPairedData stageDischarge = UncertainPairedData.ReadFromXML(xElement.Element(DISCHARGE_STAGE_ELEMENT_NAME));
+            GraphicalUncertainPairedData frequencyStage = GraphicalUncertainPairedData.ReadFromXML(xElement.Element(FREQUENCY_STAGE_ELEMENT_NAME));
+            UncertainPairedData interiorExterior = UncertainPairedData.ReadFromXML(xElement.Element(INTERIOR_EXTERIOR_ELEMENT_NAME));
+            UncertainPairedData systemResponse = UncertainPairedData.ReadFromXML(xElement.Element(SYSTEM_RESPONSE_ELEMENT_NAME));
+            IContainImpactAreaScenarioResults impactAreaScenarioResults = ImpactAreaScenarioResults.ReadFromXML(xElement.Element(IMPACT_AREA_SCENARIO_RESULTS_ELEMENT_NAME));
             List<UncertainPairedData> stageDamageList = new();
-            foreach (XElement stageDamageElement in xElement.Element("stageDamageList").Elements())
+            foreach (XElement stageDamageElement in xElement.Element(STAGE_DAMAGE_LIST_ELEMENT_NAME).Elements())
             {
                 UncertainPairedData stageDamage = UncertainPairedData.ReadFromXML(stageDamageElement);
                 stageDamageList.Add(stageDamage);
             }
 
-            double topOfLeveeElevation = Convert.ToDouble(xElement.Attribute("TopOfLeveeElevation").Value);
-            int impactAreaID = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
+            double topOfLeveeElevation = Convert.ToDouble(xElement.Attribute(TOP_OF_LEVEE_ELEVATION_ELEMENT_NAME).Value);
+            int impactAreaID = Convert.ToInt32(xElement.Attribute(IMPACT_AREA_ID_ELEMENT_NAME).Value);
 
             ImpactAreaScenarioSimulation impactAreaScenarioSimulation = Builder(impactAreaID)
-                .WithFlowFrequency(frequencyDischarge)
-                .WithFlowFrequency(frequencyDischargeGraphical)
-                .WithInflowOutflow(regulatedUnregulated)
-                .WithFlowStage(stageDischarge)
-                .WithLevee(systemResponse, topOfLeveeElevation)
-                .WithStageDamages(stageDamageList)
-                .WithFrequencyStage(frequencyStage)
-                .WithInteriorExterior(interiorExterior)
-                .WithNonFailureStageDamage(nonFailtageDamageList)
-                .Build();
+                           .WithFlowFrequency(frequencyDischarge)
+                           .WithFlowFrequency(frequencyDischargeGraphical)
+                           .WithInflowOutflow(regulatedUnregulated)
+                           .WithFlowStage(stageDischarge)
+                           .WithLevee(systemResponse, topOfLeveeElevation)
+                           .WithStageDamages(stageDamageList)
+                           .WithFrequencyStage(frequencyStage)
+                           .WithInteriorExterior(interiorExterior)
+                           .WithNonFailureStageDamage(nonFailtageDamageList)
+                           .Build();
             impactAreaScenarioSimulation._ImpactAreaScenarioResults = (ImpactAreaScenarioResults)impactAreaScenarioResults;
             return impactAreaScenarioSimulation;
-
         }
+
         public class SimulationBuilder
         {
             private readonly ImpactAreaScenarioSimulation _Simulation;
