@@ -48,7 +48,7 @@ jobs:
       shell: pwsh
       run: |
         $SEVEN_Z_OUT = "${pwd}/HEC-FDA-${{ env.VERSION }}.exe"
-        echo "SEVEN_Z_OUT=$7Z_OUT" >> $env:GITHUB_ENV
+        echo "SEVEN_Z_OUT=$SEVEN_Z_OUT" >> $env:GITHUB_ENV
         7z a -sfx $SEVEN_Z_OUT "${{ env.PUBLISH_OUT }}/*"
 
     - name: Release
