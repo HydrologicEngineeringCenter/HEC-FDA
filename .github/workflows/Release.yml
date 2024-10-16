@@ -41,8 +41,9 @@ jobs:
       shell: pwsh
       run: |
         $PUBLISH_OUT = "${pwd}/TO-PACKAGE/"
+        $DISTRIBUTION_FOLDER = "$PUBLISH_OUT/HEC-FDA-${{ env.VERSION }}/"
         echo "PUBLISH_OUT=$PUBLISH_OUT" >> $env:GITHUB_ENV
-        dotnet publish -c Release -v quiet /p:Version=${{ env.VERSION }} -o $PUBLISH_OUT ${{ env.PROJECT_NAME }}
+        dotnet publish -c Release -v quiet /p:Version=${{ env.VERSION }} -o $DISTRIBUTION_FOLDER ${{ env.PROJECT_NAME }}
 
     - name: Create 7z SFX (self-extracting) archive
       shell: pwsh
