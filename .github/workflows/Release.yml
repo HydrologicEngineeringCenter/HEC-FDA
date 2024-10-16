@@ -47,11 +47,11 @@ jobs:
     - name: Create 7z SFX (self-extracting) archive
       shell: pwsh
       run: |
-        $7Z_OUT = "${pwd}/HEC-FDA-${{ env.VERSION }}.exe"
-        echo "7Z_OUT=$7Z_OUT" >> $env:GITHUB_ENV
-        7z a -sfx $7Z_OUT "${{ env.PUBLISH_OUT }}/*"
+        $SEVEN_Z_OUT = "${pwd}/HEC-FDA-${{ env.VERSION }}.exe"
+        echo "SEVEN_Z_OUT=$7Z_OUT" >> $env:GITHUB_ENV
+        7z a -sfx $SEVEN_Z_OUT "${{ env.PUBLISH_OUT }}/*"
 
     - name: Release
       uses: softprops/action-gh-release@v2
       with:
-        files: ${{ env.7Z_OUT }}
+        files: ${{ env.SEVEN_Z_OUT }}
