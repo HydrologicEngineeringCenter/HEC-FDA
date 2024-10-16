@@ -1,14 +1,8 @@
-﻿using DatabaseManager;
-using Microsoft.VisualBasic;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SQLite;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace HEC.FDA.ViewModel;
 public class SQLiteManager
