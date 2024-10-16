@@ -85,7 +85,7 @@
                     <CheckBox 
                       Grid.ColumnSpan="2" 
                       Content="Calculate Default Threshold"
-                      IsChecked="{Binding ScenarioReflectsWithoutProjCondition}"
+                      IsChecked="{Binding CalculateDefaultThresholdChecked}"
                       IsEnabled="{Binding ScenarioReflectsEnabled}" 
                       HorizontalAlignment="Right" 
                       VerticalAlignment="Center"
