@@ -54,4 +54,4 @@ jobs:
     - name: Release
       uses: softprops/action-gh-release@v2
       with:
-          files: ${{ env.7Z_OUT }}
+        files: ${{ env.7Z_OUT }}
