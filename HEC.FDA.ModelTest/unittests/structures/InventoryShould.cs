@@ -10,6 +10,7 @@ using System;
 using HEC.FDA.ModelTest.Resources;
 using System.Reflection;
 using System.Diagnostics;
+using HEC.FDA.Model.Spatial;
 
 namespace HEC.FDA.ModelTest.unittests.structures
 {
@@ -70,7 +71,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
         [Fact]
         public void GetGroundElevationFromTerrain()
         {
-            float[] groundelevs = Model.structures.RASHelper.SamplePointsFromRaster(pathToNSIShapefile, pathToTerrainHDF,Projection.FromFile(pathToMuncieProjection));
+            float[] groundelevs = RASHelper.SamplePointsFromRaster(pathToNSIShapefile, pathToTerrainHDF,Projection.FromFile(pathToMuncieProjection));
             Assert.Equal(682, groundelevs.Length);
             Assert.Equal(947.0004, groundelevs[0], 1);
         }
@@ -101,7 +102,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
         public void ReturnProjectionFromVector()
         {
             //Act
-            Projection proj = Model.structures.RASHelper.GetVectorProjection(new PointFeatureLayer("unusedName",pathToNSIShapefile));
+            Projection proj = RASHelper.GetVectorProjection(new PointFeatureLayer("unusedName",pathToNSIShapefile));
             //Assert
             Assert.NotNull(proj);
         }
@@ -111,11 +112,11 @@ namespace HEC.FDA.ModelTest.unittests.structures
             //These projections are VERY Slightly different.
             //It's enough to show that reprojection changes coords though, and lets us not add another file to the repo. 
             //Arrange 
-            Projection projPnt = Model.structures.RASHelper.GetVectorProjection(new PointFeatureLayer("unusedName", pathToNSIShapefile));
+            Projection projPnt = RASHelper.GetVectorProjection(new PointFeatureLayer("unusedName", pathToNSIShapefile));
             Projection projTerr = Projection.FromFile(pathToAlternativeProjection);
             PointM pnt= new PointM(0,0);
             //Act
-            PointM newPnt = Model.structures.RASHelper.ReprojectPoint(pnt, projTerr, projPnt);
+            PointM newPnt = RASHelper.ReprojectPoint(pnt, projTerr, projPnt);
             //Assert
             Assert.NotEqual(pnt.X, newPnt.X);
         }

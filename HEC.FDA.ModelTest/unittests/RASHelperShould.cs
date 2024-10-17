@@ -1,4 +1,5 @@
-﻿using HEC.FDA.Model.structures;
+﻿using HEC.FDA.Model.Spatial;
+using HEC.FDA.Model.structures;
 using HEC.FDA.ModelTest.Resources;
 using RasMapperLib;
 using System.Collections.Generic;
@@ -23,8 +24,8 @@ public class RASHelperShould
     public void ReturnAllComponentFilesOfAnHDFTerrain()
     {
         string error = "";
-        List<string> terrainComponentFiles = RASHelper.GetTerrainComponentFiles(Resources.StringResourcePaths.TerrainPath,ref error);
+        List<string> terrainComponentFiles = RASHelper.GetTerrainComponentFiles(Resources.StringResourcePaths.TerrainPath, ref error);
         Assert.True(error.IsNullOrEmpty());
-        Assert.Equal(terrainComponentFiles.Count, 5); 
+        Assert.Equal(terrainComponentFiles.Count, 5);
     }
 }

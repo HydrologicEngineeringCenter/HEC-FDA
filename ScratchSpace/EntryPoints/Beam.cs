@@ -1,4 +1,4 @@
-﻿using HEC.FDA.Model.structures;
+﻿using HEC.FDA.Model.Spatial;
 using RasMapperLib;
 
 namespace ScratchSpace.EntryPoints;

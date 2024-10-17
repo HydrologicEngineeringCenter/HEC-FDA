@@ -10,7 +10,7 @@ namespace HEC.FDA.ViewModel.Storage
     public sealed class Connection
     {
         #region Fields
-        private static DatabaseManager.SQLiteManager _SqliteReader = null;
+        private static SQLiteManager _SqliteReader = null;
         private const string TERRAIN_DIRECTORY = "Terrains";
         private const string HYDRAULIC_DIRECTORY = "Hydraulic Data";
         private const string PROJECTION_DIRECTORY = "Projection";
@@ -35,6 +35,7 @@ namespace HEC.FDA.ViewModel.Storage
             }
             set
             {
+                // doesn't need to be in if else
                 if (_SqliteReader == null)
                 {
                     if (!File.Exists(value))
@@ -45,7 +46,7 @@ namespace HEC.FDA.ViewModel.Storage
                     {
                         SetUpForExistingStudy(value);
                     }
-                    _SqliteReader = new DatabaseManager.SQLiteManager(value);
+                    _SqliteReader = new SQLiteManager(value);
                 }
                 else
                 {
@@ -59,7 +60,7 @@ namespace HEC.FDA.ViewModel.Storage
                         SetUpForExistingStudy(value);
                         
                     }                    
-                    _SqliteReader = new DatabaseManager.SQLiteManager(value);
+                    _SqliteReader = new SQLiteManager(value);
                 }
             }
         }
@@ -71,8 +72,10 @@ namespace HEC.FDA.ViewModel.Storage
         private void SetUpForNewStudy(string value)
         {
             EnforceFolderStructure(value);
-            DatabaseManager.SQLiteManager.CreateSqLiteFile(value);         
+            SQLiteManager.CreateSqLiteFile(value);         
         }
+
+        // value is the sqlite file path
         private void EnforceFolderStructure(string value)
         {
             _ProjectDirectory = Path.GetDirectoryName(value);
@@ -82,7 +85,7 @@ namespace HEC.FDA.ViewModel.Storage
             if (!Directory.Exists(ProjectionDirectory)) { Directory.CreateDirectory(ProjectionDirectory); }
         }
 
-        public DatabaseManager.SQLiteManager Reader
+        public SQLiteManager Reader
         {
             get { return _SqliteReader; }
         }
