@@ -43,8 +43,8 @@
        
         <StackPanel Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
             <Button  Content="{Binding ComputeButtonLabel}" Width="100" Height="22"  Margin="5" Click="Compute_Click"/>
-            <Button  Content="Close" Width="100" Height="22" Margin="5"/>
-        </StackPanel>
+            <Util:CloseControl/>
+    </StackPanel>
             
     </Grid>
 </UserControl>

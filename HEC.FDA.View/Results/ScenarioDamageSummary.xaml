@@ -274,6 +274,6 @@
 
             </Grid>
         </ScrollViewer>
-        <util:OKCloseControl Grid.Row="1"/>
+        <util:CloseControl Grid.Row="1"/>
     </Grid>
 </UserControl>

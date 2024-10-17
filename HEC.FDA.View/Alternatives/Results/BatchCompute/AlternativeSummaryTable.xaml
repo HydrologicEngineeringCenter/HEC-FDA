@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HEC.FDA.View.Alternatives.Results.BatchCompute"
              xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
+             xmlns:util="clr-namespace:HEC.FDA.View.Utilities"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -105,7 +106,7 @@
 
 
 
-        <Button Grid.Row="2" Content="Close" Width="40" Height="22" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5"/>
+    <util:CloseControl Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
 
-    </Grid>
+  </Grid>
 </UserControl>
