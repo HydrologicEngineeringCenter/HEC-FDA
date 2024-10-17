@@ -184,6 +184,29 @@ namespace HEC.FDA.ViewModel.Saving
             }
         }
 
+        public void RemoveElementFromTableWithoutExtra(ChildElement element)
+        {
+            OpenConnection();
+            bool tableExists = Connection.Instance.TableNames().Contains(_TableName);
+            if (tableExists)
+            {
+                //Check that the element exists 
+                //Search the ID column of the database table for the ID. Return the index
+                //assume first column of the table is ID
+                //delete the row at that index. 
+
+                DataTable dt = Connection.Instance.GetDataTable(_TableName);
+                int parentTableIndex = GetElementIndexInTable(dt, element.ID);
+                if (parentTableIndex != -1)
+                {
+                    string query = $"DELETE FROM {_TableName} WHERE ID = {element.ID}";
+                    SQLiteCommand command = Connection.Instance.Reader.DbConnection.CreateCommand();
+                    command.CommandText = query;
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
         #endregion
 
         #region save existing
