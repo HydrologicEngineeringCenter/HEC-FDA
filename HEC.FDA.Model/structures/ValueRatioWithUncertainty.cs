@@ -19,7 +19,7 @@ namespace HEC.FDA.Model.structures
         private const string ValueRatioParameterErrorMessage = "Value ratio parameter values must be non-negative";
         private const string MaxMinErrorMessage = "The max must be larger than the minimum";
         private const string MaxCentralTendencyErrorMessage = "The max must be larger than the central tendency";
-        private const string MinCentralTendencyErrorMessage = "The min or standard deviation must be less than the central tendency";
+        private const string MinCentralTendencyErrorMessage = "The min must be less than the central tendency";
         #endregion
 
         #region Constructor 
@@ -72,11 +72,14 @@ namespace HEC.FDA.Model.structures
         }
         private bool MinLessThanCentral()
         {
-            if (_DistributionType.Equals(IDistributionEnum.Deterministic))
+            if (_DistributionType.Equals(IDistributionEnum.Triangular))
             {
-                return true; //because this doesn't matter for deterministic
+                return _StandardDeviationOrMin <= _CentralTendency;
             }
-            return _StandardDeviationOrMin <= _CentralTendency;
+            else
+            {
+                return true; //because this doesn't matter for deterministic or normal
+            }
         }
 
             public double Sample(double probability, bool computeIsDeterministic)
