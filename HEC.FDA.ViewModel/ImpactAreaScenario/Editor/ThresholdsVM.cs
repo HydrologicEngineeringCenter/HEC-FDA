@@ -10,7 +10,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
     public class ThresholdsVM : BaseViewModel
     {
         private ThresholdRowItem _selectedRow;
-        public ObservableCollection<ThresholdRowItem> Rows { get; } = new ObservableCollection<ThresholdRowItem>();
+        public ObservableCollection<ThresholdRowItem> Rows { get; } = [];
         public bool IsThresholdsValid { get; set; } = false;
         public ThresholdRowItem SelectedRow
         {
@@ -30,11 +30,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
  
         public void AddRow()
         {
-            Rows.Add(new ThresholdRowItem(getNextIdInteger(), ThresholdEnum.DefaultExteriorStage, 0));
-            SelectedRow = Rows[Rows.Count - 1];
+            Rows.Add(new ThresholdRowItem(GetNextIdInteger(), ThresholdEnum.AdditionalExteriorStage, 0));
+            SelectedRow = Rows[^1];
         }
 
-        private int getNextIdInteger()
+        private int GetNextIdInteger()
         {
             if(Rows.Count>0)
             {
@@ -81,17 +81,13 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                     result.AddErrorMessage("Threshold rows must be unique.");
                     break;
                 }
-                if(ri.ThresholdValue == null)
-                {
-                    result.AddErrorMessage("Threshold must have a value.");
-                }
             }
             return result;
         }
 
         private bool IsRowUnique(ThresholdRowItem rowItem)
         {
-            List<ThresholdRowItem> selections = Rows.Where(row => row.ThresholdType.Metric == rowItem.ThresholdType.Metric && row.ThresholdValue == rowItem.ThresholdValue).ToList();
+            List<ThresholdRowItem> selections = Rows.Where(row => row.ThresholdType == rowItem.ThresholdType && row.ThresholdValue == rowItem.ThresholdValue).ToList();
             return selections.Count() == 1;    
         }
 
