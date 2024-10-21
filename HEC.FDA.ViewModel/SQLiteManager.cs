@@ -50,13 +50,7 @@ public class SQLiteManager
         {
             connectionBuilder = DefaultConnectionBuilder;
         }
-
         connectionBuilder.DataSource = fileName;
-        SetDatabaseConnection(connectionBuilder);
-    }
-
-    public void SetDatabaseConnection(SQLiteConnectionStringBuilder connectionBuilder)
-    {
         _dbConnection = new SQLiteConnection(connectionBuilder.ToString());
     }
 
@@ -269,13 +263,8 @@ public class SQLiteManager
             Close();
             if (dataBaseOpen)
             {
-                Open();
+                Open(); 
             }
         }
-    }
-
-    public DataTableView GetTableManager(string tableName)
-    {
-        return new SqLiteTableManager(this, tableName, _dbConnection);
     }
 }
