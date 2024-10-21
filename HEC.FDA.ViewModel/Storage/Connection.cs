@@ -278,7 +278,7 @@ namespace HEC.FDA.ViewModel.Storage
         {
             return _SqliteReader.GetTableNames();
         }
-        public DatabaseManager.DataTableView GetTable(string TableName)
+        public object GetTable(string TableName)
         {
 
             if (IsConnectionNull)
@@ -287,7 +287,7 @@ namespace HEC.FDA.ViewModel.Storage
             }
             if (_SqliteReader.GetTableNames().Contains(TableName))
             {
-                return _SqliteReader.GetTableManager(TableName);
+                return new object();
             }else
             {
                 return null;

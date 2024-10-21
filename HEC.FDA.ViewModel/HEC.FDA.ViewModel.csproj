@@ -8,13 +8,6 @@
 		<UseWPF>true</UseWPF>
 		<RootNamespace>HEC.FDA.ViewModel</RootNamespace>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<Reference Include="DatabaseManager">
-			<HintPath>..\lib\DatabaseManager.dll</HintPath>
-			<Private>true</Private>
-		</Reference>
-	</ItemGroup>
 	
 	<ItemGroup>
 		<ProjectReference Include="..\HEC.FDA.Importer\HEC.FDA.Importer.csproj" />
