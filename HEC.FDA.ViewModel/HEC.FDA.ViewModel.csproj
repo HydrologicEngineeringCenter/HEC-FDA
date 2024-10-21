@@ -5,15 +5,6 @@
 		<UseWPF>true</UseWPF>
 		<RootNamespace>HEC.FDA.ViewModel</RootNamespace>
 	</PropertyGroup>
-
-	<!--All of these references are to keep DatabaseManager working. All on the chopping block. Shame refs.--> 
-	<ItemGroup>
-		<Reference Include="DatabaseManager">
-			<HintPath>..\lib\DatabaseManager.dll</HintPath>
-			<Private>true</Private>
-		</Reference>
-		<PackageReference Include="System.Data.SQLite" Version="1.0.118" />
-	</ItemGroup>
 	
 	<ItemGroup>
 		<ProjectReference Include="..\HEC.FDA.Importer\HEC.FDA.Importer.csproj" />
@@ -24,6 +15,7 @@
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0-preview2" />
 		<PackageReference Include="PlottingLibrary2D" Version="1.0.0-beta-gdc08aa8621" />
 		<PackageReference Include="OxyPlot.Wpf" Version="2.1.2" />
+		<PackageReference Include="System.Data.SQLite" Version="1.0.118" />
 	</ItemGroup>
 
 	<ItemGroup>
