@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 
 namespace HEC.FDA.ViewModel;
+
+// code adopted from DBManager, stripped down to fit our needs
 public class SQLiteManager
 {
     private string _dataBasePath;

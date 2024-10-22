@@ -287,6 +287,7 @@ namespace HEC.FDA.ViewModel.Storage
             }
             if (_SqliteReader.GetTableNames().Contains(TableName))
             {
+                // we just need to return something not null, there is definitely a better way
                 return new object();
             }else
             {
