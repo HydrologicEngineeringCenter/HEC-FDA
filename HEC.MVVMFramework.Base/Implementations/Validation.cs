@@ -142,7 +142,7 @@ namespace HEC.MVVMFramework.Base.Implementations
                 {
                     if (err.ErrorLevel >= errorLevelSeverityThreshold)
                     {
-                        errorsBuilder.AppendLine(objName + string.Format(" Error Level: {0} Error: {1}", ErrorLevel, err.Message));
+                        errorsBuilder.AppendLine(objName + string.Format(" Error Level: {0} | {1}", ErrorLevel, err.Message));
                     }
 
                 }
