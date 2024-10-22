@@ -45,7 +45,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             get { return _CurvesEditedLabel; }
             set { _CurvesEditedLabel = value; NotifyPropertyChanged(); }
         }
-        public List<ImpactAreaFrequencyFunctionRowItem> ImpactAreaFrequencyRows { get;} = new List<ImpactAreaFrequencyFunctionRowItem>();
+        public List<ImpactAreaFrequencyFunctionRowItem> ImpactAreaFrequencyRows { get; } = new List<ImpactAreaFrequencyFunctionRowItem>();
         public ObservableCollection<CalculatedStageDamageRowItem> Rows { get; set; }
 
         public TableWithPlotVM TableWithPlot
@@ -61,7 +61,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public CalculatedStageDamageRowItem SelectedRow
         {
             get { return _SelectedRow; }
-            set { _SelectedRow = value; NotifyPropertyChanged(); RowChanged();}
+            set { _SelectedRow = value; NotifyPropertyChanged(); RowChanged(); }
         }
 
         public ObservableCollection<InventoryElement> Structures { get; } = new ObservableCollection<InventoryElement>();
@@ -90,8 +90,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             AddLiveUpdateEvents();
             this.getName = getName;
         }
-        
-        public CalculatedStageDamageVM(int wseId, int inventoryID, int analysisYear, List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impAreaFrequencyRows,bool writeDetailsOut, Func<string> getName)
+
+        public CalculatedStageDamageVM(int wseId, int inventoryID, int analysisYear, List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impAreaFrequencyRows, bool writeDetailsOut, Func<string> getName)
         {
             AnalysisYear = analysisYear;
             WriteDetailsFile = writeDetailsOut;
@@ -221,9 +221,9 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                     indexToUpdate = i;
                     break;
                 }
-            }            
+            }
 
-            if(indexToUpdate != -1)
+            if (indexToUpdate != -1)
             {
                 bool updateSelected = false;
                 if (SelectedWaterSurfaceElevation == WaterSurfaceElevations[indexToUpdate])
@@ -231,7 +231,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                     updateSelected = true;
                 }
                 WaterSurfaceElevations[indexToUpdate] = (HydraulicElement)e.NewElement;
-                if(updateSelected)
+                if (updateSelected)
                 {
                     SelectedWaterSurfaceElevation = WaterSurfaceElevations[indexToUpdate];
                 }
@@ -281,7 +281,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         private void AddFlowFreqElement(object sender, ElementAddedEventArgs e)
         {
-            foreach(ImpactAreaFrequencyFunctionRowItem row in ImpactAreaFrequencyRows)
+            foreach (ImpactAreaFrequencyFunctionRowItem row in ImpactAreaFrequencyRows)
             {
                 row.FrequencyFunctions.Add(new FrequencyElementWrapper((FrequencyElement)e.Element));
             }
@@ -293,7 +293,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             {
                 row.FrequencyFunctions.Remove(row.FrequencyFunctions.Single(s =>
                 {
-                    if(s.Element != null && s.Element.ID == e.Element.ID)
+                    if (s.Element != null && s.Element.ID == e.Element.ID)
                     {
                         return true;
                     }
@@ -302,7 +302,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                         return false;
                     }
 
-                }));        
+                }));
             }
         }
 
@@ -311,14 +311,14 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
             foreach (ImpactAreaFrequencyFunctionRowItem row in ImpactAreaFrequencyRows)
             {
-                foreach(FrequencyElementWrapper freq in row.FrequencyFunctions)
+                foreach (FrequencyElementWrapper freq in row.FrequencyFunctions)
                 {
-                    if(freq.Element != null && freq.Element.ID == e.NewElement.ID)
+                    if (freq.Element != null && freq.Element.ID == e.NewElement.ID)
                     {
                         freq.Element = (FrequencyElement)e.NewElement;
                     }
                 }
-            }        
+            }
         }
 
         private void AddRegUnregElement(object sender, ElementAddedEventArgs e)
@@ -387,7 +387,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         private void LoadCurves(List<StageDamageCurve> curves)
         {
-            for(int i = 0; i < curves.Count; i++)
+            for (int i = 0; i < curves.Count; i++)
             {
                 //used cloned curve so that you do not modify the original data
                 StageDamageCurve curve = curves[i];
@@ -404,16 +404,16 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private void SelectInventory(int inventoryID)
         {
             bool foundInventory = false;
-            foreach(InventoryElement ie in Structures)
+            foreach (InventoryElement ie in Structures)
             {
-                if(ie.ID == inventoryID)
+                if (ie.ID == inventoryID)
                 {
                     SelectedStructures = ie;
                     foundInventory = true;
                     break;
                 }
             }
-            if(!foundInventory)
+            if (!foundInventory)
             {
                 MessageBox.Show("The previously selected inventory used in the compute of these aggregated stage-damage functions was deleted. Please select a new inventory and recompute.", "Inventory Missing", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
@@ -423,7 +423,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             bool foundHydro = false;
             foreach (HydraulicElement wat in WaterSurfaceElevations)
             {
-                if(wat.ID == waterID)
+                if (wat.ID == waterID)
                 {
                     SelectedWaterSurfaceElevation = wat;
                     foundHydro = true;
@@ -451,7 +451,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private void LoadStructureInventories()
         {
             List<InventoryElement> inventoryElements = StudyCache.GetChildElementsOfType<InventoryElement>();
-            foreach(InventoryElement elem in inventoryElements)
+            foreach (InventoryElement elem in inventoryElements)
             {
                 Structures.Add(elem);
             }
@@ -495,7 +495,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             if (vr.IsValid)
             {
                 Rows.Clear();
-                List<UncertainPairedData> stageDamageFunctions =  await ComputeStageDamageFunctionsAsync(config);
+                List<UncertainPairedData> stageDamageFunctions = await ComputeStageDamageFunctionsAsync(config);
                 LoadComputedCurveRows(stageDamageFunctions);
 
                 if (Rows.Count > 0)
@@ -517,7 +517,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         private void LoadComputedCurveRows(List<UncertainPairedData> computedCurves)
         {
-            for(int i =0;i<computedCurves.Count;i++)
+            for (int i = 0; i < computedCurves.Count; i++)
             {
                 UncertainPairedData upd = computedCurves[i];
                 CurveComponentVM computeComponent = new(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE, DistributionOptions.HISTOGRAM_ONLY);
@@ -525,8 +525,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 //get the impact area from the id
                 int impactAreaID = upd.ImpactAreaID;
                 ImpactAreaRowItem impactAreaRowItem = StudyCache.GetChildElementsOfType<ImpactAreaElement>()[0].GetImpactAreaRow(impactAreaID);
-                
-                Rows.Add(new CalculatedStageDamageRowItem(i+1, impactAreaRowItem, upd.DamageCategory, computeComponent,upd.AssetCategory, StageDamageConstructionType.COMPUTED));
+
+                Rows.Add(new CalculatedStageDamageRowItem(i + 1, impactAreaRowItem, upd.DamageCategory, computeComponent, upd.AssetCategory, StageDamageConstructionType.COMPUTED));
             }
 
         }
@@ -539,11 +539,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             {
                 totalStructureCount += stageDamage.Inventory.Structures.Count;
             }
-            if(totalStructureCount == 0)
+            if (totalStructureCount == 0)
             {
                 List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
                 string impactAreaName = impactAreaElements[0].Name;
-                vr.AddErrorMessage("The compute will not run because this scenario has zero structures inside the impact area set '" + impactAreaName + 
+                vr.AddErrorMessage("The compute will not run because this scenario has zero structures inside the impact area set '" + impactAreaName +
                     ".'");
             }
             return vr;
@@ -554,20 +554,20 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             List<ImpactAreaStageDamage> withZeroStructs = new();
             foreach (ImpactAreaStageDamage stageDamage in scenarioStageDamage.ImpactAreaStageDamages)
             {
-                if(stageDamage.Inventory.Structures.Count == 0)
+                if (stageDamage.Inventory.Structures.Count == 0)
                 {
                     withZeroStructs.Add(stageDamage);
                 }
-            }      
+            }
             return withZeroStructs;
         }
 
         private static string GenerateNoStructuresMessage(List<ImpactAreaStageDamage> zeroStructuresImpactAreas)
         {
             FdaValidationResult vr = new();
-            
+
             ImpactAreaElement impactAreaElement = StudyCache.GetChildElementsOfType<ImpactAreaElement>()[0];
-            foreach(ImpactAreaStageDamage stageDamage in zeroStructuresImpactAreas)
+            foreach (ImpactAreaStageDamage stageDamage in zeroStructuresImpactAreas)
             {
                 string impactAreaName = impactAreaElement.GetImpactAreaRow(stageDamage.ImpactAreaID).Name;
                 vr.AddErrorMessage("No structures detected in impact area '" + impactAreaName);
@@ -630,7 +630,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                     if (errors.Count > 0)
                     {
                         MessageBox.Show("There are errors in the data used to compute stage-damage. See the errors file in the structure stage damage details folder of this study directory.", "Data Errors", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    } else
+                    }
+                    else
                     {
                         MessageBox.Show("The compute has completed.", "Compute Complete", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
@@ -653,17 +654,15 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         private void WriteErrors(List<string> list)
         {
-            try
+            string structureStageDamageErrorsFileName = getName() + "_StageDamageErrorMessages.log";
+            string directory = Storage.Connection.Instance.GetStructureStageDamageDetailsDirectory;
+            Directory.CreateDirectory(directory);
+            string stageDamagePath = directory + "\\" + structureStageDamageErrorsFileName;
+
+            using StreamWriter writer = new(File.Create(stageDamagePath));
+            foreach (string error in list)
             {
-                string structureStageDamageErrorsFileName = getName() + "StageDamageErrorMessages.csv";
-                string directory = Storage.Connection.Instance.GetStructureStageDamageDetailsDirectory;
-                Directory.CreateDirectory(directory);
-                string stageDamagePath = directory + "\\" + structureStageDamageErrorsFileName;
-                File.AppendAllLines(stageDamagePath, list);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("An error occured while writing details file to path:\n" + ex.Message, "Details File Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                writer.WriteLine(error);
             }
         }
 
@@ -676,14 +675,14 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private void UpdateComputedCurvesModifiedLabel()
         {
             List<int> editedRows = new();
-            foreach(CalculatedStageDamageRowItem row in Rows)
+            foreach (CalculatedStageDamageRowItem row in Rows)
             {
-                if(row.ConstructionType == StageDamageConstructionType.COMPUTED_EDITED)
+                if (row.ConstructionType == StageDamageConstructionType.COMPUTED_EDITED)
                 {
                     editedRows.Add(row.ID);
                 }
             }
-            if(editedRows.Count>0)
+            if (editedRows.Count > 0)
             {
                 CurvesEditedLabel = "User modified curves: " + string.Join(", ", editedRows);
             }
@@ -696,21 +695,25 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public FdaValidationResult ValidateForm()
         {
             FdaValidationResult vr = new();
-            if(AnalysisYear < 1900 || AnalysisYear > 3000)
+            if (AnalysisYear < 1900 || AnalysisYear > 3000)
             {
-                vr.AddErrorMessage("The analysis year must be greater than 1900 and less than 3000.");
+                const string Msg = "The analysis year must be greater than 1900 and less than 3000.";
+                vr.AddErrorMessage(Msg);
             }
             if (SelectedWaterSurfaceElevation == null)
             {
-                vr.AddErrorMessage("A hydraulics data set must be selected.");
+                const string Msg = "A hydraulics data set must be selected.";
+                vr.AddErrorMessage(Msg);
             }
             if (SelectedStructures == null)
             {
-                vr.AddErrorMessage("A structure inventory must be selected.");
+                const string Msg = "A structure inventory must be selected.";
+                vr.AddErrorMessage(Msg);
             }
             if (Rows.Count == 0)
             {
-                vr.AddErrorMessage("No curves have been computed. Compute curves to save.");
+                const string Msg = "No curves have been computed. Compute curves to save.";
+                vr.AddErrorMessage(Msg);
             }
             return vr;
         }
@@ -752,35 +755,39 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         //TODO: GET STRUCTURE COUNT DETAILS WRITTEN TO FILE
         private void WriteDetailsCsvFile(ScenarioStageDamage scenarioStageDamage, List<UncertainPairedData> quantityDamagedElementsUPD, List<UncertainPairedData> stageDamageFunctions)
         {
-            try
+            //Its necessary for the details to be written with names for the impact areas, not FIDs. It helps users troubleshoot. I don't like this, but that's why the dictionary is passed in. to translate at the
+            //lowest level before it's written
+            Dictionary<int, string> iaNames = [];
+            ImpactAreaElement iaEle = StudyCache.GetChildElementsOfType<ImpactAreaElement>()[0];
+            List<ImpactAreaRowItem> iaRows = iaEle.ImpactAreaRows;
+            for (int i = 0; i < iaRows.Count; i++)
             {
-                //Its necessary for the details to be written with names for the impact areas, not FIDs. It helps users troubleshoot. I don't like this, but that's why the dictionary is passed in. to translate at the
-                //lowest level before it's written
-                Dictionary<int, string> iaNames = [];
-                ImpactAreaElement iaEle = StudyCache.GetChildElementsOfType<ImpactAreaElement>()[0];
-                List<ImpactAreaRowItem> iaRows = iaEle.ImpactAreaRows;
-                for(int i = 0; i < iaRows.Count; i++)
-                {
-                    iaNames[i] = iaRows[i].Name;
-                }
-                
-                List<string> stageDamageDetails = scenarioStageDamage.ProduceStructureDetails(iaNames);
-                List<string> damagedElementCounts = UncertainPairedData.ConvertDamagedElementCountToText(quantityDamagedElementsUPD, iaNames);
-                string structureStageDamageDetailsfileName = getName() + "StructureStageDamageDetails.csv";
-                string damagedElementsCountDetailsFileName = getName() + "DamagedElementCountsByStage.csv";
-                string functionsFileName = getName() + "Functions.csv";
-                string directory = Storage.Connection.Instance.GetStructureStageDamageDetailsDirectory;
-                Directory.CreateDirectory(directory);
-                string stageDamagePath = directory + "\\" + structureStageDamageDetailsfileName;
-                string damagedElementsCountPath = directory + "\\" + damagedElementsCountDetailsFileName;
-                File.AppendAllLines(stageDamagePath, stageDamageDetails);
-                File.AppendAllLines(damagedElementsCountPath, damagedElementCounts);
-        }
-            catch (Exception ex)
-            {
-                MessageBox.Show("An error occured while writing details file to path:\n" + ex.Message, "Details File Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                iaNames[i] = iaRows[i].Name;
             }
-}
+
+            string directory = Storage.Connection.Instance.GetStructureStageDamageDetailsDirectory;
+            Directory.CreateDirectory(directory);
+            const string DamageElementCountFileName = "_DamagedElementCountsByStage.csv";
+            const string StructureStageDamageDetailsFileName = "_StructureStageDamageDetails.csv";
+            string stageDamagePath = directory + "\\" + getName() + StructureStageDamageDetailsFileName;
+            string damagedElementsCountPath = directory + "\\" + getName() + DamageElementCountFileName;
+
+            List<string> stageDamageDetails = scenarioStageDamage.ProduceStructureDetails(iaNames);
+            //overwrites the existing file or creates a new one. 
+            using StreamWriter detailsWriter = new(File.Create(stageDamagePath));
+            foreach (string iaDetails in stageDamageDetails)
+            {
+                detailsWriter.WriteLine(iaDetails);
+            }
+            
+
+            List<string> damagedElementCounts = UncertainPairedData.ConvertDamagedElementCountToText(quantityDamagedElementsUPD, iaNames);
+            using StreamWriter damagedElesWriter = new(File.Create(damagedElementsCountPath));
+            foreach (string line in damagedElementCounts)
+            {
+                damagedElesWriter.WriteLine(line);
+            }
+        }
 
     }
 }
