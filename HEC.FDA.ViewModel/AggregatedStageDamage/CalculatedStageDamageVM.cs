@@ -629,7 +629,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                     List<string> errors = scenarioStageDamage.GetErrorMessages();
                     if (errors.Count > 0)
                     {
-                        MessageBox.Show("The compute has completed, but there are errors in the data used to compute stage-damage. See the errors file in the structure stage damage details folder of this study directory.", "Data Errors", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show("There are errors in the data used to compute stage-damage. See the errors file in the structure stage damage details folder of this study directory.", "Data Errors", MessageBoxButton.OK, MessageBoxImage.Warning);
                     } else
                     {
                         MessageBox.Show("The compute has completed.", "Compute Complete", MessageBoxButton.OK, MessageBoxImage.Information);
