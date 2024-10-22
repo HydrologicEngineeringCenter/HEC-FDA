@@ -1,18 +1,15 @@
-﻿using HEC.FDA.Model.structures;
+﻿using HEC.FDA.Model.Spatial;
+using HEC.FDA.Model.structures;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.Watershed;
-using Microsoft.Extensions.Logging.Abstractions;
 using RasMapperLib;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
 using System.Windows;
-using System.Windows.Forms;
-using Utility.ORM;
 
 namespace HEC.FDA.ViewModel.Inventory
 {
@@ -89,6 +86,8 @@ namespace HEC.FDA.ViewModel.Inventory
             else
             {
                 _ColumnSelections.Path = SelectedPath;
+                //Migrating systems here. The above is RASMapper world, the below is the new world. We may be able to eliminate the above validation eventually and try/catch this.
+                _ColumnSelections.PointShapefile = new PointShapefile(SelectedPath);
             }
         }
 
