@@ -341,11 +341,11 @@ namespace HEC.FDA.Model.structures
             string errors = "";
             foreach (OccupancyType occupancyType in OccTypes.Values)
             {
-                errors += occupancyType.GetErrorsFromProperties() + Environment.NewLine;
+                errors += occupancyType.GetErrorsFromProperties();
             }
             foreach (Structure structure in Structures)
             {
-                errors += structure.GetErrorMessages(ErrorLevel.Unassigned, "Structure" + structure.Fid) + Environment.NewLine;
+                errors += structure.GetErrorMessages(ErrorLevel.Unassigned, "Structure" + structure.Fid);
             }
             return errors;
         }
@@ -355,11 +355,11 @@ namespace HEC.FDA.Model.structures
             string errors = "";
             foreach (OccupancyType occupancyType in OccTypes.Values)
             {
-                errors += occupancyType.GetErrorsFromProperties() + Environment.NewLine;
+                errors += occupancyType.GetErrorsFromProperties();
             }
             foreach (Structure structure in Structures)
             {
-                errors += structure.GetErrorMessages(ErrorLevel.Unassigned, "Structure" + structure.Fid) + Environment.NewLine;
+                errors += structure.GetErrorMessages(ErrorLevel.Unassigned, "Structure" + structure.Fid);
             }
             if (Structures.Count == 0)
             {

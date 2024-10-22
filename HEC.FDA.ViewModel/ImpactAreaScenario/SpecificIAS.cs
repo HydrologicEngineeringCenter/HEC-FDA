@@ -251,23 +251,19 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             SimulationCreator sc = new(freqElem, inOutElem, ratElem, extIntElem, leveeElem, stageDamageElem, ImpactAreaID, HasNonFailureStageDamage, nonFailureStageDamageElem);
 
             //otherwise we'll calculate it ourselves in the model. 
-            if (!CalculateDefaultThreshold)
+            if (!CalculateDefaultThreshold && leveeElem == null)
             {
                 ConvergenceCriteria cc = StudyCache.GetStudyPropertiesElement().GetStudyConvergenceCriteria();
-                Threshold defaultThreshold = new(ImpactAreaScenarioSimulation.DEFAULT_THRESHOLD_ID, cc, ThresholdEnum.DefaultExteriorStage, DefaultStage);
+                Threshold defaultThreshold = new(ImpactAreaScenarioSimulation.DEFAULT_THRESHOLD_ID, cc, ThresholdEnum.AdditionalExteriorStage, DefaultStage);
                 sc.WithAdditionalThreshold(defaultThreshold);
             }
 
             int thresholdID = 1;
             foreach (ThresholdRowItem thresholdRow in Thresholds)
             {
-                double thresholdValue = 0;
-                if (thresholdRow.ThresholdValue != null)
-                {
-                    thresholdValue = thresholdRow.ThresholdValue.Value;
-                }
+                double thresholdValue = thresholdRow.ThresholdValue;
                 ConvergenceCriteria cc = StudyCache.GetStudyPropertiesElement().GetStudyConvergenceCriteria();
-                Threshold threshold = new Threshold(thresholdID, cc, thresholdRow.ThresholdType.Metric, thresholdValue);
+                Threshold threshold = new(thresholdID, cc, thresholdRow.ThresholdType, thresholdValue);
                 sc.WithAdditionalThreshold(threshold);
                 thresholdID++;
             }

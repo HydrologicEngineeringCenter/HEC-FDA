@@ -71,9 +71,11 @@ namespace HEC.FDA.Model.stageDamage
             List<string> errorMessages = new();
             foreach (ImpactAreaStageDamage impactAreaStageDamage in (_ImpactAreaStageDamage))
             {
-                errorMessages.Add(impactAreaStageDamage.GetErrorsFromProperties());
+                if (impactAreaStageDamage.HasErrors)
+                {
+                    errorMessages.Add(impactAreaStageDamage.GetErrorsFromProperties());
+                }            
             }
-
             return errorMessages;
         }
         #endregion

@@ -149,37 +149,37 @@ namespace HEC.FDA.Model.structures
             string identifyingString = $"Occupancy Type {Name} ";
             ErrorLevel minimumLevelToCheckForErrors = ErrorLevel.Unassigned;
             string errors = "";
-            errors += _StructureDepthPercentDamageFunction.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_StructureDepthPercentDamageFunction) ) + Environment.NewLine;
-            errors += _StructureValueError.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_StructureValueError)) + Environment.NewLine;
-            errors += _FirstFloorElevationError.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_FirstFloorElevationError)) + Environment.NewLine;
+            errors += _StructureDepthPercentDamageFunction.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_StructureDepthPercentDamageFunction));
+            errors += _StructureValueError.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_StructureValueError));
+            errors += _FirstFloorElevationError.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_FirstFloorElevationError));
             if (ComputeContentDamage)
             {
-                errors += _ContentDepthPercentDamageFunction.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_ContentDepthPercentDamageFunction)) + Environment.NewLine;
+                errors += _ContentDepthPercentDamageFunction.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_ContentDepthPercentDamageFunction));
                 if (UseContentToStructureValueRatio)
                 {
-                    errors += _ContentToStructureValueRatio.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_ContentToStructureValueRatio)) + Environment.NewLine;
+                    errors += _ContentToStructureValueRatio.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_ContentToStructureValueRatio));
                 }
                 else
                 {
-                    errors += _ContentValueError.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_ContentValueError)) + Environment.NewLine;
+                    errors += _ContentValueError.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_ContentValueError));
                 }
             }
             if (ComputeOtherDamage)
             {
-                errors += _OtherDepthPercentDamageFunction.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_OtherDepthPercentDamageFunction)) + Environment.NewLine;
+                errors += _OtherDepthPercentDamageFunction.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_OtherDepthPercentDamageFunction));
                 if (UseContentToStructureValueRatio)
                 {
-                    errors += _OtherToStructureValueRatio.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_OtherToStructureValueRatio)) + Environment.NewLine;
+                    errors += _OtherToStructureValueRatio.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_OtherToStructureValueRatio));
                 }
                 else
                 {
-                    errors += _OtherValueError.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_OtherValueError)) + Environment.NewLine;
+                    errors += _OtherValueError.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_OtherValueError));
                 }
             }
             if (ComputeVehicleDamage)
             {
-                errors += _VehicleDepthPercentDamageFunction.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_VehicleDepthPercentDamageFunction)) + Environment.NewLine;
-                errors += _VehicleValueError.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_VehicleValueError)) + Environment.NewLine;
+                errors += _VehicleDepthPercentDamageFunction.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_VehicleDepthPercentDamageFunction));
+                errors += _VehicleValueError.GetErrorMessages(minimumLevelToCheckForErrors, identifyingString + nameof(_VehicleValueError));
             }
             return errors;
         }

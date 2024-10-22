@@ -36,7 +36,7 @@ namespace HEC.FDA.ViewModel.Results
             AnalysisYear = scenario.AnalysisYear;
             ImpactArea = ias.GetSpecificImpactAreaName();
 
-            ThresholdType = threshold.ThresholdType.ToString();
+            ThresholdType = threshold.ThresholdType.GetDisplayName();
             ThresholdValue = threshold.ThresholdValue;
             int thresholdID = threshold.ThresholdID;
 

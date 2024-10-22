@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
+﻿using HEC.FDA.Model.metrics;
+using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
 using HEC.FDA.ViewModel.Saving;
 using System.Collections.ObjectModel;
 
@@ -21,7 +22,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             {
                 foreach (ThresholdRowItem thresh in ias.Thresholds)
                 {
-                    Rows.Add(new ViewThresholdRowItem(ias.GetSpecificImpactAreaName(), thresh.ThresholdType.DisplayName, thresh.ThresholdValue));
+                    Rows.Add(new ViewThresholdRowItem(ias.GetSpecificImpactAreaName(), thresh.ThresholdType.GetDisplayName(), thresh.ThresholdValue));
                 }
             }
         }

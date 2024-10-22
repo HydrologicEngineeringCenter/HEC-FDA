@@ -57,6 +57,9 @@ namespace HEC.MVVMFramework.Base.Implementations
                 }
             }
         }
+        /// <summary>
+        /// A rule in should return true 
+        /// </summary>
         public void AddSinglePropertyRule(string property, IRule rule)
         {
             if (property.Equals(nameof(HasErrors))) return;
@@ -110,51 +113,32 @@ namespace HEC.MVVMFramework.Base.Implementations
             StringBuilder errorsBuilder = new StringBuilder();
             foreach (IErrorMessage err in _Errors)
             {
-                if( err.ErrorLevel >= errorLevelSeverityThreshold)
+                if (err.ErrorLevel >= errorLevelSeverityThreshold)
                 {
-                    errorsBuilder.AppendLine(string.Format("Error Level: {0} Error: {1}", ErrorLevel, err.Message));
+                    errorsBuilder.AppendLine(string.Format("Error Level: {0} | {1}", ErrorLevel, err.Message));
                 }
-                
+
             }
             string errors = errorsBuilder.ToString();
             return errors;
         }
 
-        
-        public String GetErrorMessages(ErrorLevel errorLevelSeverityThreshold, string objName)
+
+        public string GetErrorMessages(ErrorLevel errorLevelSeverityThreshold, string objName)
         {
             Validate();
-            StringBuilder errorsBuilder = new StringBuilder();
-
-            //check if the properties implement Validation 
-
-            //If the properties of the inheriting class do not implement Validation, then 
-
-            PropertyInfo[] propertyList = this.GetType().GetProperties();
-            foreach (PropertyInfo propertyInfo in propertyList)
+            if(_Errors.Count == 0)
             {
-                //look at the property
-                PropertyInfo property = propertyInfo;
-                //
+                return string.Empty;
             }
+            StringBuilder errorsBuilder = new();
+            foreach (IErrorMessage err in _Errors)
             {
-                foreach (IErrorMessage err in _Errors)
+                if (err.ErrorLevel >= errorLevelSeverityThreshold)
                 {
-                    if (err.ErrorLevel >= errorLevelSeverityThreshold)
-                    {
-                        errorsBuilder.AppendLine(objName + string.Format(" Error Level: {0} Error: {1}", ErrorLevel, err.Message));
-                    }
-
+                    errorsBuilder.AppendLine(objName + string.Format(" Error Level: {0} | {1}", ErrorLevel, err.Message));
                 }
 
-            }
-            // else the properties implement Validation 
-            {
-                //Foreach (property in properties)
-                    // if properties of property do not implement then get the errors 
-                    // else foreach (props prop in property.properties) 
-                        //if properties of prop do not implement then get the errors 
-                        //else foreach (ps p in prop.properties)...
             }
             string errors = errorsBuilder.ToString();
             return errors;

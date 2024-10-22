@@ -1,5 +1,6 @@
 ﻿using HEC.FDA.View.TableWithPlot.CustomEventArgs;
 using HEC.FDA.ViewModel.TableWithPlot.Data.Interfaces;
+using HEC.FDA.ViewModel.TableWithPlot.Rows;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -38,6 +39,15 @@ namespace HEC.FDA.View.TableWithPlot
                 vm.AddRow(i);
             }
 
+        }
+
+        private void MyDataGrid_Loaded(object sender, RoutedEventArgs e)
+        {
+            IDataProvider vm = (IDataProvider)DataContext;
+            foreach(SequentialRow row in vm.Data)
+            {
+                row.Validate();
+            }
         }
     }
 }

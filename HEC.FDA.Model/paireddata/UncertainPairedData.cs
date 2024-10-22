@@ -88,13 +88,16 @@ namespace HEC.FDA.Model.paireddata
         #region Methods 
         private void AddRules()
         {
-                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => !(IsArrayValid(Xvals, (a, b) => a == b) || IsArrayValid(Xvals, (a, b) => a < b)), $"X must be deterministic or strictly monotonically increasing but is not for the function named {CurveMetaData.Name}.", ErrorLevel.Minor));
+                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => (IsArrayValid(Xvals, (a, b) => a == b) || IsArrayValid(Xvals, (a, b) => a < b)), $"X must be deterministic or strictly monotonically increasing but is not for the function named {CurveMetaData.Name}.", ErrorLevel.Minor));
                     AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .9999, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .9999, (a, b) => a <= b), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {CurveMetaData.Name} at the upper bound.", ErrorLevel.Minor));
                     AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .0001, (a, b) => a <= b), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {CurveMetaData.Name} at the lower found.", ErrorLevel.Minor));
         }
         private static bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
         {
-            if (arrayOfData == null) return false;
+            if (arrayOfData == null)
+            {
+                return false;
+            }
             for (int i = 0; i < arrayOfData.Length - 1; i++)
             {
                 if (comparison(arrayOfData[i], arrayOfData[i + 1]))

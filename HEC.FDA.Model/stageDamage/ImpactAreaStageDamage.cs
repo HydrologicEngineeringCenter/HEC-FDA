@@ -752,10 +752,10 @@ namespace HEC.FDA.Model.stageDamage
         {
             string errors = "";
             ErrorLevel minErrorLevel = ErrorLevel.Unassigned;
-            if (_AnalyticalFlowFrequency != null) { errors += _AnalyticalFlowFrequency.GetErrorMessages(minErrorLevel, nameof(_AnalyticalFlowFrequency) + Environment.NewLine); }
-            if (_GraphicalFrequency != null) { errors += _GraphicalFrequency.GetErrorMessages(minErrorLevel, nameof(_GraphicalFrequency) + Environment.NewLine); }
-            if (_DischargeStage != null) { errors += _DischargeStage.GetErrorMessages(minErrorLevel, nameof(_DischargeStage) + Environment.NewLine); }
-            if (_UnregulatedRegulated != null) { errors += _UnregulatedRegulated.GetErrorMessages(minErrorLevel, nameof(_UnregulatedRegulated) + Environment.NewLine); }
+            if (_AnalyticalFlowFrequency != null) { errors += _AnalyticalFlowFrequency.GetErrorMessages(minErrorLevel, nameof(_AnalyticalFlowFrequency)); }
+            if (_GraphicalFrequency != null) { errors += _GraphicalFrequency.GetErrorMessages(minErrorLevel, nameof(_GraphicalFrequency)); }
+            if (_DischargeStage != null) { errors += _DischargeStage.GetErrorMessages(minErrorLevel, nameof(_DischargeStage)); }
+            if (_UnregulatedRegulated != null) { errors += _UnregulatedRegulated.GetErrorMessages(minErrorLevel, nameof(_UnregulatedRegulated)); }
             errors += Inventory.GetErrorsFromProperties(ImpactAreaID);
             if (_GraphicalFrequency == null)
             {
