@@ -35,7 +35,7 @@
                         <TextBlock Text="Threshold ID" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding ThresholdType.DisplayName}" Width="*" IsReadOnly="True">
+        <DataGridTextColumn Binding="{Binding ThresholdTypeDisplayName}" Width="*" IsReadOnly="True">
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Threshold Type" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>

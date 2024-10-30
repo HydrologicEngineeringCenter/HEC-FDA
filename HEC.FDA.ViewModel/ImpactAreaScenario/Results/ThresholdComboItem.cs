@@ -15,7 +15,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         {
             Metric = metric;
             string thresholdValue = string.Format("{0:0.##}", metric.ThresholdValue);
-            Description = metric.ThresholdType + " (" + thresholdValue + ")";
+            Description = metric.ThresholdType.GetDisplayName() + " (" + thresholdValue + ")";
         }
 
     }

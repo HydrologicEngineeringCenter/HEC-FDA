@@ -1,43 +1,88 @@
 ﻿<UserControl x:Class="HEC.FDA.View.TableWithPlot.FdaDataGridControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:HEC.FDA.View.TableWithPlot"
              xmlns:vm="clr-namespace:HEC.FDA.ViewModel.TableWithPlot.Data;assembly=HEC.FDA.ViewModel"
              xmlns:fda_view="clr-namespace:HEC.FDA.View.TableWithPlot"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" d:DataContext="{d:DesignInstance Type=vm:HistogramDataProvider}">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        
-        <fda_view:FdaDataGrid Grid.Row="0" RowsAdded="MyDataGrid_RowsAdded"
-                              x:Name="MyDataGrid" PreviewDeleteRows="MyDataGrid_PreviewDeleteRows" RowsDeleted="MyDataGrid_RowsDeleted"
-                              ItemsSource="{Binding Path=Data}" AutoGenerateColumns="True" CanUserSortColumns="false" SelectionUnit="Cell" >
-            <DataGrid.RowValidationErrorTemplate>
-                <ControlTemplate>
-                    <TextBlock Text=""></TextBlock>
-                </ControlTemplate>
-            </DataGrid.RowValidationErrorTemplate>
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance Type=vm:HistogramDataProvider}">
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
 
-            <DataGrid.Resources>
-                <Style x:Key="errorStyle" TargetType="{x:Type TextBox}">
-                    <Style.Triggers>
-                        <Trigger Property="Validation.HasError" Value="true">
-                            <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-                <Style x:Key="errorStyleGrid" TargetType="{x:Type TextBlock}">
-                    <Style.Triggers>
-                        <Trigger Property="Validation.HasError" Value="true">
-                            <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </DataGrid.Resources>
-        </fda_view:FdaDataGrid>
-    </Grid>
+    <fda_view:FdaDataGrid Grid.Row="0"
+                          RowsAdded="MyDataGrid_RowsAdded"
+                          x:Name="MyDataGrid"
+                          PreviewDeleteRows="MyDataGrid_PreviewDeleteRows"
+                          RowsDeleted="MyDataGrid_RowsDeleted"
+                          ItemsSource="{Binding Path=Data}"
+                          AutoGenerateColumns="True"
+                          CanUserSortColumns="false"
+                          SelectionUnit="Cell"
+                          Loaded="MyDataGrid_Loaded"
+                          Validation.ErrorTemplate="{x:Null}">
+
+
+
+      <!--This chunk is just removing the little exclamation mark
+      That gets prepended to rows with errors.-->
+      <DataGrid.RowValidationErrorTemplate>
+        <ControlTemplate>
+          <TextBlock Text="" />
+        </ControlTemplate>
+      </DataGrid.RowValidationErrorTemplate>
+
+      <DataGrid.Resources>
+        <Style x:Key="errorStyleGrid"
+               TargetType="{x:Type TextBlock}">
+          <Setter Property="Validation.ErrorTemplate">
+            <Setter.Value>
+              <ControlTemplate>
+                 <!--Just the adorned element means NO RED BORDER--> 
+                <AdornedElementPlaceholder Name="controlWithError" />
+              </ControlTemplate>
+            </Setter.Value>
+          </Setter>
+          <Style.Triggers>
+            <Trigger Property="Validation.HasError"
+                     Value="true">
+              <Setter Property="ToolTip"
+                      Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)[0].ErrorContent}" />
+              <Setter Property="Background"
+                      Value="Yellow" />
+            </Trigger>
+          </Style.Triggers>
+        </Style>
+        
+        
+        <Style x:Key="errorStyle"
+               TargetType="{x:Type TextBox}">
+          <Setter Property="Validation.ErrorTemplate">
+            <Setter.Value>
+              <ControlTemplate>
+                <!-- Just the adorned element means NO RED BORDER -->
+                <AdornedElementPlaceholder Name="controlWithError"/>
+              </ControlTemplate>
+            </Setter.Value>
+          </Setter>
+          <Style.Triggers>
+            <Trigger Property="Validation.HasError"
+                     Value="true">
+              <Setter Property="ToolTip"
+                      Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)[0].ErrorContent}" />
+              <Setter Property="BorderBrush"
+                      Value="Yellow" />
+              
+            </Trigger>
+          </Style.Triggers>
+        </Style>
+
+      </DataGrid.Resources>
+    </fda_view:FdaDataGrid>
+  </Grid>
 </UserControl>

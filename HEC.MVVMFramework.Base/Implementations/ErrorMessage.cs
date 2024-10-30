@@ -29,7 +29,7 @@ namespace HEC.MVVMFramework.Base.Implementations
         }
         public override string ToString()
         {
-            return string.Format("Error Level: {0} Error: {1}\n", ErrorLevel, Message);
+            return string.Format("Error Level: {0} | {1}\n", ErrorLevel, Message);
         }
     }
 }

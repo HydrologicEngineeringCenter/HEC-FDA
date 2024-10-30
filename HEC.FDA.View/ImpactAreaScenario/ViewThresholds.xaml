@@ -9,13 +9,21 @@
              xmlns:impactareascenario="clr-namespace:HEC.FDA.ViewModel.ImpactAreaScenario;assembly=HEC.FDA.ViewModel"
              d:DataContext="{d:DesignInstance Type=impactareascenario:ViewThresholdsVM}"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800"
+             d:Background="AliceBlue">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
+      <RowDefinition Height="40" />
+      <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <DataGrid Grid.Row="0" ItemsSource="{Binding Rows}" AutoGenerateColumns="False" HorizontalAlignment="Left"
+    <TextBlock
+      Grid.Row="0"
+      Text="User Defined Additional Thresholds | Calculated thresholds not shown."
+      FontSize="12"
+      FontWeight="Bold"
+      Margin="5" />
+    <DataGrid Grid.Row="1" ItemsSource="{Binding Rows}" AutoGenerateColumns="False" HorizontalAlignment="Left"
                   VerticalAlignment="Top"  IsReadOnly="True" CanUserResizeColumns="True" CanUserReorderColumns="False"
                   CanUserSortColumns="True" Margin="5" SelectionUnit="Cell"  Width="700">
             <DataGrid.Columns>
