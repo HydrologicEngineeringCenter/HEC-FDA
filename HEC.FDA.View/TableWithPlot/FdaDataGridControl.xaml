@@ -23,9 +23,7 @@
                           ItemsSource="{Binding Path=Data}"
                           AutoGenerateColumns="True"
                           CanUserSortColumns="false"
-                          SelectionUnit="Cell"
-                          Loaded="MyDataGrid_Loaded"
-                          Validation.ErrorTemplate="{x:Null}">
+                          SelectionUnit="Cell">
 
 
 
