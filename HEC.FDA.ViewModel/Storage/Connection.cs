@@ -320,6 +320,7 @@ namespace HEC.FDA.ViewModel.Storage
         {
             return _SqliteReader.GetTableNames();
         }
+
         public object GetTable(string TableName)
         {
 
@@ -336,6 +337,11 @@ namespace HEC.FDA.ViewModel.Storage
                 return null;
             }
 
+        }
+
+        public bool TableExists(string tableName)
+        {
+            return GetTable(tableName) != null;
         }
         #endregion
     }
