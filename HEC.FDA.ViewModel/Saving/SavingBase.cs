@@ -101,8 +101,7 @@ namespace HEC.FDA.ViewModel.Saving
         public void SaveNewElementToTable(object[] rowData, string[] TableColumnNames, Type[] TableColumnTypes)
         {
             OpenConnection();
-            object tbl = Connection.Instance.GetTable(_TableName);
-            if (tbl == null)
+            if (!Connection.Instance.TableExists(_TableName))
             {
                 Connection.Instance.CreateTableWithPrimaryKey(_TableName, TableColumnNames, TableColumnTypes);
             }
@@ -284,7 +283,7 @@ namespace HEC.FDA.ViewModel.Saving
             //delete from occupancy_types where GroupID = 1
             OpenConnection();
             //if the table doesn't exist, then there is nothing to delete
-            if (Connection.Instance.GetTable(_TableName) == null)
+            if (Connection.Instance.TableExists(_TableName))
             {
                 return;
             }
@@ -302,7 +301,7 @@ namespace HEC.FDA.ViewModel.Saving
             //make sure the table exists
             OpenConnection();
             object tbl = Connection.Instance.GetTable(_TableName);
-            if (tbl == null)
+            if (!Connection.Instance.TableExists(_TableName))
             {
                 Connection.Instance.CreateTableWithPrimaryKey(_TableName, TableColumnNames, TableColumnTypes);
             }
