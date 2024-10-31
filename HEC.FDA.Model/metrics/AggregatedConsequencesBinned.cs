@@ -15,6 +15,7 @@ namespace HEC.FDA.Model.metrics
     public class AggregatedConsequencesBinned : IReportMessage, IProgressReport
     {
         #region Fields
+        private const int INITIAL_BIN_QUANTITY = 500;
         private readonly double[] _TempResults;
         private readonly double[] _TempCounts;
         private bool _HistogramNotConstructed = false;
@@ -91,23 +92,17 @@ namespace HEC.FDA.Model.metrics
         {
             if(_HistogramNotConstructed)
             {
-                int initialBinQuantity = 500;
                 double max = _TempResults.Max();
                 double min = _TempResults.Min();
                 double range = max - min;
                 double binWidth;
-                //following if else restricts bin width to be between 1 and 100.
-                if (range < initialBinQuantity)
+                if (range < INITIAL_BIN_QUANTITY)
                 {
                     binWidth = 1;
                 }
                 else
                 {
-                    binWidth = range / initialBinQuantity;
-                    if (binWidth > 100)
-                    {
-                        binWidth = 100;
-                    }
+                    binWidth = range / INITIAL_BIN_QUANTITY;
                 }
                 ConsequenceHistogram = new DynamicHistogram(binWidth, ConvergenceCriteria);
                 DamagedElementQuantityHistogram = new DynamicHistogram(binWidth:1, ConvergenceCriteria);
