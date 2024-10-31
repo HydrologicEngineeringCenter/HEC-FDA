@@ -37,7 +37,6 @@ namespace HEC.FDA.Model.stageDamage
         /// <returns></returns>
         public (List<UncertainPairedData>, List<UncertainPairedData>) Compute(IProvideRandomNumbers randomProvider)
         {
-
             (List<UncertainPairedData>, List<UncertainPairedData>) scenarioStageDamageResults = new(new List<UncertainPairedData>(), new List<UncertainPairedData>());
 
             foreach (ImpactAreaStageDamage impactAreaStageDamage in _ImpactAreaStageDamage)

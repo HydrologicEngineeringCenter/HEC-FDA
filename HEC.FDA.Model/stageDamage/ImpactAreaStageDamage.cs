@@ -788,6 +788,7 @@ namespace HEC.FDA.Model.stageDamage
             Inventory.Validate();
             if(Inventory.ErrorLevel > ErrorLevel)
             {
+                HasErrors = true;
                 ErrorLevel = Inventory.ErrorLevel;
             }
         }
