@@ -9,6 +9,7 @@ using HEC.MVVMFramework.Model.Messaging;
 using HEC.FDA.Model.metrics;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
+using HEC.FDA.Model.Spatial;
 
 namespace HEC.FDA.Model.structures
 {

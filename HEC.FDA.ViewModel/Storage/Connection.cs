@@ -10,7 +10,7 @@ namespace HEC.FDA.ViewModel.Storage
     public sealed class Connection
     {
         #region Fields
-        private static DatabaseManager.SQLiteManager _SqliteReader = null;
+        private static SQLiteManager _SqliteReader = null;
         private const string TERRAIN_DIRECTORY = "Terrains";
         private const string HYDRAULIC_DIRECTORY = "Hydraulic Data";
         private const string PROJECTION_DIRECTORY = "Projection";
@@ -35,6 +35,7 @@ namespace HEC.FDA.ViewModel.Storage
             }
             set
             {
+                // doesn't need to be in if else
                 if (_SqliteReader == null)
                 {
                     if (!File.Exists(value))
@@ -45,21 +46,7 @@ namespace HEC.FDA.ViewModel.Storage
                     {
                         SetUpForExistingStudy(value);
                     }
-                    _SqliteReader = new DatabaseManager.SQLiteManager(value);
-                }
-                else
-                {
-                    if (!File.Exists(value))
-                    {
-                        SetUpForNewStudy(value);
-                    
-                    }
-                    else
-                    {
-                        SetUpForExistingStudy(value);
-                        
-                    }                    
-                    _SqliteReader = new DatabaseManager.SQLiteManager(value);
+                    _SqliteReader = new SQLiteManager(value);
                 }
             }
         }
@@ -71,8 +58,10 @@ namespace HEC.FDA.ViewModel.Storage
         private void SetUpForNewStudy(string value)
         {
             EnforceFolderStructure(value);
-            DatabaseManager.SQLiteManager.CreateSqLiteFile(value);         
+            SQLiteManager.CreateSqLiteFile(value);         
         }
+
+        // value is the sqlite file path
         private void EnforceFolderStructure(string value)
         {
             _ProjectDirectory = Path.GetDirectoryName(value);
@@ -82,7 +71,7 @@ namespace HEC.FDA.ViewModel.Storage
             if (!Directory.Exists(ProjectionDirectory)) { Directory.CreateDirectory(ProjectionDirectory); }
         }
 
-        public DatabaseManager.SQLiteManager Reader
+        public SQLiteManager Reader
         {
             get { return _SqliteReader; }
         }
@@ -155,24 +144,7 @@ namespace HEC.FDA.ViewModel.Storage
         {
             _SqliteReader.Close();
         }
-        public void RenameTable(string oldTableName, string newTableName)
-        {
-            //check table exists
-            if (_SqliteReader.TableNames.Contains(oldTableName))
-            {
-                _SqliteReader.RenameTable(oldTableName, newTableName);
 
-            }
-        }
-        
-        public void DeleteTable(string tableName)
-        {
-            _SqliteReader.DeleteTable(tableName);
-        }
-        public void CreateTable(string tablename, string[] colnames, Type[] coltypes)
-        {
-            _SqliteReader.CreateTable(tablename, colnames, coltypes);
-        }
         #region Cody's DB queries
         public void CreateTableWithPrimaryKey(string tablename, string[] colnames, Type[] coltypes)
         {
@@ -226,14 +198,87 @@ namespace HEC.FDA.ViewModel.Storage
 
         private string GetCreateTableWithPrimaryKeyText(string tablename, string[] colnames, Type[] coltypes)
         {
+            // set up autoincrement ID
             StringBuilder sb = new StringBuilder("CREATE TABLE ")
             .Append(tablename).Append(" ( ")
             .Append("ID INTEGER PRIMARY KEY AUTOINCREMENT");
-            //todo: change id to use constant
-            foreach (string colName in colnames)
+            // add column names + their types
+            for (int i = 0; i < colnames.Length; i++)
             {
-                sb.Append(", ").Append(colName);
+                sb.Append(", ").Append(colnames[i]).Append(" ");
+                Type type = coltypes[i];
+                if (type == typeof(string))
+                {
+                    sb.Append("TEXT");
+                    continue;
+                }
 
+                if (type == typeof(DateTime))
+                {
+                    sb.Append("DATETIME");
+                    continue;
+                }
+
+                if (type == typeof(byte) || type == typeof(sbyte))
+                {
+                    sb.Append("INT1");
+                    continue;
+                }
+
+                if (type == typeof(short) || type == typeof(ushort))
+                {
+                    sb.Append("INT2");
+                    continue;
+                }
+
+                if (type == typeof(int) || type == typeof(uint))
+                {
+                    sb.Append("INT4");
+                    continue;
+                }
+
+                if (type == typeof(long) || type == typeof(ulong))
+                {
+                    sb.Append("INT8");
+                    continue;
+                }
+
+                if (type == typeof(float))
+                {
+                    sb.Append("FLOAT");
+                    continue;
+                }
+
+                if (type == typeof(double))
+                {
+                    sb.Append("DOUBLE");
+                    continue;
+                }
+
+                if (type == typeof(decimal))
+                {
+                    sb.Append("NUMBER");
+                    continue;
+                }
+
+                if (type == typeof(char))
+                {
+                    sb.Append("CHAR");
+                    continue;
+                }
+
+                if (type == typeof(bool))
+                {
+                    sb.Append("BOOLEAN");
+                    continue;
+                }
+
+                if (type == typeof(object) || type == typeof(byte[]))
+                {
+                    sb.Append("BLOB");
+                    continue;
+                }
+                throw new Exception(coltypes[i].ToString() + " Not implemented, Column: " + colnames[i]);
             }
             sb.Append(");");
         
@@ -275,7 +320,8 @@ namespace HEC.FDA.ViewModel.Storage
         {
             return _SqliteReader.GetTableNames();
         }
-        public DatabaseManager.DataTableView GetTable(string TableName)
+
+        public object GetTable(string TableName)
         {
 
             if (IsConnectionNull)
@@ -284,12 +330,18 @@ namespace HEC.FDA.ViewModel.Storage
             }
             if (_SqliteReader.GetTableNames().Contains(TableName))
             {
-                return _SqliteReader.GetTableManager(TableName);
+                // we just need to return something not null, there is definitely a better way
+                return new object();
             }else
             {
                 return null;
             }
 
+        }
+
+        public bool TableExists(string tableName)
+        {
+            return GetTable(tableName) != null;
         }
         #endregion
     }
