@@ -5,8 +5,10 @@ using System.Linq;
 using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
 using HEC.FDA.ViewModel.Utilities;
 using System.Windows;
-using DatabaseManager;
-using System.IO;
+using Geospatial.IO;
+using Geospatial.Features;
+using Utility.Logging;
+using Utility.Memory;
 
 namespace HEC.FDA.ViewModel.Inventory
 {
@@ -233,28 +235,23 @@ namespace HEC.FDA.ViewModel.Inventory
         /// <returns></returns>
         public List<string> GetUniqueOccupancyTypes()
         {
-            List<string> uniqueList = new List<string>();
-            DataTableView dtv = GetStructureInventoryTable();
-            if (dtv != null)
+            HashSet<string> uniqueList = new();
+            PointFeatureCollection collection;
+            OperationResult res = ShapefileWriter.TryReadShapefile(_Path, out collection);
+            if (res.Result)
             {
-                object[] occtypesFromFile = dtv.GetColumn(_SelectedOcctypeName);
-                foreach (object o in occtypesFromFile)
+                TableColumn occTypeColumn = collection.AttributeTable.GetColumn(_SelectedOcctypeName);
+                for(int i = 0; i < collection.AttributeTable.Rows.Count; i++)
                 {
-                    uniqueList.Add(o.ToString());
+                    var row = collection.AttributeTable.Rows[i];
+                    string occtype = row.ValueAs(_SelectedOcctypeName, string.Empty);
+                    if (occTypeColumn != null)
+                    {
+                        uniqueList.Add(occtype);
+                    }
                 }
             }
-            return uniqueList.Distinct().ToList();
-        }
-        private DataTableView GetStructureInventoryTable()
-        {
-            DataTableView dtv = null;
-            string dbfPath = Path.ChangeExtension(_Path, "dbf");
-            if (File.Exists(dbfPath))
-            {
-                DbfReader dbf = new DbfReader(dbfPath);
-                dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
-            }
-            return dtv;
+            return uniqueList.ToList();
         }
 
         public void UpdateOcctypeColumnSelectionName(string occtypeColName)

@@ -1,6 +1,6 @@
-﻿using HEC.FDA.Model.paireddata;
+﻿using HEC.FDA.Model.Spatial;
+using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.stageDamage;
-using HEC.FDA.Model.structures;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.ImpactArea;

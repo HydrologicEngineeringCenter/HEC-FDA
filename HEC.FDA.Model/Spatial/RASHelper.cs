@@ -11,7 +11,7 @@ using System.Linq;
 using Utilities;
 using Utility.Extensions;
 
-namespace HEC.FDA.Model.structures;
+namespace HEC.FDA.Model.Spatial;
 
 public static class RASHelper
 {
@@ -81,7 +81,7 @@ public static class RASHelper
             case ".hdf":
                 TerrainLayer terrain = new("ThisNameIsNotUSed", TerrainPath);
                 List<string> files = GetAllSourceFilesFromTerrainSAFE(terrain, ref error);
-                if(!error.IsNullOrEmpty())
+                if (!error.IsNullOrEmpty())
                 {
                     throw new Exception(error);
                 }
@@ -181,7 +181,7 @@ where T : struct
         if (mappingColumnName != null && row.Table.Columns.Contains(mappingColumnName))
         {
             //column could have wrong data type, or be null, or dbnull
-            retval = TryGet<T>(row[mappingColumnName], defaultValue);
+            retval = TryGet(row[mappingColumnName], defaultValue);
         }
         return retval;
     }
@@ -244,9 +244,9 @@ where T : struct
     }
     public static bool ShapefileIsValid(string path, ref string error)
     {
-     return ShapefileStorage.IsValid(path, ref error);
+        return ShapefileStorage.IsValid(path, ref error);
     }
-    public static bool IsPolygonShapefile(string path, ref string error )
+    public static bool IsPolygonShapefile(string path, ref string error)
     {
         bool valid = ShapefileWriter.IsPolygonShapefile(path);
         if (!valid)
@@ -272,7 +272,7 @@ where T : struct
     /// <returns></returns>
     public static bool TerrainIsValid(string path, ref string error)
     {
-        if(!File.Exists(path))
+        if (!File.Exists(path))
         {
             error += $"File {path} does not exist. ";
             return true;
@@ -282,11 +282,11 @@ where T : struct
         {
             case ".hdf":
                 TerrainLayer terrain = new("ThisNameIsNotUSed", path);
-                List<string> files = GetAllSourceFilesFromTerrainSAFE(terrain,ref error);
+                List<string> files = GetAllSourceFilesFromTerrainSAFE(terrain, ref error);
                 bool allFilesExist = true;
-                foreach(string file in files)
+                foreach (string file in files)
                 {
-                    if(!File.Exists(file))
+                    if (!File.Exists(file))
                     {
                         error += $"File {file} does not exist. " + Environment.NewLine;
                         allFilesExist = false;
