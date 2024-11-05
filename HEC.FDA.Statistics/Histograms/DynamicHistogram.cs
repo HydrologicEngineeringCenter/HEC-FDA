@@ -254,16 +254,23 @@ namespace Statistics.Histograms
                 if (observation < Min)
                 {
                     quantityAdditionalBins = Convert.ToInt32(Math.Ceiling((Min - observation) / BinWidth));
-                    Int64[] newBinCounts = new Int64[quantityAdditionalBins + BinCounts.Length];
-
-                    for (int i = BinCounts.Length + quantityAdditionalBins - 1; i > (quantityAdditionalBins - 1); i--)
+                    if (observation == 0)
                     {
-                        newBinCounts[i] = BinCounts[i - quantityAdditionalBins];
+                        ResetToZeroMin(quantityAdditionalBins);
                     }
-                    BinCounts = newBinCounts;
-                    BinCounts[0] += 1;
-                    double newMin = Min - (quantityAdditionalBins * BinWidth);
-                    Min = newMin;
+                    else
+                    {
+                        Int64[] newBinCounts = new Int64[quantityAdditionalBins + BinCounts.Length];
+
+                        for (int i = BinCounts.Length + quantityAdditionalBins - 1; i > (quantityAdditionalBins - 1); i--)
+                        {
+                            newBinCounts[i] = BinCounts[i - quantityAdditionalBins];
+                        }
+                        BinCounts = newBinCounts;
+                        BinCounts[0] += 1;
+                        double newMin = Min - (quantityAdditionalBins * BinWidth);
+                        Min = newMin;
+                    }
                 }
                 else if (observation > Max)
                 {
@@ -306,7 +313,7 @@ namespace Statistics.Histograms
             bool sampleSizeIsBigEnough = SampleSize > 1000;
             if (sampleSizeIsBigEnough && HistogramIsZeroValued)
             {
-                    ShutHistogramDown();
+                ShutHistogramDown();
             }
             else
             {
@@ -328,13 +335,34 @@ namespace Statistics.Histograms
             BinWidth = BinWidth * divisor;
             int newBinCount = Convert.ToInt32(Math.Ceiling(BinCounts.Length / divisor));
             long[] newBins = new long[newBinCount];
-            for (int i = 0; i < BinCounts.Length;i++)
+            for (int i = 0; i < BinCounts.Length; i++)
             {
-                int newBin = Convert.ToInt32(Math.Floor(i/divisor));
+                int newBin = Convert.ToInt32(Math.Floor(i / divisor));
                 newBins[newBin] += BinCounts[i];
             }
-            Max = Min + newBinCount*BinWidth;
+            Max = Min + newBinCount * BinWidth;
             BinCounts = newBins;
+        }
+
+        private void ResetToZeroMin(int quantityAdditionalBins)
+        {
+            double newMin = 0;
+            int originalBinsLength = BinCounts.Length;
+            long[] newBins = new long[quantityAdditionalBins + originalBinsLength];
+            newBins[0] += 1;
+
+            double lowerFraction = (newMin + quantityAdditionalBins * BinWidth - Min) / BinWidth;
+            double upperFraction = 1 - lowerFraction;
+
+            for (int i = 0; i < originalBinsLength; i++)
+            {
+                newBins[i + quantityAdditionalBins - 1] += Convert.ToInt64(lowerFraction * BinCounts[i]);
+                newBins[i + quantityAdditionalBins] += Convert.ToInt64(upperFraction * BinCounts[i]);
+            }
+
+            Min = newMin;
+            BinCounts = newBins;
+            Max = Min + BinCounts.Length * BinWidth;
         }
 
         private void ShutHistogramDown()
@@ -795,14 +823,14 @@ namespace Statistics.Histograms
 
         private bool IsZeroValued()
         {
-                bool isZeroValued = false;
-                bool meanIsZero = Mean == 0;
-                bool standardDeviationIsZero = StandardDeviation == 0;
-                if (meanIsZero && standardDeviationIsZero)
-                {
-                    isZeroValued = true;
-                }
-                return isZeroValued;
+            bool isZeroValued = false;
+            bool meanIsZero = Mean == 0;
+            bool standardDeviationIsZero = StandardDeviation == 0;
+            if (meanIsZero && standardDeviationIsZero)
+            {
+                isZeroValued = true;
+            }
+            return isZeroValued;
 
         }
 

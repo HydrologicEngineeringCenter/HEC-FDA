@@ -487,6 +487,38 @@ namespace StatisticsTests.Histograms
             Assert.True(errorCentral < tolerance);
             Assert.True(errorStd < tolerance);
         }
+
+        [Fact]
+        public void HistogramResetToZeroPreservesDistribution()
+        {
+            Triangular triangular = new Triangular(min: 0.0001, mode: 100, max: 1000);
+            DynamicHistogram histogram = new DynamicHistogram(min: triangular.Min, binWidth: 2, new ConvergenceCriteria());
+            Random random = new Random(Seed: 1234);
+            int sampleSize = 50000;
+            double[] sample = new double[sampleSize];
+            for (int i = 0; i < sampleSize; i++)
+            {
+                sample[i] = (triangular.InverseCDF(random.NextDouble()));
+            }
+            histogram.AddObservationsToHistogram(sample);
+            double zeroVal = 0;
+            histogram.AddObservationToHistogram(zeroVal);
+
+            
+            Assert.Equal(zeroVal, histogram.Min);
+
+            double tolerance = 0.06;
+            int steps = 100;
+            for (int i = 0; i < steps; i++)
+            {
+                double probabilityStep = i + 1;
+                double probability = (probabilityStep) / steps;
+                double histogramQuantile = histogram.InverseCDF(probability);
+                double triangularQuantile = triangular.InverseCDF(probability);
+                double relativeDifference = Math.Abs(( histogramQuantile - triangularQuantile ) / triangularQuantile);
+                Assert.True(relativeDifference < tolerance);
+            }
+        }
     }
 
 
