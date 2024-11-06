@@ -260,16 +260,23 @@ namespace Statistics.Histograms
                     }
                     else
                     {
-                        Int64[] newBinCounts = new Int64[quantityAdditionalBins + BinCounts.Length];
-
-                        for (int i = BinCounts.Length + quantityAdditionalBins - 1; i > (quantityAdditionalBins - 1); i--)
-                        {
-                            newBinCounts[i] = BinCounts[i - quantityAdditionalBins];
-                        }
-                        BinCounts = newBinCounts;
-                        BinCounts[0] += 1;
                         double newMin = Min - (quantityAdditionalBins * BinWidth);
-                        Min = newMin;
+                        if (observation > 0 && newMin < 0)
+                        {
+                            ResetToZeroMin(quantityAdditionalBins);
+                        }
+                        else
+                        {
+                            Int64[] newBinCounts = new Int64[quantityAdditionalBins + BinCounts.Length];
+
+                            for (int i = BinCounts.Length + quantityAdditionalBins - 1; i > (quantityAdditionalBins - 1); i--)
+                            {
+                                newBinCounts[i] = BinCounts[i - quantityAdditionalBins];
+                            }
+                            BinCounts = newBinCounts;
+                            BinCounts[0] += 1;
+                            Min = newMin;
+                        }
                     }
                 }
                 else if (observation > Max)
