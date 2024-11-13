@@ -11,6 +11,14 @@ namespace HEC.FDA.Model.structures
     public class OccupancyType : PropertyValidationHelper, IDontImplementValidationButMyPropertiesDo
     {
         #region Fields
+        //seeds
+        private const int DEPTH_DAMAGE_SEED = 1234;
+        private const int FIRST_FLOOR_SEED = 2345;
+        private const int STRUCTURE_VALUE_SEED = 3456;
+        private const int CONTENT_VALUE_SEED = 4567;
+        private const int OTHER_VALUE_SEED = 5678;
+        private const int VEHICLE_VALUE_SEED = 6789;
+
         //fundamental traits
         private string _OccupancyTypeName;
         private string _OccupancyTypeDamageCategory;
@@ -75,7 +83,41 @@ namespace HEC.FDA.Model.structures
         }
         #endregion
         #region Methods
-        public DeterministicOccupancyType Sample(IProvideRandomNumbers randomNumbers, bool computeIsDeterministic = false)
+        public void GenerateRandomNumbers(long size)
+        {
+            _StructureDepthPercentDamageFunction.GenerateRandomNumbers(DEPTH_DAMAGE_SEED, size);
+            _StructureValueError.GenerateRandomNumbers(STRUCTURE_VALUE_SEED, size);
+            _FirstFloorElevationError.GenerateRandomNumbers(FIRST_FLOOR_SEED, size);
+            if (ComputeContentDamage)
+            {
+                _ContentDepthPercentDamageFunction.GenerateRandomNumbers(DEPTH_DAMAGE_SEED, size);
+                if (UseContentToStructureValueRatio)
+                {
+                    _ContentToStructureValueRatio.GenerateRandomNumbers(CONTENT_VALUE_SEED, size);
+                } else
+                {
+                    _ContentValueError.GenerateRandomNumbers(CONTENT_VALUE_SEED, size);
+                }
+            }
+            if (ComputeOtherDamage)
+            {
+                _OtherDepthPercentDamageFunction.GenerateRandomNumbers(DEPTH_DAMAGE_SEED, size);
+                if (UseOtherToStructureValueRatio)
+                {
+                    _OtherToStructureValueRatio.GenerateRandomNumbers(OTHER_VALUE_SEED, size);
+                } else
+                {
+                    _OtherValueError.GenerateRandomNumbers(OTHER_VALUE_SEED,size);
+                }
+            }
+            if (ComputeVehicleDamage)
+            {
+                _VehicleDepthPercentDamageFunction.GenerateRandomNumbers(DEPTH_DAMAGE_SEED, size);
+                _VehicleValueError.GenerateRandomNumbers(VEHICLE_VALUE_SEED, size);
+            }
+        }
+
+        public DeterministicOccupancyType Sample(double probability)
         {
             if (ErrorLevel >= ErrorLevel.Major)
             {
@@ -84,7 +126,7 @@ namespace HEC.FDA.Model.structures
                 return new DeterministicOccupancyType();
             }
             //damage functions
-            IPairedData structDamagePairedData = _StructureDepthPercentDamageFunction.SamplePairedData(randomNumbers.NextRandom(), computeIsDeterministic);
+            IPairedData structDamagePairedData = _StructureDepthPercentDamageFunction.SamplePairedData(probability);
             //This hack is here because we need to create these functions before assigning their value;
             //This hack feels less hacky than having an empty paired data constructor with the same junk 
             IPairedData contentDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 });
@@ -92,21 +134,21 @@ namespace HEC.FDA.Model.structures
             IPairedData otherDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 });
 
             //parameters
-            double firstFloorElevationOffsetSampled = _FirstFloorElevationError.Sample(randomNumbers.NextRandom(), computeIsDeterministic);
-            double structureValueOffsetSampled = _StructureValueError.Sample(randomNumbers.NextRandom(), computeIsDeterministic);
+            double firstFloorElevationOffsetSampled = _FirstFloorElevationError.Sample(probability);
+            double structureValueOffsetSampled = _StructureValueError.Sample(probability);
             double contentValueOffsetSampled = 0;
             double contentValueRatioSampled = 0;
             if (ComputeContentDamage)
             {
                 if (UseContentToStructureValueRatio)
                 {
-                    contentValueRatioSampled = (_ContentToStructureValueRatio.Sample(randomNumbers.NextRandom(), computeIsDeterministic));
+                    contentValueRatioSampled = _ContentToStructureValueRatio.Sample(probability);
                 }
                 else
                 {
-                    contentValueOffsetSampled = _ContentValueError.Sample(randomNumbers.NextRandom(), computeIsDeterministic);
+                    contentValueOffsetSampled = _ContentValueError.Sample(probability);
                 }
-                contentDamagePairedData = _ContentDepthPercentDamageFunction.SamplePairedData(randomNumbers.NextRandom(), computeIsDeterministic);
+                contentDamagePairedData = _ContentDepthPercentDamageFunction.SamplePairedData(probability);
             }
             double otherValueOffsetSampled = 0;
             double otherValueRatioSampled = 0;
@@ -114,20 +156,77 @@ namespace HEC.FDA.Model.structures
             {
                 if (UseOtherToStructureValueRatio)
                 {
-                    otherValueRatioSampled = (_OtherToStructureValueRatio.Sample(randomNumbers.NextRandom(), computeIsDeterministic)) / 100;
+                    otherValueRatioSampled = _OtherToStructureValueRatio.Sample(probability) / 100;
                 }
                 else
                 {
-                    otherValueOffsetSampled = _OtherValueError.Sample(randomNumbers.NextRandom(), computeIsDeterministic);
+                    otherValueOffsetSampled = _OtherValueError.Sample(probability);
                 }
-                otherDamagePairedData = _OtherDepthPercentDamageFunction.SamplePairedData(randomNumbers.NextRandom(), computeIsDeterministic);
+                otherDamagePairedData = _OtherDepthPercentDamageFunction.SamplePairedData(probability);
             }
 
             double vehicleValueOffsetSampled = 0;
             if (ComputeVehicleDamage)
             {
-                vehicleValueOffsetSampled = _VehicleValueError.Sample(randomNumbers.NextRandom(), computeIsDeterministic);
-                vehicleDamagePairedData = _VehicleDepthPercentDamageFunction.SamplePairedData(randomNumbers.NextRandom(), computeIsDeterministic);
+                vehicleValueOffsetSampled = _VehicleValueError.Sample(probability);
+                vehicleDamagePairedData = _VehicleDepthPercentDamageFunction.SamplePairedData(probability);
+            }
+            return new DeterministicOccupancyType(_OccupancyTypeName, _OccupancyTypeDamageCategory, structDamagePairedData, firstFloorElevationOffsetSampled, structureValueOffsetSampled, ComputeContentDamage, ComputeVehicleDamage, ComputeOtherDamage, contentDamagePairedData, contentValueOffsetSampled, UseContentToStructureValueRatio, contentValueRatioSampled, vehicleDamagePairedData, vehicleValueOffsetSampled, otherDamagePairedData, otherValueOffsetSampled, UseOtherToStructureValueRatio, otherValueRatioSampled, _StructureValueIsLogNormal, _ContentValueIsLogNormal, _OtherValueIsLogNormal, _VehicleValueIsLogNormal, _FirstFloorElevationIsLogNormal);
+        }
+
+        public DeterministicOccupancyType Sample(long iteration, bool computeIsDeterministic = false)
+        {
+            if (ErrorLevel >= ErrorLevel.Major)
+            {
+                Message message = new($"Occupancy type {Name} has at least one major error and cannot be sampled. An arbitrary set of sampled parameters is being returned");
+                ReportMessage(this, new MessageEventArgs(message));
+                return new DeterministicOccupancyType();
+            }
+            //damage functions
+            IPairedData structDamagePairedData = _StructureDepthPercentDamageFunction.SamplePairedData(iteration, computeIsDeterministic);
+            //This hack is here because we need to create these functions before assigning their value;
+            //This hack feels less hacky than having an empty paired data constructor with the same junk 
+            IPairedData contentDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 });
+            IPairedData vehicleDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 });
+            IPairedData otherDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 });
+
+            //parameters
+            double firstFloorElevationOffsetSampled = _FirstFloorElevationError.Sample(iteration, computeIsDeterministic);
+            double structureValueOffsetSampled = _StructureValueError.Sample(iteration, computeIsDeterministic);
+            double contentValueOffsetSampled = 0;
+            double contentValueRatioSampled = 0;
+            if (ComputeContentDamage)
+            {
+                if (UseContentToStructureValueRatio)
+                {
+                    contentValueRatioSampled = (_ContentToStructureValueRatio.Sample(iteration, computeIsDeterministic));
+                }
+                else
+                {
+                    contentValueOffsetSampled = _ContentValueError.Sample(iteration, computeIsDeterministic);
+                }
+                contentDamagePairedData = _ContentDepthPercentDamageFunction.SamplePairedData(iteration, computeIsDeterministic);
+            }
+            double otherValueOffsetSampled = 0;
+            double otherValueRatioSampled = 0;
+            if (ComputeOtherDamage)
+            {
+                if (UseOtherToStructureValueRatio)
+                {
+                    otherValueRatioSampled = (_OtherToStructureValueRatio.Sample(iteration, computeIsDeterministic)) / 100;
+                }
+                else
+                {
+                    otherValueOffsetSampled = _OtherValueError.Sample(iteration, computeIsDeterministic);
+                }
+                otherDamagePairedData = _OtherDepthPercentDamageFunction.SamplePairedData(iteration, computeIsDeterministic);
+            }
+
+            double vehicleValueOffsetSampled = 0;
+            if (ComputeVehicleDamage)
+            {
+                vehicleValueOffsetSampled = _VehicleValueError.Sample(iteration, computeIsDeterministic);
+                vehicleDamagePairedData = _VehicleDepthPercentDamageFunction.SamplePairedData(iteration, computeIsDeterministic);
             }
             return new DeterministicOccupancyType(_OccupancyTypeName, _OccupancyTypeDamageCategory, structDamagePairedData, firstFloorElevationOffsetSampled, structureValueOffsetSampled, ComputeContentDamage, ComputeVehicleDamage, ComputeOtherDamage, contentDamagePairedData, contentValueOffsetSampled, UseContentToStructureValueRatio, contentValueRatioSampled, vehicleDamagePairedData, vehicleValueOffsetSampled, otherDamagePairedData, otherValueOffsetSampled, UseOtherToStructureValueRatio, otherValueRatioSampled, _StructureValueIsLogNormal, _ContentValueIsLogNormal, _OtherValueIsLogNormal, _VehicleValueIsLogNormal, _FirstFloorElevationIsLogNormal);
         }

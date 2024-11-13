@@ -58,7 +58,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
         public void ComputeStructureDamage(float wse, double expectedStructureDamage, double expectedContentDamage)
         {
             List<DeterministicOccupancyType> deterministicOccupancyTypes = new List<DeterministicOccupancyType>();
-            deterministicOccupancyTypes.Add(occupancyType.Sample(medianRandomProvider, true));
+            deterministicOccupancyTypes.Add(occupancyType.Sample(iteration:1, true));
             ConsequenceResult consequenceResult = structure.ComputeDamage(wse, deterministicOccupancyTypes);
             Assert.Equal(expectedStructureDamage, consequenceResult.StructureDamage, 0);
             Assert.Equal(expectedContentDamage, consequenceResult.ContentDamage, 0);
@@ -113,8 +113,8 @@ namespace HEC.FDA.ModelTest.unittests.structures
             float wse233375 = -4.17f;
             float wse232549 = -1.27f;
 
-            (double, double, double, double) consequenceResult233375 = structure233375.ComputeDamage(wse233375, oneStryPier.Sample(new MedianRandomProvider(), true));
-            (double, double, double, double) consequenceResult232549 = structure232549.ComputeDamage(wse232549, oneStryPier.Sample(new MedianRandomProvider(), true));
+            (double, double, double, double) consequenceResult233375 = structure233375.ComputeDamage(wse233375, oneStryPier.Sample(iteration:1, true));
+            (double, double, double, double) consequenceResult232549 = structure232549.ComputeDamage(wse232549, oneStryPier.Sample(iteration:1, true));
 
             //percent damage externally interpolated from depth-percent damage function
             double expectedStructureDamage232549 = 0.4213 * structure232549.InventoriedStructureValue;

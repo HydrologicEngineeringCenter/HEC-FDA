@@ -19,7 +19,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor.ChartControls
         {
             if (Function != null)
             {
-                PairedData pd = Function.SamplePairedData(0.5, true);
+                PairedData pd = Function.SamplePairedData(0.5);
                 UpdateYAxisLabel(pd.MetaData.YLabel);
             }
         }

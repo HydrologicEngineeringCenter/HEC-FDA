@@ -119,7 +119,7 @@ namespace HEC.FDA.ModelTest.unittests
             double medianProbability = 0.5;
 
             //Act
-            IPairedData pairedData = uncertainPairedData.SamplePairedData(medianProbability, retrieveDeterministicRepresentation: true);
+            IPairedData pairedData = uncertainPairedData.SamplePairedData(medianProbability);
             double tolerance = 0.05;
 
             //Assert

@@ -13,6 +13,8 @@ namespace HEC.FDA.Model.structures
         private readonly double _PercentOfInventoryValueStandardDeviationOrMin;
         private readonly double _PercentOfInventoryValueMax;
         private readonly IDistributionEnum _DistributionType;
+        private double[] _RandomNumbers;
+
         #endregion
 
         #region Properties 
@@ -36,6 +38,16 @@ namespace HEC.FDA.Model.structures
         #endregion
 
         #region Methods
+        internal void GenerateRandomNumbers(int seed, long size)
+        {
+            Random random = new Random(seed);
+            double[] randos = new double[size];
+            for (int i = 0; i < size; i++)
+            {
+                randos[i] = random.NextDouble();
+            }
+            _RandomNumbers = randos;
+        }
         private void AddRules()
         {
             AddSinglePropertyRule(nameof(_DistributionType), new Rule(() => _DistributionType.Equals(IDistributionEnum.Normal) || _DistributionType.Equals(IDistributionEnum.Uniform) || _DistributionType.Equals(IDistributionEnum.Deterministic) || _DistributionType.Equals(IDistributionEnum.Triangular), "Only Deterministic, Normal, Triangular, and Uniform distributions can be used for value uncertainty", ErrorLevel.Fatal));
@@ -51,16 +63,10 @@ namespace HEC.FDA.Model.structures
         /// <param name="probability"></param>
         /// <param name="computeIsDeterministic"></param>
         /// <returns></returns>        
-        public double Sample(double probability, bool computeIsDeterministic)
+        public double Sample(double probability)
         {
             double centerOfDistribution = 100;
             double sampledValueOffset;
-            if (computeIsDeterministic)
-            {
-                    sampledValueOffset = centerOfDistribution/100;
-            } 
-            else
-            {
             switch (_DistributionType)
             {
                 case IDistributionEnum.Normal:
@@ -83,6 +89,53 @@ namespace HEC.FDA.Model.structures
                     sampledValueOffset = centerOfDistribution/100;
                     break;
             }
+            if (sampledValueOffset < 0)
+            {
+                sampledValueOffset = 0;
+            }
+            return sampledValueOffset;
+        }
+
+        /// <summary>
+        /// The use of this method will depend on the type of distribution. 
+        /// If Normal, Triangular, or Uniform, the value returned is the percent of inventory value to add or subtract from the inventoried value
+        /// If log normal, then the return value will need to be multiplied by the inventoried value
+        /// </summary>
+        /// <param name="iteration"></param>
+        /// <param name="computeIsDeterministic"></param>
+        /// <returns></returns>        
+        public double Sample(long iteration, bool computeIsDeterministic)
+        {
+            double centerOfDistribution = 100;
+            double sampledValueOffset;
+            if (computeIsDeterministic)
+            {
+                sampledValueOffset = centerOfDistribution / 100;
+            }
+            else
+            {
+                switch (_DistributionType)
+                {
+                    case IDistributionEnum.Normal:
+                        Normal normal = new(centerOfDistribution / 100, (_PercentOfInventoryValueStandardDeviationOrMin / 100));
+                        sampledValueOffset = normal.InverseCDF(_RandomNumbers[iteration]);
+                        break;
+
+                    case IDistributionEnum.LogNormal:
+                        sampledValueOffset = Math.Exp(Normal.StandardNormalInverseCDF(_RandomNumbers[iteration]) * (_PercentOfInventoryValueStandardDeviationOrMin / 100));
+                        break;
+                    case IDistributionEnum.Triangular:
+                        Triangular triangular = new(_PercentOfInventoryValueStandardDeviationOrMin / 100, centerOfDistribution / 100, _PercentOfInventoryValueMax / 100);
+                        sampledValueOffset = triangular.InverseCDF(_RandomNumbers[iteration]);
+                        break;
+                    case IDistributionEnum.Uniform:
+                        Uniform uniform = new(_PercentOfInventoryValueStandardDeviationOrMin / 100, _PercentOfInventoryValueMax / 100);
+                        sampledValueOffset = uniform.InverseCDF(_RandomNumbers[iteration]);
+                        break;
+                    default:
+                        sampledValueOffset = centerOfDistribution / 100;
+                        break;
+                }
             }
             if (sampledValueOffset < 0)
             {

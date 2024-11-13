@@ -12,6 +12,10 @@ namespace HEC.FDA.Model.paireddata
 {
     public class GraphicalUncertainPairedData : ValidationErrorLogger, IPairedDataProducer, ICanBeNull, IMetaData
     {
+        #region Fields 
+        private double[] _RandomNumbers;
+
+        #endregion
 
         #region Properties
         internal GraphicalDistribution GraphicalDistributionWithLessSimple { get; }
@@ -52,6 +56,16 @@ namespace HEC.FDA.Model.paireddata
         #endregion
 
         #region Methods
+        public void GenerateRandomNumbers(int seed, int size)
+        {
+            Random random = new Random(seed);
+            double[] randos = new double[size];
+            for (int i = 0; i < size; i++)
+            {
+                randos[i] = random.NextDouble();
+            }
+            _RandomNumbers = randos;
+        }
         private static double[] ExceedanceToNonExceedance(double[] exceedanceProbabilities)
         {
             double[] nonExceedanceProbabilities = new double[exceedanceProbabilities.Length];
@@ -62,9 +76,62 @@ namespace HEC.FDA.Model.paireddata
             return nonExceedanceProbabilities;
         }
         //compute with deterministic is an unused argument because graphical returns deterministically for the median random provider 
-        public PairedData SamplePairedData(double probability, bool computeIsDeterministic = false)
+        public PairedData SamplePairedData(double probability)
         {
             double[] y = new double[GraphicalDistributionWithLessSimple.StageOrLogFlowDistributions.Length];
+
+            for (int i = 0; i < GraphicalDistributionWithLessSimple.StageOrLogFlowDistributions.Length; i++)
+            {
+                if (GraphicalDistributionWithLessSimple.UsingStagesNotFlows)
+                {
+                    y[i] = GraphicalDistributionWithLessSimple.StageOrLogFlowDistributions[i].InverseCDF(probability);
+                }
+                else
+                {
+                    y[i] = Math.Log(GraphicalDistributionWithLessSimple.StageOrLogFlowDistributions[i].InverseCDF(probability));
+                }
+            }
+            PairedData pairedData = new(ExceedanceToNonExceedance(GraphicalDistributionWithLessSimple.ExceedanceProbabilities), y, CurveMetaData);
+            bool isMonotonicallyIncreasing = IsMonotonicallyIncreasing(pairedData);
+            if (!isMonotonicallyIncreasing)
+            {
+                pairedData.ForceStrictMonotonicity();
+            }
+            double[] expandedStageOrLogFlowValues = InterpolateQuantiles.InterpolateOnX(pairedData.Xvals, CombinedExceedanceProbabilities, pairedData.Yvals);
+            if (!GraphicalDistributionWithLessSimple.UsingStagesNotFlows)
+            {
+                double[] tempArray = new double[expandedStageOrLogFlowValues.Length];
+                for (int i = 0; i < expandedStageOrLogFlowValues.Length; i++)
+                {
+                    tempArray[i] = Math.Exp(expandedStageOrLogFlowValues[i]);
+                }
+                expandedStageOrLogFlowValues = tempArray;
+            }
+            PairedData expandedPairedData = new(ExceedanceToNonExceedance(CombinedExceedanceProbabilities), expandedStageOrLogFlowValues, CurveMetaData);
+            return expandedPairedData;
+        }
+
+        public PairedData SamplePairedData(long iterationNumber, bool computeIsDeterministic = false)
+        {
+            double probability;
+            double[] y = new double[GraphicalDistributionWithLessSimple.StageOrLogFlowDistributions.Length];
+            if (computeIsDeterministic)
+            {
+                probability = 0.5;
+            }
+            else
+            {
+            if (_RandomNumbers.Length == 0)
+            {
+                throw new Exception("Random numbers have not been created for UPD sampling");
+            }
+            if (iterationNumber < 0 || iterationNumber > _RandomNumbers.Length)
+            {
+                throw new Exception("Iteration number cannot be less than 0 or greater than the size of the random number array");
+
+            }
+                probability = _RandomNumbers[iterationNumber];
+            }
 
             for (int i = 0; i < GraphicalDistributionWithLessSimple.StageOrLogFlowDistributions.Length; i++)
             {

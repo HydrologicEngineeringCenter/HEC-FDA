@@ -208,6 +208,8 @@ namespace HEC.FDA.Model.stageDamage
         /// </summary>
         private PairedData IdentifyCentralStageFrequencyAtIndexLocation()
         {
+            int iteration = 1;
+            bool deterministic = true;
             if (_AnalyticalFlowFrequency != null)
             {
                 if (_DischargeStage != null)
@@ -216,27 +218,27 @@ namespace HEC.FDA.Model.stageDamage
                     PairedData flowFrequencyPairedData = new(flowFreqAsTuple.Item1, flowFreqAsTuple.Item2);
                     if (_UnregulatedRegulated != null)
                     {
-                        flowFrequencyPairedData = _UnregulatedRegulated.SamplePairedData(0.5, true).compose(flowFrequencyPairedData) as PairedData;
+                        flowFrequencyPairedData = _UnregulatedRegulated.SamplePairedData(iteration, deterministic).compose(flowFrequencyPairedData) as PairedData;
                     }
-                    return _DischargeStage.SamplePairedData(0.5, true).compose(flowFrequencyPairedData) as PairedData;
+                    return _DischargeStage.SamplePairedData(iteration, deterministic).compose(flowFrequencyPairedData) as PairedData;
                 }
             }
             else if (_GraphicalFrequency != null)
             {
                 if (_GraphicalFrequency.GraphicalDistributionWithLessSimple.UsingStagesNotFlows)
                 {
-                    return _GraphicalFrequency.SamplePairedData(0.5, true) as PairedData;
+                    return _GraphicalFrequency.SamplePairedData(0.5) as PairedData;
                 }
                 else
                 {
                     if (_DischargeStage != null)
                     {
-                        PairedData flowFrequencyPairedData = _GraphicalFrequency.SamplePairedData(0.5, true) as PairedData;
+                        PairedData flowFrequencyPairedData = _GraphicalFrequency.SamplePairedData(iteration, deterministic) as PairedData;
                         if (_UnregulatedRegulated != null)
                         {
-                            flowFrequencyPairedData = _UnregulatedRegulated.SamplePairedData(0.5, true).compose(flowFrequencyPairedData) as PairedData;
+                            flowFrequencyPairedData = _UnregulatedRegulated.SamplePairedData(iteration, deterministic).compose(flowFrequencyPairedData) as PairedData;
                         }
-                        return _DischargeStage.SamplePairedData(0.5, true).compose(flowFrequencyPairedData) as PairedData;
+                        return _DischargeStage.SamplePairedData(iteration, deterministic).compose(flowFrequencyPairedData) as PairedData;
                     }
                 }
             }
@@ -328,6 +330,9 @@ namespace HEC.FDA.Model.stageDamage
             return zeroResults;
         }
 
+        //j * i gets us the correct iteration number
+        //however, we also need to be sure that we won't get ourselves into an index out of bounds situation
+
         /// <summary>
         /// Begins the third loop of the Scenario Stage Damage Compute. 
         /// Scenario SD 
@@ -348,6 +353,8 @@ namespace HEC.FDA.Model.stageDamage
 
             //damage for each stage
             List<StudyAreaConsequencesBinned> consequenceDistributionResults = CreateConsequenceDistributionResults(damageCategory);
+            Inventory.GenerateRandomNumbers(_ConvergenceCriteria);
+
             bool computeIsDeterministic = false;
             if (randomProvider is MedianRandomProvider)
             {
@@ -380,7 +387,7 @@ namespace HEC.FDA.Model.stageDamage
                     /// W.S.Profile
                     for (int i = 0; i < iterations; i++)
                     {
-                        List<DeterministicOccupancyType> deterministicOccTypes = Inventory.SampleOccupancyTypes(randomProvider, computeIsDeterministic);
+                        List<DeterministicOccupancyType> deterministicOccTypes = Inventory.SampleOccupancyTypes(j*i, computeIsDeterministic);
                         ComputeLowerStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, i);
                         ComputeMiddleStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, i);
                         ComputeUpperStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, i);
@@ -637,7 +644,7 @@ namespace HEC.FDA.Model.stageDamage
         internal List<string> ProduceImpactAreaStructureDetails(Dictionary<int, string> impactAreaNames)
         {
             //this list will be the size of the number of structures + 1 where the first string is the header
-            List<DeterministicOccupancyType> deterministicOccupancyTypes = Inventory.SampleOccupancyTypes(new compute.MedianRandomProvider(), computeIsDeterministic: true);
+            List<DeterministicOccupancyType> deterministicOccupancyTypes = Inventory.SampleOccupancyTypes(iteration:1, computeIsDeterministic: true);
             List<string> structureDetails = Inventory.StructureDetails(deterministicOccupancyTypes, impactAreaNames);
             //here I need to add to structure details: occ types, impact area,
             StagesToStrings(ref structureDetails);

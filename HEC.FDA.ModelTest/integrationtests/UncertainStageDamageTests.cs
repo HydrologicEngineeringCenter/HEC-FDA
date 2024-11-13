@@ -173,7 +173,7 @@ namespace HEC.FDA.ModelTest.integrationtests
 
             foreach (UncertainPairedData stageDamageFunction in stageDamageFunctions)
             {
-                IPairedData meanDamageFunction = stageDamageFunction.SamplePairedData(meanProb, true);
+                IPairedData meanDamageFunction = stageDamageFunction.SamplePairedData(meanProb);
                 meanDamageFunctions.Add(meanDamageFunction);
                 IPairedData conf95Function = stageDamageFunction.SamplePairedData(conf95Prob);
                 conf95DamageFunctions.Add(conf95Function);

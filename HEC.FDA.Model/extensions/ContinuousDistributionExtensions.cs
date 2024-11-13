@@ -44,5 +44,30 @@ namespace HEC.FDA.Model.extensions
             }
             return new UncertainPairedData(ExceedanceProbabilities, ys, new CurveMetaData("Exceedance Probs", "Flow Histograms"));
         }
+
+        public static PairedData BootstrapToPairedData(this ContinuousDistribution continuousDistribution, long iterationNumber, double[] ExceedanceProbabilities, bool computeIsDeterministic = false)
+        {
+
+            IDistribution bootstrap;
+            if (computeIsDeterministic)
+            {
+                bootstrap = continuousDistribution;
+            }   else
+            {
+                bootstrap = continuousDistribution.Sample(iterationNumber);
+            } 
+            double[] x = new double[ExceedanceProbabilities.Length];
+            double[] y = new double[ExceedanceProbabilities.Length];
+            for (int i = 0; i < ExceedanceProbabilities.Length; i++)
+            {
+                //same exceedance probs as graphical and as 1.4.3
+                double prob = 1 - ExceedanceProbabilities[i];
+                x[i] = prob;
+
+                //y values in increasing order 
+                y[i] = bootstrap.InverseCDF(prob);
+            }
+            return new PairedData(x, y);
+        }
     }
 }
