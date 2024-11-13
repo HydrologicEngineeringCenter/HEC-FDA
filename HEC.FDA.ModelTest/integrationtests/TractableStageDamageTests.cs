@@ -199,7 +199,7 @@ namespace HEC.FDA.ModelTest.integrationtests
             double relativeTolerance = 0.05;
             foreach (UncertainPairedData stageDamageFunction in stageDamageFunctions)
             {
-                IPairedData pairedData = stageDamageFunction.SamplePairedData(0.5, true);
+                IPairedData pairedData = stageDamageFunction.SamplePairedData(0.5);
                 if (stageDamageFunction.CurveMetaData.DamageCategory == residentialDamAndOccType)
                 {
                     if (stageDamageFunction.CurveMetaData.AssetCategory == structureAssetType)

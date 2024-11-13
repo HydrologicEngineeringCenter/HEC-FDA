@@ -15,7 +15,9 @@ namespace HEC.FDA.Model.paireddata
 {
     public class UncertainPairedData : ValidationErrorLogger, IPairedDataProducer, ICanBeNull
     {
-
+        #region Fields 
+        private double[] _RandomNumbers;
+        #endregion
         #region Properties 
         public string XLabel
         {
@@ -86,6 +88,17 @@ namespace HEC.FDA.Model.paireddata
         #endregion
 
         #region Methods 
+        public void GenerateRandomNumbers(int seed, long size)
+        {
+            Random random = new Random(seed);
+            double[] randos = new double[size];
+            for (int i = 0; i < size; i++)
+            {
+                randos[i] = random.NextDouble();
+            }
+            _RandomNumbers = randos;
+        }
+
         private void AddRules()
         {
                     AddSinglePropertyRule(nameof(Xvals), new Rule(() => (IsArrayValid(Xvals, (a, b) => a == b) || IsArrayValid(Xvals, (a, b) => a < b)), $"X must be deterministic or strictly monotonically increasing but is not for the function named {CurveMetaData.Name}.", ErrorLevel.Minor));
@@ -119,7 +132,20 @@ namespace HEC.FDA.Model.paireddata
             }
             return true;
         }
-        public PairedData SamplePairedData(double probability, bool retrieveDeterministicRepresentation = false)
+
+        public PairedData SamplePairedData(double probability)
+        {
+            double[] y = new double[Yvals.Length];
+                for (int i = 0; i < Xvals.Length; i++)
+                {
+                    y[i] = Yvals[i].InverseCDF(probability);
+                }
+            PairedData pairedData = new(Xvals, y, CurveMetaData);//mutability leakage on xvals
+            pairedData.ForceMonotonicity();
+            return pairedData;
+        }
+
+        public PairedData SamplePairedData(long iterationNumber, bool retrieveDeterministicRepresentation)
         {
             double[] y = new double[Yvals.Length];
             if (retrieveDeterministicRepresentation)
@@ -129,14 +155,23 @@ namespace HEC.FDA.Model.paireddata
                     Deterministic deterministic = UncertainToDeterministicDistributionConverter.ConvertDistributionToDeterministic(Yvals[i]);
                     y[i] = (deterministic.Value);
                 }
-
-            } else
+            }
+            else
             {
+
+            if (_RandomNumbers.Length ==0)
+            {
+                throw new Exception("Random numbers have not been created for UPD sampling");
+            }
+            if (iterationNumber < 0 || iterationNumber > _RandomNumbers.Length)
+            {
+                throw new Exception("Iteration number cannot be less than 0 or greater than the size of the random number array");
+
+            }
                 for (int i = 0; i < Xvals.Length; i++)
                 {
-                    y[i] = Yvals[i].InverseCDF(probability);
+                    y[i] = Yvals[i].InverseCDF(_RandomNumbers[iterationNumber]);
                 }
-
             }
             PairedData pairedData = new(Xvals, y, CurveMetaData);//mutability leakage on xvals
             pairedData.ForceMonotonicity();

@@ -35,7 +35,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
         /// <param name="inputFunctionVals"></param>
         public void OverwriteInputFunctionVals(UncertainPairedData inputFunctionVals)
         {
-            PairedData deterministicInputFunc = inputFunctionVals.SamplePairedData(0.5, true);
+            PairedData deterministicInputFunc = inputFunctionVals.SamplePairedData(0.5);
             deterministicInputFunc.SortToIncreasingXVals();
             for (int i = 0; i < Data.Count; i++)
             {

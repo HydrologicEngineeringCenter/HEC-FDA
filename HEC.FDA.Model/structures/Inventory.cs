@@ -10,11 +10,12 @@ using HEC.FDA.Model.metrics;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.FDA.Model.Spatial;
+using Statistics;
 
 namespace HEC.FDA.Model.structures
 {
     //TODO: Figure out how to set Occupany Type Set
-    public class Inventory: PropertyValidationHelper, IDontImplementValidationButMyPropertiesDo
+    public class Inventory : PropertyValidationHelper, IDontImplementValidationButMyPropertiesDo
     {
         #region Properties
         public List<Structure> Structures { get; } = new List<Structure>();
@@ -172,12 +173,34 @@ namespace HEC.FDA.Model.structures
             return structureDetails;
         }
 
-        public List<DeterministicOccupancyType> SampleOccupancyTypes(IProvideRandomNumbers randomNumberProvider, bool computeIsDeterministic)
+        public void GenerateRandomNumbers(ConvergenceCriteria convergenceCriteria)
+        {
+            //double the max iterations allows for sufficient random numbers if we get above max iterations before rechecking for convergence 
+            int size = convergenceCriteria.MaxIterations * 2;
+            foreach (OccupancyType occupancyType in OccTypes.Values)
+            {
+                occupancyType.GenerateRandomNumbers(size);
+            }
+        }
+
+        public List<DeterministicOccupancyType> SampleOccupancyTypes(double probability)
         {
             List<DeterministicOccupancyType> deterministicOccupancyTypes = new();
             foreach (OccupancyType occupancyType in OccTypes.Values)
             {
-                DeterministicOccupancyType deterministicOccupancyType = occupancyType.Sample(randomNumberProvider, computeIsDeterministic);
+                DeterministicOccupancyType deterministicOccupancyType = occupancyType.Sample(probability);
+                deterministicOccupancyTypes.Add(deterministicOccupancyType);
+            }
+
+            return deterministicOccupancyTypes;
+        }
+
+        public List<DeterministicOccupancyType> SampleOccupancyTypes(long iteration, bool computeIsDeterministic)
+        {
+            List<DeterministicOccupancyType> deterministicOccupancyTypes = new();
+            foreach (OccupancyType occupancyType in OccTypes.Values)
+            {
+                DeterministicOccupancyType deterministicOccupancyType = occupancyType.Sample(iteration, computeIsDeterministic);
                 deterministicOccupancyTypes.Add(deterministicOccupancyType);
             }
 

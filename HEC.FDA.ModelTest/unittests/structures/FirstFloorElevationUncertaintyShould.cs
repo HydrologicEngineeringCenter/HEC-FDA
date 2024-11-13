@@ -21,11 +21,11 @@ namespace HEC.FDA.ModelTest.unittests.structures
             double actual = 0;
             if (distributionEnum.Equals(IDistributionEnum.LogNormal))
             {
-                actual = inventoriedFirstFloorElevation * firstFloorElevationUncertainty.Sample(probability, computeIsDeterministic: false);
+                actual = inventoriedFirstFloorElevation * firstFloorElevationUncertainty.Sample(probability);
             }
             else
             {
-                actual = inventoriedFirstFloorElevation + firstFloorElevationUncertainty.Sample(probability, computeIsDeterministic: false);
+                actual = inventoriedFirstFloorElevation + firstFloorElevationUncertainty.Sample(probability);
             }
             Assert.Equal(expected, actual, 1);
         }

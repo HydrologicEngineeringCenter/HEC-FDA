@@ -12,6 +12,7 @@ namespace HEC.FDA.Model.structures
         private readonly double _FeetAboveInventoryValue;
         private readonly double _StandardDeviationFromOrFeetBelowInventoryValue;
         private readonly IDistributionEnum _DistributionType;
+        private double[] _RandomNumbers;
         #endregion
 
         #region Properties 
@@ -39,6 +40,16 @@ namespace HEC.FDA.Model.structures
         #endregion
 
         #region Methods 
+        internal void GenerateRandomNumbers(int seed, long size)
+        {
+            Random random = new Random(seed);
+            double[] randos = new double[size];
+            for (int i = 0; i < size; i++)
+            {
+                randos[i] = random.NextDouble();
+            }
+            _RandomNumbers = randos;
+        }
         private void AddRules()
         {
             AddSinglePropertyRule(nameof(_DistributionType), new Rule(() => _DistributionType.Equals(IDistributionEnum.Normal) || _DistributionType.Equals(IDistributionEnum.Uniform) || _DistributionType.Equals(IDistributionEnum.Deterministic) || _DistributionType.Equals(IDistributionEnum.Triangular), "Only Deterministic, Normal, Triangular, and Uniform distributions can be used for value ratio uncertainty", ErrorLevel.Fatal));
@@ -53,7 +64,44 @@ namespace HEC.FDA.Model.structures
         /// <param name="probability"></param>
         /// <param name="computeIsDeterministic"></param>
         /// <returns></returns>
-        public double Sample(double probability, bool computeIsDeterministic)
+        public double Sample(double probability)
+        {
+            double centerOfDistribution = 0;
+            double sampledFirstFloorElevationOffset;
+
+                switch (_DistributionType)
+                {
+                    case IDistributionEnum.Normal:
+                        Normal normal = new(centerOfDistribution, _StandardDeviationFromOrFeetBelowInventoryValue);
+                        sampledFirstFloorElevationOffset = normal.InverseCDF(probability);
+                        break;
+                    case IDistributionEnum.LogNormal:
+                        sampledFirstFloorElevationOffset = Math.Exp(Normal.StandardNormalInverseCDF(probability) * _StandardDeviationFromOrFeetBelowInventoryValue);
+                        break;
+                    case IDistributionEnum.Triangular:
+                        Triangular triangular = new(-_StandardDeviationFromOrFeetBelowInventoryValue, centerOfDistribution, _FeetAboveInventoryValue);
+                        sampledFirstFloorElevationOffset = triangular.InverseCDF(probability);
+                        break;
+                    case IDistributionEnum.Uniform:
+                        Uniform uniform = new(-_StandardDeviationFromOrFeetBelowInventoryValue, _FeetAboveInventoryValue);
+                        sampledFirstFloorElevationOffset = uniform.InverseCDF(probability);
+                        break;
+                    default:
+                        sampledFirstFloorElevationOffset = centerOfDistribution;
+                        break;
+                }
+            return sampledFirstFloorElevationOffset;
+        }
+
+        /// <summary>
+        /// The use of this method will depend on the type of distribution. 
+        /// If Normal, Triangular, or Uniform, the value returned is the feet to add or subtract from the inventoried value
+        /// If log normal, then the return value will need to be multiplied by the inventoried value        
+        /// /// </summary>
+        /// <param name="probability"></param>
+        /// <param name="computeIsDeterministic"></param>
+        /// <returns></returns>
+        public double Sample(long iteration, bool computeIsDeterministic)
         {
             double centerOfDistribution = 0;
             double sampledFirstFloorElevationOffset;
@@ -75,18 +123,18 @@ namespace HEC.FDA.Model.structures
                 {
                     case IDistributionEnum.Normal:
                         Normal normal = new(centerOfDistribution, _StandardDeviationFromOrFeetBelowInventoryValue);
-                        sampledFirstFloorElevationOffset = normal.InverseCDF(probability);
+                        sampledFirstFloorElevationOffset = normal.InverseCDF(_RandomNumbers[iteration]);
                         break;
                     case IDistributionEnum.LogNormal:
-                        sampledFirstFloorElevationOffset = Math.Exp(Normal.StandardNormalInverseCDF(probability) * _StandardDeviationFromOrFeetBelowInventoryValue);
+                        sampledFirstFloorElevationOffset = Math.Exp(Normal.StandardNormalInverseCDF(_RandomNumbers[iteration]) * _StandardDeviationFromOrFeetBelowInventoryValue);
                         break;
                     case IDistributionEnum.Triangular:
                         Triangular triangular = new(-_StandardDeviationFromOrFeetBelowInventoryValue, centerOfDistribution, _FeetAboveInventoryValue);
-                        sampledFirstFloorElevationOffset = triangular.InverseCDF(probability);
+                        sampledFirstFloorElevationOffset = triangular.InverseCDF(_RandomNumbers[iteration]);
                         break;
                     case IDistributionEnum.Uniform:
                         Uniform uniform = new(-_StandardDeviationFromOrFeetBelowInventoryValue, _FeetAboveInventoryValue);
-                        sampledFirstFloorElevationOffset = uniform.InverseCDF(probability);
+                        sampledFirstFloorElevationOffset = uniform.InverseCDF(_RandomNumbers[iteration]);
                         break;
                     default:
                         sampledFirstFloorElevationOffset = centerOfDistribution;
