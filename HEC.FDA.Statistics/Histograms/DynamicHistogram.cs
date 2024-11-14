@@ -310,21 +310,20 @@ namespace Statistics.Histograms
             }
             else
             {
-                bool thereAreTooManyBins = BinCounts.Length > 2000;
-                if (thereAreTooManyBins)
-                {
-                    ResizeHistogram();
-                }
                 foreach (double x in data)
                 {
                     AddObservationToHistogram(x);
                 }
+                if (BinCounts.Length > 2000)
+                {
+                    double divisor = BinCounts.Length / 500;
+                    ResizeHistogram(divisor);
+                }
             }
         }
 
-        private void ResizeHistogram()
+        private void ResizeHistogram(double divisor)
         {
-            double divisor = 4;
             BinWidth = BinWidth * divisor;
             int newBinCount = Convert.ToInt32(Math.Ceiling(BinCounts.Length / divisor));
             long[] newBins = new long[newBinCount];

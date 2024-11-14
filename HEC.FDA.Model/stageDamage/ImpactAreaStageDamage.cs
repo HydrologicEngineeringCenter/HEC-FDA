@@ -269,6 +269,7 @@ namespace HEC.FDA.Model.stageDamage
             }
             else
             {
+                Inventory.GenerateRandomNumbers(_ConvergenceCriteria);
                 List<string> damCats = Inventory.GetDamageCategories();
                 if (Inventory.Structures.Count == 0)
                 {
@@ -349,17 +350,19 @@ namespace HEC.FDA.Model.stageDamage
         private List<StudyAreaConsequencesBinned> ComputeDamageWithUncertaintyAllCoordinates(string damageCategory, IProvideRandomNumbers randomProvider, (Inventory, List<float[]>) inventoryAndWaterTupled, List<double> profileProbabilities)
         {
 
+            //TODO GET RID OF RANDOM PROVIDER IT IS NO LONGER NEEDED I DONT THINK
+
+
             //damage for each stage
             List<StudyAreaConsequencesBinned> consequenceDistributionResults = CreateConsequenceDistributionResults(damageCategory);
-            Inventory.GenerateRandomNumbers(_ConvergenceCriteria);
 
             bool computeIsDeterministic = false;
             if (randomProvider is MedianRandomProvider)
             {
                 computeIsDeterministic = true;
             }
-            int iterations = _ConvergenceCriteria.IterationCount;
-            int computeChunks = Convert.ToInt32(_ConvergenceCriteria.MinIterations / iterations);
+            int iterationsPerComputeChunk = _ConvergenceCriteria.IterationCount;
+            int computeChunkQuantity = Convert.ToInt32(_ConvergenceCriteria.MinIterations / iterationsPerComputeChunk);
             int sampleSize = 0;
             bool stageDamageFunctionsAreNotConverged = true;
             while (stageDamageFunctionsAreNotConverged)
@@ -373,7 +376,7 @@ namespace HEC.FDA.Model.stageDamage
                 /// Iteration
                 /// Structure
                 /// W.S.Profile
-                for (int j = 0; j < computeChunks; j++)
+                for (int computeChunk = 0; computeChunk < computeChunkQuantity; computeChunk++)
                 {
                     /// Begins the fifth loop of the Scenario Stage Damage Compute. 
                     /// Scenario SD 
@@ -383,12 +386,12 @@ namespace HEC.FDA.Model.stageDamage
                     /// Iteration <--
                     /// Structure
                     /// W.S.Profile
-                    for (int i = 0; i < iterations; i++)
+                    for (int computeChunkIteration = 0; computeChunkIteration < iterationsPerComputeChunk; computeChunkIteration++)
                     {
-                        List<DeterministicOccupancyType> deterministicOccTypes = Inventory.SampleOccupancyTypes(j*i, computeIsDeterministic);
-                        ComputeLowerStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, i);
-                        ComputeMiddleStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, i);
-                        ComputeUpperStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, i);
+                        List<DeterministicOccupancyType> deterministicOccTypes = Inventory.SampleOccupancyTypes(computeChunk*iterationsPerComputeChunk + computeChunkIteration, computeIsDeterministic);
+                        ComputeLowerStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, computeChunkIteration);
+                        ComputeMiddleStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, computeChunkIteration);
+                        ComputeUpperStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, computeChunkIteration);
                         inventoryAndWaterTupled.Item1.ResetStructureWaterIndexTracking();
                         sampleSize += 1;
                     }
@@ -401,7 +404,7 @@ namespace HEC.FDA.Model.stageDamage
                 {
                     //TODO: I am going to hard-wire in an additional 10000 iterations for now. 
                     //At some point we can estimate iterations remaining - but that is computationally expensive 
-                    computeChunks = 100;
+                    computeChunkQuantity = 100;
                 }
             }
             return consequenceDistributionResults;
