@@ -177,7 +177,7 @@ namespace HEC.FDA.Model.structures
         {
             //generate slightly more random numbers than max iterations because it is possible that we keep iterating beyond max 
             //before re-checking for convergence 
-            int quantityOfRandomNumbers = Convert.ToInt32(convergenceCriteria.MaxIterations * 1.25);
+            int quantityOfRandomNumbers = Convert.ToInt32(convergenceCriteria.MaxIterations * 2);
             foreach (OccupancyType occupancyType in OccTypes.Values)
             {
                 occupancyType.GenerateRandomNumbers(quantityOfRandomNumbers);
