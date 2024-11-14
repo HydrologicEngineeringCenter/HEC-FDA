@@ -136,7 +136,10 @@ namespace HEC.FDA.Model.compute
 
         private void PopulateRandomNumbers(ConvergenceCriteria convergenceCriteria)
         {
-            int quantityOfRandomNumbers = convergenceCriteria.MaxIterations;
+            //generate slightly more random numbers than max iterations because it is possible that we keep iterating beyond max 
+            //before re-checking for convergence 
+            int quantityOfRandomNumbers = Convert.ToInt32(convergenceCriteria.MaxIterations*1.25);
+
             if (_FrequencyDischarge != null)
             {
                 _FrequencyDischarge.GenerateRandomSamplesofNumbers(FREQUENCY_SEED, quantityOfRandomNumbers);
@@ -263,7 +266,7 @@ namespace HEC.FDA.Model.compute
             {
                 if (HasLevee.Equals(false))
                 {
-                    string errorMessage = $"The simulation for impact area with ID {ImpactAreaID} was configured to calculate nonfail risk but a levee was not specified, therefore nonfail risk will not be calculated.";
+                    string errorMessage = $"T he simulation for impact area with ID {ImpactAreaID} was configured to calculate nonfail risk but a levee was not specified, therefore nonfail risk will not be calculated.";
                     ErrorMessage leveeMissing = new(errorMessage, ErrorLevel.Major);
                     ReportMessage(this, new MessageEventArgs(leveeMissing));
                 }

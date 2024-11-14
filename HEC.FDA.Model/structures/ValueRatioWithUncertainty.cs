@@ -153,6 +153,14 @@ namespace HEC.FDA.Model.structures
             }
             else
             {
+                if (_RandomNumbers.Length == 0)
+                {
+                    throw new Exception("Random numbers by iteration have not yet been generated for this compute but the software attempted to sample value uncertainty by iteration.");
+                }
+                if (iteration < 0 || iteration >= _RandomNumbers.Length)
+                {
+                    throw new Exception("The iteration at which value uncertainty was attempted to be sampled is beyond the quantity of random numbers sampled. There is a significant conflict between the stage-damage convergence criteria and the quantity of iterations being computed.");
+                }
                 switch (_DistributionType)
                 {
                     case IDistributionEnum.Normal:

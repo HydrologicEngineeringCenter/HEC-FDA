@@ -75,7 +75,6 @@ namespace HEC.FDA.Model.paireddata
             }
             return nonExceedanceProbabilities;
         }
-        //compute with deterministic is an unused argument because graphical returns deterministically for the median random provider 
         public PairedData SamplePairedData(double probability)
         {
             double[] y = new double[GraphicalDistributionWithLessSimple.StageOrLogFlowDistributions.Length];
@@ -121,15 +120,15 @@ namespace HEC.FDA.Model.paireddata
             }
             else
             {
-            if (_RandomNumbers.Length == 0)
-            {
-                throw new Exception("Random numbers have not been created for UPD sampling");
-            }
-            if (iterationNumber < 0 || iterationNumber > _RandomNumbers.Length)
-            {
-                throw new Exception("Iteration number cannot be less than 0 or greater than the size of the random number array");
+                if (_RandomNumbers.Length == 0)
+                {
+                    throw new Exception("Random numbers have not been created for UPD sampling");
+                }
+                if (iterationNumber < 0 || iterationNumber >= _RandomNumbers.Length)
+                {
+                    throw new Exception("Iteration number cannot be less than 0 or greater than the size of the random number array");
 
-            }
+                }
                 probability = _RandomNumbers[iterationNumber];
             }
 
@@ -236,14 +235,14 @@ namespace HEC.FDA.Model.paireddata
             masterElement.Add(graphicalElement);
 
             XElement probabilities = new("Probabilities");
-            foreach (double probability in CombinedExceedanceProbabilities) 
+            foreach (double probability in CombinedExceedanceProbabilities)
             {
                 XElement rowElement = new("Probability");
                 rowElement.SetAttributeValue("Value", probability);
                 probabilities.Add(rowElement);
             }
             masterElement.Add(probabilities);
-            
+
             return masterElement;
         }
 
@@ -257,7 +256,7 @@ namespace HEC.FDA.Model.paireddata
             else
             {
                 GraphicalDistribution graphicalDistributionWithLessSimple = GraphicalDistribution.ReadFromXML(xElement.Element("Graphical"));
-                
+
                 List<double> combinedProbabilities = new();
                 foreach (XElement valueElement in xElement.Element("Probabilities").Elements())
                 {
