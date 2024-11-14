@@ -163,7 +163,7 @@ namespace HEC.FDA.Model.paireddata
             {
                 throw new Exception("Random numbers have not been created for UPD sampling");
             }
-            if (iterationNumber < 0 || iterationNumber > _RandomNumbers.Length)
+            if (iterationNumber < 0 || iterationNumber >= _RandomNumbers.Length)
             {
                 throw new Exception("Iteration number cannot be less than 0 or greater than the size of the random number array");
 

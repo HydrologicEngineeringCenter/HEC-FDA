@@ -60,8 +60,7 @@ namespace HEC.FDA.Model.structures
         /// If Normal, Triangular, or Uniform, the value returned is the percent of inventory value to add or subtract from the inventoried value
         /// If log normal, then the return value will need to be multiplied by the inventoried value
         /// </summary>
-        /// <param name="probability"></param>
-        /// <param name="computeIsDeterministic"></param>
+        /// <param name="probability"></param> cumulative probability at which to return a quantile of the value uncertainty 
         /// <returns></returns>        
         public double Sample(double probability)
         {
@@ -101,8 +100,8 @@ namespace HEC.FDA.Model.structures
         /// If Normal, Triangular, or Uniform, the value returned is the percent of inventory value to add or subtract from the inventoried value
         /// If log normal, then the return value will need to be multiplied by the inventoried value
         /// </summary>
-        /// <param name="iteration"></param>
-        /// <param name="computeIsDeterministic"></param>
+        /// <param name="iteration"></param> The iteration is used to pull the correct random number from a pre-generated list of random numbers for a compute with uncertainty
+        /// <param name="computeIsDeterministic"></param> Flag compute is deterministic if not running uncertainty and the measure of central tendancy will be used for input distributions.
         /// <returns></returns>        
         public double Sample(long iteration, bool computeIsDeterministic)
         {
@@ -114,6 +113,14 @@ namespace HEC.FDA.Model.structures
             }
             else
             {
+                if(_RandomNumbers.Length == 0)
+                {
+                    throw new Exception("Random numbers by iteration have not yet been generated for this compute but the software attempted to sample value uncertainty by iteration.");
+                }
+                if(iteration < 0 || iteration >= _RandomNumbers.Length)
+                {
+                    throw new Exception("The iteration at which value uncertainty was attempted to be sampled is beyond the quantity of random numbers sampled. There is a significant conflict between the stage-damage convergence criteria and the quantity of iterations being computed.");
+                }
                 switch (_DistributionType)
                 {
                     case IDistributionEnum.Normal:

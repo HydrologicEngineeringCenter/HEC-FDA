@@ -330,8 +330,6 @@ namespace HEC.FDA.Model.stageDamage
             return zeroResults;
         }
 
-        //j * i gets us the correct iteration number
-        //however, we also need to be sure that we won't get ourselves into an index out of bounds situation
 
         /// <summary>
         /// Begins the third loop of the Scenario Stage Damage Compute. 
