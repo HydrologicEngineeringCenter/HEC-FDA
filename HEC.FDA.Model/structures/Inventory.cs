@@ -184,18 +184,6 @@ namespace HEC.FDA.Model.structures
             }
         }
 
-        public List<DeterministicOccupancyType> SampleOccupancyTypes(double probability)
-        {
-            List<DeterministicOccupancyType> deterministicOccupancyTypes = new();
-            foreach (OccupancyType occupancyType in OccTypes.Values)
-            {
-                DeterministicOccupancyType deterministicOccupancyType = occupancyType.Sample(probability);
-                deterministicOccupancyTypes.Add(deterministicOccupancyType);
-            }
-
-            return deterministicOccupancyTypes;
-        }
-
         public List<DeterministicOccupancyType> SampleOccupancyTypes(long iteration, bool computeIsDeterministic)
         {
             List<DeterministicOccupancyType> deterministicOccupancyTypes = new();

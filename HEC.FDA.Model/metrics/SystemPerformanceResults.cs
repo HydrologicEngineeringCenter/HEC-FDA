@@ -119,7 +119,7 @@ namespace HEC.FDA.Model.metrics
         /// <returns></returns>
         public DynamicHistogram GetAEPHistogramForPlotting()
         {
-            DynamicHistogram aepHistogram = GetAssurance(AEP_ASSURANCE_FOR_PLOTTING).AssuranceHistogram;
+            DynamicHistogram aepHistogram = GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram;
             return aepHistogram;
         }
         public DynamicHistogram GetAssuranceOfThresholdHistogram(double standardNonExceedanceProbability)
