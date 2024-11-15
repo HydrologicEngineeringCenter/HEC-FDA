@@ -59,7 +59,7 @@ namespace HEC.FDA.Model.metrics
         }
         public DynamicHistogram GetAEPHistogramForPlotting(int thresholdID)
         {
-            return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.GetAEPHistogramForPlotting();
+            return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.GetAEPHistogram();
         }
         public double LongTermExceedanceProbability(int thresholdID, int years)
         {

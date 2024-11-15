@@ -25,6 +25,7 @@ namespace HEC.FDA.Model.stageDamage
         #region Methods 
         /// <summary>
         /// Begins the outermost loop of the Scenario Stage Damage Compute. 
+        /// At this time, the compute engine can run a deterministic stage-damage compute, but the user interface does not avail that option.
         /// Scenario SD <--
         /// Impact Area SD
         /// Damage Catagory 

@@ -3,6 +3,7 @@ using HEC.FDA.Model.interfaces;
 
 namespace HEC.FDA.Model.compute
 {
+    //TODO: I think that this class can be ripped out, this is a wrapper around Random with little added functionality 
     public class RandomProvider : IProvideRandomNumbers
     {
         private Random _randomNumberGenerator;
