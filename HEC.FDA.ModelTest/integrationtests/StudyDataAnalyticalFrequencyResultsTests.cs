@@ -124,7 +124,6 @@ namespace HEC.FDA.ModelTest.integrationtests
                 .WithStageDamages(stageDamageList)
                 .Build();
 
-            RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations);
             ImpactAreaScenarioResults results = simulation.Compute(convergenceCriteria);
             double difference = expected - results.ConsequenceResults.MeanDamage(damCat, assetCat, impactAreaID);

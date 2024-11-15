@@ -157,14 +157,14 @@ public abstract class ChartControlBase : BaseViewModel
         {
             if (_data.FlipXAxisValues)
             {
-                foreach (double x in Function.SamplePairedData(0.5).Xvals) //TODO: Clean this up. This is stupid to sample to paired data twice. 
+                foreach (double x in Function.SamplePairedData(iteration:1, computeIsDeterministic:true).Xvals) //TODO: Clean this up. This is stupid to sample to paired data twice. 
                 {
                     xVals.Add(1 - x);
                 }
             }
             else
             {
-                xVals.AddRange(Function.SamplePairedData(.5).Xvals);
+                xVals.AddRange(Function.SamplePairedData(iteration: 1, computeIsDeterministic: true).Xvals);
             }
         }
 
@@ -175,7 +175,7 @@ public abstract class ChartControlBase : BaseViewModel
         double[] yVals = Array.Empty<double>();
         if (Function != null)
         {
-            PairedData pd = Function.SamplePairedData(.5);
+            PairedData pd = Function.SamplePairedData(iteration: 1, computeIsDeterministic: true);
             yVals = pd.Yvals;
         }
         return yVals;
