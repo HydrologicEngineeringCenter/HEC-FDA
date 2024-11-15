@@ -28,17 +28,17 @@ namespace HEC.FDA.Model.scenarios
         }
 
         #region Methods
-        public ScenarioResults Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria)
+        public ScenarioResults Compute(ConvergenceCriteria convergenceCriteria, bool computeIsDeterministic = false)
         {
-            return Compute(randomProvider, convergenceCriteria, new CancellationToken());
+            return Compute(convergenceCriteria, new CancellationToken(), computeIsDeterministic);
         }
-        public ScenarioResults Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, CancellationToken cancellationToken)
+        public ScenarioResults Compute(ConvergenceCriteria convergenceCriteria, CancellationToken cancellationToken, bool computeIsDeterministic)
         {
             //probably instantiate a rng to seed each impact area differently
             ScenarioResults scenarioResults = new();
             foreach (ImpactAreaScenarioSimulation impactArea in _impactAreaSimulations)
             {
-                scenarioResults.AddResults(impactArea.Compute(randomProvider, convergenceCriteria, cancellationToken));
+                scenarioResults.AddResults(impactArea.Compute(convergenceCriteria, cancellationToken, computeIsDeterministic));
             }
             scenarioResults.ComputeDate = DateTime.Now.ToString("G");
             scenarioResults.SoftwareVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();

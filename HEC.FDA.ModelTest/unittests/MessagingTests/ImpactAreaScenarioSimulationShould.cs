@@ -75,13 +75,12 @@ namespace HEC.FDA.ModelTest.unittests.MessagingTests
                 .WithFlowStage(stageDischarge)
                 .WithStageDamages(stageDamageList)
                 .Build();
-            RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 101, maxIterations: 300);
 
 
             Listener listener = new Listener();
             MessageHub.Subscribe(listener);
-            ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria);
+            ImpactAreaScenarioResults results = simulation.Compute(convergenceCriteria);
             MessageHub.UnsubscribeAll(listener);
             Debug.WriteLine(listener.GetMessageLogAsString());
 

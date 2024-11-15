@@ -59,8 +59,7 @@ namespace HEC.FDA.ModelTest.unittests
                 .WithStageDamages(upd)
                 .WithAdditionalThreshold(threshold)
                 .Build();
-            MedianRandomProvider mrp = new MedianRandomProvider();
-            ImpactAreaScenarioResults impactAreaScenarioResult = simulation.Compute(mrp, convergenceCriteria); //here we test compute, below we test preview compute 
+            ImpactAreaScenarioResults impactAreaScenarioResult = simulation.Compute(convergenceCriteria, computeIsDeterministic: true); //here we test compute, below we test preview compute 
             double actual = impactAreaScenarioResult.MeanExpectedAnnualConsequences(id, damCat, assetCat);
             double difference = expected - actual;
             double relativeDifference = Math.Abs(difference / expected);
@@ -106,13 +105,10 @@ namespace HEC.FDA.ModelTest.unittests
             Assert.True(relativeDifference < .01);
         }
 
-
+        //This is a benchmark test. The expected result was obtained from the compute engine on 15 Nov 24. 
         [Theory]
-        [InlineData(1234, 100, 124987.126536313)]
-        [InlineData(2345, 100, 120189.843743947)]
-        [InlineData(4321, 100, 116493.377846062)]
-        [InlineData(1111, 100, 143316.627604432)]
-        public void ComputeEAD_Iterations(int seed, int iterations, double expected)
+        [InlineData(100, 121194.5159789352)]
+        public void ComputeEAD_Iterations(int iterations, double expected)
         {
 
             ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
@@ -138,9 +134,8 @@ namespace HEC.FDA.ModelTest.unittests
                 .WithFlowStage(flow_stage)
                 .WithStageDamages(upd)
                 .Build();
-            RandomProvider randomProvider = new RandomProvider(seed);
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
-            ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria);
+            ImpactAreaScenarioResults results = simulation.Compute(convergenceCriteria);
             double actual = results.MeanExpectedAnnualConsequences(id, damCat, assetCat);
             double difference = Math.Abs(actual - expected);
             double relativeDifference = difference / expected;
@@ -187,9 +182,8 @@ namespace HEC.FDA.ModelTest.unittests
                 .WithLevee(levee, 100000.0d)
                 .WithStageDamages(stageDamageList)
                 .Build();
-            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             ConvergenceCriteria convergencriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
-            ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, convergencriteria);
+            ImpactAreaScenarioResults results = simulation.Compute(convergencriteria, computeIsDeterministic:true);
             double actual = results.MeanExpectedAnnualConsequences(id, damCat, assetCat);
             if (actual == 0) //handle assertion differently if EAD is zero
             {
@@ -235,8 +229,7 @@ namespace HEC.FDA.ModelTest.unittests
                 .WithStageDamages(upd)
                 .WithAdditionalThreshold(threshold)
                 .Build();
-            MedianRandomProvider mrp = new MedianRandomProvider();
-            ImpactAreaScenarioResults impactAreaScenarioResult = simulation.Compute(mrp, convergenceCriteria); //here we test compute, below we test preview compute 
+            ImpactAreaScenarioResults impactAreaScenarioResult = simulation.Compute(convergenceCriteria, computeIsDeterministic: true); //here we test compute, below we test preview compute 
             XElement simulationElement = simulation.WriteToXML();
             ImpactAreaScenarioSimulation simulationFromXML = ImpactAreaScenarioSimulation.ReadFromXML(simulationElement);
             bool simulationMatches = simulation.Equals(simulationFromXML);
@@ -284,13 +277,12 @@ namespace HEC.FDA.ModelTest.unittests
             stageDamageList.Add(zeroStageDamage);
 
             int seed = 1234;
-            RandomProvider randomProvider = new RandomProvider(seed);
 
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
                 .WithFrequencyStage(graphicalUncertain)
                 .WithStageDamages(stageDamageList)
                 .Build();
-            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(randomProvider, new ConvergenceCriteria(minIterations: 1001, maxIterations: 1100));
+            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(new ConvergenceCriteria(minIterations: 1001, maxIterations: 1100));
             double actualMeanEAD = impactAreaScenarioResults.MeanExpectedAnnualConsequences();
             Assert.Equal(expectedEAD, actualMeanEAD);
             bool actualHistogramZeroValued = impactAreaScenarioResults.GetSpecificHistogram(impactAreaID, damCat, assetCat).HistogramIsZeroValued;
@@ -351,8 +343,7 @@ namespace HEC.FDA.ModelTest.unittests
                 .WithLevee(systemResponseCurve, leveeElevation)
                 .Build();
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
-            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
-            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(meanRandomProvider, convergenceCriteria);
+            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(convergenceCriteria, computeIsDeterministic: true);
             double actual = impactAreaScenarioResults.MeanExpectedAnnualConsequences();
             double difference = Math.Abs(actual - expected);
             double relativeDifference = difference / expected;
@@ -367,7 +358,6 @@ namespace HEC.FDA.ModelTest.unittests
         {
             //Arrange
             ConvergenceCriteria deterministicConvergenceCriteria = new ConvergenceCriteria(1, 1);
-            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
 
             ContinuousDistribution flowFrequency = new Uniform(0, 100000, 100);
             double[] xFlows = new double[] { 0, 100000 };
@@ -390,7 +380,7 @@ namespace HEC.FDA.ModelTest.unittests
                 .Build();
 
             //Act 
-            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(meanRandomProvider, deterministicConvergenceCriteria);
+            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(deterministicConvergenceCriteria, computeIsDeterministic: true);
             double actual = impactAreaScenarioResults.MeanExpectedAnnualConsequences();
             double relativeDifference = Math.Abs(actual - expected) / expected;
             double tolerance = 0.05;
@@ -449,8 +439,7 @@ namespace HEC.FDA.ModelTest.unittests
                 .Build();
 
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
-            MedianRandomProvider medianRandomProvider = new MedianRandomProvider();
-            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(medianRandomProvider, convergenceCriteria, new CancellationToken(), computeIsDeterministic: true); ;
+            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(convergenceCriteria, new CancellationToken(), computeIsDeterministic: true); 
             double actual = impactAreaScenarioResults.MeanExpectedAnnualConsequences(id, damCat, assetCat);
             double relativeTolerance = Math.Abs(expected - actual) / actual;
             Assert.True(relativeTolerance < 0.017);

@@ -74,7 +74,6 @@ namespace HEC.FDA.ModelTest.unittests
         private static FirstFloorElevationUncertainty firstFloorElevationNormallyDistUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.Normal, 0.5);
         private static ValueUncertainty _structureValueNormallyDistUncertainty = new ValueUncertainty(IDistributionEnum.Normal, .1);
         private static ValueRatioWithUncertainty _contentToStructureValueRatioNormallyDist = new ValueRatioWithUncertainty(IDistributionEnum.Normal, 10, 90);
-        private static MedianRandomProvider medianRandomProvider = new MedianRandomProvider();
 
         public static OccupancyType residentialOccupancyTypeNormalDists = OccupancyType.Builder()
             .WithName(residentialNormalDistOccupancyTypeName)
@@ -270,7 +269,7 @@ namespace HEC.FDA.ModelTest.unittests
             //Act
             //This compute should return a list with count of 0 stage-damage functions - we didnt provide any H&H summary relationships 
             //so cannot calculate stage frequency, and the compute should check for that 
-            List<UncertainPairedData> nullStageDamage = impactAreaStageDamage.Compute(randomProvider).Item1;
+            List<UncertainPairedData> nullStageDamage = impactAreaStageDamage.Compute().Item1;
 
             //Assert
             Assert.Equal(0, nullStageDamage.Count);
@@ -314,7 +313,7 @@ namespace HEC.FDA.ModelTest.unittests
             List<ImpactAreaStageDamage> impactAreaStageDamages = new List<ImpactAreaStageDamage>();
             impactAreaStageDamages.Add(impactAreaStageDamage);
             ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(new List<ImpactAreaStageDamage>(impactAreaStageDamages));
-            List<UncertainPairedData> results = scenarioStageDamage.Compute(new MedianRandomProvider()).Item1;
+            List<UncertainPairedData> results = scenarioStageDamage.Compute().Item1;
 
             Assert.NotNull(results);
 

@@ -99,8 +99,7 @@ internal class Lehman
             .WithStageDamages(stageDamageList)
             .WithLevee(leveeFragilityFunction, topOfLeveeElevation)
             .Build();
-        RandomProvider randomProvider = new RandomProvider(seed);
-        ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1000, maxIterations: iterations);
+        ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1000, maxIterations: iterations);
         simulation.ProgressReport += WriteProgress;
 
         void WriteProgress(object sender, ProgressReportEventArgs progress)
@@ -108,7 +107,7 @@ internal class Lehman
             Console.WriteLine("compute progress: " + progress.Progress);
         }
 
-        ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
+        ImpactAreaScenarioResults results = simulation.Compute(convergenceCriteria);
 
         double EAD = results.ConsequenceResults.MeanDamage(damageCategory, assetCategory, impactAreaID);
         Console.WriteLine("EAD was " + EAD);

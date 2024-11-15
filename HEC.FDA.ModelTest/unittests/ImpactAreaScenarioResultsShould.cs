@@ -26,8 +26,7 @@ namespace HEC.FDA.ModelTest.unittests
         {
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
             ImpactAreaScenarioSimulation simulation = CreateTestScenarioSimulation(convergenceCriteria);
-            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
-            ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, convergenceCriteria); //here we test compute, below we test preview compute 
+            ImpactAreaScenarioResults results = simulation.Compute(convergenceCriteria, computeIsDeterministic: true); //here we test compute, below we test preview compute 
             XElement resultsElement = results.WriteToXml();
             ImpactAreaScenarioResults resultsFromXML = ImpactAreaScenarioResults.ReadFromXML(resultsElement);
             bool success = results.Equals(resultsFromXML);
@@ -64,8 +63,7 @@ namespace HEC.FDA.ModelTest.unittests
                 .WithStageDamages(stageDamageList)
                 .WithAdditionalThreshold(threshold)
                 .Build();
-            RandomProvider randomProvider = new RandomProvider();
-            ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria); //here we test compute, below we test preview compute 
+            ImpactAreaScenarioResults results = simulation.Compute(convergenceCriteria); //here we test compute, below we test preview compute 
             Assert.True(results.IsNull);
         }
 

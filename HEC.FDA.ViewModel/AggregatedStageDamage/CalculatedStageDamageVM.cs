@@ -618,14 +618,13 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
                 ScenarioStageDamage scenarioStageDamage = new(impactAreaStageDamages);
                 int seed = 1234;
-                Model.compute.RandomProvider randomProvider = new(seed);
 
                 bool canCompute = ValidateStructureCount(scenarioStageDamage);
                 if (canCompute)
                 {
                     List<UncertainPairedData> quantityDamagedElementsUPD = new();
                     //these are the rows in the computed table
-                    (stageDamageFunctions, quantityDamagedElementsUPD) = await Task.Run(() => scenarioStageDamage.Compute(randomProvider));
+                    (stageDamageFunctions, quantityDamagedElementsUPD) = await Task.Run(() => scenarioStageDamage.Compute());
                     List<string> errors = scenarioStageDamage.GetErrorMessages();
                     if (errors.Count > 0)
                     {
