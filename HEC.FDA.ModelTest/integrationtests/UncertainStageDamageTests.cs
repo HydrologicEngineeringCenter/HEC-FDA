@@ -139,7 +139,7 @@ namespace HEC.FDA.ModelTest.integrationtests
         #endregion
 
         #region Expected Values
-        //These damage values were obtained from the computational engine on Feb 8 2024
+        //These damage values were obtained from the computational engine on 15 Nov 24 RJN
         private static double[] stageAtWhichToCheckForDamage = new double[] { 472, 473, 477, 478, 479 };
 
         private static double[] expected_mean_residentialDamage_A = new double[] { 1.095, 1.532, 447.677, 615.962, 785.926 }; 
