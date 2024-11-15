@@ -276,7 +276,7 @@ namespace HEC.FDA.Model.compute
         private void ComputeIterations(ConvergenceCriteria convergenceCriteria, bool computeWithDamage, bool computeIsDeterministic, CancellationToken cancellationToken)
         {
             long completedIterations = 0;
-            long expectedIterations = convergenceCriteria.MinIterations;
+            long expectedIterations = convergenceCriteria.MinIterations; //only used in % complete
             Int64 iterationsPerComputeChunk = convergenceCriteria.IterationCount;
             Int64 computeChunkQuantity = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(convergenceCriteria.MinIterations) / iterationsPerComputeChunk));
             if (computeChunkQuantity < 1)
@@ -329,7 +329,7 @@ namespace HEC.FDA.Model.compute
                                 {
                                     PairedData inflow_outflow_sample = _UnregulatedRegulated.SamplePairedData(thisComputeIteration, computeIsDeterministic); //should be a random number
                                     PairedData transformff = inflow_outflow_sample.compose(frequencyDischarge);
-                                    PairedData discharge_stage_sample = _DischargeStage.SamplePairedData(thisComputeIteration + computeChunkIteration, computeIsDeterministic);//needs to be a random number
+                                    PairedData discharge_stage_sample = _DischargeStage.SamplePairedData(thisComputeIteration, computeIsDeterministic);//needs to be a random number TODO FIX a;sdlfk;asldfj;lasdfj;lkdasj;lasdfj;lkdfsj;lkfda
                                     PairedData frequency_stage = discharge_stage_sample.compose(transformff);
                                     ComputeFromStageFrequency(frequency_stage, iterationsCompletedByPriorComputeChunks, computeChunkIteration, computeWithDamage, computeIsDeterministic);
                                 }
@@ -391,6 +391,7 @@ namespace HEC.FDA.Model.compute
 
         private void ComputeFromStageFrequency(PairedData frequency_stage, long iterationsCompletedThroughPriorComputeChunk, long computeChunkIteration, bool computeWithDamage, bool computeIsDeterministic)
         {
+            long actualIteration = iterationsCompletedThroughPriorComputeChunk + computeChunkIteration; //implement this with paired data
 
             //interior exterior
             if (_ChannelStageFloodplainStage.CurveMetaData.IsNull)
@@ -400,7 +401,7 @@ namespace HEC.FDA.Model.compute
                 {
                     if (computeWithDamage)
                     {
-                        ComputeDamagesFromStageFrequency(frequency_stage, iterationsCompletedThroughPriorComputeChunk, computeChunkIteration, computeIsDeterministic);
+                        ComputeDamagesFromStageFrequency(frequency_stage, iterationsCompletedThroughPriorComputeChunk, computeChunkIteration, computeIsDeterministic); ///a;lsdfj;lasdfj;lasdfj;lkf
                     }
                     ComputePerformance(frequency_stage, Convert.ToInt32(computeChunkIteration));
                 }
