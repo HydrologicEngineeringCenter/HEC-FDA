@@ -75,9 +75,9 @@ namespace HEC.FDA.ViewModel.Inventory
 
         public InventoryColumnSelectionsVM(StructureSelectionMapping mappings, string inventoryShpPath)
         {
+            Path = inventoryShpPath;
             LoadRows();
             RequiredRows.AddRange(FirstFloorElevationRows);
-            Path = inventoryShpPath;
 
             FromTerrainFileIsSelected = mappings.IsUsingTerrainFile;
             FirstFloorElevationIsSelected = mappings.IsUsingFirstFloorElevation;
@@ -158,6 +158,7 @@ namespace HEC.FDA.ViewModel.Inventory
 
         private void PathChanged()
         {
+            PointShapefile = new PointShapefile(Path);
             UpdateRows();
         }
 
