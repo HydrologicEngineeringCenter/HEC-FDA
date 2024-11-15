@@ -254,9 +254,8 @@ namespace HEC.FDA.Model.stageDamage
         /// Structure
         /// W.S.Profile
         /// </summary>
-        /// <param name="randomProvider"></param>
         /// <returns></returns>
-        public (List<UncertainPairedData>, List<UncertainPairedData>) Compute(IProvideRandomNumbers randomProvider)
+        public (List<UncertainPairedData>, List<UncertainPairedData>) Compute(bool computeIsDeterministic = false)
         {
             Validate();
             (List<UncertainPairedData>, List<UncertainPairedData>) results = new(new List<UncertainPairedData>(), new List<UncertainPairedData>());
@@ -291,7 +290,7 @@ namespace HEC.FDA.Model.stageDamage
 
                         //There will be one ConsequenceDistributionResults object for each stage in the stage-damage function
                         //Each ConsequenceDistributionResults object holds a ConsequenceDistributionResult for each asset cat
-                        List<StudyAreaConsequencesBinned> consequenceDistributionResults = ComputeDamageWithUncertaintyAllCoordinates(damageCategory, randomProvider, inventoryAndWaterTupled, wsesAtEachStructureByProfile.Item1);
+                        List<StudyAreaConsequencesBinned> consequenceDistributionResults = ComputeDamageWithUncertaintyAllCoordinates(damageCategory, inventoryAndWaterTupled, wsesAtEachStructureByProfile.Item1, computeIsDeterministic);
 
                         //there should be four UncertainPairedData objects - one for each asset cat of the given dam cat level compute 
                         (List<UncertainPairedData>, List<UncertainPairedData>) tempResultsList = StudyAreaConsequencesBinned.ToUncertainPairedData(_StagesAtIndexLocation.ToList(), consequenceDistributionResults, ImpactAreaID);
@@ -347,20 +346,11 @@ namespace HEC.FDA.Model.stageDamage
         /// <param name="inventoryAndWaterTupled"></param>
         /// <param name="profileProbabilities"></param>
         /// <returns></returns>
-        private List<StudyAreaConsequencesBinned> ComputeDamageWithUncertaintyAllCoordinates(string damageCategory, IProvideRandomNumbers randomProvider, (Inventory, List<float[]>) inventoryAndWaterTupled, List<double> profileProbabilities)
+        private List<StudyAreaConsequencesBinned> ComputeDamageWithUncertaintyAllCoordinates(string damageCategory, (Inventory, List<float[]>) inventoryAndWaterTupled, List<double> profileProbabilities, bool computeIsDeterministic)
         {
-
-            //TODO GET RID OF RANDOM PROVIDER IT IS NO LONGER NEEDED I DONT THINK
-
 
             //damage for each stage
             List<StudyAreaConsequencesBinned> consequenceDistributionResults = CreateConsequenceDistributionResults(damageCategory);
-
-            bool computeIsDeterministic = false;
-            if (randomProvider is MedianRandomProvider)
-            {
-                computeIsDeterministic = true;
-            }
             int iterationsPerComputeChunk = _ConvergenceCriteria.IterationCount;
             int computeChunkQuantity = Convert.ToInt32(_ConvergenceCriteria.MinIterations / iterationsPerComputeChunk);
             int sampleSize = 0;

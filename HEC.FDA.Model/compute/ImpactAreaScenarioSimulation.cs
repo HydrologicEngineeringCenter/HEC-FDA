@@ -85,15 +85,15 @@ namespace HEC.FDA.Model.compute
         /// <summary>
         /// This code path currently only used by tests. 
         /// </summary>
-        public ImpactAreaScenarioResults Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria)
+        public ImpactAreaScenarioResults Compute(ConvergenceCriteria convergenceCriteria, bool computeIsDeterministic =false)
         {
-            return Compute(randomProvider, convergenceCriteria, new CancellationToken());
+            return Compute(convergenceCriteria, new CancellationToken(), computeIsDeterministic);
         }
 
         /// <summary>
         /// A simulation must be built with a stage damage function for compute default threshold to be true.
         /// </summary>
-        public ImpactAreaScenarioResults Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, CancellationToken cancellationToken, bool computeIsDeterministic = false)
+        public ImpactAreaScenarioResults Compute(ConvergenceCriteria convergenceCriteria, CancellationToken cancellationToken, bool computeIsDeterministic = false)
         {
             if (!CanCompute(convergenceCriteria))
             {
@@ -293,6 +293,9 @@ namespace HEC.FDA.Model.compute
                     {
                         Parallel.For(0, convergenceCriteria.IterationCount, computeChunkIteration =>
                         {
+                            long iterationsCompletedByPriorComputeChunks = computeChunk * iterationsPerComputeChunk;
+                            long thisComputeIteration = iterationsCompletedByPriorComputeChunks + computeChunkIteration;
+
                             if (_FrequencyStage.CurveMetaData.IsNull)
                             {
                                 if (_DischargeStage.CurveMetaData.IsNull)
@@ -307,36 +310,36 @@ namespace HEC.FDA.Model.compute
                                 if (_FrequencyDischargeGraphical.CurveMetaData.IsNull)
                                 {
                                     //If threadlocalRandomProvider is medianRandomProvider then we get a quasi-deterministic result
-                                    frequencyDischarge = _FrequencyDischarge.BootstrapToPairedData(computeChunk* iterationsPerComputeChunk + computeChunkIteration, utilities.DoubleGlobalStatics.RequiredExceedanceProbabilities, computeIsDeterministic);//ordinates defines the number of values in the frequency curve, more would be a better approximation.                                                                                                                  
+                                    frequencyDischarge = _FrequencyDischarge.BootstrapToPairedData(thisComputeIteration, utilities.DoubleGlobalStatics.RequiredExceedanceProbabilities, computeIsDeterministic);//ordinates defines the number of values in the frequency curve, more would be a better approximation.                                                                                                                  
                                 }
                                 else
                                 {
                                     //If threadlocalRandomProvider is medianRandomProvider then we get a quasi-deterministic result
-                                    frequencyDischarge = _FrequencyDischargeGraphical.SamplePairedData(computeChunk * iterationsPerComputeChunk + computeChunkIteration, computeIsDeterministic);
+                                    frequencyDischarge = _FrequencyDischargeGraphical.SamplePairedData(thisComputeIteration, computeIsDeterministic);
                                 }
                                 //if frequency_flow is not defined throw big errors.
                                 //check if flow transform exists, and use it here
                                 if (_UnregulatedRegulated.CurveMetaData.IsNull)
                                 {
-                                    PairedData discharge_stage_sample = _DischargeStage.SamplePairedData(computeChunk * iterationsPerComputeChunk + computeChunkIteration, computeIsDeterministic);
+                                    PairedData discharge_stage_sample = _DischargeStage.SamplePairedData(thisComputeIteration, computeIsDeterministic);
                                     PairedData frequency_stage = discharge_stage_sample.compose(frequencyDischarge);
-                                    ComputeFromStageFrequency(frequency_stage, computeChunk * iterationsPerComputeChunk, computeChunkIteration, computeWithDamage, computeIsDeterministic);
+                                    ComputeFromStageFrequency(frequency_stage, iterationsCompletedByPriorComputeChunks, computeChunkIteration, computeWithDamage, computeIsDeterministic);
                                 }
                                 else
                                 {
-                                    PairedData inflow_outflow_sample = _UnregulatedRegulated.SamplePairedData(computeChunk * iterationsPerComputeChunk + computeChunkIteration, computeIsDeterministic); //should be a random number
+                                    PairedData inflow_outflow_sample = _UnregulatedRegulated.SamplePairedData(thisComputeIteration, computeIsDeterministic); //should be a random number
                                     PairedData transformff = inflow_outflow_sample.compose(frequencyDischarge);
-                                    PairedData discharge_stage_sample = _DischargeStage.SamplePairedData(computeChunk * iterationsPerComputeChunk + computeChunkIteration, computeIsDeterministic);//needs to be a random number
+                                    PairedData discharge_stage_sample = _DischargeStage.SamplePairedData(thisComputeIteration + computeChunkIteration, computeIsDeterministic);//needs to be a random number
                                     PairedData frequency_stage = discharge_stage_sample.compose(transformff);
-                                    ComputeFromStageFrequency(frequency_stage, computeChunk*iterationsPerComputeChunk, computeChunkIteration, computeWithDamage, computeIsDeterministic);
+                                    ComputeFromStageFrequency(frequency_stage, iterationsCompletedByPriorComputeChunks, computeChunkIteration, computeWithDamage, computeIsDeterministic);
                                 }
 
                             }
                             else
                             {
                                 //if threadlocalRandomProvider is medianRandomProvider then we get a quasi-deterministic result
-                                PairedData frequency_stage_sample = _FrequencyStage.SamplePairedData(computeChunk * iterationsPerComputeChunk + computeChunkIteration, computeIsDeterministic);
-                                ComputeFromStageFrequency(frequency_stage_sample, computeChunk * iterationsPerComputeChunk, computeChunkIteration, computeWithDamage, computeIsDeterministic);
+                                PairedData frequency_stage_sample = _FrequencyStage.SamplePairedData(thisComputeIteration, computeIsDeterministic);
+                                ComputeFromStageFrequency(frequency_stage_sample, iterationsCompletedByPriorComputeChunks, computeChunkIteration, computeWithDamage, computeIsDeterministic);
                             }
                         });
                         _ImpactAreaScenarioResults.ConsequenceResults.PutDataIntoHistograms();
@@ -753,9 +756,8 @@ namespace HEC.FDA.Model.compute
         public ImpactAreaScenarioResults PreviewCompute()
         {
 
-            MedianRandomProvider meanRandomProvider = new();
             ConvergenceCriteria convergenceCriteria = new(minIterations: 1, maxIterations: 1);
-            ImpactAreaScenarioResults results = Compute(meanRandomProvider, convergenceCriteria, new CancellationTokenSource().Token, computeIsDeterministic: true);
+            ImpactAreaScenarioResults results = Compute(convergenceCriteria, new CancellationTokenSource().Token, computeIsDeterministic: true);
             return results;
         }
         public static SimulationBuilder Builder(int impactAreaID)

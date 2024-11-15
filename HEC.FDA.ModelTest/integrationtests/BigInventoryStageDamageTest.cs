@@ -187,7 +187,6 @@ public class BigInventoryStageDamageTest
     private static FirstFloorElevationUncertainty firstFloorElevationNormallyDistUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.Normal, 0.5);
     private static ValueUncertainty _structureValueNormallyDistUncertainty = new ValueUncertainty(IDistributionEnum.Normal, .1);
     private static ValueRatioWithUncertainty _contentToStructureValueRatioNormallyDist = new ValueRatioWithUncertainty(IDistributionEnum.Normal, 10, 90);
-    private static MedianRandomProvider medianRandomProvider = new MedianRandomProvider();
 
     public static OccupancyType residentialOccupancyTypeNormalDists = OccupancyType.Builder()
         .WithName(residentialNormalDistOccupancyTypeName)
@@ -244,7 +243,7 @@ new double[] { 0, 1, 2, 3, 4, 5, 6, 7 }, 50, new CurveMetaData("Probability", "S
         //Act
 
         
-        List<UncertainPairedData> stageDamageFunctions = scenarioStageDamage.Compute(new RandomProvider(seed: 1234)).Item1;
+        List<UncertainPairedData> stageDamageFunctions = scenarioStageDamage.Compute().Item1;
         time += " and the compute was completed at: " + DateTime.Now.ToString();
 
         File.AppendAllText(filePath, time);

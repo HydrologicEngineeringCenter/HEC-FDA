@@ -32,7 +32,6 @@ namespace HEC.FDA.ModelTest.unittests.structures
         private static FirstFloorElevationUncertainty firstFloorElevationUncertainty = new FirstFloorElevationUncertainty(IDistributionEnum.Normal, 0.5);
         private static ValueUncertainty _structureValueUncertainty = new ValueUncertainty(IDistributionEnum.Normal, .1);
         private static ValueRatioWithUncertainty _contentToStructureValueRatio = new ValueRatioWithUncertainty(IDistributionEnum.Normal, 10, 90);
-        private static MedianRandomProvider medianRandomProvider = new MedianRandomProvider();
         private static string occupancyTypeName = "MyOccupancyType";
         private static string damageCategory = "DamageCategory";
         private static OccupancyType occupancyType = OccupancyType.Builder()

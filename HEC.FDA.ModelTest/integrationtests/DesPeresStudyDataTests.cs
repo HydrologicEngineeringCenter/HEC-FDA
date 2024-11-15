@@ -47,7 +47,6 @@ namespace HEC.FDA.ModelTest.integrationtests
 
         static List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
         static int seed = 1234;
-        static RandomProvider randomProvider = new RandomProvider(seed);
         [Fact]
         public void ComputeShould()
         {
@@ -57,7 +56,7 @@ namespace HEC.FDA.ModelTest.integrationtests
                 .WithStageDamages(stageDamageList)
                 .Build();
 
-            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(randomProvider, new ConvergenceCriteria());
+            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(new ConvergenceCriteria());
 
             Assert.True(impactAreaScenarioResults.ConsequenceResults.GetSpecificHistogram("res", "struct", impactAreaID).HistogramIsZeroValued);
 

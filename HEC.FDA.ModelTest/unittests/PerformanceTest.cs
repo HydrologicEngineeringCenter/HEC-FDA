@@ -65,8 +65,8 @@ namespace HEC.FDA.ModelTest.unittests
             List<UncertainPairedData> uncertainPairedDataList = new List<UncertainPairedData>();
             uncertainPairedDataList.Add(stage_damage);
             int thresholdID = 1;
-            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
-            Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.DefaultExteriorStage, thresholdValue);
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
+            Threshold threshold = new Threshold(thresholdID, convergenceCriteria, ThresholdEnum.DefaultExteriorStage, thresholdValue);
 
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(id)
                 .WithFlowFrequency(flow_frequency)
@@ -75,8 +75,7 @@ namespace HEC.FDA.ModelTest.unittests
                 .WithAdditionalThreshold(threshold)
                 .Build();
 
-            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
-            ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, cc,new CancellationToken(), false);
+            ImpactAreaScenarioResults results = simulation.Compute(convergenceCriteria,new CancellationToken(), true);
 
             double actualAEP = results.MeanAEP(thresholdID);
             double actualLTEP = results.LongTermExceedanceProbability(thresholdID, years);
@@ -118,7 +117,7 @@ namespace HEC.FDA.ModelTest.unittests
             UncertainPairedData leveeCurve = new UncertainPairedData(StageForNonLeveeFailureProbs, failureProbs, metaData);
 
             int thresholdID = 0;
-            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
 
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(id)
                 .WithFlowFrequency(flow_frequency)
@@ -126,8 +125,7 @@ namespace HEC.FDA.ModelTest.unittests
                 .WithLevee(leveeCurve, thresholdValue)
                 .Build();
 
-            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
-            ImpactAreaScenarioResults results = simulation.Compute(meanRandomProvider, cc, new CancellationToken(),false);
+            ImpactAreaScenarioResults results = simulation.Compute(convergenceCriteria, new CancellationToken(),true);
             double actual = results.MeanAEP(thresholdID);
 
             Assert.Equal(expected, actual, 2);
@@ -141,11 +139,11 @@ namespace HEC.FDA.ModelTest.unittests
         /// <param name="recurrenceInterval"></param>
         /// <param name="expected"></param>
         [Theory]
-        [InlineData(5678, 10001, 1.4, .9, 0.7777)]
-        [InlineData(6789, 10001, 1.5, .99, 0.7575)]
-        [InlineData(8910, 10001, 1.4, .996, 0.7028)]
-        [InlineData(9102, 10001, 1.8, .998, 0.9018)]
-        public void ComputeConditionalNonExceedanceProbability_Test(int seed, int iterations, double thresholdValue, double recurrenceInterval, double expected)
+        [InlineData(10001, 1.4, .9, 0.7777)]
+        [InlineData(10001, 1.5, .99, 0.7575)]
+        [InlineData(10001, 1.4, .996, 0.7028)]
+        [InlineData(10001, 1.8, .998, 0.9018)]
+        public void ComputeConditionalNonExceedanceProbability_Test(int iterations, double thresholdValue, double recurrenceInterval, double expected)
         {
             ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
             //create a stage distribution
@@ -187,9 +185,8 @@ namespace HEC.FDA.ModelTest.unittests
                 .Build();
 
 
-            RandomProvider randomProvider = new RandomProvider(seed);
-            ImpactAreaScenarioResults results = simulation.Compute(randomProvider, convergenceCriteria, new CancellationToken(), false);
-            ImpactAreaScenarioResults resultsWithLevee = simulationWithLevee.Compute(randomProvider, convergenceCriteria);
+            ImpactAreaScenarioResults results = simulation.Compute(convergenceCriteria);
+            ImpactAreaScenarioResults resultsWithLevee = simulationWithLevee.Compute(convergenceCriteria);
 
             double actualAssuranceOfThreshold = results.AssuranceOfEvent(thresholdID, recurrenceInterval);
             double actualAssuranceOfLevee = resultsWithLevee.AssuranceOfEvent(thresholdID: 0, recurrenceInterval);
@@ -235,8 +232,8 @@ namespace HEC.FDA.ModelTest.unittests
             uncertainPairedDataList.Add(stage_damage);
             int thresholdID = 1;
 
-            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations, tolerance: .001);
-            Threshold threshold = new Threshold(thresholdID, cc, ThresholdEnum.DefaultExteriorStage, thresholdValue);
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations, tolerance: .001);
+            Threshold threshold = new Threshold(thresholdID, convergenceCriteria, ThresholdEnum.DefaultExteriorStage, thresholdValue);
 
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(id)
                 .WithFlowFrequency(flow_frequency)
@@ -245,8 +242,7 @@ namespace HEC.FDA.ModelTest.unittests
                 .WithAdditionalThreshold(threshold)
                 .Build();
 
-            RandomProvider randomProvider = new RandomProvider(seed);
-            ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc, new CancellationToken(), false);
+            ImpactAreaScenarioResults results = simulation.Compute(convergenceCriteria, new CancellationToken(), false);
             XElement xElement = results.PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.WriteToXML();
             SystemPerformanceResults projectPerformanceResults = SystemPerformanceResults.ReadFromXML(xElement);
             bool success = results.PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.Equals(projectPerformanceResults);
