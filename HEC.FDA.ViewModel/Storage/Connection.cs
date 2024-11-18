@@ -35,19 +35,15 @@ namespace HEC.FDA.ViewModel.Storage
             }
             set
             {
-                // doesn't need to be in if else
-                if (_SqliteReader == null)
+                if (!File.Exists(value))
                 {
-                    if (!File.Exists(value))
-                    {
-                        SetUpForNewStudy(value);
-                    }
-                    else
-                    {
-                        SetUpForExistingStudy(value);
-                    }
-                    _SqliteReader = new SQLiteManager(value);
+                    SetUpForNewStudy(value);
                 }
+                else
+                {
+                    SetUpForExistingStudy(value);
+                }
+                _SqliteReader = new SQLiteManager(value);
             }
         }
 
