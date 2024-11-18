@@ -99,10 +99,10 @@ namespace HEC.FDA.Model.structures
         /// The use of this method will depend on the type of distribution. 
         /// If Normal, Triangular, or Uniform, the value returned is the percent of inventory value to add or subtract from the inventoried value
         /// If log normal, then the return value will need to be multiplied by the inventoried value
-        /// </summary>
+        /// All sampling methods include a computeIsDeterministic argument that bypasses the iteration number for the retrieval of the deterministic representation of the variable 
         /// <param name="iteration"></param> The iteration is used to pull the correct random number from a pre-generated list of random numbers for a compute with uncertainty
         /// <param name="computeIsDeterministic"></param> Flag compute is deterministic if not running uncertainty and the measure of central tendancy will be used for input distributions.
-        /// <returns></returns>        
+        /// <returns></returns>  the sampled value offset is returned as a double      
         public double Sample(long iteration, bool computeIsDeterministic)
         {
             double centerOfDistribution = 100;

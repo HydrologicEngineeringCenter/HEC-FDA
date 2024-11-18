@@ -208,7 +208,7 @@ namespace HEC.FDA.Model.stageDamage
         /// </summary>
         private PairedData IdentifyCentralStageFrequencyAtIndexLocation()
         {
-            int iteration = 1;
+            int fakeIterationNumberNotUsedInThisPartOfTheComputeBecauseItIsDeterministic = 1;
             bool deterministic = true;
             if (_AnalyticalFlowFrequency != null)
             {
@@ -218,9 +218,9 @@ namespace HEC.FDA.Model.stageDamage
                     PairedData flowFrequencyPairedData = new(flowFreqAsTuple.Item1, flowFreqAsTuple.Item2);
                     if (_UnregulatedRegulated != null)
                     {
-                        flowFrequencyPairedData = _UnregulatedRegulated.SamplePairedData(iteration, deterministic).compose(flowFrequencyPairedData) as PairedData;
+                        flowFrequencyPairedData = _UnregulatedRegulated.SamplePairedData(fakeIterationNumberNotUsedInThisPartOfTheComputeBecauseItIsDeterministic, deterministic).compose(flowFrequencyPairedData) as PairedData;
                     }
-                    return _DischargeStage.SamplePairedData(iteration, deterministic).compose(flowFrequencyPairedData) as PairedData;
+                    return _DischargeStage.SamplePairedData(fakeIterationNumberNotUsedInThisPartOfTheComputeBecauseItIsDeterministic, deterministic).compose(flowFrequencyPairedData) as PairedData;
                 }
             }
             else if (_GraphicalFrequency != null)
@@ -233,12 +233,12 @@ namespace HEC.FDA.Model.stageDamage
                 {
                     if (_DischargeStage != null)
                     {
-                        PairedData flowFrequencyPairedData = _GraphicalFrequency.SamplePairedData(iteration, deterministic) as PairedData;
+                        PairedData flowFrequencyPairedData = _GraphicalFrequency.SamplePairedData(fakeIterationNumberNotUsedInThisPartOfTheComputeBecauseItIsDeterministic, deterministic) as PairedData;
                         if (_UnregulatedRegulated != null)
                         {
-                            flowFrequencyPairedData = _UnregulatedRegulated.SamplePairedData(iteration, deterministic).compose(flowFrequencyPairedData) as PairedData;
+                            flowFrequencyPairedData = _UnregulatedRegulated.SamplePairedData(fakeIterationNumberNotUsedInThisPartOfTheComputeBecauseItIsDeterministic, deterministic).compose(flowFrequencyPairedData) as PairedData;
                         }
-                        return _DischargeStage.SamplePairedData(iteration, deterministic).compose(flowFrequencyPairedData) as PairedData;
+                        return _DischargeStage.SamplePairedData(fakeIterationNumberNotUsedInThisPartOfTheComputeBecauseItIsDeterministic, deterministic).compose(flowFrequencyPairedData) as PairedData;
                     }
                 }
             }
@@ -272,7 +272,7 @@ namespace HEC.FDA.Model.stageDamage
                 List<string> damCats = Inventory.GetDamageCategories();
                 if (Inventory.Structures.Count == 0)
                 {
-                    results = (ProduceZeroDamageFunctions(damCats));
+                    results = (ProduceZeroDamageFunctions());
                     return results;
                 }
                 else
@@ -305,7 +305,7 @@ namespace HEC.FDA.Model.stageDamage
             }
         }
 
-        private (List<UncertainPairedData>, List<UncertainPairedData>) ProduceZeroDamageFunctions(List<string> damCats)
+        private (List<UncertainPairedData>, List<UncertainPairedData>) ProduceZeroDamageFunctions()
         {
             (List<UncertainPairedData>, List<UncertainPairedData>) zeroResults = new();
             IHistogram[] deterministics = new IHistogram[_StageFrequency.Yvals.Length];
@@ -376,12 +376,18 @@ namespace HEC.FDA.Model.stageDamage
                     /// Iteration <--
                     /// Structure
                     /// W.S.Profile
-                    for (int computeChunkIteration = 0; computeChunkIteration < iterationsPerComputeChunk; computeChunkIteration++)
+                    for (int thisChunkIteration = 0; thisChunkIteration < iterationsPerComputeChunk; thisChunkIteration++)
                     {
-                        List<DeterministicOccupancyType> deterministicOccTypes = Inventory.SampleOccupancyTypes(computeChunk*iterationsPerComputeChunk + computeChunkIteration, computeIsDeterministic);
-                        ComputeLowerStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, computeChunkIteration);
-                        ComputeMiddleStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, computeChunkIteration);
-                        ComputeUpperStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, computeChunkIteration);
+                        
+                        //this is the only sampling taking place in the aggregated stage-damage compute with uncertainty
+                        //the sampling takes place by the overall compute iteration number so that for each iteration the same random numbers are retrieved 
+                        int thisComputeIteration = computeChunk * iterationsPerComputeChunk + thisChunkIteration;
+                        List<DeterministicOccupancyType> deterministicOccTypes = Inventory.SampleOccupancyTypes(thisComputeIteration, computeIsDeterministic);
+
+                        //iteration counts in the following method calls are only used for saving results in temp results arrays
+                        ComputeLowerStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, thisChunkIteration);
+                        ComputeMiddleStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, thisChunkIteration);
+                        ComputeUpperStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, thisChunkIteration);
                         inventoryAndWaterTupled.Item1.ResetStructureWaterIndexTracking();
                         sampleSize += 1;
                     }
@@ -495,7 +501,7 @@ namespace HEC.FDA.Model.stageDamage
         /// <summary>
         /// This method computes damage at stages lower than the most frequent profile 
         /// </summary>
-        private void ComputeLowerStageDamage(ref List<StudyAreaConsequencesBinned> parallelConsequenceResultCollection, string damageCategory, List<DeterministicOccupancyType> deterministicOccTypes, (Inventory, List<float[]>) inventoryAndWaterCoupled, List<double> profileProbabilities, int iterationIndex)
+        private void ComputeLowerStageDamage(ref List<StudyAreaConsequencesBinned> parallelConsequenceResultCollection, string damageCategory, List<DeterministicOccupancyType> deterministicOccTypes, (Inventory, List<float[]>) inventoryAndWaterCoupled, List<double> profileProbabilities, int thisChunkIteration)
         {
 
             float interval = CalculateLowerIncrementOfStages(profileProbabilities);
@@ -511,7 +517,7 @@ namespace HEC.FDA.Model.stageDamage
             int i = 0;
             foreach (ConsequenceResult consequenceResult in consequenceResults)
             {
-                parallelConsequenceResultCollection[i].AddConsequenceRealization(consequenceResult, damageCategory, ImpactAreaID, iterationIndex);
+                parallelConsequenceResultCollection[i].AddConsequenceRealization(consequenceResult, damageCategory, ImpactAreaID, thisChunkIteration);
                 i++;
             }
         }
@@ -541,19 +547,19 @@ namespace HEC.FDA.Model.stageDamage
         /// <summary>
         /// This method calculates a stage damage function within the hydraulic profiles 
         /// </summary>
-        private void ComputeMiddleStageDamage(ref List<StudyAreaConsequencesBinned> parallelConsequenceResultCollection, string damageCategory, List<DeterministicOccupancyType> deterministicOccTypes, (Inventory, List<float[]>) inventoryAndWaterCoupled, List<double> profileProbabilities, int iterationIndex)
+        private void ComputeMiddleStageDamage(ref List<StudyAreaConsequencesBinned> parallelConsequenceResultCollection, string damageCategory, List<DeterministicOccupancyType> deterministicOccTypes, (Inventory, List<float[]>) inventoryAndWaterCoupled, List<double> profileProbabilities, int thisChunkIteration)
         {
             int numProfiles = profileProbabilities.Count;
             int stageIndex = _BottomExtrapolationPoints + 1;
             for (int profileIndex = 1; profileIndex < numProfiles; profileIndex++)
             {
-                InterpolateBetweenProfiles(ref parallelConsequenceResultCollection, deterministicOccTypes, inventoryAndWaterCoupled.Item2[profileIndex - 1], inventoryAndWaterCoupled.Item2[profileIndex], damageCategory, inventoryAndWaterCoupled.Item1, stageIndex, iterationIndex);
+                InterpolateBetweenProfiles(ref parallelConsequenceResultCollection, deterministicOccTypes, inventoryAndWaterCoupled.Item2[profileIndex - 1], inventoryAndWaterCoupled.Item2[profileIndex], damageCategory, inventoryAndWaterCoupled.Item1, stageIndex, thisChunkIteration);
                 stageIndex += _CentralInterpolationPoints;
             }
         }
 
 
-        private void InterpolateBetweenProfiles(ref List<StudyAreaConsequencesBinned> parallelConsequenceResultCollection, List<DeterministicOccupancyType> occTypes, float[] previousHydraulicProfile, float[] currentHydraulicProfile, string damageCategory, Inventory inventory, int stageIndex, int iterationIndex)
+        private void InterpolateBetweenProfiles(ref List<StudyAreaConsequencesBinned> parallelConsequenceResultCollection, List<DeterministicOccupancyType> occTypes, float[] previousHydraulicProfile, float[] currentHydraulicProfile, string damageCategory, Inventory inventory, int stageIndex, int thisChunkIteration)
         {
             float[] intervalsAtStructures = CalculateIntervals(previousHydraulicProfile, currentHydraulicProfile);
             List<float[]> stagesAllStructuresAllStages = new();
@@ -566,7 +572,7 @@ namespace HEC.FDA.Model.stageDamage
             List<ConsequenceResult> consequenceResults = inventory.ComputeDamages(stagesAllStructuresAllStages, _AnalysisYear, damageCategory, occTypes);
             foreach (ConsequenceResult consequenceResult in consequenceResults)
             {
-                parallelConsequenceResultCollection[stageIndex + i].AddConsequenceRealization(consequenceResult, damageCategory, ImpactAreaID, iterationIndex);
+                parallelConsequenceResultCollection[stageIndex + i].AddConsequenceRealization(consequenceResult, damageCategory, ImpactAreaID, thisChunkIteration);
                 i++;
             }
         }
@@ -593,7 +599,7 @@ namespace HEC.FDA.Model.stageDamage
         /// <summary>
         /// this method calculates the stage damage function for stages higher than the least frequent profile 
         /// </summary>
-        private void ComputeUpperStageDamage(ref List<StudyAreaConsequencesBinned> parallelConsequenceResultCollection, string damageCategory, List<DeterministicOccupancyType> deterministicOccTypes, (Inventory, List<float[]>) inventoryAndWaterCoupled, List<double> profileProbabilities, int iterationIndex)
+        private void ComputeUpperStageDamage(ref List<StudyAreaConsequencesBinned> parallelConsequenceResultCollection, string damageCategory, List<DeterministicOccupancyType> deterministicOccTypes, (Inventory, List<float[]>) inventoryAndWaterCoupled, List<double> profileProbabilities, int thisChunkIteration)
         {
             //the probability of a profile is an EXCEEDANCE probability but in the model we use NONEXCEEDANCE PROBABILITY
             int stageIndex = _BottomExtrapolationPoints + _CentralInterpolationPoints * (profileProbabilities.Count - 1);
@@ -611,7 +617,7 @@ namespace HEC.FDA.Model.stageDamage
             int i = 1;
             foreach (ConsequenceResult consequenceResult in consequenceResults)
             {
-                parallelConsequenceResultCollection[stageIndex + i].AddConsequenceRealization(consequenceResult, damageCategory, ImpactAreaID, iterationIndex);
+                parallelConsequenceResultCollection[stageIndex + i].AddConsequenceRealization(consequenceResult, damageCategory, ImpactAreaID, thisChunkIteration);
                 i++;
             }
         }

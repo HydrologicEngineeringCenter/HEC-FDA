@@ -50,7 +50,6 @@ namespace HEC.FDA.ViewModel.Compute
         {
             return Task.Run(() =>
             {
-                int seed = 1234;
                 ConvergenceCriteria convergenceCriteria = StudyCache.GetStudyPropertiesElement().GetStudyConvergenceCriteria();              
                 ScenarioResults scenarioResults = scenario.Compute(convergenceCriteria, cancellationToken, computeIsDeterministic:false);       
                 //Event for when everything has been computed.

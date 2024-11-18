@@ -144,7 +144,13 @@ namespace HEC.FDA.Model.paireddata
             pairedData.ForceMonotonicity();
             return pairedData;
         }
-
+        /// <summary>
+        /// All sampling methods include a computeIsDeterministic argument that bypasses the iteration number for the retrieval of the deterministic representation of the variable 
+        /// </summary>
+        /// <param name="iterationNumber"></param> If this method is called during a full compute with uncertainty, random numbers need to have been previously generated, and the correct random number will be pulled for the given iteration number
+        /// <param name="retrieveDeterministicRepresentation"></param> If the method is instead called during a deterministic compute, the iteration number will be bypassed and the deterministic representation will be returned
+        /// <returns></returns> the x vals are returned alongside the sampled y vales for the random number that corresponds to the iteration index or the deterministic representation of the y vals 
+        /// <exception cref="Exception"></exception>
         public PairedData SamplePairedData(long iterationNumber, bool retrieveDeterministicRepresentation)
         {
             double[] y = new double[Yvals.Length];

@@ -127,7 +127,12 @@ namespace HEC.FDA.Model.structures
 
             return sampledValueRatio;
         }
-
+        /// <summary>
+        /// All sampling methods include a computeIsDeterministic argument that bypasses the iteration number for the retrieval of the deterministic representation of the variable 
+        /// </summary>
+        /// <param name="iteration"></param> If this method is called during a full compute with uncertainty, random numbers need to have been previously generated, and the correct random number will be pulled for the given iteration number
+        /// <param name="computeIsDeterministic"></param> If the method is instead called during a deterministic compute, the iteration number will be bypassed and the deterministic representation will be returned
+        /// <returns></returns> the sampled value ratio is returned as a double.
         public double Sample(long iteration, bool computeIsDeterministic)
         {
             double sampledValueRatio;

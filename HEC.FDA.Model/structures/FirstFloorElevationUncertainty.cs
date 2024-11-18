@@ -97,10 +97,11 @@ namespace HEC.FDA.Model.structures
         /// The use of this method will depend on the type of distribution. 
         /// If Normal, Triangular, or Uniform, the value returned is the feet to add or subtract from the inventoried value
         /// If log normal, then the return value will need to be multiplied by the inventoried value        
-        /// /// </summary>
-        /// <param name="probability"></param>
-        /// <param name="computeIsDeterministic"></param>
-        /// <returns></returns>
+        /// All sampling methods include a computeIsDeterministic argument that bypasses the iteration number for the retrieval of the deterministic representation of the variable 
+        /// </summary>
+        /// <param name="iteration"></param> If this method is called during a full compute with uncertainty, random numbers need to have been previously generated, and the correct random number will be pulled for the given iteration number
+        /// <param name="computeIsDeterministic"></param> If the method is instead called during a deterministic compute, the iteration number will be bypassed and the deterministic representation will be returned
+        /// <returns></returns> the first floor elevation offset is returned as a double
         public double Sample(long iteration, bool computeIsDeterministic)
         {
 
