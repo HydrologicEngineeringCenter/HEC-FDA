@@ -61,7 +61,7 @@ namespace HEC.FDA.ViewModel.Inventory
         {
             InventoryElement inventoryElement = elem as InventoryElement;
             _SelectedPath = inventoryElement.GetFilePath(".shp");
-            _ColumnSelections = new InventoryColumnSelectionsVM(inventoryElement.SelectionMappings, inventoryElement.GetFilePath(".dbf"));
+            _ColumnSelections = new InventoryColumnSelectionsVM(inventoryElement.SelectionMappings, _SelectedPath);
             _OcctypeLinking = new InventoryOcctypeLinkingVM(_SelectedPath, _ColumnSelections.OccupancyTypeRow.SelectedItem, inventoryElement.OcctypeMapping);
             CurrentViewIsEnabled = true;
             CurrentView = _ColumnSelections;
