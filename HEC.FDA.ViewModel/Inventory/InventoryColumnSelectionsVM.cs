@@ -293,7 +293,7 @@ namespace HEC.FDA.ViewModel.Inventory
         private FdaValidationResult AreStructureIdsUnique()
         {
             FdaValidationResult vr = new();
-            if(StructureDataValidator.AllRowsHaveUniqueValueForColumn<string>(PointShapefile, _StructureIDRow.SelectedItem, out _))
+            if(!StructureDataValidator.AllRowsHaveUniqueValueForColumn<string>(PointShapefile, _StructureIDRow.SelectedItem, out _))
             {
                 vr.AddErrorMessage("Duplicate structure ID's were found. This is not allowed.");
             }
