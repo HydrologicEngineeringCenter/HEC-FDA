@@ -113,10 +113,10 @@ public static class OverlappingRangeHelper
         IPairedDataProducer func2 = GetUncertainPairedData(element2);
 
 
-        PairedData function1Max = func1.SamplePairedData(maxProb, true);
-        PairedData function1Min = func1.SamplePairedData(minProb, true);
-        PairedData function2Max = func2.SamplePairedData(maxProb, true);
-        PairedData function2Min = func2.SamplePairedData(minProb, true);
+        PairedData function1Max = func1.SamplePairedData(maxProb);
+        PairedData function1Min = func1.SamplePairedData(minProb);
+        PairedData function2Max = func2.SamplePairedData(maxProb);
+        PairedData function2Min = func2.SamplePairedData(minProb);
 
         string name1 = element1.Name;
         string name2 = element2.Name;

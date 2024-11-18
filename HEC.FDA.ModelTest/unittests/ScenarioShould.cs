@@ -118,8 +118,7 @@ namespace HEC.FDA.ModelTest.unittests
             impactAreaScenarioSimulations.Add(simulation2);
             Scenario scenario = new Scenario( impactAreaScenarioSimulations);
 
-            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
-            ScenarioResults scenarioResults = scenario.Compute(meanRandomProvider, convergenceCriteria);
+            ScenarioResults scenarioResults = scenario.Compute(convergenceCriteria, computeIsDeterministic:true);
             XElement element = scenarioResults.WriteToXML();
             ScenarioResults scenarioResultsFromXML = ScenarioResults.ReadFromXML(element);
             bool scenariosAreEqual = scenarioResults.Equals(scenarioResultsFromXML);

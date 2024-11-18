@@ -53,7 +53,7 @@ namespace HEC.FDA.ModelTest.unittests
             int expectedUPDLength = 20;
             double expectedMeanAllOver = mean + 0.5;
             double actualMeanFirstUPDMiddleStage = damageUncertainPairedData[0].Yvals[9].InverseCDF(0.5);
-            IPairedData pairedData = damageUncertainPairedData[3].SamplePairedData(0.5, true);
+            IPairedData pairedData = damageUncertainPairedData[3].SamplePairedData(0.5);
             double actualMeanLastUPDLastStage = pairedData.f(19);
             double relativeErrorMeanFirstUPDMiddleStage = Math.Abs(actualMeanFirstUPDMiddleStage - expectedMeanAllOver) / expectedMeanAllOver;
             double relativeErrorMeanLastUPDLastStage = Math.Abs(actualMeanLastUPDLastStage - expectedMeanAllOver) / expectedMeanAllOver;

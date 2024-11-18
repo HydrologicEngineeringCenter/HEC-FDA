@@ -119,7 +119,7 @@ namespace HEC.FDA.ModelTest.unittests
             double medianProbability = 0.5;
 
             //Act
-            IPairedData pairedData = uncertainPairedData.SamplePairedData(medianProbability, retrieveDeterministicRepresentation: true);
+            IPairedData pairedData = uncertainPairedData.SamplePairedData(medianProbability);
             double tolerance = 0.05;
 
             //Assert
@@ -160,9 +160,8 @@ namespace HEC.FDA.ModelTest.unittests
                 new Normal(0,2), new Normal(-10,2), new Normal(100,2)
             };
             UncertainPairedData uncertainPairedData = new(xVals_probabilities, yVals_normalDists, new CurveMetaData("fake"));
-
-            MedianRandomProvider medianRandomProvider = new MedianRandomProvider();
-            PairedData pairedData = uncertainPairedData.SamplePairedData(medianRandomProvider.NextRandom());
+            double probabilityOfMedian = 0.5;
+            PairedData pairedData = uncertainPairedData.SamplePairedData(probabilityOfMedian);
             Assert.Equal(0, pairedData.Yvals[0]);
             Assert.Equal(0.005, pairedData.Yvals[1],.02); //forced strict monotonicity should make this 0.005 instead of -10
             Assert.Equal(100, pairedData.Yvals[2]);

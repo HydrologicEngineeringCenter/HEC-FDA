@@ -28,7 +28,6 @@ namespace HEC.FDA.ModelTest.unittests.structures
         private static ValueUncertainty _structureValueUncertainty = new ValueUncertainty(IDistributionEnum.Normal, .1);
         private static ValueRatioWithUncertainty _contentToStructureValueRatio = new ValueRatioWithUncertainty(IDistributionEnum.Normal, 10, 90);
         private double expectedCSVR = 90;
-        private static MedianRandomProvider medianRandomProvider = new MedianRandomProvider();
         private static string name = "MyOccupancyType";
         private static string damageCategory = "DamageCategory";
 
@@ -46,7 +45,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
                 .WithContentToStructureValueRatio(_contentToStructureValueRatio)
                 .Build();
 
-            DeterministicOccupancyType sampledStructureParameters = occupancyType.Sample(medianRandomProvider);
+            DeterministicOccupancyType sampledStructureParameters = occupancyType.Sample(iteration:1, computeIsDeterministic:true);
 
             Assert.Equal(name, sampledStructureParameters.OccupancyTypeName);
             Assert.Equal(damageCategory, sampledStructureParameters.OccupancyTypeDamageCategory);

@@ -10,17 +10,42 @@ using System.Xml.Linq;
 namespace Statistics
 {
     public abstract class ContinuousDistribution : ValidationErrorLogger, IDistribution
-    {   
+    {
+        #region Fields 
+        double[][] RandomSamplesofNumbers;
+        #endregion
+
+        #region Properties 
         public abstract IDistributionEnum Type { get; }
         [Stored(Name = "SampleSize", type = typeof(Int32))]
         public Int64 SampleSize { get; set; }
         [Stored(Name = "Truncated", type = typeof(bool))]
         public bool Truncated { get; protected set; }
+        #endregion
+
+        #region Methods
         public abstract double CDF(double x);
         public abstract bool Equals(IDistribution distribution);
         public abstract double InverseCDF(double p);
         public abstract double PDF(double x);
         public abstract IDistribution Fit(double[] data);
+
+        public void GenerateRandomSamplesofNumbers(int seed, int quantityOfSamples)
+        {
+            Random rando = new Random(seed);
+            double[][] randomSamples = new double[quantityOfSamples][];
+            for (int i = 0; i < quantityOfSamples; i++)
+            {
+                double[] sampleOfRandomNumbers = new double[SampleSize];
+                for (int j = 0; j < SampleSize; j++)
+                {
+                    sampleOfRandomNumbers[j] = rando.NextDouble();
+                }
+                randomSamples[i] = sampleOfRandomNumbers;
+            }
+            RandomSamplesofNumbers = randomSamples;
+        }
+
         /// <summary>
         /// Generates a parametric bootstrap sample of the distribution.
         /// </summary>
@@ -35,6 +60,16 @@ namespace Statistics
             for (int i = 0; i < SampleSize; i++) samples[i] = this.InverseCDF(packetOfRandomNumbers[i]);
             return this.Fit(samples);
         }
+
+        public IDistribution Sample(long iterationNumber)
+        {
+            if (RandomSamplesofNumbers.Length == 0) throw new Exception("This distribution cannot be sampled by iteration number without first generating random samples of numbers for each iteration");
+            double[] sampleOfRandomNumbers = RandomSamplesofNumbers[iterationNumber];
+            double[] samples = new double[SampleSize];
+            for (int i = 0; i < SampleSize; i++) samples[i] = this.InverseCDF(sampleOfRandomNumbers[i]);
+            return this.Fit(samples);
+        }
+
         public XElement ToXML()
         {
             XElement element = new(this.GetType().Name);
@@ -143,9 +178,11 @@ namespace Statistics
             {
                 x = x.Select(static (val) => 1 - val).ToArray();
             }
-            Tuple<double[],double[]> rtn = new(x,y);
-            return rtn;
+            Tuple<double[],double[]> coordinates = new(x,y);
+            return coordinates;
 
         }
+
+        #endregion
     }
 }

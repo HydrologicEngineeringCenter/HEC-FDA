@@ -41,7 +41,6 @@ namespace HEC.FDA.ModelTest.integrationtests
 
         private static ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(maxIterations: 50000);
         private static int seed = 1234;
-        private static RandomProvider randomProvider = new RandomProvider(seed);
         //set up exterior-interior relationship 
 
         private static double[] _ExteriorInteriorXValues = new double[] { 927, 928, 930, 931, 932, 933, 934, 935, 935.5, 936, 936.5, 937, 937.5, 938, 950 };
@@ -206,9 +205,9 @@ namespace HEC.FDA.ModelTest.integrationtests
             impactAreaScenarioSimulations.Add(simulation);
 
             Scenario scenario = new Scenario(impactAreaScenarioSimulations);
-            ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
+            ScenarioResults scenarioResults = scenario.Compute(convergenceCriteria);
             Scenario scenario2 = new Scenario(impactAreaScenarioSimulations);
-            ScenarioResults scenarioResults2 = scenario2.Compute(randomProvider, convergenceCriteria);
+            ScenarioResults scenarioResults2 = scenario2.Compute(convergenceCriteria);
             AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(.025, 50, 1, scenarioResults, 
                 scenarioResults2, baseYear, futureYear, new CancellationToken());
             Empirical empiricalEADDistribution = alternativeResults.GetBaseYearEADDistribution(impactAreaID1, commercialDamageCategory);
@@ -264,7 +263,7 @@ namespace HEC.FDA.ModelTest.integrationtests
             impactAreaScenarioSimulations.Add(simulation);
             impactAreaScenarioSimulations.Add(simulation2);
             Scenario scenario = new Scenario(impactAreaScenarioSimulations);
-            ScenarioResults scenarioResults = scenario.Compute(randomProvider, convergenceCriteria);
+            ScenarioResults scenarioResults = scenario.Compute(convergenceCriteria);
 
             //Act
             double actualResidentialMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1, residentialDamageCategory);

@@ -34,8 +34,6 @@ namespace HEC.FDA.ModelTest.unittests
             int withoutAlternativeIdentifier = 1;
             int withAlternativeIdentifier = 2;
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
-            MedianRandomProvider mrp = new MedianRandomProvider();
-
             ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
             //create a stage distribution
             IDistribution[] stages = new IDistribution[2];
@@ -107,9 +105,9 @@ namespace HEC.FDA.ModelTest.unittests
             impactAreaListFutureYear.Add(withoutProjectSimulationFuture);
 
             Scenario baseWithoutProjectScenario = new Scenario( impactAreaListBaseYear);
-            ScenarioResults baseWithoutProjectScenarioResults = baseWithoutProjectScenario.Compute(mrp, convergenceCriteria);
+            ScenarioResults baseWithoutProjectScenarioResults = baseWithoutProjectScenario.Compute(convergenceCriteria, computeIsDeterministic: true);
             Scenario futureWithoutProjectScenario = new Scenario( impactAreaListFutureYear);
-            ScenarioResults futureWithoutProjectScenarioResults = futureWithoutProjectScenario.Compute(mrp, convergenceCriteria);
+            ScenarioResults futureWithoutProjectScenarioResults = futureWithoutProjectScenario.Compute(convergenceCriteria, computeIsDeterministic: true);
             AlternativeResults withoutProjectAlternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, withoutAlternativeIdentifier, 
                 baseWithoutProjectScenarioResults, futureWithoutProjectScenarioResults, baseYear,
                 futureYear, new CancellationToken());
@@ -138,9 +136,9 @@ namespace HEC.FDA.ModelTest.unittests
 
 
             Scenario baseWithProjectScenario = new Scenario( impactAreaListWithProjectBaseYear);
-            ScenarioResults baseWithProjectScenarioResults = baseWithProjectScenario.Compute(mrp, convergenceCriteria);
+            ScenarioResults baseWithProjectScenarioResults = baseWithProjectScenario.Compute(convergenceCriteria, computeIsDeterministic:true);
             Scenario futureWithProjectScenario = new Scenario( impactAreaListWithProjectfutureYear);
-            ScenarioResults futureWithProjectScenarioResults = futureWithProjectScenario.Compute(mrp, convergenceCriteria);
+            ScenarioResults futureWithProjectScenarioResults = futureWithProjectScenario.Compute(convergenceCriteria, computeIsDeterministic: true);
             AlternativeResults withProjectAlternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, withAlternativeIdentifier, 
                 baseWithProjectScenarioResults, futureWithProjectScenarioResults, baseYear,
                 futureYear, new CancellationToken());
@@ -201,7 +199,6 @@ namespace HEC.FDA.ModelTest.unittests
             int withoutAlternativeIdentifier = 1;
             int withAlternativeIdentifier = 2;
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
-            MedianRandomProvider mrp = new MedianRandomProvider();
 
             ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
             //create a stage distribution
@@ -261,9 +258,9 @@ namespace HEC.FDA.ModelTest.unittests
             impactAreaListFutureYear.Add(withoutProjectSimulationFuture);
 
             Scenario baseWithoutProjectScenario = new Scenario( impactAreaListBaseYear);
-            ScenarioResults baseWithoutProjectScenarioResults = baseWithoutProjectScenario.Compute(mrp, convergenceCriteria);
+            ScenarioResults baseWithoutProjectScenarioResults = baseWithoutProjectScenario.Compute(convergenceCriteria, computeIsDeterministic: true);
             Scenario futureWothoutProjectScenario = new Scenario( impactAreaListFutureYear);
-            ScenarioResults futureWithoutProjectScenarioResults = futureWothoutProjectScenario.Compute(mrp, convergenceCriteria);
+            ScenarioResults futureWithoutProjectScenarioResults = futureWothoutProjectScenario.Compute(convergenceCriteria, computeIsDeterministic: true);
             AlternativeResults withoutProjectAlternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, withoutAlternativeIdentifier, 
                 baseWithoutProjectScenarioResults, futureWithoutProjectScenarioResults, baseYear, futureYear, new CancellationToken());
 
@@ -291,9 +288,9 @@ namespace HEC.FDA.ModelTest.unittests
 
 
             Scenario baseWithProjectScenario = new Scenario( impactAreaListWithProjectBaseYear);
-            ScenarioResults baseWithProjectScenarioResults = baseWithProjectScenario.Compute(mrp, convergenceCriteria);
+            ScenarioResults baseWithProjectScenarioResults = baseWithProjectScenario.Compute(convergenceCriteria, computeIsDeterministic:true);
             Scenario futureWithProjectScenario = new Scenario( impactAreaListWithProjectfutureYear);
-            ScenarioResults futureWithProjectScenarioResults = futureWithProjectScenario.Compute(mrp, convergenceCriteria);
+            ScenarioResults futureWithProjectScenarioResults = futureWithProjectScenario.Compute(convergenceCriteria, computeIsDeterministic: true);
             AlternativeResults withProjectAlternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, withAlternativeIdentifier, 
                 baseWithProjectScenarioResults, futureWithProjectScenarioResults, baseYear, futureYear, new CancellationToken());
 
@@ -337,7 +334,6 @@ namespace HEC.FDA.ModelTest.unittests
             int withoutAlternativeIdentifier = 1;
             int withAlternativeIdentifier = 2;
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: iterations);
-            MedianRandomProvider mrp = new MedianRandomProvider();
             double exceedanceProbability = 0.5;
 
             ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
@@ -398,9 +394,9 @@ namespace HEC.FDA.ModelTest.unittests
             impactAreaListFutureYear.Add(withoutProjectSimulationFuture);
 
             Scenario baseWithoutProjectScenario = new Scenario( impactAreaListBaseYear);
-            ScenarioResults baseWithoutProjectScenarioResults = baseWithoutProjectScenario.Compute(mrp, convergenceCriteria);
+            ScenarioResults baseWithoutProjectScenarioResults = baseWithoutProjectScenario.Compute(convergenceCriteria, computeIsDeterministic: true);
             Scenario futureWothoutProjectScenario = new Scenario( impactAreaListFutureYear);
-            ScenarioResults futureWithoutProjectScenarioResults = futureWothoutProjectScenario.Compute(mrp, convergenceCriteria);
+            ScenarioResults futureWithoutProjectScenarioResults = futureWothoutProjectScenario.Compute(convergenceCriteria, computeIsDeterministic: true);
             AlternativeResults withoutProjectAlternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, 
                 withoutAlternativeIdentifier, baseWithoutProjectScenarioResults, futureWithoutProjectScenarioResults, baseYear, futureYear, new CancellationToken());
 
@@ -428,9 +424,9 @@ namespace HEC.FDA.ModelTest.unittests
 
 
             Scenario baseWithProjectScenario = new Scenario( impactAreaListWithProjectBaseYear);
-            ScenarioResults baseWithProjectScenarioResults = baseWithProjectScenario.Compute(mrp, convergenceCriteria);
+            ScenarioResults baseWithProjectScenarioResults = baseWithProjectScenario.Compute(convergenceCriteria, computeIsDeterministic: true);
             Scenario futureWithProjectScenario = new Scenario( impactAreaListWithProjectfutureYear);
-            ScenarioResults futureWithProjectScenarioResults = futureWithProjectScenario.Compute(mrp, convergenceCriteria);
+            ScenarioResults futureWithProjectScenarioResults = futureWithProjectScenario.Compute(convergenceCriteria, computeIsDeterministic: true);
             AlternativeResults withProjectAlternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, withAlternativeIdentifier, 
                 baseWithProjectScenarioResults, futureWithProjectScenarioResults, baseYear, futureYear, new CancellationToken());
 

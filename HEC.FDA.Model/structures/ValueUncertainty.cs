@@ -13,6 +13,8 @@ namespace HEC.FDA.Model.structures
         private readonly double _PercentOfInventoryValueStandardDeviationOrMin;
         private readonly double _PercentOfInventoryValueMax;
         private readonly IDistributionEnum _DistributionType;
+        private double[] _RandomNumbers;
+
         #endregion
 
         #region Properties 
@@ -36,6 +38,16 @@ namespace HEC.FDA.Model.structures
         #endregion
 
         #region Methods
+        internal void GenerateRandomNumbers(int seed, long size)
+        {
+            Random random = new Random(seed);
+            double[] randos = new double[size];
+            for (int i = 0; i < size; i++)
+            {
+                randos[i] = random.NextDouble();
+            }
+            _RandomNumbers = randos;
+        }
         private void AddRules()
         {
             AddSinglePropertyRule(nameof(_DistributionType), new Rule(() => _DistributionType.Equals(IDistributionEnum.Normal) || _DistributionType.Equals(IDistributionEnum.Uniform) || _DistributionType.Equals(IDistributionEnum.Deterministic) || _DistributionType.Equals(IDistributionEnum.Triangular), "Only Deterministic, Normal, Triangular, and Uniform distributions can be used for value uncertainty", ErrorLevel.Fatal));
@@ -48,19 +60,12 @@ namespace HEC.FDA.Model.structures
         /// If Normal, Triangular, or Uniform, the value returned is the percent of inventory value to add or subtract from the inventoried value
         /// If log normal, then the return value will need to be multiplied by the inventoried value
         /// </summary>
-        /// <param name="probability"></param>
-        /// <param name="computeIsDeterministic"></param>
+        /// <param name="probability"></param> cumulative probability at which to return a quantile of the value uncertainty 
         /// <returns></returns>        
-        public double Sample(double probability, bool computeIsDeterministic)
+        public double Sample(double probability)
         {
             double centerOfDistribution = 100;
             double sampledValueOffset;
-            if (computeIsDeterministic)
-            {
-                    sampledValueOffset = centerOfDistribution/100;
-            } 
-            else
-            {
             switch (_DistributionType)
             {
                 case IDistributionEnum.Normal:
@@ -83,6 +88,61 @@ namespace HEC.FDA.Model.structures
                     sampledValueOffset = centerOfDistribution/100;
                     break;
             }
+            if (sampledValueOffset < 0)
+            {
+                sampledValueOffset = 0;
+            }
+            return sampledValueOffset;
+        }
+
+        /// <summary>
+        /// The use of this method will depend on the type of distribution. 
+        /// If Normal, Triangular, or Uniform, the value returned is the percent of inventory value to add or subtract from the inventoried value
+        /// If log normal, then the return value will need to be multiplied by the inventoried value
+        /// All sampling methods include a computeIsDeterministic argument that bypasses the iteration number for the retrieval of the deterministic representation of the variable 
+        /// <param name="iteration"></param> The iteration is used to pull the correct random number from a pre-generated list of random numbers for a compute with uncertainty
+        /// <param name="computeIsDeterministic"></param> Flag compute is deterministic if not running uncertainty and the measure of central tendancy will be used for input distributions.
+        /// <returns></returns>  the sampled value offset is returned as a double      
+        public double Sample(long iteration, bool computeIsDeterministic)
+        {
+            double centerOfDistribution = 100;
+            double sampledValueOffset;
+            if (computeIsDeterministic)
+            {
+                sampledValueOffset = centerOfDistribution / 100;
+            }
+            else
+            {
+                if(_RandomNumbers.Length == 0)
+                {
+                    throw new Exception("Random numbers by iteration have not yet been generated for this compute but the software attempted to sample value uncertainty by iteration.");
+                }
+                if(iteration < 0 || iteration >= _RandomNumbers.Length)
+                {
+                    throw new Exception("The iteration at which value uncertainty was attempted to be sampled is beyond the quantity of random numbers sampled. There is a significant conflict between the stage-damage convergence criteria and the quantity of iterations being computed.");
+                }
+                switch (_DistributionType)
+                {
+                    case IDistributionEnum.Normal:
+                        Normal normal = new(centerOfDistribution / 100, (_PercentOfInventoryValueStandardDeviationOrMin / 100));
+                        sampledValueOffset = normal.InverseCDF(_RandomNumbers[iteration]);
+                        break;
+
+                    case IDistributionEnum.LogNormal:
+                        sampledValueOffset = Math.Exp(Normal.StandardNormalInverseCDF(_RandomNumbers[iteration]) * (_PercentOfInventoryValueStandardDeviationOrMin / 100));
+                        break;
+                    case IDistributionEnum.Triangular:
+                        Triangular triangular = new(_PercentOfInventoryValueStandardDeviationOrMin / 100, centerOfDistribution / 100, _PercentOfInventoryValueMax / 100);
+                        sampledValueOffset = triangular.InverseCDF(_RandomNumbers[iteration]);
+                        break;
+                    case IDistributionEnum.Uniform:
+                        Uniform uniform = new(_PercentOfInventoryValueStandardDeviationOrMin / 100, _PercentOfInventoryValueMax / 100);
+                        sampledValueOffset = uniform.InverseCDF(_RandomNumbers[iteration]);
+                        break;
+                    default:
+                        sampledValueOffset = centerOfDistribution / 100;
+                        break;
+                }
             }
             if (sampledValueOffset < 0)
             {

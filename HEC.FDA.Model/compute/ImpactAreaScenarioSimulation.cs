@@ -22,6 +22,12 @@ namespace HEC.FDA.Model.compute
     public class ImpactAreaScenarioSimulation : ValidationErrorLogger, IProgressReport
     {
         #region Fields 
+        private const int FREQUENCY_SEED = 1234;
+        private const int FLOW_REGULATION_SEED = 2345;
+        private const int STAGE_FLOW_SEED = 3456;
+        private const int EXTERIOR_INTERIOR_SEED = 4567;
+        private const int SYSTEM_RESPONSE_SEED = 5678;
+        private const int STAGE_DAMAGE_SEED = 6789;
         public const int IMPACT_AREA_SIM_COMPLETED = -1001;
         private const double THRESHOLD_DAMAGE_PERCENT = 0.05;
         private const double THRESHOLD_DAMAGE_RECURRENCE_INTERVAL = 0.99; //this is a non-exceedance probability 
@@ -34,14 +40,14 @@ namespace HEC.FDA.Model.compute
         private UncertainPairedData _ChannelStageFloodplainStage;
         private UncertainPairedData _SystemResponseFunction;
         private double _TopOfLeveeElevation;
-        private List<UncertainPairedData> _DamageCategoryStageDamage;
+        private List<UncertainPairedData> _StageDamageFunctions;
         private int _ImpactAreaID;
         private ImpactAreaScenarioResults _ImpactAreaScenarioResults;
         #endregion
 
         #region Properties 
         [StoredProperty("DamageCategoryStageNonFailureDamage")]
-        public List<UncertainPairedData> DamageCategoryStageNonFailureDamage { get; private set; }
+        public List<UncertainPairedData> _NonFailureStageDamageFunctions { get; private set; }
         public event ProgressReportedEventHandler ProgressReport;
         [StoredProperty("NonFailRiskIncluded")]
         public bool NonFailRiskIncluded { get; private set; } = false;
@@ -70,8 +76,8 @@ namespace HEC.FDA.Model.compute
             _FrequencyStage = new GraphicalUncertainPairedData();//defaults to null
             _ChannelStageFloodplainStage = new UncertainPairedData();//defaults to null
             _SystemResponseFunction = new UncertainPairedData(); //defaults to null
-            _DamageCategoryStageDamage = new List<UncertainPairedData>();//defaults to empty
-            DamageCategoryStageNonFailureDamage = new List<UncertainPairedData>(); //empty 
+            _StageDamageFunctions = new List<UncertainPairedData>();//defaults to empty
+            _NonFailureStageDamageFunctions = new List<UncertainPairedData>(); //empty 
             _ImpactAreaID = impactAreaID;
             _ImpactAreaScenarioResults = new ImpactAreaScenarioResults(_ImpactAreaID); //defaults to null
         }
@@ -79,29 +85,29 @@ namespace HEC.FDA.Model.compute
         /// <summary>
         /// This code path currently only used by tests. 
         /// </summary>
-        public ImpactAreaScenarioResults Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria)
+        public ImpactAreaScenarioResults Compute(ConvergenceCriteria convergenceCriteria, bool computeIsDeterministic =false)
         {
-            return Compute(randomProvider, convergenceCriteria, new CancellationToken());
+            return Compute(convergenceCriteria, new CancellationToken(), computeIsDeterministic);
         }
 
         /// <summary>
         /// A simulation must be built with a stage damage function for compute default threshold to be true.
+        /// Random numbers are generated for a full compute with uncertainty, during which the correct random number is pulled for the current iteration 
+        /// All sampling methods include a computeIsDeterministic argument that bypasses the iteration number for the retrieval of the deterministic representation of the variable 
         /// </summary>
-        public ImpactAreaScenarioResults Compute(IProvideRandomNumbers randomProvider, ConvergenceCriteria convergenceCriteria, CancellationToken cancellationToken, bool computeIsDeterministic = false)
+        public ImpactAreaScenarioResults Compute(ConvergenceCriteria convergenceCriteria, CancellationToken cancellationToken, bool computeIsDeterministic = false)
         {
             if (!CanCompute(convergenceCriteria))
             {
                 _ImpactAreaScenarioResults = new ImpactAreaScenarioResults(_ImpactAreaID, true); //I would like to just return regular Null here but I'm unsure who is relying on this behavior. BBB
                 return _ImpactAreaScenarioResults;
             }
-            int masterseed = 0;
-            if (randomProvider is RandomProvider)
-            {
-                masterseed = randomProvider.Seed;
-            }
+
+            
+            PopulateRandomNumbers(convergenceCriteria);
             bool computeWithDamage = true;
 
-            if (_DamageCategoryStageDamage.Count == 0)
+            if (_StageDamageFunctions.Count == 0)
             {
                 computeWithDamage = false;
                 Threshold systemResponseThreshold = new(thresholdID: 0, _SystemResponseFunction, convergenceCriteria);
@@ -109,7 +115,7 @@ namespace HEC.FDA.Model.compute
             }
             else
             {
-                List<(CurveMetaData, PairedData)> damageFrequencyFunctions = ComputeDamageFrequency(computeIsDeterministic);
+                List<(CurveMetaData, PairedData)> damageFrequencyFunctions = ComputeDamageFrequency();
                 _ImpactAreaScenarioResults.DamageFrequencyFunctions = damageFrequencyFunctions;
                 CreateEADHistograms(convergenceCriteria, damageFrequencyFunctions);
 
@@ -124,18 +130,63 @@ namespace HEC.FDA.Model.compute
             CreateHistogramsForAssuranceOfThresholds();
             MessageEventArgs beginComputeMessageArgs = new(new Message($"EAD and performance compute for the impact area with ID {_ImpactAreaID} has been initiated" + Environment.NewLine));
             ReportMessage(this, beginComputeMessageArgs);
-            ComputeIterations(convergenceCriteria, randomProvider, masterseed, computeWithDamage, computeIsDeterministic, cancellationToken);
+            ComputeIterations(convergenceCriteria, computeWithDamage, computeIsDeterministic, cancellationToken);
             _ImpactAreaScenarioResults.ParallelResultsAreConverged(.95, .05);
             MessageEventArgs endComputeMessageArgs = new(new Message($"EAD and performance compute for the impact area with ID {_ImpactAreaID} has completed successfully" + Environment.NewLine));
             ReportMessage(this, endComputeMessageArgs);
             return _ImpactAreaScenarioResults;
         }
 
+        //This method tells each object that will be sampled in the full compute to generate random numbers for sampling 
+        private void PopulateRandomNumbers(ConvergenceCriteria convergenceCriteria)
+        {
+            //generate slightly more random numbers than max iterations because it is possible that we keep iterating beyond max 
+            //before re-checking for convergence 
+            int quantityOfRandomNumbers = Convert.ToInt32(convergenceCriteria.MaxIterations*1.25);
+
+            if (_FrequencyDischarge != null)
+            {
+                _FrequencyDischarge.GenerateRandomSamplesofNumbers(FREQUENCY_SEED, quantityOfRandomNumbers);
+            }
+            if (!_FrequencyDischargeGraphical.CurveMetaData.IsNull)
+            {
+                _FrequencyDischargeGraphical.GenerateRandomNumbers(FREQUENCY_SEED, quantityOfRandomNumbers);
+            }
+            if (!_UnregulatedRegulated.CurveMetaData.IsNull)
+            {
+                _UnregulatedRegulated.GenerateRandomNumbers(FLOW_REGULATION_SEED, quantityOfRandomNumbers);
+            }
+            if (!_DischargeStage.CurveMetaData.IsNull)
+            {
+                _DischargeStage.GenerateRandomNumbers(STAGE_FLOW_SEED, quantityOfRandomNumbers);
+            }
+            if (!_FrequencyStage.CurveMetaData.IsNull)
+            {
+                _FrequencyStage.GenerateRandomNumbers(FREQUENCY_SEED, quantityOfRandomNumbers);
+            }
+            if (!_ChannelStageFloodplainStage.CurveMetaData.IsNull)
+            {
+                _ChannelStageFloodplainStage.GenerateRandomNumbers(EXTERIOR_INTERIOR_SEED, quantityOfRandomNumbers);
+            }
+            if (!_SystemResponseFunction.CurveMetaData.IsNull)
+            {
+                _SystemResponseFunction.GenerateRandomNumbers(SYSTEM_RESPONSE_SEED, quantityOfRandomNumbers);
+            }
+            foreach (UncertainPairedData stageDamage in _StageDamageFunctions)
+            {
+                stageDamage.GenerateRandomNumbers(STAGE_DAMAGE_SEED, quantityOfRandomNumbers);
+            }
+            foreach (UncertainPairedData stageDamage in _NonFailureStageDamageFunctions)
+            {
+                stageDamage.GenerateRandomNumbers(STAGE_DAMAGE_SEED, quantityOfRandomNumbers);
+            }
+        }
+
         private void CreateEADHistograms(ConvergenceCriteria convergenceCriteria, List<(CurveMetaData, PairedData)> damageFrequencyFunctions)
         {
             //run the preview compute
             //I need to do this off of the damage frequency function instead
-            foreach (UncertainPairedData stageDamage in _DamageCategoryStageDamage)
+            foreach (UncertainPairedData stageDamage in _StageDamageFunctions)
             {
                 foreach ((CurveMetaData, PairedData) metaData in damageFrequencyFunctions)
                 {
@@ -177,10 +228,10 @@ namespace HEC.FDA.Model.compute
             validationObjects.Add(_SystemResponseFunction);
             validationIntroMessages.Add(nameof(_SystemResponseFunction) + $" has the following messages for the impact area with ID {_ImpactAreaID}:");
 
-            foreach (UncertainPairedData relationship in _DamageCategoryStageDamage)
+            foreach (UncertainPairedData relationship in _StageDamageFunctions)
             {
                 validationObjects.Add(relationship);
-                validationIntroMessages.Add(nameof(_DamageCategoryStageDamage) + ": " + relationship.CurveMetaData.DamageCategory + ": " + relationship.CurveMetaData.AssetCategory + ": " + "has the following messages");
+                validationIntroMessages.Add(nameof(_StageDamageFunctions) + ": " + relationship.CurveMetaData.DamageCategory + ": " + relationship.CurveMetaData.AssetCategory + ": " + "has the following messages");
             }
         }
 
@@ -202,7 +253,7 @@ namespace HEC.FDA.Model.compute
                 ErrorMessage errorMessage = new(message, ErrorLevel.Fatal);
                 ReportMessage(this, new MessageEventArgs(errorMessage));
             }
-            if (_DamageCategoryStageDamage.Count == 0)
+            if (_StageDamageFunctions.Count == 0)
             {
                 if (!HasLevee)
                 {
@@ -219,48 +270,38 @@ namespace HEC.FDA.Model.compute
             {
                 if (HasLevee.Equals(false))
                 {
-                    string errorMessage = $"The simulation for impact area with ID {ImpactAreaID} was configured to calculate nonfail risk but a levee was not specified, therefore nonfail risk will not be calculated.";
+                    string errorMessage = $"T he simulation for impact area with ID {ImpactAreaID} was configured to calculate nonfail risk but a levee was not specified, therefore nonfail risk will not be calculated.";
                     ErrorMessage leveeMissing = new(errorMessage, ErrorLevel.Major);
                     ReportMessage(this, new MessageEventArgs(leveeMissing));
                 }
             }
         }
 
-        private void ComputeIterations(ConvergenceCriteria convergenceCriteria, IProvideRandomNumbers randomProvider, int masterseed, bool computeWithDamage, bool computeIsDeterministic, CancellationToken cancellationToken)
+        private void ComputeIterations(ConvergenceCriteria convergenceCriteria, bool computeWithDamage, bool computeIsDeterministic, CancellationToken cancellationToken)
         {
             long completedIterations = 0;
-            long expectedIterations = convergenceCriteria.MinIterations;
-            Random masterSeedList = new(masterseed);//must be seeded.
-            int[] seeds = new int[convergenceCriteria.MaxIterations];
-            for (int i = 0; i < convergenceCriteria.MaxIterations; i++)
+            long expectedIterations = convergenceCriteria.MinIterations; //only used in % complete
+            Int64 iterationsPerComputeChunk = convergenceCriteria.IterationCount;
+            Int64 computeChunkQuantity = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(convergenceCriteria.MinIterations) / iterationsPerComputeChunk));
+            if (computeChunkQuantity < 1)
             {
-                seeds[i] = masterSeedList.Next();
-            }
-            Int64 computeChunks = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(convergenceCriteria.MinIterations) / convergenceCriteria.IterationCount));
-            if (computeChunks < 1)
-            {
-                computeChunks = 1;
+                computeChunkQuantity = 1;
             }
             bool computeIsNotConverged = true;
             while (computeIsNotConverged)
             {
-                int j = 0;
-                while (j < computeChunks)
+                int computeChunk = 0;
+                while (computeChunk < computeChunkQuantity)
                 {
                     try
                     {
-                        Parallel.For(0, convergenceCriteria.IterationCount, i =>
+                        Parallel.For(0, iterationsPerComputeChunk, thisChunkIteration =>
                         {
-                            //check if it is a mean random provider or not
-                            IProvideRandomNumbers threadlocalRandomProvider;
-                            if (randomProvider is MedianRandomProvider)
-                            {
-                                threadlocalRandomProvider = new MedianRandomProvider();
-                            }
-                            else
-                            {
-                                threadlocalRandomProvider = new RandomProvider(seeds[i]);
-                            }
+                            long iterationsCompletedByPriorComputeChunks = computeChunk * iterationsPerComputeChunk;
+
+                            //thisComputeIteration is used for pulling the correct random number in sampling whereas thisChunkIteration is used for saving a result in the correct place of a temp results array
+                            long thisComputeIteration = iterationsCompletedByPriorComputeChunks + thisChunkIteration;
+
                             if (_FrequencyStage.CurveMetaData.IsNull)
                             {
                                 if (_DischargeStage.CurveMetaData.IsNull)
@@ -274,37 +315,35 @@ namespace HEC.FDA.Model.compute
                                 PairedData frequencyDischarge;
                                 if (_FrequencyDischargeGraphical.CurveMetaData.IsNull)
                                 {
-                                    //If threadlocalRandomProvider is medianRandomProvider then we get a quasi-deterministic result
-                                    frequencyDischarge = _FrequencyDischarge.BootstrapToPairedData(threadlocalRandomProvider, utilities.DoubleGlobalStatics.RequiredExceedanceProbabilities);//ordinates defines the number of values in the frequency curve, more would be a better approximation.                                                                                                                  
+                                    frequencyDischarge = _FrequencyDischarge.BootstrapToPairedData(thisComputeIteration, utilities.DoubleGlobalStatics.RequiredExceedanceProbabilities, computeIsDeterministic);                                                                                                              
                                 }
                                 else
                                 {
-                                    //If threadlocalRandomProvider is medianRandomProvider then we get a quasi-deterministic result
-                                    frequencyDischarge = _FrequencyDischargeGraphical.SamplePairedData(threadlocalRandomProvider.NextRandom());
+                                    frequencyDischarge = _FrequencyDischargeGraphical.SamplePairedData(thisComputeIteration, computeIsDeterministic);
                                 }
                                 //if frequency_flow is not defined throw big errors.
                                 //check if flow transform exists, and use it here
                                 if (_UnregulatedRegulated.CurveMetaData.IsNull)
                                 {
-                                    PairedData discharge_stage_sample = _DischargeStage.SamplePairedData(threadlocalRandomProvider.NextRandom(), computeIsDeterministic);
+                                    PairedData discharge_stage_sample = _DischargeStage.SamplePairedData(thisComputeIteration, computeIsDeterministic);
                                     PairedData frequency_stage = discharge_stage_sample.compose(frequencyDischarge);
-                                    ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage, i, computeWithDamage, computeIsDeterministic);
+                                    ComputeFromStageFrequency(frequency_stage, thisComputeIteration, thisChunkIteration, computeWithDamage, computeIsDeterministic);
                                 }
                                 else
                                 {
-                                    PairedData inflow_outflow_sample = _UnregulatedRegulated.SamplePairedData(threadlocalRandomProvider.NextRandom(), computeIsDeterministic); //should be a random number
+                                    PairedData inflow_outflow_sample = _UnregulatedRegulated.SamplePairedData(thisComputeIteration, computeIsDeterministic); 
                                     PairedData transformff = inflow_outflow_sample.compose(frequencyDischarge);
-                                    PairedData discharge_stage_sample = _DischargeStage.SamplePairedData(threadlocalRandomProvider.NextRandom(), computeIsDeterministic);//needs to be a random number
+                                    PairedData discharge_stage_sample = _DischargeStage.SamplePairedData(thisComputeIteration, computeIsDeterministic);
                                     PairedData frequency_stage = discharge_stage_sample.compose(transformff);
-                                    ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage, i, computeWithDamage, computeIsDeterministic);
+                                    ComputeFromStageFrequency(frequency_stage, thisComputeIteration, thisChunkIteration, computeWithDamage, computeIsDeterministic);
                                 }
 
                             }
                             else
                             {
                                 //if threadlocalRandomProvider is medianRandomProvider then we get a quasi-deterministic result
-                                PairedData frequency_stage_sample = _FrequencyStage.SamplePairedData(threadlocalRandomProvider.NextRandom());
-                                ComputeFromStageFrequency(threadlocalRandomProvider, frequency_stage_sample, i, computeWithDamage, computeIsDeterministic);
+                                PairedData frequency_stage_sample = _FrequencyStage.SamplePairedData(thisComputeIteration, computeIsDeterministic);
+                                ComputeFromStageFrequency(frequency_stage_sample, thisComputeIteration, thisChunkIteration, computeWithDamage, computeIsDeterministic);
                             }
                         });
                         _ImpactAreaScenarioResults.ConsequenceResults.PutDataIntoHistograms();
@@ -316,7 +355,7 @@ namespace HEC.FDA.Model.compute
                         //report progress
                         double percentcomplete = (completedIterations / (double)expectedIterations) * 100;
                         ReportProgress(this, new ProgressReportEventArgs((int)percentcomplete));
-                        j++;
+                        computeChunk++;
                     }
                     //I learned that you cannot throw an exception in a parallel for loop and expect it to work.
                     //According to the internet you need to catch an aggregateException and then use it find the
@@ -336,12 +375,12 @@ namespace HEC.FDA.Model.compute
                 {
                     //recalculate compute chunks 
                     expectedIterations = _ImpactAreaScenarioResults.RemainingIterations(.95, .05, computeWithDamage);
-                    computeChunks = Convert.ToInt64(expectedIterations / convergenceCriteria.IterationCount);
-                    if (computeChunks == 0)
+                    computeChunkQuantity = Convert.ToInt64(expectedIterations / convergenceCriteria.IterationCount);
+                    if (computeChunkQuantity == 0)
                     {
-                        computeChunks = 1;
+                        computeChunkQuantity = 1;
                     }
-                    j = 0;
+                    computeChunk = 0;
                 }
                 else
                 {
@@ -354,9 +393,8 @@ namespace HEC.FDA.Model.compute
             ReportProgress(this, new ProgressReportEventArgs(IMPACT_AREA_SIM_COMPLETED));
         }
 
-        private void ComputeFromStageFrequency(IProvideRandomNumbers randomProvider, PairedData frequency_stage, long iteration, bool computeWithDamage, bool computeIsDeterministic)
+        private void ComputeFromStageFrequency(PairedData frequency_stage, long thisComputeIteration, long thisChunkIteration, bool computeWithDamage, bool computeIsDeterministic)
         {
-
             //interior exterior
             if (_ChannelStageFloodplainStage.CurveMetaData.IsNull)
             {
@@ -365,27 +403,25 @@ namespace HEC.FDA.Model.compute
                 {
                     if (computeWithDamage)
                     {
-                        ComputeDamagesFromStageFrequency(randomProvider, frequency_stage, iteration, computeIsDeterministic);
+                        ComputeDamagesFromStageFrequency(frequency_stage, thisComputeIteration, thisChunkIteration, computeIsDeterministic); ///a;lsdfj;lasdfj;lasdfj;lkf
                     }
-                    ComputePerformance(frequency_stage, Convert.ToInt32(iteration));
+                    ComputePerformance(frequency_stage, Convert.ToInt32(thisChunkIteration));
                 }
                 else
                 {
-                    PairedData systemResponse_sample = _SystemResponseFunction.SamplePairedData(randomProvider.NextRandom(), computeIsDeterministic); //needs to be a random number
-                                                                                                                                                      //IPairedData frequency_stage_withLevee = frequency_stage.multiply(levee_curve_sample);
-
+                    PairedData systemResponse_sample = _SystemResponseFunction.SamplePairedData(thisComputeIteration, computeIsDeterministic); 
                     if (computeWithDamage)
                     {
-                        ComputeDamagesFromStageFrequency_WithLevee(randomProvider, frequency_stage, systemResponse_sample, iteration, computeIsDeterministic);
+                        ComputeDamagesFromStageFrequency_WithLevee(frequency_stage, systemResponse_sample, thisComputeIteration, thisChunkIteration, computeIsDeterministic);
                     }
                     //If the system response function is the default function 
                     if (systemResponse_sample.Xvals.Length <= 2)
                     {
-                        ComputePerformance(frequency_stage, Convert.ToInt32(iteration));
+                        ComputePerformance(frequency_stage, Convert.ToInt32(thisChunkIteration));
                     }
                     else
                     {
-                        ComputeLeveePerformance(frequency_stage, systemResponse_sample, Convert.ToInt32(iteration));
+                        ComputeLeveePerformance(frequency_stage, systemResponse_sample, Convert.ToInt32(thisChunkIteration));
                     }
 
 
@@ -394,90 +430,89 @@ namespace HEC.FDA.Model.compute
             }
             else
             {
-                PairedData _channelstage_floodplainstage_sample = _ChannelStageFloodplainStage.SamplePairedData(randomProvider.NextRandom(), computeIsDeterministic); //needs to be a random number
+                PairedData _channelstage_floodplainstage_sample = _ChannelStageFloodplainStage.SamplePairedData(thisComputeIteration, computeIsDeterministic); 
                 PairedData frequency_floodplainstage = _channelstage_floodplainstage_sample.compose(frequency_stage);
                 //levees
                 if (_SystemResponseFunction.CurveMetaData.IsNull)
                 {
                     if (computeWithDamage)
                     {
-                        ComputeDamagesFromStageFrequency(randomProvider, frequency_floodplainstage, iteration, computeIsDeterministic);
+                        ComputeDamagesFromStageFrequency(frequency_floodplainstage, thisComputeIteration, thisChunkIteration, computeIsDeterministic);
                     }
-                    ComputePerformance(frequency_floodplainstage, Convert.ToInt32(iteration));
+                    ComputePerformance(frequency_floodplainstage, Convert.ToInt32(thisChunkIteration));
                 }
                 else
                 {
-                    PairedData systemResponse_sample = _SystemResponseFunction.SamplePairedData(randomProvider.NextRandom(), computeIsDeterministic); //needs to be a random number
-                                                                                                                                                      //IPairedData frequency_floodplainstage_withLevee = frequency_floodplainstage.multiply(_levee_curve_sample);
+                    PairedData systemResponse_sample = _SystemResponseFunction.SamplePairedData(thisComputeIteration, computeIsDeterministic); 
                     if (computeWithDamage)
                     {
-                        ComputeDamagesFromStageFrequency_WithLeveeAndInteriorExterior(randomProvider, _channelstage_floodplainstage_sample, frequency_stage, systemResponse_sample, iteration, computeIsDeterministic);
+                        ComputeDamagesFromStageFrequency_WithLeveeAndInteriorExterior(_channelstage_floodplainstage_sample, frequency_stage, systemResponse_sample, thisComputeIteration, thisChunkIteration, computeIsDeterministic);
                     }
                     //If the system response function is the default function
                     if (systemResponse_sample.Xvals.Length <= 2)
                     {
-                        ComputePerformance(frequency_stage, Convert.ToInt32(iteration));
+                        ComputePerformance(frequency_stage, Convert.ToInt32(thisChunkIteration));
                     }
                     else
                     {
-                        ComputeLeveePerformance(frequency_stage, systemResponse_sample, Convert.ToInt32(iteration));
+                        ComputeLeveePerformance(frequency_stage, systemResponse_sample, Convert.ToInt32(thisChunkIteration));
                     }
                 }
 
             }
         }
 
-        private void ComputeDamagesFromStageFrequency(IProvideRandomNumbers randomProvider, PairedData frequency_stage, long iteration, bool computeIsDeterministic)
+        private void ComputeDamagesFromStageFrequency(PairedData frequency_stage, long thisComputeIteration, long thisChunkIteration, bool computeIsDeterministic)
         {
-            foreach (UncertainPairedData stageUncertainDamage in _DamageCategoryStageDamage)
+            foreach (UncertainPairedData stageUncertainDamage in _StageDamageFunctions)
             {
                 //TODO: here we need to check if stage damage is zero 
                 //if so, then skip this stuff and just add 0 to consequenceResults
-                PairedData _stage_damage_sample = stageUncertainDamage.SamplePairedData(randomProvider.NextRandom(), computeIsDeterministic);
+                PairedData _stage_damage_sample = stageUncertainDamage.SamplePairedData(thisComputeIteration, computeIsDeterministic);
                 PairedData frequency_damage = _stage_damage_sample.compose(frequency_stage);
                 double eadEstimate = frequency_damage.integrate();
-                _ImpactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadEstimate, stageUncertainDamage.CurveMetaData.DamageCategory, stageUncertainDamage.CurveMetaData.AssetCategory, _ImpactAreaID, iteration);
+                _ImpactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadEstimate, stageUncertainDamage.CurveMetaData.DamageCategory, stageUncertainDamage.CurveMetaData.AssetCategory, _ImpactAreaID, thisChunkIteration);
             }
         }
-        private void ComputeDamagesFromStageFrequency_WithLevee(IProvideRandomNumbers randomProvider, PairedData frequency_stage, PairedData systemResponse, long iteration, bool computeIsDeterministic)
+        private void ComputeDamagesFromStageFrequency_WithLevee(PairedData frequency_stage, PairedData systemResponse,  long thisComputeIteration, long thisChunkIteration, bool computeIsDeterministic)
         {
-            foreach (UncertainPairedData stageUncertainDamage in _DamageCategoryStageDamage)
+            foreach (UncertainPairedData stageUncertainDamage in _StageDamageFunctions)
             {
-                PairedData stageDamageSample = stageUncertainDamage.SamplePairedData(randomProvider.NextRandom(), computeIsDeterministic);//needs to be a random number
+                PairedData stageDamageSample = stageUncertainDamage.SamplePairedData(thisComputeIteration, computeIsDeterministic);
                 PairedData validatedSystemResponse = EnsureBottomAndTopHaveCorrectProbabilities(systemResponse);
                 PairedData stageDamageSampledAndMultiplied = stageDamageSample.multiply(validatedSystemResponse);
 
                 if (NonFailRiskIncluded)
                 {
-                    foreach (UncertainPairedData stageUncertainNonFailureDamage in DamageCategoryStageNonFailureDamage)
+                    foreach (UncertainPairedData stageUncertainNonFailureDamage in _NonFailureStageDamageFunctions)
                     {
                         if (stageUncertainNonFailureDamage.DamageCategory == stageUncertainDamage.DamageCategory
                             && stageUncertainNonFailureDamage.AssetCategory == stageUncertainDamage.AssetCategory)
                         {
                             PairedData inverseOfSystemResponse = CalculateFailureProbComplement(validatedSystemResponse);
-                            PairedData stageNonFailureDamageSampledAndMultiplied = stageUncertainNonFailureDamage.SamplePairedData(randomProvider.NextRandom(), computeIsDeterministic).multiply(inverseOfSystemResponse);
+                            PairedData stageNonFailureDamageSampledAndMultiplied = stageUncertainNonFailureDamage.SamplePairedData(thisComputeIteration, computeIsDeterministic).multiply(inverseOfSystemResponse);
                             stageDamageSampledAndMultiplied = stageDamageSampledAndMultiplied.SumYsForGivenX(stageNonFailureDamageSampledAndMultiplied);
                         }
                     }
                 }
                 PairedData frequency_damage = stageDamageSampledAndMultiplied.compose(frequency_stage);
                 double eadEstimate = frequency_damage.integrate();
-                _ImpactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadEstimate, stageUncertainDamage.CurveMetaData.DamageCategory, stageUncertainDamage.CurveMetaData.AssetCategory, _ImpactAreaID, iteration);
+                _ImpactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadEstimate, stageUncertainDamage.CurveMetaData.DamageCategory, stageUncertainDamage.CurveMetaData.AssetCategory, _ImpactAreaID, thisChunkIteration);
             }
 
         }
 
-        private void ComputeDamagesFromStageFrequency_WithLeveeAndInteriorExterior(IProvideRandomNumbers randomProvider, PairedData exterior_interior, PairedData frequency_exteriorStage, PairedData systemResponse, long iteration, bool computeIsDeterministic)
+        private void ComputeDamagesFromStageFrequency_WithLeveeAndInteriorExterior(PairedData exterior_interior, PairedData frequency_exteriorStage, PairedData systemResponse, long thisComputeIteration, long thisChunkIteration, bool computeIsDeterministic)
         {
-            foreach (UncertainPairedData stageUncertainDamage in _DamageCategoryStageDamage)
+            foreach (UncertainPairedData stageUncertainDamage in _StageDamageFunctions)
             {
-                PairedData interiorStage_damage_sample = stageUncertainDamage.SamplePairedData(randomProvider.NextRandom(), computeIsDeterministic);//needs to be a random number
+                PairedData interiorStage_damage_sample = stageUncertainDamage.SamplePairedData(thisComputeIteration, computeIsDeterministic);
                 PairedData exteriorStage_damage_sample = interiorStage_damage_sample.compose(exterior_interior);
                 PairedData validatedSystemResponse = EnsureBottomAndTopHaveCorrectProbabilities(systemResponse);
                 PairedData stage_damage_sample_withLevee = exteriorStage_damage_sample.multiply(validatedSystemResponse);
                 PairedData frequency_damage = stage_damage_sample_withLevee.compose(frequency_exteriorStage);
                 double eadEstimate = frequency_damage.integrate();
-                _ImpactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadEstimate, stageUncertainDamage.CurveMetaData.DamageCategory, stageUncertainDamage.CurveMetaData.AssetCategory, _ImpactAreaID, iteration);
+                _ImpactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadEstimate, stageUncertainDamage.CurveMetaData.DamageCategory, stageUncertainDamage.CurveMetaData.AssetCategory, _ImpactAreaID, thisChunkIteration);
             }
 
         }
@@ -493,19 +528,19 @@ namespace HEC.FDA.Model.compute
             return complementOfSystemResponse;
         }
         //TODO: Opportunity for refactor: move performance functions to system performance statistics
-        public void ComputePerformance(PairedData frequency_stage, int iteration)
+        public void ComputePerformance(PairedData frequency_stage, int thisChunkIteration)
         {
 
             foreach (var thresholdEntry in _ImpactAreaScenarioResults.PerformanceByThresholds.ListOfThresholds)
             {
                 double thresholdValue = thresholdEntry.ThresholdValue;
                 double aep = 1 - frequency_stage.f_inverse(thresholdValue);
-                thresholdEntry.SystemPerformanceResults.AddAEPForAssurance(aep, iteration);
-                GetStageForNonExceedanceProbability(frequency_stage, thresholdEntry, iteration);
+                thresholdEntry.SystemPerformanceResults.AddAEPForAssurance(aep, thisChunkIteration);
+                GetStageForNonExceedanceProbability(frequency_stage, thresholdEntry, thisChunkIteration);
             }
         }
         //this method assumes that the levee fragility function spans the entire probability domain 
-        public void ComputeLeveePerformance(PairedData frequency_stage, PairedData levee_curve_sample, int iteration)
+        public void ComputeLeveePerformance(PairedData frequency_stage, PairedData levee_curve_sample, int thisChunkIteration)
         {
             PairedData levee_frequency_stage = levee_curve_sample.compose(frequency_stage);
             double aep = 0;
@@ -529,19 +564,19 @@ namespace HEC.FDA.Model.compute
             aep += finalProbOfStageInRange * finalAvgProbFailure;
             foreach (var thresholdEntry in _ImpactAreaScenarioResults.PerformanceByThresholds.ListOfThresholds)
             {
-                thresholdEntry.SystemPerformanceResults.AddAEPForAssurance(aep, iteration);
-                GetStageForNonExceedanceProbability(frequency_stage, thresholdEntry, iteration);
+                thresholdEntry.SystemPerformanceResults.AddAEPForAssurance(aep, thisChunkIteration);
+                GetStageForNonExceedanceProbability(frequency_stage, thresholdEntry, thisChunkIteration);
             }
 
         }
 
-        public static void GetStageForNonExceedanceProbability(PairedData frequency_stage, Threshold threshold, int iteration)
+        public static void GetStageForNonExceedanceProbability(PairedData frequency_stage, Threshold threshold, int thisChunkIteration)
         {//TODO: Get rid of these hard coded doubles 
             double[] er101RequiredNonExceedanceProbabilities = new double[] { .9, .96, .98, .99, .996, .998 };
             foreach (double nonExceedanceProbability in er101RequiredNonExceedanceProbabilities)
             {
                 double stageOfEvent = frequency_stage.f(nonExceedanceProbability);
-                threshold.SystemPerformanceResults.AddStageForAssurance(nonExceedanceProbability, stageOfEvent, iteration);
+                threshold.SystemPerformanceResults.AddStageForAssurance(nonExceedanceProbability, stageOfEvent, thisChunkIteration);
             }
         }
         public void CreateHistogramsForAssuranceOfThresholds()
@@ -560,10 +595,10 @@ namespace HEC.FDA.Model.compute
         {
             CurveMetaData metadata = new("Total", "Total");
             PairedData totalStageDamage = new(null, null, metadata);
-            MedianRandomProvider meanRandomProvider = new();
+            long iteration = 1;
             foreach (UncertainPairedData uncertainPairedData in listOfUncertainPairedData)
             {
-                PairedData stageDamageSample = uncertainPairedData.SamplePairedData(meanRandomProvider.NextRandom());
+                PairedData stageDamageSample = uncertainPairedData.SamplePairedData(iteration, retrieveDeterministicRepresentation: true);
                 totalStageDamage = totalStageDamage.SumYsForGivenX(stageDamageSample);
             }
             return totalStageDamage;
@@ -582,7 +617,7 @@ namespace HEC.FDA.Model.compute
                     ReportMessage(this, new MessageEventArgs(errorMessage));
                     return new Threshold();
                 }
-                PairedData totalStageDamage = ComputeTotalStageDamage(_DamageCategoryStageDamage);
+                PairedData totalStageDamage = ComputeTotalStageDamage(_StageDamageFunctions);
                 PairedData totalFrequencyDamage = new(new double[] { 0 }, new double[] { 0 });
                 bool firstPass = true;
                 foreach ((CurveMetaData, PairedData) metaData in damageFrequencyFunctions)
@@ -618,16 +653,17 @@ namespace HEC.FDA.Model.compute
 
 
 
-        private List<(CurveMetaData, PairedData)> ComputeDamageFrequency(bool computeIsDeterministic)
+        private List<(CurveMetaData, PairedData)> ComputeDamageFrequency()
         {
-            MedianRandomProvider meanRandomProvider = new();
+            long fakeIterationNumberNotUsedInThisPartOfTheComputeBecauseItIsDeterministic = 1;
+            bool computeIsDeterministic = true;
             double[] xs = new double[] { 0 };
             double[] ys = new double[] { 0 };
             PairedData frequencyStage;
 
             List<(CurveMetaData, PairedData)> damageFrequency = new();
 
-            if (_DamageCategoryStageDamage.Count == 0)
+            if (_StageDamageFunctions.Count == 0)
             {
                 string message = $"A valid damage frequency cannot be calculated for the impact area with ID {_ImpactAreaID} because no stage-damage functions were found. A meaningless default threshold of 0 will be used. Please have an additional threshold for meaningful performance statistics" + Environment.NewLine;
                 ErrorMessage errorMessage = new(message, ErrorLevel.Fatal);
@@ -638,18 +674,18 @@ namespace HEC.FDA.Model.compute
             }
             else
             {
-                foreach (UncertainPairedData stageDamageFunction in _DamageCategoryStageDamage)
+                foreach (UncertainPairedData stageDamageFunction in _StageDamageFunctions)
                 {
                     if (_FrequencyStage.CurveMetaData.IsNull)
                     {
                         PairedData frequencyFlow;
                         if (_FrequencyDischargeGraphical.CurveMetaData.IsNull)
                         {
-                            frequencyFlow = _FrequencyDischarge.BootstrapToPairedData(meanRandomProvider, utilities.DoubleGlobalStatics.RequiredExceedanceProbabilities);
+                            frequencyFlow = _FrequencyDischarge.BootstrapToPairedData(fakeIterationNumberNotUsedInThisPartOfTheComputeBecauseItIsDeterministic, utilities.DoubleGlobalStatics.RequiredExceedanceProbabilities, computeIsDeterministic);
                         }
                         else
                         {
-                            frequencyFlow = _FrequencyDischargeGraphical.SamplePairedData(meanRandomProvider.NextRandom());
+                            frequencyFlow = _FrequencyDischargeGraphical.SamplePairedData(fakeIterationNumberNotUsedInThisPartOfTheComputeBecauseItIsDeterministic, computeIsDeterministic);
                         }
                         if (_UnregulatedRegulated.CurveMetaData.IsNull)
                         {
@@ -665,13 +701,13 @@ namespace HEC.FDA.Model.compute
                             }
                             else
                             {
-                                PairedData flowStageSample = _DischargeStage.SamplePairedData(meanRandomProvider.NextRandom(), computeIsDeterministic);
+                                PairedData flowStageSample = _DischargeStage.SamplePairedData(fakeIterationNumberNotUsedInThisPartOfTheComputeBecauseItIsDeterministic, computeIsDeterministic);
                                 frequencyStage = flowStageSample.compose(frequencyFlow);
                             }
                         }
                         else
                         {
-                            PairedData inflowOutflowSample = _UnregulatedRegulated.SamplePairedData(meanRandomProvider.NextRandom(), computeIsDeterministic);
+                            PairedData inflowOutflowSample = _UnregulatedRegulated.SamplePairedData(fakeIterationNumberNotUsedInThisPartOfTheComputeBecauseItIsDeterministic, computeIsDeterministic);
                             PairedData transformFlowFrequency = inflowOutflowSample.compose(frequencyFlow);
                             if (_DischargeStage.CurveMetaData.IsNull)
                             {
@@ -684,7 +720,7 @@ namespace HEC.FDA.Model.compute
                             }
                             else
                             {
-                                PairedData flowStageSample = _DischargeStage.SamplePairedData(meanRandomProvider.NextRandom(), computeIsDeterministic);
+                                PairedData flowStageSample = _DischargeStage.SamplePairedData(fakeIterationNumberNotUsedInThisPartOfTheComputeBecauseItIsDeterministic, computeIsDeterministic);
                                 frequencyStage = flowStageSample.compose(transformFlowFrequency);
                             }
                         }
@@ -692,10 +728,10 @@ namespace HEC.FDA.Model.compute
                     }
                     else
                     {
-                        frequencyStage = _FrequencyStage.SamplePairedData(meanRandomProvider.NextRandom());
+                        frequencyStage = _FrequencyStage.SamplePairedData(fakeIterationNumberNotUsedInThisPartOfTheComputeBecauseItIsDeterministic, computeIsDeterministic);
                     }
 
-                    PairedData stageDamage = stageDamageFunction.SamplePairedData(meanRandomProvider.NextRandom(), computeIsDeterministic);
+                    PairedData stageDamage = stageDamageFunction.SamplePairedData(fakeIterationNumberNotUsedInThisPartOfTheComputeBecauseItIsDeterministic, computeIsDeterministic);
                     if (_ChannelStageFloodplainStage.IsNull)
                     {
 
@@ -703,7 +739,7 @@ namespace HEC.FDA.Model.compute
                     }
                     else
                     {
-                        PairedData exteriorInterior = _ChannelStageFloodplainStage.SamplePairedData(meanRandomProvider.NextRandom(), computeIsDeterministic);
+                        PairedData exteriorInterior = _ChannelStageFloodplainStage.SamplePairedData(fakeIterationNumberNotUsedInThisPartOfTheComputeBecauseItIsDeterministic, computeIsDeterministic);
                         PairedData frequencyInteriorStage = exteriorInterior.compose(frequencyStage);
                         damageFrequency.Add((stageDamageFunction.CurveMetaData, (PairedData)stageDamage.compose(frequencyInteriorStage)));
                     }
@@ -723,9 +759,8 @@ namespace HEC.FDA.Model.compute
         public ImpactAreaScenarioResults PreviewCompute()
         {
 
-            MedianRandomProvider meanRandomProvider = new();
             ConvergenceCriteria convergenceCriteria = new(minIterations: 1, maxIterations: 1);
-            ImpactAreaScenarioResults results = Compute(meanRandomProvider, convergenceCriteria, new CancellationTokenSource().Token, computeIsDeterministic: true);
+            ImpactAreaScenarioResults results = Compute(convergenceCriteria, new CancellationTokenSource().Token, computeIsDeterministic: true);
             return results;
         }
         public static SimulationBuilder Builder(int impactAreaID)
@@ -827,9 +862,9 @@ namespace HEC.FDA.Model.compute
             {
                 return false;
             }
-            foreach (UncertainPairedData stageDamage in _DamageCategoryStageDamage)
+            foreach (UncertainPairedData stageDamage in _StageDamageFunctions)
             {
-                foreach (UncertainPairedData incomingStageDamage in incomingImpactAreaScenarioSimulation._DamageCategoryStageDamage)
+                foreach (UncertainPairedData incomingStageDamage in incomingImpactAreaScenarioSimulation._StageDamageFunctions)
                 {
                     if (stageDamage.CurveMetaData.DamageCategory.Equals(incomingStageDamage.CurveMetaData.DamageCategory) && stageDamage.CurveMetaData.AssetCategory.Equals(incomingStageDamage.CurveMetaData.AssetCategory))
                     {
@@ -891,16 +926,16 @@ namespace HEC.FDA.Model.compute
             impactAreaScenarioResults.Name = IMPACT_AREA_SCENARIO_RESULTS_ELEMENT_NAME;
             XElement stageDamageList = new(STAGE_DAMAGE_LIST_ELEMENT_NAME);
 
-            foreach (UncertainPairedData stageDamage in _DamageCategoryStageDamage)
+            foreach (UncertainPairedData stageDamage in _StageDamageFunctions)
             {
                 XElement stageDamageElement = stageDamage.WriteToXML();
                 stageDamageList.Add(stageDamageElement);
             }
 
-            string nonFailStageDamageTag = Serialization.GetXMLTagFromProperty(GetType(), nameof(DamageCategoryStageNonFailureDamage));
+            string nonFailStageDamageTag = Serialization.GetXMLTagFromProperty(GetType(), nameof(_NonFailureStageDamageFunctions));
             XElement nonFailStageDamageList = new(nonFailStageDamageTag);
 
-            foreach (UncertainPairedData stageDamage in DamageCategoryStageNonFailureDamage)
+            foreach (UncertainPairedData stageDamage in _NonFailureStageDamageFunctions)
             {
                 XElement stageDamageElement = stageDamage.WriteToXML();
                 nonFailStageDamageList.Add(stageDamageElement);
@@ -922,7 +957,7 @@ namespace HEC.FDA.Model.compute
         {
             Type type = typeof(ImpactAreaScenarioSimulation);
 
-            string nonFailStageDamageTag = Serialization.GetXMLTagFromProperty(type, nameof(DamageCategoryStageNonFailureDamage));
+            string nonFailStageDamageTag = Serialization.GetXMLTagFromProperty(type, nameof(_NonFailureStageDamageFunctions));
             List<UncertainPairedData> nonFailtageDamageList = new();
             foreach (XElement stageDamageElement in xElement.Element(nonFailStageDamageTag).Elements())
             {
@@ -1040,8 +1075,8 @@ namespace HEC.FDA.Model.compute
             }
             public SimulationBuilder WithStageDamages(List<UncertainPairedData> uncertainPairedDataList)
             {
-                _Simulation._DamageCategoryStageDamage = uncertainPairedDataList;
-                foreach (UncertainPairedData uncertainPairedData in _Simulation._DamageCategoryStageDamage)
+                _Simulation._StageDamageFunctions = uncertainPairedDataList;
+                foreach (UncertainPairedData uncertainPairedData in _Simulation._StageDamageFunctions)
                 {
                     _Simulation.AddSinglePropertyRule(uncertainPairedData.CurveMetaData.DamageCategory + " stage damages", new Rule(() => { uncertainPairedData.Validate(); return !uncertainPairedData.HasErrors; }, $"Stage-damage errors ror the impact area with ID {_Simulation._ImpactAreaID}: " + uncertainPairedData.GetErrors().ToString()));
                 }
@@ -1066,7 +1101,7 @@ namespace HEC.FDA.Model.compute
 
             public SimulationBuilder WithNonFailureStageDamage(List<UncertainPairedData> stageDamageFunctions)
             {
-                _Simulation.DamageCategoryStageNonFailureDamage = stageDamageFunctions;
+                _Simulation._NonFailureStageDamageFunctions = stageDamageFunctions;
                 _Simulation.NonFailRiskIncluded = true;
                 return new SimulationBuilder(_Simulation);
             }

@@ -2,6 +2,7 @@ namespace HEC.FDA.Model.paireddata
 {
     public interface IPairedDataProducer
     {
-        PairedData SamplePairedData(double probability, bool computeIsDeterministic);
+        PairedData SamplePairedData(long iteration, bool computeIsDeterministic);
+        PairedData SamplePairedData(double probability);
     }
 }

@@ -35,13 +35,13 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
         /// <param name="inputFunctionVals"></param>
         public void OverwriteInputFunctionVals(UncertainPairedData inputFunctionVals)
         {
-            PairedData deterministicInputFunc = inputFunctionVals.SamplePairedData(0.5, true);
-            deterministicInputFunc.SortToIncreasingXVals();
+            PairedData medianInputFunction = inputFunctionVals.SamplePairedData(0.5);
+            medianInputFunction.SortToIncreasingXVals();
             for (int i = 0; i < Data.Count; i++)
             {
                 LP3HistogramRow row = (LP3HistogramRow)Data[i];
                 double probability = row.X;
-                row.InputFunctionY = deterministicInputFunc.f(probability);
+                row.InputFunctionY = medianInputFunction.f(probability);
             }
         }
 

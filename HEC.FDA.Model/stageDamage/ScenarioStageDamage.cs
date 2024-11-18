@@ -25,6 +25,7 @@ namespace HEC.FDA.Model.stageDamage
         #region Methods 
         /// <summary>
         /// Begins the outermost loop of the Scenario Stage Damage Compute. 
+        /// At this time, the compute engine can run a deterministic stage-damage compute, but the user interface does not avail that option.
         /// Scenario SD <--
         /// Impact Area SD
         /// Damage Catagory 
@@ -33,15 +34,14 @@ namespace HEC.FDA.Model.stageDamage
         /// Structure
         /// W.S.Profile
         /// </summary>
-        /// <param name="randomProvider"></param>
         /// <returns></returns>
-        public (List<UncertainPairedData>, List<UncertainPairedData>) Compute(IProvideRandomNumbers randomProvider)
+        public (List<UncertainPairedData>, List<UncertainPairedData>) Compute(bool computeIsDeterministic = false)
         {
             (List<UncertainPairedData>, List<UncertainPairedData>) scenarioStageDamageResults = new(new List<UncertainPairedData>(), new List<UncertainPairedData>());
 
             foreach (ImpactAreaStageDamage impactAreaStageDamage in _ImpactAreaStageDamage)
             {
-                (List<UncertainPairedData>, List<UncertainPairedData>) impactAreaStageDamageResults = impactAreaStageDamage.Compute(randomProvider);
+                (List<UncertainPairedData>, List<UncertainPairedData>) impactAreaStageDamageResults = impactAreaStageDamage.Compute(computeIsDeterministic);
                 scenarioStageDamageResults.Item1.AddRange(impactAreaStageDamageResults.Item1);
                 scenarioStageDamageResults.Item2.AddRange(impactAreaStageDamageResults.Item2);
             }

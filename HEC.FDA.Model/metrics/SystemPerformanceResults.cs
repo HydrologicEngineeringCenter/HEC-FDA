@@ -18,10 +18,8 @@ namespace HEC.FDA.Model.metrics
         #region Fields
         private const string AEP_ASSURANCE_TYPE = "AEP";
         private const string STAGE_ASSURANCE_TYPE = "STAGE";
-        private const string AEP_ASSURANCE_FOR_PLOTTING = "AEP_PLOT";
         private const double AEP_BIN_WIDTH = 0.0002;
         private const double STAGE_BIN_WIDTH = 0.001;
-        private const double AEP_FOR_PLOTTING_BIN_WIDTH = 0.02;
         private readonly bool _CalculatePerformanceForLevee;
         private readonly UncertainPairedData _SystemResponseFunction;
         private readonly ConvergenceCriteria _ConvergenceCriteria;
@@ -38,8 +36,6 @@ namespace HEC.FDA.Model.metrics
             Assurances = new List<AssuranceResultStorage>();
             AssuranceResultStorage dummyAEP = new(AEP_ASSURANCE_TYPE, 0);
             Assurances.Add(dummyAEP);
-            AssuranceResultStorage dummyPlottingAEP = new(AEP_ASSURANCE_FOR_PLOTTING, 0);
-            Assurances.Add(dummyPlottingAEP);
             double[] standardNonExceedanceProbabilities = new double[] { .9, .96, .98, .99, .996, .998 };
             foreach (double probability in standardNonExceedanceProbabilities)
             {
@@ -53,8 +49,6 @@ namespace HEC.FDA.Model.metrics
             Assurances = new List<AssuranceResultStorage>();
             AssuranceResultStorage aepAssurance = new(AEP_ASSURANCE_TYPE, AEP_BIN_WIDTH, convergenceCriteria);
             Assurances.Add(aepAssurance);
-            AssuranceResultStorage aepAssuranceForPlotting = new(AEP_ASSURANCE_FOR_PLOTTING, AEP_FOR_PLOTTING_BIN_WIDTH, convergenceCriteria);
-            Assurances.Add(aepAssuranceForPlotting);
         }
         public SystemPerformanceResults(UncertainPairedData systemResponseFunction, ConvergenceCriteria convergenceCriteria)
         {
@@ -70,8 +64,6 @@ namespace HEC.FDA.Model.metrics
             Assurances = new List<AssuranceResultStorage>();
             AssuranceResultStorage aepAssurance = new(AEP_ASSURANCE_TYPE, AEP_BIN_WIDTH, convergenceCriteria);
             Assurances.Add(aepAssurance);
-            AssuranceResultStorage aepAssuranceForPlotting = new(AEP_ASSURANCE_FOR_PLOTTING, AEP_FOR_PLOTTING_BIN_WIDTH, convergenceCriteria);
-            Assurances.Add(aepAssuranceForPlotting);
             _ConvergenceCriteria = convergenceCriteria;
         }
 
@@ -112,22 +104,12 @@ namespace HEC.FDA.Model.metrics
                 Assurances.Add(assurance);
             }
         }
-        /// <summary>
-        /// This method returns the thread safe inline histogram of AEPs
-        /// This method is only used to get the histogram for plotting purposes. 
-        /// </summary>
-        /// <returns></returns>
-        public DynamicHistogram GetAEPHistogramForPlotting()
-        {
-            DynamicHistogram aepHistogram = GetAssurance(AEP_ASSURANCE_FOR_PLOTTING).AssuranceHistogram;
-            return aepHistogram;
-        }
         public DynamicHistogram GetAssuranceOfThresholdHistogram(double standardNonExceedanceProbability)
         {
             DynamicHistogram stageHistogram = GetAssurance(STAGE_ASSURANCE_TYPE, standardNonExceedanceProbability).AssuranceHistogram;
             return stageHistogram;
         }
-        internal DynamicHistogram GetAEPHistogramForMetrics()
+        internal DynamicHistogram GetAEPHistogram()
         {
             DynamicHistogram aepHistogram = GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram;
             return aepHistogram;
@@ -136,7 +118,6 @@ namespace HEC.FDA.Model.metrics
         public void AddAEPForAssurance(double aep, int iteration)
         {
             GetAssurance(AEP_ASSURANCE_TYPE).AddObservation(aep, iteration);
-            GetAssurance(AEP_ASSURANCE_FOR_PLOTTING).AddObservation(aep, iteration);
         }
         public void AddStageForAssurance(double standardNonExceedanceProbability, double stage, int iteration)
         {

@@ -36,7 +36,6 @@ namespace HEC.FDA.ModelTest.unittests
         [InlineData(150000, 150000, 150000, 150000, 150000, 150000, 50, .0275, 2023, 2050, 1, 1.0)]//if base year EAD = future year EAD then EAD = AAEQ
         public void AlternativeResults_Test(double expectedAAEQDamageExceededWithAnyProbability, double expectedMeanAAEQ, double expectedBaseYearEAD, double expectedFutureYearEAD, double expectedBaseYearDamageExceededWithAnyProb, double expectedFutureYearDamageExceededWithAnyProb, int poa, double discountRate, int baseYear, int futureYear, int iterations, double futureDamageFractionOfExistingDamage)
         {
-            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
             ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
             //create a stage distribution
@@ -85,9 +84,9 @@ namespace HEC.FDA.ModelTest.unittests
             impactAreaListFutureYear.Add(sFuture);
 
             Scenario baseScenario = new Scenario( impactAreaListBaseYear);
-            ScenarioResults baseScenarioResults = baseScenario.Compute(meanRandomProvider, convergenceCriteria);
+            ScenarioResults baseScenarioResults = baseScenario.Compute(convergenceCriteria, computeIsDeterministic:true);
             Scenario futureScenario = new Scenario(impactAreaListFutureYear);
-            ScenarioResults futureScenarioResults = futureScenario.Compute(meanRandomProvider, convergenceCriteria);
+            ScenarioResults futureScenarioResults = futureScenario.Compute(convergenceCriteria, computeIsDeterministic: true);
 
             AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, alternativeID, 
                 baseScenarioResults, futureScenarioResults,baseYear, futureYear, new CancellationToken());
@@ -130,7 +129,6 @@ namespace HEC.FDA.ModelTest.unittests
         [InlineData(50, .0275, 2023, 2050, 1)]
         public void AlternativeReturnsCorrectDamCats(int poa, double discountRate, int baseYear, int futureYear, int iterations)
         {
-            MedianRandomProvider meanRandomProvider = new MedianRandomProvider();
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
             ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
             //create a stage distribution
@@ -187,9 +185,9 @@ namespace HEC.FDA.ModelTest.unittests
             impactAreaListFutureYear.Add(sFuture);
 
             Scenario baseScenario = new Scenario(impactAreaListBaseYear);
-            ScenarioResults baseScenarioResults = baseScenario.Compute(meanRandomProvider, convergenceCriteria);
+            ScenarioResults baseScenarioResults = baseScenario.Compute(convergenceCriteria, computeIsDeterministic: true);
             Scenario futureScenario = new Scenario(impactAreaListFutureYear);
-            ScenarioResults futureScenarioResults = futureScenario.Compute(meanRandomProvider, convergenceCriteria);
+            ScenarioResults futureScenarioResults = futureScenario.Compute(convergenceCriteria, computeIsDeterministic: true);
 
 
             AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, alternativeID, 

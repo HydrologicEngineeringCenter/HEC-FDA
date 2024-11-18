@@ -124,9 +124,8 @@ namespace HEC.FDA.ModelTest.integrationtests
                 .WithStageDamages(stageDamageList)
                 .Build();
 
-            RandomProvider randomProvider = new RandomProvider(seed);
-            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations);
-            ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations);
+            ImpactAreaScenarioResults results = simulation.Compute(convergenceCriteria);
             double difference = expected - results.ConsequenceResults.MeanDamage(damCat, assetCat, impactAreaID);
             double relativeDifference = Math.Abs(difference / expected);
             Assert.True(relativeDifference < .032);
@@ -166,8 +165,8 @@ namespace HEC.FDA.ModelTest.integrationtests
                 .WithLevee(leveeFragilityFunction, topOfLeveeElevation)
                 .Build();
             RandomProvider randomProvider = new RandomProvider(seed);
-            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1000, maxIterations: iterations);
-            ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1000, maxIterations: iterations);
+            ImpactAreaScenarioResults results = simulation.Compute(convergenceCriteria);
 
             double differenceEAD = expectedEAD - results.ConsequenceResults.MeanDamage(damCat, assetCat, impactAreaID);
             double relativeDifferenceEAD = Math.Abs(differenceEAD / expectedEAD);
@@ -200,9 +199,8 @@ namespace HEC.FDA.ModelTest.integrationtests
                 .WithStageDamages(stageDamageList)
                 .WithLevee(fragilityCurve, topOfLeveeElevation)
                 .Build();
-            RandomProvider randomProvider = new RandomProvider(seed);
-            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations);
-            ImpactAreaScenarioResults results = simulation.Compute(randomProvider, cc);
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations);
+            ImpactAreaScenarioResults results = simulation.Compute(convergenceCriteria);
 
             double differenceEAD = expectedEAD - results.ConsequenceResults.MeanDamage(damCat, assetCat, impactAreaID);
             double relativeDifferenceEAD = Math.Abs(differenceEAD / expectedEAD);

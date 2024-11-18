@@ -617,15 +617,13 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 List<ImpactAreaStageDamage> impactAreaStageDamages = config.CreateStageDamages();
 
                 ScenarioStageDamage scenarioStageDamage = new(impactAreaStageDamages);
-                int seed = 1234;
-                Model.compute.RandomProvider randomProvider = new(seed);
 
                 bool canCompute = ValidateStructureCount(scenarioStageDamage);
                 if (canCompute)
                 {
                     List<UncertainPairedData> quantityDamagedElementsUPD = new();
                     //these are the rows in the computed table
-                    (stageDamageFunctions, quantityDamagedElementsUPD) = await Task.Run(() => scenarioStageDamage.Compute(randomProvider));
+                    (stageDamageFunctions, quantityDamagedElementsUPD) = await Task.Run(() => scenarioStageDamage.Compute());
                     List<string> errors = scenarioStageDamage.GetErrorMessages();
                     if (errors.Count > 0)
                     {
@@ -638,7 +636,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                     WriteErrors(errors);
                     if (WriteDetailsFile)
                     {
-                        WriteDetailsCsvFile(scenarioStageDamage, quantityDamagedElementsUPD, stageDamageFunctions);
+                        WriteDetailsCsvFile(scenarioStageDamage, quantityDamagedElementsUPD);
                     }
                 }
             }
@@ -753,7 +751,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         }
 
         //TODO: GET STRUCTURE COUNT DETAILS WRITTEN TO FILE
-        private void WriteDetailsCsvFile(ScenarioStageDamage scenarioStageDamage, List<UncertainPairedData> quantityDamagedElementsUPD, List<UncertainPairedData> stageDamageFunctions)
+        private void WriteDetailsCsvFile(ScenarioStageDamage scenarioStageDamage, List<UncertainPairedData> quantityDamagedElementsUPD)
         {
             //Its necessary for the details to be written with names for the impact areas, not FIDs. It helps users troubleshoot. I don't like this, but that's why the dictionary is passed in. to translate at the
             //lowest level before it's written
