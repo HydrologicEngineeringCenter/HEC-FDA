@@ -62,7 +62,7 @@ public static class StructureDataValidator
         bool valid = true;
         var rows = pointShapefile.Rows;
         rowsWithDuplicatedData = [];
-        List<object> previousVals = [];
+        HashSet<object> previousVals = [];
 
         for (int i = 0; i < rows.Count; i++)
         {
@@ -71,14 +71,10 @@ public static class StructureDataValidator
             {
                 continue;
             }
-            if(previousVals.Contains(val))
+            if(!previousVals.Add(val))
             {
                 rowsWithDuplicatedData.Add(i);
                 valid = false;
-            }
-            else
-            {
-                previousVals.Add(val);
             }
         }
         return valid;
