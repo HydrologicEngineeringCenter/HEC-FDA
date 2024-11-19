@@ -101,8 +101,8 @@ namespace HEC.FDA.ViewModel.Results
             {
                 Rows.Add(new ScenarioDamageRowItem(element));
                 damCatRows.Add(new ScenarioDamCatRowItem(element));
-                List<IContainImpactAreaScenarioResults> resultsList = element.Results.ResultsList;
-                foreach (IContainImpactAreaScenarioResults impactAreaScenarioResults in resultsList)
+                List<ImpactAreaScenarioResults> resultsList = element.Results.ResultsList;
+                foreach (ImpactAreaScenarioResults impactAreaScenarioResults in resultsList)
                 { 
                     int iasID = impactAreaScenarioResults.ImpactAreaID;
                     SpecificIAS ias = element.SpecificIASElements.Where(ias => ias.ImpactAreaID == iasID).First();

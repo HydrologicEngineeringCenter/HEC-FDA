@@ -84,7 +84,7 @@ namespace HEC.FDA.Model.alternatives
             {
                 //To keep track of which results have yet to be processed
                 //I think this allows us to handle situations where we have uneven numbers of results 
-                List<IContainImpactAreaScenarioResults> futureYearResultsList = new();
+                List<ImpactAreaScenarioResults> futureYearResultsList = new();
                 foreach (ImpactAreaScenarioResults futureYearImpactAreaScenarioResults in computedResultsFutureYear.ResultsList.Cast<ImpactAreaScenarioResults>())
                 {
                     futureYearResultsList.Add(futureYearImpactAreaScenarioResults);
@@ -114,7 +114,7 @@ namespace HEC.FDA.Model.alternatives
             return alternativeResults;
         }
 
-        private double ProcessBaseAndFutureYearScenarioResults(List<int> analysisYears, double discountRate, int periodOfAnalysis, ScenarioResults computedResultsBaseYear, ScenarioResults computedResultsFutureYear, AlternativeResults alternativeResults, List<IContainImpactAreaScenarioResults> futureYearResultsList, double quantityOFDamCatAssetCatImpactAreaCombos)
+        private double ProcessBaseAndFutureYearScenarioResults(List<int> analysisYears, double discountRate, int periodOfAnalysis, ScenarioResults computedResultsBaseYear, ScenarioResults computedResultsFutureYear, AlternativeResults alternativeResults, List<ImpactAreaScenarioResults> futureYearResultsList, double quantityOFDamCatAssetCatImpactAreaCombos)
         {
             double progressTicker = 0;
             foreach (ImpactAreaScenarioResults baseYearResults in computedResultsBaseYear.ResultsList.Cast<ImpactAreaScenarioResults>())
@@ -190,7 +190,7 @@ namespace HEC.FDA.Model.alternatives
 
        
         private void ProcessUnmatchedFutureResults(List<int> analysisYears, double discountRate, int periodOfAnalysis, ScenarioResults computedResultsBaseYear, AlternativeResults alternativeResults,
-            List<IContainImpactAreaScenarioResults> futureYearResultsList, CancellationToken cancellationToken)
+            List<ImpactAreaScenarioResults> futureYearResultsList, CancellationToken cancellationToken)
         {
             foreach (ImpactAreaScenarioResults futureYearResults in futureYearResultsList.Cast<ImpactAreaScenarioResults>())
             {
