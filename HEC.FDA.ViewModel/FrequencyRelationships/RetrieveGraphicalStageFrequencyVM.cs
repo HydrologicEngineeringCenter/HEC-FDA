@@ -144,6 +144,7 @@ public class RetrieveGraphicalStageFrequencyVM : BaseViewModel
         FrequencyEditorVM vm = new();
         vm.IsGraphical = true;
         vm.GraphicalVM.CurveComponentVM.SelectedItem.UpdateFromUncertainPairedData(upd);
+        ((GraphicalVM)vm.GraphicalVM.CurveComponentVM).UseFlow = false;
 
         FrequencyElement element = new FrequencyElement(name, editDate, "Retrieved from Hydraulics", id,vm);
         IElementManager elementManager = PersistenceFactory.GetElementManager(element);
