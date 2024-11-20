@@ -32,7 +32,8 @@
           <TextBlock Text="Total Average Annual Equivalent Damage"
                      HorizontalAlignment="Center"
                      Margin="5" />
-          <twp:FdaDataGrid ItemsSource="{Binding Path=Rows}"
+          <twp:FdaDataGrid AutoGeneratingColumn="FdaDataGrid_AutoGeneratingColumn"
+                           ItemsSource="{Binding Path=Rows}"
                            AutoGenerateColumns="True"
                            CanUserSortColumns="false"
                            SelectionUnit="Cell"
@@ -42,46 +43,31 @@
     </ScrollViewer>
 
 
+
     <ScrollViewer Grid.Row="1"
-                  VerticalScrollBarVisibility="Auto"
-                  HorizontalScrollBarVisibility="Auto"
                   HorizontalAlignment="Left"
+                  HorizontalScrollBarVisibility="Auto"
                   Margin="5">
-      <Grid>
-        <Grid.RowDefinitions>
-          <RowDefinition Height="auto" />
-          <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Grid Grid.Row="0"
-              Width="{Binding Path=Width, ElementName=damCatGrid}"
-              HorizontalAlignment="Left"
-              Margin="0 0 0 0">
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="{Binding ElementName=damCatGrid, Path=ActualWidth}" />
-          </Grid.ColumnDefinitions>
-          <Border Grid.Row="0"
-                  BorderBrush="Gray"
-                  BorderThickness="1">
-            <Label  HorizontalContentAlignment='Center'>Average Annual Equivalent Damage by Damage Category</Label>
-          </Border>
-        </Grid>
-
-
-        <DataGrid   HeadersVisibility="Column"
-                    Grid.Row="1"
-                    Name="damCatGrid"
-                    ItemsSource="{Binding DamCatTable}"
-                    AutoGenerateColumns="True"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    IsReadOnly="True"
-                    CanUserResizeColumns="True"
-                    CanUserReorderColumns="False"
-                    CanUserSortColumns="false"
-                    SelectionUnit="Cell"
-                    MinWidth="330">
-        </DataGrid>
-      </Grid>
+      <Border BorderBrush="Gray"
+              BorderThickness="1">
+        <StackPanel>
+          <TextBlock HorizontalAlignment="Center" Text="Average Annual Equivalent Damage by Damage Category" Margin="5" />
+          <DataGrid   HeadersVisibility="Column"
+                      Grid.Row="1"
+                      ItemsSource="{Binding DamCatTable}"
+                      AutoGeneratingColumn="FdaDataGrid_AutoGeneratingColumn"
+                      AutoGenerateColumns="True"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Top"
+                      IsReadOnly="True"
+                      CanUserResizeColumns="True"
+                      CanUserReorderColumns="False"
+                      CanUserSortColumns="false"
+                      SelectionUnit="Cell"
+                      MinWidth="330">
+          </DataGrid>
+        </StackPanel>
+      </Border>
     </ScrollViewer>
 
     <util:CloseControl Grid.Row="2"
