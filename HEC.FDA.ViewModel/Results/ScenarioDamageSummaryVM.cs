@@ -139,11 +139,12 @@ namespace HEC.FDA.ViewModel.Results
         {
             
             _DamCatTable = new DataTable();
-            DataColumn nameCol = new DataColumn("Name", typeof(string));
+            DataColumn nameCol = new("Name", typeof(string));
             _DamCatTable.Columns.Add(nameCol);
-            DataColumn yearCol = new DataColumn("Analysis Year", typeof(int));
+            DataColumn yearCol = new("Analysis Year", typeof(int));
             _DamCatTable.Columns.Add(yearCol);
-            DataColumn assetCol = new DataColumn("Asset Category", typeof(string));
+            DataColumn impactAreaCol = new("Impact Area", typeof(string));
+            _DamCatTable.Columns.Add(impactAreaCol);
             List<string> allUniqueDamCats = GetAllDamCats(rows);
             foreach (string damCat in allUniqueDamCats)
             {
@@ -162,6 +163,7 @@ namespace HEC.FDA.ViewModel.Results
             DataRow myRow = _DamCatTable.NewRow();
             myRow["Name"] = row.Name;
             myRow["Analysis Year"] = row.AnalysisYear;
+            myRow["Impact Area"] = row.ImpactAreaName;
             foreach(string damCat in allDamCats)
             {
                 if(row.DamCatMap.ContainsKey(damCat))

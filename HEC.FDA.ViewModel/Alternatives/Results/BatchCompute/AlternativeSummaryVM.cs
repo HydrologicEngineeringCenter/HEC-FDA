@@ -19,8 +19,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
             List<AlternativeDamCatRowItem> damCatRows = new List<AlternativeDamCatRowItem>();
             foreach (AlternativeElement element in altElems)
             {
-                Rows.Add(new AlternativeDamageRowItem(element));
-                damCatRows.Add(new AlternativeDamCatRowItem(element));
+                Rows.AddRange( AlternativeDamageRowItem.CreateAlternativeDamageRowItems(element));
+                damCatRows.AddRange( AlternativeDamCatRowItem.CreateAlternativeDamCatRowItems(element));
             }
             LoadDamCatDataTable(damCatRows);
         }
@@ -29,6 +29,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
         {
             DataColumn nameCol = new DataColumn("Name", typeof(string));
             DamCatTable.Columns.Add(nameCol);
+            DataColumn impactAreaCol = new DataColumn("Impact Area", typeof(string));
+            DamCatTable.Columns.Add(impactAreaCol);
             List<string> allUniqueDamCats = GetAllDamCats(rows);
             foreach (string damCat in allUniqueDamCats)
             {
@@ -45,6 +47,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
         {
             DataRow myRow = DamCatTable.NewRow();
             myRow["Name"] = row.Name;
+            myRow["Impact Area"] = row.ImpactArea;
             foreach (string damCat in allDamCats)
             {
                 if (row.DamCatMap.ContainsKey(damCat))
