@@ -64,7 +64,7 @@
           </WrapPanel>
         </GroupBox>
 
-        <!--Total Expected Annual Damage--> 
+        <!--Total Expected Annual Damage-->
         <ScrollViewer Grid.Row="1"
                       Width="1020"
                       HorizontalAlignment="Left"
@@ -76,7 +76,9 @@
               <TextBlock Text="Total Expected Annual Damage"
                          HorizontalAlignment="Center"
                          Margin="5" />
-              <twp:FdaDataGrid ItemsSource="{Binding Path=Rows}"
+              <twp:FdaDataGrid x:Name="TotalEADGrid"
+                               ItemsSource="{Binding Path=Rows}"
+                               AutoGeneratingColumn="TotalEADGrid_AutoGeneratingColumn"
                                AutoGenerateColumns="True"
                                CanUserSortColumns="false"
                                SelectionUnit="Cell"
@@ -84,7 +86,7 @@
             </StackPanel>
           </Border>
         </ScrollViewer>
-       
+
         <ScrollViewer Grid.Row="2"
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Auto"
@@ -114,6 +116,7 @@
                       Name="damCatGrid"
                       ItemsSource="{Binding DamCatTable}"
                       AutoGenerateColumns="True"
+                      AutoGeneratingColumn="TotalEADGrid_AutoGeneratingColumn"
                       HorizontalAlignment="Left"
                       VerticalAlignment="Top"
                       IsReadOnly="True"

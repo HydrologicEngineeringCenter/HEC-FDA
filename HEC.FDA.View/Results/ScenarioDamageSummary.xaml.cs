@@ -11,5 +11,13 @@ namespace HEC.FDA.View.Results
         {
             InitializeComponent();
         }
+
+        private void TotalEADGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            if (e.PropertyType == typeof(double) || e.PropertyType == typeof(double?))
+            {
+                (e.Column as DataGridTextColumn).Binding.StringFormat = "{0:F2}";
+            }
+        }
     }
 }

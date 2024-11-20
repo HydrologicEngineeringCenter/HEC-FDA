@@ -148,7 +148,8 @@ namespace HEC.FDA.ViewModel.Results
             List<string> allUniqueDamCats = GetAllDamCats(rows);
             foreach (string damCat in allUniqueDamCats)
             {
-                _DamCatTable.Columns.Add( new DataColumn(damCat, typeof(string)));
+                DataColumn dataColumn = new(damCat, typeof(double));
+                _DamCatTable.Columns.Add(dataColumn);
             }
 
             foreach(ScenarioDamCatRowItem row in rows)
