@@ -51,6 +51,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// The impact area ID for the selected impact area. It will be -1 if no selection was made.
         /// </summary>
         public int ImpactAreaID { get; set; }
+        public string ImpactAreaName { get => GetSpecificImpactAreaName(); }
+
         /// <summary>
         /// The flow freq ID for the selected flow freq. It will be -1 if no selection was made.
         /// </summary>
@@ -161,11 +163,16 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
         public string GetSpecificImpactAreaName()
         {
+            return GetSpecificImpactAreaName(ImpactAreaID);
+        }
+
+        public static string GetSpecificImpactAreaName(int id)
+        {
             string name = "";
             ImpactAreaElement impactAreaElem = (ImpactAreaElement)StudyCache.GetChildElementsOfType(typeof(ImpactAreaElement))[0];
-            foreach(ImpactAreaRowItem row in impactAreaElem.ImpactAreaRows)
+            foreach (ImpactAreaRowItem row in impactAreaElem.ImpactAreaRows)
             {
-                if(row.ID == ImpactAreaID)
+                if (row.ID == id)
                 {
                     name = row.Name;
                 }

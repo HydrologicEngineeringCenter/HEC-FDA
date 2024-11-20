@@ -12,10 +12,10 @@ namespace HEC.FDA.ViewModel.Results
     {
         private DataTable _DamCatTable;
 
-        public CustomObservableCollection<SelectableChildElement> SelectableElements { get; } = new CustomObservableCollection<SelectableChildElement>();
-        public CustomObservableCollection<ScenarioDamageRowItem> Rows { get; } = new CustomObservableCollection<ScenarioDamageRowItem>();
-        public CustomObservableCollection<ScenarioPerformanceRowItem> PerformanceRows { get; } = new CustomObservableCollection<ScenarioPerformanceRowItem>();
-        public CustomObservableCollection<AssuranceOfAEPRowItem> AssuranceOfAEPRows { get; } = new CustomObservableCollection<AssuranceOfAEPRowItem>();
+        public CustomObservableCollection<SelectableChildElement> SelectableElements { get; } = [];
+        public CustomObservableCollection<ScenarioDamageRowItem> Rows { get; } = [];
+        public CustomObservableCollection<ScenarioPerformanceRowItem> PerformanceRows { get; } = [];
+        public CustomObservableCollection<AssuranceOfAEPRowItem> AssuranceOfAEPRows { get; } = [];
 
         public DataTable DamCatTable
         {
@@ -99,8 +99,8 @@ namespace HEC.FDA.ViewModel.Results
             AssuranceOfAEPRows.Clear();
             foreach (IASElement element in elems)
             {
-                Rows.Add(new ScenarioDamageRowItem(element));
-                damCatRows.Add(new ScenarioDamCatRowItem(element));
+                Rows.AddRange(ScenarioDamageRowItem.CreateScenarioDamageRowItems(element));
+                damCatRows.AddRange(ScenarioDamCatRowItem.CreateScenarioDamCatRowItems(element));
                 List<ImpactAreaScenarioResults> resultsList = element.Results.ResultsList;
                 foreach (ImpactAreaScenarioResults impactAreaScenarioResults in resultsList)
                 { 
@@ -143,6 +143,7 @@ namespace HEC.FDA.ViewModel.Results
             _DamCatTable.Columns.Add(nameCol);
             DataColumn yearCol = new DataColumn("Analysis Year", typeof(int));
             _DamCatTable.Columns.Add(yearCol);
+            DataColumn assetCol = new DataColumn("Asset Category", typeof(string));
             List<string> allUniqueDamCats = GetAllDamCats(rows);
             foreach (string damCat in allUniqueDamCats)
             {

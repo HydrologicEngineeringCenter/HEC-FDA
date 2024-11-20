@@ -13,7 +13,8 @@ namespace HEC.FDA.ViewModel.Results
     {
         public string Name { get; set; }
         public string AnalysisYear { get; set; }
-        public Dictionary<string, double> DamCatMap = new Dictionary<string, double>();
+        public string ImpactAreaName { get; set; }
+        public Dictionary<string, double> DamCatMap = new();
 
         public ScenarioDamCatRowItem(IASElement scenario)
         {
@@ -29,5 +30,43 @@ namespace HEC.FDA.ViewModel.Results
             }
         }
 
+        private ScenarioDamCatRowItem(string name, string analysisYear, string impactAreaName, Dictionary<string, double> DamCatToMeanDamage)
+        {
+            Name = name;
+            AnalysisYear = analysisYear;
+            ImpactAreaName = impactAreaName;
+            DamCatMap = DamCatToMeanDamage;
+        }
+
+        public static List<ScenarioDamCatRowItem> CreateScenarioDamCatRowItems(IASElement scenario)
+        {
+            //shared props
+            string name = scenario.Name;
+            string analysisYear = scenario.AnalysisYear;
+
+            ScenarioResults results = scenario.Results;
+            List<int> impactAreaIds = results.GetImpactAreaIDs();
+            List<string> impactAreaNames = scenario.SpecificIASElements.Select(x => x.ImpactAreaName).ToList();
+            Dictionary<int, string> impactAreaIdToName = [];
+            for (int i = 0; i < impactAreaIds.Count; i++)
+            {
+                impactAreaIdToName.Add(impactAreaIds[i], impactAreaNames[i]);
+            }
+            List<string> damCats = results.GetDamageCategories();
+            int rowsPerScenario = damCats.Count * impactAreaIds.Count;
+            List<ScenarioDamCatRowItem> rowItems = new(rowsPerScenario);
+            foreach (int impactAreaID in impactAreaIds)
+            {
+                Dictionary<string, double> damCatToMean = [];
+                foreach (string damcat in damCats)
+                {
+                        double mean = results.MeanExpectedAnnualConsequences(impactAreaID, damcat);
+                    damCatToMean.Add(damcat, mean);
+                }
+                ScenarioDamCatRowItem row = new(name, analysisYear, impactAreaIdToName[impactAreaID], damCatToMean);
+                rowItems.Add(row);
+            }
+            return rowItems;
+        }
     }
 }
