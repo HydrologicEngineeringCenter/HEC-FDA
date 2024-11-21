@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Windows;
 using System.Xml.Linq;
 using HEC.FDA.Model.metrics;
@@ -185,7 +186,16 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             }
             return results;
         }
-
+        public static Dictionary<int,string> GetImpactAreaNamesFromIDs()
+        {
+            List<ImpactAreaRowItem> impactAreaRows = GetStudyImpactAreaRowItems();
+            Dictionary<int, string> impactAreaNames = [];
+            foreach (ImpactAreaRowItem row in impactAreaRows)
+            {
+                impactAreaNames.Add(row.ID, row.Name);  
+            }
+            return impactAreaNames;
+        }
         private static string GetImpactAreaNameFromID(List<ImpactAreaRowItem> rows, int id)
         {
             string rowName = null;

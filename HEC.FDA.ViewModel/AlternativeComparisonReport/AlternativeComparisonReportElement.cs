@@ -4,6 +4,7 @@ using HEC.FDA.ViewModel.Alternatives;
 using HEC.FDA.ViewModel.Alternatives.Results;
 using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
 using HEC.FDA.ViewModel.Compute;
+using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using System;
@@ -30,7 +31,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
 
         #endregion
 
-        public AlternativeComparisonReportElement(string name, string desc, string creationDate, int withoutProjectAltId, List<int> withProjAlternativeIds, int id) 
+        public AlternativeComparisonReportElement(string name, string desc, string creationDate, int withoutProjectAltId, List<int> withProjAlternativeIds, int id)
             : base(name, creationDate, desc, id)
         {
             WithoutProjAltID = withoutProjectAltId;
@@ -67,7 +68,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             viewResults.Action = ComputeAltCompReport;
 
             Actions.Insert(1, viewResults);
-        }    
+        }
 
         public override XElement ToXML()
         {
@@ -127,7 +128,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
                 string header = "Compute Log For Alternative Comp Report: " + Name;
                 DynamicTabVM tab = new DynamicTabVM(header, compVM, "ComputeLogAltCompReport" + Name);
                 Navigate(tab, false, false);
-            }       
+            }
         }
 
         private void ComputeCompleted(AlternativeComparisonReportResults results)
@@ -157,7 +158,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
 
         private List<SpecificAltCompReportResultsVM> CreateResults()
         {
-            List < SpecificAltCompReportResultsVM > results = new List < SpecificAltCompReportResultsVM >();
+            List<SpecificAltCompReportResultsVM> results = new List<SpecificAltCompReportResultsVM>();
             List<AAEQSummaryRowItem> aAEQSummaryRowItems = CreateAAEQSummaryTable(_Results);
             List<EADSummaryRowItem> eADBaseSummaryRowItems = CreateEADBaseYearSummaryTable(_Results);
             List<EADSummaryRowItem> eADFutureSummaryRowItems = CreateEADFutureYearSummaryTable(_Results);
@@ -170,67 +171,92 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             SpecificAltCompReportResultsVM summaryOption = new SummaryVM(eADBaseSummaryRowItems, eADFutureSummaryRowItems, aAEQSummaryRowItems, _Results.Years);
             results.Add(summaryOption);
             return results;
+            
         }
 
         private List<EADSummaryRowItem> CreateEADFutureYearSummaryTable(AlternativeComparisonReportResults results)
         {
-            List<EADSummaryRowItem> eadSummaryRowItems = new List<EADSummaryRowItem>();
+            List<EADSummaryRowItem> eadSummaryRowItems = new();
+            Dictionary<int, string> impactAreaNames = IASElement.GetImpactAreaNamesFromIDs();
 
             string withoutProjName = GetAlternativeElementFromID(WithoutProjAltID).Name;
 
             double eadWithoutProjDamage = results.MeanWithoutProjectFutureYearEAD();
             foreach (int altID in WithProjAltIDs)
             {
-                string withProjName = GetAlternativeElementFromID(altID).Name;
-
+                //add a totaled row
                 double withProjEAD = results.MeanWithProjectFutureYearEAD(altID);
-
                 double eadReduced = results.MeanFutureYearEADReduced(altID);
-
-
-                double point75 = results.FutureYearEADReducedExceededWithProbabilityQ( .75, altID);
+                double point75 = results.FutureYearEADReducedExceededWithProbabilityQ(.75, altID);
                 double point5 = results.FutureYearEADReducedExceededWithProbabilityQ(.5, altID);
                 double point25 = results.FutureYearEADReducedExceededWithProbabilityQ(.25, altID);
-
-                EADSummaryRowItem row = new EADSummaryRowItem(withoutProjName, eadWithoutProjDamage, withProjName, withProjEAD, eadReduced, point75, point5, point25);
-
+                string withProjName = GetAlternativeElementFromID(altID).Name;
+                EADSummaryRowItem row = new("all", "all", "all", withoutProjName, eadWithoutProjDamage, withProjName, withProjEAD, eadReduced, point75, point5, point25);
                 eadSummaryRowItems.Add(row);
-
+                foreach (int impactAreaID in results.GetImpactAreaIDs())
+                {
+                    foreach (string damcat in results.GetDamageCategories())
+                    {
+                        foreach (string assetType in results.GetAssetCategories())
+                        {
+                            withProjEAD = results.MeanWithProjectFutureYearEAD(altID, impactAreaID, damcat, assetType);
+                            eadReduced = results.MeanFutureYearEADReduced(altID, impactAreaID, damcat, assetType);
+                            point75 = results.FutureYearEADReducedExceededWithProbabilityQ(.75, altID, impactAreaID, damcat, assetType);
+                            point5 = results.FutureYearEADReducedExceededWithProbabilityQ(.5, altID, impactAreaID, damcat, assetType);
+                            point25 = results.FutureYearEADReducedExceededWithProbabilityQ(.25, altID, impactAreaID, damcat, assetType);
+                            row = new EADSummaryRowItem(impactAreaNames[impactAreaID], damcat, assetType, withoutProjName, eadWithoutProjDamage, withProjName, withProjEAD, eadReduced, point75, point5, point25);
+                            eadSummaryRowItems.Add(row);
+                        }
+                    }
+                }
             }
             return eadSummaryRowItems;
         }
 
         private List<EADSummaryRowItem> CreateEADBaseYearSummaryTable(AlternativeComparisonReportResults results)
         {
-            List<EADSummaryRowItem> eadSummaryRowItems = new List<EADSummaryRowItem>();
+            List<EADSummaryRowItem> eadSummaryRowItems = new();
+
+            Dictionary<int, string> impactAreaNames = IASElement.GetImpactAreaNamesFromIDs();
 
             string withoutProjName = GetAlternativeElementFromID(WithoutProjAltID).Name;
 
             double eadWithoutProjDamage = results.MeanWithoutProjectBaseYearEAD();
             foreach (int altID in WithProjAltIDs)
             {
-                string withProjName = GetAlternativeElementFromID(altID).Name;
-
+                //add a totaled row
                 double withProjEAD = results.MeanWithProjectBaseYearEAD(altID);
-
                 double eadReduced = results.MeanBaseYearEADReduced(altID);
-
-
                 double point75 = results.BaseYearEADReducedExceededWithProbabilityQ(.75, altID);
                 double point5 = results.BaseYearEADReducedExceededWithProbabilityQ(.5, altID);
                 double point25 = results.BaseYearEADReducedExceededWithProbabilityQ(.25, altID);
-
-                EADSummaryRowItem row = new EADSummaryRowItem(withoutProjName, eadWithoutProjDamage, withProjName, withProjEAD, eadReduced, point75, point5, point25);
-
+                string withProjName = GetAlternativeElementFromID(altID).Name;
+                EADSummaryRowItem row = new("all", "all", "all", withoutProjName, eadWithoutProjDamage, withProjName, withProjEAD, eadReduced, point75, point5, point25);
                 eadSummaryRowItems.Add(row);
-
+                foreach (int impactAreaID in results.GetImpactAreaIDs())
+                {
+                    foreach (string damcat in results.GetDamageCategories())
+                    {
+                        foreach (string assetType in results.GetAssetCategories())
+                        {
+                            withProjEAD = results.MeanWithProjectBaseYearEAD(altID, impactAreaID, damcat, assetType);
+                            eadReduced = results.MeanBaseYearEADReduced(altID, impactAreaID, damcat, assetType);
+                            point75 = results.BaseYearEADReducedExceededWithProbabilityQ(.75, altID, impactAreaID, damcat, assetType);
+                            point5 = results.BaseYearEADReducedExceededWithProbabilityQ(.5, altID, impactAreaID, damcat, assetType);
+                            point25 = results.BaseYearEADReducedExceededWithProbabilityQ(.25, altID, impactAreaID, damcat, assetType);
+                            row = new EADSummaryRowItem(impactAreaNames[impactAreaID],damcat, assetType, withoutProjName, eadWithoutProjDamage, withProjName, withProjEAD, eadReduced, point75, point5, point25);
+                            eadSummaryRowItems.Add(row);
+                        }
+                    }
+                }
             }
             return eadSummaryRowItems;
         }
 
         private List<AAEQSummaryRowItem> CreateAAEQSummaryTable(AlternativeComparisonReportResults results)
         {
-            List<AAEQSummaryRowItem> aaeqSummaryRowItems = new List<AAEQSummaryRowItem>();
+            List<AAEQSummaryRowItem> aaeqSummaryRowItems = [];
+            Dictionary<int, string> impactAreaNames = IASElement.GetImpactAreaNamesFromIDs();
 
             string withoutProjName = GetAlternativeElementFromID(WithoutProjAltID).Name;
 
@@ -239,29 +265,42 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             {
                 string withProjName = GetAlternativeElementFromID(altID).Name;
 
-                double withProjAAEQ = results.MeanWithProjectAAEQDamage(altID);               
-
+                //add a totaled row
+                double withProjAAEQ = results.MeanWithProjectAAEQDamage(altID);
                 double aaeqReduced = results.MeanAAEQDamageReduced(altID);
-
                 double point75 = results.AAEQDamageReducedExceededWithProbabilityQ(.75, altID);
                 double point5 = results.AAEQDamageReducedExceededWithProbabilityQ(.5, altID);
                 double point25 = results.AAEQDamageReducedExceededWithProbabilityQ(.25, altID);
-
-                AAEQSummaryRowItem row = new AAEQSummaryRowItem(withoutProjName, aaeqWithoutProjDamage, withProjName, withProjAAEQ, aaeqReduced, point75, point5, point25);
-
+                AAEQSummaryRowItem row = new("all", "all", "all", withoutProjName, aaeqWithoutProjDamage, withProjName, withProjAAEQ, aaeqReduced, point75, point5, point25);
                 aaeqSummaryRowItems.Add(row);
+                foreach (int impactAreaID in results.GetImpactAreaIDs())
+                {
+                    foreach (string damcat in results.GetDamageCategories())
+                    {
+                        foreach (string assetType in results.GetAssetCategories())
+                        {
+                            withProjAAEQ = results.MeanWithProjectAAEQDamage(altID);
+                            aaeqReduced = results.MeanAAEQDamageReduced(altID);
+                            point75 = results.AAEQDamageReducedExceededWithProbabilityQ(.75, altID);
+                            point5 = results.AAEQDamageReducedExceededWithProbabilityQ(.5, altID);
+                            point25 = results.AAEQDamageReducedExceededWithProbabilityQ(.25, altID);
+                            row = new AAEQSummaryRowItem(impactAreaNames[impactAreaID], damcat, assetType, withoutProjName, aaeqWithoutProjDamage, withProjName, withProjAAEQ, aaeqReduced, point75, point5, point25);
+                            aaeqSummaryRowItems.Add(row);
+                        }
+                    }
 
+                }
             }
             return aaeqSummaryRowItems;
         }
-  
+
         public List<AlternativeElement> GetWithProjectAlternatives()
         {
             List<AlternativeElement> alts = new List<AlternativeElement>();
-            foreach(int id in WithProjAltIDs )
+            foreach (int id in WithProjAltIDs)
             {
                 AlternativeElement altElement = GetAlternativeElementFromID(id);
-                if(altElement != null)
+                if (altElement != null)
                 {
                     alts.Add(altElement);
                 }
@@ -322,7 +361,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             List<AlternativeElement> withProjAlts = GetWithProjectAlternatives();
 
             FdaValidationResult withoutAltValidationResult = withoutAlt.RunPreComputeValidation();
-            if(!withoutAltValidationResult.IsValid)
+            if (!withoutAltValidationResult.IsValid)
             {
                 vr.AddErrorMessage("Alternative " + withoutAlt.Name + ":");
                 vr.AddErrorMessage(withoutAltValidationResult.ErrorMessage);
@@ -344,7 +383,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
         }
 
         private SpecificAltCompReportResultsVM CreateAlternativeComparisonResult(int withProjID, string withProjName, List<EADSummaryRowItem> baseSummary, List<EADSummaryRowItem> futureSummary, List<AAEQSummaryRowItem> aaeqSummary)
-        { 
+        {
             StudyPropertiesElement studyPropElem = StudyCache.GetStudyPropertiesElement();
 
             double discountRate = studyPropElem.DiscountRate;
@@ -355,10 +394,10 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             int baseYear = _Results.Years[0];
             int futureYear = _Results.Years[1];
 
-            YearResult yr1 = new YearResult(baseYear, new DamageWithUncertaintyVM( _Results, withProjID, DamageMeasureYear.Base), new DamageByImpactAreaVM( _Results, withProjID, DamageMeasureYear.Base), new DamageByDamCatVM(_Results, DamageMeasureYear.Base, withProjID));
-            YearResult yr2 = new YearResult(futureYear, new DamageWithUncertaintyVM( _Results, withProjID, DamageMeasureYear.Future), new DamageByImpactAreaVM( _Results, withProjID, DamageMeasureYear.Future), new DamageByDamCatVM(_Results, DamageMeasureYear.Future, withProjID));
+            YearResult yr1 = new YearResult(baseYear, new DamageWithUncertaintyVM(_Results, withProjID, DamageMeasureYear.Base), new DamageByImpactAreaVM(_Results, withProjID, DamageMeasureYear.Base), new DamageByDamCatVM(_Results, DamageMeasureYear.Base, withProjID));
+            YearResult yr2 = new YearResult(futureYear, new DamageWithUncertaintyVM(_Results, withProjID, DamageMeasureYear.Future), new DamageByImpactAreaVM(_Results, withProjID, DamageMeasureYear.Future), new DamageByDamCatVM(_Results, DamageMeasureYear.Future, withProjID));
 
-            AAEQResult aaeqResult = new AAEQResult(new DamageWithUncertaintyVM( _Results, withProjID, DamageMeasureYear.AAEQ, discountRate, period), new DamageByImpactAreaVM( _Results, withProjID, DamageMeasureYear.AAEQ, discountRate, period), new DamageByDamCatVM(_Results, DamageMeasureYear.AAEQ, withProjID, discountRate, period));
+            AAEQResult aaeqResult = new AAEQResult(new DamageWithUncertaintyVM(_Results, withProjID, DamageMeasureYear.AAEQ, discountRate, period), new DamageByImpactAreaVM(_Results, withProjID, DamageMeasureYear.AAEQ, discountRate, period), new DamageByDamCatVM(_Results, DamageMeasureYear.AAEQ, withProjID, discountRate, period));
 
             EADResult eadResult = new EADResult(new List<YearResult>() { yr1, yr2 });
             AlternativeResult altResult = new AlternativeResult(withProjName, eadResult, aaeqResult);
