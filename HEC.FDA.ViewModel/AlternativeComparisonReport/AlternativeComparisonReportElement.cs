@@ -174,6 +174,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             
         }
 
+        //I know theres a big brick of repeated code in this method, but It's not really reusable outside this method, and I think the added complexity of ripping it out into a private method washes out any benefit of fewer lines. 
         private List<EADSummaryRowItem> CreateEADFutureYearSummaryTable(AlternativeComparisonReportResults results)
         {
             List<EADSummaryRowItem> eadSummaryRowItems = new();
@@ -213,6 +214,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             return eadSummaryRowItems;
         }
 
+        //I know theres a big brick of repeated code in this method, but It's not really reusable outside this method, and I think the added complexity of ripping it out into a private method washes out any benefit of fewer lines. 
         private List<EADSummaryRowItem> CreateEADBaseYearSummaryTable(AlternativeComparisonReportResults results)
         {
             List<EADSummaryRowItem> eadSummaryRowItems = new();
@@ -253,6 +255,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
             return eadSummaryRowItems;
         }
 
+        //I know theres a big brick of repeated code in this method, but It's not really reusable outside this method, and I think the added complexity of ripping it out into a private method washes out any benefit of fewer lines. 
         private List<AAEQSummaryRowItem> CreateAAEQSummaryTable(AlternativeComparisonReportResults results)
         {
             List<AAEQSummaryRowItem> aaeqSummaryRowItems = [];

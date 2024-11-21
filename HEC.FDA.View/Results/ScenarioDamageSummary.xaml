@@ -74,8 +74,7 @@
             <TextBlock Text="Total Expected Annual Damage"
                        HorizontalAlignment="Center"
                        Margin="5" />
-            <twp:FdaDataGrid x:Name="TotalEADGrid"
-                             ItemsSource="{Binding Path=Rows}"
+            <twp:FdaDataGrid ItemsSource="{Binding Path=Rows}"
                              AutoGeneratingColumn="FdaDataGrid_AutoGeneratingColumn"
                              AutoGenerateColumns="True"
                              CanUserSortColumns="false"
@@ -104,7 +103,7 @@
                              Width="auto" />
           </StackPanel>
         </Border>
-
+        
         <ScrollViewer Grid.Row="3"
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Auto"

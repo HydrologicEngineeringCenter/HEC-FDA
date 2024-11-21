@@ -12,67 +12,63 @@
              mc:Ignorable="d"
              d:DesignHeight="450"
              d:DesignWidth="800">
+  
   <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="*" />
-    </Grid.RowDefinitions>
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="*" />
-    </Grid.ColumnDefinitions>
+    <ScrollViewer>
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <!--Total Average Equivalent Damage-->
+        <Border BorderBrush="Gray"
+                BorderThickness="1"
+                Grid.Row="0"
+                HorizontalAlignment="Left"
+                Margin="5">
+          <StackPanel HorizontalAlignment="Left">
+            <TextBlock Text="Total Average Annual Equivalent Damage"
+                       HorizontalAlignment="Center"
+                       Margin="5" />
+            <twp:FdaDataGrid ItemsSource="{Binding Path=Rows}"
+                             AutoGeneratingColumn="FdaDataGrid_AutoGeneratingColumn"
+                             AutoGenerateColumns="True"
+                             CanUserSortColumns="false"
+                             SelectionUnit="Cell"
+                             Width="auto"
+                             HorizontalAlignment="Left" />
+          </StackPanel>
+        </Border>
 
-    <ScrollViewer Grid.Row="0"
-                  HorizontalAlignment="Left"
-                  HorizontalScrollBarVisibility="Auto"
-                  Margin="5">
-      <Border BorderBrush="Gray"
-              BorderThickness="1">
-        <StackPanel>
-          <TextBlock Text="Total Average Annual Equivalent Damage"
-                     HorizontalAlignment="Center"
-                     Margin="5" />
-          <twp:FdaDataGrid AutoGeneratingColumn="FdaDataGrid_AutoGeneratingColumn"
-                           ItemsSource="{Binding Path=Rows}"
-                           AutoGenerateColumns="True"
-                           CanUserSortColumns="false"
-                           SelectionUnit="Cell"
-                           Width="1000" />
-        </StackPanel>
-      </Border>
+        <!--AAEQ By Damage Cat-->
+        <Border BorderBrush="Gray"
+                BorderThickness="1"
+                Grid.Row="1"
+                HorizontalAlignment="Left"
+                Margin="5">
+          <StackPanel>
+            <TextBlock HorizontalAlignment="Center"
+                       Text="Average Annual Equivalent Damage by Damage Category"
+                       Margin="5" />
+            <twp:FdaDataGrid ItemsSource="{Binding Path=DamCatRows}"
+                             AutoGeneratingColumn="FdaDataGrid_AutoGeneratingColumn"
+                             AutoGenerateColumns="True"
+                             CanUserSortColumns="false"
+                             SelectionUnit="Cell"
+                             Width="auto"
+                             HorizontalAlignment="Left" />
+          </StackPanel>
+        </Border>
+
+        <util:CloseControl Grid.Row="2"
+                           VerticalAlignment="Bottom"
+                           HorizontalAlignment="Right" />
+
+      </Grid>
     </ScrollViewer>
 
 
-
-    <ScrollViewer Grid.Row="1"
-                  HorizontalAlignment="Left"
-                  HorizontalScrollBarVisibility="Auto"
-                  Margin="5">
-      <Border BorderBrush="Gray"
-              BorderThickness="1">
-        <StackPanel>
-          <TextBlock HorizontalAlignment="Center" Text="Average Annual Equivalent Damage by Damage Category" Margin="5" />
-          <DataGrid   HeadersVisibility="Column"
-                      Grid.Row="1"
-                      ItemsSource="{Binding DamCatTable}"
-                      AutoGeneratingColumn="FdaDataGrid_AutoGeneratingColumn"
-                      AutoGenerateColumns="True"
-                      HorizontalAlignment="Left"
-                      VerticalAlignment="Top"
-                      IsReadOnly="True"
-                      CanUserResizeColumns="True"
-                      CanUserReorderColumns="False"
-                      CanUserSortColumns="false"
-                      SelectionUnit="Cell"
-                      MinWidth="330">
-          </DataGrid>
-        </StackPanel>
-      </Border>
-    </ScrollViewer>
-
-    <util:CloseControl Grid.Row="2"
-                       VerticalAlignment="Bottom"
-                       HorizontalAlignment="Right" />
-
+   
   </Grid>
 </UserControl>

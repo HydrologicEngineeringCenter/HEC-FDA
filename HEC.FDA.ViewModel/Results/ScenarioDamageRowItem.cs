@@ -17,50 +17,43 @@ namespace HEC.FDA.ViewModel.Results
         public string AnalysisYear { get; set; }
         [DisplayAsColumn("Impact Area")]
         public string ImpactArea { get; set; }
-        [DisplayAsColumn("Mean")]
+        [DisplayAsColumn("Mean EAD")]
         public double Mean { get; set; }
-        [DisplayAsColumn("Q1")]
-        public double Q1 { get; set; }
-        [DisplayAsColumn("Q2")]
-        public double Q2 { get; set; }
-        [DisplayAsColumn("Q3")]
-        public double Q3 { get; set; }
+        [DisplayAsColumn("75th Percentile EAD")]
+        public double Point75 { get; set; }
+        [DisplayAsColumn("50th Percentile EAD")]
+        public double Point5 { get; set; }
+        [DisplayAsColumn("25th Percentile EAD")]
+        public double Point25 { get; set; }
 
-        private ScenarioDamageRowItem(string name, string analysisYear, string impactArea, double mean, double q1, double q2, double q3)
+        private ScenarioDamageRowItem(string name, string analysisYear, string impactArea, double mean, double point75, double point5, double point25)
         {
             Name = name;
             AnalysisYear = analysisYear;
             ImpactArea = impactArea;
             Mean = mean;
-            Q1 = q1;
-            Q2 = q2;
-            Q3 = q3;
+            Point75 = point75;
+            Point5 = point5;
+            Point25 = point25;
         }
 
         public static List<ScenarioDamageRowItem> CreateScenarioDamageRowItems(IASElement scenario)
         {
-            //shared props
-            string name = scenario.Name;
-            string analysisYear = scenario.AnalysisYear;
-
-            ScenarioResults results = scenario.Results;
-            List<int> impactAreaIds = results.GetImpactAreaIDs();
-            List<string> impactAreaNames = scenario.SpecificIASElements.Select(x => x.ImpactAreaName).ToList();
-            Dictionary<int, string> impactAreaIdToName = [];
-            for (int i = 0; i < impactAreaIds.Count; i++)
-            {
-                impactAreaIdToName.Add(impactAreaIds[i], impactAreaNames[i]);
-            }
-            int rowsPerScenario = impactAreaIds.Count;
             List<ScenarioDamageRowItem> rowItems = [];
 
+            string name = scenario.Name;
+            string analysisYear = scenario.AnalysisYear;
+            ScenarioResults results = scenario.Results;
+            List<int> impactAreaIds = results.GetImpactAreaIDs();
+            Dictionary<int, string> impactAreaIdToName = IASElement.GetImpactAreaNamesFromIDs();
+           
             foreach (int impactAreaID in impactAreaIds)
             {
                     double Mean = results.MeanExpectedAnnualConsequences(impactAreaID);
-                    double Q1 = results.ConsequencesExceededWithProbabilityQ(.75, impactAreaID);
-                    double Q2 = results.ConsequencesExceededWithProbabilityQ(.50, impactAreaID);
-                    double Q3 = results.ConsequencesExceededWithProbabilityQ(.25, impactAreaID);
-                    rowItems.Add(new(name, analysisYear, impactAreaIdToName[impactAreaID], Mean, Q1, Q2, Q3));
+                    double point75 = results.ConsequencesExceededWithProbabilityQ(.75, impactAreaID);
+                    double point5 = results.ConsequencesExceededWithProbabilityQ(.50, impactAreaID);
+                    double point25 = results.ConsequencesExceededWithProbabilityQ(.25, impactAreaID);
+                    rowItems.Add(new(name, analysisYear, impactAreaIdToName[impactAreaID], Mean, point75, point5, point25));
             }
             return rowItems;
         }

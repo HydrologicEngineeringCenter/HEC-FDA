@@ -23,16 +23,16 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
         public double DiscountRate { get; set; }
         [DisplayAsColumn("Period of Analysis")]
         public int PeriodOfAnalysis { get; set; }
-        [DisplayAsColumn("Mean")]
+        [DisplayAsColumn("Mean EEAQ")]
         public double Mean { get; set; }
-        [DisplayAsColumn("Q1")]
-        public double Q1 { get; set; }
-        [DisplayAsColumn("Q2")]
-        public double Q2 { get; set; }
-        [DisplayAsColumn("Q3")]
-        public double Q3 { get; set; }
+        [DisplayAsColumn("75th Percentile EEAQ")]
+        public double Point75 { get; set; }
+        [DisplayAsColumn("50th Percentile EEAQ")]
+        public double Point5 { get; set; }
+        [DisplayAsColumn("25th Percentile EEAQ")]
+        public double Point25 { get; set; }
 
-        private AlternativeDamageRowItem(string name, string impactArea, int baseYear, int futureYear, double discountRate, int periodOfAnalysis, double mean, double q1, double q2, double q3)
+        private AlternativeDamageRowItem(string name, string impactArea, int baseYear, int futureYear, double discountRate, int periodOfAnalysis, double mean, double point75, double point5, double point25)
         {
             Name = name;
             ImpactArea = impactArea;
@@ -41,9 +41,9 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
             DiscountRate = discountRate;
             PeriodOfAnalysis = periodOfAnalysis;
             Mean = mean;
-            Q1 = q1;
-            Q2 = q2;
-            Q3 = q3;
+            Point75 = point75;
+            Point5 = point5;
+            Point25 = point25;
         }
 
         public static List<AlternativeDamageRowItem> CreateAlternativeDamageRowItems(AlternativeElement altElem)
@@ -57,12 +57,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
             int PeriodOfAnalysis = altElem.Results.PeriodOfAnalysis;
             IASElement BaseYearScenario = altElem.BaseScenario.GetElement();
             List<int> impactAreaIds = BaseYearScenario.Results.GetImpactAreaIDs();
-            List<string> impactAreaNames = BaseYearScenario.SpecificIASElements.Select(x => x.ImpactAreaName).ToList();
-            Dictionary<int, string> impactAreaIdToName = [];
-            for (int i = 0; i < impactAreaIds.Count; i++)
-            {
-                impactAreaIdToName.Add(impactAreaIds[i], impactAreaNames[i]);
-            }
+            Dictionary<int, string> impactAreaIdToName = IASElement.GetImpactAreaNamesFromIDs();
 
             int rowsPerScenario = impactAreaIds.Count;
             List<AlternativeDamageRowItem> rowItems = new(rowsPerScenario);
@@ -70,10 +65,10 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
             foreach(int impactAreaID in impactAreaIds)
             {
                 double mean = altElem.Results.MeanAAEQDamage(impactAreaID);
-                double q1 = altElem.Results.AAEQDamageExceededWithProbabilityQ(.75,impactAreaID);
-                double q2 = altElem.Results.AAEQDamageExceededWithProbabilityQ( .5, impactAreaID);
-                double q3 = altElem.Results.AAEQDamageExceededWithProbabilityQ( .25, impactAreaID);
-                AlternativeDamageRowItem row = new(Name, impactAreaIdToName[impactAreaID], baseYear,futureYear, DiscountRate, PeriodOfAnalysis, mean, q1, q2, q3);
+                double point75 = altElem.Results.AAEQDamageExceededWithProbabilityQ(.75,impactAreaID);
+                double point5 = altElem.Results.AAEQDamageExceededWithProbabilityQ( .5, impactAreaID);
+                double point25 = altElem.Results.AAEQDamageExceededWithProbabilityQ( .25, impactAreaID);
+                AlternativeDamageRowItem row = new(Name, impactAreaIdToName[impactAreaID], baseYear,futureYear, DiscountRate, PeriodOfAnalysis, mean, point75, point5, point25);
                 rowItems.Add(row);
             }
             return rowItems;

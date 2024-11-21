@@ -27,7 +27,8 @@
                 BorderThickness="1"
                 Margin="5"
                 Grid.Row="0"
-                Width="auto">
+                Width="auto"
+                HorizontalAlignment="Left">
           <StackPanel>
             <TextBlock Text="{Binding BaseYearLabel}"
                        HorizontalAlignment="Center"
@@ -51,7 +52,8 @@
         <!--Future Year EAD-->
         <Border BorderBrush="Gray"
                 BorderThickness="1"
-                Grid.Row="1">
+                Grid.Row="1"
+                HorizontalAlignment="Left">
           <StackPanel>
             <TextBlock Text="{Binding FutureYearLabel}"
                        HorizontalAlignment="Center"
@@ -75,7 +77,8 @@
         <!--Period of Analysis AAEQ-->
         <Border BorderBrush="Gray"
                 BorderThickness="1"
-                Grid.Row="2">
+                Grid.Row="2"
+                HorizontalAlignment="Left">
           <StackPanel>
             <TextBlock Text="{Binding AAEQLabel}"
                        HorizontalAlignment="Center"

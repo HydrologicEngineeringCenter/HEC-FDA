@@ -37,22 +37,16 @@ namespace HEC.FDA.ViewModel.Results
 
         public static List<ScenarioDamCatRowItem> CreateScenarioDamCatRowItems(IASElement scenario)
         {
-            //shared props
             string name = scenario.Name;
             string analysisYear = scenario.AnalysisYear;
 
             ScenarioResults results = scenario.Results;
             List<int> impactAreaIds = results.GetImpactAreaIDs();
-            List<string> impactAreaNames = scenario.SpecificIASElements.Select(x => x.ImpactAreaName).ToList();
-            Dictionary<int, string> impactAreaIdToName = [];
-            for (int i = 0; i < impactAreaIds.Count; i++)
-            {
-                impactAreaIdToName.Add(impactAreaIds[i], impactAreaNames[i]);
-            }
+            Dictionary<int, string> impactAreaIdToName = IASElement.GetImpactAreaNamesFromIDs();
             List<string> damCats = results.GetDamageCategories();
             List<string> assetCats = results.GetAssetCategories();
-            int rowsPerScenario = damCats.Count * impactAreaIds.Count;
-            List<ScenarioDamCatRowItem> rowItems = new(rowsPerScenario);
+
+            List<ScenarioDamCatRowItem> rowItems = [];
             foreach (int impactAreaID in impactAreaIds)
             {
                 foreach (string damCat in damCats)
