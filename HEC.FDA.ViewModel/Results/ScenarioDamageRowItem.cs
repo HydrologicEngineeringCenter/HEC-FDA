@@ -17,8 +17,6 @@ namespace HEC.FDA.ViewModel.Results
         public string AnalysisYear { get; set; }
         [DisplayAsColumn("Impact Area")]
         public string ImpactArea { get; set; }
-        [DisplayAsColumn("Damage Category")]
-        public string DamageCategory { get; set; }
         [DisplayAsColumn("Mean")]
         public double Mean { get; set; }
         [DisplayAsColumn("Q1")]
@@ -28,12 +26,11 @@ namespace HEC.FDA.ViewModel.Results
         [DisplayAsColumn("Q3")]
         public double Q3 { get; set; }
 
-        private ScenarioDamageRowItem(string name, string analysisYear, string impactArea, string damageCategory, double mean, double q1, double q2, double q3)
+        private ScenarioDamageRowItem(string name, string analysisYear, string impactArea, double mean, double q1, double q2, double q3)
         {
             Name = name;
             AnalysisYear = analysisYear;
             ImpactArea = impactArea;
-            DamageCategory = damageCategory;
             Mean = mean;
             Q1 = q1;
             Q2 = q2;
@@ -54,20 +51,16 @@ namespace HEC.FDA.ViewModel.Results
             {
                 impactAreaIdToName.Add(impactAreaIds[i], impactAreaNames[i]);
             }
-            List<string> damCats = results.GetDamageCategories();
-            int rowsPerScenario = damCats.Count * impactAreaIds.Count;
-            List<ScenarioDamageRowItem> rowItems = new(rowsPerScenario);
+            int rowsPerScenario = impactAreaIds.Count;
+            List<ScenarioDamageRowItem> rowItems = [];
 
             foreach (int impactAreaID in impactAreaIds)
             {
-                foreach (string damcat in damCats)
-                {
-                    double Mean = results.MeanExpectedAnnualConsequences(impactAreaID, damcat);
-                    double Q1 = results.ConsequencesExceededWithProbabilityQ(.75, impactAreaID, damcat);
-                    double Q2 = results.ConsequencesExceededWithProbabilityQ(.50, impactAreaID, damcat);
-                    double Q3 = results.ConsequencesExceededWithProbabilityQ(.25, impactAreaID, damcat);
-                    rowItems.Add(new(name, analysisYear, impactAreaIdToName[impactAreaID], damcat, Mean, Q1, Q2, Q3));
-                }
+                    double Mean = results.MeanExpectedAnnualConsequences(impactAreaID);
+                    double Q1 = results.ConsequencesExceededWithProbabilityQ(.75, impactAreaID);
+                    double Q2 = results.ConsequencesExceededWithProbabilityQ(.50, impactAreaID);
+                    double Q3 = results.ConsequencesExceededWithProbabilityQ(.25, impactAreaID);
+                    rowItems.Add(new(name, analysisYear, impactAreaIdToName[impactAreaID], Mean, Q1, Q2, Q3));
             }
             return rowItems;
         }

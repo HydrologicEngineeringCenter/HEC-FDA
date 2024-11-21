@@ -1,5 +1,6 @@
 ﻿using HEC.FDA.Model.metrics;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
+using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
 using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
@@ -11,31 +12,27 @@ namespace HEC.FDA.ViewModel.Results
 {
     public class ScenarioDamCatRowItem
     {
+        [DisplayAsColumn("Scenario Name")]
         public string Name { get; set; }
+        [DisplayAsColumn("Analysis Year")]
         public string AnalysisYear { get; set; }
+        [DisplayAsColumn("Impact Area")]
         public string ImpactAreaName { get; set; }
-        public Dictionary<string, double> DamCatMap = new();
+        [DisplayAsColumn("Damage Category")]
+        public string DamCat { get; set; }
+        [DisplayAsColumn("Asset Category")]
+        public string AssetCat { get; set; }
+        [DisplayAsColumn("Mean EAD")]
+        public double MeanDamage { get; set; }
 
-        public ScenarioDamCatRowItem(IASElement scenario)
-        {
-            Name = scenario.Name;
-            AnalysisYear = scenario.AnalysisYear;
-            ScenarioResults results = scenario.Results;
-
-            List<string> damCats = results.GetDamageCategories();
-            foreach (string damCat in damCats)
-            {
-                Empirical damCatValue = results.GetConsequencesDistribution(damageCategory: damCat);
-                DamCatMap.Add(damCat, Math.Round(damCatValue.Mean,2));
-            }
-        }
-
-        private ScenarioDamCatRowItem(string name, string analysisYear, string impactAreaName, Dictionary<string, double> DamCatToMeanDamage)
+        private ScenarioDamCatRowItem(string name, string analysisYear, string impactAreaName, string damcat, string assetCat, double mean)
         {
             Name = name;
             AnalysisYear = analysisYear;
             ImpactAreaName = impactAreaName;
-            DamCatMap = DamCatToMeanDamage;
+            DamCat = damcat;
+            AssetCat = assetCat;
+            MeanDamage = mean;
         }
 
         public static List<ScenarioDamCatRowItem> CreateScenarioDamCatRowItems(IASElement scenario)
@@ -53,18 +50,20 @@ namespace HEC.FDA.ViewModel.Results
                 impactAreaIdToName.Add(impactAreaIds[i], impactAreaNames[i]);
             }
             List<string> damCats = results.GetDamageCategories();
+            List<string> assetCats = results.GetAssetCategories();
             int rowsPerScenario = damCats.Count * impactAreaIds.Count;
             List<ScenarioDamCatRowItem> rowItems = new(rowsPerScenario);
             foreach (int impactAreaID in impactAreaIds)
             {
-                Dictionary<string, double> damCatToMean = [];
-                foreach (string damcat in damCats)
+                foreach (string damCat in damCats)
                 {
-                        double mean = results.MeanExpectedAnnualConsequences(impactAreaID, damcat);
-                    damCatToMean.Add(damcat, mean);
+                    foreach (string assetCat in assetCats)
+                    {
+                        double mean = results.MeanExpectedAnnualConsequences(impactAreaID, damCat, assetCat);
+                        ScenarioDamCatRowItem row = new(name, analysisYear, impactAreaIdToName[impactAreaID], damCat, assetCat, mean);
+                        rowItems.Add(row);
+                    }
                 }
-                ScenarioDamCatRowItem row = new(name, analysisYear, impactAreaIdToName[impactAreaID], damCatToMean);
-                rowItems.Add(row);
             }
             return rowItems;
         }

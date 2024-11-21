@@ -279,11 +279,11 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
                     {
                         foreach (string assetType in results.GetAssetCategories())
                         {
-                            withProjAAEQ = results.MeanWithProjectAAEQDamage(altID);
-                            aaeqReduced = results.MeanAAEQDamageReduced(altID);
-                            point75 = results.AAEQDamageReducedExceededWithProbabilityQ(.75, altID);
-                            point5 = results.AAEQDamageReducedExceededWithProbabilityQ(.5, altID);
-                            point25 = results.AAEQDamageReducedExceededWithProbabilityQ(.25, altID);
+                            withProjAAEQ = results.MeanWithProjectAAEQDamage(altID, impactAreaID, damcat, assetType);
+                            aaeqReduced = results.MeanAAEQDamageReduced(altID, impactAreaID, damcat, assetType);
+                            point75 = results.AAEQDamageReducedExceededWithProbabilityQ(.75, altID, impactAreaID, damcat, assetType);
+                            point5 = results.AAEQDamageReducedExceededWithProbabilityQ(.5, altID, impactAreaID, damcat, assetType);
+                            point25 = results.AAEQDamageReducedExceededWithProbabilityQ(.25, altID, impactAreaID, damcat, assetType);
                             row = new AAEQSummaryRowItem(impactAreaNames[impactAreaID], damcat, assetType, withoutProjName, aaeqWithoutProjDamage, withProjName, withProjAAEQ, aaeqReduced, point75, point5, point25);
                             aaeqSummaryRowItems.Add(row);
                         }

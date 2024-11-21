@@ -29,7 +29,7 @@ namespace HEC.FDA.View.Alternatives.Results.BatchCompute
         {
             if (e.PropertyType == typeof(double) || e.PropertyType == typeof(double?))
             {
-                (e.Column as DataGridTextColumn).Binding.StringFormat = "{0:F2}";
+                (e.Column as DataGridTextColumn).Binding.StringFormat = "C2";
             }
         }
     }

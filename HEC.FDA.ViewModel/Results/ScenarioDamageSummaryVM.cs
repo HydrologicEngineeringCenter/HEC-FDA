@@ -16,12 +16,7 @@ namespace HEC.FDA.ViewModel.Results
         public CustomObservableCollection<ScenarioDamageRowItem> Rows { get; } = [];
         public CustomObservableCollection<ScenarioPerformanceRowItem> PerformanceRows { get; } = [];
         public CustomObservableCollection<AssuranceOfAEPRowItem> AssuranceOfAEPRows { get; } = [];
-
-        public DataTable DamCatTable
-        {
-            get { return _DamCatTable; }
-            set { _DamCatTable = value; NotifyPropertyChanged(); }
-        }
+        public CustomObservableCollection<ScenarioDamCatRowItem> DamCatRows { get; } = [];
 
         public ScenarioDamageSummaryVM(List<IASElement> selectedScenarioElems)
         {
@@ -97,10 +92,11 @@ namespace HEC.FDA.ViewModel.Results
             Rows.Clear();
             PerformanceRows.Clear();
             AssuranceOfAEPRows.Clear();
+            DamCatRows.Clear();
             foreach (IASElement element in elems)
             {
                 Rows.AddRange(ScenarioDamageRowItem.CreateScenarioDamageRowItems(element));
-                damCatRows.AddRange(ScenarioDamCatRowItem.CreateScenarioDamCatRowItems(element));
+                DamCatRows.AddRange(ScenarioDamCatRowItem.CreateScenarioDamCatRowItems(element));
                 List<ImpactAreaScenarioResults> resultsList = element.Results.ResultsList;
                 foreach (ImpactAreaScenarioResults impactAreaScenarioResults in resultsList)
                 { 
@@ -114,7 +110,6 @@ namespace HEC.FDA.ViewModel.Results
                     }
                 }
             }
-            LoadDamCatDataTable(damCatRows);
         }
 
         private void SelectElem_SelectionChanged(object sender, System.EventArgs e)
@@ -133,64 +128,6 @@ namespace HEC.FDA.ViewModel.Results
                 }
             }
             return selectedElements;
-        }
-
-        private void LoadDamCatDataTable(List<ScenarioDamCatRowItem> rows)
-        {
-            
-            _DamCatTable = new DataTable();
-            DataColumn nameCol = new("Name", typeof(string));
-            _DamCatTable.Columns.Add(nameCol);
-            DataColumn yearCol = new("Analysis Year", typeof(int));
-            _DamCatTable.Columns.Add(yearCol);
-            DataColumn impactAreaCol = new("Impact Area", typeof(string));
-            _DamCatTable.Columns.Add(impactAreaCol);
-            List<string> allUniqueDamCats = GetAllDamCats(rows);
-            foreach (string damCat in allUniqueDamCats)
-            {
-                DataColumn dataColumn = new(damCat, typeof(double));
-                _DamCatTable.Columns.Add(dataColumn);
-            }
-
-            foreach(ScenarioDamCatRowItem row in rows)
-            {
-                AddDamCatRowToTable(row, allUniqueDamCats);
-            }
-            NotifyPropertyChanged(nameof(DamCatTable));
-        }
-
-        private void AddDamCatRowToTable(ScenarioDamCatRowItem row, List<string> allDamCats)
-        {
-            DataRow myRow = _DamCatTable.NewRow();
-            myRow["Name"] = row.Name;
-            myRow["Analysis Year"] = row.AnalysisYear;
-            myRow["Impact Area"] = row.ImpactAreaName;
-            foreach(string damCat in allDamCats)
-            {
-                if(row.DamCatMap.ContainsKey(damCat))
-                {
-                    myRow[damCat] = row.DamCatMap[damCat];
-                }
-                else
-                {
-                    //this scenario doesn't have a value for that dam cat. Assign 0.
-                    myRow[damCat] = 0;
-                }
-            }
-            _DamCatTable.Rows.Add(myRow);
-        }
-
-        private List<string> GetAllDamCats(List<ScenarioDamCatRowItem> rows)
-        {
-            HashSet<string> uniqueDamCats = new HashSet<string>();
-            foreach(ScenarioDamCatRowItem row in rows)
-            {
-                foreach(string damCat in row.DamCatMap.Keys)
-                {
-                    uniqueDamCats.Add(damCat);
-                }
-            }
-            return uniqueDamCats.ToList();
         }
     }
 }

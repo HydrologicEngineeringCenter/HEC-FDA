@@ -22,94 +22,80 @@
           <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         
-        <!--Base Year EAD--> 
-        <ScrollViewer Grid.Row="0"
-                      Width="1920"
-                      HorizontalAlignment="Left"
-                      HorizontalScrollBarVisibility="Auto"
-                      Margin="10">
-          <Border BorderBrush="Gray"
-                  BorderThickness="1"
-                  Margin="5">
-            <StackPanel>
-              <TextBlock Text="{Binding BaseYearLabel}"
-                         HorizontalAlignment="Center"
-                         Margin="5" />
+        <!--Base Year EAD-->
+        <Border BorderBrush="Gray"
+                BorderThickness="1"
+                Margin="5"
+                Grid.Row="0"
+                Width="auto">
+          <StackPanel>
+            <TextBlock Text="{Binding BaseYearLabel}"
+                       HorizontalAlignment="Center"
+                       Margin="5" />
 
-              <twp:FdaDataGrid ItemsSource="{Binding BaseEADSummaryVM.Rows}"
-                               AutoGeneratingColumn="FdaDataGrid_AutoGeneratingColumn"
-                               AutoGenerateColumns="True"
-                               HorizontalAlignment="Left"
-                               VerticalAlignment="Top"
-                               IsReadOnly="True"
-                               CanUserResizeColumns="True"
-                               CanUserReorderColumns="False"
-                               CanUserSortColumns="false"
-                               Margin="5"
-                               SelectionUnit="Cell"
-                               Width="1920" />
-            </StackPanel>
-          </Border>
-        </ScrollViewer>
+            <twp:FdaDataGrid ItemsSource="{Binding BaseEADSummaryVM.Rows}"
+                             AutoGeneratingColumn="FdaDataGrid_AutoGeneratingColumn"
+                             AutoGenerateColumns="True"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Top"
+                             IsReadOnly="True"
+                             CanUserResizeColumns="True"
+                             CanUserReorderColumns="False"
+                             CanUserSortColumns="false"
+                             Margin="5"
+                             SelectionUnit="Cell"
+                             Width="auto" />
+          </StackPanel>
+        </Border>
 
         <!--Future Year EAD-->
-        <ScrollViewer Grid.Row="1"
-                      Width="1920"
-                      HorizontalAlignment="Left"
-                      HorizontalScrollBarVisibility="Auto"
-                      Margin="5">
-          <Border BorderBrush="Gray"
-                  BorderThickness="1">
-            <StackPanel>
-              <TextBlock Text="{Binding FutureYearLabel}"
-                         HorizontalAlignment="Center"
-                         Margin="5" />
+        <Border BorderBrush="Gray"
+                BorderThickness="1"
+                Grid.Row="1">
+          <StackPanel>
+            <TextBlock Text="{Binding FutureYearLabel}"
+                       HorizontalAlignment="Center"
+                       Margin="5" />
 
-              <twp:FdaDataGrid ItemsSource="{Binding FutureEADSummaryVM.Rows}"
-                               AutoGeneratingColumn="FdaDataGrid_AutoGeneratingColumn"
-                               AutoGenerateColumns="True"
-                               HorizontalAlignment="Left"
-                               VerticalAlignment="Top"
-                               IsReadOnly="True"
-                               CanUserResizeColumns="True"
-                               CanUserReorderColumns="False"
-                               CanUserSortColumns="false"
-                               Margin="5"
-                               SelectionUnit="Cell" 
-                               Width="1920"/>
-            </StackPanel>
-          </Border>
-        </ScrollViewer>
+            <twp:FdaDataGrid ItemsSource="{Binding FutureEADSummaryVM.Rows}"
+                             AutoGeneratingColumn="FdaDataGrid_AutoGeneratingColumn"
+                             AutoGenerateColumns="True"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Top"
+                             IsReadOnly="True"
+                             CanUserResizeColumns="True"
+                             CanUserReorderColumns="False"
+                             CanUserSortColumns="false"
+                             Margin="5"
+                             SelectionUnit="Cell"
+                             Width="auto" />
+          </StackPanel>
+        </Border>
 
         <!--Period of Analysis AAEQ-->
-        <ScrollViewer Grid.Row="2"
-                      Width="1920"
-                      HorizontalAlignment="Left"
-                      HorizontalScrollBarVisibility="Auto"
-                      Margin="5">
-          <Border BorderBrush="Gray"
-                  BorderThickness="1">
-            <StackPanel>
-              <TextBlock Text="{Binding AAEQLabel}"
-                         HorizontalAlignment="Center"
-                         Margin="5" />
+        <Border BorderBrush="Gray"
+                BorderThickness="1"
+                Grid.Row="2">
+          <StackPanel>
+            <TextBlock Text="{Binding AAEQLabel}"
+                       HorizontalAlignment="Center"
+                       Margin="5" />
 
-              <twp:FdaDataGrid ItemsSource="{Binding AAEQSummaryVM.Rows}"
-                               AutoGeneratingColumn="FdaDataGrid_AutoGeneratingColumn"
-                               AutoGenerateColumns="True"
-                               HorizontalAlignment="Left"
-                               VerticalAlignment="Top"
-                               IsReadOnly="True"
-                               CanUserResizeColumns="True"
-                               CanUserReorderColumns="False"
-                               CanUserSortColumns="false"
-                               Margin="5"
-                               SelectionUnit="Cell"
-                               Width="1920" />
-            </StackPanel>
-          </Border>
-        </ScrollViewer>
-        
+            <twp:FdaDataGrid ItemsSource="{Binding AAEQSummaryVM.Rows}"
+                             AutoGeneratingColumn="FdaDataGrid_AutoGeneratingColumn"
+                             AutoGenerateColumns="True"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Top"
+                             IsReadOnly="True"
+                             CanUserResizeColumns="True"
+                             CanUserReorderColumns="False"
+                             CanUserSortColumns="false"
+                             Margin="5"
+                             SelectionUnit="Cell"
+                             Width="auto" />
+          </StackPanel>
+        </Border>
+
         <!--Bottom Bar-->
         <utils:OKCloseControl Grid.Row="3"
                               VerticalAlignment="Bottom"

@@ -12,12 +12,13 @@ namespace HEC.FDA.View.Results
             InitializeComponent();
         }
 
-        private void TotalEADGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        private void FdaDataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
             if (e.PropertyType == typeof(double) || e.PropertyType == typeof(double?))
             {
-                (e.Column as DataGridTextColumn).Binding.StringFormat = "{0:F2}";
+                (e.Column as DataGridTextColumn).Binding.StringFormat = "C2";
             }
+
         }
     }
 }

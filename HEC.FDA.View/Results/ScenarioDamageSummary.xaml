@@ -65,68 +65,45 @@
         </GroupBox>
 
         <!--Total Expected Annual Damage-->
-        <ScrollViewer Grid.Row="1"
-                      Width="1020"
-                      HorizontalAlignment="Left"
-                      HorizontalScrollBarVisibility="Auto"
-                      Margin="5">
-          <Border BorderBrush="Gray"
-                  BorderThickness="1">
-            <StackPanel>
-              <TextBlock Text="Total Expected Annual Damage"
-                         HorizontalAlignment="Center"
-                         Margin="5" />
-              <twp:FdaDataGrid x:Name="TotalEADGrid"
-                               ItemsSource="{Binding Path=Rows}"
-                               AutoGeneratingColumn="TotalEADGrid_AutoGeneratingColumn"
-                               AutoGenerateColumns="True"
-                               CanUserSortColumns="false"
-                               SelectionUnit="Cell"
-                               Width="1000" />
-            </StackPanel>
-          </Border>
-        </ScrollViewer>
+        <Border BorderBrush="Gray"
+                BorderThickness="1"
+                Margin="5"
+                Grid.Row="1"
+                HorizontalAlignment="Left">
+          <StackPanel>
+            <TextBlock Text="Total Expected Annual Damage"
+                       HorizontalAlignment="Center"
+                       Margin="5" />
+            <twp:FdaDataGrid x:Name="TotalEADGrid"
+                             ItemsSource="{Binding Path=Rows}"
+                             AutoGeneratingColumn="FdaDataGrid_AutoGeneratingColumn"
+                             AutoGenerateColumns="True"
+                             CanUserSortColumns="false"
+                             SelectionUnit="Cell"
+                             HorizontalAlignment="Left"
+                             Width="auto" />
+          </StackPanel>
+        </Border>
 
-        <ScrollViewer Grid.Row="2"
-                      VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Auto"
-                      HorizontalAlignment="Left"
-                      Margin="5">
-          <Grid>
-            <Grid.RowDefinitions>
-              <RowDefinition Height="auto" />
-              <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <Grid Grid.Row="0"
-                  Width="{Binding Path=Width, ElementName=damCatGrid}"
-                  HorizontalAlignment="Left"
-                  Margin="0 0 0 0">
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="{Binding ElementName=damCatGrid, Path=ActualWidth}" />
-              </Grid.ColumnDefinitions>
-              <Border Grid.Column="0"
-                      Grid.ColumnSpan="2"
-                      BorderBrush="Gray"
-                      BorderThickness="1">
-                <Label  HorizontalContentAlignment='Center'>Mean Expected Annual Damage by Damage Category</Label>
-              </Border>
-            </Grid>
-            <DataGrid HeadersVisibility="Column"
-                      Grid.Row="1"
-                      Name="damCatGrid"
-                      ItemsSource="{Binding DamCatTable}"
-                      AutoGenerateColumns="True"
-                      AutoGeneratingColumn="TotalEADGrid_AutoGeneratingColumn"
-                      HorizontalAlignment="Left"
-                      VerticalAlignment="Top"
-                      IsReadOnly="True"
-                      CanUserResizeColumns="True"
-                      CanUserReorderColumns="False"
-                      CanUserSortColumns="false"
-                      SelectionUnit="Cell">
-            </DataGrid>
-          </Grid>
-        </ScrollViewer>
+        <!--DamCatTable-->
+        <Border BorderBrush="Gray"
+                BorderThickness="1"
+                Margin="5"
+                Grid.Row="2"
+                HorizontalAlignment="Left">
+          <StackPanel HorizontalAlignment="Left">
+            <TextBlock Text="Mean Expected Annual Damage"
+                       HorizontalAlignment="Center"
+                       Margin="5" />
+            <twp:FdaDataGrid ItemsSource="{Binding Path=DamCatRows}"
+                             AutoGeneratingColumn="FdaDataGrid_AutoGeneratingColumn"
+                             AutoGenerateColumns="True"
+                             CanUserSortColumns="false"
+                             SelectionUnit="Cell"
+                             HorizontalAlignment="Left"
+                             Width="auto" />
+          </StackPanel>
+        </Border>
 
         <ScrollViewer Grid.Row="3"
                       VerticalScrollBarVisibility="Auto"
