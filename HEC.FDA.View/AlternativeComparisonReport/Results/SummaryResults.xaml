@@ -19,10 +19,15 @@
           <RowDefinition Height="Auto" /> 
           <RowDefinition Height="Auto" />
           <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
           <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         
-        <!--Base Year EAD-->
+
+
+        <!--Agg Base Year EAD-->
         <Border BorderBrush="Gray"
                 BorderThickness="1"
                 Margin="5"
@@ -30,11 +35,11 @@
                 Width="auto"
                 HorizontalAlignment="Left">
           <StackPanel>
-            <TextBlock Text="{Binding BaseYearLabel}"
+            <TextBlock Text="{Binding AggBaseYearLabel}"
                        HorizontalAlignment="Center"
                        Margin="5" />
 
-            <twp:FdaDataGrid ItemsSource="{Binding BaseEADSummaryVM.Rows}"
+            <twp:FdaDataGrid ItemsSource="{Binding AggBaseEADSummaryRows}"
                              AutoGeneratingColumn="FdaDataGrid_AutoGeneratingColumn"
                              AutoGenerateColumns="True"
                              HorizontalAlignment="Left"
@@ -55,11 +60,11 @@
                 Grid.Row="1"
                 HorizontalAlignment="Left">
           <StackPanel>
-            <TextBlock Text="{Binding FutureYearLabel}"
+            <TextBlock Text="{Binding AggFutureYearLabel}"
                        HorizontalAlignment="Center"
                        Margin="5" />
 
-            <twp:FdaDataGrid ItemsSource="{Binding FutureEADSummaryVM.Rows}"
+            <twp:FdaDataGrid ItemsSource="{Binding AggFutureEADSummaryRows}"
                              AutoGeneratingColumn="FdaDataGrid_AutoGeneratingColumn"
                              AutoGenerateColumns="True"
                              HorizontalAlignment="Left"
@@ -80,11 +85,88 @@
                 Grid.Row="2"
                 HorizontalAlignment="Left">
           <StackPanel>
+            <TextBlock Text="{Binding AggAAEQLabel}"
+                       HorizontalAlignment="Center"
+                       Margin="5" />
+
+            <twp:FdaDataGrid ItemsSource="{Binding AggAAEQSummaryRows}"
+                             AutoGeneratingColumn="FdaDataGrid_AutoGeneratingColumn"
+                             AutoGenerateColumns="True"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Top"
+                             IsReadOnly="True"
+                             CanUserResizeColumns="True"
+                             CanUserReorderColumns="False"
+                             CanUserSortColumns="false"
+                             Margin="5"
+                             SelectionUnit="Cell"
+                             Width="auto" />
+          </StackPanel>
+        </Border>
+
+        <!--Base Year EAD-->
+        <Border BorderBrush="Gray"
+                BorderThickness="1"
+                Margin="5"
+                Grid.Row="3"
+                Width="auto"
+                HorizontalAlignment="Left">
+          <StackPanel>
+            <TextBlock Text="{Binding BaseYearLabel}"
+                       HorizontalAlignment="Center"
+                       Margin="5" />
+
+            <twp:FdaDataGrid ItemsSource="{Binding BaseEADSummaryRows}"
+                             AutoGeneratingColumn="FdaDataGrid_AutoGeneratingColumn"
+                             AutoGenerateColumns="True"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Top"
+                             IsReadOnly="True"
+                             CanUserResizeColumns="True"
+                             CanUserReorderColumns="False"
+                             CanUserSortColumns="false"
+                             Margin="5"
+                             SelectionUnit="Cell"
+                             Width="auto" />
+          </StackPanel>
+        </Border>
+
+        <!--Future Year EAD-->
+        <Border BorderBrush="Gray"
+                BorderThickness="1"
+                Grid.Row="4"
+                HorizontalAlignment="Left">
+          <StackPanel>
+            <TextBlock Text="{Binding FutureYearLabel}"
+                       HorizontalAlignment="Center"
+                       Margin="5" />
+
+            <twp:FdaDataGrid ItemsSource="{Binding FutureEADSummaryRows}"
+                             AutoGeneratingColumn="FdaDataGrid_AutoGeneratingColumn"
+                             AutoGenerateColumns="True"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Top"
+                             IsReadOnly="True"
+                             CanUserResizeColumns="True"
+                             CanUserReorderColumns="False"
+                             CanUserSortColumns="false"
+                             Margin="5"
+                             SelectionUnit="Cell"
+                             Width="auto" />
+          </StackPanel>
+        </Border>
+
+        <!--Period of Analysis AAEQ-->
+        <Border BorderBrush="Gray"
+                BorderThickness="1"
+                Grid.Row="5"
+                HorizontalAlignment="Left">
+          <StackPanel>
             <TextBlock Text="{Binding AAEQLabel}"
                        HorizontalAlignment="Center"
                        Margin="5" />
 
-            <twp:FdaDataGrid ItemsSource="{Binding AAEQSummaryVM.Rows}"
+            <twp:FdaDataGrid ItemsSource="{Binding AAEQSummaryRows}"
                              AutoGeneratingColumn="FdaDataGrid_AutoGeneratingColumn"
                              AutoGenerateColumns="True"
                              HorizontalAlignment="Left"
@@ -100,7 +182,7 @@
         </Border>
 
         <!--Bottom Bar-->
-        <utils:OKCloseControl Grid.Row="3"
+        <utils:OKCloseControl Grid.Row="6"
                               VerticalAlignment="Bottom"
                               HorizontalAlignment="Right"
                               Margin="5" />

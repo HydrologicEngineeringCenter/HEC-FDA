@@ -71,7 +71,7 @@
                 Grid.Row="1"
                 HorizontalAlignment="Left">
           <StackPanel>
-            <TextBlock Text="Total Expected Annual Damage"
+            <TextBlock Text="Expected Annual Damage Distribution Summary"
                        HorizontalAlignment="Center"
                        Margin="5" />
             <twp:FdaDataGrid ItemsSource="{Binding Path=Rows}"
@@ -91,7 +91,7 @@
                 Grid.Row="2"
                 HorizontalAlignment="Left">
           <StackPanel HorizontalAlignment="Left">
-            <TextBlock Text="Mean Expected Annual Damage"
+            <TextBlock Text="Expected Annual Damage by Damage and Asset Category"
                        HorizontalAlignment="Center"
                        Margin="5" />
             <twp:FdaDataGrid ItemsSource="{Binding Path=DamCatRows}"
