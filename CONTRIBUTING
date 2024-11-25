@@ -15,8 +15,7 @@ We are targeting a robust test coverage for the code, please write tests for new
 -  Ideally, please do not push code that has not been tested; at a minimum please do not submit a pull request on untested code. 
 
 ## Submitting changes
-Please create a GitHub Pull Request with a clear list of what you've done and add one of the labels to categorize the changes. If any method signatures or interfaces have been changed, be sure to note that explicitly and prepare separate PRs for depending projects to fix build errors. 
-
+Please create a GitHub Pull Request with a clear list of what you've done and add one of the labels to categorize the changes.
 We can always use more test coverage. Please follow our coding conventions (below) and make sure all of your commits are atomic (one feature per commit). Please keep commits to a given branch small/few in number and maintain short branch life. For any given class you have touched:
 - Remove commented out code unless there is a special reason (and add reason to comments).
 - Fix all throw not implemented exceptions. 
@@ -27,9 +26,7 @@ We can always use more test coverage. Please follow our coding conventions (belo
 - Ensure all tests are attributed with RunsOn = Local or RunsOn = Remote. 
 - Ensure all local tests pass by running them on your own machine (they are not automatically run through GitHub Actions).
 - Approve or request changes and describe changes requested in detail 
-- If approve, merge and delete branch. Update package dependencies in other repositories and confirm that the merge did not break depending projects. 
-- If the merge broke depending projects, create and assign issue to author of PR. 
-
+- If approve, merge and delete branch. 
 
 Always write a clear log message for your commits. Feel free to tag @rnugent3 for a review.
 
