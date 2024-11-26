@@ -236,12 +236,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             {
                 vr.AddErrorMessage(CreateElementDoesntExistMessage("frequency element"));
             }
-            if (stageDamageElem == null)
-            {
-                vr.AddErrorMessage(CreateElementDoesntExistMessage("stage damage element"));
-            }
-
-        
+       
             return vr;
         }
 

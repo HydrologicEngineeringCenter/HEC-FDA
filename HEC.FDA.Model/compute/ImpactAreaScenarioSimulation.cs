@@ -85,7 +85,7 @@ namespace HEC.FDA.Model.compute
         /// <summary>
         /// This code path currently only used by tests. 
         /// </summary>
-        public ImpactAreaScenarioResults Compute(ConvergenceCriteria convergenceCriteria, bool computeIsDeterministic =false)
+        public ImpactAreaScenarioResults Compute(ConvergenceCriteria convergenceCriteria, bool computeIsDeterministic = false)
         {
             return Compute(convergenceCriteria, new CancellationToken(), computeIsDeterministic);
         }
@@ -103,15 +103,35 @@ namespace HEC.FDA.Model.compute
                 return _ImpactAreaScenarioResults;
             }
 
-            
+
             PopulateRandomNumbers(convergenceCriteria);
             bool computeWithDamage = true;
 
             if (_StageDamageFunctions.Count == 0)
             {
                 computeWithDamage = false;
-                Threshold systemResponseThreshold = new(thresholdID: 0, _SystemResponseFunction, convergenceCriteria);
-                _ImpactAreaScenarioResults.PerformanceByThresholds.AddThreshold(systemResponseThreshold);
+
+                //need to at least specify a levee to evaluate performance 
+                //TODO, we could lessen this restriction to at least need a user entered threshold
+                if (_SystemResponseFunction.IsNull)
+                {
+                    _ImpactAreaScenarioResults = new ImpactAreaScenarioResults(_ImpactAreaID, true); //I would like to just return regular Null here but I'm unsure who is relying on this behavior. BBB
+                    return _ImpactAreaScenarioResults;
+                }
+                else
+                {
+                    ThresholdEnum thresholdEnum;
+                    if (_SystemResponseFunction.Xvals.Length <= 2)
+                    {
+                        thresholdEnum = ThresholdEnum.TopOfLevee;
+                    }
+                    else
+                    {
+                        thresholdEnum = ThresholdEnum.LeveeSystemResponse;
+                    }
+                    Threshold systemResponseThreshold = new(thresholdID: 0, _SystemResponseFunction, convergenceCriteria, thresholdEnum, _TopOfLeveeElevation);
+                    _ImpactAreaScenarioResults.PerformanceByThresholds.AddThreshold(systemResponseThreshold);
+                }
             }
             else
             {
@@ -142,7 +162,7 @@ namespace HEC.FDA.Model.compute
         {
             //generate slightly more random numbers than max iterations because it is possible that we keep iterating beyond max 
             //before re-checking for convergence 
-            int quantityOfRandomNumbers = Convert.ToInt32(convergenceCriteria.MaxIterations*1.25);
+            int quantityOfRandomNumbers = Convert.ToInt32(convergenceCriteria.MaxIterations * 1.25);
 
             if (_FrequencyDischarge != null)
             {
@@ -315,7 +335,7 @@ namespace HEC.FDA.Model.compute
                                 PairedData frequencyDischarge;
                                 if (_FrequencyDischargeGraphical.CurveMetaData.IsNull)
                                 {
-                                    frequencyDischarge = _FrequencyDischarge.BootstrapToPairedData(thisComputeIteration, utilities.DoubleGlobalStatics.RequiredExceedanceProbabilities, computeIsDeterministic);                                                                                                              
+                                    frequencyDischarge = _FrequencyDischarge.BootstrapToPairedData(thisComputeIteration, utilities.DoubleGlobalStatics.RequiredExceedanceProbabilities, computeIsDeterministic);
                                 }
                                 else
                                 {
@@ -331,7 +351,7 @@ namespace HEC.FDA.Model.compute
                                 }
                                 else
                                 {
-                                    PairedData inflow_outflow_sample = _UnregulatedRegulated.SamplePairedData(thisComputeIteration, computeIsDeterministic); 
+                                    PairedData inflow_outflow_sample = _UnregulatedRegulated.SamplePairedData(thisComputeIteration, computeIsDeterministic);
                                     PairedData transformff = inflow_outflow_sample.compose(frequencyDischarge);
                                     PairedData discharge_stage_sample = _DischargeStage.SamplePairedData(thisComputeIteration, computeIsDeterministic);
                                     PairedData frequency_stage = discharge_stage_sample.compose(transformff);
@@ -409,7 +429,7 @@ namespace HEC.FDA.Model.compute
                 }
                 else
                 {
-                    PairedData systemResponse_sample = _SystemResponseFunction.SamplePairedData(thisComputeIteration, computeIsDeterministic); 
+                    PairedData systemResponse_sample = _SystemResponseFunction.SamplePairedData(thisComputeIteration, computeIsDeterministic);
                     if (computeWithDamage)
                     {
                         ComputeDamagesFromStageFrequency_WithLevee(frequency_stage, systemResponse_sample, thisComputeIteration, thisChunkIteration, computeIsDeterministic);
@@ -430,7 +450,7 @@ namespace HEC.FDA.Model.compute
             }
             else
             {
-                PairedData _channelstage_floodplainstage_sample = _ChannelStageFloodplainStage.SamplePairedData(thisComputeIteration, computeIsDeterministic); 
+                PairedData _channelstage_floodplainstage_sample = _ChannelStageFloodplainStage.SamplePairedData(thisComputeIteration, computeIsDeterministic);
                 PairedData frequency_floodplainstage = _channelstage_floodplainstage_sample.compose(frequency_stage);
                 //levees
                 if (_SystemResponseFunction.CurveMetaData.IsNull)
@@ -443,7 +463,7 @@ namespace HEC.FDA.Model.compute
                 }
                 else
                 {
-                    PairedData systemResponse_sample = _SystemResponseFunction.SamplePairedData(thisComputeIteration, computeIsDeterministic); 
+                    PairedData systemResponse_sample = _SystemResponseFunction.SamplePairedData(thisComputeIteration, computeIsDeterministic);
                     if (computeWithDamage)
                     {
                         ComputeDamagesFromStageFrequency_WithLeveeAndInteriorExterior(_channelstage_floodplainstage_sample, frequency_stage, systemResponse_sample, thisComputeIteration, thisChunkIteration, computeIsDeterministic);
@@ -474,7 +494,7 @@ namespace HEC.FDA.Model.compute
                 _ImpactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadEstimate, stageUncertainDamage.CurveMetaData.DamageCategory, stageUncertainDamage.CurveMetaData.AssetCategory, _ImpactAreaID, thisChunkIteration);
             }
         }
-        private void ComputeDamagesFromStageFrequency_WithLevee(PairedData frequency_stage, PairedData systemResponse,  long thisComputeIteration, long thisChunkIteration, bool computeIsDeterministic)
+        private void ComputeDamagesFromStageFrequency_WithLevee(PairedData frequency_stage, PairedData systemResponse, long thisComputeIteration, long thisChunkIteration, bool computeIsDeterministic)
         {
             foreach (UncertainPairedData stageUncertainDamage in _StageDamageFunctions)
             {

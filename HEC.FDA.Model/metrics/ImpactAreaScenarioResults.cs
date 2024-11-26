@@ -246,13 +246,16 @@ namespace HEC.FDA.Model.metrics
         public PairedData GetDamageFrequency(string damageCategory, string assetCategory)
         {
             PairedData returnValue = new(new double[] {0, 1},new double[] {0, 1});
-            foreach ((CurveMetaData, PairedData) pairedData in DamageFrequencyFunctions)
+            if (DamageFrequencyFunctions != null)
             {
-                if (pairedData.Item1.DamageCategory ==  damageCategory)
+                foreach ((CurveMetaData, PairedData) pairedData in DamageFrequencyFunctions)
                 {
-                    if (pairedData.Item1.AssetCategory == assetCategory)
+                    if (pairedData.Item1.DamageCategory == damageCategory)
                     {
-                        returnValue = pairedData.Item2 as PairedData;
+                        if (pairedData.Item1.AssetCategory == assetCategory)
+                        {
+                            returnValue = pairedData.Item2 as PairedData;
+                        }
                     }
                 }
             }

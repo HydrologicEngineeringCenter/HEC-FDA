@@ -492,27 +492,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             }
             return vr;
         }
-        private FdaValidationResult GetStageDamageValidationResult()
-        {
-            ChildElementComboItem selectedStageDamage = _SelectedStageDamage();
-            FdaValidationResult vr = new();
-            if (selectedStageDamage == null || selectedStageDamage.ChildElement == null)
-            {
-                vr.AddErrorMessage("A Stage Damage is required. ");
-            }
-            else
-            {
-                List<StageDamageCurve> stageDamageCurves = GetStageDamageCurves();
-                if (stageDamageCurves.Count == 0)
-                {
-                    //todo: maybe get the impact area name for this message?
-                    //todo: this name exists in multiple places. look into it. 
-                    vr.AddErrorMessage("The aggregated stage damage element '" + _SelectedStageDamage().ChildElement.Name + "' did not contain any curves that are associated " +
-                        "with the impact area.");
-                }
-            }
-            return vr;
-        }
 
         #endregion
 
@@ -530,25 +509,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             }
         }
 
-        private FdaValidationResult GetNonFailureValidationResult()
-        {
-            FdaValidationResult vr = new();
-            if (HasNonFailureStageDamage && (NonFailureSelectedStageDamage == null || NonFailureSelectedStageDamage.ChildElement == null))
-            {
-                //then a selection is required
-                vr.AddErrorMessage("A non failure stage-damage curve is required.");
-            }
-            return vr;
-        }
-
         public FdaValidationResult GetValidationResults()
         {
             FdaValidationResult vr = new();
 
             vr.AddErrorMessage(GetFrequencyRelationshipValidationResult().ErrorMessage);
             vr.AddErrorMessage(GetRatingCurveValidationResult().ErrorMessage);
-            vr.AddErrorMessage(GetStageDamageValidationResult().ErrorMessage);
-            vr.AddErrorMessage(GetNonFailureValidationResult().ErrorMessage);
 
             if (!vr.IsValid)
             {
@@ -580,9 +546,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 sc.WithAdditionalThreshold(threshold);
             }
 
-            FdaValidationResult configurationValidationResult = sc.IsConfigurationValid();
-            if (configurationValidationResult.IsValid)
-            {
+            //might need to be able to handle no stage damage here elegantly 
+
                 ImpactAreaScenarioSimulation simulation = sc.BuildSimulation();
                 ImpactAreaScenarioResults result = simulation.PreviewCompute();
                 if (result == null)
@@ -594,7 +559,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                     EAD = result.ConsequenceResults.MeanDamage(_selectedDamageCategory, _selectedAssetCategory, CurrentImpactArea.ID);
                     _DamageFrequencyCurve = result.GetDamageFrequency(_selectedDamageCategory, _selectedAssetCategory);
                 }
-            }
+            
 
         }
 
