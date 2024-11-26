@@ -79,7 +79,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         {
             ConfidenceLimits = new MVVMFramework.ViewModel.Implementations.NamedAction
             {
-                Name = "Compute Confidence Limits",
+                Name = "Display Uncertainty",
                 Action = ConfidenceLimitsAction
             };
         }
