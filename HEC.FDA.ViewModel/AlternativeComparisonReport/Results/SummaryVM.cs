@@ -32,13 +32,13 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
             FutureEADSummaryRows = futureYearSummary;
             AggFutureEADSummaryRows = aggFutureYearSummary;
 
-            BaseYearLabel = "Base Year Expected Annual Damage by Damage and Asset Category " + years[0];
-            FutureYearLabel = "Future Year Expected Annual Damage by Damage and Asset Category " + years[1];
-            AAEQLabel = "Equivalent Annual Damage Distribution by Damage and Asset Category";
+            BaseYearLabel = "Base Year Expected Annual Damage Reduced by Damage and Asset Category " + years[0];
+            FutureYearLabel = "Future Year Expected Annual Damage Reduced by Damage and Asset Category " + years[1];
+            AAEQLabel = "Equivalent Annual Damage Distribution (EqAD) Reduced by Damage and Asset Category";
 
-            AggBaseYearLabel = "Base Year Expected Annual Damage " + years[0];
-            AggFutureYearLabel = "Future Year Expected Annual Damage " + years[1];
-            AggAAEQLabel = "Equivalent Annual Damage Distribution";
+            AggBaseYearLabel = "Base Year Expected Annual Damage Reduced Distribution " + years[0];
+            AggFutureYearLabel = "Future Year Expected Annual Damage Reduced Distribution " + years[1];
+            AggAAEQLabel = "Equivalent Annual Damage (EqAD) Reduced Distribution";
         }
 
     }

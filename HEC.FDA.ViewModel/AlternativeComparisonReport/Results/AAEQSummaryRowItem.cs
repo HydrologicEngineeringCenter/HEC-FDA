@@ -12,19 +12,19 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
         public string AssetCat { get; set; }
         [DisplayAsColumn("Without Project Alternative")]
         public string WithoutProjAlternative { get; set; }
-        [DisplayAsColumn("Without Project AAEQ")]
+        [DisplayAsColumn("Without Project EqAD")]
         public double WithoutProjAAEQ { get; set; }
         [DisplayAsColumn("With Project Alternative")]
         public string WithProjAlternative { get; set; }
-        [DisplayAsColumn("With Project AAEQ")]
+        [DisplayAsColumn("With Project EqAD")]
         public double WithProjAAEQ { get; set; }
-        [DisplayAsColumn("Mean AAEQ Reduced")]
+        [DisplayAsColumn("Mean EqAD Reduced")]
         public double AAEQDamageReduced { get; set; }
-        [DisplayAsColumn("25th Percentile AAEQ Reduced")]// This is intentionally swapped 1-x
+        [DisplayAsColumn("25th Percentile EqAD Reduced")]// This is intentionally swapped 1-x
         public double Point75 { get; set; }
-        [DisplayAsColumn("50th Percentile AAEQ Reduced")]
+        [DisplayAsColumn("50th Percentile EqAD Reduced")]
         public double Point5 { get; set; }
-        [DisplayAsColumn("75th Percentile AAEQ Reduced")] // This is intentionally swapped 1-x
+        [DisplayAsColumn("75th Percentile EqAD Reduced")] // This is intentionally swapped 1-x
         public double Point25 { get; set; }
         public AAEQSummaryRowItem(string impactArea, string damcat, string assetcat,string withoutName, double withoutAAEQDamage, string withProjName, double withProjAAEQ, 
             double AAEQReduced, double point75, double point5, double point25)
