@@ -212,7 +212,7 @@ namespace HEC.FDA.View.TableWithPlot
             PreviewAddRows?.Invoke(this, EventArgs.Empty);
             List<int> UniqueRows = GetSelectedRows();
             Int32 InsertAtRow = UniqueRows.Min();
-            RowsAdded?.Invoke(this,new RowsAddedEventArgs(InsertAtRow + 1, UniqueRows.Count));
+            RowsAdded?.Invoke(this, new RowsAddedEventArgs(InsertAtRow + 1, UniqueRows.Count));
         }
 
         public Int32 GetSelectedIndex()
@@ -359,7 +359,8 @@ namespace HEC.FDA.View.TableWithPlot
                                 var newVal = Convert.ChangeType(clipboardData[i][j], y.PropertyType);
                                 ((SequentialRow)Items[RowIndex + i]).UpdateRow(ColumnIndex + j, (double)newVal);
                             }
-                            catch {
+                            catch
+                            {
                                 //ignore
                             }
                         }
@@ -434,40 +435,42 @@ namespace HEC.FDA.View.TableWithPlot
             e.Cancel = true;
             if (e.Column.GetType() == typeof(DataGridTextColumn))
             {
-                DataGridTextColumn dgtc = (DataGridTextColumn)e.Column;
-                FdaDataGrid sndr = sender as FdaDataGrid;
+                DataGridTextColumn dataGridtextColumn = (DataGridTextColumn)e.Column;
+                FdaDataGrid dataGrid = sender as FdaDataGrid;
                 bool cancel = true;
-                if (sndr != null)
+                if (dataGrid != null)
                 {
-                    PropertyInfo[] pilist = sndr.Items.CurrentItem.GetType().GetProperties();
+                    PropertyInfo[] pilist = dataGrid.Items.CurrentItem.GetType().GetProperties();
                     foreach (PropertyInfo pi in pilist)
                     {
-                        if ( pi.Name == e.PropertyName)
+                        if (pi.Name == e.PropertyName)
                         {
-                            DisplayAsColumnAttribute dna = (DisplayAsColumnAttribute)pi.GetCustomAttribute(typeof(DisplayAsColumnAttribute));
-                            if (dna != null)
+                            DisplayAsColumnAttribute DisplayAsColAttribute = (DisplayAsColumnAttribute)pi.GetCustomAttribute(typeof(DisplayAsColumnAttribute));
+                            if (DisplayAsColAttribute != null)
                             {
-                                Console.WriteLine(dna.DisplayName);
-                                dgtc.Header = dna.DisplayName;
+                                dataGridtextColumn.Header = DisplayAsColAttribute.DisplayName;
                                 cancel = false;
                             }
                         }
-                        
+
                     }
                 }
                 e.Cancel = cancel;
-                if (cancel) {return;}
+                if (cancel) { return; }
 
-                dgtc.Width = new DataGridLength(1, DataGridLengthUnitType.Star);
+                dataGridtextColumn.Width = new DataGridLength(1, DataGridLengthUnitType.Auto);
                 Style ers = (Style)Resources["errorStyle"];
                 Style ersG = (Style)Resources["errorStyleGrid"];
-                dgtc.EditingElementStyle = ers;
-                dgtc.ElementStyle = ersG;
-                Binding b = (Binding)dgtc.Binding;
-                b.UpdateSourceTrigger = UpdateSourceTrigger.LostFocus;
-                b.ValidatesOnNotifyDataErrors = true;
+                dataGridtextColumn.EditingElementStyle = ers;
+                dataGridtextColumn.ElementStyle = ersG;
+                Binding binding = (Binding)dataGridtextColumn.Binding;
+                binding.UpdateSourceTrigger = UpdateSourceTrigger.LostFocus;
+                binding.ValidatesOnNotifyDataErrors = true;
                 //TODO: This approach fixes all of the data grid columns to the same format. I think we could use a way to access the format of certain columns. 
-                b.StringFormat = ViewModel.Utilities.StringConstants.DETAILED_DECIMAL_FORMAT;
+                if (e.PropertyType == typeof(double) || e.PropertyType == typeof(double?))
+                {
+                    binding.StringFormat = ViewModel.Utilities.StringConstants.DETAILED_DECIMAL_FORMAT;
+                }
             }
         }
     }

@@ -24,5 +24,14 @@ namespace HEC.FDA.View.AlternativeComparisonReport.Results
         {
             InitializeComponent();
         }
+
+        private void FdaDataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            if (e.PropertyType == typeof(double) || e.PropertyType == typeof(double?))
+            {
+                (e.Column as DataGridTextColumn).Binding.StringFormat = "C2";
+            }
+
+        }
     }
 }

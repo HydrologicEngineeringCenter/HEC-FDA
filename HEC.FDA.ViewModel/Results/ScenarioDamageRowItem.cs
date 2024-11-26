@@ -1,36 +1,61 @@
 ﻿using HEC.FDA.Model.metrics;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
+using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
 using Statistics.Distributions;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using Utility.Memory;
 
 namespace HEC.FDA.ViewModel.Results
 {
     public class ScenarioDamageRowItem
     {
+        [DisplayAsColumn("Name")]
         public string Name { get; set; }
+        [DisplayAsColumn("Analysis Year")]
         public string AnalysisYear { get; set; }
+        [DisplayAsColumn("Impact Area")]
+        public string ImpactArea { get; set; }
+        [DisplayAsColumn("Mean EAD")]
         public double Mean { get; set; }
-        public double Q1 { get; set; }
-        public double Q2 { get; set; }
-        public double Q3 { get; set; }
+        [DisplayAsColumn("25th Percentile EAD")] //This is intentionally swapped 1-x 
+        public double Point75 { get; set; }
+        [DisplayAsColumn("50th Percentile EAD")]
+        public double Point5 { get; set; }
+        [DisplayAsColumn("75th Percentile EAD")]//This is intentionally swapped 1-x 
+        public double Point25 { get; set; }
 
-
-        public ScenarioDamageRowItem(IASElement scenario)
+        private ScenarioDamageRowItem(string name, string analysisYear, string impactArea, double mean, double point75, double point5, double point25)
         {
-            Name = scenario.Name;
-            AnalysisYear = scenario.AnalysisYear;
-            ScenarioResults results = scenario.Results;
-            Mean = results.MeanExpectedAnnualConsequences();
-            Q1 = results.ConsequencesExceededWithProbabilityQ(.75);
-            Q2 = results.ConsequencesExceededWithProbabilityQ(.5);
-            Q3 = results.ConsequencesExceededWithProbabilityQ(.25);
-            List<string> damCats = results.GetDamageCategories();
-            foreach (string damCat in damCats)
-            {
-                Empirical damCatValue = results.GetConsequencesDistribution(damageCategory: damCat);
-            }
+            Name = name;
+            AnalysisYear = analysisYear;
+            ImpactArea = impactArea;
+            Mean = mean;
+            Point75 = point75;
+            Point5 = point5;
+            Point25 = point25;
+        }
 
-                
+        public static List<ScenarioDamageRowItem> CreateScenarioDamageRowItems(IASElement scenario)
+        {
+            List<ScenarioDamageRowItem> rowItems = [];
+
+            string name = scenario.Name;
+            string analysisYear = scenario.AnalysisYear;
+            ScenarioResults results = scenario.Results;
+            List<int> impactAreaIds = results.GetImpactAreaIDs();
+            Dictionary<int, string> impactAreaIdToName = IASElement.GetImpactAreaNamesFromIDs();
+           
+            foreach (int impactAreaID in impactAreaIds)
+            {
+                    double Mean = results.MeanExpectedAnnualConsequences(impactAreaID);
+                    double point75 = results.ConsequencesExceededWithProbabilityQ(.75, impactAreaID);
+                    double point5 = results.ConsequencesExceededWithProbabilityQ(.50, impactAreaID);
+                    double point25 = results.ConsequencesExceededWithProbabilityQ(.25, impactAreaID);
+                    rowItems.Add(new(name, analysisYear, impactAreaIdToName[impactAreaID], Mean, point75, point5, point25));
+            }
+            return rowItems;
         }
 
     }

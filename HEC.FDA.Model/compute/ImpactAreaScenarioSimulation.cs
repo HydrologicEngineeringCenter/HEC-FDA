@@ -981,7 +981,7 @@ namespace HEC.FDA.Model.compute
             GraphicalUncertainPairedData frequencyStage = GraphicalUncertainPairedData.ReadFromXML(xElement.Element(FREQUENCY_STAGE_ELEMENT_NAME));
             UncertainPairedData interiorExterior = UncertainPairedData.ReadFromXML(xElement.Element(INTERIOR_EXTERIOR_ELEMENT_NAME));
             UncertainPairedData systemResponse = UncertainPairedData.ReadFromXML(xElement.Element(SYSTEM_RESPONSE_ELEMENT_NAME));
-            IContainImpactAreaScenarioResults impactAreaScenarioResults = ImpactAreaScenarioResults.ReadFromXML(xElement.Element(IMPACT_AREA_SCENARIO_RESULTS_ELEMENT_NAME));
+            ImpactAreaScenarioResults impactAreaScenarioResults = ImpactAreaScenarioResults.ReadFromXML(xElement.Element(IMPACT_AREA_SCENARIO_RESULTS_ELEMENT_NAME));
             List<UncertainPairedData> stageDamageList = new();
             foreach (XElement stageDamageElement in xElement.Element(STAGE_DAMAGE_LIST_ELEMENT_NAME).Elements())
             {

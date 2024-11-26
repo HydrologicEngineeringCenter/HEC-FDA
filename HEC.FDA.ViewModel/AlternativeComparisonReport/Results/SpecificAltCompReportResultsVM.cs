@@ -58,7 +58,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
 
         public AlternativeResult AlternativeResult { get; }
 
-        public SpecificAltCompReportResultsVM(AlternativeResult altResult, List<EADSummaryRowItem> baseYearSummary, List<EADSummaryRowItem> futureYearSummary, List<AAEQSummaryRowItem> aaeqSummary)
+        public SpecificAltCompReportResultsVM(AlternativeResult altResult)
         {
             Name = altResult.Name;       
             AlternativeResult = altResult;

@@ -1,5 +1,8 @@
-﻿using HEC.FDA.ViewModel.ImpactAreaScenario;
+﻿using HEC.FDA.Model.scenarios;
+using HEC.FDA.ViewModel.ImpactAreaScenario;
+using HEC.FDA.ViewModel.Results;
 using HEC.FDA.ViewModel.Study;
+using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
 using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
@@ -12,41 +15,52 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
     public class AlternativeDamCatRowItem : BaseViewModel
     {
 
+        [DisplayAsColumn("Scenario Name")]
         public string Name { get; set; }
-        public IASElement BaseYearScenario { get; set; }
-        public IASElement FutureYearScenario { get; set; }
-        public double DiscountRate { get; set; }
-        public int PeriodOfAnalysis { get; set; }
-        public double Mean { get; set; }
-        public double Q1 { get; set; }
-        public double Q2 { get; set; }
-        public double Q3 { get; set; }
+        [DisplayAsColumn("Impact Area")]
+        public string ImpactAreaName { get; set; }
+        [DisplayAsColumn("Damage Category")]
+        public string DamCat { get; set; }
+        [DisplayAsColumn("Asset Category")]
+        public string AssetCat { get; set; }
+        [DisplayAsColumn("Mean EqAD")]
+        public double MeanDamage { get; set; }
 
-        public Dictionary<string, double> DamCatMap = new Dictionary<string, double>();
-
-        public AlternativeDamCatRowItem(AlternativeElement altElem)
+        private AlternativeDamCatRowItem(string name, string impactArea, string assetCategory, string damCat, double mean)
         {
-            Name = altElem.Name;
-            BaseYearScenario = altElem.BaseScenario.GetElement();
-            FutureYearScenario = altElem.FutureScenario.GetElement();
+            Name = name;
+            ImpactAreaName = impactArea;
+            AssetCat = assetCategory;
+            DamCat = damCat;
+            MeanDamage = mean;
+        }
 
-            StudyPropertiesElement studyPropElem = StudyCache.GetStudyPropertiesElement();
-            DiscountRate = studyPropElem.DiscountRate;
-            PeriodOfAnalysis = altElem.Results.PeriodOfAnalysis;
+        public static List<AlternativeDamCatRowItem> CreateAlternativeDamCatRowItems(AlternativeElement altElem) 
+        {
+            List<AlternativeDamCatRowItem> rowItems = [];
 
-            Mean = altElem.Results.MeanAAEQDamage();
-            Q1 = altElem.Results.AAEQDamageExceededWithProbabilityQ(.75);
-            Q2 = altElem.Results.AAEQDamageExceededWithProbabilityQ(.5);
-            Q3 = altElem.Results.AAEQDamageExceededWithProbabilityQ(.25);
+            string Name = altElem.Name;
+            IASElement BaseYearScenario = altElem.BaseScenario.GetElement();
+            List<int> impactAreaIds = BaseYearScenario.Results.GetImpactAreaIDs();
+            Dictionary<int, string> impactAreaIdToName = IASElement.GetImpactAreaNamesFromIDs();
 
 
             List<string> damCats = altElem.Results.GetDamageCategories();
-            foreach (string damCat in damCats)
+            List<string> assetCats = altElem.Results.GetAssetCategories();
+            foreach (int impactAreaID in impactAreaIds)
             {
-                Empirical damCatValue = altElem.Results.GetAAEQDamageDistribution(damageCategory: damCat);
-                DamCatMap.Add(damCat, Math.Round(damCatValue.Mean, 2));
+                foreach (string damCat in damCats)
+                {
+                    foreach(string assetCat in assetCats)
+                    {
+                        Empirical dist = altElem.Results.GetAAEQDamageDistribution(impactAreaID, damCat, assetCat);
+                        double mean = Math.Round(dist.Mean, 2);
+                        AlternativeDamCatRowItem row = new(Name, impactAreaIdToName[impactAreaID], assetCat, damCat, mean);
+                        rowItems.Add(row);
+                    }
+                }
             }
+            return rowItems;
         }
-
     }
 }

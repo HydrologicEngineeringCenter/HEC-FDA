@@ -8,7 +8,7 @@ using HEC.FDA.Model.paireddata;
 
 namespace HEC.FDA.Model.metrics
 {
-    public class ImpactAreaScenarioResults : IContainImpactAreaScenarioResults
+    public class ImpactAreaScenarioResults
     {
         #region Properties 
         public PerformanceByThresholds PerformanceByThresholds { get; set; } //exposed publicly for testing
@@ -40,7 +40,6 @@ namespace HEC.FDA.Model.metrics
             IsNull = false;
         }
         #endregion
-
         #region Methods
         public double MeanAEP(int thresholdID)
         {

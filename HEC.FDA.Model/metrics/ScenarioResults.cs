@@ -21,7 +21,7 @@ namespace HEC.FDA.Model.metrics
         public string ComputeDate { get; set; }
         public string SoftwareVersion { get; set; }
 
-        public List<IContainImpactAreaScenarioResults> ResultsList { get; } = new List<IContainImpactAreaScenarioResults>();
+        public List<ImpactAreaScenarioResults> ResultsList { get; } = new List<ImpactAreaScenarioResults>();
 
         #endregion
 
@@ -38,7 +38,7 @@ namespace HEC.FDA.Model.metrics
             List<int> impactAreaIDs = new();
             if (ResultsList.Count != 0)
             {
-                foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in ResultsList)
+                foreach (ImpactAreaScenarioResults containImpactAreaScenarioResults in ResultsList)
                 {
                     foreach (AggregatedConsequencesBinned consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                     {
@@ -57,7 +57,7 @@ namespace HEC.FDA.Model.metrics
             List<string> assetCats = new();
             if (ResultsList.Count != 0)
             {
-                foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in ResultsList)
+                foreach (ImpactAreaScenarioResults containImpactAreaScenarioResults in ResultsList)
                 {
                     foreach (AggregatedConsequencesBinned consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                     {
@@ -77,7 +77,7 @@ namespace HEC.FDA.Model.metrics
             List<string> damCats = new();
             if (ResultsList.Count != 0)
             {
-                foreach (IContainImpactAreaScenarioResults containImpactAreaScenarioResults in ResultsList)
+                foreach (ImpactAreaScenarioResults containImpactAreaScenarioResults in ResultsList)
                 {
                     foreach (AggregatedConsequencesBinned consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                     {
@@ -356,7 +356,7 @@ namespace HEC.FDA.Model.metrics
                 return Empirical.StackEmpiricalDistributions(empiricalDistsToStack, Empirical.Sum);
             }
         }
-        public void AddResults(IContainImpactAreaScenarioResults resultsToAdd)
+        public void AddResults(ImpactAreaScenarioResults resultsToAdd)
         { 
             ResultsList.Add(resultsToAdd);
         }
@@ -423,7 +423,7 @@ namespace HEC.FDA.Model.metrics
             
             foreach (XElement element in xElement.Elements())
             {
-                IContainImpactAreaScenarioResults impactAreaScenarioResults = ImpactAreaScenarioResults.ReadFromXML(element);
+                ImpactAreaScenarioResults impactAreaScenarioResults = ImpactAreaScenarioResults.ReadFromXML(element);
                 scenarioResults.AddResults(impactAreaScenarioResults);
             }
 
