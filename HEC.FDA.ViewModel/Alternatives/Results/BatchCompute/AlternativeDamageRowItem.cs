@@ -23,13 +23,13 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
         public double DiscountRate { get; set; }
         [DisplayAsColumn("Period of Analysis")]
         public int PeriodOfAnalysis { get; set; }
-        [DisplayAsColumn("Mean EEAQ")]
+        [DisplayAsColumn("Mean EqAD")]
         public double Mean { get; set; }
-        [DisplayAsColumn("25th Percentile EQAD")] //This is intentionally swapped 1-x 
+        [DisplayAsColumn("25th Percentile EqAD")] //This is intentionally swapped 1-x 
         public double Point75 { get; set; }
-        [DisplayAsColumn("50th Percentile EQAD")]
+        [DisplayAsColumn("50th Percentile EqAD")]
         public double Point5 { get; set; }
-        [DisplayAsColumn("75th Percentile EQAD")]//This is intentionally swapped 1-x 
+        [DisplayAsColumn("75th Percentile EqAD")]//This is intentionally swapped 1-x 
         public double Point25 { get; set; }
 
         private AlternativeDamageRowItem(string name, string impactArea, int baseYear, int futureYear, double discountRate, int periodOfAnalysis, double mean, double point75, double point5, double point25)

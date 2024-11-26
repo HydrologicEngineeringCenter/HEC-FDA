@@ -23,7 +23,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
         public string DamCat { get; set; }
         [DisplayAsColumn("Asset Category")]
         public string AssetCat { get; set; }
-        [DisplayAsColumn("Mean EQAD")]
+        [DisplayAsColumn("Mean EqAD")]
         public double MeanDamage { get; set; }
 
         private AlternativeDamCatRowItem(string name, string impactArea, string assetCategory, string damCat, double mean)

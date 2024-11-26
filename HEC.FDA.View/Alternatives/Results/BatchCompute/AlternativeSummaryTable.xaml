@@ -28,7 +28,7 @@
                 HorizontalAlignment="Left"
                 Margin="5">
           <StackPanel HorizontalAlignment="Left">
-            <TextBlock Text="Equivalent Annual Damage Distribution"
+            <TextBlock Text="Equivalent Annual Damage (EqAD) Distribution"
                        HorizontalAlignment="Center"
                        Margin="5" />
             <twp:FdaDataGrid ItemsSource="{Binding Path=Rows}"
@@ -49,7 +49,7 @@
                 Margin="5">
           <StackPanel>
             <TextBlock HorizontalAlignment="Center"
-                       Text="Equivalent Annual Damage by Damage and Asset Category"
+                       Text="Equivalent Annual Damage (EqAD) by Damage and Asset Category"
                        Margin="5" />
             <twp:FdaDataGrid ItemsSource="{Binding Path=DamCatRows}"
                              AutoGeneratingColumn="FdaDataGrid_AutoGeneratingColumn"
