@@ -46,7 +46,10 @@ public static class OverlappingRangeHelper
                 //check outflows with rating flows
                 CheckRangeValues(SelectedRatingCurveElement, SelectedInflowOutflowElement, true, false, RATING, FLOW, messageRows);
                 //check rating stages with stage-damage stages
-                CheckRangeWithStageDamage(StageDamageElement, SelectedRatingCurveElement, SelectedDamageCurve, messageRows);
+                if (SelectedDamageCurve !=  null)
+                {
+                    CheckRangeWithStageDamage(StageDamageElement, SelectedRatingCurveElement, SelectedDamageCurve, messageRows);
+                }
             }
         }
         else if(ratingSelected)
@@ -55,7 +58,10 @@ public static class OverlappingRangeHelper
             CheckRangeValues(SelectedRatingCurveElement, SelectedFrequencyElement, true, false, RATING, FLOW, messageRows);
 
             //check rating stages with stage-damage stages
-            CheckRangeWithStageDamage(StageDamageElement, SelectedRatingCurveElement, SelectedDamageCurve, messageRows);
+            if (SelectedDamageCurve != null)
+            {
+                CheckRangeWithStageDamage(StageDamageElement, SelectedRatingCurveElement, SelectedDamageCurve, messageRows);
+            }
         }
     }
 
