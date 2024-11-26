@@ -32,7 +32,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             else
             {
                 RateAndPeriodVisible = true;
-                ProbabilityExceedsValueLabel = StringConstants.ALTERNATIVE_AAEQ_LABEL;
+                ProbabilityExceedsValueLabel = StringConstants.ALTERNATIVE_EqAD_LABEL;
             }
             LoadHistogramData(results, damageMeasureYear);
             LoadData(results, damageMeasureYear);
@@ -64,7 +64,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             else
             {
                 RateAndPeriodVisible = true;
-                ProbabilityExceedsValueLabel = StringConstants.ALTERNATIVE_COMP_REPORT_AAEQ_LABEL;
+                ProbabilityExceedsValueLabel = StringConstants.ALTERNATIVE_COMP_REPORT_EqAD_LABEL;
             }
 
             LoadHistogramData(altCompReport, altID, damageMeasureYear);
@@ -161,7 +161,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
         {
             if(isAlternative)
             {
-                MyPlot.Title = StringConstants.AAEQ_DAMAGE_DISTRIBUTION;
+                MyPlot.Title = StringConstants.EqAD_DISTRIBUTION;
             }
             else
             {

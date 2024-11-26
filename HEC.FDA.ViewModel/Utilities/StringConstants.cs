@@ -6,7 +6,7 @@
         public static readonly string RENAME_MENU = "Rename...";
         public static readonly string REMOVE_MENU = "Remove";
         public static readonly string VIEW_RESULTS_MENU = "View Results...";
-        public const string CALCULATE_AED_MENU = "Calculate Average Annual Equivalent Damage...";
+        public const string CALCULATE_AED_MENU = "Calculate Equivalent Annual Damage...";
 
 
         #endregion
@@ -194,7 +194,7 @@
         public static readonly string EXPECTED_ANNUAL_DAMAGE = "Expected Annual Damage";
         public static readonly string EAD_DISTRIBUTION = "EAD Distribution";
         public static readonly string DAMAGE_REDUCED = "Damage Reduced Distribution";
-        public static readonly string AAEQ_DAMAGE_DISTRIBUTION = "AAEQ Damage Distribution";
+        public static readonly string EqAD_DISTRIBUTION = "EqAD Distribution";
         public static readonly string STUDY_PROPERTIES = "Study Properties";
         public static readonly string PROPERTIES = "Properties";
 
@@ -209,10 +209,10 @@
         public const string DETAILED_DECIMAL_FORMAT = "N4";
 
         public const string ALTERNATIVE_EAD_LABEL = "Quartile of EAD Distribution";
-        public const string ALTERNATIVE_AAEQ_LABEL = "Quartile of AAEQ Damage Distribution";
+        public const string ALTERNATIVE_EqAD_LABEL = "Quartile of EqAD Distribution";
 
         public const string ALTERNATIVE_COMP_REPORT_EAD_LABEL = "Quartile of EAD Reduced Distribution";
-        public const string ALTERNATIVE_COMP_REPORT_AAEQ_LABEL = "Quartile of AAEQ Damage Reduced Distribution";
+        public const string ALTERNATIVE_COMP_REPORT_EqAD_LABEL = "Quartile of EqAD Reduced Distribution";
 
         public const string SCENARIO_PROGRESS_LABEL = "Computing Impact Area:";
         public const string ALTERNATIVE_PROGRESS_LABEL = "Compute progress:";

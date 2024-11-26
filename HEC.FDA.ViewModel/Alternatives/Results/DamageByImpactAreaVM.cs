@@ -19,14 +19,14 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             if (double.IsNaN(discountRate))
             {
                 RateAndPeriodVisible = false;
-                EADLabel = "Expected Annual Damage";
+                EADLabel = "Mean EAD";
             }
             else
             { 
                 DiscountRate = discountRate;
                 PeriodOfAnalysis = period;
                 RateAndPeriodVisible = true;
-                EADLabel = "AAEQ Damage";
+                EADLabel = "Mean EqAD";
             }
 
             List<int> impactAreaIDs = results.GetImpactAreaIDs();
@@ -62,7 +62,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             }
             else
             {
-                EADLabel = "AAEQ Damage Reduced";
+                EADLabel = "EqAD Reduced";
                 DiscountRate = discountRate;
                 PeriodOfAnalysis = period;
                 RateAndPeriodVisible = true;

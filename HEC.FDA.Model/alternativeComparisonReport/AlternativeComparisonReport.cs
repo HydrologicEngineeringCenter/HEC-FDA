@@ -162,7 +162,7 @@ namespace HEC.FDA.Model.alternativeComparisonReport
             foreach (AlternativeResults alternative in withProjectAlternativesResults)
             {
                 StudyAreaConsequencesByQuantile damageReducedAlternative = new(alternative.AlternativeID);
-                MessageEventArgs beginComputeMessageArgs = new(new Message($"Compute of the distribution of AAEQ damage reduced for alternative ID {damageReducedAlternative.AlternativeID} has been initiated." + Environment.NewLine));
+                MessageEventArgs beginComputeMessageArgs = new(new Message($"Compute of the distribution of EqAD reduced for alternative ID {damageReducedAlternative.AlternativeID} has been initiated." + Environment.NewLine));
                 ReportMessage(this, beginComputeMessageArgs);
 
                 foreach (ImpactAreaScenarioResults withProjectResults in alternative.FutureYearScenarioResults.ResultsList.Cast<ImpactAreaScenarioResults>())
@@ -198,7 +198,7 @@ namespace HEC.FDA.Model.alternativeComparisonReport
                     }
                 }
                 damageReducedAlternatives.Add(damageReducedAlternative);
-                MessageEventArgs endComputeMessageArgs = new(new Message($"Compute of the distribution of AAEQ damage reduced for alternative ID {damageReducedAlternative.AlternativeID} has completed." + Environment.NewLine));
+                MessageEventArgs endComputeMessageArgs = new(new Message($"Compute of the distribution of EqAD reduced for alternative ID {damageReducedAlternative.AlternativeID} has completed." + Environment.NewLine));
                 ReportMessage(this, endComputeMessageArgs);
             }
             _FutureYearEADResults = damageReducedAlternatives;
