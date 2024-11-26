@@ -225,7 +225,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
                     double point75 = results.FutureYearEADReducedExceededWithProbabilityQ(.75, altID, impactAreaID);
                     double point5 = results.FutureYearEADReducedExceededWithProbabilityQ(.5, altID, impactAreaID);
                     double point25 = results.FutureYearEADReducedExceededWithProbabilityQ(.25, altID, impactAreaID);
-                    double eadWithoutProjDamage = results.MeanWithoutProjectFutureYearEAD();
+                    double eadWithoutProjDamage = results.MeanWithoutProjectFutureYearEAD(impactAreaID);
                     AggregatedEADSummaryRowItem row = new(impactAreaNames[impactAreaID], withoutProjName, eadWithoutProjDamage, withProjName, withProjEAD, eadReduced, point75, point5, point25);
                     eadSummaryRowItems.Add(row);
                 }
@@ -280,7 +280,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
                     double point75 = results.BaseYearEADReducedExceededWithProbabilityQ(.75, altID, impactAreaID);
                     double point5 = results.BaseYearEADReducedExceededWithProbabilityQ(.5, altID, impactAreaID);
                     double point25 = results.BaseYearEADReducedExceededWithProbabilityQ(.25, altID, impactAreaID);
-                    double eadWithoutProjDamage = results.MeanWithoutProjectBaseYearEAD(); 
+                    double eadWithoutProjDamage = results.MeanWithoutProjectBaseYearEAD(impactAreaID); 
                     AggregatedEADSummaryRowItem row = new(impactAreaNames[impactAreaID], withoutProjName, eadWithoutProjDamage, withProjName, withProjEAD, eadReduced, point75, point5, point25);
                     eadSummaryRowItems.Add(row);
                 }
@@ -335,7 +335,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport
                     double point75 = results.AAEQDamageReducedExceededWithProbabilityQ(.75, altID, impactAreaID);
                     double point5 = results.AAEQDamageReducedExceededWithProbabilityQ(.5, altID, impactAreaID);
                     double point25 = results.AAEQDamageReducedExceededWithProbabilityQ(.25, altID, impactAreaID);
-                    double aaeqWithoutProjDamage = results.MeanWithoutProjectAAEQDamage();
+                    double aaeqWithoutProjDamage = results.MeanWithoutProjectAAEQDamage(impactAreaID);
                     AggregatedAAEQSummaryRowItem row = new(impactAreaNames[impactAreaID], withoutProjName, aaeqWithoutProjDamage, withProjName, withProjAAEQ, aaeqReduced, point75, point5, point25);
                     aaeqSummaryRowItems.Add(row);
                 }
