@@ -12,7 +12,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
         private const string DAMAGE_BY_IMPACT_AREA = "Damage by Impact Area";
         private const string DAMAGE_BY_DAMAGE_CATEGORY = "Damage by Damage Category";
         private const string EAD = "EAD";
-        private const string AAEQ = "AAEQ";
+        private const string EqAD = "EqAD";
 
         private IAlternativeResult _selectedResult;
         private string _SelectedDamageMeasure;
@@ -40,7 +40,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
             get { return _selectedResult; }
             set { _selectedResult = value; NotifyPropertyChanged(); }
         }
-        public List<string> DamageMeasure { get; } = new List<string>() { EAD, AAEQ };
+        public List<string> DamageMeasure { get; } = new List<string>() { EAD, EqAD };
 
         public string SelectedDamageMeasure
         {
@@ -109,7 +109,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
                 SelectedReport = DAMAGE_WITH_UNCERTAINTY;
                 CurrentResultVM = SelectedYear.DamageWithUncertaintyVM;
             }
-            else if (AAEQ.Equals(_SelectedDamageMeasure))
+            else if (EqAD.Equals(_SelectedDamageMeasure))
             {
                 YearsVisible = false;
                 SelectedReport = DAMAGE_WITH_UNCERTAINTY;
@@ -125,7 +125,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
                     {
                         CurrentResultVM = SelectedYear.DamageWithUncertaintyVM;
                     }
-                    else if (AAEQ.Equals(_SelectedDamageMeasure))
+                    else if (EqAD.Equals(_SelectedDamageMeasure))
                     {
                         CurrentResultVM = AlternativeResult.AAEQResult.DamageWithUncertaintyVM;
                     }
@@ -135,7 +135,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
                     {
                         CurrentResultVM = SelectedYear.DamageByImpactAreaVM;
                     }
-                    else if (AAEQ.Equals(_SelectedDamageMeasure))
+                    else if (EqAD.Equals(_SelectedDamageMeasure))
                     {
                         CurrentResultVM = AlternativeResult.AAEQResult.DamageByImpactAreaVM;
                     }
@@ -145,7 +145,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
                     {
                         CurrentResultVM = SelectedYear.DamageByDamCatVM;
                     }
-                    else if (AAEQ.Equals(_SelectedDamageMeasure))
+                    else if (EqAD.Equals(_SelectedDamageMeasure))
                     {
                         CurrentResultVM = AlternativeResult.AAEQResult.DamageByDamCatVM;
                     }
