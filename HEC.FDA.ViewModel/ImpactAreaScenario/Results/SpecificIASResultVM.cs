@@ -127,18 +127,18 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
       _damageWithUncertaintyVM = new DamageWithUncertaintyVM(scenarioResults,impactAreaID);
       _damageByDamageCategoryVM = new DamageByDamCatVM(_IASResult, damCats, discountRate, period);
       _performanceAEPVM = new PerformanceAEPVM(scenarioResults, impactAreaID, Thresholds);
-      _performanceAEPVM.updateSelectedMetric(SelectedThreshold);
+      _performanceAEPVM.UpdateSelectedMetric(SelectedThreshold);
       _performanceAssuranceOfThresholdVM = new PerformanceAssuranceOfThresholdVM(_IASResult, Thresholds);
-      _performanceAssuranceOfThresholdVM.updateSelectedMetric(SelectedThreshold);
+      _performanceAssuranceOfThresholdVM.UpdateSelectedMetric(SelectedThreshold);
       _performanceLongTermRiskVM = new PerformanceLongTermRiskVM(_IASResult, Thresholds);
-      _performanceLongTermRiskVM.updateSelectedMetric(SelectedThreshold);
+      _performanceLongTermRiskVM.UpdateSelectedMetric(SelectedThreshold);
     }
 
     private void ThresholdChanged()
     {
       if (_currentResultVM is PerformanceVMBase currentResult)
       {
-        currentResult.updateSelectedMetric(SelectedThreshold);
+        currentResult.UpdateSelectedMetric(SelectedThreshold);
       }
     }
 

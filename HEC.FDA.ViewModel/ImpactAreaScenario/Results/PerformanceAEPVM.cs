@@ -28,9 +28,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                 Threshold threshold = thresholdComboItems[i].Metric;
                 ThresholdEnum thresholdType = threshold.ThresholdType;
                 int thresholdID = threshold.ThresholdID;
-                Mean = iasResult.MeanAEP(impactAreaID, thresholdID);
-                Median = iasResult.MedianAEP(impactAreaID, thresholdID);
-                NinetyPercentAssurance = iasResult.AEPWithGivenAssurance(impactAreaID, assurance:0.9, thresholdID);
+                double mean = iasResult.MeanAEP(impactAreaID, thresholdID);
+                double median = iasResult.MedianAEP(impactAreaID, thresholdID);
+                double ninetyPercentAssurance = iasResult.AEPWithGivenAssurance(impactAreaID, assurance:0.9, thresholdID);
                 List<IPerformanceRowItem> rows = new List<IPerformanceRowItem>();
                 //get the table values
                 List<double> xVals = new List<double>() { .1, .04, .02, .01, .004, .002 };
@@ -41,12 +41,16 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                 }
 
                 MetricsToRows.Add(threshold, rows);
+                ThresholdToMetrics.Add(threshold, (mean, median, ninetyPercentAssurance));
                 LoadHistogramData(iasResult, impactAreaID, threshold);
             }
 
             if(MetricsToRows.Count>0)
             {
                 Rows = MetricsToRows.First().Value;
+                Mean = ThresholdToMetrics.First().Value.Item1;
+                Median = ThresholdToMetrics.First().Value.Item2;
+                NinetyPercentAssurance = ThresholdToMetrics.First().Value.Item3;
             }
         }
 
