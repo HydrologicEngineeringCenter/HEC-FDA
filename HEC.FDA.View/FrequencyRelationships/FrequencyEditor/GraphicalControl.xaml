@@ -23,7 +23,7 @@
         <StackPanel Orientation="Horizontal"  Grid.Row="1">
             <Label Content="Equivalent Record Length: "/>
             <TextBox Text="{Binding Path=EquivalentRecordLength, Mode=TwoWay}" Width="80" Margin="5"/>
-            <v:NamedActionButton NamedAction="{Binding ConfidenceLimits}" Margin="5" />
+            <v:NamedActionButton NamedAction="{Binding ConfidenceLimits}" Margin="5" ToolTip="Not Needed For Compute" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="2">
             <RadioButton Content="Flow" IsChecked="{Binding UseFlow}" Margin="5" GroupName="FlowStageRadio" x:Name="FlowRadioButton"/>
