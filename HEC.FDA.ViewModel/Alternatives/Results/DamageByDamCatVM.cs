@@ -17,7 +17,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
         public DamageByDamCatVM(ImpactAreaScenarioResults iasResult, List<string> damCats, double discountRate, int period)
         {
-            EADLabel = "Expected Annual Damage";
+            EADLabel = "Mean EAD";
             DiscountRate = discountRate;
             PeriodOfAnalysis = period;
             RateAndPeriodVisible = false;
@@ -31,7 +31,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
         public DamageByDamCatVM(AlternativeResults alternativeResults, DamageMeasureYear damageMeasureYear)
         {
-            EADLabel = "Expected Annual Damage";
+            EADLabel = "Mean EAD";
             RateAndPeriodVisible = false;
             List<string> damCats = alternativeResults.GetDamageCategories();
             foreach (string damCat in damCats)
@@ -49,7 +49,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
         public DamageByDamCatVM(AlternativeResults alternativeResults, double discountRate, int period)
         {
-            EADLabel = "AAEQ Damage";
+            EADLabel = "Mean EqAD";
 
             DiscountRate = discountRate;
             PeriodOfAnalysis = period;
@@ -71,7 +71,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             }
             else
             {
-                EADLabel = "AAEQ Damage Reduced";
+                EADLabel = "EqAD Reduced";
                 DiscountRate = discountRate;
                 PeriodOfAnalysis = period;
                 RateAndPeriodVisible = true;
