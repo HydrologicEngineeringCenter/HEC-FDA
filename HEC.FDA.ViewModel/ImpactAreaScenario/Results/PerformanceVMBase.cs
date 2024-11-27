@@ -4,6 +4,10 @@ using HEC.FDA.Model.metrics;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
+    /// <summary>
+    /// I very much dislike the design of this class. Some of the inhereting vms use the mean, median, ninety, and some don't. I'm not stoked about the threshhold dictionaries either. I'd like to take the time to rethink and refactor this someday if remain in this UI for
+    /// and extended period. TODO. 
+    /// </summary>
     public abstract class PerformanceVMBase : BaseViewModel
     {
         private List<IPerformanceRowItem> _rows;
@@ -28,6 +32,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             set { _NinetyPctAssurance = value; NotifyPropertyChanged(); }
         }
         public Dictionary<Threshold, List<IPerformanceRowItem>> MetricsToRows { get;} = new Dictionary<Threshold, List<IPerformanceRowItem>>();
+        public Dictionary<Threshold, (double, double, double)> ThresholdToMetrics { get; } = [];
         public List<IPerformanceRowItem> Rows
         {
             get { return _rows; }
@@ -40,13 +45,19 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             //Is there a reason that this is empty? 
         }
 
-        public void updateSelectedMetric(ThresholdComboItem metric)
+        public void UpdateSelectedMetric(ThresholdComboItem metric)
         {
             if (metric != null)
             {
                 if (MetricsToRows.ContainsKey(metric.Metric))
                 {
                     Rows = MetricsToRows[metric.Metric];
+                }
+                if(ThresholdToMetrics.ContainsKey(metric.Metric))
+                {
+                    Mean = ThresholdToMetrics[metric.Metric].Item1;
+                    Median = ThresholdToMetrics[metric.Metric].Item2;
+                    NinetyPercentAssurance = ThresholdToMetrics[metric.Metric].Item3;
                 }
                 UpdateHistogram(metric);
             }
