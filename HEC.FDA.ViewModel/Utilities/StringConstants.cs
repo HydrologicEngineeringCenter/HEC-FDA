@@ -195,6 +195,7 @@
         public static readonly string EAD_DISTRIBUTION = "EAD Distribution";
         public static readonly string DAMAGE_REDUCED = "Damage Reduced Distribution";
         public static readonly string EqAD_DISTRIBUTION = "EqAD Distribution";
+        public static readonly string EQUIVALENT_ANNUAL_DAMAGE = "Equivalent Annual Damage";
         public static readonly string STUDY_PROPERTIES = "Study Properties";
         public static readonly string PROPERTIES = "Properties";
 
