@@ -116,7 +116,7 @@ and cease using the program).
     </RichTextBox>
     <Button
       Grid.Row="2"
-      Content="Close"
+      Content="Accept"
       Width="80"
       Height="22"
       HorizontalAlignment="Right"
