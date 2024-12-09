@@ -92,7 +92,12 @@ namespace HEC.FDA.ViewModel.Study
 
         public void LaunchSplashScreen()
         {
-            SplashScreenVM vm = new SplashScreenVM();
+            //don't throw up the splash screen if the t&c were already accepted
+            if (SplashScreenVM.TermsAndConditionsAccepted)
+            {
+                return;
+            }
+            SplashScreenVM vm = new();
             string header = "Terms and Conditions";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "splashscreen", true, false);
             Navigate(tab, true, true);

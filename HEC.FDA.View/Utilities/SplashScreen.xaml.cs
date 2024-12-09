@@ -1,4 +1,8 @@
-﻿using System.Diagnostics;
+﻿using HEC.FDA.ViewModel.Utilities;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -54,6 +58,7 @@ namespace HEC.FDA.View.Utilities
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             Window window = Window.GetWindow(this);
+            SplashScreenVM.TermsAndConditionsAccepted = true;
             window.Close();
         }
     }
