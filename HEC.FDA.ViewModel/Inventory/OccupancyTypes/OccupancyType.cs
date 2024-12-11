@@ -25,7 +25,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public string Name { get; set; }
 
         
-        public OccupancyType(string name, string damCatName, int groupId)
+        public OccupancyType(string name, string damCatName, int groupId, int id)
         {
             Name = name;
             DamageCategory = damCatName;
@@ -36,9 +36,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             VehicleItem = CreateDefaultAsset(OcctypeAssetType.vehicle, true);
             OtherItem = CreateDefaultItemWithRatio(OcctypeAssetType.other, false);
             FoundationHeightUncertainty = new Deterministic(0);
-
-            Saving.IElementManager manager = Saving.PersistenceFactory.GetElementManager<OccupancyTypesElement>();
-            ID = manager.GetNextAvailableId();
+            ID = id;
         } 
 
         public OccupancyType(string name, string description, int groupID, string damageCategory, OccTypeAsset structureItem,
