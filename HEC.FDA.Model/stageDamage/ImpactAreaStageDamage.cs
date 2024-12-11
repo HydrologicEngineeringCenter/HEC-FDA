@@ -104,16 +104,19 @@ namespace HEC.FDA.Model.stageDamage
         private void SetCoordinateQuantity()
         {
             //set bottom coordinate quantity 
-            double stageAtAEPofMostFrequentHydraulicsProfile = _StageFrequency.f(_HydraulicDataset.HydraulicProfiles.First().Probability);
+            //take 1-prob from hydraulic profiles to convert exceedance to non-exceedance
+            double stageAtAEPofMostFrequentHydraulicsProfile = _StageFrequency.f(1-_HydraulicDataset.HydraulicProfiles.First().Probability);
             double rangeOfStagesAtBottom = stageAtAEPofMostFrequentHydraulicsProfile - _MinStageForArea;
             _BottomExtrapolationPoints = Convert.ToInt32(Math.Ceiling(rangeOfStagesAtBottom/FEET_PER_COORDINATE));
             //require at least 4 coordinates at the bottom
             if (_BottomExtrapolationPoints < MINIMUM_EXTRAPOLATION_COORDINATES) { _BottomExtrapolationPoints = MINIMUM_EXTRAPOLATION_COORDINATES; }
 
             //set middle coordinate quantity 
-            double stageAtAEPofLeastFrequentHydraulicsProfile = _StageFrequency.f(_HydraulicDataset.HydraulicProfiles.Last().Probability);
+            //take 1-prob from hydraulic profiles to convert exceedance to non-exceedance
+            double stageAtAEPofLeastFrequentHydraulicsProfile = _StageFrequency.f(1-_HydraulicDataset.HydraulicProfiles.Last().Probability);
             double middleRange = stageAtAEPofLeastFrequentHydraulicsProfile - stageAtAEPofMostFrequentHydraulicsProfile;
             //based upon the range of stages between most frequent and least frequent AEP in hydraulics and the number of intervals to be interpolated 
+            //number of intervals to be interpolated is the number of hydraulic profiles minus 1
             _CentralInterpolationPoints = Convert.ToInt32(Math.Ceiling((middleRange / FEET_PER_COORDINATE) / (_HydraulicDataset.HydraulicProfiles.Count() - 1)));
             //require at least two coordinates between profiles  
             if (_CentralInterpolationPoints < MINIMUM_INTERPOLATION_COORDINATES) { _CentralInterpolationPoints = MINIMUM_INTERPOLATION_COORDINATES; }
