@@ -141,8 +141,16 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                     }
 
                     //create the new occupancy type
-                    int nextAvailableOccTypeID = SelectedOccTypeGroup.Occtypes.Select<OccupancyTypeEditable, int>((occtype) => occtype.ID).Max() + 1;
-                    OccupancyType newOT = new(vm.Name, damCatName, SelectedOccTypeGroup.ID,nextAvailableOccTypeID);
+                    int nextAvailableOccTypeID;
+                    if(SelectedOccTypeGroup.Occtypes.Count == 0)
+                    {
+                        nextAvailableOccTypeID = 0;
+                    }
+                    else
+                    {
+                        nextAvailableOccTypeID = SelectedOccTypeGroup.Occtypes.Select<OccupancyTypeEditable, int>((occtype) => occtype.ID).Max() + 1;
+                    }
+                    OccupancyType newOT = new(vm.Name, damCatName,nextAvailableOccTypeID);
                     OccupancyTypeEditable otEditable = new(newOT, ref _DamageCategoriesList, false);
                     otEditable.RequestNavigation += this.Navigate;
 
@@ -219,7 +227,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         private OccupancyTypeEditable CreateDefaultOcctype(int groupID, int id)
         {
-            OccupancyType newOT = new OccupancyType("New Occupancy Type", "", groupID, id);
+            OccupancyType newOT = new("New Occupancy Type", "", id);
             ObservableCollection<string> damCatOptions = [];
             OccupancyTypeEditable otEditable = new(newOT, ref damCatOptions, false);
             otEditable.RequestNavigation += this.Navigate;

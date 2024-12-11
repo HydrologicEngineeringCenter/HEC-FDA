@@ -20,17 +20,15 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public OccTypeAssetWithRatio OtherItem { get; set; }
         public ContinuousDistribution FoundationHeightUncertainty { get; set; }
 
-        public int GroupID { get; set; }
         public int ID { get; set; }
         public string Name { get; set; }
 
         
-        public OccupancyType(string name, string damCatName, int groupId, int id)
+        public OccupancyType(string name, string damCatName, int id)
         {
             Name = name;
             DamageCategory = damCatName;
             Description = "";
-            GroupID = groupId;
             StructureItem = CreateDefaultAsset(OcctypeAssetType.structure, true);
             ContentItem = CreateDefaultItemWithRatio(OcctypeAssetType.content, true);
             VehicleItem = CreateDefaultAsset(OcctypeAssetType.vehicle, true);
@@ -39,12 +37,11 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             ID = id;
         } 
 
-        public OccupancyType(string name, string description, int groupID, string damageCategory, OccTypeAsset structureItem,
+        public OccupancyType(string name, string description, string damageCategory, OccTypeAsset structureItem,
             OccTypeAssetWithRatio contentItem, OccTypeAsset vehicleItem, OccTypeAssetWithRatio otherItem, ContinuousDistribution foundationHtUncertainty, int id)
         {
             Name = name;
             Description = description;
-            GroupID = groupID;
             DamageCategory = damageCategory;
             StructureItem = structureItem;
             ContentItem = contentItem;
@@ -59,7 +56,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             Name = occtypeElem.Attribute("Name").Value;
             Description = occtypeElem.Attribute("Description").Value;
             DamageCategory = occtypeElem.Attribute("DamCat").Value;
-            GroupID = Convert.ToInt32(occtypeElem.Attribute("GroupID").Value);
             ID = Convert.ToInt32(occtypeElem.Attribute("ID").Value);
 
             XElement foundUncert = occtypeElem.Element("FoundationUncertainty");
@@ -95,7 +91,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             occtypeElem.SetAttributeValue("Name", Name);
             occtypeElem.SetAttributeValue("Description", Description);
             occtypeElem.SetAttributeValue("DamCat", DamageCategory);
-            occtypeElem.SetAttributeValue("GroupID", GroupID);
             occtypeElem.SetAttributeValue("ID", ID);
 
             XElement foundUncert = new XElement("FoundationUncertainty");

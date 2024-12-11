@@ -689,7 +689,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
             ContinuousDistribution FoundationHeightUncertainty = foundationHeightUncertainty;
 
-            OccupancyType ot = new(importedOT.Name, importedOT.Description, groupID, importedOT.CategoryName,
+            OccupancyType ot = new(importedOT.Name, importedOT.Description, importedOT.CategoryName,
                 StructureItem, ContentItem, VehicleItem, OtherItem, FoundationHeightUncertainty, ID);
             return ot;
         }
