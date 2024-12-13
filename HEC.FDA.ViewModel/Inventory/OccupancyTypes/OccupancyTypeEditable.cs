@@ -112,7 +112,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             DamageCategory = clonedOcctype.DamageCategory;
 
             ID = clonedOcctype.ID;
-            GroupID = clonedOcctype.GroupID;
 
             FoundationHeightUncertainty = new FoundationValueUncertaintyVM(clonedOcctype.FoundationHeightUncertainty);
 
@@ -174,7 +173,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         public OccupancyType CreateOccupancyType()
         {
-            return new OccupancyType(Name, Description, GroupID, DamageCategory, StructureItem, ContentItem, VehicleItem, OtherItem,
+            return new OccupancyType(Name, Description, DamageCategory, StructureItem, ContentItem, VehicleItem, OtherItem,
                 FoundationHeightUncertainty.CreateOrdinate(), ID);
         }
       
