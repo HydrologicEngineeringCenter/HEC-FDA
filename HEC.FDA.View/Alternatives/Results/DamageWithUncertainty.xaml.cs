@@ -16,9 +16,6 @@ namespace HEC.FDA.View.Alternatives.Results
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            //link the plot with its chart view model
-            DamageWithUncertaintyVM vm = (DamageWithUncertaintyVM)this.DataContext;
-            frequency_textblock.Text = vm.ProbabilityExceedsValueLabel;
         }
         
     }
