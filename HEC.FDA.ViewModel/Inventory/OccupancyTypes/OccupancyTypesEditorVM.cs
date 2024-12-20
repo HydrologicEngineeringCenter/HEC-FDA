@@ -168,7 +168,18 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
             if (SelectedOccType != null)
             {
+                //create the new occupancy type
+                int nextAvailableOccTypeID;
+                if (SelectedOccTypeGroup.Occtypes.Count == 0)
+                {
+                    nextAvailableOccTypeID = 0;
+                }
+                else
+                {
+                    nextAvailableOccTypeID = SelectedOccTypeGroup.Occtypes.Select<OccupancyTypeEditable, int>((occtype) => occtype.ID).Max() + 1;
+                }
                 OccupancyType newOT = SelectedOccType.CreateOccupancyType();
+                newOT.ID = nextAvailableOccTypeID;
 
                 CreateNewDamCatVM vm = new CreateNewDamCatVM(SelectedOccType.Name + "_Copy", GetAllOccTypeNames());
                 string header = "Copy Occupancy Type";
