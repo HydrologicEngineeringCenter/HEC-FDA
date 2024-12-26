@@ -19,7 +19,12 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
         public double DiscountRate { get; set; }
         public int PeriodOfAnalysis { get; set; }
         public bool RateAndPeriodVisible { get; }
+        public string QuartileLabel { get; }
         private DamageMeasureYear _damageMeasureYear;
+        private const string QUARTILE_EAD = "Quartile of EAD Distribution";
+        private const string QUARTILE_EQAD = "Quartile of EqAD Distribution";
+        private const string QUARTILE_REDUCED_EAD = "Quartile of EAD Reduced Distribution";
+        private const string QUARTILE_REDUCED_EQAD = "Quartile of EqAD Reduced Distribution";
 
         public DamageWithUncertaintyVM(AlternativeResults results, DamageMeasureYear damageMeasureYear,
             double discountRate = double.NaN, int periodOfAnalysis = -1)
@@ -42,12 +47,15 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             {
                 case DamageMeasureYear.Base:
                     Mean = results.MeanBaseYearEAD();
+                    QuartileLabel = QUARTILE_EAD;
                     break;
                 case DamageMeasureYear.Future:
                     Mean = results.MeanFutureYearEAD();
+                    QuartileLabel = QUARTILE_EAD;
                     break;
                 case DamageMeasureYear.AAEQ:
                     Mean = results.MeanAAEQDamage();
+                    QuartileLabel = QUARTILE_EQAD;
                     break;
             }
         }
@@ -76,12 +84,15 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             {
                 case DamageMeasureYear.Base:
                     Mean = altCompReport.MeanBaseYearEADReduced(altID);
+                    QuartileLabel = QUARTILE_REDUCED_EAD;
                     break;
                 case DamageMeasureYear.Future:
                     Mean = altCompReport.MeanFutureYearEADReduced(altID);
+                    QuartileLabel = QUARTILE_REDUCED_EAD;
                     break;
                 case DamageMeasureYear.AAEQ:
                     Mean = altCompReport.MeanAAEQDamageReduced(altID);
+                    QuartileLabel = QUARTILE_REDUCED_EQAD;
                     break;
             }
 
@@ -257,9 +268,19 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             List<string> xValNames = new() { "First", "Second", "Third" };
             List<double> yVals = LoadYData(xVals, scenarioResults, damageMeasureYear);
 
-            for (int i = 0; i < xValNames.Count; i++)
+            if (DamageMeasureYear.Future.Equals(_damageMeasureYear) || DamageMeasureYear.Base.Equals(_damageMeasureYear))
             {
-                Rows.Add(new EadRowItem(xValNames[i], yVals[i]));
+                for (int i = 0; i < xValNames.Count; i++)
+                {
+                    Rows.Add(new EadRowItem(xValNames[i], yVals[i]));
+                }
+            }
+            else
+            {
+                for (int i = 0; i < xValNames.Count; i++)
+                {
+                    Rows.Add(new EqadRowItem(xValNames[i], yVals[i]));
+                }
             }
         }
 
