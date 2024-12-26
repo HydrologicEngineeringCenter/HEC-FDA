@@ -18,10 +18,10 @@ public class InventoryElementShould
     {
         ValueUncertainty valueUncertainty = new(Statistics.IDistributionEnum.Triangular, 50, 100);
         //Structures
-        OccTypeAsset structures = new(OccTypeAsset.OcctypeAssetType.structure, true, new ViewModel.TableWithPlot.CurveComponentVM(isDepthPercentDamage: true), new Triangular(50,100,200));
+        OccTypeAsset structures = new(OccTypeAsset.OcctypeAssetType.structure, true, new ViewModel.TableWithPlot.CurveComponentVM(isDepthPercentDamage: true), new Triangular(50, 100, 200));
 
         //Content
-        OccTypeAssetWithRatio contents = new(OccTypeAsset.OcctypeAssetType.content, true, new ViewModel.TableWithPlot.CurveComponentVM(isDepthPercentDamage: true), new Triangular(50, 100, 200), new Triangular(.5,1,1.5),true);
+        OccTypeAssetWithRatio contents = new(OccTypeAsset.OcctypeAssetType.content, true, new ViewModel.TableWithPlot.CurveComponentVM(isDepthPercentDamage: true), new Triangular(50, 100, 200), new Triangular(.5, 1, 1.5), true);
 
         //Vehicle
         OccTypeAsset vehicles = new(OccTypeAsset.OcctypeAssetType.structure, true, new ViewModel.TableWithPlot.CurveComponentVM(isDepthPercentDamage: true), new Triangular(50, 100, 200));
@@ -30,7 +30,7 @@ public class InventoryElementShould
         OccTypeAssetWithRatio others = new(OccTypeAsset.OcctypeAssetType.content, true, new ViewModel.TableWithPlot.CurveComponentVM(isDepthPercentDamage: true), new Triangular(50, 100, 200), new Triangular(.5, 1, 1.5), true);
 
         //Foundation
-        ViewModel.Inventory.OccupancyTypes.OccupancyType occupancyType = new("name","desc",0,"damCat",structures,contents,vehicles,others, new Triangular(0,1,10),0);
+        ViewModel.Inventory.OccupancyTypes.OccupancyType occupancyType = new("name", "desc", "damCat", structures, contents, vehicles, others, new Triangular(0, 1, 10), 0);
         var modelOccupancyType = InventoryElement.CreateModelOcctypeFromVMOcctype(occupancyType);
 
         //Assert that user options are recorded
