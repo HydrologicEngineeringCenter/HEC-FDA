@@ -20,7 +20,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
         public int PeriodOfAnalysis { get; set; }
         public bool RateAndPeriodVisible { get; }
         public string QuartileLabel { get; }
-        private DamageMeasureYear _damageMeasureYear;
+        private readonly DamageMeasureYear _damageMeasureYear;
         private const string QUARTILE_EAD = "Quartile of EAD Distribution";
         private const string QUARTILE_EQAD = "Quartile of EqAD Distribution";
         private const string QUARTILE_REDUCED_EAD = "Quartile of EAD Reduced Distribution";
@@ -185,11 +185,11 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             {
                 if (DamageMeasureYear.Future.Equals(_damageMeasureYear) || DamageMeasureYear.Base.Equals(_damageMeasureYear))
                 {
-                    MyPlot.Title = StringConstants.EqAD_DISTRIBUTION;
+                    MyPlot.Title = StringConstants.EAD_DISTRIBUTION; 
                 }
                 else
                 {
-                    MyPlot.Title = StringConstants.EAD_DISTRIBUTION;
+                    MyPlot.Title = StringConstants.EqAD_DISTRIBUTION;
                 }
 
             }
