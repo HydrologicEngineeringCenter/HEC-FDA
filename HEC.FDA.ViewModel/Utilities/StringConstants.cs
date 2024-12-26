@@ -209,6 +209,10 @@
         public const string DEFAULT_UNIT_FORMAT = "N2";
         public const string DETAILED_DECIMAL_FORMAT = "N4";
 
+        public const string QUARTILE_VALUE = "Quartile Value";
+
+        public const string SCENARIOS_EAD_LABEL = "Quartile of EAD Distribution";
+
         public const string ALTERNATIVE_EAD_LABEL = "Quartile of EAD Distribution";
         public const string ALTERNATIVE_EqAD_LABEL = "Quartile of EqAD Distribution";
 

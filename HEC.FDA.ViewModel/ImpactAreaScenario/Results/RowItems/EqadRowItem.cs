@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
 internal class EqadRowItem:IQuartileRowItem
 {
-    [DisplayAsColumn("Frequency")]
-    public string Frequency { get; }
     [DisplayAsColumn(StringConstants.ALTERNATIVE_EqAD_LABEL)]
+    public string Frequency { get; }
+    [DisplayAsColumn(StringConstants.QUARTILE_VALUE)]
     public double Value { get; }
 
     public EqadRowItem(string frequency, double value)
