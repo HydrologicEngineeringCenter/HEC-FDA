@@ -35,7 +35,7 @@ jobs:
         echo "VERSION=$VERSION" >> $env:GITHUB_ENV
 
     - name: Test Solution
-      run: dotnet test --nologo --no-build --filter RunsOn=Remote -c Release
+      run: dotnet test --nologo --filter RunsOn=Remote -c Release
       
     - name: Publish
       shell: pwsh
