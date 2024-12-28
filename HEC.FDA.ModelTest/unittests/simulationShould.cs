@@ -391,27 +391,27 @@ namespace HEC.FDA.ModelTest.unittests
 
         //Download Calculation in Excel at https://www.hec.usace.army.mil/fwlink/?linkid=total-risk-unit-test-data
         [Theory]
-        [InlineData(81324)]
+        [InlineData(100150.179)]
         public void TotalRiskShould(double expected)
         {
             string damCat = "RES";
             string assetCat = "Structure";
             CurveMetaData curveMetaData = new CurveMetaData(damageCategory: damCat, assetCategory: assetCat);
-            //trick the software into drawing a straight line with 5 points between 0 and 1
-            ContinuousDistribution flowFrequency = new Uniform(-50, 1050, 5);
+
+            ContinuousDistribution flowFrequency = new Uniform(0, 1000, 5);
             double[] flows = new double[] { 0, 250, 500, 750, 1000 };
             double[] stages = new double[] { 10, 11, 13, 17, 17.5 };
             IDistribution[] stageDistributions = new IDistribution[stages.Length];
             for (int i = 0; i < stages.Length; i++)
             {
-                stageDistributions[i] = new Triangular(stages[i] - 1, stages[i], stages[i] + 1);
+                stageDistributions[i] = new Deterministic( stages[i]);
             }
             UncertainPairedData flowStage = new UncertainPairedData(flows, stageDistributions, curveMetaData);
             double[] failureDamage = new double[] { 0, 0, 14000, 150000, 500000 };
             IDistribution[] failureDamageDistributions = new IDistribution[stages.Length];
             for (int i = 0; i < failureDamage.Length; i++)
             {
-                failureDamageDistributions[i] = new Normal(failureDamage[i], failureDamage[i]);
+                failureDamageDistributions[i] = new Deterministic(failureDamage[i]);
             }
             UncertainPairedData stageFailureDamage = new UncertainPairedData(stages, failureDamageDistributions, curveMetaData);
             List<UncertainPairedData> stageFailureDamageList = new List<UncertainPairedData>() { stageFailureDamage };
@@ -419,7 +419,7 @@ namespace HEC.FDA.ModelTest.unittests
             IDistribution[] nonFailureDamageDistributions = new IDistribution[stages.Length];
             for (int i = 0; i < nonFailureDamage.Length; i++)
             {
-                nonFailureDamageDistributions[i] = new Normal(nonFailureDamage[i], stages[i]);
+                nonFailureDamageDistributions[i] = new Deterministic(nonFailureDamage[i]);
             }
             UncertainPairedData stageNonFailureDamage = new UncertainPairedData(stages, nonFailureDamageDistributions, curveMetaData);
             List<UncertainPairedData> stageNonFailureDamageList = new List<UncertainPairedData>() { stageNonFailureDamage };
@@ -427,7 +427,7 @@ namespace HEC.FDA.ModelTest.unittests
             IDistribution[] failureProbDistributions = new IDistribution[stages.Length];
             for (int i = 0; i < failureProbs.Length; i++)
             {
-                failureProbDistributions[i] = new Deterministic(failureProbs[i]);
+                failureProbDistributions[i] = new Deterministic(failureProbs[i]); 
             }
             UncertainPairedData systemResponse = new UncertainPairedData(stages, failureProbDistributions, curveMetaData);
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(id)
@@ -435,14 +435,14 @@ namespace HEC.FDA.ModelTest.unittests
                 .WithFlowStage(flowStage)
                 .WithStageDamages(stageFailureDamageList)
                 .WithNonFailureStageDamage(stageNonFailureDamageList)
-                .WithLevee(systemResponse, topOfLeveeElevation: 16)
+                .WithLevee(systemResponse, topOfLeveeElevation: 17) ///this doesn't matter since we have a system response curve. 
                 .Build();
 
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
             ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(convergenceCriteria, new CancellationToken(), computeIsDeterministic: true); 
             double actual = impactAreaScenarioResults.MeanExpectedAnnualConsequences(id, damCat, assetCat);
             double relativeTolerance = Math.Abs(expected - actual) / actual;
-            Assert.True(relativeTolerance < 0.017);
+            Assert.True(relativeTolerance < 0.01);
         }
     }
 }

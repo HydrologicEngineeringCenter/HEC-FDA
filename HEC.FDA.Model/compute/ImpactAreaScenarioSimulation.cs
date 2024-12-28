@@ -498,9 +498,9 @@ namespace HEC.FDA.Model.compute
         {
             foreach (UncertainPairedData stageUncertainDamage in _StageDamageFunctions)
             {
-                PairedData stageDamageSample = stageUncertainDamage.SamplePairedData(thisComputeIteration, computeIsDeterministic);
+                PairedData stageDamageFailSample = stageUncertainDamage.SamplePairedData(thisComputeIteration, computeIsDeterministic);
                 PairedData validatedSystemResponse = EnsureBottomAndTopHaveCorrectProbabilities(systemResponse);
-                PairedData stageDamageSampledAndMultiplied = stageDamageSample.multiply(validatedSystemResponse);
+                PairedData stageDamageFailAdjusted = stageDamageFailSample.multiply(validatedSystemResponse);
 
                 if (NonFailRiskIncluded)
                 {
@@ -510,12 +510,14 @@ namespace HEC.FDA.Model.compute
                             && stageUncertainNonFailureDamage.AssetCategory == stageUncertainDamage.AssetCategory)
                         {
                             PairedData inverseOfSystemResponse = CalculateFailureProbComplement(validatedSystemResponse);
-                            PairedData stageNonFailureDamageSampledAndMultiplied = stageUncertainNonFailureDamage.SamplePairedData(thisComputeIteration, computeIsDeterministic).multiply(inverseOfSystemResponse);
-                            stageDamageSampledAndMultiplied = stageDamageSampledAndMultiplied.SumYsForGivenX(stageNonFailureDamageSampledAndMultiplied);
+                            PairedData stageDamNonFail = stageUncertainNonFailureDamage.SamplePairedData(thisComputeIteration, computeIsDeterministic);
+                            PairedData stageDamNonFailAdjusted = stageDamNonFail.multiply(inverseOfSystemResponse);
+                            //stageDam Fail + StageDam Non-Fail
+                            stageDamageFailAdjusted = stageDamageFailAdjusted.SumYsForGivenX(stageDamNonFailAdjusted);
                         }
                     }
                 }
-                PairedData frequency_damage = stageDamageSampledAndMultiplied.compose(frequency_stage);
+                PairedData frequency_damage = stageDamageFailAdjusted.compose(frequency_stage);
                 double eadEstimate = frequency_damage.integrate();
                 _ImpactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadEstimate, stageUncertainDamage.CurveMetaData.DamageCategory, stageUncertainDamage.CurveMetaData.AssetCategory, _ImpactAreaID, thisChunkIteration);
             }
@@ -754,8 +756,8 @@ namespace HEC.FDA.Model.compute
                     PairedData stageDamage = stageDamageFunction.SamplePairedData(fakeIterationNumberNotUsedInThisPartOfTheComputeBecauseItIsDeterministic, computeIsDeterministic);
                     if (_ChannelStageFloodplainStage.IsNull)
                     {
-
-                        damageFrequency.Add((stageDamageFunction.CurveMetaData, (PairedData)stageDamage.compose(frequencyStage)));
+                        PairedData damFreq = (PairedData)stageDamage.compose(frequencyStage);
+                        damageFrequency.Add((stageDamageFunction.CurveMetaData, damFreq));
                     }
                     else
                     {
