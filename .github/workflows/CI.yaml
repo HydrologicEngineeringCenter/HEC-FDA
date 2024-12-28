@@ -14,19 +14,18 @@ jobs:
     runs-on: windows-latest                         
     env:
       Solution_Name: Fda.sln                                  
-      dotnet-version: '8.0.x'
+      dotnet-version: '9.0.x'
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
         
-    - uses: actions/checkout@v3
-    - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
-      uses: actions/setup-dotnet@v3.2.0
+    - name: Setup .NET Core SDK ${{ env.dotnet-version }}
+      uses: actions/setup-dotnet@v4
       with:
-          dotnet-version: ${{ matrix.dotnet-version }} 
+          dotnet-version: ${{ env.dotnet-version }} 
          
     - name: Authenticate to ras-nuget-public
       run: |
@@ -48,8 +47,16 @@ jobs:
         echo "PUBLISH_OUT=$PUBLISH_OUT" >> $env:GITHUB_ENV
         dotnet publish -c Release -v quiet /p:Version=${{ env.VERSION }} -o $PUBLISH_OUT ${{ env.PROJECT_NAME }} --self-contained true
       
+    - name: Download and unzip file
+      shell: pwsh
+      run: |
+        $zipUrl = "https://s3.hecdev.net/ras-public-data/ras-GDAL-3.9.1.zip"
+        $zipPath = "${pwd}/downloaded.zip"
+        Invoke-WebRequest -Uri $zipUrl -OutFile $zipPath
+        Expand-Archive -Path $zipPath -DestinationPath $PUBLISH_OUT
+
     - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v3.1.2
+      uses: actions/upload-artifact@v4
       with:
         name: HEC-FDA-${{ env.VERSION }}
         path: ${{ env.PUBLISH_OUT }}
