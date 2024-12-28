@@ -29,7 +29,7 @@ jobs:
          
     - name: Authenticate to ras-nuget-public
       run: |
-        dotnet nuget update source ras-nuget-public --username ${{ github.actor }} --password ${{ secrets.HEC_NEXUS_READ_PASSWORD }} --store-password-in-clear-text
+        dotnet nuget update source ras-nuget-public --username ${{ secrets.HEC_NEXUS_READ_UID }} --password ${{ secrets.HEC_NEXUS_READ_PASSWORD }} --store-password-in-clear-text
 
     - name: Create version number
       shell: pwsh
