@@ -260,7 +260,8 @@ namespace HEC.FDA.ViewModel.Alternatives
         {
             if (Results != null)
             {
-                AlternativeResultsVM vm = new(CreateAlternativeResult(Results));
+                AlternativeResult res = CreateAlternativeResult(Results);
+                AlternativeResultsVM vm = new(res);
                 string header = "Alternative Results: " + Name;
                 DynamicTabVM tab = new(header, vm, "AlternativeResults" + Name);
                 Navigate(tab, false, true);
