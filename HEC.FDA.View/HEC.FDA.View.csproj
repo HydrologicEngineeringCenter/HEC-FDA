@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<ApplicationIcon>Resources\FDA.ico</ApplicationIcon>
 		<StartupObject>HEC.FDA.View.App</StartupObject>
-		<TargetFramework>net8.0-windows</TargetFramework>
+		<TargetFramework>net9.0-windows</TargetFramework>
 		<OutputType>WinExe</OutputType>
 		<UseWPF>true</UseWPF>
 	</PropertyGroup>
