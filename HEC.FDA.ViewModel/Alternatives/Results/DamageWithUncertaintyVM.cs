@@ -6,6 +6,7 @@ using OxyPlot.Axes;
 using OxyPlot.Series;
 using Statistics.Distributions;
 using System.Collections.Generic;
+using System.Windows.Markup.Localizer;
 
 namespace HEC.FDA.ViewModel.Alternatives.Results
 {
@@ -13,26 +14,31 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
     {
         public ViewResolvingPlotModel MyPlot { get; } = new ViewResolvingPlotModel();
         public bool HistogramVisible { get; set; } = true;
-        public List<EadRowItem> Rows { get; } = new List<EadRowItem>();
+        public List<IQuartileRowItem> Rows { get; } = [];
         public double Mean { get; set; }
         public double DiscountRate { get; set; }
         public int PeriodOfAnalysis { get; set; }
         public bool RateAndPeriodVisible { get; }
-        public string ProbabilityExceedsValueLabel { get; }
+        public string QuartileLabel { get; }
+        private readonly DamageMeasureYear _damageMeasureYear;
+        private const string QUARTILE_EAD = "Quartile of EAD Distribution";
+        private const string QUARTILE_EQAD = "Quartile of EqAD Distribution";
+        private const string QUARTILE_REDUCED_EAD = "Quartile of EAD Reduced Distribution";
+        private const string QUARTILE_REDUCED_EQAD = "Quartile of EqAD Reduced Distribution";
 
-        public DamageWithUncertaintyVM(AlternativeResults results, DamageMeasureYear damageMeasureYear, double discountRate = double.NaN, int periodOfAnalysis = -1)
+        public DamageWithUncertaintyVM(AlternativeResults results, DamageMeasureYear damageMeasureYear,
+            double discountRate = double.NaN, int periodOfAnalysis = -1)
         {
+            _damageMeasureYear = damageMeasureYear;
             DiscountRate = discountRate;
             PeriodOfAnalysis = periodOfAnalysis;
             if (double.IsNaN(discountRate))
             {
                 RateAndPeriodVisible = false;
-                ProbabilityExceedsValueLabel = StringConstants.ALTERNATIVE_EAD_LABEL;
             }
             else
             {
                 RateAndPeriodVisible = true;
-                ProbabilityExceedsValueLabel = StringConstants.ALTERNATIVE_EqAD_LABEL;
             }
             LoadHistogramData(results, damageMeasureYear);
             LoadData(results, damageMeasureYear);
@@ -41,60 +47,76 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             {
                 case DamageMeasureYear.Base:
                     Mean = results.MeanBaseYearEAD();
+                    QuartileLabel = QUARTILE_EAD;
                     break;
                 case DamageMeasureYear.Future:
                     Mean = results.MeanFutureYearEAD();
+                    QuartileLabel = QUARTILE_EAD;
                     break;
                 case DamageMeasureYear.AAEQ:
                     Mean = results.MeanAAEQDamage();
+                    QuartileLabel = QUARTILE_EQAD;
                     break;
             }
         }
 
-        public DamageWithUncertaintyVM( AlternativeComparisonReportResults altCompReport, int altID, DamageMeasureYear damageMeasureYear, double discountRate = double.NaN, int periodOfAnalysis = -1)
+        public DamageWithUncertaintyVM(AlternativeComparisonReportResults altCompReport, int altID, DamageMeasureYear damageMeasureYear,
+            double discountRate = double.NaN, int periodOfAnalysis = -1)
         {
+            _damageMeasureYear = damageMeasureYear;
             DiscountRate = discountRate;
             PeriodOfAnalysis = periodOfAnalysis;
 
             if (double.IsNaN(discountRate))
             {
                 RateAndPeriodVisible = false;
-                ProbabilityExceedsValueLabel = StringConstants.ALTERNATIVE_COMP_REPORT_EAD_LABEL;
             }
             else
             {
                 RateAndPeriodVisible = true;
-                ProbabilityExceedsValueLabel = StringConstants.ALTERNATIVE_COMP_REPORT_EqAD_LABEL;
             }
 
             LoadHistogramData(altCompReport, altID, damageMeasureYear);
 
-            LoadAAEQData(altCompReport, altID, damageMeasureYear);
+            LoadData(altCompReport, altID, damageMeasureYear);
 
             switch (damageMeasureYear)
             {
                 case DamageMeasureYear.Base:
                     Mean = altCompReport.MeanBaseYearEADReduced(altID);
+                    QuartileLabel = QUARTILE_REDUCED_EAD;
                     break;
                 case DamageMeasureYear.Future:
                     Mean = altCompReport.MeanFutureYearEADReduced(altID);
+                    QuartileLabel = QUARTILE_REDUCED_EAD;
                     break;
                 case DamageMeasureYear.AAEQ:
                     Mean = altCompReport.MeanAAEQDamageReduced(altID);
+                    QuartileLabel = QUARTILE_REDUCED_EQAD;
                     break;
             }
 
         }
 
-        private void LoadAAEQData(AlternativeComparisonReportResults altResults, int altID, DamageMeasureYear damageMeasureYear)
+        private void LoadData(AlternativeComparisonReportResults altResults, int altID, DamageMeasureYear damageMeasureYear)
         {
-            List<double> xVals = new() { .75, .5, .25 };
-            List<string> xValNames = new() { "First", "Second", "Third" };
+            List<double> xVals = [.75, .5, .25];
+            List<string> xValNames = ["First", "Second", "Third"];
             List<double> yVals = LoadYData(xVals, altResults, altID, damageMeasureYear);
 
-            for (int i = 0; i < xValNames.Count; i++)
+            if (DamageMeasureYear.Future.Equals(_damageMeasureYear) || DamageMeasureYear.Base.Equals(_damageMeasureYear))
             {
-                Rows.Add(new EadRowItem(xValNames[i], yVals[i]));
+                for (int i = 0; i < xValNames.Count; i++)
+                {
+                    Rows.Add(new EadRowItem(xValNames[i], yVals[i]));
+                }
+            }
+            else
+            {
+                for (int i = 0; i < xValNames.Count; i++)
+                {
+                    Rows.Add(new EqadRowItem(xValNames[i], yVals[i]));
+                }
             }
         }
 
@@ -142,7 +164,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
         {
             if (empirical != null)
             {
-                if (empirical.CumulativeProbabilities.Length <=1)
+                if (empirical.CumulativeProbabilities.Length <= 1)
                 {
                     HistogramVisible = false;
                 }
@@ -159,13 +181,22 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
         private void InitializePlotModel(Empirical empirical, bool isAlternative)
         {
-            if(isAlternative)
+            if (isAlternative)
             {
-                MyPlot.Title = StringConstants.EqAD_DISTRIBUTION;
+                if (DamageMeasureYear.Future.Equals(_damageMeasureYear) || DamageMeasureYear.Base.Equals(_damageMeasureYear))
+                {
+                    MyPlot.Title = StringConstants.EAD_DISTRIBUTION; 
+                }
+                else
+                {
+                    MyPlot.Title = StringConstants.EqAD_DISTRIBUTION;
+                }
+
             }
             else
             {
                 MyPlot.Title = StringConstants.DAMAGE_REDUCED;
+
             }
             AddAxes();
             AddSeries(empirical);
@@ -203,10 +234,20 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                 StartPosition = 1,
                 EndPosition = 0
             };
+
+            string yaxisLabel;
+            if (DamageMeasureYear.Future.Equals(_damageMeasureYear) || DamageMeasureYear.Base.Equals(_damageMeasureYear))
+            {
+                yaxisLabel = StringConstants.EXPECTED_ANNUAL_DAMAGE;
+            }
+            else
+            {
+                yaxisLabel = StringConstants.EQUIVALENT_ANNUAL_DAMAGE;
+            }
             LinearAxis y = new()
             {
                 Position = AxisPosition.Left,
-                Title = StringConstants.EXPECTED_ANNUAL_DAMAGE,
+                Title = yaxisLabel,
                 MinorTickSize = 0,
                 Unit = "$",
             };
@@ -227,9 +268,19 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             List<string> xValNames = new() { "First", "Second", "Third" };
             List<double> yVals = LoadYData(xVals, scenarioResults, damageMeasureYear);
 
-            for (int i = 0; i < xValNames.Count; i++)
+            if (DamageMeasureYear.Future.Equals(_damageMeasureYear) || DamageMeasureYear.Base.Equals(_damageMeasureYear))
             {
-                Rows.Add(new EadRowItem(xValNames[i], yVals[i]));
+                for (int i = 0; i < xValNames.Count; i++)
+                {
+                    Rows.Add(new EadRowItem(xValNames[i], yVals[i]));
+                }
+            }
+            else
+            {
+                for (int i = 0; i < xValNames.Count; i++)
+                {
+                    Rows.Add(new EqadRowItem(xValNames[i], yVals[i]));
+                }
             }
         }
 

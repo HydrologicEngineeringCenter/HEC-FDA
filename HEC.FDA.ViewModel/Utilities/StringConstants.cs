@@ -195,6 +195,7 @@
         public static readonly string EAD_DISTRIBUTION = "EAD Distribution";
         public static readonly string DAMAGE_REDUCED = "Damage Reduced Distribution";
         public static readonly string EqAD_DISTRIBUTION = "EqAD Distribution";
+        public static readonly string EQUIVALENT_ANNUAL_DAMAGE = "Equivalent Annual Damage";
         public static readonly string STUDY_PROPERTIES = "Study Properties";
         public static readonly string PROPERTIES = "Properties";
 
@@ -207,6 +208,10 @@
 
         public const string DEFAULT_UNIT_FORMAT = "N2";
         public const string DETAILED_DECIMAL_FORMAT = "N4";
+
+        public const string QUARTILE_VALUE = "Quartile Value";
+
+        public const string SCENARIOS_EAD_LABEL = "Quartile of EAD Distribution";
 
         public const string ALTERNATIVE_EAD_LABEL = "Quartile of EAD Distribution";
         public const string ALTERNATIVE_EqAD_LABEL = "Quartile of EqAD Distribution";
