@@ -28,7 +28,7 @@ namespace HEC.FDA.ViewModel.Watershed
 
             if (isTemporaryNode)
             {
-                CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.GetImage(typeof(TerrainElement)), " -Saving", true);
+                CustomTreeViewHeader = new CustomHeaderVM(Name, ImageSources.GetImage(typeof(TerrainElement)), " -Saving");
             }
             else
             {
