@@ -53,7 +53,7 @@ jobs:
         $zipUrl = "https://s3.hecdev.net/ras-public-data/ras-GDAL-3.9.1.zip"
         $zipPath = "${pwd}/downloaded.zip"
         Invoke-WebRequest -Uri $zipUrl -OutFile $zipPath
-        Expand-Archive -Path $zipPath -DestinationPath $PUBLISH_OUT
+        Expand-Archive -Path $zipPath -DestinationPath ${{ env.PUBLISH_OUT }}
 
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4
