@@ -6,6 +6,7 @@
 		<Authors>US Army Corps of Engineers Hydrologic Engineering Center</Authors>
 		<TargetFramework>net9.0</TargetFramework>
 		<Version>2.0.0.1-Beta+LocalDev</Version>
+		<SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
 	</PropertyGroup>
 
 </Project>
