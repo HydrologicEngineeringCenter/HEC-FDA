@@ -13,7 +13,6 @@
         #region Fields
         private string _Decoration;
         private string _ImageSource;
-        private bool _GifVisible = false;
         private string _Tooltip;
         #endregion
         #region Properties
@@ -50,8 +49,7 @@
         /// <param name="name">Name of the element</param>
         /// <param name="imageSource">image source for the image that will be displayed before the element name</param>
         /// <param name="decoration">A string that will be added to the end of the element name ie: '*'</param>
-        /// <param name="gifVisible">True: displays a "wait" gif at the end of the name that indicates that it is busy doing some process.</param>
-        public CustomHeaderVM(string name, string imageSource = "", string decoration = "", bool gifVisible = false)
+        public CustomHeaderVM(string name, string imageSource = "", string decoration = "")
         {
             Name = name;
             Decoration = decoration;
