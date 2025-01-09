@@ -111,7 +111,7 @@ namespace HEC.FDA.Model.structures
                     filteredStructureList.Add(structure);
                 }
             }
-            return new Inventory(OccTypes, filteredStructureList);
+            return new Inventory(OccTypes, filteredStructureList, PriceIndex);
         }
         /// <summary>
         /// This method filters structures and the water surface profiles by damage category
