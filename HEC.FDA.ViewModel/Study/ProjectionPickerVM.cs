@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Storage;
 using HEC.MVVMFramework.ViewModel.Implementations;
 
@@ -38,20 +37,48 @@ namespace HEC.FDA.ViewModel.Study
         }
         #endregion
         #region Methods
+		/// <summary>
+		/// Always uses the first file in the directory. Should only ever be one file. 
+		/// </summary>
         private void GrabExistingProjection()
 		{
 			string[] filesInDirectory =  Directory.GetFiles(Connection.Instance.ProjectionDirectory);
 			if(filesInDirectory.Length > 0) { ProjectProjectionPath = filesInDirectory[0]; } 
 		}
+		
 		public void Save()
 		{
+            ArchiveExistingProjections();
             string destination = Connection.Instance.ProjectionDirectory + Path.DirectorySeparatorChar + Path.GetFileName(ProjectProjectionPath);
 			if(File.Exists(_projectProjectionPath) && !_projectProjectionPath.Equals(destination) )
 			{
                 File.Copy(ProjectProjectionPath,destination);
 				ProjectProjectionPath = destination;
             }
-		}
+		} 
+        /// <summary>
+        /// Checks if there are already files in the projection directory. If there are, moves them to a subfolder called archive. Creates archive if it doesn't exist. Overwrites on Copy 
+        /// </summary>
+        private static void ArchiveExistingProjections()
+        {
+            string[] filesInDirectory = Directory.GetFiles(Connection.Instance.ProjectionDirectory);
+            if (filesInDirectory.Length == 0)
+            {
+                return; //nothing to archive
+            }
+            string archiveDirectory = Path.Combine(Connection.Instance.ProjectionDirectory, "archive");
+            if (!Directory.Exists(archiveDirectory))
+            {
+                Directory.CreateDirectory(archiveDirectory);
+            }
+            foreach (string filePath in filesInDirectory)
+            {
+                string fileName = Path.GetFileName(filePath);
+                string destinationPath = Path.Combine(archiveDirectory, fileName);
+                File.Copy(filePath, destinationPath, true);
+                File.Delete(filePath);
+            }
+        }
         #endregion
     }
 }
