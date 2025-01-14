@@ -320,6 +320,25 @@ namespace HEC.FDA.ModelTest.unittests
         }
 
         [Theory]
+        [InlineData(1,2600)]
+        [InlineData(2,5200)]
+        public void UsePriceIndex(double index, double expected)
+        {
+            ConvergenceCriteria convergenceCriteriaDeterministic = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
+            Inventory inventory = CreateInventory();
+            inventory.PriceIndex = index;
+            ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, inventory, hydraulicDataset, String.Empty, graphicalFrequency: stageFrequency, usingMockData: true);
+            List<ImpactAreaStageDamage> impactAreaStageDamages = new List<ImpactAreaStageDamage>();
+            impactAreaStageDamages.Add(impactAreaStageDamage);
+            ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(new List<ImpactAreaStageDamage>(impactAreaStageDamages));
+            List<UncertainPairedData> results = scenarioStageDamage.Compute().Item1;
+            double actual = results[0].Yvals[^1].InverseCDF(0.5);
+
+            Assert.Equal(expected,actual,.05*(actual));
+
+        }
+
+        [Theory]
         [InlineData(new float[] { 500, 400, 300 }, new float[] { 455, 355, 255 })]
         public void ExtrapolateFromBelowShould(float[] input, float[] expectedResult)
         {
