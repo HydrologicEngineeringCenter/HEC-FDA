@@ -131,6 +131,11 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         }
         private void ConfidenceLimitsAction(object arg1, EventArgs arg2)
         {
+            ComputeConfidenceLimits();
+        }
+
+        public void ComputeConfidenceLimits()
+        {
             GraphicalUncertainPairedData graphical = GraphicalUncertainPairedData;
             PairedData upperNonExceedence = graphical.SamplePairedData(.975) as PairedData;
             PairedData lowerNonExceedence = graphical.SamplePairedData(.025) as PairedData;
@@ -140,13 +145,13 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
             {
                 int binarySearchReturn = Array.BinarySearch(probs, 1 - row.X);
                 int index;
-                if(binarySearchReturn < 0)
+                if (binarySearchReturn < 0)
                 {
                     index = ~binarySearchReturn;
                 }
                 else
                 {
-                    index =binarySearchReturn;
+                    index = binarySearchReturn;
                 }
                 row.SetConfidenceLimits(Math.Round(lowerNonExceedence.f(probs[index]), 4), Math.Round(upperNonExceedence.f(probs[index]), 4));
             }

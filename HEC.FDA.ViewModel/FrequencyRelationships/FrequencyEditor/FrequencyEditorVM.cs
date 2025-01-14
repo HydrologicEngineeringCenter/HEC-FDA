@@ -36,11 +36,20 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// from owner element
+        /// </summary>
+        /// <param name="actionManager"></param>
         public FrequencyEditorVM(EditorActionManager actionManager) : base(actionManager)
         {
             ParameterEntryVM = new();
             GraphicalVM = new TableWithPlotVM(new GraphicalVM(StringConstants.GRAPHICAL_FREQUENCY,StringConstants.EXCEEDANCE_PROBABILITY,StringConstants.DISCHARGE),true,true,true);
         }
+        /// <summary>
+        /// from frequency element
+        /// </summary>
+        /// <param name="elem"></param>
+        /// <param name="actionManager"></param>
         public FrequencyEditorVM(FrequencyElement elem, EditorActionManager actionManager) : base(elem, actionManager)
         {
             FromXML(elem.FrequencyEditorXML);
@@ -78,7 +87,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
                 {
                     ParameterEntryVM = new(childs);
                 }
-                else if (childs.Name.LocalName.Equals(typeof(AnalyticalVM).Name)) {
+                else if (childs.Name.LocalName.Equals("AnalyticalVM")) {
                     BackwardCompatibilityFromXML(childs);
                 }
             }
@@ -92,8 +101,9 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
                 {
                     ParameterEntryVM = new ParameterEntryVM(child);
                 }
-                else if (child.Name.LocalName.Equals(typeof(FitToFlowVM).Name))
+                else if (child.Name.LocalName.Equals("FitToFlowVM"));
                 {
+                    continue;
                     //Just ignore it. We don't support fit to flow anymore as of 9/18/2024. No released version ever has or will. 
                 }
             }
@@ -108,6 +118,16 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         }
         #endregion
 
+        /// <summary>
+        /// initializes the confidence bounds of the component vms. to be used only when an editor is opened. 
+        /// </summary>
+        public void InitializeConfidenceBounds()
+        {
+            ParameterEntryVM.InitializePlotModel();
+            ParameterEntryVM.UpdatePlot();
+            ((GraphicalVM)(GraphicalVM.CurveComponentVM)).ComputeConfidenceLimits();
+            return;
+        }
 
     }
 }

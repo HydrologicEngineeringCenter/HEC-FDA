@@ -52,17 +52,13 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         #region Constructors
         public ParameterEntryVM(XElement xElement)
         {
-            InitializePlotModel();
             FromXML(xElement);
             Validate();
-            UpdatePlot();
         }
         public ParameterEntryVM()
         {
-            InitializePlotModel();
             LP3Distribution = new LogPearson3(3.5, 0.22, 0.1, 60);
             Validate();
-            UpdatePlot();
         }
         #endregion
 

@@ -110,6 +110,7 @@ public class FrequencyElement : ChildElement
         EditorActionManager actionManager = new EditorActionManager()
             .WithSiblingRules(this);
         FrequencyEditorVM vm = new(this, actionManager);
+        vm.InitializeConfidenceBounds();
         string header = "Edit " + vm.Name;
         DynamicTabVM tab = new(header, vm, "EditAnalyticalFrequency" + vm.Name);
         Navigate(tab, false, false);

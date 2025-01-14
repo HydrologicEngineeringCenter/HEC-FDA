@@ -49,7 +49,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Base
         #endregion
 
         #region OxyPlot
-        protected void InitializePlotModel()
+        public void InitializePlotModel()
         {
             PlotModel = new ViewResolvingPlotModel();
             _plotModel.Title = StringConstants.ANALYTICAL_FREQUENCY;
@@ -61,8 +61,12 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Base
             AddAxes();
             PlotModel.InvalidatePlot(true);
         }
-        protected void UpdatePlot()
+        public void UpdatePlot()
         {
+            if (PlotModel == null)
+            {
+                return; 
+            }
             PlotModel.Series.Clear();
             LP3Distribution.Validate();
             if (!LP3Distribution.HasErrors)
