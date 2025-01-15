@@ -87,6 +87,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships
                .WithSiblingRules(this);
 
             FrequencyEditorVM vm = new(actionManager);
+            vm.InitializeConfidenceBounds();
             string header = StringConstants.CREATE_FREQUENCY_HEADER;
             DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.CREATE_FREQUENCY_HEADER);
             Navigate(tab, false, false);
