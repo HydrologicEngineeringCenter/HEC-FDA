@@ -20,7 +20,6 @@ namespace HEC.FDA.ViewModel.Utilities
         private static int _enqueue;
         private static int _dequeue;
         private string _filePath = Path.GetTempFileName();
-        private System.Timers.Timer _timer;
         StreamWriter sw;
         private BackgroundWorker _bw;
         private ConcurrentQueue<IMessage> _messages;

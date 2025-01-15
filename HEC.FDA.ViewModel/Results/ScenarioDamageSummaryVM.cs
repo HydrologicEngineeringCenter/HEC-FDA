@@ -10,7 +10,6 @@ namespace HEC.FDA.ViewModel.Results
 {
     public class ScenarioDamageSummaryVM : BaseViewModel
     {
-        private DataTable _DamCatTable;
 
         public CustomObservableCollection<SelectableChildElement> SelectableElements { get; } = [];
         public CustomObservableCollection<ScenarioDamageRowItem> Rows { get; } = [];

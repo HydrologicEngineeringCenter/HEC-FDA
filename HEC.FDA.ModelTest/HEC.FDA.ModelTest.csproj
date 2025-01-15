@@ -9,7 +9,6 @@
 	<ItemGroup>
 		<PackageReference Include="Geospatial.GDALAssist" Version="0.1.0-Beta" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-		<PackageReference Include="Ras.Mapper" Version="0.1.0-Beta" />
 		<PackageReference Include="xunit" Version="2.8.1" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="2.8.1">
 			<PrivateAssets>all</PrivateAssets>

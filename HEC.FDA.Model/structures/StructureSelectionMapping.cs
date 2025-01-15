@@ -31,7 +31,6 @@ namespace HEC.FDA.Model.structures
 
         private const string VALUE = "Value";
 
-        private Dictionary<string, Type> _expectedTypes;
 
         public bool IsUsingFirstFloorElevation { get; }
         public bool IsUsingTerrainFile { get; }
