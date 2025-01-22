@@ -7,7 +7,12 @@
              mc:Ignorable="d" 
              xmlns:v="clr-namespace:HEC.MVVMFramework.View.NamedActionConverters;assembly=HEC.MVVMFramework.View"
              xmlns:vm ="clr-namespace:HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor;assembly=HEC.FDA.ViewModel"
+             xmlns:conv ="clr-namespace:HEC.FDA.View.Utilities"
              d:DesignHeight="450" d:DesignWidth="800" d:DataContext="{d:DesignInstance Type=vm:GraphicalVM }" d:Background="AliceBlue">
+  
+  <UserControl.Resources>
+    <conv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+  </UserControl.Resources>
   <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="35"/>
@@ -26,8 +31,16 @@
             <v:NamedActionButton NamedAction="{Binding ConfidenceLimits}" Margin="5" ToolTip="Not Needed For Compute" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="2">
-            <RadioButton Content="Flow" IsChecked="{Binding UseFlow}" Margin="5" GroupName="FlowStageRadio" x:Name="FlowRadioButton"/>
-            <RadioButton Content="Stage" Margin="5" GroupName="FlowStageRadio" x:Name="StageRadioButton"/>
+      <RadioButton Content="Flow"
+                   Margin="5"
+                   IsChecked="{Binding UseFlow, Mode=TwoWay}"
+                   GroupName="{Binding InstanceID, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                   x:Name="FlowRadioButton"/>
+      <RadioButton Content="Stage"
+                   Margin="5"
+                   IsChecked="{Binding UseFlow, Converter={StaticResource InverseBooleanConverter}, Mode=TwoWay}"
+                   GroupName="{Binding InstanceID, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                   x:Name="StageRadioButton"/>
         </StackPanel>
         <local:FdaDataGridControl DataContext="{Binding Path =SelectedItem }" Grid.Row="3"/>
     </Grid>
