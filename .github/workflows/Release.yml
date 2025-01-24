@@ -55,6 +55,6 @@ jobs:
         Compress-Archive -Path "${{ env.PUBLISH_OUT }}/*" -DestinationPath $ZIP_OUT
 
     - name: Release
-      uses: softprops/action-gh-release@v4
+      uses: softprops/action-gh-release@v2.2.1
       with:
         files: ${{ env.ZIP_OUT }}
