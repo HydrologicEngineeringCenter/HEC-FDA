@@ -133,84 +133,13 @@ namespace Statistics.Histograms
         }
         #endregion
         #region Functions
-        public double Skewness()
-        {
-            double deviation = 0, deviation2 = 0, deviation3 = 0;
-            if (SampleSize == 0)
-            {
-                return double.NaN;
-            }
-            if (Min == (Max - BinWidth))
-            {
-                return 0.0;
-            }
-            for (int i = 0; i < BinCounts.Length; i++)
-            {
-                double midpoint = Min + (i * BinWidth) + (0.5 * BinWidth);
-
-                deviation += midpoint - Mean;
-                deviation2 += deviation * deviation;
-                deviation3 += deviation2 * deviation;
-
-            }
-            double skewness = SampleSize > 2 ? deviation3 / SampleSize / Math.Pow(Variance, 3 / 2) : 0;
-            return skewness;
-        }
-
 
         public void ForceDeQueue()
         {
             //do nothing
             //HACK
         }
-        public double HistogramMean()
-        {
-            if (SampleSize == 0)
-            {
-                return double.NaN;
-            }
-            if (Min == (Max - BinWidth))
-            {
-                return Max + (.5 * BinWidth);
-            }
-            double sum = 0;
-            for (int i = 0; i < BinCounts.Length; i++)
-            {
-                sum += (Min + (i * BinWidth) + (0.5 * BinWidth)) * BinCounts[i];
-            }
-            return sum / SampleSize;
-        }
-        public double HistogramVariance()
-        {
-            if (SampleSize == 0)
-            {
-                return double.NaN;
-            }
-            if (SampleSize == 1)
-            {
-                return 0.0;
-            }
-            if (Min == (Max - BinWidth))
-            {
-                return 0.0;
-            }
 
-            double deviation2 = 0;
-            for (int i = 0; i < BinCounts.Length; i++)
-            {
-                double midpoint = Min + (i * BinWidth) + (0.5 * BinWidth);
-
-                double deviation = midpoint - Mean;
-                deviation2 += deviation * deviation;
-
-            }
-            double variance = deviation2 / (SampleSize - 1);
-            return variance;
-        }
-        public double HistogramStandardDeviation()
-        {
-            return Math.Sqrt(HistogramVariance());
-        }
         /// <summary>
         /// The only argument that should be used in this function is the observation value
         /// A hacky solution was used here so that Histogram and ThreadsafeInlineHIstogram match 
@@ -386,7 +315,7 @@ namespace Statistics.Histograms
             ConvergedOnMax = false;
         }
 
-        public Int64 FindBinCount(double x, bool cumulative = true)
+        public long FindBinCount(double x, bool cumulative = true)
         {
             if (x > Max)
             {
@@ -410,7 +339,7 @@ namespace Statistics.Histograms
             }
             if (cumulative)
             {
-                Int64 sum = 0;
+                long sum = 0;
                 for (int i = 0; i < obsIndex + 1; i++)
                 {
                     sum += BinCounts[i];
@@ -549,8 +478,6 @@ namespace Statistics.Histograms
 
             }
         }
-
-
         public static Empirical ConvertToEmpiricalDistribution(IHistogram histogram)
         {
             int probabilitySteps = 2500;
@@ -798,25 +725,9 @@ namespace Statistics.Histograms
             return Convert.ToInt64(Math.Min(remainingIters, biggestGuess));
         }
 
-        public string Print(bool round = false)
-        {
-            string histogram = $"This histogram consists of the following bin starts and bin counts:" + Environment.NewLine;
-            for (int i = 0; i < BinCounts.Length; i++)
-            {
-                histogram += $"Bin Start: {Min + BinWidth * i}, Bin Count: {BinCounts[i]}" + Environment.NewLine;
-            }
-            return histogram;
-        }
-
-        public string Requirements(bool printNotes)
-        {
-            string message = "The histogram minimally requires a bin width or a list of observations and convergence criteria.";
-            return message;
-        }
-
         public IDistribution Sample(double[] packetOfRandomNumbers)
         {
-            if (packetOfRandomNumbers.Length < SampleSize) throw new ArgumentException($"The parametric bootstrap sample cannot be constructed using the {Print(true)} distribution. It requires at least {SampleSize} random value but only {packetOfRandomNumbers.Length} were provided.");
+            if (packetOfRandomNumbers.Length < SampleSize) throw new ArgumentException($"The parametric bootstrap sample cannot be constructed using the distribution. It requires at least {SampleSize} random value but only {packetOfRandomNumbers.Length} were provided.");
             double[] samples = new double[SampleSize];
             for (int i = 0; i < SampleSize; i++) samples[i] = this.InverseCDF(packetOfRandomNumbers[i]);
             return this.Fit(samples);
