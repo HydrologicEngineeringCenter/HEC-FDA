@@ -4,6 +4,7 @@ using HEC.FDA.Model.hydraulics.Interfaces;
 using HEC.FDA.Model.interfaces;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.paireddata.Interfaces;
 using HEC.FDA.Model.structures;
 using HEC.FDA.Model.utilities;
 using HEC.MVVMFramework.Base.Enumerations;

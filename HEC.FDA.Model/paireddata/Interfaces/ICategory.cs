@@ -1,4 +1,4 @@
-namespace HEC.FDA.Model.paireddata
+namespace HEC.FDA.Model.paireddata.Interfaces
 {
     public interface ICategory
     {

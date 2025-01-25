@@ -1,4 +1,4 @@
-namespace HEC.FDA.Model.paireddata
+namespace HEC.FDA.Model.paireddata.Interfaces
 {
     //TODO: This class does not have utility in the current design 
     //REMOVE

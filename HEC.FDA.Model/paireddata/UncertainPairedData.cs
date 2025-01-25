@@ -10,6 +10,7 @@ using HEC.FDA.Model.interfaces;
 using Statistics.Histograms;
 using HEC.MVVMFramework.Model.Messaging;
 using System.Collections.Generic;
+using HEC.FDA.Model.paireddata.Interfaces;
 
 namespace HEC.FDA.Model.paireddata
 {

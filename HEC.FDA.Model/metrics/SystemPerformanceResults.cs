@@ -10,6 +10,7 @@ using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Enumerations;
 using HEC.FDA.Model.paireddata;
 using HEC.MVVMFramework.Model.Messaging;
+using HEC.FDA.Model.paireddata.Interfaces;
 
 namespace HEC.FDA.Model.metrics
 {

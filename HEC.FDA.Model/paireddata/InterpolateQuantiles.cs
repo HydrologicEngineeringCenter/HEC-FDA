@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.paireddata.Interfaces;
 using Statistics.Distributions;
 
 namespace Statistics.Graphical

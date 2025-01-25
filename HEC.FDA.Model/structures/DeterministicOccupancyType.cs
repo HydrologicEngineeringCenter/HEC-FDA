@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.paireddata.Interfaces;
 using Statistics;
 
 namespace HEC.FDA.Model.structures

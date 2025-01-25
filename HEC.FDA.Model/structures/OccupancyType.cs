@@ -5,6 +5,7 @@ using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Model.Messaging;
 using System;
+using HEC.FDA.Model.paireddata.Interfaces;
 
 namespace HEC.FDA.Model.structures
 { //TODO: add messaging and validation 

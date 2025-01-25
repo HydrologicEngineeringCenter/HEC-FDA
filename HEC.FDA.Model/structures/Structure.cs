@@ -4,7 +4,7 @@ using RasMapperLib;
 using HEC.FDA.Model.metrics;
 using System.Collections.Generic;
 using System;
-using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.paireddata.Interfaces;
 
 namespace HEC.FDA.Model.structures
 {

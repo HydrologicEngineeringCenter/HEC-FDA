@@ -1,16 +1,11 @@
-using Statistics;
+using HEC.FDA.Model.paireddata.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using HEC.FDA.Model.interfaces;
 
 namespace HEC.FDA.Model.paireddata
 {
     public class PairedData : IPairedData
     {
-        #region Fields 
-        #endregion
-
         #region Properties 
         public CurveMetaData MetaData { get; }
         public double[] Xvals { get; }

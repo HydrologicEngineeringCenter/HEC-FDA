@@ -7,6 +7,7 @@ using HEC.MVVMFramework.Model.Messaging;
 using Statistics.Graphical;
 using HEC.FDA.Model.utilities;
 using System.Linq;
+using HEC.FDA.Model.paireddata.Interfaces;
 
 namespace HEC.FDA.Model.paireddata
 {
