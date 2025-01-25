@@ -1,41 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Statistics
+﻿namespace Statistics
 {
     /// <summary>
     /// An enumeration of supported IDistribution types
     /// </summary>
     public enum IDistributionEnum
     {
-        /// <summary>
-        /// Default value likely to lead to an error.
-        /// </summary>
         NotSupported = 0,
-        /// <summary>
-        /// Normal distribution.
-        /// </summary>
         Normal = 1,
-        /// <summary>
-        /// Continuous Uniform distribution.
-        /// </summary>
         Uniform = 2,
-        /// <summary>
-        /// Triangular distribution.
-        /// </summary>
         Triangular = 3,
-        /// <summary>
-        /// Log Pearson Type III distribution.
-        /// </summary>
         LogPearsonIII = 4,
-        /// <summary>
-        /// Log Normal distribution.
-        /// </summary>
         LogNormal = 5,
-        /// <summary>
-        /// Deterministic Distribution
-        /// </summary>
         Deterministic = 6,
         /// <summary>
         /// IHistogram includes Histogram and ThreadsafeInlineHistogram 
