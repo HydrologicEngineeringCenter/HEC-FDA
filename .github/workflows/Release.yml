@@ -35,7 +35,8 @@ jobs:
       shell: pwsh
       run: |
         $PUBLISH_OUT = "${pwd}/TO-PACKAGE/"
-        $DISTRIBUTION_FOLDER = "$PUBLISH_OUT/HEC-FDA-${{ env.VERSION }}/"
+        $DISTRIBUTION_FOLDER = "$PUBLISH_OUT/HEC-FDA ${{ env.VERSION }}/"
+        echo "DISTRIBUTION_FOLDER=$DISTRIBUTION_FOLDER" >> $env:GITHUB_ENV
         echo "PUBLISH_OUT=$PUBLISH_OUT" >> $env:GITHUB_ENV
         dotnet publish -c Release -v quiet /p:Version=${{ env.VERSION }} -o $DISTRIBUTION_FOLDER ${{ env.PROJECT_NAME }} --self-contained true
 
@@ -45,7 +46,7 @@ jobs:
         $zipUrl = "https://s3.hecdev.net/ras-public-data/ras-GDAL-3.9.1.zip"
         $zipPath = "${pwd}/downloaded.zip"
         Invoke-WebRequest -Uri $zipUrl -OutFile $zipPath
-        Expand-Archive -Path $zipPath -DestinationPath ${{ env.PUBLISH_OUT }}
+        Expand-Archive -Path $zipPath -DestinationPath ${{ env.DISTRIBUTION_FOLDER }}
 
     - name: Create Zip Archive
       shell: pwsh
