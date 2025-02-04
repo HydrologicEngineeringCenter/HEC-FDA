@@ -45,15 +45,15 @@ namespace HEC.FDA.Model.alternatives
         /// <returns></returns>
         /// 
         public AlternativeResults AnnualizationCompute(double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear,
-            ScenarioResults computedResultsFutureYear,int baseYear, int futureYear, CancellationToken cancellationToken)
+            ScenarioResults computedResultsFutureYear,int baseYear, int futureYear)
         {
             List<int> analysisYears = new() { baseYear, futureYear };
-            ReportMessage(this, new MessageEventArgs(new Message("Starting alternative compute" + Environment.NewLine)));
+            MessageEventArgs messageEventArgs = new(new Message("Starting alternative compute" + Environment.NewLine));
+           ReportMessage(this, messageEventArgs);
 
             if (CanCompute(baseYear, futureYear, periodOfAnalysis))
             {
-               AlternativeResults alternativeResults = RunAnnualizationCompute(analysisYears, discountRate, periodOfAnalysis, alternativeResultsID, computedResultsBaseYear, computedResultsFutureYear,
-                    cancellationToken);
+               AlternativeResults alternativeResults = RunAnnualizationCompute(analysisYears, discountRate, periodOfAnalysis, alternativeResultsID, computedResultsBaseYear, computedResultsFutureYear);
                 return alternativeResults;
             }
             else
@@ -64,8 +64,7 @@ namespace HEC.FDA.Model.alternatives
             }
         }
 
-        private AlternativeResults RunAnnualizationCompute(List<int> analysisYears, double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear, ScenarioResults computedResultsFutureYear,
-            CancellationToken cancellationToken)
+        private AlternativeResults RunAnnualizationCompute(List<int> analysisYears, double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear, ScenarioResults computedResultsFutureYear)
         {
             AlternativeResults alternativeResults = new(alternativeResultsID, analysisYears, periodOfAnalysis);
             MessageEventArgs messargs = new(new Message("Initiating discounting routine." + Environment.NewLine));
@@ -84,11 +83,7 @@ namespace HEC.FDA.Model.alternatives
             {
                 //To keep track of which results have yet to be processed
                 //I think this allows us to handle situations where we have uneven numbers of results 
-                List<ImpactAreaScenarioResults> futureYearResultsList = new();
-                foreach (ImpactAreaScenarioResults futureYearImpactAreaScenarioResults in computedResultsFutureYear.ResultsList.Cast<ImpactAreaScenarioResults>())
-                {
-                    futureYearResultsList.Add(futureYearImpactAreaScenarioResults);
-                }
+                List<ImpactAreaScenarioResults> futureYearResultsList = [.. computedResultsFutureYear.ResultsList.Cast<ImpactAreaScenarioResults>()];
 
                 //this quantity assumes uniformity of dimensionality 
                 int integerQuantityImpactAreas = computedResultsBaseYear.ResultsList.Count;
@@ -190,7 +185,7 @@ namespace HEC.FDA.Model.alternatives
 
        
         private void ProcessUnmatchedFutureResults(List<int> analysisYears, double discountRate, int periodOfAnalysis, ScenarioResults computedResultsBaseYear, AlternativeResults alternativeResults,
-            List<ImpactAreaScenarioResults> futureYearResultsList, CancellationToken cancellationToken)
+            List<ImpactAreaScenarioResults> futureYearResultsList)
         {
             foreach (ImpactAreaScenarioResults futureYearResults in futureYearResultsList.Cast<ImpactAreaScenarioResults>())
             {

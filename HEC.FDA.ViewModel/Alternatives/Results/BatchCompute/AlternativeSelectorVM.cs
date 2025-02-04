@@ -109,8 +109,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
             MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message("Beginning Batch Compute"));
             ReportMessage(this, beginComputeMessageArgs);
 
-            List<Task> taskList = new List<Task>();
-            List<AlternativeElement> elementList = new List<AlternativeElement>();
+            List<Task> taskList = [];
+            List<AlternativeElement> elementList = [];
 
             try
             {
@@ -121,9 +121,9 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
                     FdaValidationResult canComputeVR = elem.RunPreComputeValidation();
                     if (canComputeVR.IsValid)
                     {
-                        Alternative alt = new Alternative();
-                        ComputeAlternativeVM vm = new ComputeAlternativeVM(elem, ComputeCompleted);
-                        taskList.Add(ComputeAlternativeVM.RunAnnualizationCompute(alt, elem, ComputeCompleted, _CancellationToken.Token));
+                        ComputeAlternativeVM vm = new(elem, ComputeCompleted);
+                        Task anualizeComputeTask = ComputeAlternativeVM.RunAnnualizationCompute(new(),elem, ComputeCompleted);
+                        taskList.Add(anualizeComputeTask);
                     }
                     else
                     {

@@ -21,10 +21,10 @@ namespace HEC.FDA.ViewModel.Compute
             Alternative alt = new();
             alt.ProgressReport += Alt_ProgressReport;
             MessageVM.InstanceHash.Add(alt.GetHashCode());
-            RunAnnualizationCompute(alt, altElem, callback, new CancellationToken());
+            RunAnnualizationCompute(alt, altElem, callback);
         }
 
-        public static Task RunAnnualizationCompute(Alternative alt, AlternativeElement altElem, Action<AlternativeResults> callback, CancellationToken cancellationToken)
+        public static Task RunAnnualizationCompute(Alternative alt, AlternativeElement altElem, Action<AlternativeResults> callback)
         {
             IASElement firstElem = altElem.BaseScenario.GetElement();
             IASElement secondElem = altElem.FutureScenario.GetElement();
@@ -43,7 +43,7 @@ namespace HEC.FDA.ViewModel.Compute
             return Task.Run(() =>
             {
                 AlternativeResults results = alt.AnnualizationCompute(discountRate, periodOfAnalysis, altElem.ID, 
-                    firstResults, secondResults,baseYear, futureYear, cancellationToken);
+                    firstResults, secondResults,baseYear, futureYear);
                 callback?.Invoke(results);
             });
         }

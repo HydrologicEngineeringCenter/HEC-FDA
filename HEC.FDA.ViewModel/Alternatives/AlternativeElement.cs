@@ -246,7 +246,7 @@ namespace HEC.FDA.ViewModel.Alternatives
 
             //todo: register somthing with the message hub?
             AlternativeResults results = new Alternative().AnnualizationCompute(discountRate, periodOfAnalysis, ID,
-                baseResults, futureResults,BaseScenario.Year, FutureScenario.Year, new CancellationToken());
+                baseResults, futureResults,BaseScenario.Year, FutureScenario.Year);
             callback?.Invoke(results);
         }
 
