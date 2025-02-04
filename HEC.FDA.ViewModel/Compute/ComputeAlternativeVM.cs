@@ -11,14 +11,13 @@ using System.Threading.Tasks;
 
 namespace HEC.FDA.ViewModel.Compute
 {
-    public class ComputeAlternativeVM : ComputeWithProgressAndMessagesBase
+    /// <summary>
+    /// This guy should be the compute window for computing a alternative. 
+    /// </summary>
+    public class ComputeAlternativeVM : BaseViewModel
     {
-
-
-        public ComputeAlternativeVM(AlternativeElement altElem, Action<AlternativeResults> callback) : base()
+        public ComputeAlternativeVM() : base()
         {
-            ProgressLabel = StringConstants.ALTERNATIVE_PROGRESS_LABEL;
-            RunAnnualizationCompute(altElem, callback);
         }
 
         public static Task RunAnnualizationCompute(AlternativeElement altElem, Action<AlternativeResults> callback)
@@ -28,8 +27,6 @@ namespace HEC.FDA.ViewModel.Compute
 
             ScenarioResults firstResults = firstElem.Results;
             ScenarioResults secondResults = secondElem.Results;
-            int seed = 99;
-            RandomProvider randomProvider = new(seed);
             StudyPropertiesElement studyProperties = StudyCache.GetStudyPropertiesElement();
 
             double discountRate = studyProperties.DiscountRate;
@@ -43,14 +40,6 @@ namespace HEC.FDA.ViewModel.Compute
                     firstResults, secondResults,baseYear, futureYear);
                 callback?.Invoke(results);
             });
-        }
-
-        private void Alt_ProgressReport(object sender, MVVMFramework.Base.Events.ProgressReportEventArgs progress)
-        {
-            if (sender is Alternative)
-            {
-                Progress = progress.Progress;
-            }
         }
     }
 }

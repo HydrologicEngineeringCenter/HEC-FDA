@@ -218,7 +218,8 @@ namespace HEC.FDA.ViewModel.Alternatives
             FdaValidationResult vr = RunPreComputeValidation();
             if (vr.IsValid)
             {
-                ComputeAlternativeVM vm = new(this, ComputeCompleted);
+                ComputeAlternativeVM vm = new(); //we'll want to replace this with a progress reporter we pump in. 
+                ComputeAlternativeVM.RunAnnualizationCompute(this, ComputeCompleted);
                 string header = "Compute Log For Alternative: " + Name;
                 DynamicTabVM tab = new(header, vm, "ComputeLog" + Name);
                 Navigate(tab, false, false);
