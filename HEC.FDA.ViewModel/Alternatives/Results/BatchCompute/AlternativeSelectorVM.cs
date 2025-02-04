@@ -122,7 +122,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
                     if (canComputeVR.IsValid)
                     {
                         ComputeAlternativeVM vm = new(elem, ComputeCompleted);
-                        Task anualizeComputeTask = ComputeAlternativeVM.RunAnnualizationCompute(new(),elem, ComputeCompleted);
+                        Task anualizeComputeTask = ComputeAlternativeVM.RunAnnualizationCompute(elem, ComputeCompleted);
                         taskList.Add(anualizeComputeTask);
                     }
                     else

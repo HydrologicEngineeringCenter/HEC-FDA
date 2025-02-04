@@ -18,11 +18,10 @@ namespace HEC.FDA.ViewModel.Compute
         public ComputeAlternativeVM(AlternativeElement altElem, Action<AlternativeResults> callback) : base()
         {
             ProgressLabel = StringConstants.ALTERNATIVE_PROGRESS_LABEL;
-            Alternative alt = new();
-            RunAnnualizationCompute(alt, altElem, callback);
+            RunAnnualizationCompute(altElem, callback);
         }
 
-        public static Task RunAnnualizationCompute(Alternative alt, AlternativeElement altElem, Action<AlternativeResults> callback)
+        public static Task RunAnnualizationCompute(AlternativeElement altElem, Action<AlternativeResults> callback)
         {
             IASElement firstElem = altElem.BaseScenario.GetElement();
             IASElement secondElem = altElem.FutureScenario.GetElement();
@@ -40,7 +39,7 @@ namespace HEC.FDA.ViewModel.Compute
             int futureYear = altElem.FutureScenario.Year;
             return Task.Run(() =>
             {
-                AlternativeResults results = alt.AnnualizationCompute(discountRate, periodOfAnalysis, altElem.ID, 
+                AlternativeResults results = Alternative.AnnualizationCompute(discountRate, periodOfAnalysis, altElem.ID, 
                     firstResults, secondResults,baseYear, futureYear);
                 callback?.Invoke(results);
             });

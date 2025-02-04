@@ -108,7 +108,7 @@ namespace HEC.FDA.ModelTest.unittests
             ScenarioResults baseWithoutProjectScenarioResults = baseWithoutProjectScenario.Compute(convergenceCriteria, computeIsDeterministic: true);
             Scenario futureWithoutProjectScenario = new Scenario( impactAreaListFutureYear);
             ScenarioResults futureWithoutProjectScenarioResults = futureWithoutProjectScenario.Compute(convergenceCriteria, computeIsDeterministic: true);
-            AlternativeResults withoutProjectAlternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, withoutAlternativeIdentifier, 
+            AlternativeResults withoutProjectAlternativeResults = Alternative.AnnualizationCompute(discountRate, poa, withoutAlternativeIdentifier, 
                 baseWithoutProjectScenarioResults, futureWithoutProjectScenarioResults, baseYear,
                 futureYear);
 
@@ -139,7 +139,7 @@ namespace HEC.FDA.ModelTest.unittests
             ScenarioResults baseWithProjectScenarioResults = baseWithProjectScenario.Compute(convergenceCriteria, computeIsDeterministic:true);
             Scenario futureWithProjectScenario = new Scenario( impactAreaListWithProjectfutureYear);
             ScenarioResults futureWithProjectScenarioResults = futureWithProjectScenario.Compute(convergenceCriteria, computeIsDeterministic: true);
-            AlternativeResults withProjectAlternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, withAlternativeIdentifier, 
+            AlternativeResults withProjectAlternativeResults = Alternative.AnnualizationCompute(discountRate, poa, withAlternativeIdentifier, 
                 baseWithProjectScenarioResults, futureWithProjectScenarioResults, baseYear,
                 futureYear);
 
@@ -261,7 +261,7 @@ namespace HEC.FDA.ModelTest.unittests
             ScenarioResults baseWithoutProjectScenarioResults = baseWithoutProjectScenario.Compute(convergenceCriteria, computeIsDeterministic: true);
             Scenario futureWothoutProjectScenario = new Scenario( impactAreaListFutureYear);
             ScenarioResults futureWithoutProjectScenarioResults = futureWothoutProjectScenario.Compute(convergenceCriteria, computeIsDeterministic: true);
-            AlternativeResults withoutProjectAlternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, withoutAlternativeIdentifier, 
+            AlternativeResults withoutProjectAlternativeResults = Alternative.AnnualizationCompute(discountRate, poa, withoutAlternativeIdentifier, 
                 baseWithoutProjectScenarioResults, futureWithoutProjectScenarioResults, baseYear, futureYear);
 
             //build with project alternative results 
@@ -291,7 +291,7 @@ namespace HEC.FDA.ModelTest.unittests
             ScenarioResults baseWithProjectScenarioResults = baseWithProjectScenario.Compute(convergenceCriteria, computeIsDeterministic:true);
             Scenario futureWithProjectScenario = new Scenario( impactAreaListWithProjectfutureYear);
             ScenarioResults futureWithProjectScenarioResults = futureWithProjectScenario.Compute(convergenceCriteria, computeIsDeterministic: true);
-            AlternativeResults withProjectAlternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, withAlternativeIdentifier, 
+            AlternativeResults withProjectAlternativeResults = Alternative .AnnualizationCompute(discountRate, poa, withAlternativeIdentifier, 
                 baseWithProjectScenarioResults, futureWithProjectScenarioResults, baseYear, futureYear);
 
             List<AlternativeResults> withProjectAlternativeResultsList = new List<AlternativeResults>();
@@ -397,7 +397,7 @@ namespace HEC.FDA.ModelTest.unittests
             ScenarioResults baseWithoutProjectScenarioResults = baseWithoutProjectScenario.Compute(convergenceCriteria, computeIsDeterministic: true);
             Scenario futureWothoutProjectScenario = new Scenario( impactAreaListFutureYear);
             ScenarioResults futureWithoutProjectScenarioResults = futureWothoutProjectScenario.Compute(convergenceCriteria, computeIsDeterministic: true);
-            AlternativeResults withoutProjectAlternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, 
+            AlternativeResults withoutProjectAlternativeResults = Alternative.AnnualizationCompute(discountRate, poa, 
                 withoutAlternativeIdentifier, baseWithoutProjectScenarioResults, futureWithoutProjectScenarioResults, baseYear, futureYear);
 
             //build with project alternative results 
@@ -427,7 +427,7 @@ namespace HEC.FDA.ModelTest.unittests
             ScenarioResults baseWithProjectScenarioResults = baseWithProjectScenario.Compute(convergenceCriteria, computeIsDeterministic: true);
             Scenario futureWithProjectScenario = new Scenario( impactAreaListWithProjectfutureYear);
             ScenarioResults futureWithProjectScenarioResults = futureWithProjectScenario.Compute(convergenceCriteria, computeIsDeterministic: true);
-            AlternativeResults withProjectAlternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, withAlternativeIdentifier, 
+            AlternativeResults withProjectAlternativeResults = Alternative.AnnualizationCompute(discountRate, poa, withAlternativeIdentifier, 
                 baseWithProjectScenarioResults, futureWithProjectScenarioResults, baseYear, futureYear);
 
             List<AlternativeResults> withProjectAlternativeResultsList = new List<AlternativeResults>();

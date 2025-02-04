@@ -10,7 +10,7 @@ using System.Linq;
 using Utility.Progress;
 namespace HEC.FDA.Model.alternatives
 {
-    public class Alternative
+    public static class Alternative
     {
 
         #region Methods 
@@ -30,7 +30,7 @@ namespace HEC.FDA.Model.alternatives
         /// <param name="computedResultsFutureYear"<>/param> Previously computed Scenario results for the future year. Optionally, leave null and run scenario compute. 
         /// <returns></returns>
         /// 
-        public AlternativeResults AnnualizationCompute(double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear,
+        public static AlternativeResults AnnualizationCompute(double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear,
             ScenarioResults computedResultsFutureYear, int baseYear, int futureYear, ProgressReporter reporter = null)
         {
             if (reporter == null)
@@ -54,11 +54,11 @@ namespace HEC.FDA.Model.alternatives
             }
         }
 
-        private AlternativeResults RunAnnualizationCompute(List<int> analysisYears, double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear, ScenarioResults computedResultsFutureYear, ProgressReporter reporter)
+        private static AlternativeResults RunAnnualizationCompute(List<int> analysisYears, double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear, ScenarioResults computedResultsFutureYear, ProgressReporter reporter)
         {
             AlternativeResults alternativeResults = new(alternativeResultsID, analysisYears, periodOfAnalysis);
-            MessageEventArgs messargs = new(new Message("Initiating discounting routine." + Environment.NewLine));
-            alternativeResults.ReportMessage(this, messargs);
+            Utility.Logging.Message messargs = new("Initiating discounting routine.");
+            reporter.ReportMessage(messargs);
 
             alternativeResults.BaseYearScenarioResults = computedResultsBaseYear;
             alternativeResults.FutureYearScenarioResults = computedResultsFutureYear;
@@ -99,7 +99,7 @@ namespace HEC.FDA.Model.alternatives
             return alternativeResults;
         }
 
-        private double ProcessBaseAndFutureYearScenarioResults(List<int> analysisYears, double discountRate, int periodOfAnalysis, ScenarioResults computedResultsBaseYear,
+        private static double ProcessBaseAndFutureYearScenarioResults(List<int> analysisYears, double discountRate, int periodOfAnalysis, ScenarioResults computedResultsBaseYear,
             ScenarioResults computedResultsFutureYear, AlternativeResults alternativeResults, List<ImpactAreaScenarioResults> futureYearResultsList, double quantityOFDamCatAssetCatImpactAreaCombos, ProgressReporter reporter)
         {
             double progressTicker = 0;
@@ -175,7 +175,7 @@ namespace HEC.FDA.Model.alternatives
         }
 
 
-        private void ProcessUnmatchedFutureResults(List<int> analysisYears, double discountRate, int periodOfAnalysis, ScenarioResults computedResultsBaseYear, AlternativeResults alternativeResults,
+        private static void ProcessUnmatchedFutureResults(List<int> analysisYears, double discountRate, int periodOfAnalysis, ScenarioResults computedResultsBaseYear, AlternativeResults alternativeResults,
             List<ImpactAreaScenarioResults> futureYearResultsList)
         {
             foreach (ImpactAreaScenarioResults futureYearResults in futureYearResultsList.Cast<ImpactAreaScenarioResults>())
@@ -249,7 +249,7 @@ namespace HEC.FDA.Model.alternatives
         /// <summary>
         /// Progress reporter added as optional to not change method signature. Should always be passed in.
         /// </summary>
-        private AggregatedConsequencesByQuantile IterateOnAAEQ(AggregatedConsequencesBinned baseYearDamageResult, AggregatedConsequencesBinned mlfYearDamageResult, int baseYear, int futureYear, int periodOfAnalysis, double discountRate, bool iterateOnFutureYear = true, ProgressReporter reporter = null)
+        private static AggregatedConsequencesByQuantile IterateOnAAEQ(AggregatedConsequencesBinned baseYearDamageResult, AggregatedConsequencesBinned mlfYearDamageResult, int baseYear, int futureYear, int periodOfAnalysis, double discountRate, bool iterateOnFutureYear = true, ProgressReporter reporter = null)
         {
             if (reporter == null)
             {

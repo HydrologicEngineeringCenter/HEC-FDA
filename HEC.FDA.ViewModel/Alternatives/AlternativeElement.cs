@@ -245,7 +245,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             int periodOfAnalysis = studyProperties.PeriodOfAnalysis;
 
             //todo: register somthing with the message hub?
-            AlternativeResults results = new Alternative().AnnualizationCompute(discountRate, periodOfAnalysis, ID,
+            AlternativeResults results = Alternative.AnnualizationCompute(discountRate, periodOfAnalysis, ID,
                 baseResults, futureResults,BaseScenario.Year, FutureScenario.Year);
             callback?.Invoke(results);
         }
