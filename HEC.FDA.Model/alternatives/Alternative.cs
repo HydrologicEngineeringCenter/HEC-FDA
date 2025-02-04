@@ -59,7 +59,7 @@ namespace HEC.FDA.Model.alternatives
             else
             {
                 MessageEventArgs messageArguments = new(new Message("The discounting parameters are not valid, discounting routine aborted." + Environment.NewLine));
-                ReportMessage(this, messageArguments);
+               ReportMessage(this, messageArguments);
                 return null;
             }
         }
@@ -68,7 +68,7 @@ namespace HEC.FDA.Model.alternatives
         {
             AlternativeResults alternativeResults = new(alternativeResultsID, analysisYears, periodOfAnalysis);
             MessageEventArgs messargs = new(new Message("Initiating discounting routine." + Environment.NewLine));
-            alternativeResults.ReportMessage(this, messargs);
+           alternativeResults.ReportMessage(this, messargs);
 
             alternativeResults.BaseYearScenarioResults = computedResultsBaseYear;
             alternativeResults.FutureYearScenarioResults = computedResultsFutureYear;
@@ -102,7 +102,7 @@ namespace HEC.FDA.Model.alternatives
                 //or vice versa, such as with managed retreat 
                 if (futureYearResultsList.Count > 0)
                 {
-                    ProcessUnmatchedFutureResults(analysisYears, discountRate, periodOfAnalysis, computedResultsBaseYear, alternativeResults, futureYearResultsList, cancellationToken);
+                    ProcessUnmatchedFutureResults(analysisYears, discountRate, periodOfAnalysis, computedResultsBaseYear, alternativeResults, futureYearResultsList);
                 }
                 ReportProgress(this, new ProgressReportEventArgs(100));
             }
@@ -270,7 +270,7 @@ namespace HEC.FDA.Model.alternatives
             {
                 convergenceCriteria = baseYearDamageResult.ConvergenceCriteria;
                 MessageEventArgs beginComputeMessageArgs = new(new Message($"Average annual equivalent damage compute for damage category {baseYearDamageResult.DamageCategory}, asset category {baseYearDamageResult.AssetCategory}, and impact area ID {baseYearDamageResult.RegionID} has been initiated." + Environment.NewLine));
-                ReportMessage(this, beginComputeMessageArgs);
+               ReportMessage(this, beginComputeMessageArgs);
             }
             var resultCollection = new ConcurrentBag<double>();
 
@@ -303,7 +303,7 @@ namespace HEC.FDA.Model.alternatives
                 aaeqResult = new AggregatedConsequencesByQuantile(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, resultCollection.ToList(), baseYearDamageResult.RegionID);
             }
             MessageEventArgs endComputeMessageArgs = new(new Message($"Average annual equivalent damage compute for damage category {aaeqResult.DamageCategory}, asset category {aaeqResult.AssetCategory}, and impact area ID {aaeqResult.RegionID} has completed." + Environment.NewLine));
-            ReportMessage(this, endComputeMessageArgs);
+           ReportMessage(this, endComputeMessageArgs);
             return aaeqResult;
         }
 
