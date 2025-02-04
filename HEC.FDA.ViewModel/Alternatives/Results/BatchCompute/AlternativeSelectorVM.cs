@@ -140,6 +140,12 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
             MessageEventArgs finishedComputeMessageArgs = new MessageEventArgs(new Message("All Scenarios Computed"));
             ReportMessage(this, finishedComputeMessageArgs);
 
+            if (HasFatalError)
+            {
+                MessageBox.Show("One or more of your selected alternatives failed to compute");
+                HasFatalError = false;
+                return;
+            }
             AlternativeSummaryVM altVm = new AlternativeSummaryVM(elementList);
             string header = "Alternative Summary Results";
             DynamicTabVM tab = new DynamicTabVM(header, altVm, header);
@@ -149,6 +155,12 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
 
         private void ComputeCompleted(AlternativeResults results)
         {
+            if(results == null)
+            {
+                HasFatalError = true;
+                
+                return; // if failed, don't try to save a result. 
+            }
             //Assign the results back onto the alt.      
             foreach(ComputeChildRowItem row in Rows)
             {
