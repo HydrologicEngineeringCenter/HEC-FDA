@@ -19,8 +19,6 @@ namespace HEC.FDA.ViewModel.Compute
         {
             ProgressLabel = StringConstants.ALTERNATIVE_PROGRESS_LABEL;
             Alternative alt = new();
-            alt.ProgressReport += Alt_ProgressReport;
-            MessageVM.InstanceHash.Add(alt.GetHashCode());
             RunAnnualizationCompute(alt, altElem, callback);
         }
 

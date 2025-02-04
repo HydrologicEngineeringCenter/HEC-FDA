@@ -1,31 +1,17 @@
 using Statistics;
-using Statistics.Histograms;
 using System;
 using System.Collections.Generic;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
-using HEC.MVVMFramework.Base.Interfaces;
 using HEC.FDA.Model.metrics;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using System.Linq;
-using HEC.MVVMFramework.Model.Messaging;
-using System.Threading;
-using HEC.FDA.Model.interfaces;
-
+using Utility.Progress;
 namespace HEC.FDA.Model.alternatives
 {
-    public class Alternative : ValidationErrorLogger, IProgressReport
+    public class Alternative
     {
-        #region Properties 
-        public event ProgressReportedEventHandler ProgressReport;
-        #endregion
-
-        #region Constructor
-        public Alternative()
-        {
-        }
-        #endregion
 
         #region Methods 
         /// <summary>
@@ -45,30 +31,34 @@ namespace HEC.FDA.Model.alternatives
         /// <returns></returns>
         /// 
         public AlternativeResults AnnualizationCompute(double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear,
-            ScenarioResults computedResultsFutureYear,int baseYear, int futureYear)
+            ScenarioResults computedResultsFutureYear, int baseYear, int futureYear, ProgressReporter reporter = null)
         {
-            List<int> analysisYears = new() { baseYear, futureYear };
-            MessageEventArgs messageEventArgs = new(new Message("Starting alternative compute" + Environment.NewLine));
-           ReportMessage(this, messageEventArgs);
+            if (reporter == null)
+            {
+                reporter = ProgressReporter.None();
+            }
+            reporter.ReportMessage("Starting alternative compute.");
+
+            List<int> analysisYears = [baseYear, futureYear];
 
             if (CanCompute(baseYear, futureYear, periodOfAnalysis))
             {
-               AlternativeResults alternativeResults = RunAnnualizationCompute(analysisYears, discountRate, periodOfAnalysis, alternativeResultsID, computedResultsBaseYear, computedResultsFutureYear);
+                AlternativeResults alternativeResults = RunAnnualizationCompute(analysisYears, discountRate, periodOfAnalysis, alternativeResultsID, computedResultsBaseYear, computedResultsFutureYear, reporter);
                 return alternativeResults;
             }
             else
             {
-                MessageEventArgs messageArguments = new(new Message("The discounting parameters are not valid, discounting routine aborted." + Environment.NewLine));
-               ReportMessage(this, messageArguments);
+                Utility.Logging.Message message = new("The discounting parameters are not valid, discounting routine aborted.");
+                reporter.ReportMessage(message);
                 return null;
             }
         }
 
-        private AlternativeResults RunAnnualizationCompute(List<int> analysisYears, double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear, ScenarioResults computedResultsFutureYear)
+        private AlternativeResults RunAnnualizationCompute(List<int> analysisYears, double discountRate, int periodOfAnalysis, int alternativeResultsID, ScenarioResults computedResultsBaseYear, ScenarioResults computedResultsFutureYear, ProgressReporter reporter)
         {
             AlternativeResults alternativeResults = new(alternativeResultsID, analysisYears, periodOfAnalysis);
             MessageEventArgs messargs = new(new Message("Initiating discounting routine." + Environment.NewLine));
-           alternativeResults.ReportMessage(this, messargs);
+            alternativeResults.ReportMessage(this, messargs);
 
             alternativeResults.BaseYearScenarioResults = computedResultsBaseYear;
             alternativeResults.FutureYearScenarioResults = computedResultsFutureYear;
@@ -94,7 +84,7 @@ namespace HEC.FDA.Model.alternatives
 
                 //Iterate through the base year and future year Scenario Results simultaneously  
                 //There will be one base year results for each impact area in the impact area set
-                ProcessBaseAndFutureYearScenarioResults(analysisYears, discountRate, periodOfAnalysis, computedResultsBaseYear, computedResultsFutureYear, alternativeResults, futureYearResultsList, quantityOFDamCatAssetCatImpactAreaCombos);
+                ProcessBaseAndFutureYearScenarioResults(analysisYears, discountRate, periodOfAnalysis, computedResultsBaseYear, computedResultsFutureYear, alternativeResults, futureYearResultsList, quantityOFDamCatAssetCatImpactAreaCombos, reporter);
 
                 //UNLIKELY TO HIT THIS CODE 
                 //in case there future year impact area scenario results that did not match to any base year impact area scenario results
@@ -104,12 +94,13 @@ namespace HEC.FDA.Model.alternatives
                 {
                     ProcessUnmatchedFutureResults(analysisYears, discountRate, periodOfAnalysis, computedResultsBaseYear, alternativeResults, futureYearResultsList);
                 }
-                ReportProgress(this, new ProgressReportEventArgs(100));
+                reporter.ReportProgressFraction(1);
             }
             return alternativeResults;
         }
 
-        private double ProcessBaseAndFutureYearScenarioResults(List<int> analysisYears, double discountRate, int periodOfAnalysis, ScenarioResults computedResultsBaseYear, ScenarioResults computedResultsFutureYear, AlternativeResults alternativeResults, List<ImpactAreaScenarioResults> futureYearResultsList, double quantityOFDamCatAssetCatImpactAreaCombos)
+        private double ProcessBaseAndFutureYearScenarioResults(List<int> analysisYears, double discountRate, int periodOfAnalysis, ScenarioResults computedResultsBaseYear,
+            ScenarioResults computedResultsFutureYear, AlternativeResults alternativeResults, List<ImpactAreaScenarioResults> futureYearResultsList, double quantityOFDamCatAssetCatImpactAreaCombos, ProgressReporter reporter)
         {
             double progressTicker = 0;
             foreach (ImpactAreaScenarioResults baseYearResults in computedResultsBaseYear.ResultsList.Cast<ImpactAreaScenarioResults>())
@@ -159,7 +150,7 @@ namespace HEC.FDA.Model.alternatives
                     double progressRatio = progressTicker / quantityOFDamCatAssetCatImpactAreaCombos;
                     double progressPercent = progressRatio * 100.00;
 
-                    ReportProgress(this, new ProgressReportEventArgs((int)progressPercent));
+                    reporter.ReportProgressFraction((float)progressRatio);
                 }
                 //in the event that there are more most likely future year results than base year results 
                 //or simply most likely future year results that were not matched to any base year results 
@@ -183,7 +174,7 @@ namespace HEC.FDA.Model.alternatives
             return progressTicker;
         }
 
-       
+
         private void ProcessUnmatchedFutureResults(List<int> analysisYears, double discountRate, int periodOfAnalysis, ScenarioResults computedResultsBaseYear, AlternativeResults alternativeResults,
             List<ImpactAreaScenarioResults> futureYearResultsList)
         {
@@ -236,7 +227,7 @@ namespace HEC.FDA.Model.alternatives
             }
         }
 
-       
+
         private static bool CanCompute(int baseYear, int futureYear, int periodOfAnalysis)
         {
             bool canCompute = true;
@@ -255,22 +246,28 @@ namespace HEC.FDA.Model.alternatives
             }
             return canCompute;
         }
-
-        private AggregatedConsequencesByQuantile IterateOnAAEQ(AggregatedConsequencesBinned baseYearDamageResult, AggregatedConsequencesBinned mlfYearDamageResult, int baseYear, int futureYear, int periodOfAnalysis, double discountRate, bool iterateOnFutureYear = true)
+        /// <summary>
+        /// Progress reporter added as optional to not change method signature. Should always be passed in.
+        /// </summary>
+        private AggregatedConsequencesByQuantile IterateOnAAEQ(AggregatedConsequencesBinned baseYearDamageResult, AggregatedConsequencesBinned mlfYearDamageResult, int baseYear, int futureYear, int periodOfAnalysis, double discountRate, bool iterateOnFutureYear = true, ProgressReporter reporter = null)
         {
+            if (reporter == null)
+            {
+                reporter = ProgressReporter.None();
+            }
             AggregatedConsequencesByQuantile aaeqResult = new();
             ConvergenceCriteria convergenceCriteria;
             if (iterateOnFutureYear)
             {
                 convergenceCriteria = mlfYearDamageResult.ConvergenceCriteria;
-                MessageEventArgs beginComputeMessageArgs = new(new Message($"Average annual equivalent damage compute for damage category {mlfYearDamageResult.DamageCategory}, asset category {mlfYearDamageResult.AssetCategory}, and impact area ID {mlfYearDamageResult.RegionID} has been initiated." + Environment.NewLine));
-                ReportMessage(this, beginComputeMessageArgs);
+                Utility.Logging.Message message = new($"Average annual equivalent damage compute for damage category {mlfYearDamageResult.DamageCategory}, asset category {mlfYearDamageResult.AssetCategory}, and impact area ID {mlfYearDamageResult.RegionID} has been initiated.");
+                reporter.ReportMessage(message);
             }
             else
             {
                 convergenceCriteria = baseYearDamageResult.ConvergenceCriteria;
-                MessageEventArgs beginComputeMessageArgs = new(new Message($"Average annual equivalent damage compute for damage category {baseYearDamageResult.DamageCategory}, asset category {baseYearDamageResult.AssetCategory}, and impact area ID {baseYearDamageResult.RegionID} has been initiated." + Environment.NewLine));
-               ReportMessage(this, beginComputeMessageArgs);
+                Utility.Logging.Message message = new($"Average annual equivalent damage compute for damage category {baseYearDamageResult.DamageCategory}, asset category {baseYearDamageResult.AssetCategory}, and impact area ID {baseYearDamageResult.RegionID} has been initiated.");
+                reporter.ReportMessage(message);
             }
             var resultCollection = new ConcurrentBag<double>();
 
@@ -290,7 +287,7 @@ namespace HEC.FDA.Model.alternatives
                 double aaeqDamage = ComputeEEAD(eadSampledBaseYear, baseYear, eadSampledFutureYear, futureYear, periodOfAnalysis, discountRate);
 
                 resultCollection.Add(aaeqDamage);
-              
+
             }
             );
             if (iterateOnFutureYear)
@@ -302,8 +299,8 @@ namespace HEC.FDA.Model.alternatives
             {
                 aaeqResult = new AggregatedConsequencesByQuantile(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, resultCollection.ToList(), baseYearDamageResult.RegionID);
             }
-            MessageEventArgs endComputeMessageArgs = new(new Message($"Average annual equivalent damage compute for damage category {aaeqResult.DamageCategory}, asset category {aaeqResult.AssetCategory}, and impact area ID {aaeqResult.RegionID} has completed." + Environment.NewLine));
-           ReportMessage(this, endComputeMessageArgs);
+            Utility.Logging.Message msg = new($"Average annual equivalent damage compute for damage category {aaeqResult.DamageCategory}, asset category {aaeqResult.AssetCategory}, and impact area ID {aaeqResult.RegionID} has completed.");
+            reporter.ReportMessage(msg);
             return aaeqResult;
         }
 
@@ -344,18 +341,13 @@ namespace HEC.FDA.Model.alternatives
             interpolatedEADs[0] = baseYearEAD;
             for (int i = 0; i < yearsBetweenBaseAndMLFInclusive; i++)
             {
-                interpolatedEADs[i] = baseYearEAD + (mostLikelyFutureEAD - baseYearEAD)*(i/(yearsBetweenBaseAndMLFInclusive - 1));
+                interpolatedEADs[i] = baseYearEAD + (mostLikelyFutureEAD - baseYearEAD) * (i / (yearsBetweenBaseAndMLFInclusive - 1));
             }
             for (int i = Convert.ToInt32(yearsBetweenBaseAndMLFInclusive); i < periodOfAnalysis; i++)
             {
                 interpolatedEADs[i] = mostLikelyFutureEAD;
             }
             return interpolatedEADs;
-        }
-
-        public void ReportProgress(object sender, ProgressReportEventArgs e)
-        {
-            ProgressReport?.Invoke(sender, e);
         }
         #endregion 
     }
