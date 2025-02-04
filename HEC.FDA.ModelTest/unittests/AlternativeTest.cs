@@ -89,7 +89,7 @@ namespace HEC.FDA.ModelTest.unittests
             ScenarioResults futureScenarioResults = futureScenario.Compute(convergenceCriteria, computeIsDeterministic: true);
 
             AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, alternativeID, 
-                baseScenarioResults, futureScenarioResults,baseYear, futureYear, new CancellationToken());
+                baseScenarioResults, futureScenarioResults,baseYear, futureYear);
             double tolerance = 0.01;
 
             double actualAAEQExceededWithProb = alternativeResults.AAEQDamageExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damCat, assetCat);
@@ -191,7 +191,7 @@ namespace HEC.FDA.ModelTest.unittests
 
 
             AlternativeResults alternativeResults = new Alternative().AnnualizationCompute(discountRate, poa, alternativeID, 
-                baseScenarioResults, futureScenarioResults, baseYear, futureYear, new CancellationToken());
+                baseScenarioResults, futureScenarioResults, baseYear, futureYear);
             List<string> damCats = alternativeResults.GetDamageCategories();
             List<string> expectedList = new List<string>() { "residential", "commercial" };
             bool testPasses = true;
