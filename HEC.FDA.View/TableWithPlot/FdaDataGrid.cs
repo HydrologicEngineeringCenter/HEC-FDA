@@ -406,13 +406,13 @@ namespace HEC.FDA.View.TableWithPlot
             }
             return null;
         }
-        public T GetTheVisualChild<T>(Visual parent) where T : Visual
+        public T GetTheVisualChild<T>(System.Windows.Media.Visual parent) where T : System.Windows.Media.Visual
         {
             T child = null;
             int numVisuals = VisualTreeHelper.GetChildrenCount(parent);
             for (int i = 0; i <= numVisuals - 1; i++)
             {
-                Visual v = (Visual)VisualTreeHelper.GetChild(parent, i);
+                System.Windows.Media.Visual v = (System.Windows.Media.Visual)VisualTreeHelper.GetChild(parent, i);
                 child = v as T;
                 if (child == null)
                     child = GetTheVisualChild<T>(v);
