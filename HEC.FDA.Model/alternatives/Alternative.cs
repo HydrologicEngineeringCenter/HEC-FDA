@@ -1,8 +1,6 @@
 using Statistics;
 using System;
 using System.Collections.Generic;
-using HEC.MVVMFramework.Base.Events;
-using HEC.MVVMFramework.Base.Implementations;
 using HEC.FDA.Model.metrics;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
@@ -94,13 +92,15 @@ namespace HEC.FDA.Model.alternatives
                 {
                     ProcessUnmatchedFutureResults(analysisYears, discountRate, periodOfAnalysis, computedResultsBaseYear, alternativeResults, futureYearResultsList);
                 }
-                reporter.ReportProgressFraction(1);
             }
+            reporter.ReportMessage("Compute Complete");
+            reporter.ReportProgressFraction(1);
             return alternativeResults;
         }
 
-        private static double ProcessBaseAndFutureYearScenarioResults(List<int> analysisYears, double discountRate, int periodOfAnalysis, ScenarioResults computedResultsBaseYear,
-            ScenarioResults computedResultsFutureYear, AlternativeResults alternativeResults, List<ImpactAreaScenarioResults> futureYearResultsList, double quantityOFDamCatAssetCatImpactAreaCombos, ProgressReporter reporter)
+        private static void ProcessBaseAndFutureYearScenarioResults(List<int> analysisYears, double discountRate, int periodOfAnalysis, ScenarioResults computedResultsBaseYear,
+            ScenarioResults computedResultsFutureYear, AlternativeResults alternativeResults, List<ImpactAreaScenarioResults> futureYearResultsList, double quantityOFDamCatAssetCatImpactAreaCombos, 
+            ProgressReporter reporter)
         {
             double progressTicker = 0;
             foreach (ImpactAreaScenarioResults baseYearResults in computedResultsBaseYear.ResultsList.Cast<ImpactAreaScenarioResults>())
@@ -148,7 +148,6 @@ namespace HEC.FDA.Model.alternatives
                     //this math is an estimate and depends on the dimensions
                     progressTicker += 1.0;
                     double progressRatio = progressTicker / quantityOFDamCatAssetCatImpactAreaCombos;
-                    double progressPercent = progressRatio * 100.00;
 
                     reporter.ReportProgressFraction((float)progressRatio);
                 }
@@ -171,7 +170,6 @@ namespace HEC.FDA.Model.alternatives
                     }
                 }
             }
-            return progressTicker;
         }
 
 

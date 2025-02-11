@@ -1,13 +1,13 @@
 ﻿using HEC.FDA.Model.alternatives;
-using HEC.FDA.Model.compute;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.ViewModel.Alternatives;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Study;
-using HEC.FDA.ViewModel.Utilities;
 using System;
-using System.Threading;
+using System.ComponentModel;
 using System.Threading.Tasks;
+using Utility.Progress;
+using Visual.Observables;
 
 namespace HEC.FDA.ViewModel.Compute
 {
@@ -16,12 +16,41 @@ namespace HEC.FDA.ViewModel.Compute
     /// </summary>
     public class ComputeAlternativeVM : BaseViewModel
     {
-        public ComputeAlternativeVM() : base()
+        private BatchJob _job;
+
+        public BatchJob Job
         {
+            get { return _job; }
+            set
+            {
+                _job = value;
+                NotifyPropertyChanged();
+            }
         }
 
-        public static Task RunAnnualizationCompute(AlternativeElement altElem, Action<AlternativeResults> callback)
+        public ComputeAlternativeVM(BatchJob batchJob) : base()
         {
+            _job = batchJob;
+            _job.ProgressChanged += JobProgressChanged;
+            _job.PropertyChanged += JobPropertyChanged;
+        }
+
+        private void JobProgressChanged(BatchJob sender, double progress)
+        {
+            NotifyPropertyChanged(nameof(Job));
+        }
+
+        private void JobPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            NotifyPropertyChanged(nameof(Job));
+        }
+
+        public static Task RunAnnualizationCompute(AlternativeElement altElem, Action<AlternativeResults> callback, ProgressReporter reporter = null)
+        {
+            if (reporter == null)
+            {
+                reporter = ProgressReporter.None();
+            }
             IASElement firstElem = altElem.BaseScenario.GetElement();
             IASElement secondElem = altElem.FutureScenario.GetElement();
 
@@ -36,8 +65,8 @@ namespace HEC.FDA.ViewModel.Compute
             int futureYear = altElem.FutureScenario.Year;
             return Task.Run(() =>
             {
-                AlternativeResults results = Alternative.AnnualizationCompute(discountRate, periodOfAnalysis, altElem.ID, 
-                    firstResults, secondResults,baseYear, futureYear);
+                AlternativeResults results = Alternative.AnnualizationCompute(discountRate, periodOfAnalysis, altElem.ID,
+                    firstResults, secondResults, baseYear, futureYear, reporter);
                 callback?.Invoke(results);
             });
         }
