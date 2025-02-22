@@ -1,7 +1,7 @@
 ﻿using ScratchSpace.EntryPoints;
 
 // get your computer name quickly using powershell. enter the following:  '$env:COMPUTERNAME'
-const string BrennanWork = "EIWRW4EFAANB144";
+const string BrennanWork = "EIWRW4EFAANB455";
 const string BrennanVM = "BEAM-VM00";
 const string BrennanHome = "BRENNANDESKTOP";
 const string RichardWork = "";

@@ -7,7 +7,22 @@ public static class Beam
 {
     public static void EntryPoint()
     {
-        TestIntegrate();
+        try
+        {
+            //string path = @"C:\Temp\_FDA\Jefferson City\Jeff City Sensitivity Analysis\Structure Inventories\New folder";
+            string path = @"C:\Temp\_FDA\Jefferson City\Jeff City Sensitivity Analysis\Structure Inventories\JC Strucs";
+            if (Directory.Exists(path))
+            {
+                Directory.Delete(path);
+            }
+            //Directory.Delete(@"C:\Temp\_FDA\Jefferson City\Jeff City Sensitivity Analysis\Structure Inventories\JC Strucs");
+            
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Failed to delete directory " + ex.Message);
+        }
+        
     }
 
     private static void TestIntegrate()
