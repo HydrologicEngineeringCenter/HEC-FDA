@@ -76,13 +76,13 @@ namespace HEC.FDA.ViewModel.Study
 
         private void InitializeGDAL()
         {
-            string gdalPath = @"GDAL\";
-            if (!Directory.Exists(gdalPath))
-            {
-                Console.WriteLine("GDAL directory not found: " + gdalPath);
-                return;
-            }
-            GDALSetup.InitializeMultiplatform(gdalPath);
+            //string gdalPath = @"GDAL\";
+            //if (!Directory.Exists(gdalPath))
+            //{
+            //    Console.WriteLine("GDAL directory not found: " + gdalPath);
+            //    return;
+            //}
+            GDALSetup.InitializeMultiplatform();
         }
 
         private void UpdateSaveStatus(object sender, EventArgs e)
