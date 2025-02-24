@@ -4,41 +4,90 @@ namespace HEC.FDA.ViewModel.Study
 {
     public class PropertiesVM : Editors.BaseEditorVM
     {
-        #region Notes
-        #endregion
-
-        private int _SurveyedYear;
-        private double _DiscountRate;
-
         #region Properties
+        private double _DiscountRate;
         public double DiscountRate
         {
             get { return _DiscountRate; }
             set { _DiscountRate = value; NotifyPropertyChanged(); }
         }
-        public int PeriodOfAnalysis { get; set; }
-        public string StudyName { get; set; }
-        public string StudyPath { get; set; }
-        public string StudyDescription { get; set; }
-        public string CreatedBy { get; set; }
-        public string CreatedDate { get; set; }
-        public string StudyNotes { get; set; }
 
+        private int _PeriodOfAnalysis;
+        public int PeriodOfAnalysis
+        {
+            get { return _PeriodOfAnalysis; }
+            set { _PeriodOfAnalysis = value; NotifyPropertyChanged(); }
+        }
+
+        private string _StudyName;
+        public string StudyName
+        {
+            get { return _StudyName; }
+            set { _StudyName = value; NotifyPropertyChanged(); }
+        }
+
+        private string _StudyPath;
+        public string StudyPath
+        {
+            get { return _StudyPath; }
+            set { _StudyPath = value; NotifyPropertyChanged(); }
+        }
+
+        private string _StudyDescription;
+        public string StudyDescription
+        {
+            get { return _StudyDescription; }
+            set { _StudyDescription = value; NotifyPropertyChanged(); }
+        }
+
+        private string _CreatedBy;
+        public string CreatedBy
+        {
+            get { return _CreatedBy; }
+            set { _CreatedBy = value; NotifyPropertyChanged(); }
+        }
+
+        private string _CreatedDate;
+        public string CreatedDate
+        {
+            get { return _CreatedDate; }
+            set { _CreatedDate = value; NotifyPropertyChanged(); }
+        }
+
+        private string _StudyNotes;
+        public string StudyNotes
+        {
+            get { return _StudyNotes; }
+            set { _StudyNotes = value; NotifyPropertyChanged(); }
+        }
+
+        private int _SurveyedYear;
         public int SurveyedYear
         {
             get { return _SurveyedYear; }
             set { _SurveyedYear = value; NotifyPropertyChanged(); }
         }
-        public int UpdatedYear { get; set; }
-        public double UpdatedPriceIndex { get; set; }
+
+        private int _UpdatedYear;
+        public int UpdatedYear
+        {
+            get { return _UpdatedYear; }
+            set { _UpdatedYear = value; NotifyPropertyChanged(); }
+        }
+
+        private double _UpdatedPriceIndex;
+        public double UpdatedPriceIndex
+        {
+            get { return _UpdatedPriceIndex; }
+            set { _UpdatedPriceIndex = value; NotifyPropertyChanged(); }
+        }
 
         public ConvergenceCriteriaVM ConvergenceCriteria { get; set; }
         public ProjectionPickerVM ProjectionPicker { get; set; } = new ProjectionPickerVM();
-
         #endregion
-        #region Constructors      
 
-        public PropertiesVM(StudyPropertiesElement elem):base(elem, null)
+        #region Constructors      
+        public PropertiesVM(StudyPropertiesElement elem) : base(elem, null)
         {
             ConvergenceCriteria = new ConvergenceCriteriaVM(elem.ConvergenceCriteria.ToXML());
             RegisterChildViewModel(ConvergenceCriteria);
@@ -49,14 +98,13 @@ namespace HEC.FDA.ViewModel.Study
             CreatedBy = elem.CreatedBy;
             CreatedDate = elem.CreatedDate;
             StudyNotes = elem.StudyNotes;
-     
+
             SurveyedYear = elem.SurveyedYear;
             UpdatedYear = elem.UpdatedYear;
             UpdatedPriceIndex = elem.UpdatedPriceIndex;
             DiscountRate = elem.DiscountRate;
             PeriodOfAnalysis = elem.PeriodOfAnalysis;
         }
-
         #endregion
         #region Voids
         public override void AddValidationRules()
@@ -76,7 +124,7 @@ namespace HEC.FDA.ViewModel.Study
             int id = 1;
             StudyPropertiesElement elemToSave = new StudyPropertiesElement(StudyName, StudyPath, StudyDescription, CreatedBy,
                 CreatedDate, StudyNotes, SurveyedYear, UpdatedYear, UpdatedPriceIndex, DiscountRate, PeriodOfAnalysis, ConvergenceCriteria, id);
-            ProjectionPicker.Save(); 
+            ProjectionPicker.Save();
             base.Save(elemToSave);
         }
         #endregion        

@@ -59,7 +59,7 @@ namespace HEC.FDA.ViewModel.Study
         /// <summary>
         /// Checks if there are already files in the projection directory. If there are, moves them to a subfolder called archive. Creates archive if it doesn't exist. Overwrites on Copy 
         /// </summary>
-        private static void ArchiveExistingProjections()
+        private void ArchiveExistingProjections()
         {
             string[] filesInDirectory = Directory.GetFiles(Connection.Instance.ProjectionDirectory);
             if (filesInDirectory.Length == 0)
@@ -73,10 +73,14 @@ namespace HEC.FDA.ViewModel.Study
             }
             foreach (string filePath in filesInDirectory)
             {
-                string fileName = Path.GetFileName(filePath);
-                string destinationPath = Path.Combine(archiveDirectory, fileName);
-                File.Copy(filePath, destinationPath, true);
-                File.Delete(filePath);
+                if (!filePath.Equals(ProjectProjectionPath)) // don't do archive the active projection. 
+                {
+                    string fileName = Path.GetFileName(filePath);
+                    string destinationPath = Path.Combine(archiveDirectory, fileName);
+                    File.Copy(filePath, destinationPath, true);
+                    File.Delete(filePath);
+                }
+
             }
         }
         #endregion

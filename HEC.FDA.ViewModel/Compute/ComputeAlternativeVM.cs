@@ -1,38 +1,61 @@
 ﻿using HEC.FDA.Model.alternatives;
-using HEC.FDA.Model.compute;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.ViewModel.Alternatives;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Study;
-using HEC.FDA.ViewModel.Utilities;
 using System;
-using System.Threading;
+using System.ComponentModel;
 using System.Threading.Tasks;
+using Utility.Progress;
+using Visual.Observables;
 
 namespace HEC.FDA.ViewModel.Compute
 {
-    public class ComputeAlternativeVM : ComputeWithProgressAndMessagesBase
+    /// <summary>
+    /// This guy should be the compute window for computing a alternative. 
+    /// </summary>
+    public class ComputeAlternativeVM : BaseViewModel
     {
+        private BatchJob _job;
 
-
-        public ComputeAlternativeVM(AlternativeElement altElem, Action<AlternativeResults> callback) : base()
+        public BatchJob Job
         {
-            ProgressLabel = StringConstants.ALTERNATIVE_PROGRESS_LABEL;
-            Alternative alt = new();
-            alt.ProgressReport += Alt_ProgressReport;
-            MessageVM.InstanceHash.Add(alt.GetHashCode());
-            RunAnnualizationCompute(alt, altElem, callback, new CancellationToken());
+            get { return _job; }
+            set
+            {
+                _job = value;
+                NotifyPropertyChanged();
+            }
         }
 
-        public static Task RunAnnualizationCompute(Alternative alt, AlternativeElement altElem, Action<AlternativeResults> callback, CancellationToken cancellationToken)
+        public ComputeAlternativeVM(BatchJob batchJob) : base()
         {
+            _job = batchJob;
+            _job.ProgressChanged += JobProgressChanged;
+            _job.PropertyChanged += JobPropertyChanged;
+        }
+
+        private void JobProgressChanged(BatchJob sender, double progress)
+        {
+            NotifyPropertyChanged(nameof(Job));
+        }
+
+        private void JobPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            NotifyPropertyChanged(nameof(Job));
+        }
+
+        public static Task RunAnnualizationCompute(AlternativeElement altElem, Action<AlternativeResults> callback, ProgressReporter reporter = null)
+        {
+            if (reporter == null)
+            {
+                reporter = ProgressReporter.None();
+            }
             IASElement firstElem = altElem.BaseScenario.GetElement();
             IASElement secondElem = altElem.FutureScenario.GetElement();
 
             ScenarioResults firstResults = firstElem.Results;
             ScenarioResults secondResults = secondElem.Results;
-            int seed = 99;
-            RandomProvider randomProvider = new(seed);
             StudyPropertiesElement studyProperties = StudyCache.GetStudyPropertiesElement();
 
             double discountRate = studyProperties.DiscountRate;
@@ -42,18 +65,10 @@ namespace HEC.FDA.ViewModel.Compute
             int futureYear = altElem.FutureScenario.Year;
             return Task.Run(() =>
             {
-                AlternativeResults results = alt.AnnualizationCompute(discountRate, periodOfAnalysis, altElem.ID, 
-                    firstResults, secondResults,baseYear, futureYear, cancellationToken);
+                AlternativeResults results = Alternative.AnnualizationCompute(discountRate, periodOfAnalysis, altElem.ID,
+                    firstResults, secondResults, baseYear, futureYear, reporter);
                 callback?.Invoke(results);
             });
-        }
-
-        private void Alt_ProgressReport(object sender, MVVMFramework.Base.Events.ProgressReportEventArgs progress)
-        {
-            if (sender is Alternative)
-            {
-                Progress = progress.Progress;
-            }
         }
     }
 }

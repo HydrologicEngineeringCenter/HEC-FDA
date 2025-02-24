@@ -15,7 +15,6 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
 
         public AlternativeSummaryVM(List<AlternativeElement> altElems)
         {
-            List<AlternativeDamCatRowItem> damCatRows = new List<AlternativeDamCatRowItem>();
             foreach (AlternativeElement element in altElems)
             {
                 Rows.AddRange( AlternativeDamageRowItem.CreateAlternativeDamageRowItems(element));

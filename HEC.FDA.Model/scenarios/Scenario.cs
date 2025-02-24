@@ -38,7 +38,8 @@ namespace HEC.FDA.Model.scenarios
             ScenarioResults scenarioResults = new();
             foreach (ImpactAreaScenarioSimulation impactArea in _impactAreaSimulations)
             {
-                scenarioResults.AddResults(impactArea.Compute(convergenceCriteria, cancellationToken, computeIsDeterministic));
+               ImpactAreaScenarioResults res = impactArea.Compute(convergenceCriteria, cancellationToken, computeIsDeterministic);
+                scenarioResults.AddResults(res);
             }
             scenarioResults.ComputeDate = DateTime.Now.ToString("G");
             scenarioResults.SoftwareVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
