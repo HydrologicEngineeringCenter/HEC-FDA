@@ -65,7 +65,7 @@ namespace HEC.FDA.ViewModel.Study
             _StudyElement.RequestNavigation += Navigate;
             _StudyElement.PropertyChanged += _StudyElement_PropertyChanged;
 
-            InitializeGDAL();
+            GDALSetup.InitializeMultiplatform();
         }
 
         private void _StudyElement_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -73,17 +73,6 @@ namespace HEC.FDA.ViewModel.Study
             NotifyPropertyChanged(e.PropertyName);
         }
         #endregion
-
-        private void InitializeGDAL()
-        {
-            //string gdalPath = @"GDAL\";
-            //if (!Directory.Exists(gdalPath))
-            //{
-            //    Console.WriteLine("GDAL directory not found: " + gdalPath);
-            //    return;
-            //}
-            GDALSetup.InitializeMultiplatform();
-        }
 
         private void UpdateSaveStatus(object sender, EventArgs e)
         {
