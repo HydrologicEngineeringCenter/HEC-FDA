@@ -70,7 +70,7 @@ namespace HEC.FDA.ViewModel.Inventory
             IEnumerable<XElement> occtypeMappingElements = occtypeMappings.Elements(OCCTYPE_MAPPING);
             foreach (XElement occtypeMappingElement in occtypeMappingElements)
             {
-                string shapefileOcctypeName = occtypeMappingElement.Attribute(SHAPEFILE_OCCTYPE).Value;
+                string shapefileOcctypeName = occtypeMappingElement.Attribute(SHAPEFILE_OCCTYPE).Value.Trim();
                 int groupID = Convert.ToInt32(occtypeMappingElement.Attribute(GROUP_ID).Value);
                 int id = Convert.ToInt32(occtypeMappingElement.Attribute(ID_ATTRIBUTE_NAME).Value);
                 OccupancyTypes.OcctypeReference otRef = new(groupID, id);

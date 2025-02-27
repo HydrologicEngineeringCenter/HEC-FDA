@@ -30,7 +30,7 @@ jobs:
     - name: Create version number
       shell: pwsh
       run: |
-        $VERSION = "2.0.0.${{ github. run_number }}-Beta"
+        $VERSION = "2.0.1.${{ github. run_number }}-Beta"
         echo "VERSION=$VERSION" >> $env:GITHUB_ENV
 
     - name: Test Solution
