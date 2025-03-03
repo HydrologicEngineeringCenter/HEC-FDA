@@ -95,7 +95,7 @@
                     <Label  Grid.Column="2" Content="*" Foreground="Red" HorizontalAlignment="Right" Padding="0,5,5,5" Visibility="{Binding DefaultStageRequired,Converter={StaticResource BoolToVisibilityConverter}}" />
                 </StackPanel>
 
-                <TextBox Grid.Column="3" HorizontalAlignment="Stretch" Text="{Binding DefaultStage, Mode=TwoWay}" IsEnabled="{Binding DefaultStageRequired}" />
+                <TextBox Grid.Column="3" HorizontalAlignment="Stretch" Text="{Binding DefaultStage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding DefaultStageRequired}" />
 
                     <Label Grid.Column="4" Content="Thresholds:" HorizontalAlignment="Right" Margin="0,0,0,0"/>
                     <Button Grid.Column="5" Content="Additional Thresholds..."  HorizontalAlignment="Stretch" Click="addThresholdBtn_Click"  />
