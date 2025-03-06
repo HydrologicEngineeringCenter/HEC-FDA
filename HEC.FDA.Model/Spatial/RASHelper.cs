@@ -1,7 +1,6 @@
 ﻿using Geospatial.GDALAssist;
 using Geospatial.GDALAssist.Vectors;
 using Geospatial.IO;
-using Geospatial.Rasters;
 using RasMapperLib;
 using RasMapperLib.Utilities;
 using System;
@@ -15,54 +14,49 @@ namespace HEC.FDA.Model.Spatial;
 
 public static class RASHelper
 {
-    public static float[] SamplePointsFromRaster(string pointShapefilePath, string terrainLayerPath, Projection studyProjection)
+    private const string UNUSED_STRING = "";   
+    /// <summary>
+    /// Raster projection has to be provided separate because RAS 6.x .hdfs don't come packaged with a projection. 
+    /// </summary>
+    public static float[] SamplePointsFromRaster(string pointShapefilePath, string rasterPath, Projection rasterProjection)
     {
-        PointFeatureLayer pointLayer = new("thisNameIsntUsed", pointShapefilePath);
-        Projection siProjection = GetVectorProjection(pointLayer);
+        Projection siProjection = GetVectorProjection(pointShapefilePath);
+        PointFeatureLayer pointLayer = new(UNUSED_STRING, pointShapefilePath);
         PointMs pointMs = new(pointLayer.Points().Select(p => p.PointM()));
-        pointMs = ReprojectPoints(studyProjection, siProjection, pointMs);
-        string extension = System.IO.Path.GetExtension(terrainLayerPath);
+        pointMs = ReprojectPoints(rasterProjection, siProjection, pointMs);
+        return SamplePointsFromRaster(pointMs, rasterPath);
+    }
+
+    public static float[] SamplePointsFromRaster(PointMs pointMs, string rasterPath)
+    {
+        string extension = System.IO.Path.GetExtension(rasterPath);
         float[] groundelevs;
         switch (extension)
         {
             case ".hdf":
-                TerrainLayer layer = new("thisNameIsNotUsed", terrainLayerPath);
+                TerrainLayer layer = new("thisNameIsNotUsed", rasterPath);
                 groundelevs = layer.ComputePointElevations(pointMs);
                 break;
             case ".tif":
-                groundelevs = SamplePointsOnTiff(pointMs, terrainLayerPath);
+                groundelevs = SamplePointsOnTiff(pointMs, rasterPath);
                 break;
             default:
                 throw new Exception("The file type is invalid.");
         }
         return groundelevs;
-
-        static PointMs ReprojectPoints(Projection targetProjection, Projection originalProjection, PointMs pointMs)
-        {
-
-            if (!(targetProjection == null))
-            {
-                if (!targetProjection.IsEqual(originalProjection))
-                {
-
-                }
-            }
-            return pointMs;
-        }
     }
+
+    /// <summary>
+    /// Expects the points to be in the same projection as the raster.
+    /// </summary>
     public static float[] SamplePointsOnTiff(PointMs pts, string filePath)
     {
-        var baseDs = TiffDataSource<float>.TryLoad(filePath);
-        if (baseDs == null)
-        {
-            throw new Exception();
-        }
-        RasterPyramid<float> baseRaster = (RasterPyramid<float>)baseDs.AsRasterizer();
+        GdalBandedRaster<float> resultsGrid = new(filePath);
         List<Geospatial.Vectors.Point> geospatialpts = Converter.Convert(pts);
         Memory<Geospatial.Vectors.Point> points = new(geospatialpts.ToArray());
         float[] elevationData = new float[points.Length];
         elevationData.Fill(Geospatial.Constants.NoDataF);
-        baseRaster.SamplePoints(points, elevationData);
+        resultsGrid.SamplePoints(points,0,elevationData);
         return elevationData;
     }
     /// <summary>
@@ -107,17 +101,22 @@ public static class RASHelper
         }
         return -9999;
     }
-    public static Projection GetVectorProjection(FeatureLayer featureLayer)
+    public static Projection GetVectorProjection(string fileName)
     {
-        string siFilename = featureLayer.SourceFilename;
-        VectorDataset vector = new(siFilename);
+        VectorDataset vector = new(fileName);
         VectorLayer vectorLayer = vector.GetLayer(0);
         Projection projection = vectorLayer.GetProjection();
         return projection;
     }
+
+    public static Projection GetVectorProjection(FeatureLayer featureLayer)
+    {
+        string siFilename = featureLayer.SourceFilename;
+        return GetVectorProjection(siFilename);
+    }
+
     public static PointM ReprojectPoint(PointM point, Projection newProjection, Projection currentProjection)
     {
-
         Geospatial.Vectors.Point p = Converter.Convert(point);
         Geospatial.Vectors.Point newp = VectorExtensions.Reproject(p, currentProjection, newProjection);
         return Converter.ConvertPtM(newp);

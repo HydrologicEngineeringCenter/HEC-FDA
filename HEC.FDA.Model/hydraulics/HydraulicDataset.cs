@@ -20,6 +20,7 @@ namespace HEC.FDA.Model.hydraulics
         public const string HYDRAULIC_DATA_SET = "HydraulicDataSet";
         private const string HYDRAULIC_TYPE_XML_TAG = "HydroType";
         private const string PROFILES = "Profiles";
+        private const string UNUSED_STRING = "";
         #endregion
         #region Properties
         public List<IHydraulicProfile> HydraulicProfiles { get; } = new List<IHydraulicProfile>();
@@ -73,7 +74,7 @@ namespace HEC.FDA.Model.hydraulics
         public List<UncertainPairedData> GetGraphicalStageFrequency(string pointShapefileFilePath, string parentDirectory, Projection studyProjection)
         {
             List<UncertainPairedData> ret = new();
-            PointFeatureLayer indexPoint = new("ThisNameIsNotUsedForAnythingHere", pointShapefileFilePath);
+            PointFeatureLayer indexPoint = new(UNUSED_STRING, pointShapefileFilePath);
             if (!indexPoint.SourceFileExists)
             {
                 return null;

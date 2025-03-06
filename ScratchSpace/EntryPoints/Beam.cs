@@ -1,4 +1,5 @@
-﻿using HEC.FDA.Model.paireddata;
+﻿using Geospatial.GDALAssist;
+using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.Spatial;
 using RasMapperLib;
 
@@ -7,22 +8,12 @@ public static class Beam
 {
     public static void EntryPoint()
     {
-        try
-        {
-            //string path = @"C:\Temp\_FDA\Jefferson City\Jeff City Sensitivity Analysis\Structure Inventories\New folder";
-            string path = @"C:\Temp\_FDA\Jefferson City\Jeff City Sensitivity Analysis\Structure Inventories\JC Strucs";
-            if (Directory.Exists(path))
-            {
-                Directory.Delete(path);
-            }
-            //Directory.Delete(@"C:\Temp\_FDA\Jefferson City\Jeff City Sensitivity Analysis\Structure Inventories\JC Strucs");
-            
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Failed to delete directory " + ex.Message);
-        }
-        
+        GDALSetup.InitializeMultiplatform();
+        string tiff = @"C:\Temp\_FDA\MySAC38_FragTest\MySAC38_FragTest\Hydraulic Data\Grids\80\WSE80Pct.tif";
+        PointMs pts = new([626707],[4271419]);
+        float[] res = RASHelper.SamplePointsOnTiff(pts, tiff);
+        Console.WriteLine("wow");
+
     }
 
     private static void TestIntegrate()
