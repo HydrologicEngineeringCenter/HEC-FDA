@@ -26,6 +26,10 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
           dotnet-version: ${{ env.dotnet-version }} 
+    - name: Configure NuGet private feed credentials
+    # This step updates the ras-nuget-private source with credentials
+      run: dotnet nuget update source ras-nuget-private --username "${{ secrets.HEC_NEXUS_READ_UID }}" --password "${{ secrets.HEC_NEXUS_READ_PASSWORD }}" --store-password-in-clear-text --configfile nuget.config
+
 
     - name: Create version number
       shell: pwsh
