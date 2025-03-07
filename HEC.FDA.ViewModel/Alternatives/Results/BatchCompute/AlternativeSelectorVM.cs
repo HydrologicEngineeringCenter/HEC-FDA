@@ -109,8 +109,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
             MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message("Beginning Batch Compute"));
             ReportMessage(this, beginComputeMessageArgs);
 
-            List<Task> taskList = new List<Task>();
-            List<AlternativeElement> elementList = new List<AlternativeElement>();
+            List<Task> taskList = [];
+            List<AlternativeElement> elementList = [];
 
             try
             {
@@ -121,9 +121,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
                     FdaValidationResult canComputeVR = elem.RunPreComputeValidation();
                     if (canComputeVR.IsValid)
                     {
-                        Alternative alt = new Alternative();
-                        ComputeAlternativeVM vm = new ComputeAlternativeVM(elem, ComputeCompleted);
-                        taskList.Add(ComputeAlternativeVM.RunAnnualizationCompute(alt, elem, ComputeCompleted, _CancellationToken.Token));
+                        Task anualizeComputeTask = ComputeAlternativeVM.RunAnnualizationCompute(elem, ComputeCompleted);
+                        taskList.Add(anualizeComputeTask);
                     }
                     else
                     {
@@ -140,6 +139,12 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
             MessageEventArgs finishedComputeMessageArgs = new MessageEventArgs(new Message("All Scenarios Computed"));
             ReportMessage(this, finishedComputeMessageArgs);
 
+            if (HasFatalError)
+            {
+                MessageBox.Show("One or more of your selected alternatives failed to compute");
+                HasFatalError = false;
+                return;
+            }
             AlternativeSummaryVM altVm = new AlternativeSummaryVM(elementList);
             string header = "Alternative Summary Results";
             DynamicTabVM tab = new DynamicTabVM(header, altVm, header);
@@ -149,6 +154,12 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
 
         private void ComputeCompleted(AlternativeResults results)
         {
+            if(results == null)
+            {
+                HasFatalError = true;
+                
+                return; // if failed, don't try to save a result. 
+            }
             //Assign the results back onto the alt.      
             foreach(ComputeChildRowItem row in Rows)
             {
