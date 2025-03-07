@@ -366,7 +366,31 @@ namespace HEC.FDA.Model.paireddata
             }
             Yvals = update;
         }
-        public void ForceStrictMonotonicity(double max = double.MaxValue, double min = double.MinValue)
+        public void ForceStrictMonotonicityTopDown(double max = double.MaxValue, double min = double.MinValue)
+        {
+            double epsilon = 0.005;
+
+            double[] update = new double[Yvals.Length];
+            double upperValue = Yvals[Yvals.Length - 1];
+            update[Yvals.Length - 1] = upperValue;
+
+            for (int i = Yvals.Length - 2; i >= 0; i--)
+            {
+
+                if (Yvals[i] >= upperValue)
+                {
+                    update[i] = upperValue - epsilon;
+                    upperValue -= epsilon;
+                }
+                else
+                {
+                    update[i] = Yvals[i];
+                    upperValue = Yvals[i];
+                }
+            }
+            Yvals = update;
+        }
+        public void ForceStrictMonotonicityBottomUp(double max = double.MaxValue, double min = double.MinValue)
         {
             double epsilon = 0.005;
             double previousYval = min;
@@ -398,7 +422,6 @@ namespace HEC.FDA.Model.paireddata
             }
             Yvals = update;
         }
-
         public void SortToIncreasingXVals()
         {
             Array.Sort(Xvals,Yvals);

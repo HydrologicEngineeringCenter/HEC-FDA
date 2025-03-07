@@ -94,7 +94,14 @@ namespace HEC.FDA.Model.paireddata
             bool isMonotonicallyIncreasing = IsMonotonicallyIncreasing(pairedData);
             if (!isMonotonicallyIncreasing)
             {
-                pairedData.ForceStrictMonotonicity();
+                if (probability < 0.5)
+                {
+                    pairedData.ForceStrictMonotonicityBottomUp();
+
+                } else
+                {
+                    pairedData.ForceStrictMonotonicityTopDown();
+                }
             }
             double[] expandedStageOrLogFlowValues = InterpolateQuantiles.InterpolateOnX(pairedData.Xvals, CombinedExceedanceProbabilities, pairedData.Yvals);
             if (!GraphicalDistributionWithLessSimple.UsingStagesNotFlows)
@@ -147,7 +154,15 @@ namespace HEC.FDA.Model.paireddata
             bool isMonotonicallyIncreasing = IsMonotonicallyIncreasing(pairedData);
             if (!isMonotonicallyIncreasing)
             {
-                pairedData.ForceStrictMonotonicity();
+                if (probability < 0.5)
+                {
+                    pairedData.ForceStrictMonotonicityBottomUp();
+
+                }
+                else
+                {
+                    pairedData.ForceStrictMonotonicityTopDown();
+                }
             }
             double[] expandedStageOrLogFlowValues = InterpolateQuantiles.InterpolateOnX(pairedData.Xvals, CombinedExceedanceProbabilities, pairedData.Yvals);
             if (!GraphicalDistributionWithLessSimple.UsingStagesNotFlows)
