@@ -247,7 +247,7 @@ namespace HEC.FDA.ViewModel.Inventory
                     string occtype = row.ValueAs(_SelectedOcctypeName, string.Empty);
                     if (occTypeColumn != null)
                     {
-                        uniqueList.Add(occtype);
+                        uniqueList.Add(occtype.Trim());
                     }
                 }
             }

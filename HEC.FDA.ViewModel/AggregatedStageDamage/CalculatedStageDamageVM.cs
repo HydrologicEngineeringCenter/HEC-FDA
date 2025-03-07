@@ -11,6 +11,7 @@ using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.MVVMFramework.Model.Messaging;
+using SciChart.Core.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -463,18 +464,10 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
 
         public async Task ComputeCurvesAsync()
         {
-            if (WriteDetailsFile)
+            string name = getName();
+            if (name.IsNullOrWhiteSpace())
             {
-                string name = getName();
-
-                if (name != null)
-                {
-                    await RunComputeAsync();
-                }
-                else
-                {
-                    MessageBox.Show("A name is required to compute.", "Name Required", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                MessageBox.Show("A name is required to compute.", "Name Required", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             else
             {

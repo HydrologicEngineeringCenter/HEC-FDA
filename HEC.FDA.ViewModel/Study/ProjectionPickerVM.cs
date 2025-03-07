@@ -48,10 +48,11 @@ namespace HEC.FDA.ViewModel.Study
 		
 		public void Save()
 		{
-            ArchiveExistingProjections();
             string destination = Connection.Instance.ProjectionDirectory + Path.DirectorySeparatorChar + Path.GetFileName(ProjectProjectionPath);
-			if(File.Exists(_projectProjectionPath) && !_projectProjectionPath.Equals(destination) )
+            //check if the user is saving pointed at the existing imported file. If so, do nothing, else, archive anything that's there and copy the new file in. 
+            if (File.Exists(_projectProjectionPath) && !_projectProjectionPath.Equals(destination) )
 			{
+                ArchiveExistingProjections();
                 File.Copy(ProjectProjectionPath,destination);
 				ProjectProjectionPath = destination;
             }

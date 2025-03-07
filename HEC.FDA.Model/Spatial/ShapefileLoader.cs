@@ -39,15 +39,19 @@ public class ShapefileLoader
             string ImpactAreaShapefilePath, Projection studyProjection, Dictionary<string, OccupancyType> occTypes)
     {
         List<Structure> Structures = [];
-
         PolygonFeatureLayer impactAreaFeatureLayer = new(UNUSED_STRING_VALUE, ImpactAreaShapefilePath);
         List<Polygon> impactAreas = RASHelper.LoadImpactAreasFromSourceFiles(impactAreaFeatureLayer, studyProjection);
         float[] groundelevs = Array.Empty<float>();
         PointFeatureLayer structureFeatureLayer = new(UNUSED_STRING_VALUE, pointShapefilePath);
         PointMs pointMs = new(structureFeatureLayer.Points().Select(p => p.PointM()));
+
+        //reproject right here. SI gets put into study projection immediately. 
+        Projection siProjection = RASHelper.GetVectorProjection(pointShapefilePath);
+        pointMs = RASHelper.ReprojectPoints(studyProjection, siProjection, pointMs);
+
         if (updateGroundElevFromTerrain)
         {
-            groundelevs = RASHelper.SamplePointsFromRaster(pointShapefilePath, terrrainFilePath, studyProjection);
+            groundelevs = RASHelper.SamplePointsFromRaster(pointMs, terrrainFilePath);
         }
 
         for (int i = 0; i < structureFeatureLayer.FeatureCount(); i++)
