@@ -1,6 +1,9 @@
-﻿using Geospatial.GDALAssist;
+﻿using Geospatial.Features;
+using Geospatial.GDALAssist;
 using Geospatial.GDALAssist.Vectors;
 using Geospatial.IO;
+using Geospatial.Terrain;
+using Geospatial.Vectors;
 using RasMapperLib;
 using RasMapperLib.Utilities;
 using System;
@@ -9,23 +12,13 @@ using System.IO;
 using System.Linq;
 using Utilities;
 using Utility.Extensions;
+using Utility.Logging;
 
 namespace HEC.FDA.Model.Spatial;
 
 public static class RASHelper
 {
-    private const string UNUSED_STRING = "";   
-    /// <summary>
-    /// Raster projection has to be provided separate because RAS 6.x .hdfs don't come packaged with a projection. 
-    /// </summary>
-    public static float[] SamplePointsFromRaster(string pointShapefilePath, string rasterPath, Projection rasterProjection)
-    {
-        Projection siProjection = GetVectorProjection(pointShapefilePath);
-        PointFeatureLayer pointLayer = new(UNUSED_STRING, pointShapefilePath);
-        PointMs pointMs = new(pointLayer.Points().Select(p => p.PointM()));
-        pointMs = ReprojectPoints(rasterProjection, siProjection, pointMs);
-        return SamplePointsFromRaster(pointMs, rasterPath);
-    }
+    private const string UNUSED_STRING = "";
 
     public static float[] SamplePointsFromRaster(PointMs pointMs, string rasterPath)
     {
@@ -46,19 +39,67 @@ public static class RASHelper
         return groundelevs;
     }
 
+    public static float[] SamplePointsFromRaster(string pointShapefilePath, string rasterPath, Projection rasterProjection)
+    {
+        OperationResult or = ShapefileWriter.TryReadShapefile(pointShapefilePath, out PointFeatureCollection pointFeatures, rasterProjection);
+        if (!or.Result)
+        {
+            throw new Exception("Failed to read shapefile: " + pointShapefilePath);
+        }
+        IVectorCollection<Geospatial.Vectors.Point> points = pointFeatures.Features;
+        return SamplePointsFromRaster(points, rasterPath);
+    }
+    public static float[] SamplePointsFromRaster(IVectorCollection<Geospatial.Vectors.Point> points, string rasterPath)
+    {
+        string extension = System.IO.Path.GetExtension(rasterPath);
+        float[] groundelevs;
+        switch (extension)
+        {
+            case ".hdf":
+                //This is supporting a HEC-RAS 6.x terrain, which is why we're in RasMapperLib and using PointMs.
+                TerrainLayer layer = new("thisNameIsNotUsed", rasterPath);
+                PointM[] pointms = GeospatialPointsToPointMs(points);
+                groundelevs = layer.ComputePointElevations(pointms);
+                break;
+            case ".tif":
+                groundelevs = SamplePointsOnTiff(points, rasterPath);
+                break;
+            default:
+                throw new Exception("The file type is invalid.");
+        }
+        return groundelevs;
+    }
+
+    private static PointM[] GeospatialPointsToPointMs(IVectorCollection<Geospatial.Vectors.Point> points)
+    {
+        PointM[] pointMs = new PointM[points.Count];
+        for(int i = 0; i < points.Count; i++)
+        {
+            pointMs[i] = Converter.ConvertPtM(points[i]);
+        }
+        return pointMs;
+    }
+
     /// <summary>
     /// Expects the points to be in the same projection as the raster.
     /// </summary>
     public static float[] SamplePointsOnTiff(PointMs pts, string filePath)
     {
-        GdalBandedRaster<float> resultsGrid = new(filePath);
         List<Geospatial.Vectors.Point> geospatialpts = Converter.Convert(pts);
-        Memory<Geospatial.Vectors.Point> points = new(geospatialpts.ToArray());
+        PointCollection vectorCollection = new(geospatialpts);
+        return SamplePointsOnTiff(vectorCollection, filePath);
+    }
+
+    public static float[] SamplePointsOnTiff(IVectorCollection<Geospatial.Vectors.Point> geospatialpts, string filePath)
+    {
+        GdalBandedRaster<float> resultsGrid = new(filePath);
+        Memory<Geospatial.Vectors.Point> points = new([.. geospatialpts]);
         float[] elevationData = new float[points.Length];
         elevationData.Fill(Geospatial.Constants.NoDataF);
-        resultsGrid.SamplePoints(points,0,elevationData);
+        resultsGrid.SamplePoints(points, 0, elevationData);
         return elevationData;
     }
+
     /// <summary>
     /// Takes a file path, checks whether it has a .hdf or .tif extension, and returns the projection of the file.
     /// </summary>

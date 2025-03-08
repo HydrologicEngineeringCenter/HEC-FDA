@@ -5,6 +5,7 @@ using HEC.FDA.Model.metrics;
 using System.Collections.Generic;
 using System;
 using HEC.FDA.Model.paireddata;
+using Geospatial.Vectors;
 
 namespace HEC.FDA.Model.structures
 {
@@ -15,7 +16,7 @@ namespace HEC.FDA.Model.structures
         //TODO: How are we going to handle missing data?
         //For now, we won't allow missing data 
         public string Fid { get; }
-        public PointM Point { get; set; }
+        public Geospatial.Vectors.Point Point { get; set; }
         public double FirstFloorElevation { get; }
         public double GroundElevation { get; }
         public double InventoriedStructureValue { get; }
@@ -39,7 +40,19 @@ namespace HEC.FDA.Model.structures
         #endregion
 
         #region Constructors 
-        public Structure(string fid, PointM point, double firstFloorElevation, double val_struct, string st_damcat, string occtype, int impactAreaID, double val_cont =0, double val_vehic = 0, double val_other = 0, string cbfips = "unassigned", double beginDamage = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, double groundElevation = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, double foundationHeight = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, int year = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, int numStructures = 1, string notes = "", string description = "")
+        /// <summary>
+        /// Maintained to support point M. No longer using PointMs behind the scene. 
+        /// </summary>
+        public Structure(string fid, PointM point, double firstFloorElevation, double val_struct, string st_damcat, string occtype, int impactAreaID, double val_cont =0, double val_vehic = 0, double val_other = 0, 
+            string cbfips = "unassigned", double beginDamage = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, double groundElevation = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE,
+            double foundationHeight = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, int year = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, int numStructures = 1, string notes = "", string description = "")
+        {
+            Geospatial.Vectors.Point geoPoint = RasMapperLib.Utilities.Converter.Convert(point);
+            return new Structure(fid, geoPoint, firstFloorElevation, val_struct, st_damcat, occtype, impactAreaID, val_cont = 0, val_vehic = 0, val_other = 0, cbfips = "unassigned", beginDamage = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE,
+                 groundElevation = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, foundationHeight = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, year = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, numStructures = 1,
+                 notes = "", description = "");
+        }
+        public Structure(string fid, Geospatial.Vectors.Point point, double firstFloorElevation, double val_struct, string st_damcat, string occtype, int impactAreaID, double val_cont = 0, double val_vehic = 0, double val_other = 0, string cbfips = "unassigned", double beginDamage = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, double groundElevation = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, double foundationHeight = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, int year = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, int numStructures = 1, string notes = "", string description = "")
 
         {
             Fid = fid;
