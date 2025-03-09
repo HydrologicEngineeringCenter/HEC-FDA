@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HEC.RAS.Ras.Mapper" Version="0.1.0.1421-dev" />
+    <PackageReference Include="HEC.RAS.Ras.Mapper" Version="0.1.0.1506-dev" />
   </ItemGroup>
 
   <ItemGroup>
