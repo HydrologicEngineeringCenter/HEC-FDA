@@ -18,7 +18,6 @@ namespace HEC.FDA.Model.Spatial;
 
 public static class RASHelper
 {
-    private const string UNUSED_STRING = "";
 
     public static float[] SamplePointsFromRaster(PointMs pointMs, string rasterPath)
     {
@@ -131,17 +130,7 @@ public static class RASHelper
         GDALRaster raster = new(terrainTif);
         return raster.GetProjection();
     }
-    public static int GetImpactAreaFID(PointM point, List<Polygon> ImpactAreas)
-    {
-        for (int i = 0; i < ImpactAreas.Count; i++)
-        {
-            if (ImpactAreas[i].Contains(point))
-            {
-                return i;
-            }
-        }
-        return -9999;
-    }
+
     public static Projection GetVectorProjection(string fileName)
     {
         VectorDataset vector = new(fileName);
@@ -162,106 +151,7 @@ public static class RASHelper
         Geospatial.Vectors.Point newp = VectorExtensions.Reproject(p, currentProjection, newProjection);
         return Converter.ConvertPtM(newp);
     }
-    public static PointMs ReprojectPoints(Projection targetProjection, Projection originalProjection, PointMs pointMs)
-    {
-        if (targetProjection == null || targetProjection.IsEqual(originalProjection))
-        {
-            return pointMs;
-        }
-        PointMs reprojPointMs = new();
-        foreach (PointM pt in pointMs)
-        {
-            reprojPointMs.Add(ReprojectPoint(pt, targetProjection, originalProjection));
-        }
-        return reprojPointMs;
 
-    }
-    public static Polygon ReprojectPolygon(Polygon polygon, Projection newProjection, Projection currentProjection)
-    {
-        Geospatial.Vectors.Polygon poly = Converter.Convert(polygon);
-        Geospatial.Vectors.Polygon reprojPoly = VectorExtensions.Reproject(poly, currentProjection, newProjection);
-        return Converter.Convert(reprojPoly);
-
-    }
-    public static T TryGet<T>(object value, T defaultValue = default)
-where T : struct
-    {
-        if (value == null)
-            return defaultValue;
-        else if (value == DBNull.Value)
-            return defaultValue;
-        else
-        {
-            var retn = value as T?;
-            if (retn.HasValue)
-                return retn.Value;
-            else
-                return defaultValue;
-        }
-    }
-    public static string TryGetObj(object value, string defaultValue)
-    {
-        if (value == null)
-            return defaultValue;
-        else if (value == DBNull.Value)
-            return defaultValue;
-        else
-        {
-            string ret = value.ToString();
-            if (ret.IsNullOrEmpty())
-            {
-                ret = defaultValue;
-            }
-            return ret;
-        }
-    }
-    public static T GetRowValueForColumn<T>(System.Data.DataRow row, string mappingColumnName, T defaultValue) where T : struct
-    {
-        T retval = defaultValue;
-        if (mappingColumnName != null && row.Table.Columns.Contains(mappingColumnName))
-        {
-            //column could have wrong data type, or be null, or dbnull
-            retval = TryGet(row[mappingColumnName], defaultValue);
-        }
-        return retval;
-    }
-    public static string GetRowValueForColumn(System.Data.DataRow row, string mappingColumnName, string defaultValue)
-    {
-        string retval = defaultValue;
-        if (mappingColumnName != null && row.Table.Columns.Contains(mappingColumnName))
-        {
-            //column could have wrong data type, or be null, or dbnull
-            retval = TryGetObj(row[mappingColumnName], defaultValue);
-        }
-        return retval;
-    }
-    public static List<Polygon> LoadImpactAreasFromSourceFiles(PolygonFeatureLayer impactAreaSet, Projection studyProjection)
-    {
-        List<Polygon> polygons = impactAreaSet.Polygons().ToList();
-        Projection impactAreaPrj = GetVectorProjection(impactAreaSet);
-        if (studyProjection == null)
-        {
-            return polygons;
-        }
-        if (impactAreaPrj.IsEqual(studyProjection))
-        {
-            return polygons;
-        }
-        else
-        {
-            return ReprojectPolygons(studyProjection, polygons, impactAreaPrj);
-        }
-    }
-    public static List<Polygon> ReprojectPolygons(Projection studyProjection, List<Polygon> polygons, Projection impactAreaPrj)
-    {
-        List<Polygon> ImpactAreas = new();
-        foreach (Polygon poly in polygons)
-        {
-            Polygon newPoly = ReprojectPolygon(poly, impactAreaPrj, studyProjection);
-            ImpactAreas.Add(newPoly);
-        }
-        return ImpactAreas;
-    }
     /// <summary>
     /// returns all the component files of the terrain. Does not gaurantee they exist, just that they should for the terrain to be complete. 
     /// </summary>

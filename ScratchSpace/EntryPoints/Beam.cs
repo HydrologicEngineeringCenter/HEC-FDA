@@ -12,24 +12,24 @@ public static class Beam
     public static void EntryPoint()
     {
         GDALSetup.InitializeMultiplatform();
-        string tiff = @"C:\Temp\_FDA\MySAC38_FragTest\MySAC38_FragTest\Hydraulic Data\Grids\80\WSE80Pct.tif";
-        string structureInv = @"C:\Temp\_FDA\MySAC38_FragTest\MySAC38_FragTest\Structure Inventories\Structs\Structure.shp";
-        string impactArea = @"C:\Temp\_FDA\MySAC38_FragTest\MySAC38_FragTest\Impact Areas\IA\Sac38_Zone_10N.shp";
-        Projection tiffProj = RASHelper.GetProjectionFromTerrain(tiff);
-        Projection siProj = RASHelper.GetVectorProjection(structureInv);
-        Projection iaProj = RASHelper.GetVectorProjection(impactArea);
-        bool same = tiffProj.Equals(iaProj);
-        PolygonFeatureLayer ias = new("",impactArea);
-        PolygonFeatureCollection pgsOut = new();
-        ShapefileWriter.TryReadShapefile(impactArea,out pgsOut);
-        var gon = pgsOut.Features[0];
-        var reprogon = gon.Reproject(iaProj, tiffProj);
-        Console.WriteLine(gon);
-        Console.WriteLine(reprogon);
-        List<Polygon> polygons = ias.Polygons().ToList();
-        //This reprojection is incorrect and failing. Move shapefile reader. 
-        List<Polygon> reproPolys = RASHelper.ReprojectPolygons(tiffProj, polygons, iaProj);
-        Console.WriteLine("garbage");
+        //string tiff = @"C:\Temp\_FDA\MySAC38_FragTest\MySAC38_FragTest\Hydraulic Data\Grids\80\WSE80Pct.tif";
+        //string structureInv = @"C:\Temp\_FDA\MySAC38_FragTest\MySAC38_FragTest\Structure Inventories\Structs\Structure.shp";
+        //string impactArea = @"C:\Temp\_FDA\MySAC38_FragTest\MySAC38_FragTest\Impact Areas\IA\Sac38_Zone_10N.shp";
+        //Projection tiffProj = RASHelper.GetProjectionFromTerrain(tiff);
+        //Projection siProj = RASHelper.GetVectorProjection(structureInv);
+        //Projection iaProj = RASHelper.GetVectorProjection(impactArea);
+        //bool same = tiffProj.Equals(iaProj);
+        //PolygonFeatureLayer ias = new("",impactArea);
+        //PolygonFeatureCollection pgsOut = new();
+        //ShapefileWriter.TryReadShapefile(impactArea,out pgsOut);
+        //var gon = pgsOut.Features[0];
+        //var reprogon = gon.Reproject(iaProj, tiffProj);
+        //Console.WriteLine(gon);
+        //Console.WriteLine(reprogon);
+        //List<Polygon> polygons = ias.Polygons().ToList();
+        ////This reprojection is incorrect and failing. Move shapefile reader. 
+        //List<Polygon> reproPolys = RASHelper.ReprojectPolygons(tiffProj, polygons, iaProj);
+        //Console.WriteLine("garbage");
 
     }
 

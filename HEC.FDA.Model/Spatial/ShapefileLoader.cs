@@ -10,6 +10,7 @@ using Geospatial.IO;
 using Geospatial.Vectors;
 using Utility.Logging;
 using Geospatial.GDALAssist.Vectors;
+using Utility.Memory;
 
 namespace HEC.FDA.Model.Spatial;
 public class ShapefileLoader
@@ -187,7 +188,7 @@ public class ShapefileLoader
 
             // Get the point geometry from the feature.
             Geospatial.Vectors.Point point = structurePoints[i];
-            int impactAreaID = GetImpactAreaFID(point, impactAreas);
+            int impactAreaID = GetImpactAreaFID(point, impactAreaCollection);
 
             string notes = row.ValueAs<string>(map.NotesCol, DEFAULT_MISSING_STRING_VALUE);
             string description = row.ValueAs<string>(map.DescriptionCol, DEFAULT_MISSING_STRING_VALUE);
@@ -213,12 +214,13 @@ public class ShapefileLoader
     /// <param name="map"></param>
     /// <param name="row"></param>
     /// <returns></returns>
-    private static string GetFID(StructureSelectionMapping map, System.Data.DataRow row)
+    private static string GetFID(StructureSelectionMapping map, TableRow row)
     {
-        string name = RASHelper.GetRowValueForColumn(row, map.StructureIDCol, DEFAULT_MISSING_STRING_VALUE);
-        if (name == DEFAULT_MISSING_STRING_VALUE)
-        {
-            name = RASHelper.GetRowValueForColumn(row, map.StructureIDCol, DEFAULT_MISSING_NUMBER_VALUE).ToString();
+        string name = row.ValueAs(map.StructureIDCol, DEFAULT_MISSING_STRING_VALUE);
+        if (name == DEFAULT_MISSING_STRING_VALUE){
+            {
+                name = row.ValueAs(map.StructureIDCol, DEFAULT_MISSING_NUMBER_VALUE).ToString();
+            }
         }
         if (name == DEFAULT_MISSING_NUMBER_VALUE.ToString())
         {
@@ -227,7 +229,7 @@ public class ShapefileLoader
         return name;
     }
 
-    public static int GetImpactAreaFID(PointM point, List<Polygon> ImpactAreas)
+    public static int GetImpactAreaFID(Geospatial.Vectors.Point point, PolygonFeatureCollection ImpactAreas)
     {
         for (int i = 0; i < ImpactAreas.Count; i++)
         {
