@@ -11,6 +11,7 @@ using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.FDA.Model.Spatial;
 using Statistics;
+using Utility.Logging;
 
 namespace HEC.FDA.Model.structures
 {
@@ -40,8 +41,16 @@ namespace HEC.FDA.Model.structures
         {
             OccTypes = occTypes;
             PriceIndex = priceIndex;
-            Projection studyProjection = Projection.FromFile(projectionFilePath);//Projection.FromFile returns Null if the path is bad. We'll check for null before we reproject. 
-            Structures = ShapefileLoader.LoadStructuresFromSourceFiles(pointShapefilePath, map, null, false, impactAreaShapefilePath, studyProjection, OccTypes);
+            Projection studyProjection = Projection.FromFile(projectionFilePath);//Projection.FromFile returns Null if the path is bad. We'll check for null before we reproject.
+            OperationResult operationResult = ShapefileLoader.LoadStructuresFromSourceFiles(pointShapefilePath, map, null, false, impactAreaShapefilePath, studyProjection, OccTypes, out List<Structure> structures);
+            if (operationResult.Result)
+            {
+                Structures = structures;
+            }
+            else
+            {
+                throw new Exception("Error loading structures from shapefiles" + operationResult.GetConcatenatedMessages());
+            }
         }
 
         /// <summary>
@@ -59,8 +68,15 @@ namespace HEC.FDA.Model.structures
             OccTypes = occTypes;
             PriceIndex = priceIndex;
             Projection studyProjection = RASHelper.GetProjectionFromTerrain(terrainPath);
-            Structures = ShapefileLoader.LoadStructuresFromSourceFiles(pointShapefilePath, map, terrainPath, true, impactAreaShapefilePath, studyProjection, OccTypes);
-
+            OperationResult operationResult = ShapefileLoader.LoadStructuresFromSourceFiles(pointShapefilePath, map, terrainPath, true, impactAreaShapefilePath, studyProjection, OccTypes, out List<Structure> structures);
+            if (operationResult.Result)
+            {
+                Structures = structures;
+            }
+            else
+            {
+                throw new Exception("Error loading structures from shapefiles" + operationResult.GetConcatenatedMessages());
+            }
         }
 
         /// <summary>
