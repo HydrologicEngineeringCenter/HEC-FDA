@@ -9,6 +9,7 @@ namespace HEC.FDA.Model.paireddata
     public class PairedData : IPairedData
     {
         #region Fields 
+        private const double EPSILON = double.Epsilon;
         #endregion
 
         #region Properties 
@@ -368,8 +369,6 @@ namespace HEC.FDA.Model.paireddata
         }
         public void ForceStrictMonotonicityTopDown(double max = double.MaxValue, double min = double.MinValue)
         {
-            double epsilon = 0.005;
-
             double[] update = new double[Yvals.Length];
             double upperValue = Yvals[Yvals.Length - 1];
             update[Yvals.Length - 1] = upperValue;
@@ -379,8 +378,8 @@ namespace HEC.FDA.Model.paireddata
 
                 if (Yvals[i] >= upperValue)
                 {
-                    update[i] = upperValue - epsilon;
-                    upperValue -= epsilon;
+                    update[i] = upperValue - EPSILON;
+                    upperValue -= EPSILON;
                 }
                 else
                 {
@@ -392,7 +391,6 @@ namespace HEC.FDA.Model.paireddata
         }
         public void ForceStrictMonotonicityBottomUp(double max = double.MaxValue, double min = double.MinValue)
         {
-            double epsilon = 0.005;
             double previousYval = min;
 
             double[] update = new double[Yvals.Length];
@@ -401,8 +399,8 @@ namespace HEC.FDA.Model.paireddata
             {
                 if (previousYval >= currentY)
                 {
-                    update[index] = previousYval + epsilon;
-                    previousYval += epsilon;
+                    update[index] = previousYval + EPSILON;
+                    previousYval += EPSILON;
                 }
                 else
                 {

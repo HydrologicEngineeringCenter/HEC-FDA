@@ -9,6 +9,7 @@ using System.Xml.Linq;
 using HEC.FDA.Model.utilities;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Model.Messaging;
+using Statistics.Graphical;
 
 namespace HEC.FDA.Model.extensions
 {
@@ -51,25 +52,41 @@ namespace HEC.FDA.Model.extensions
         /// See the HEC-FDA Technical Reference for more information on the Less Simple Method
         /// This constructor assumes that exceedance probabilities and flow or stage values have a strictly monotonic relationships.
         /// </summary>
-        /// <param name="exceedanceProbabilities"></param> User-provided exceedance probabilities. There should be at least 8.
+        /// <param name="userInputExceedanceProbabilities"></param> User-provided exceedance probabilities. There should be at least 8.
         /// <param name="stageOrUnloggedFlowValues"></param> User-provided flow or stage values. A value should correspond to a probability. 
         /// <param name="equivalentRecordLength"></param> The equivalent record length in years.
       
-        public GraphicalDistribution(double[] exceedanceProbabilities, double[] stageOrUnloggedFlowValues, int equivalentRecordLength, bool usingStagesNotFlows = true, double higherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant = 0.99, double lowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant = 0.01)
+        public GraphicalDistribution(double[] userInputExceedanceProbabilities, double[] stageOrUnloggedFlowValues, int equivalentRecordLength, bool usingStagesNotFlows = true, double higherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant = 0.99, double lowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant = 0.01)
         {
             EquivalentRecordLength = equivalentRecordLength;
             UsingStagesNotFlows = usingStagesNotFlows;
+            double[] combinedInterpolationExceedanceProbabilities = FillInputExceedanceProbabilitiesWithInterpolationPoints(userInputExceedanceProbabilities);
+            //first stage or logged flows is interpolated 
             if (UsingStagesNotFlows)
             {
-                StageOrLoggedFlowValues = stageOrUnloggedFlowValues;
+                StageOrLoggedFlowValues = InterpolateQuantiles.InterpolateOnX(userInputExceedanceProbabilities, combinedInterpolationExceedanceProbabilities, stageOrUnloggedFlowValues); ;
             } else
             {
-                StageOrLoggedFlowValues = LogFlows(stageOrUnloggedFlowValues);
+                StageOrLoggedFlowValues = InterpolateQuantiles.InterpolateOnX(userInputExceedanceProbabilities, combinedInterpolationExceedanceProbabilities, LogFlows(stageOrUnloggedFlowValues));
             }
             LowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant = lowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant;
             HigherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant = higherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant;
-            AddRules(exceedanceProbabilities);
-            Compute(exceedanceProbabilities);
+            AddRules(userInputExceedanceProbabilities);
+            Validate();
+            if (ErrorLevel >= ErrorLevel.Major)
+            {
+                string message = $"There are major or worse errors associated with a graphical frequency function, confidence intervals cannot be computed." + Environment.NewLine;
+                ErrorMessage errorMessage = new(message, ErrorLevel.Major);
+                ReportMessage(this, new MessageEventArgs(errorMessage));
+            }
+            else
+            {
+                //then stage or logged flows is extrapolated 
+                ExtrapolateFrequencyFunction(combinedInterpolationExceedanceProbabilities);
+
+                //then we compute uncertainty 
+                StageOrLogFlowDistributions = ConstructContinuousDistributions();
+            }
         }
         private GraphicalDistribution(double lowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant, double higherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant, double[] stageOrLoggedFlowValues, bool usingStagesNotFlows, int equivalentRecordLength, double[] exceedanceProbabilities, ContinuousDistribution[] stageOrLogFlowDistributions)
         {
@@ -85,21 +102,6 @@ namespace HEC.FDA.Model.extensions
         #endregion
 
         #region Methods
-        private void Compute(double[] exceedanceProbabilities)
-        {
-            Validate();
-            if (ErrorLevel >= ErrorLevel.Major)
-            {
-                string message = $"There are major or worse errors associated with a graphical frequency function, confidence intervals cannot be computed." + Environment.NewLine;
-                ErrorMessage errorMessage = new(message, ErrorLevel.Major);
-                ReportMessage(this, new MessageEventArgs(errorMessage));
-            }
-            else
-            {
-                ExtrapolateFrequencyFunction(exceedanceProbabilities);
-                StageOrLogFlowDistributions = ConstructContinuousDistributions();
-            }
-        }
         private void AddRules(double[] exceedanceProbabilities)
         {
             AddSinglePropertyRule(nameof(EquivalentRecordLength), new Rule(() => EquivalentRecordLength > 0, "Equivalent record length must be greater than 0."));
@@ -117,6 +119,20 @@ namespace HEC.FDA.Model.extensions
                 }
             }
             return true;
+        }
+        //make this add required exceedance probs with the user input for interpolation 
+        private static double[] FillInputExceedanceProbabilitiesWithInterpolationPoints(double[] inputExceedanceProbabilities)
+        {
+            List<double> allProbabilities = DoubleGlobalStatics.RequiredExceedanceProbabilities.ToList();
+            foreach (double probability in inputExceedanceProbabilities)
+            {
+                if (!allProbabilities.Contains(probability))
+                {
+                    allProbabilities.Add(probability);
+                }
+            }
+            allProbabilities.Sort((a, b) => b.CompareTo(a));
+            return allProbabilities.ToArray();
         }
         private static double[] LogFlows(double[] unloggedFlows)
         {
@@ -137,6 +153,8 @@ namespace HEC.FDA.Model.extensions
         }
 
         //TODO: This method can be refactored for clarity.
+        //It could be that we need to extrapolate for probs outside user entered 
+        //because we interpolate differently inside frequencies? 
         public void ExtrapolateFrequencyFunction(double[] exceedanceProbabilities)
         {
             double toleratedDifference = 0.0001;
