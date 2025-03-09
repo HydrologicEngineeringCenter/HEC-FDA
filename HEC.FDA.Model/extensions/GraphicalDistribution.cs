@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Statistics.Distributions;
+using Statistics;
 using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Base.Implementations;
 using System.Xml.Linq;
@@ -9,7 +10,7 @@ using HEC.FDA.Model.utilities;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Model.Messaging;
 
-namespace Statistics.GraphicalRelationships
+namespace HEC.FDA.Model.extensions
 {
     [StoredProperty("GraphicalDistribution")]
     public class GraphicalDistribution: ValidationErrorLogger
@@ -180,7 +181,7 @@ namespace Statistics.GraphicalRelationships
             //less frequent end of the frequency curve
             if (finalExceedanceProbabilities.Last() - minimumExceedanceProbability > toleratedDifference)
             {
-                Distributions.Normal standardNormalDistribution = new();
+                Normal standardNormalDistribution = new();
                 double penultimateInputExceedanceProbability = finalExceedanceProbabilities[^2];
                 double lastInputExceedanceProbability = finalExceedanceProbabilities.Last();
                 double zValueOfMin = standardNormalDistribution.InverseCDF(minimumExceedanceProbability);
@@ -321,7 +322,7 @@ namespace Statistics.GraphicalRelationships
             {
                 for (int i = 0; i < stageOrLogFlowStandardErrorsComputed.Length; i++)
                 {
-                    distributionArray[i] = new Distributions.Normal(StageOrLoggedFlowValues[i], stageOrLogFlowStandardErrorsComputed[i]);
+                    distributionArray[i] = new Normal(StageOrLoggedFlowValues[i], stageOrLogFlowStandardErrorsComputed[i]);
                 }
                 return distributionArray;
             }
@@ -329,7 +330,7 @@ namespace Statistics.GraphicalRelationships
             {
                 for (int i = 0; i < stageOrLogFlowStandardErrorsComputed.Length; i++)
                 {
-                    distributionArray[i] = new Distributions.LogNormal(StageOrLoggedFlowValues[i], stageOrLogFlowStandardErrorsComputed[i]);
+                    distributionArray[i] = new LogNormal(StageOrLoggedFlowValues[i], stageOrLogFlowStandardErrorsComputed[i]);
                 }
                 return distributionArray;
             }

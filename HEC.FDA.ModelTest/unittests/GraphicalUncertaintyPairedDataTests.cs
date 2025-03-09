@@ -3,7 +3,7 @@ using Xunit;
 using System.Xml.Linq;
 using HEC.FDA.Model.paireddata;
 using Statistics.Distributions;
-using Statistics.GraphicalRelationships;
+using HEC.FDA.Model.extensions;
 using System;
 
 namespace HEC.FDA.ModelTest.unittests

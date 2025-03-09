@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Statistics.GraphicalRelationships;
+using HEC.FDA.Model.extensions;
 using System.Xml.Linq;
 using System;
 using HEC.FDA.Model.interfaces;
