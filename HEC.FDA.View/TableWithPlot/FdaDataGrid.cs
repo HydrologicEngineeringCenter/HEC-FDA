@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -246,9 +247,17 @@ namespace HEC.FDA.View.TableWithPlot
 
             return UniqueRows;
         }
+
+        /// <summary>
+        /// The ApplicationCommands.Copy.Execute() stopped working properly at some point. This is a hack to get rid of all the different formats it copies and explicitly set only the one we want for pasting into excel.
+        /// </summary>
         private void CopyClipBoard(object sender, RoutedEventArgs e)
         {
             ApplicationCommands.Copy.Execute(null, this);
+            IDataObject clipboardData = Clipboard.GetDataObject();
+            object data = clipboardData.GetData("Text");
+            Clipboard.Clear();
+            Clipboard.SetText(data.ToString());
         }
         private void MenuItemPasteClipboard(object sender, RoutedEventArgs e)
         {
