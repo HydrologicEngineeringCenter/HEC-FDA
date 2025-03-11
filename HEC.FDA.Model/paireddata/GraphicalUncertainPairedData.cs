@@ -46,7 +46,6 @@ namespace HEC.FDA.Model.paireddata
             GraphicalDistributionWithLessSimple = new GraphicalDistribution(exceedanceProbabilities, flowOrStageValues, equivalentRecordLength, usingStagesNotFlows);
             CombinedExceedanceProbabilities = GraphicalDistributionWithLessSimple.ExceedanceProbabilities;
             CurveMetaData = curveMetaData;
-            //combine required and input probabilities 
         }
         private GraphicalUncertainPairedData(double[] combinedExceedanceProbabilities, GraphicalDistribution graphicalDistributionWithLessSimple, CurveMetaData curveMetaData)
         {
@@ -224,20 +223,6 @@ namespace HEC.FDA.Model.paireddata
                 }
             }
             return true;
-        }
-
-        private static double[] CombineInputAndRequiredExceedanceProbabilities(double[] inputExceedanceProbabilities)
-        {
-            List<double> allProbabilities = DoubleGlobalStatics.RequiredExceedanceProbabilities.ToList();
-            foreach (double probability in inputExceedanceProbabilities)
-            {
-                if (!allProbabilities.Contains(probability))
-                {
-                    allProbabilities.Add(probability);
-                }
-            }
-            allProbabilities.Sort((a, b) => b.CompareTo(a));
-            return allProbabilities.ToArray();
         }
 
         #endregion

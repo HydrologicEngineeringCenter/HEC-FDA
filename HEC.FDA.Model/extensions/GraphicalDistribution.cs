@@ -120,7 +120,6 @@ namespace HEC.FDA.Model.extensions
             }
             return true;
         }
-        //make this add required exceedance probs with the user input for interpolation 
         private static double[] FillInputExceedanceProbabilitiesWithInterpolationPoints(double[] inputExceedanceProbabilities)
         {
             List<double> allProbabilities = DoubleGlobalStatics.RequiredExceedanceProbabilities.ToList();
@@ -153,8 +152,6 @@ namespace HEC.FDA.Model.extensions
         }
 
         //TODO: This method can be refactored for clarity.
-        //It could be that we need to extrapolate for probs outside user entered 
-        //because we interpolate differently inside frequencies? 
         public void ExtrapolateFrequencyFunction(double[] exceedanceProbabilities)
         {
             double toleratedDifference = 0.0001;
