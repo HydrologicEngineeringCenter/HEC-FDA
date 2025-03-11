@@ -88,18 +88,18 @@ new double[] { 6.6, 7.4, 8.55, 9.95, 11.5, 12.7, 13.85, 14.7, 15.8, 16.7, 17.5, 
         }
 
         /// <summary>
-        /// This test demonstrates that our quantile interpolation reasonably matches direct quantile calculation
-        /// test data can be found at: https://docs.google.com/spreadsheets/d/1aLnGuzmmopDID7ehb1Jux5IZtegMpmnX/edit?usp=drive_link&ouid=105470256128470573157&rtpof=true&sd=true
+        /// This test demonstrates that our quantile sampling reasonably matches direct quantile calculation
+        /// test data for the first case study can be found at: https://docs.google.com/spreadsheets/d/1aLnGuzmmopDID7ehb1Jux5IZtegMpmnX/edit?usp=drive_link&ouid=105470256128470573157&rtpof=true&sd=true
+        /// test data for the second case study was generated from HEC-FDA Version 1.4.3 from the Algiers feasibilty study data 
         /// </summary>
         /// <param name="probabilitiesAtWhichToTest"></param> these are probabilities for quantiles that are interpolated
         /// <param name="expectedQuantile"></param> these are interpolated quantiles 
         [Theory]
-        [InlineData(new double[] {0.35, 0.75, 0.956, 0.9905}, new double[] {81.8684, 84.060773, 84.970707, 88.707344})]
-        public void SamplePairedDataShould(double[] probabilitiesAtWhichToTest, double[] expectedQuantile)
+        [InlineData(new double[] { 0.999, 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.004, 0.002 }, new double[] { 80, 82, 84, 84.5, 84.8, 85, 86, 88, 90 }, 50, 1, new double[] {0.35, 0.75, 0.956, 0.9905}, new double[] {81.8684, 84.060773, 84.970707, 88.707344})]
+        [InlineData(new double[] {0.5,0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.002}, new double[] {1, 1.1, 4.93, 4.98, 5.02, 5.04, 5.18, 5.3}, 40, 2, new double[] { .1, .78, .8, .825, .99, .995 }, new double[] {1, 1.144, 3.398, 4.995, 5.216, 5.356})]
+        public void SamplePairedDataShould(double[] inputProbabilities, double[] inputStages, int erl, int standardDeviationAtWhichToTest, double[] probabilitiesAtWhichToTest, double[] expectedQuantile)
         {
-            int erl = 50;
-            double[] inputProbabilities = new double[] { 0.999, 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.004, 0.002 };
-            double[] inputStages = new double[] { 80, 82, 84, 84.5, 84.8, 85, 86, 88, 90 };
+
             GraphicalUncertainPairedData graphicalUncertainPairedData = new(inputProbabilities, inputStages, erl, new CurveMetaData("hello"), true);
             double probOneStandardDeviation = new Normal().CDF(1);
             PairedData oneStandardDeviationAboveMean = graphicalUncertainPairedData.SamplePairedData(probOneStandardDeviation);
