@@ -101,7 +101,8 @@ new double[] { 6.6, 7.4, 8.55, 9.95, 11.5, 12.7, 13.85, 14.7, 15.8, 16.7, 17.5, 
         {
 
             GraphicalUncertainPairedData graphicalUncertainPairedData = new(inputProbabilities, inputStages, erl, new CurveMetaData("hello"), true);
-            PairedData oneStandardDeviationAboveMean = graphicalUncertainPairedData.SamplePairedData(standardDeviationAtWhichToTest);
+            double probAtWhichToTest = new Normal().CDF(standardDeviationAtWhichToTest);
+            PairedData oneStandardDeviationAboveMean = graphicalUncertainPairedData.SamplePairedData(probAtWhichToTest);
             for (int i = 0; i < probabilitiesAtWhichToTest.Length; i++)
             {
                 double probability = probabilitiesAtWhichToTest[i];
