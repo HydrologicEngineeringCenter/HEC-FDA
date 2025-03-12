@@ -243,7 +243,7 @@ namespace HEC.FDA.ViewModel.Inventory
             }
             string fieldName = rowItem.Name;
             string shapefileColumnName = rowItem.SelectedItem;
-            Type expectedType = ShapefileLoader.ExpectedTypes[fieldName];
+            Type expectedType = StructureFactory.ExpectedTypes[fieldName];
             Type actualType = siPointLayerTable.Columns[shapefileColumnName].DataType;
 
             //this short circuits and lets FID be either int or string. it's handled in the importer. 

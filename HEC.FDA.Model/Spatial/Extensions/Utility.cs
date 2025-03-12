@@ -9,7 +9,9 @@ public static class Utility
     public static T TryGetValueAs<T>(this TableRow row, string columnName, T fallbackValue = default) {
 		try
 		{
-			return row.ValueAs(columnName, fallbackValue);
+			if(string.IsNullOrWhiteSpace(columnName))
+                return fallbackValue;
+            return row.ValueAs(columnName, fallbackValue);
         }
 		catch (System.Exception)
 		{

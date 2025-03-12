@@ -42,7 +42,7 @@ namespace HEC.FDA.Model.structures
             OccTypes = occTypes;
             PriceIndex = priceIndex;
             Projection studyProjection = Projection.FromFile(projectionFilePath);//Projection.FromFile returns Null if the path is bad. We'll check for null before we reproject.
-            OperationResult operationResult = ShapefileLoader.LoadStructuresFromSourceFiles(pointShapefilePath, map, null, false, impactAreaShapefilePath, studyProjection, OccTypes, out List<Structure> structures);
+            OperationResult operationResult = StructureFactory.LoadStructuresFromSourceFiles(pointShapefilePath, map, null, false, impactAreaShapefilePath, studyProjection, OccTypes, out List<Structure> structures);
             if (operationResult.Result)
             {
                 Structures = structures;
@@ -68,7 +68,7 @@ namespace HEC.FDA.Model.structures
             OccTypes = occTypes;
             PriceIndex = priceIndex;
             Projection studyProjection = RASHelper.GetProjectionFromTerrain(terrainPath);
-            OperationResult operationResult = ShapefileLoader.LoadStructuresFromSourceFiles(pointShapefilePath, map, terrainPath, true, impactAreaShapefilePath, studyProjection, OccTypes, out List<Structure> structures);
+            OperationResult operationResult = StructureFactory.LoadStructuresFromSourceFiles(pointShapefilePath, map, terrainPath, true, impactAreaShapefilePath, studyProjection, OccTypes, out List<Structure> structures);
             if (operationResult.Result)
             {
                 Structures = structures;

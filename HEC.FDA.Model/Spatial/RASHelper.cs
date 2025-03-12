@@ -18,29 +18,9 @@ namespace HEC.FDA.Model.Spatial;
 
 public static class RASHelper
 {
-
-    public static float[] SamplePointsFromRaster(PointMs pointMs, string rasterPath)
-    {
-        string extension = System.IO.Path.GetExtension(rasterPath);
-        float[] groundelevs;
-        switch (extension)
-        {
-            case ".hdf":
-                TerrainLayer layer = new("thisNameIsNotUsed", rasterPath);
-                groundelevs = layer.ComputePointElevations(pointMs);
-                break;
-            case ".tif":
-                groundelevs = SamplePointsOnTiff(pointMs, rasterPath);
-                break;
-            default:
-                throw new Exception("The file type is invalid.");
-        }
-        return groundelevs;
-    }
-
     public static float[] SamplePointsFromRaster(string pointShapefilePath, string rasterPath, Projection rasterProjection)
     {
-        OperationResult or = ShapefileWriter.TryReadShapefile(pointShapefilePath, out PointFeatureCollection pointFeatures, rasterProjection);
+        OperationResult or = ShapefileIO.TryRead(pointShapefilePath, out PointFeatureCollection pointFeatures, rasterProjection);
         if (!or.Result)
         {
             throw new Exception("Failed to read shapefile: " + pointShapefilePath);
@@ -178,7 +158,7 @@ public static class RASHelper
     }
     public static bool IsPolygonShapefile(string path, ref string error)
     {
-        bool valid = ShapefileWriter.IsPolygonShapefile(path);
+        bool valid = ShapefileIO.IsPolygonShapefile(path);
         if (!valid)
         {
             error += " Not a polygon shapefile. ";
@@ -187,7 +167,7 @@ public static class RASHelper
     }
     public static bool IsPointShapefile(string path, ref string error)
     {
-        bool valid = ShapefileWriter.IsPointShapefile(path);
+        bool valid = ShapefileIO.IsPointShapefile(path);
         if (!valid)
         {
             error += " Not a point shapefile. ";
