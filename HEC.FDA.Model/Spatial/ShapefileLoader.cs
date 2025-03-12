@@ -153,10 +153,10 @@ public class ShapefileLoader
             var row = structurePoints.AttributeTable.Rows[i];
 
             // Get the feature’s ID.
-            string fid = GetFID(map, row);
+            string fid = GetFID(map, row).Trim();
 
             double val_struct = row.TryGetValueAs<double>(map.StructureValueCol, DEFAULT_MISSING_NUMBER_VALUE);
-            string occtype = row.TryGetValueAs<string>(map.OccTypeCol, DEFAULT_MISSING_STRING_VALUE);
+            string occtype = row.TryGetValueAs<string>(map.OccTypeCol, DEFAULT_MISSING_STRING_VALUE).Trim();
             if (!occTypes.TryGetValue(occtype, out OccupancyType occ))
             {
                 return OperationResult.Fail($"Occupancy type {occtype} not found in the list of occupancy types.");
@@ -191,8 +191,8 @@ public class ShapefileLoader
             Geospatial.Vectors.Point point = structurePoints[i];
             int impactAreaID = GetImpactAreaFID(point, impactAreaCollection);
 
-            string notes = row.TryGetValueAs<string>(map.NotesCol, DEFAULT_MISSING_STRING_VALUE);
-            string description = row.TryGetValueAs<string>(map.DescriptionCol, DEFAULT_MISSING_STRING_VALUE);
+            string notes = row.TryGetValueAs<string>(map.NotesCol, DEFAULT_MISSING_STRING_VALUE).Trim();
+            string description = row.TryGetValueAs<string>(map.DescriptionCol, DEFAULT_MISSING_STRING_VALUE).Trim();
 
             // Create and add the new Structure.
             structures.Add(new Structure(
