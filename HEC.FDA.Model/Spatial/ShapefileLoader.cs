@@ -18,8 +18,6 @@ public class ShapefileLoader
 {
     private const string DEFAULT_MISSING_STRING_VALUE = "EMPTY";
     private const int DEFAULT_MISSING_NUMBER_VALUE = IntegerGlobalConstants.DEFAULT_MISSING_VALUE;
-    private const string UNUSED_STRING_VALUE = "";
-
     public static readonly Dictionary<string, Type> _expectedTypes = new()
             {
                 { StructureSelectionMapping.STRUCTURE_ID, typeof(string)},
@@ -165,32 +163,20 @@ public class ShapefileLoader
 
             double found_ht = row.TryGetValueAs<double>(map.FoundationHeightCol, DEFAULT_MISSING_NUMBER_VALUE);
             double ground_elv = updateGroundElevFromTerrain ? groundelevs[i] : row.TryGetValueAs<double>(map.GroundElevCol, DEFAULT_MISSING_NUMBER_VALUE);
-            double ff_elev = row.TryGetValueAs<double>(map.FirstFloorElevCol, DEFAULT_MISSING_NUMBER_VALUE);
-            if (ff_elev == DEFAULT_MISSING_NUMBER_VALUE)
-            {
-                ff_elev = ground_elv + found_ht;
-            }
+            double ff_elev = row.TryGetValueAs<double>(map.FirstFloorElevCol, ground_elv + found_ht);
 
             // Optional parameters:
             double val_cont = row.TryGetValueAs<double>(map.ContentValueCol, 0);
             double val_vehic = row.TryGetValueAs<double>(map.VehicleValueCol, 0);
             double val_other = row.TryGetValueAs<double>(map.OtherValueCol, 0);
             string cbfips = DEFAULT_MISSING_STRING_VALUE;
-
-            double beginningDamage = row.TryGetValueAs<double>(map.BeginningDamageDepthCol, DEFAULT_MISSING_NUMBER_VALUE);
-            if (beginningDamage == DEFAULT_MISSING_NUMBER_VALUE)
-            {
-                if (found_ht != DEFAULT_MISSING_NUMBER_VALUE)
-                    beginningDamage = -found_ht;
-            }
-
+            double beginningDamage = row.TryGetValueAs<double>(map.BeginningDamageDepthCol, -found_ht);
             int numStructures = row.TryGetValueAs<int>(map.NumberOfStructuresCol, 1);
             int yearInService = row.TryGetValueAs<int>(map.YearInConstructionCol, DEFAULT_MISSING_NUMBER_VALUE);
 
             // Get the point geometry from the feature.
             Geospatial.Vectors.Point point = structurePoints[i];
             int impactAreaID = GetImpactAreaFID(point, impactAreaCollection);
-
             string notes = row.TryGetValueAs<string>(map.NotesCol, DEFAULT_MISSING_STRING_VALUE).Trim();
             string description = row.TryGetValueAs<string>(map.DescriptionCol, DEFAULT_MISSING_STRING_VALUE).Trim();
 
