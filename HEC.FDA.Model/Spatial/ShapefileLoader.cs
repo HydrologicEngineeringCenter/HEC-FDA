@@ -11,6 +11,7 @@ using Geospatial.Vectors;
 using Utility.Logging;
 using Geospatial.GDALAssist.Vectors;
 using Utility.Memory;
+using HEC.FDA.Model.Spatial.Extensions;
 
 namespace HEC.FDA.Model.Spatial;
 public class ShapefileLoader
@@ -154,44 +155,44 @@ public class ShapefileLoader
             // Get the feature’s ID.
             string fid = GetFID(map, row);
 
-            double val_struct = row.ValueAs<double>(map.StructureValueCol, DEFAULT_MISSING_NUMBER_VALUE);
-            string occtype = row.ValueAs<string>(map.OccTypeCol, DEFAULT_MISSING_STRING_VALUE);
+            double val_struct = row.TryGetValueAs<double>(map.StructureValueCol, DEFAULT_MISSING_NUMBER_VALUE);
+            string occtype = row.TryGetValueAs<string>(map.OccTypeCol, DEFAULT_MISSING_STRING_VALUE);
             if (!occTypes.TryGetValue(occtype, out OccupancyType occ))
             {
                 return OperationResult.Fail($"Occupancy type {occtype} not found in the list of occupancy types.");
             }
             string st_damcat = occ.DamageCategory;
 
-            double found_ht = row.ValueAs<double>(map.FoundationHeightCol, DEFAULT_MISSING_NUMBER_VALUE);
-            double ground_elv = updateGroundElevFromTerrain ? groundelevs[i] : row.ValueAs<double>(map.GroundElevCol, DEFAULT_MISSING_NUMBER_VALUE);
-            double ff_elev = row.ValueAs<double>(map.FirstFloorElevCol, DEFAULT_MISSING_NUMBER_VALUE);
+            double found_ht = row.TryGetValueAs<double>(map.FoundationHeightCol, DEFAULT_MISSING_NUMBER_VALUE);
+            double ground_elv = updateGroundElevFromTerrain ? groundelevs[i] : row.TryGetValueAs<double>(map.GroundElevCol, DEFAULT_MISSING_NUMBER_VALUE);
+            double ff_elev = row.TryGetValueAs<double>(map.FirstFloorElevCol, DEFAULT_MISSING_NUMBER_VALUE);
             if (ff_elev == DEFAULT_MISSING_NUMBER_VALUE)
             {
                 ff_elev = ground_elv + found_ht;
             }
 
             // Optional parameters:
-            double val_cont = row.ValueAs<double>(map.ContentValueCol, 0);
-            double val_vehic = row.ValueAs<double>(map.VehicleValueCol, 0);
-            double val_other = row.ValueAs<double>(map.OtherValueCol, 0);
+            double val_cont = row.TryGetValueAs<double>(map.ContentValueCol, 0);
+            double val_vehic = row.TryGetValueAs<double>(map.VehicleValueCol, 0);
+            double val_other = row.TryGetValueAs<double>(map.OtherValueCol, 0);
             string cbfips = DEFAULT_MISSING_STRING_VALUE;
 
-            double beginningDamage = row.ValueAs<double>(map.BeginningDamageDepthCol, DEFAULT_MISSING_NUMBER_VALUE);
+            double beginningDamage = row.TryGetValueAs<double>(map.BeginningDamageDepthCol, DEFAULT_MISSING_NUMBER_VALUE);
             if (beginningDamage == DEFAULT_MISSING_NUMBER_VALUE)
             {
                 if (found_ht != DEFAULT_MISSING_NUMBER_VALUE)
                     beginningDamage = -found_ht;
             }
 
-            int numStructures = row.ValueAs<int>(map.NumberOfStructuresCol, 1);
-            int yearInService = row.ValueAs<int>(map.YearInConstructionCol, DEFAULT_MISSING_NUMBER_VALUE);
+            int numStructures = row.TryGetValueAs<int>(map.NumberOfStructuresCol, 1);
+            int yearInService = row.TryGetValueAs<int>(map.YearInConstructionCol, DEFAULT_MISSING_NUMBER_VALUE);
 
             // Get the point geometry from the feature.
             Geospatial.Vectors.Point point = structurePoints[i];
             int impactAreaID = GetImpactAreaFID(point, impactAreaCollection);
 
-            string notes = row.ValueAs<string>(map.NotesCol, DEFAULT_MISSING_STRING_VALUE);
-            string description = row.ValueAs<string>(map.DescriptionCol, DEFAULT_MISSING_STRING_VALUE);
+            string notes = row.TryGetValueAs<string>(map.NotesCol, DEFAULT_MISSING_STRING_VALUE);
+            string description = row.TryGetValueAs<string>(map.DescriptionCol, DEFAULT_MISSING_STRING_VALUE);
 
             // Create and add the new Structure.
             structures.Add(new Structure(
@@ -216,10 +217,10 @@ public class ShapefileLoader
     /// <returns></returns>
     private static string GetFID(StructureSelectionMapping map, TableRow row)
     {
-        string name = row.ValueAs(map.StructureIDCol, DEFAULT_MISSING_STRING_VALUE);
+        string name = row.TryGetValueAs(map.StructureIDCol, DEFAULT_MISSING_STRING_VALUE);
         if (name == DEFAULT_MISSING_STRING_VALUE){
             {
-                name = row.ValueAs(map.StructureIDCol, DEFAULT_MISSING_NUMBER_VALUE).ToString();
+                name = row.TryGetValueAs(map.StructureIDCol, DEFAULT_MISSING_NUMBER_VALUE).ToString();
             }
         }
         if (name == DEFAULT_MISSING_NUMBER_VALUE.ToString())
