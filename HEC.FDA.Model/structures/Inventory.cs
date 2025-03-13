@@ -75,7 +75,7 @@ namespace HEC.FDA.Model.structures
             }
             else
             {
-                throw new Exception("Error loading structures from shapefiles" + operationResult.GetConcatenatedMessages());
+                throw new Exception("Error loading structures from shapefiles: " + operationResult.GetConcatenatedMessages());
             }
         }
 
