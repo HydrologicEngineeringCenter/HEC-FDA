@@ -98,7 +98,8 @@ namespace HEC.FDA.Model.paireddata
                 {
                     pairedData.ForceStrictMonotonicityBottomUp();
 
-                } else
+                }
+                else
                 {
                     pairedData.ForceStrictMonotonicityTopDown();
                 }
