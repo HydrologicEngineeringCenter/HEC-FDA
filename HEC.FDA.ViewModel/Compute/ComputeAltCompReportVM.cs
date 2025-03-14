@@ -74,7 +74,7 @@ namespace HEC.FDA.ViewModel.Compute
                 {
                     try
                     {
-                        elem.ComputeAlternative(ComputeCompleted);
+                        elem.ComputeAlternativeAsync(ComputeCompleted);
                     }
                     catch
                     {

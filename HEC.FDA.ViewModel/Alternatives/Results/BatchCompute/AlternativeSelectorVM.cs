@@ -121,7 +121,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
                     FdaValidationResult canComputeVR = elem.RunPreComputeValidation();
                     if (canComputeVR.IsValid)
                     {
-                        Task anualizeComputeTask = ComputeAlternativeVM.RunAnnualizationCompute(elem, ComputeCompleted);
+                        Task anualizeComputeTask = elem.ComputeAlternativeAsync();
                         taskList.Add(anualizeComputeTask);
                     }
                     else

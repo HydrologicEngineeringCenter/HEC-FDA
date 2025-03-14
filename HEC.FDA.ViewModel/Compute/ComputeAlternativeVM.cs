@@ -44,31 +44,5 @@ namespace HEC.FDA.ViewModel.Compute
         {
             NotifyPropertyChanged(nameof(Job));
         }
-
-        public static Task RunAnnualizationCompute(AlternativeElement altElem, Action<AlternativeResults> callback, ProgressReporter reporter = null)
-        {
-            if (reporter == null)
-            {
-                reporter = ProgressReporter.None();
-            }
-            IASElement firstElem = altElem.BaseScenario.GetElement();
-            IASElement secondElem = altElem.FutureScenario.GetElement();
-
-            ScenarioResults firstResults = firstElem.Results;
-            ScenarioResults secondResults = secondElem.Results;
-            StudyPropertiesElement studyProperties = StudyCache.GetStudyPropertiesElement();
-
-            double discountRate = studyProperties.DiscountRate;
-            int periodOfAnalysis = studyProperties.PeriodOfAnalysis;
-
-            int baseYear = altElem.BaseScenario.Year;
-            int futureYear = altElem.FutureScenario.Year;
-            return Task.Run(() =>
-            {
-                AlternativeResults results = Alternative.AnnualizationCompute(discountRate, periodOfAnalysis, altElem.ID,
-                    firstResults, secondResults, baseYear, futureYear, reporter);
-                callback?.Invoke(results);
-            });
-        }
     }
 }

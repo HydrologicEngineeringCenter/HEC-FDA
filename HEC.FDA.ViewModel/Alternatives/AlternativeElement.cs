@@ -55,7 +55,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             NamedAction viewResults = new()
             {
                 Header = StringConstants.VIEW_RESULTS_MENU,
-                Action = ComputeAlternative
+                Action = ComputeAlternativeAsync
             };
             Actions.Insert(1, viewResults);
         }
@@ -105,7 +105,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             NamedAction viewResults = new()
             {
                 Header = StringConstants.VIEW_RESULTS_MENU,
-                Action = ComputeAlternative
+                Action = ComputeAlternativeAsync
             };
             Actions.Insert(1, viewResults);
         }
@@ -214,7 +214,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             return altResult;
         }
 
-        public void ComputeAlternative(object arg1 = null, EventArgs arg2 = null)
+        public async void ComputeAlternativeAsync(object arg1 = null, EventArgs arg2 = null)
         {
             //This is the new entry point for the "view results" menu item
             //when the compute is completed it will call ComputeCompleted which will then call the "ViewResults".
@@ -223,11 +223,25 @@ namespace HEC.FDA.ViewModel.Alternatives
             {
                 ProgressReporter reporter = new();
                 BatchJob batchJob = new(reporter);
-                ComputeAlternativeVM vm = new ComputeAlternativeVM(batchJob);
-                ComputeAlternativeVM.RunAnnualizationCompute(this, ComputeCompleted, reporter);
+                ComputeAlternativeVM vm = new(batchJob);
                 string header = "Compute Log For Alternative: " + Name;
                 DynamicTabVM tab = new(header, vm, "ComputeLog" + Name);
                 Navigate(tab, false, false);
+
+                IASElement firstElem = BaseScenario.GetElement();
+                IASElement secondElem = FutureScenario.GetElement();
+
+                ScenarioResults firstResults = firstElem.Results;
+                ScenarioResults secondResults = secondElem.Results;
+                StudyPropertiesElement studyProperties = StudyCache.GetStudyPropertiesElement();
+
+                double discountRate = studyProperties.DiscountRate;
+                int periodOfAnalysis = studyProperties.PeriodOfAnalysis;
+
+                int baseYear = BaseScenario.Year;
+                int futureYear = FutureScenario.Year;
+                AlternativeResults results = await Task.Run(()=>Alternative.AnnualizationCompute(discountRate, periodOfAnalysis, ID, firstResults, secondResults, baseYear, futureYear, reporter));
+                ComputeCompleted(results);
             }
             else
             {
