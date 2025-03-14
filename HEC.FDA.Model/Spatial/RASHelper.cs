@@ -74,9 +74,23 @@ public static class RASHelper
         GdalBandedRaster<float> resultsGrid = new(filePath);
         Memory<Geospatial.Vectors.Point> points = new([.. geospatialpts]);
         float[] elevationData = new float[points.Length];
-        elevationData.Fill(Geospatial.Constants.NoDataF);
-        resultsGrid.SamplePoints(points, 0, elevationData);
+        resultsGrid.SamplePoints(points, 0, elevationData); //this writes float.MinValue for NoData.
+        OverwriteNoDataValues(ref elevationData);
         return elevationData;
+    }
+
+    /// <summary>
+    /// Checks for float.MinValue and replaces it with Geospatial.Constants.NoDataF
+    /// </summary>
+    private static void OverwriteNoDataValues(ref float[] elevations)
+    {
+        for(int i = 0; i<elevations.Length; i++)
+        {
+            if (elevations[i] == float.MinValue)
+            {
+                elevations[i] = Geospatial.Constants.NoDataF;
+            }
+        }
     }
 
     /// <summary>
