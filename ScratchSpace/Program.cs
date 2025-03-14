@@ -4,7 +4,7 @@
 const string BrennanWork = "EIWRW4EFAANB455";
 const string BrennanVM = "BEAM-VM00";
 const string BrennanHome = "BRENNANDESKTOP";
-const string RichardWork = "";
+const string RichardWork = "EIWRW4EFAANB369";
 const string WillWork = "";
 
 string pcName = GetPCName();

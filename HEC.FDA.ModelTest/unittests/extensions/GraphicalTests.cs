@@ -55,12 +55,10 @@ namespace HEC.FDA.ModelTest.unittests.extensions
             Assert.Equal(dists.Length, prob.Length);
         }
 
-        ///// <summary>
-        ///// Test data: https://docs.google.com/spreadsheets/d/1GhRe3ECAFIKgRqEE8Xo6f_0lHYnHqUW0/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
-        ///// </summary>
+        /// <summary>
+        /// Make it clear what assumptions take place in the development of the test case/expected values
+        /// </summary>
         [Theory]
-        //[InlineData(new double[] { 0.999, 0.5, 0.2, 0.1, 0.02, 0.01, 0.005, 0.001, 0.0001 }, new double[] { 80, 11320, 18520, 23810, 35010, 39350, 42850, 47300, 52739.48924 }, 50, true, new double[] { 936.69, 1951.72, 3213.97, 6066.15, 7900.75, 7900.75 })]
-        //[InlineData(new double[] { 0.999, 0.5, 0.2, 0.1, 0.02, 0.01, 0.005, 0.001, 0.0001 }, new double[] { 80, 11320, 18520, 23810, 35010, 39350, 42850, 47300, 52739.48924 }, 50, false, new double[] { .2244, .1164, .1293, .1924, .2030, .2030 })]
         [InlineData(new double[] {.5, .2, .1, .04, .02, .01, .005, .002}, new double[] {1, 1.1, 4.93, 4.98, 5.02, 5.04, 5.18, 5.3}, 40, true, new double[] {.2, .08, .05, .04, .015, .002 }, new double[] {1.149, .031, .036, .044, .038, .088})]
         public void ReturnsCorrectStandardDeviations(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, bool usingStagesNotFlows, double[] frequenciesAtWhichToCheck, double[] expectedSD)
         {
