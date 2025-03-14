@@ -1,6 +1,9 @@
-﻿using Geospatial.GDALAssist;
+﻿using Geospatial.Features;
+using Geospatial.GDALAssist;
 using Geospatial.GDALAssist.Vectors;
 using Geospatial.IO;
+using Geospatial.Terrain;
+using Geospatial.Vectors;
 using RasMapperLib;
 using RasMapperLib.Utilities;
 using System;
@@ -9,36 +12,36 @@ using System.IO;
 using System.Linq;
 using Utilities;
 using Utility.Extensions;
+using Utility.Logging;
 
 namespace HEC.FDA.Model.Spatial;
 
 public static class RASHelper
 {
-    private const string UNUSED_STRING = "";   
-    /// <summary>
-    /// Raster projection has to be provided separate because RAS 6.x .hdfs don't come packaged with a projection. 
-    /// </summary>
     public static float[] SamplePointsFromRaster(string pointShapefilePath, string rasterPath, Projection rasterProjection)
     {
-        Projection siProjection = GetVectorProjection(pointShapefilePath);
-        PointFeatureLayer pointLayer = new(UNUSED_STRING, pointShapefilePath);
-        PointMs pointMs = new(pointLayer.Points().Select(p => p.PointM()));
-        pointMs = ReprojectPoints(rasterProjection, siProjection, pointMs);
-        return SamplePointsFromRaster(pointMs, rasterPath);
+        OperationResult or = ShapefileIO.TryRead(pointShapefilePath, out PointFeatureCollection pointFeatures, rasterProjection);
+        if (!or.Result)
+        {
+            throw new Exception("Failed to read shapefile: " + pointShapefilePath);
+        }
+        IVectorCollection<Geospatial.Vectors.Point> points = pointFeatures.Features;
+        return SamplePointsFromRaster(points, rasterPath);
     }
-
-    public static float[] SamplePointsFromRaster(PointMs pointMs, string rasterPath)
+    public static float[] SamplePointsFromRaster(IVectorCollection<Geospatial.Vectors.Point> points, string rasterPath)
     {
         string extension = System.IO.Path.GetExtension(rasterPath);
         float[] groundelevs;
         switch (extension)
         {
             case ".hdf":
+                //This is supporting a HEC-RAS 6.x terrain, which is why we're in RasMapperLib and using PointMs.
                 TerrainLayer layer = new("thisNameIsNotUsed", rasterPath);
-                groundelevs = layer.ComputePointElevations(pointMs);
+                PointM[] pointms = GeospatialPointsToPointMs(points);
+                groundelevs = layer.ComputePointElevations(pointms);
                 break;
             case ".tif":
-                groundelevs = SamplePointsOnTiff(pointMs, rasterPath);
+                groundelevs = SamplePointsOnTiff(points, rasterPath);
                 break;
             default:
                 throw new Exception("The file type is invalid.");
@@ -46,19 +49,50 @@ public static class RASHelper
         return groundelevs;
     }
 
+    private static PointM[] GeospatialPointsToPointMs(IVectorCollection<Geospatial.Vectors.Point> points)
+    {
+        PointM[] pointMs = new PointM[points.Count];
+        for(int i = 0; i < points.Count; i++)
+        {
+            pointMs[i] = Converter.ConvertPtM(points[i]);
+        }
+        return pointMs;
+    }
+
     /// <summary>
     /// Expects the points to be in the same projection as the raster.
     /// </summary>
     public static float[] SamplePointsOnTiff(PointMs pts, string filePath)
     {
-        GdalBandedRaster<float> resultsGrid = new(filePath);
         List<Geospatial.Vectors.Point> geospatialpts = Converter.Convert(pts);
-        Memory<Geospatial.Vectors.Point> points = new(geospatialpts.ToArray());
+        PointCollection vectorCollection = new(geospatialpts);
+        return SamplePointsOnTiff(vectorCollection, filePath);
+    }
+
+    public static float[] SamplePointsOnTiff(IVectorCollection<Geospatial.Vectors.Point> geospatialpts, string filePath)
+    {
+        GdalBandedRaster<float> resultsGrid = new(filePath);
+        Memory<Geospatial.Vectors.Point> points = new([.. geospatialpts]);
         float[] elevationData = new float[points.Length];
-        elevationData.Fill(Geospatial.Constants.NoDataF);
-        resultsGrid.SamplePoints(points,0,elevationData);
+        resultsGrid.SamplePoints(points, 0, elevationData); //this writes float.MinValue for NoData.
+        OverwriteNoDataValues(ref elevationData);
         return elevationData;
     }
+
+    /// <summary>
+    /// Checks for float.MinValue and replaces it with Geospatial.Constants.NoDataF
+    /// </summary>
+    private static void OverwriteNoDataValues(ref float[] elevations)
+    {
+        for(int i = 0; i<elevations.Length; i++)
+        {
+            if (elevations[i] == float.MinValue)
+            {
+                elevations[i] = Geospatial.Constants.NoDataF;
+            }
+        }
+    }
+
     /// <summary>
     /// Takes a file path, checks whether it has a .hdf or .tif extension, and returns the projection of the file.
     /// </summary>
@@ -90,17 +124,7 @@ public static class RASHelper
         GDALRaster raster = new(terrainTif);
         return raster.GetProjection();
     }
-    public static int GetImpactAreaFID(PointM point, List<Polygon> ImpactAreas)
-    {
-        for (int i = 0; i < ImpactAreas.Count; i++)
-        {
-            if (ImpactAreas[i].Contains(point))
-            {
-                return i;
-            }
-        }
-        return -9999;
-    }
+
     public static Projection GetVectorProjection(string fileName)
     {
         VectorDataset vector = new(fileName);
@@ -121,106 +145,7 @@ public static class RASHelper
         Geospatial.Vectors.Point newp = VectorExtensions.Reproject(p, currentProjection, newProjection);
         return Converter.ConvertPtM(newp);
     }
-    public static PointMs ReprojectPoints(Projection targetProjection, Projection originalProjection, PointMs pointMs)
-    {
-        if (targetProjection == null || targetProjection.IsEqual(originalProjection))
-        {
-            return pointMs;
-        }
-        PointMs reprojPointMs = new();
-        foreach (PointM pt in pointMs)
-        {
-            reprojPointMs.Add(ReprojectPoint(pt, targetProjection, originalProjection));
-        }
-        return reprojPointMs;
 
-    }
-    public static Polygon ReprojectPolygon(Polygon polygon, Projection newProjection, Projection currentProjection)
-    {
-        Geospatial.Vectors.Polygon poly = Converter.Convert(polygon);
-        Geospatial.Vectors.Polygon reprojPoly = VectorExtensions.Reproject(poly, currentProjection, newProjection);
-        return Converter.Convert(reprojPoly);
-
-    }
-    public static T TryGet<T>(object value, T defaultValue = default)
-where T : struct
-    {
-        if (value == null)
-            return defaultValue;
-        else if (value == DBNull.Value)
-            return defaultValue;
-        else
-        {
-            var retn = value as T?;
-            if (retn.HasValue)
-                return retn.Value;
-            else
-                return defaultValue;
-        }
-    }
-    public static string TryGetObj(object value, string defaultValue)
-    {
-        if (value == null)
-            return defaultValue;
-        else if (value == DBNull.Value)
-            return defaultValue;
-        else
-        {
-            string ret = value.ToString();
-            if (ret.IsNullOrEmpty())
-            {
-                ret = defaultValue;
-            }
-            return ret;
-        }
-    }
-    public static T GetRowValueForColumn<T>(System.Data.DataRow row, string mappingColumnName, T defaultValue) where T : struct
-    {
-        T retval = defaultValue;
-        if (mappingColumnName != null && row.Table.Columns.Contains(mappingColumnName))
-        {
-            //column could have wrong data type, or be null, or dbnull
-            retval = TryGet(row[mappingColumnName], defaultValue);
-        }
-        return retval;
-    }
-    public static string GetRowValueForColumn(System.Data.DataRow row, string mappingColumnName, string defaultValue)
-    {
-        string retval = defaultValue;
-        if (mappingColumnName != null && row.Table.Columns.Contains(mappingColumnName))
-        {
-            //column could have wrong data type, or be null, or dbnull
-            retval = TryGetObj(row[mappingColumnName], defaultValue);
-        }
-        return retval;
-    }
-    public static List<Polygon> LoadImpactAreasFromSourceFiles(PolygonFeatureLayer impactAreaSet, Projection studyProjection)
-    {
-        List<Polygon> polygons = impactAreaSet.Polygons().ToList();
-        Projection impactAreaPrj = GetVectorProjection(impactAreaSet);
-        if (studyProjection == null)
-        {
-            return polygons;
-        }
-        if (impactAreaPrj.IsEqual(studyProjection))
-        {
-            return polygons;
-        }
-        else
-        {
-            return ReprojectPolygons(studyProjection, polygons, impactAreaPrj);
-        }
-    }
-    public static List<Polygon> ReprojectPolygons(Projection studyProjection, List<Polygon> polygons, Projection impactAreaPrj)
-    {
-        List<Polygon> ImpactAreas = new();
-        foreach (Polygon poly in polygons)
-        {
-            Polygon newPoly = ReprojectPolygon(poly, impactAreaPrj, studyProjection);
-            ImpactAreas.Add(newPoly);
-        }
-        return ImpactAreas;
-    }
     /// <summary>
     /// returns all the component files of the terrain. Does not gaurantee they exist, just that they should for the terrain to be complete. 
     /// </summary>
@@ -247,7 +172,7 @@ where T : struct
     }
     public static bool IsPolygonShapefile(string path, ref string error)
     {
-        bool valid = ShapefileWriter.IsPolygonShapefile(path);
+        bool valid = ShapefileIO.IsPolygonShapefile(path);
         if (!valid)
         {
             error += " Not a polygon shapefile. ";
@@ -256,7 +181,7 @@ where T : struct
     }
     public static bool IsPointShapefile(string path, ref string error)
     {
-        bool valid = ShapefileWriter.IsPointShapefile(path);
+        bool valid = ShapefileIO.IsPointShapefile(path);
         if (!valid)
         {
             error += " Not a point shapefile. ";

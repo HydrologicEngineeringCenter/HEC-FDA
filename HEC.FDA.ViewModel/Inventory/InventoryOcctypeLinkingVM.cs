@@ -237,7 +237,7 @@ namespace HEC.FDA.ViewModel.Inventory
         {
             HashSet<string> uniqueList = new();
             PointFeatureCollection collection;
-            OperationResult res = ShapefileWriter.TryReadShapefile(_Path, out collection);
+            OperationResult res = ShapefileIO.TryRead(_Path, out collection);
             if (res.Result)
             {
                 TableColumn occTypeColumn = collection.AttributeTable.GetColumn(_SelectedOcctypeName);

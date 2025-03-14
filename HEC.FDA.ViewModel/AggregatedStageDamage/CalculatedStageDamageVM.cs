@@ -1,6 +1,5 @@
 ﻿using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.stageDamage;
-using HEC.FDA.Model.structures;
 using HEC.FDA.ViewModel.FlowTransforms;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
@@ -10,7 +9,6 @@ using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
-using HEC.MVVMFramework.Model.Messaging;
 using SciChart.Core.Extensions;
 using System;
 using System.Collections.Generic;
@@ -620,7 +618,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                     List<string> errors = scenarioStageDamage.GetErrorMessages();
                     if (errors.Count > 0)
                     {
-                        MessageBox.Show("There are errors in the data used to compute stage-damage. See the errors file in the structure stage damage details folder of this study directory.", "Data Errors", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        MessageBox.Show("There are errors in the data used to compute stage-damage. See the errors file in the structure stage damage details folder of this study directory.", "Data Errors", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     else
                     {

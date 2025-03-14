@@ -47,7 +47,12 @@ namespace HEC.FDA.ModelTest.unittests.structures
                 GroundElevCol,ContentValueCol,OtherValueCol,VehicleValueCol,BeginningDamageDepthCol,YearInConstructionCol,NotesCol,DescriptionCol,NumberOfStructuresCol);
             //Empty (default) occupancy types
             OccupancyType occupancyType = OccupancyType.Builder().Build();
-            Dictionary<string, OccupancyType> occupancyTypes = new Dictionary<string, OccupancyType>() { { "occtype", occupancyType } };
+
+            //This is a hack to make every occtype string match the same key.
+            Dictionary<string, OccupancyType> occupancyTypes = new Dictionary<string, OccupancyType>(new CustomEqualityComparer())
+            {
+                { "EMPTY", occupancyType }
+            };
             Inventory inv;
             if (useTerrainFile)
             {
@@ -119,6 +124,22 @@ namespace HEC.FDA.ModelTest.unittests.structures
             PointM newPnt = RASHelper.ReprojectPoint(pnt, projTerr, projPnt);
             //Assert
             Assert.NotEqual(pnt.X, newPnt.X);
+        }
+    }
+
+    /// <summary>
+    /// Used to make all string match the same key in the dictionary above. Super Hacky. DO NOT USE ANYWHERE OUTSIDE THIS CLASS. 
+    /// </summary>
+    internal class CustomEqualityComparer : IEqualityComparer<string>
+    {
+        public bool Equals(string x, string y)
+        {
+            return true; // Always return true to make all keys equal
+        }
+
+        public int GetHashCode(string obj)
+        {
+            return 0; // Return a constant hash code for all keys
         }
     }
 }
