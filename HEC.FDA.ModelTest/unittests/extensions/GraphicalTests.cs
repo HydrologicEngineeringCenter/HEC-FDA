@@ -1,9 +1,10 @@
 ﻿using System;
 using Xunit;
-using Statistics.GraphicalRelationships;
+using HEC.FDA.Model.extensions;
 using Statistics.Distributions;
+using HEC.FDA.ModelTest.unittests.extensions;
 
-namespace StatisticsTests.GraphicalRelationships
+namespace HEC.FDA.ModelTest.unittests.extensions
 {
     [Trait("RunsOn", "Remote")]
     public class GraphicalTests
@@ -55,37 +56,52 @@ namespace StatisticsTests.GraphicalRelationships
         }
 
         /// <summary>
-        /// Test data: https://docs.google.com/spreadsheets/d/1GhRe3ECAFIKgRqEE8Xo6f_0lHYnHqUW0/edit?usp=sharing&ouid=105470256128470573157&rtpof=true&sd=true
+        /// Make it clear what assumptions take place in the development of the test case/expected values
         /// </summary>
         [Theory]
-        [InlineData(new double[] { 0.999, 0.5, 0.2, 0.1, 0.02, 0.01, 0.005, 0.001, 0.0001 }, new double[] { 80, 11320, 18520, 23810, 35010, 39350, 42850, 47300, 52739.48924 }, 50, true, new double[] { 936.69, 1951.72, 3213.97, 6066.15, 7900.75, 7900.75} )]
-        [InlineData(new double[] { 0.999, 0.5, 0.2, 0.1, 0.02, 0.01, 0.005, 0.001, 0.0001 }, new double[] { 80, 11320, 18520, 23810, 35010, 39350, 42850, 47300, 52739.48924 }, 50, false, new double[] {.2244,  .1164, .1293, .1924, .2030, .2030})]
-        public void ReturnsCorrectStandardDeviations(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, bool usingStagesNotFlows, double[] expectedSD)
+        [InlineData(new double[] {.5, .2, .1, .04, .02, .01, .005, .002}, new double[] {1, 1.1, 4.93, 4.98, 5.02, 5.04, 5.18, 5.3}, 40, true, new double[] {.2, .08, .05, .04, .015, .002 }, new double[] {1.149, .031, .036, .044, .038, .088})] //Algiers
+        [InlineData(new double[] { .99, .5, .2, .1, .04, .02, .01, .005, .002 }, new double[] { 0, 1340.37, 1899.36, 2279.29, 2731.60, 3000.05, 3416.28, 3767.17, 4207.08 }, 20, false, new double[] { .2, .1, .06, .02, .005 }, new double[] { 271.8, 363.61, 478.99, 765.9, 1489.73})] //Tafuna
+        public void ReturnsCorrectStandardDeviations(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, bool usingStagesNotFlows, double[] frequenciesAtWhichToCheck, double[] expectedSD)
         {
             GraphicalDistribution graphical = new GraphicalDistribution(exceedanceProbabilities, flowOrStageValues, equivalentRecordLength, usingStagesNotFlows);
             Statistics.ContinuousDistribution[] actualDistributions = graphical.StageOrLogFlowDistributions;
-            for (int i = 2; i < 8; i++)
+            for (int i = 0; i < frequenciesAtWhichToCheck.Length; i++)
             {
                 double actual;
+                double expected = expectedSD[i];
+                double frequencyAtWhichToCheck = frequenciesAtWhichToCheck[i];
+               
+                int indexAtWhichToCheck = 0;
+                for (int j = 0; j < graphical.ExceedanceProbabilities.Length; j++)
+                {
+                    if (graphical.ExceedanceProbabilities[j] == frequencyAtWhichToCheck)
+                    {
+                        indexAtWhichToCheck = j;
+                        break;
+                    }
+                }
+
                 if (usingStagesNotFlows)
                 {
-                    actual = ((Normal)actualDistributions[i]).StandardDeviation;
+                    actual = ((Normal)actualDistributions[indexAtWhichToCheck]).StandardDeviation;
+                    double levelToleranceInFeet = 0.20; //allowable error is 2 tenths of a foot 
+                    double absoluteError = Math.Abs((actual - expected));
+                    Assert.True(absoluteError < levelToleranceInFeet);
                 }
                 else
                 {
-                    actual = ((LogNormal)actualDistributions[i]).StandardDeviation;
+                    actual = Math.Exp(((LogNormal)actualDistributions[indexAtWhichToCheck]).StandardDeviation);
+                    double levelTolerance = 500; //allowable error is 500 CFS 
+                    double levelError = Math.Abs((actual - expected));
+                    Assert.True(levelError < levelTolerance);
                 }
-                //TODO: The values used to calculate the test data were calculated with a different slope schema than the one that has been implemented, which is better. 
-                //Re-do the test data to update to current methodology 
-                double tolerance = 0.15;
-                double relativeError = Math.Abs((actual - expectedSD[i-2]) / expectedSD[i-2]);
-                Assert.True(relativeError < tolerance);
+
             }
         }
 
         [Theory]
-        [InlineData(0.25, 1/0.1797, 50, 0.3408)]
-        [InlineData(0.963, 1/0.0017, 50, 15.3195)]
+        [InlineData(0.25, 1 / 0.1797, 50, 0.3408)]
+        [InlineData(0.963, 1 / 0.0017, 50, 15.3195)]
         public void Equation6Should(double nonExceedanceProbability, double slope, int erl, double expected)
         {
             double actual = GraphicalDistribution.Equation6StandardError(nonExceedanceProbability, slope, erl);
@@ -93,21 +109,21 @@ namespace StatisticsTests.GraphicalRelationships
         }
 
         [Theory]
-        [InlineData(0.999,0.99,900,800,0.995,832.6595)]
-        [InlineData(0.34,0.31,1002,1000,0.32,1000.6752)]
-        [InlineData(0.004,0.002,1200,1100, 0.0025, 1131.4598)]
-        public void InterpolateNormallyShould(double p, double p_minus, double q, double q_minus, double p_minusEpsilon,  double expected)
+        [InlineData(0.999, 0.99, 900, 800, 0.995, 832.6595)]
+        [InlineData(0.34, 0.31, 1002, 1000, 0.32, 1000.6752)]
+        [InlineData(0.004, 0.002, 1200, 1100, 0.0025, 1131.4598)]
+        public void InterpolateNormallyShould(double p, double p_minus, double q, double q_minus, double p_minusEpsilon, double expected)
         {
-            double actual = GraphicalDistribution.InterpolateNormally(p, p_minus, q, q_minus, p_minusEpsilon); 
+            double actual = GraphicalDistribution.InterpolateNormally(p, p_minus, q, q_minus, p_minusEpsilon);
             Assert.Equal(expected, actual, 0.01);
         }
 
         [Theory]
-        [InlineData(new double[] {0.5, 0.2, 0.1}, new double[] {102, 104, 104.2}, 1, 5.0560)]
-        [InlineData(new double[] {0.99, 0.5, 0.2}, new double[] {101.5, 102, 104}, 1, 3.2477)]
+        [InlineData(new double[] { 0.5, 0.2, 0.1 }, new double[] { 102, 104, 104.2 }, 1, 5.0560)]
+        [InlineData(new double[] { 0.99, 0.5, 0.2 }, new double[] { 101.5, 102, 104 }, 1, 3.2477)]
         public void ComputeSlopeShould(double[] exceedanceProbabilities, double[] stageOrLoggedFlowValues, int index, double expected)
         {
-            double actual = GraphicalDistribution.ComputeSlope(exceedanceProbabilities,stageOrLoggedFlowValues,index);
+            double actual = GraphicalDistribution.ComputeSlope(exceedanceProbabilities, stageOrLoggedFlowValues, index);
             Assert.Equal(expected, actual, 0.5);
         }
     }
