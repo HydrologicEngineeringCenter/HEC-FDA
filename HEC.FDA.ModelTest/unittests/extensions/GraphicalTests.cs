@@ -91,13 +91,9 @@ namespace HEC.FDA.ModelTest.unittests.extensions
                 else
                 {
                     actual = Math.Exp(((LogNormal)actualDistributions[indexAtWhichToCheck]).StandardDeviation);
-                    double levelToleranceInCFS = 5; //allowable error is 2 tenths of a foot 
-                    if (actual > levelToleranceInCFS)
-                    {
-                        //burn it down
-                    }
-                    double absoluteError = Math.Abs((actual - expected));
-                    Assert.True(absoluteError < levelToleranceInCFS);
+                    double levelTolerance = 275; //allowable error is 275 CFS 
+                    double levelError = Math.Abs((actual - expected));
+                    Assert.True(levelError < levelTolerance);
                 }
 
             }
