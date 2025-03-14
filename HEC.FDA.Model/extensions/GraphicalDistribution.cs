@@ -10,6 +10,7 @@ using HEC.FDA.Model.utilities;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Model.Messaging;
 using Statistics.Graphical;
+using HEC.FDA.Model.paireddata;
 
 namespace HEC.FDA.Model.extensions
 {
@@ -60,15 +61,17 @@ namespace HEC.FDA.Model.extensions
         {
             EquivalentRecordLength = equivalentRecordLength;
             UsingStagesNotFlows = usingStagesNotFlows;
-            double[] combinedInterpolationExceedanceProbabilities = FillInputExceedanceProbabilitiesWithInterpolationPoints(userInputExceedanceProbabilities);
-            //first stage or logged flows is interpolated 
-            if (UsingStagesNotFlows)
+            PairedData extrapolatedFrequencyFunctionWithStagesOrLoggedFlows;
+            if (usingStagesNotFlows)
             {
-                StageOrLoggedFlowValues = InterpolateQuantiles.InterpolateOnX(userInputExceedanceProbabilities, combinedInterpolationExceedanceProbabilities, stageOrUnloggedFlowValues); ;
-            } else
-            {
-                StageOrLoggedFlowValues = InterpolateQuantiles.InterpolateOnX(userInputExceedanceProbabilities, combinedInterpolationExceedanceProbabilities, LogFlows(stageOrUnloggedFlowValues));
+                extrapolatedFrequencyFunctionWithStagesOrLoggedFlows = ExtrapolateFrequencyFunction(userInputExceedanceProbabilities, stageOrUnloggedFlowValues);
             }
+            else
+            {
+                extrapolatedFrequencyFunctionWithStagesOrLoggedFlows = ExtrapolateFrequencyFunction(userInputExceedanceProbabilities, LogFlows(stageOrUnloggedFlowValues));
+            }
+            ExceedanceProbabilities = FillInputExceedanceProbabilitiesWithRequiredPoints(extrapolatedFrequencyFunctionWithStagesOrLoggedFlows.Xvals);
+            StageOrLoggedFlowValues = InterpolateQuantiles.InterpolateOnX(extrapolatedFrequencyFunctionWithStagesOrLoggedFlows.Xvals, ExceedanceProbabilities, extrapolatedFrequencyFunctionWithStagesOrLoggedFlows.Yvals); ;
             LowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant = lowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant;
             HigherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant = higherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant;
             AddRules(userInputExceedanceProbabilities);
@@ -81,9 +84,6 @@ namespace HEC.FDA.Model.extensions
             }
             else
             {
-                //then stage or logged flows is extrapolated 
-                ExtrapolateFrequencyFunction(combinedInterpolationExceedanceProbabilities);
-
                 //then we compute uncertainty 
                 StageOrLogFlowDistributions = ConstructContinuousDistributions();
             }
@@ -120,7 +120,7 @@ namespace HEC.FDA.Model.extensions
             }
             return true;
         }
-        private static double[] FillInputExceedanceProbabilitiesWithInterpolationPoints(double[] inputExceedanceProbabilities)
+        private static double[] FillInputExceedanceProbabilitiesWithRequiredPoints(double[] inputExceedanceProbabilities)
         {
             List<double> allProbabilities = DoubleGlobalStatics.RequiredExceedanceProbabilities.ToList();
             foreach (double probability in inputExceedanceProbabilities)
@@ -151,66 +151,66 @@ namespace HEC.FDA.Model.extensions
             return loggedFlows;
         }
 
-        //TODO: This method can be refactored for clarity.
-        public void ExtrapolateFrequencyFunction(double[] exceedanceProbabilities)
+        //This method adds a minimum and maximum coordinate to the frequency function, extrapolating beyond what the user provided 
+        public PairedData ExtrapolateFrequencyFunction(double[] exceedanceProbabilities, double[] userProvidedStageOrLoggedFlowValues)
         {
             double toleratedDifference = 0.0001;
             double maximumExceedanceProbability = 0.9999;
             double minimumExceedanceProbability = 0.0001;
 
-            List<double> finalFlowOrStageValues = new();
-            List<double> finalExceedanceProbabilities = new();
+            List<double> ExtrapolatedFlowOrStageValues = new();
+            List<double> ExtrapolatedExceedanceProbabilities = new();
             for (int i = 0; i < exceedanceProbabilities.Length; i++)
             {
-                finalFlowOrStageValues.Add(StageOrLoggedFlowValues[i]);
-                finalExceedanceProbabilities.Add(exceedanceProbabilities[i]);
+                ExtrapolatedFlowOrStageValues.Add(userProvidedStageOrLoggedFlowValues[i]);
+                ExtrapolatedExceedanceProbabilities.Add(exceedanceProbabilities[i]);
             }
 
             //more frequent of the frequency curve
-            if (maximumExceedanceProbability - finalExceedanceProbabilities.First() > toleratedDifference)
+            if (maximumExceedanceProbability - ExtrapolatedExceedanceProbabilities.First() > toleratedDifference)
             { //if the maximum exceedance probability is sufficiently larger than the largest exceedance probabiltiy 
 
 
                 // let x1 be the lowest value in xvals 
-                double smallestInputFlowOrStage = finalFlowOrStageValues[0];
+                double smallestInputFlowOrStage = ExtrapolatedFlowOrStageValues[0];
 
                 //insert the maximum probability into the first location 
-                finalExceedanceProbabilities.Insert(0, maximumExceedanceProbability);
+                ExtrapolatedExceedanceProbabilities.Insert(0, maximumExceedanceProbability);
                
-                if (smallestInputFlowOrStage < 0) { finalFlowOrStageValues.Insert(0, 1.001 * smallestInputFlowOrStage); } //if the first value is negative then make it slightly more negative
+                if (smallestInputFlowOrStage < 0) { ExtrapolatedFlowOrStageValues.Insert(0, 1.001 * smallestInputFlowOrStage); } //if the first value is negative then make it slightly more negative
 
                 if (smallestInputFlowOrStage > 0)
                 {
-                    finalFlowOrStageValues.Insert(0, .999 * smallestInputFlowOrStage);
+                    ExtrapolatedFlowOrStageValues.Insert(0, .999 * smallestInputFlowOrStage);
                 } //insert a slightly smaller value 
 
                 else if (smallestInputFlowOrStage < -1.0e-4)
                 {
-                    finalFlowOrStageValues[0] = 1.001 * smallestInputFlowOrStage;//why are we doing it a second time?
+                    ExtrapolatedFlowOrStageValues[0] = 1.001 * smallestInputFlowOrStage;//why are we doing it a second time?
                 }                   
                 else
                 {
-                    finalFlowOrStageValues.Insert(0, -1.0e-4);//so if xl is really close to zero, set the value equal to -1e-4?
+                    ExtrapolatedFlowOrStageValues.Insert(0, -1.0e-4);//so if xl is really close to zero, set the value equal to -1e-4?
                 } 
             }
             //less frequent end of the frequency curve
-            if (finalExceedanceProbabilities.Last() - minimumExceedanceProbability > toleratedDifference)
+            if (ExtrapolatedExceedanceProbabilities.Last() - minimumExceedanceProbability > toleratedDifference)
             {
                 Normal standardNormalDistribution = new();
-                double penultimateInputExceedanceProbability = finalExceedanceProbabilities[^2];
-                double lastInputExceedanceProbability = finalExceedanceProbabilities.Last();
+                double penultimateInputExceedanceProbability = ExtrapolatedExceedanceProbabilities[^2];
+                double lastInputExceedanceProbability = ExtrapolatedExceedanceProbabilities.Last();
                 double zValueOfMin = standardNormalDistribution.InverseCDF(minimumExceedanceProbability);
                 double zValueOfPenultimateInputProbability = standardNormalDistribution.InverseCDF(penultimateInputExceedanceProbability);
                 double zValueOfLastInputProbability = standardNormalDistribution.InverseCDF(lastInputExceedanceProbability);
-                double penultimateInputFlowOrStage = finalFlowOrStageValues[^2];
-                double lastInputFlowOrStage = finalFlowOrStageValues.Last();
+                double penultimateInputFlowOrStage = ExtrapolatedFlowOrStageValues[^2];
+                double lastInputFlowOrStage = ExtrapolatedFlowOrStageValues.Last();
                 double c = (zValueOfLastInputProbability - zValueOfPenultimateInputProbability) / (zValueOfMin - zValueOfPenultimateInputProbability); //TODO: figure out what c represents and give it a good name
                 double upperFlowOrStage = ((lastInputFlowOrStage - penultimateInputFlowOrStage) + c * penultimateInputFlowOrStage) / c;
-                finalFlowOrStageValues.Add(upperFlowOrStage);
-                finalExceedanceProbabilities.Add(minimumExceedanceProbability);
+                ExtrapolatedFlowOrStageValues.Add(upperFlowOrStage);
+                ExtrapolatedExceedanceProbabilities.Add(minimumExceedanceProbability);
             }
-            StageOrLoggedFlowValues = finalFlowOrStageValues.ToArray();
-            ExceedanceProbabilities = finalExceedanceProbabilities.ToArray();
+            PairedData extrapolatedFunction = new PairedData(ExtrapolatedExceedanceProbabilities.ToArray(), ExtrapolatedFlowOrStageValues.ToArray());
+            return extrapolatedFunction;
         }
 
         //TODO: This method can be refactored for clarity.  
