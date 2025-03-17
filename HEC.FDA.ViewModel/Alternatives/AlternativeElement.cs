@@ -14,9 +14,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using System.Xml.Linq;
+using Utility;
 using Utility.Progress;
 using Visual.Observables;
+using SynchronizationContext = Utility.SynchronizationContext;
 
 namespace HEC.FDA.ViewModel.Alternatives
 {
@@ -221,10 +224,10 @@ namespace HEC.FDA.ViewModel.Alternatives
             FdaValidationResult vr = RunPreComputeValidation();
             if (vr.IsValid)
             {
-                ProgressReporter reporter = new();
-                BatchJob batchJob = new(reporter);
-                ComputeAlternativeVM vm = new ComputeAlternativeVM(batchJob);
-                ComputeAlternativeVM.RunAnnualizationCompute(this, ComputeCompleted);
+                ISynchronizationContext context = new SynchronizationContext(action => Application.Current.Dispatcher.BeginInvoke(action));
+                BatchJob batchJob = new(uiThreadSyncContext: context);
+                ComputeAlternativeVM vm = new(batchJob);
+                ComputeAlternativeVM.RunAnnualizationCompute(this, ComputeCompleted,batchJob.Reporter);
                 string header = "Compute Log For Alternative: " + Name;
                 DynamicTabVM tab = new(header, vm, "ComputeLog" + Name);
                 Navigate(tab, false, false);
