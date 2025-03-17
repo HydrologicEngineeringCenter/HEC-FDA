@@ -217,7 +217,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             return altResult;
         }
 
-        public void ComputeAlternative(object arg1 = null, EventArgs arg2 = null)
+        public async void ComputeAlternative(object arg1 = null, EventArgs arg2 = null)
         {
             //This is the new entry point for the "view results" menu item
             //when the compute is completed it will call ComputeCompleted which will then call the "ViewResults".
@@ -227,21 +227,17 @@ namespace HEC.FDA.ViewModel.Alternatives
                 ISynchronizationContext context = new SynchronizationContext(action => Application.Current.Dispatcher.BeginInvoke(action));
                 BatchJob batchJob = new(uiThreadSyncContext: context);
                 ComputeAlternativeVM vm = new(batchJob);
-                ComputeAlternativeVM.RunAnnualizationCompute(this, ComputeCompleted,batchJob.Reporter);
                 string header = "Compute Log For Alternative: " + Name;
                 DynamicTabVM tab = new(header, vm, "ComputeLog" + Name);
                 Navigate(tab, false, false);
+                Results = await ComputeAlternativeVM.RunAnnualizationCompute(this, batchJob.Reporter);
+                ViewResults();
+
             }
             else
             {
                 MessageBox.Show(vr.ErrorMessage, "Cannot Compute Alternative Results", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
-        }
-
-        private void ComputeCompleted(AlternativeResults results)
-        {
-            Results = results;
-            Application.Current.Dispatcher.Invoke(() => { ViewResults();});
         }
 
         private void ViewResults()

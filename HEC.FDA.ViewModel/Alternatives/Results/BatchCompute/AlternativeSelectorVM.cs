@@ -1,6 +1,7 @@
 ﻿using HEC.FDA.Model.alternatives;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.ViewModel.Compute;
+using HEC.FDA.ViewModel.ImpactAreaScenario.Results;
 using HEC.FDA.ViewModel.Results;
 using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Utilities;
@@ -20,7 +21,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
     public class AlternativeSelectorVM : ChildSelectorVM
     {
 
-        public AlternativeSelectorVM():base()
+        public AlternativeSelectorVM() : base()
         {
             ComputeButtonLabel = "View";
             ValidateAlternatives();
@@ -106,38 +107,37 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
 
         public override async void Compute(List<ComputeChildRowItem> altRows)
         {
-            MessageEventArgs beginComputeMessageArgs = new MessageEventArgs(new Message("Beginning Batch Compute"));
-            ReportMessage(this, beginComputeMessageArgs);
+            ReportMessage(this, new MessageEventArgs(new Message("Beginning Batch Compute")));
 
-            List<Task> taskList = [];
-            List<AlternativeElement> elementList = [];
+            List<Task<AlternativeResults>> computeTasks = [];
+            List<AlternativeElement> alternativeElements = [];
 
-            try
+            foreach (ComputeChildRowItem row in altRows)
             {
-                foreach (ComputeChildRowItem row in altRows)
+                // Retrieve the alternative element from the row.
+                var altElement = (AlternativeElement)row.ChildElement;
+                alternativeElements.Add(altElement);
+
+                // Check if the element is valid for computing.
+                var validation = altElement.RunPreComputeValidation();
+                if (validation.IsValid)
                 {
-                    AlternativeElement elem = (AlternativeElement)row.ChildElement;
-                    elementList.Add(elem);
-                    FdaValidationResult canComputeVR = elem.RunPreComputeValidation();
-                    if (canComputeVR.IsValid)
-                    {
-                        Task anualizeComputeTask = ComputeAlternativeVM.RunAnnualizationCompute(elem, ComputeCompleted);
-                        taskList.Add(anualizeComputeTask);
-                    }
-                    else
-                    {
-                        row.MarkInError(canComputeVR.ErrorMessage);
-                    }
+                    // RunAnnualizationCompute returns a started task.
+                    computeTasks.Add(ComputeAlternativeVM.RunAnnualizationCompute(altElement));
                 }
-                await Task.WhenAll(taskList.ToArray());
+                else
+                {
+                    row.MarkInError(validation.ErrorMessage);
+                }
             }
-            catch (TaskCanceledException)
+            // Wait for all valid compute tasks to finish.
+            AlternativeResults[] aggregatedResults = await Task.WhenAll(computeTasks);
+
+            // Assign the computed results to the matching alternative element.
+            foreach (var result in aggregatedResults)
             {
-                MessageBox.Show("Compute Canceled.", "Compute Canceled", MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
+                ComputeCompleted(result);
             }
-            MessageEventArgs finishedComputeMessageArgs = new MessageEventArgs(new Message("All Scenarios Computed"));
-            ReportMessage(this, finishedComputeMessageArgs);
 
             if (HasFatalError)
             {
@@ -145,25 +145,29 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
                 HasFatalError = false;
                 return;
             }
-            AlternativeSummaryVM altVm = new AlternativeSummaryVM(elementList);
-            string header = "Alternative Summary Results";
-            DynamicTabVM tab = new DynamicTabVM(header, altVm, header);
-            Navigate(tab, false, true);
+
+            // Report that all scenarios have been computed.
+            ReportMessage(this, new MessageEventArgs(new Message("All Scenarios Computed")));
+
+            var altSummaryVM = new AlternativeSummaryVM(alternativeElements);
+            const string header = "Alternative Summary Results";
+            var dynamicTabVM = new DynamicTabVM(header, altSummaryVM, header);
+            Navigate(dynamicTabVM, false, true);
         }
 
 
         private void ComputeCompleted(AlternativeResults results)
         {
-            if(results == null)
+            if (results == null)
             {
                 HasFatalError = true;
-                
+
                 return; // if failed, don't try to save a result. 
             }
-            //Assign the results back onto the alt.      
-            foreach(ComputeChildRowItem row in Rows)
+            // Assign the computed results to the matching alternative element.
+            foreach (var row in Rows)
             {
-                if(row.ChildElement.ID == results.AlternativeID)
+                if (((AlternativeElement)row.ChildElement).ID == results.AlternativeID)
                 {
                     ((AlternativeElement)row.ChildElement).Results = results;
                 }
