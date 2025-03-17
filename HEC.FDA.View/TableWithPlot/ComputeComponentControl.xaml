@@ -16,6 +16,6 @@
             <ComboBox Margin="5" ItemsSource="{Binding Path = Options}" Grid.Column="1" SelectedItem="{Binding Path=SelectedItem}" DisplayMemberPath="Name"/>
             <Label Content="{Binding Path=Units}" VerticalAlignment="Center"/>
         </StackPanel>
-        <local:FdaDataGridControl DataContext="{Binding Path=SelectedItem }" Grid.Row="1"/>
+        <local:FdaDataGridControl DataContext="{Binding Path=SelectedItem }" UseStarSizing="True" Grid.Row="1"/>
     </Grid>
 </UserControl>
