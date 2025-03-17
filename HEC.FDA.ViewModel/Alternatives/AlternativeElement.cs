@@ -224,7 +224,7 @@ namespace HEC.FDA.ViewModel.Alternatives
                 ProgressReporter reporter = new();
                 BatchJob batchJob = new(reporter);
                 ComputeAlternativeVM vm = new ComputeAlternativeVM(batchJob);
-                ComputeAlternativeVM.RunAnnualizationCompute(this, ComputeCompleted, reporter);
+                ComputeAlternativeVM.RunAnnualizationCompute(this, ComputeCompleted);
                 string header = "Compute Log For Alternative: " + Name;
                 DynamicTabVM tab = new(header, vm, "ComputeLog" + Name);
                 Navigate(tab, false, false);
