@@ -137,9 +137,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         public void ComputeConfidenceLimits()
         {
             GraphicalUncertainPairedData graphical = GraphicalUncertainPairedData;
-            //temporarily adjusted so that we have the same quantiles as 1.4.3
-            PairedData upperNonExceedence = graphical.SamplePairedData(.97725) as PairedData;
-            PairedData lowerNonExceedence = graphical.SamplePairedData(.02275) as PairedData;
+            PairedData upperNonExceedence = graphical.SamplePairedData(0.975) as PairedData;
+            PairedData lowerNonExceedence = graphical.SamplePairedData(.025) as PairedData;
             double[] probs = lowerNonExceedence.Xvals;
 
             foreach (GraphicalRow row in ((GraphicalDataProvider)SelectedItem).Data)
