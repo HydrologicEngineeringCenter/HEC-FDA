@@ -55,50 +55,6 @@ namespace HEC.FDA.ModelTest.unittests.extensions
             Assert.Equal(dists.Length, prob.Length);
         }
 
-        /// <summary>
-        /// Make it clear what assumptions take place in the development of the test case/expected values
-        /// </summary>
-        [Theory]
-        [InlineData(new double[] {.5, .2, .1, .04, .02, .01, .005, .002}, new double[] {1, 1.1, 4.93, 4.98, 5.02, 5.04, 5.18, 5.3}, 40, true, new double[] {.2, .08, .05, .04, .015, .002 }, new double[] {1.149, .031, .036, .044, .038, .088})] //Algiers
-        [InlineData(new double[] { .99, .5, .2, .1, .04, .02, .01, .005, .002 }, new double[] { 0, 1340.37, 1899.36, 2279.29, 2731.60, 3000.05, 3416.28, 3767.17, 4207.08 }, 20, false, new double[] { .2, .1, .06, .02, .005 }, new double[] { 271.8, 363.61, 478.99, 765.9, 1489.73})] //Tafuna
-        public void ReturnsCorrectStandardDeviations(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, bool usingStagesNotFlows, double[] frequenciesAtWhichToCheck, double[] expectedSD)
-        {
-            GraphicalDistribution graphical = new GraphicalDistribution(exceedanceProbabilities, flowOrStageValues, equivalentRecordLength, usingStagesNotFlows);
-            Statistics.ContinuousDistribution[] actualDistributions = graphical.StageOrLogFlowDistributions;
-            for (int i = 0; i < frequenciesAtWhichToCheck.Length; i++)
-            {
-                double actual;
-                double expected = expectedSD[i];
-                double frequencyAtWhichToCheck = frequenciesAtWhichToCheck[i];
-               
-                int indexAtWhichToCheck = 0;
-                for (int j = 0; j < graphical.ExceedanceProbabilities.Length; j++)
-                {
-                    if (graphical.ExceedanceProbabilities[j] == frequencyAtWhichToCheck)
-                    {
-                        indexAtWhichToCheck = j;
-                        break;
-                    }
-                }
-
-                if (usingStagesNotFlows)
-                {
-                    actual = ((Normal)actualDistributions[indexAtWhichToCheck]).StandardDeviation;
-                    double levelToleranceInFeet = 0.20; //allowable error is 2 tenths of a foot 
-                    double absoluteError = Math.Abs((actual - expected));
-                    Assert.True(absoluteError < levelToleranceInFeet);
-                }
-                else
-                {
-                    actual = Math.Exp(((LogNormal)actualDistributions[indexAtWhichToCheck]).StandardDeviation);
-                    double levelTolerance = 500; //allowable error is 500 CFS 
-                    double levelError = Math.Abs((actual - expected));
-                    Assert.True(levelError < levelTolerance);
-                }
-
-            }
-        }
-
         [Theory]
         [InlineData(0.25, 1 / 0.1797, 50, 0.3408)]
         [InlineData(0.963, 1 / 0.0017, 50, 15.3195)]

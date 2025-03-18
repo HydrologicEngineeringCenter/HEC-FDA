@@ -68,32 +68,73 @@ new double[] { 6.6, 7.4, 8.55, 9.95, 11.5, 12.7, 13.85, 14.7, 15.8, 16.7, 17.5, 
         }
 
 
-        ///// <summary>
-        ///// This test demonstrates that our quantile sampling reasonably matches direct quantile calculation
-        ///// test data for the first case study can be found at: https://docs.google.com/spreadsheets/d/1aLnGuzmmopDID7ehb1Jux5IZtegMpmnX/edit?usp=drive_link&ouid=105470256128470573157&rtpof=true&sd=true
-        ///// test data for the second case study was generated from HEC-FDA Version 1.4.3 from the Algiers feasibilty study data 
-        ///// </summary>
-        ///// <param name="probabilitiesAtWhichToTest"></param> these are probabilities for quantiles that are interpolated
-        ///// <param name="expectedQuantile"></param> these are interpolated quantiles 
-        //[Theory]
-        //[InlineData(new double[] { 0.999, 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.004, 0.002 }, new double[] { 80, 82, 84, 84.5, 84.8, 85, 86, 88, 90 }, 50, 1, new double[] {0.35, 0.75, 0.956, 0.9905}, new double[] {81.8684, 84.060773, 84.970707, 88.707344})]
-        //[InlineData(new double[] {0.5,0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.002}, new double[] {1, 1.1, 4.93, 4.98, 5.02, 5.04, 5.18, 5.3}, 40, 2, new double[] { .1, .78, .8, .825, .99, .995 }, new double[] {1, 1.144, 3.398, 4.995, 5.216, 5.356})]
-        //public void SamplePairedDataShould(double[] inputProbabilities, double[] inputStages, int erl, int standardDeviationAtWhichToTest, double[] probabilitiesAtWhichToTest, double[] expectedQuantile)
-        //{
+        /// <summary>
+        /// This test demonstrates that our quantile sampling reasonably matches direct quantile calculation
+        /// test data for the first case study can be found at: https://docs.google.com/spreadsheets/d/1aLnGuzmmopDID7ehb1Jux5IZtegMpmnX/edit?usp=drive_link&ouid=105470256128470573157&rtpof=true&sd=true
+        /// test data for the second case study was generated from HEC-FDA Version 1.4.3 from the Algiers feasibilty study data 
+        /// </summary>
+        /// <param name="probabilitiesAtWhichToTest"></param> these are probabilities for quantiles that are interpolated
+        /// <param name="expectedQuantile"></param> these are interpolated quantiles 
+        [Theory]
+        [InlineData(new double[] { 0.999, 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.004, 0.002 }, new double[] { 80, 82, 84, 84.5, 84.8, 85, 86, 88, 90 }, 50, true, 1, new double[] { 0.35, 0.75, 0.956, 0.9905 }, new double[] { 81.8684, 84.060773, 84.970707, 88.707344 })] //spreadsheet test
+        [InlineData(new double[] { 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.002 }, new double[] { -2, -1.9, 1.93, 1.98, 2.02, 2.04, 2.18, 2.3 }, 40, true, 2, new double[] { .1, .78, .8, .825, .99, .995 }, new double[] { -2.001, -1.856, 0.398, 1.995, 2.216, 2.356 })] //Algiers 2 sd above mean, chosen quantiles hug important inflection point and include bottom extrapolation
+        [InlineData(new double[] { 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.002 }, new double[] { -2, -1.9, 1.93, 1.98, 2.02, 2.04, 2.18, 2.3 }, 40, true, -2, new double[] { .1, .78, .8, .825, .99, .995 }, new double[] { -2.001,-1.96, -1.96, -1.96, 1.952, 2.004 })] //Algiers 2 sd below mean, chosen quantiles hug important inflection point and include bottom extrapolation
+        [InlineData(new double[] { 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.002 }, new double[] { -2, -1.9, 1.93, 1.98, 2.02, 2.04, 2.18, 2.3 }, 40, true, 0, new double[] { .1, .78, .8, .825, .99, .995 }, new double[] { -2.001, -1.908, -1.9, -1.091, 2.04, 2.18 })] //Algiers mean, chosen quantiles hug important inflection point, tests mean interpolation and correct mean assignment for user input
+        [InlineData(new double[] { 0.5, 0.2, 0.1, 0.05, 0.02, 0.01, 0.005, 0.002 }, new double[] { 1.242, 6.646, 9.821, 12.54, 14.803, 16.29, 17.492, 18.196 }, 81, true, 2, new double[] { .65, .825, .95, .985, .999 }, new double[] { 5.555, 9.692, 15.591, 19.453, 22.528 })] //Glendive 2 sd above mean, quantiles include top end extrapolation
+        [InlineData(new double[] { 0.5, 0.2, 0.1, 0.05, 0.02, 0.01, 0.005, 0.002 }, new double[] { 1.242, 6.646, 9.821, 12.54, 14.803, 16.29, 17.492, 18.196 }, 81, true, -2, new double[] { .65, .825, .95, .985, .999 }, new double[] { 1.877, 4.942, 9.49, 11.502, 14.852 })] //Glendive 2 sd below mean, quantiles include top end extrapolation
+        [InlineData(new double[] { 0.5, 0.2, 0.1, 0.05, 0.02, 0.01, 0.005, 0.002 }, new double[] { 1.242, 6.646, 9.821, 12.54, 14.803, 16.29, 17.492, 18.196 }, 81, true, 0, new double[] { .65, .825, .95, .985, .999 }, new double[] { 3.716, 7.317, 12.54, 15.437, 18.69 })] //Glendive mean function, quantiles include top end extrapolation
+        [InlineData(new double[] { 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.002 }, new double[] { 3.902, 5.677, 6.322, 6.952, 7.56, 5.128, 8.589, 9.14 }, 50, true, 2, new double[] { .65, .825, .95, .985, .999 }, new double[] { 5.484, 6.427, 7.621, 9.751, 12.538 })] //London Orleans 2 sd above mean, quantiles include top end extrapolation
+        [InlineData(new double[] { 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.002 }, new double[] { 3.902, 5.677, 6.322, 6.952, 7.56, 5.128, 8.589, 9.14 }, 50, true, -2, new double[] { .65, .825, .95, .985, .999 }, new double[] { 3.946, 5.199, 5.999, 6.005, 8.807 })] //London Orleans 2 sd below mean, quantiles include top end extrapolation
+        [InlineData(new double[] { 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.002 }, new double[] { 3.902, 5.677, 6.322, 6.952, 7.56, 5.128, 8.589, 9.14 }, 50, true, 0, new double[] { .65, .825, .95, .985, .999 }, new double[] { 4.715, 5.813, 6.81, 7.802, 10.673 })] //London Orleans mean function, quantiles include top end extrapolation
+        [InlineData(new double[] {.99, 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.002 }, new double[] { 4.17, 312.89, 557.91, 733.63, 855.88, 1122.36, 1302.23, 1496.96, 1749.36 }, 20, false, 2, new double[] { .1, .78, .8, .825, .99, .995 }, new double[] { -2.001, -1.856, 0.398, 1.995, 2.216, 2.356 })] //Tafuna 2 sd above mean, FLOWS, chosen quantiles hug important inflection point and include bottom extrapolation
+        [InlineData(new double[] { .99, 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.002 }, new double[] { 4.17, 312.89, 557.91, 733.63, 855.88, 1122.36, 1302.23, 1496.96, 1749.36 }, 20, false, -2, new double[] { .1, .78, .8, .825, .99, .995 }, new double[] { -2.001, -1.96, -1.96, -1.96, 1.952, 2.004 })] //Tafuna 2 sd below mean, FLOWS, chosen quantiles hug important inflection point and include bottom extrapolation
+        [InlineData(new double[] { .99, 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.002 }, new double[] { 4.17, 312.89, 557.91, 733.63, 855.88, 1122.36, 1302.23, 1496.96, 1749.36 }, 20, false, 0, new double[] { .1, .78, .8, .825, .99, .995 }, new double[] { -2.001, -1.908, -1.9, -1.091, 2.04, 2.18 })] //Tafuna mean, FLOWS, chosen quantiles hug important inflection point, tests mean interpolation and correct mean assignment for user input
+        public void SamplePairedDataShould(double[] inputProbabilities, double[] inputStages, int erl, bool usesStagesNotFlows, int standardDeviationAtWhichToTest, double[] probabilitiesAtWhichToTest, double[] expectedQuantile)
+        {
 
-        //    GraphicalUncertainPairedData graphicalUncertainPairedData = new(inputProbabilities, inputStages, erl, new CurveMetaData("hello"), true);
-        //    double probAtWhichToTest = new Normal().CDF(standardDeviationAtWhichToTest);
-        //    PairedData sampledCurve = graphicalUncertainPairedData.SamplePairedData(probAtWhichToTest);
-        //    for (int i = 0; i < probabilitiesAtWhichToTest.Length; i++)
-        //    {
-        //        double probability = probabilitiesAtWhichToTest[i];
-        //        double actual = sampledCurve.f(probability);
-        //        double expected = expectedQuantile[i];
-        //        Assert.Equal(expected, actual, 0.2);
-        //    }
+            GraphicalUncertainPairedData graphicalUncertainPairedData = new(inputProbabilities, inputStages, erl, new CurveMetaData("hello"), true);
+            double probAtWhichToTest = new Normal().CDF(standardDeviationAtWhichToTest);
+            PairedData sampledCurve = graphicalUncertainPairedData.SamplePairedData(probAtWhichToTest);
+            for (int i = 0; i < probabilitiesAtWhichToTest.Length; i++)
+            {
+                double probability = probabilitiesAtWhichToTest[i];
+
+                double actual = sampledCurve.f(probability);
+                double expected = expectedQuantile[i];
+                double levelError = Math.Abs(actual - expected);
+
+                double relativeError = Math.Abs(actual - expected)/expected;
+                bool testPasses = false;
+                double relativeTolerance = 0.075;
+
+                if (relativeError < relativeTolerance)
+                {
+                    testPasses = true;
+                }
+
+                if (usesStagesNotFlows)
+                {
+                    double stageLevelTolerance = 0.5;
+                    if (levelError < stageLevelTolerance)
+                    {
+                        testPasses = true;
+                    }
+
+                }
+
+                if (!usesStagesNotFlows)
+                {
+                    double flowLevelTolerance = 100;
+                    if(levelError < flowLevelTolerance)
+                    {
+                        testPasses = true;
+                    }
+                }
+                Assert.True(testPasses);
+            }
 
 
-        //}   
+        }
 
     }
 }

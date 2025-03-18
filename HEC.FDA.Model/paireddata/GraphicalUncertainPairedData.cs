@@ -87,6 +87,7 @@ namespace HEC.FDA.Model.paireddata
                 }
                 else
                 {
+                    //We log the unlogged result here and then unlog again below - not necessary 
                     y[i] = Math.Log(GraphicalDistributionWithLessSimple.StageOrLogFlowDistributions[i].InverseCDF(probability));
                 }
             }
