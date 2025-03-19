@@ -17,7 +17,7 @@ public class PointShapefile
 
     public PointShapefile(string pointShapefilePath)
     {
-        OperationResult res = ShapefileWriter.TryReadShapefile(pointShapefilePath, out _pointCollection);
+        OperationResult res = ShapefileIO.TryRead(pointShapefilePath, out _pointCollection);
         if (!res) 
         {
             throw new Exception(res.GetConcatenatedMessages(","));

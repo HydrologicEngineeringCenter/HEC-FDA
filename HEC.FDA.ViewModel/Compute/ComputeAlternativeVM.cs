@@ -45,30 +45,35 @@ namespace HEC.FDA.ViewModel.Compute
             NotifyPropertyChanged(nameof(Job));
         }
 
-        public static Task RunAnnualizationCompute(AlternativeElement altElem, Action<AlternativeResults> callback, ProgressReporter reporter = null)
+        /// <summary>
+        /// Returns a 'cold' task. Does not actually start the task. Not Awaitable. 
+        /// </summary>
+        public static Task<AlternativeResults> RunAnnualizationCompute(AlternativeElement altElem, ProgressReporter reporter = null)
         {
-            if (reporter == null)
-            {
-                reporter = ProgressReporter.None();
-            }
-            IASElement firstElem = altElem.BaseScenario.GetElement();
-            IASElement secondElem = altElem.FutureScenario.GetElement();
+            reporter ??= ProgressReporter.None();
 
-            ScenarioResults firstResults = firstElem.Results;
-            ScenarioResults secondResults = secondElem.Results;
-            StudyPropertiesElement studyProperties = StudyCache.GetStudyPropertiesElement();
+            // Group the base and future scenarios for readability.
+            var baseScenario = altElem.BaseScenario;
+            var futureScenario = altElem.FutureScenario;
 
-            double discountRate = studyProperties.DiscountRate;
-            int periodOfAnalysis = studyProperties.PeriodOfAnalysis;
+            // Retrieve the results from each scenario's element.
+            var firstResults = baseScenario.GetElement().Results;
+            var secondResults = futureScenario.GetElement().Results;
 
-            int baseYear = altElem.BaseScenario.Year;
-            int futureYear = altElem.FutureScenario.Year;
-            return Task.Run(() =>
-            {
-                AlternativeResults results = Alternative.AnnualizationCompute(discountRate, periodOfAnalysis, altElem.ID,
-                    firstResults, secondResults, baseYear, futureYear, reporter);
-                callback?.Invoke(results);
-            });
+            // Retrieve the study properties.
+            var studyProperties = StudyCache.GetStudyPropertiesElement();
+
+            // Start the computation on a separate task.
+            return Task.Run(() => Alternative.AnnualizationCompute(
+                studyProperties.DiscountRate,
+                studyProperties.PeriodOfAnalysis,
+                altElem.ID,
+                firstResults,
+                secondResults,
+                baseScenario.Year,
+                futureScenario.Year,
+                reporter
+            ));
         }
     }
 }

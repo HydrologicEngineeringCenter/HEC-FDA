@@ -42,6 +42,6 @@
                    GroupName="{Binding InstanceID, RelativeSource={RelativeSource AncestorType=UserControl}}"
                    x:Name="StageRadioButton"/>
         </StackPanel>
-        <local:FdaDataGridControl DataContext="{Binding Path =SelectedItem }" Grid.Row="3"/>
+        <local:FdaDataGridControl DataContext="{Binding Path =SelectedItem }" UseStarSizing="True"  Grid.Row="3"/>
     </Grid>
 </UserControl>

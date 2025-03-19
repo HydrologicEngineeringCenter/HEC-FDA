@@ -11,6 +11,38 @@ namespace HEC.FDA.View.TableWithPlot
     /// </summary>
     public partial class FdaDataGridControl : UserControl
     {
+        // Register a dependency property so that users outside can set this property.
+        public static readonly DependencyProperty UseStarSizingProperty =
+            DependencyProperty.Register(
+                "UseStarSizing",
+                typeof(bool),
+                typeof(FdaDataGridControl),
+                new PropertyMetadata(false, OnUseStarSizingChanged));
+
+        public bool UseStarSizing
+        {
+            get { return (bool)GetValue(UseStarSizingProperty); }
+            set { SetValue(UseStarSizingProperty, value); }
+        }
+
+        private static void OnUseStarSizingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as FdaDataGridControl;
+            if (control != null)
+            {
+                control.UpdateInternalGridStarSizing((bool)e.NewValue);
+            }
+        }
+
+        private void UpdateInternalGridStarSizing(bool useStar)
+        {
+            // Assuming your FdaDataGrid in the XAML has the name "MyDataGrid"
+            if (MyDataGrid != null)
+            {
+                MyDataGrid.UseStarSizing = useStar;
+            }
+        }
+
         public FdaDataGridControl()
         {
             InitializeComponent();

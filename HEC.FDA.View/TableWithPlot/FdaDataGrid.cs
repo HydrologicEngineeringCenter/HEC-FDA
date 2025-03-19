@@ -30,6 +30,15 @@ namespace HEC.FDA.View.TableWithPlot
 
         public bool AllowAddDeleteRows { get; set; } = true;
         public bool PasteAddsRows { get; set; } = true;
+        //Dependency property to control the column sizing behavior.
+        public static readonly DependencyProperty UseStarSizingProperty = DependencyProperty.Register("UseStarSizing", typeof(bool), typeof(FdaDataGrid), new PropertyMetadata(false));
+
+        public bool UseStarSizing
+        {
+            get { return (bool)GetValue(UseStarSizingProperty); }
+            set { SetValue(UseStarSizingProperty, value); }
+        }
+
         public FdaDataGrid()
         {
             //TODO:  This might be bad, I never remove these handlers, but I don't know how to do it better. 
@@ -466,8 +475,15 @@ namespace HEC.FDA.View.TableWithPlot
                 }
                 e.Cancel = cancel;
                 if (cancel) { return; }
-
-                dataGridtextColumn.Width = new DataGridLength(1, DataGridLengthUnitType.Auto);
+                // Only override the width if UseStarSizing is true.
+                if (UseStarSizing)
+                {
+                    dataGridtextColumn.Width = new DataGridLength(1, DataGridLengthUnitType.Star);
+                }
+                else
+                {
+                    dataGridtextColumn.Width = new DataGridLength(1, DataGridLengthUnitType.Auto);
+            }
                 Style ers = (Style)Resources["errorStyle"];
                 Style ersG = (Style)Resources["errorStyleGrid"];
                 dataGridtextColumn.EditingElementStyle = ers;

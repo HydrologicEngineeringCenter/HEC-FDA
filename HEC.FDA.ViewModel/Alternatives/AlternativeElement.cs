@@ -14,9 +14,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using System.Xml.Linq;
+using Utility;
 using Utility.Progress;
 using Visual.Observables;
+using SynchronizationContext = Utility.SynchronizationContext;
 
 namespace HEC.FDA.ViewModel.Alternatives
 {
@@ -214,31 +217,27 @@ namespace HEC.FDA.ViewModel.Alternatives
             return altResult;
         }
 
-        public void ComputeAlternative(object arg1 = null, EventArgs arg2 = null)
+        public async void ComputeAlternative(object arg1 = null, EventArgs arg2 = null)
         {
             //This is the new entry point for the "view results" menu item
             //when the compute is completed it will call ComputeCompleted which will then call the "ViewResults".
             FdaValidationResult vr = RunPreComputeValidation();
             if (vr.IsValid)
             {
-                ProgressReporter reporter = new();
-                BatchJob batchJob = new(reporter);
-                ComputeAlternativeVM vm = new ComputeAlternativeVM(batchJob);
-                ComputeAlternativeVM.RunAnnualizationCompute(this, ComputeCompleted, reporter);
+                ISynchronizationContext context = new SynchronizationContext(action => Application.Current.Dispatcher.BeginInvoke(action));
+                BatchJob batchJob = new(uiThreadSyncContext: context);
+                ComputeAlternativeVM vm = new(batchJob);
                 string header = "Compute Log For Alternative: " + Name;
                 DynamicTabVM tab = new(header, vm, "ComputeLog" + Name);
                 Navigate(tab, false, false);
+                Results = await ComputeAlternativeVM.RunAnnualizationCompute(this, batchJob.Reporter);
+                ViewResults();
+
             }
             else
             {
                 MessageBox.Show(vr.ErrorMessage, "Cannot Compute Alternative Results", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
-        }
-
-        private void ComputeCompleted(AlternativeResults results)
-        {
-            Results = results;
-            Application.Current.Dispatcher.Invoke(() => { ViewResults();});
         }
 
         private void ViewResults()

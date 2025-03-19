@@ -5,6 +5,9 @@ using HEC.FDA.Model.metrics;
 using System.Collections.Generic;
 using System;
 using HEC.FDA.Model.paireddata;
+using Geospatial.Vectors;
+using RasMapperLib.Utilities;
+using Math = System.Math;
 
 namespace HEC.FDA.Model.structures
 {
@@ -39,11 +42,42 @@ namespace HEC.FDA.Model.structures
         #endregion
 
         #region Constructors 
-        public Structure(string fid, PointM point, double firstFloorElevation, double val_struct, string st_damcat, string occtype, int impactAreaID, double val_cont =0, double val_vehic = 0, double val_other = 0, string cbfips = "unassigned", double beginDamage = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, double groundElevation = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, double foundationHeight = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, int year = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, int numStructures = 1, string notes = "", string description = "")
-
+        /// <summary>
+        /// Maintained to support point M.
+        /// </summary>
+        public Structure(string fid, PointM point, double firstFloorElevation, double val_struct, string st_damcat, string occtype, int impactAreaID, double val_cont =0, double val_vehic = 0, double val_other = 0, 
+            string cbfips = "unassigned", double beginDamage = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, double groundElevation = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE,
+            double foundationHeight = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, int year = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, int numStructures = 1, string notes = "", string description = "")
         {
             Fid = fid;
             Point = point;
+            InventoriedStructureValue = val_struct;
+            InventoriedContentValue = val_cont;
+            InventoriedVehicleValue = val_vehic;
+            InventoriedOtherValue = val_other;
+            DamageCatagory = st_damcat;
+            OccTypeName = occtype;
+            ImpactAreaID = impactAreaID;
+            Cbfips = cbfips;
+            FirstFloorElevation = firstFloorElevation;
+            GroundElevation = groundElevation;
+            FoundationHeight = foundationHeight;
+            YearInService = year;
+            NumberOfStructures = numStructures;
+            BeginningDamageDepth = beginDamage;
+            AddRules();
+            Notes = notes;
+            Description = description;
+        }
+        /// <summary>
+        /// Preferred Constructor for now. Eventually will store Geospatial.Vectors.Point instead of PointM.
+        /// </summary>
+        public Structure(string fid, Geospatial.Vectors.Point point, double firstFloorElevation, double val_struct, string st_damcat, string occtype, int impactAreaID, double val_cont = 0, double val_vehic = 0, double val_other = 0, string cbfips = "unassigned", double beginDamage = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, double groundElevation = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, double foundationHeight = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, int year = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, int numStructures = 1, string notes = "", string description = "")
+
+        {
+            Fid = fid;
+            PointM pt = Converter.ConvertPtM(point);
+            Point = pt;
             InventoriedStructureValue = val_struct;
             InventoriedContentValue = val_cont;
             InventoriedVehicleValue = val_vehic;
