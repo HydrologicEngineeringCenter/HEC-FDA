@@ -26,7 +26,6 @@ namespace Statistics.Graphical
             {
                 neededZs[i] = standardNormalDistribution.InverseCDF(1-exceedanceProbabilitiesForWhichQuantilesAreRequired[i]);
             }
-            //could there be a problem here with expecting non exceedance but having exceedance? I don't think so 
             IPairedData nonexceedance_zScore = new PairedData(exceedanceProbabilitiesForWhichQuantilesAreRequired, neededZs);
             IPairedData zScore_stage_flow = new PairedData(inputZs, inputDataForInterpolation);
             IPairedData interpolatedFrequencyCurve = zScore_stage_flow.compose(nonexceedance_zScore);
