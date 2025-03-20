@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Statistics.GraphicalRelationships;
+using HEC.FDA.Model.extensions;
 using System.Xml.Linq;
 using System;
 using HEC.FDA.Model.interfaces;
@@ -7,6 +7,7 @@ using HEC.MVVMFramework.Model.Messaging;
 using Statistics.Graphical;
 using HEC.FDA.Model.utilities;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 
 namespace HEC.FDA.Model.paireddata
 {
@@ -43,9 +44,8 @@ namespace HEC.FDA.Model.paireddata
         public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, CurveMetaData curveMetaData, bool usingStagesNotFlows)
         {
             GraphicalDistributionWithLessSimple = new GraphicalDistribution(exceedanceProbabilities, flowOrStageValues, equivalentRecordLength, usingStagesNotFlows);
+            CombinedExceedanceProbabilities = GraphicalDistributionWithLessSimple.ExceedanceProbabilities;
             CurveMetaData = curveMetaData;
-            //combine required and input probabilities 
-            CombinedExceedanceProbabilities = CombineInputAndRequiredExceedanceProbabilities(exceedanceProbabilities);
         }
         private GraphicalUncertainPairedData(double[] combinedExceedanceProbabilities, GraphicalDistribution graphicalDistributionWithLessSimple, CurveMetaData curveMetaData)
         {
@@ -87,6 +87,7 @@ namespace HEC.FDA.Model.paireddata
                 }
                 else
                 {
+                    //We log the unlogged result here and then unlog again below - not necessary 
                     y[i] = Math.Log(GraphicalDistributionWithLessSimple.StageOrLogFlowDistributions[i].InverseCDF(probability));
                 }
             }
@@ -94,20 +95,30 @@ namespace HEC.FDA.Model.paireddata
             bool isMonotonicallyIncreasing = IsMonotonicallyIncreasing(pairedData);
             if (!isMonotonicallyIncreasing)
             {
-                pairedData.ForceStrictMonotonicity();
+                if (probability < 0.5)
+                {
+                    pairedData.ForceStrictMonotonicityBottomUp();
+
+                }
+                else
+                {
+                    pairedData.ForceStrictMonotonicityTopDown();
+                }
             }
-            double[] expandedStageOrLogFlowValues = InterpolateQuantiles.InterpolateOnX(pairedData.Xvals, CombinedExceedanceProbabilities, pairedData.Yvals);
             if (!GraphicalDistributionWithLessSimple.UsingStagesNotFlows)
             {
-                double[] tempArray = new double[expandedStageOrLogFlowValues.Length];
-                for (int i = 0; i < expandedStageOrLogFlowValues.Length; i++)
+                double[] unloggedFlows = new double[pairedData.Yvals.Length];
+                for (int i = 0; i < pairedData.Yvals.Length; i++)
                 {
-                    tempArray[i] = Math.Exp(expandedStageOrLogFlowValues[i]);
+                    unloggedFlows[i] = Math.Exp(pairedData.Yvals[i]);
                 }
-                expandedStageOrLogFlowValues = tempArray;
+                PairedData unloggedPairedData = new(pairedData.Xvals, unloggedFlows, CurveMetaData);
+                return unloggedPairedData;
             }
-            PairedData expandedPairedData = new(ExceedanceToNonExceedance(CombinedExceedanceProbabilities), expandedStageOrLogFlowValues, CurveMetaData);
-            return expandedPairedData;
+            else
+            {
+                return pairedData;
+            }
         }
 
         public PairedData SamplePairedData(long iterationNumber, bool computeIsDeterministic = false)
@@ -147,20 +158,30 @@ namespace HEC.FDA.Model.paireddata
             bool isMonotonicallyIncreasing = IsMonotonicallyIncreasing(pairedData);
             if (!isMonotonicallyIncreasing)
             {
-                pairedData.ForceStrictMonotonicity();
+                if (probability < 0.5)
+                {
+                    pairedData.ForceStrictMonotonicityBottomUp();
+
+                }
+                else
+                {
+                    pairedData.ForceStrictMonotonicityTopDown();
+                }
             }
-            double[] expandedStageOrLogFlowValues = InterpolateQuantiles.InterpolateOnX(pairedData.Xvals, CombinedExceedanceProbabilities, pairedData.Yvals);
             if (!GraphicalDistributionWithLessSimple.UsingStagesNotFlows)
             {
-                double[] tempArray = new double[expandedStageOrLogFlowValues.Length];
-                for (int i = 0; i < expandedStageOrLogFlowValues.Length; i++)
+                double[] unloggedFlows = new double[pairedData.Yvals.Length];
+                for (int i = 0; i < pairedData.Yvals.Length; i++)
                 {
-                    tempArray[i] = Math.Exp(expandedStageOrLogFlowValues[i]);
+                    unloggedFlows[i] = Math.Exp(pairedData.Yvals[i]);
                 }
-                expandedStageOrLogFlowValues = tempArray;
+                PairedData unloggedPairedData = new(pairedData.Xvals, unloggedFlows, CurveMetaData);
+                return unloggedPairedData;
             }
-            PairedData expandedPairedData = new(ExceedanceToNonExceedance(CombinedExceedanceProbabilities), expandedStageOrLogFlowValues, CurveMetaData);
-            return expandedPairedData;
+            else
+            {
+                return pairedData;
+            }
         }
 
         private static bool IsMonotonicallyIncreasing(IPairedData pairedData)
@@ -204,20 +225,6 @@ namespace HEC.FDA.Model.paireddata
                 }
             }
             return true;
-        }
-
-        private static double[] CombineInputAndRequiredExceedanceProbabilities(double[] inputExceedanceProbabilities)
-        {
-            List<double> allProbabilities = DoubleGlobalStatics.RequiredExceedanceProbabilities.ToList();
-            foreach (double probability in inputExceedanceProbabilities)
-            {
-                if (!allProbabilities.Contains(probability))
-                {
-                    allProbabilities.Add(probability);
-                }
-            }
-            allProbabilities.Sort((a, b) => b.CompareTo(a));
-            return allProbabilities.ToArray();
         }
 
         #endregion
