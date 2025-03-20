@@ -71,10 +71,8 @@ new double[] { 6.6, 7.4, 8.55, 9.95, 11.5, 12.7, 13.85, 14.7, 15.8, 16.7, 17.5, 
         /// <summary>
         /// This test demonstrates that our quantile sampling reasonably matches direct quantile calculation
         /// test data for the first case study can be found at: https://docs.google.com/spreadsheets/d/1aLnGuzmmopDID7ehb1Jux5IZtegMpmnX/edit?usp=drive_link&ouid=105470256128470573157&rtpof=true&sd=true
-        /// test data for the second case study was generated from HEC-FDA Version 1.4.3 from the Algiers feasibilty study data 
+        /// test data for the all other case studies were generated from HEC-FDA Version 1.4.3 and can be found at: https://www.hec.usace.army.mil/confluence/download/attachments/35030931/benchmarks_from_143.xlsx?api=v2
         /// </summary>
-        /// <param name="probabilitiesAtWhichToTest"></param> these are probabilities for quantiles that are interpolated
-        /// <param name="expectedQuantile"></param> these are interpolated quantiles 
         [Theory]
         [InlineData(new double[] { 0.999, 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.004, 0.002 }, new double[] { 80, 82, 84, 84.5, 84.8, 85, 86, 88, 90 }, 50, true, 1, new double[] { 0.35, 0.75, 0.956, 0.9905 }, new double[] { 81.8684, 84.060773, 84.970707, 88.707344 })] //spreadsheet test
         [InlineData(new double[] { 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.002 }, new double[] { -2, -1.9, 1.93, 1.98, 2.02, 2.04, 2.18, 2.3 }, 40, true, 2, new double[] { .1, .78, .8, .825, .99, .995 }, new double[] { -2.001, -1.856, 0.398, 1.995, 2.216, 2.356 })] //Algiers 2 sd above mean, chosen quantiles hug important inflection point and include bottom extrapolation
@@ -83,16 +81,16 @@ new double[] { 6.6, 7.4, 8.55, 9.95, 11.5, 12.7, 13.85, 14.7, 15.8, 16.7, 17.5, 
         [InlineData(new double[] { 0.5, 0.2, 0.1, 0.05, 0.02, 0.01, 0.005, 0.002 }, new double[] { 1.242, 6.646, 9.821, 12.54, 14.803, 16.29, 17.492, 18.196 }, 81, true, 2, new double[] { .65, .825, .95, .985, .999 }, new double[] { 5.555, 9.692, 15.591, 19.453, 22.528 })] //Glendive 2 sd above mean, quantiles include top end extrapolation
         [InlineData(new double[] { 0.5, 0.2, 0.1, 0.05, 0.02, 0.01, 0.005, 0.002 }, new double[] { 1.242, 6.646, 9.821, 12.54, 14.803, 16.29, 17.492, 18.196 }, 81, true, -2, new double[] { .65, .825, .95, .985, .999 }, new double[] { 1.877, 4.942, 9.49, 11.502, 14.852 })] //Glendive 2 sd below mean, quantiles include top end extrapolation
         [InlineData(new double[] { 0.5, 0.2, 0.1, 0.05, 0.02, 0.01, 0.005, 0.002 }, new double[] { 1.242, 6.646, 9.821, 12.54, 14.803, 16.29, 17.492, 18.196 }, 81, true, 0, new double[] { .65, .825, .95, .985, .999 }, new double[] { 3.716, 7.317, 12.54, 15.437, 18.69 })] //Glendive mean function, quantiles include top end extrapolation
-        [InlineData(new double[] { 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.002 }, new double[] { 3.902, 5.677, 6.322, 6.952, 7.56, 5.128, 8.589, 9.14 }, 50, true, 2, new double[] { .65, .825, .95, .985, .999 }, new double[] { 5.484, 6.427, 7.621, 9.751, 12.538 })] //London Orleans 2 sd above mean, quantiles include top end extrapolation
-        [InlineData(new double[] { 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.002 }, new double[] { 3.902, 5.677, 6.322, 6.952, 7.56, 5.128, 8.589, 9.14 }, 50, true, -2, new double[] { .65, .825, .95, .985, .999 }, new double[] { 3.946, 5.199, 5.999, 6.005, 8.807 })] //London Orleans 2 sd below mean, quantiles include top end extrapolation
-        [InlineData(new double[] { 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.002 }, new double[] { 3.902, 5.677, 6.322, 6.952, 7.56, 5.128, 8.589, 9.14 }, 50, true, 0, new double[] { .65, .825, .95, .985, .999 }, new double[] { 4.715, 5.813, 6.81, 7.802, 10.673 })] //London Orleans mean function, quantiles include top end extrapolation
-        [InlineData(new double[] {.99, 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.002 }, new double[] { 4.17, 312.89, 557.91, 733.63, 855.88, 1122.36, 1302.23, 1496.96, 1749.36 }, 20, false, 2, new double[] { .1, .78, .8, .825, .99, .995 }, new double[] { 76.94, 2385.07, 2481.35, 2597.31, 6652.48, 7335.77 })] //Tafuna 2 sd above mean, FLOWS, chosen quantiles hug important inflection point and include bottom extrapolation
-        [InlineData(new double[] { .99, 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.002 }, new double[] { 4.17, 312.89, 557.91, 733.63, 855.88, 1122.36, 1302.23, 1496.96, 1749.36 }, 20, false, -2, new double[] { .1, .78, .8, .825, .99, .995 }, new double[] { .05, 1428.03, 1453.57, 1500, 1989.14, 1989.59 })] //Tafuna 2 sd below mean, FLOWS, chosen quantiles hug important inflection point and include bottom extrapolation
-        [InlineData(new double[] { .99, 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.002 }, new double[] { 4.17, 312.89, 557.91, 733.63, 855.88, 1122.36, 1302.23, 1496.96, 1749.36 }, 20, false, 0, new double[] { .1, .78, .8, .825, .99, .995 }, new double[] { 2.01, 1845.52, 1899.36, 1973.98, 3416.28, 3767.17 })] //Tafuna mean, FLOWS, chosen quantiles hug important inflection point, tests mean interpolation and correct mean assignment for user input
+        [InlineData(new double[] { 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.002 }, new double[] { 3.902, 5.677, 6.322, 6.952, 7.56, 8.127, 8.589, 9.14 }, 50, true, 2, new double[] { .65, .825, .95, .985, .999 }, new double[] { 5.484, 6.427, 7.621, 9.751, 12.538 })] //London Orleans 2 sd above mean, quantiles include top end extrapolation
+        [InlineData(new double[] { 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.002 }, new double[] { 3.902, 5.677, 6.322, 6.952, 7.56, 8.127, 8.589, 9.14 }, 50, true, -2, new double[] { .65, .825, .95, .985, .999 }, new double[] { 3.946, 5.199, 5.999, 6.005, 7.661 })] //London Orleans 2 sd below mean, quantiles include top end extrapolation
+        [InlineData(new double[] { 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.002 }, new double[] { 3.902, 5.677, 6.322, 6.952, 7.56, 8.127, 8.589, 9.14 }, 50, true, 0, new double[] { .65, .825, .95, .985, .999 }, new double[] { 4.715, 5.813, 6.81, 7.802, 9.572 })] //London Orleans mean function, quantiles include top end extrapolation
+        [InlineData(new double[] {.99, 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.002 }, new double[] { 0, 1340.37, 1899.36, 2279.29, 2731.6, 3000.05, 3416.28, 3767.17, 4207.08 }, 20, false, 2, new double[] { .1, .78, .8, .825, .99, .995 }, new double[] { 76.94, 2385.07, 2481.35, 2597.31, 6652.48, 7335.77 })] //Tafuna 2 sd above mean, FLOWS, chosen quantiles hug important inflection point and include bottom extrapolation
+        [InlineData(new double[] { .99, 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.002 }, new double[] { 0, 1340.37, 1899.36, 2279.29, 2731.6, 3000.05, 3416.28, 3767.17, 4207.08 }, 20, false, -2, new double[] { .1, .78, .8, .825, .99, .995 }, new double[] { .05, 1428.03, 1453.57, 1500, 1989.14, 1989.59 })] //Tafuna 2 sd below mean, FLOWS, chosen quantiles hug important inflection point and include bottom extrapolation
+        [InlineData(new double[] { .99, 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.002 }, new double[] { 0, 1340.37, 1899.36, 2279.29, 2731.6, 3000.05, 3416.28, 3767.17, 4207.08 }, 20, false, 0, new double[] { .1, .78, .8, .825, .99, .995 }, new double[] { 2.01, 1845.52, 1899.36, 1973.98, 3416.28, 3767.17 })] //Tafuna mean, FLOWS, chosen quantiles hug important inflection point, tests mean interpolation and correct mean assignment for user input
         public void SamplePairedDataShould(double[] inputProbabilities, double[] inputStages, int erl, bool usesStagesNotFlows, int standardDeviationAtWhichToTest, double[] probabilitiesAtWhichToTest, double[] expectedQuantile)
         {
 
-            GraphicalUncertainPairedData graphicalUncertainPairedData = new(inputProbabilities, inputStages, erl, new CurveMetaData("hello"), true);
+            GraphicalUncertainPairedData graphicalUncertainPairedData = new(inputProbabilities, inputStages, erl, new CurveMetaData("hello"), usesStagesNotFlows);
             double probAtWhichToTest = new Normal().CDF(standardDeviationAtWhichToTest);
             PairedData sampledCurve = graphicalUncertainPairedData.SamplePairedData(probAtWhichToTest);
             for (int i = 0; i < probabilitiesAtWhichToTest.Length; i++)
@@ -112,9 +110,11 @@ new double[] { 6.6, 7.4, 8.55, 9.95, 11.5, 12.7, 13.85, 14.7, 15.8, 16.7, 17.5, 
                     testPasses = true;
                 }
 
+                //in some instances, there is a very small level error but due to the magnitude, the small level error has a large relative error
+                //stage error must be less than 0.31 feet 
                 if (usesStagesNotFlows)
                 {
-                    double stageLevelTolerance = 2;
+                    double stageLevelTolerance = .31;
                     if (levelError < stageLevelTolerance)
                     {
                         testPasses = true;
@@ -122,10 +122,12 @@ new double[] { 6.6, 7.4, 8.55, 9.95, 11.5, 12.7, 13.85, 14.7, 15.8, 16.7, 17.5, 
 
                 }
 
+                //in some instances, there is a very small level error but due to the magnitude, the small level error has a large relative error
+                //flow error must be less than 25 CFS
                 if (!usesStagesNotFlows)
                 {
-                    double flowLevelTolerance = 425;
-                    if(levelError < flowLevelTolerance)
+                    double flowLevelTolerance = 25;
+                    if (levelError < flowLevelTolerance)
                     {
                         testPasses = true;
                     }
