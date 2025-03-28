@@ -24,7 +24,7 @@ namespace HEC.FDA.Model.paireddata
                 if (IsArrayValid(Xvals, (a, b) => a >= b) && IsArrayValid(Yvals, (a, b) => a >= b))
                 {
                     return true;
-                }                
+                }
                 else
                 {
                     return false;
@@ -106,9 +106,9 @@ namespace HEC.FDA.Model.paireddata
                 //This is the next LARGER value.
                 index = ~index;
                 int len = Xvals.Length;
-                if (index == len) return Yvals[len-1];
+                if (index == len) return Yvals[len - 1];
 
-                if (index == 0) return Yvals[0]; 
+                if (index == 0) return Yvals[0];
 
                 //Ok. Interpolate Y=mx+b
                 double yIndexMinus1 = Yvals[index - 1];
@@ -122,7 +122,7 @@ namespace HEC.FDA.Model.paireddata
         /// <summary>
         /// Created to provide a method for searching paired data without using binary search. 
         /// </summary>
-        public double f(double x,  ref int indexOfPreviousTopOfSegment)
+        public double f(double x, ref int indexOfPreviousTopOfSegment)
         {
             //We're above the curve
             if (x > Xvals[^1])
@@ -312,7 +312,7 @@ namespace HEC.FDA.Model.paireddata
             {
                 double stageFromStageDamage = Xvals[i];
                 double probabilityOfFailure = systemResponseFunction.f(stageFromStageDamage);
-                double probabilityWeightedDamage = probabilityOfFailure*Yvals[i];
+                double probabilityWeightedDamage = probabilityOfFailure * Yvals[i];
 
                 newXvals.Add(stageFromStageDamage);
                 newYvals.Add(probabilityWeightedDamage);
@@ -325,7 +325,7 @@ namespace HEC.FDA.Model.paireddata
                 {
                     double probabilityOfFailure = systemResponseFunction.Yvals[i];
                     double unweightedDamage = f(fragilityStage);
-                    double probabilityWeightedDamage = probabilityOfFailure*unweightedDamage;
+                    double probabilityWeightedDamage = probabilityOfFailure * unweightedDamage;
                     newXvals.Add(fragilityStage);
                     newYvals.Add(probabilityWeightedDamage);
                 }
@@ -334,39 +334,56 @@ namespace HEC.FDA.Model.paireddata
             double[] damages = newYvals.ToArray();
             //This sorts the stages and sorts the damage based on the sorting of the stages
             Array.Sort(stages, damages);
-            return new PairedData(stages,damages);
+            return new PairedData(stages, damages);
         }
 
+        // old. here to facilitate regression test. 
+        //public void ForceWeakMonotonicityBottomUp(double max = double.MaxValue, double min = double.MinValue)
+        //{
+        //    double previousYval = min;
 
-        public void ForceWeakMonotonicityBottomUp(double max = double.MaxValue, double min = double.MinValue)
+        //    double[] update = new double[Yvals.Length];
+        //    int index = 0;
+        //    foreach (double currentY in Yvals)
+        //    {
+        //        if (previousYval >= currentY)
+        //        {
+        //            update[index] = previousYval;
+        //        }
+        //        else
+        //        {
+        //            //if max is default, this condition does nothing
+        //            if (currentY > max)
+        //            {
+        //                update[index] = max;
+        //                previousYval = max;
+        //            }
+        //            else
+        //            {
+        //                update[index] = currentY;
+        //                previousYval = currentY;
+        //            }
+        //        }
+        //        index++;
+        //    }
+        //    Yvals = update;
+        //}
+
+        public void ForceWeakMonotonicityBottomUp()
         {
-            double previousYval = min;
-
-            double[] update = new double[Yvals.Length];
-            int index = 0;
-            foreach (double currentY in Yvals)
+            double previousYval = Yvals[0];
+            for (int i = 1; i < Yvals.Length; i++)
             {
+                double currentY = Yvals[i];
                 if (previousYval >= currentY)
                 {
-                    update[index] = previousYval;
+                    Yvals[i] = previousYval;
                 }
                 else
                 {
-                    //if max is default, this condition does nothing
-                    if (currentY > max)
-                    {
-                        update[index] = max;
-                        previousYval = max;
-                    }
-                    else
-                    {
-                        update[index] = currentY;
-                        previousYval = currentY;
-                    }
+                    previousYval = currentY;
                 }
-                index++;
             }
-            Yvals = update;
         }
         public void ForceStrictMonotonicityTopDown()
         {
@@ -404,7 +421,7 @@ namespace HEC.FDA.Model.paireddata
         }
         public void SortToIncreasingXVals()
         {
-            Array.Sort(Xvals,Yvals);
+            Array.Sort(Xvals, Yvals);
         }
         public void SortToIncreasingYals()
         {

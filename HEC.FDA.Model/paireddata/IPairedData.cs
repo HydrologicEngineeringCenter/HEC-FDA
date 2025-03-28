@@ -6,6 +6,5 @@ namespace HEC.FDA.Model.paireddata
     {
         double[] Xvals { get; }
         double[] Yvals { get; }
-        void ForceWeakMonotonicityBottomUp(double max = double.MaxValue, double min = double.MinValue);
     }
 }
