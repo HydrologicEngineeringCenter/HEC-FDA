@@ -337,7 +337,8 @@ namespace HEC.FDA.Model.paireddata
             return new PairedData(stages,damages);
         }
 
-        public void ForceMonotonicity(double max = double.MaxValue, double min = double.MinValue)
+
+        public void ForceWeakMonotonicityBottomUp(double max = double.MaxValue, double min = double.MinValue)
         {
             double previousYval = min;
 
@@ -367,7 +368,7 @@ namespace HEC.FDA.Model.paireddata
             }
             Yvals = update;
         }
-        public void ForceStrictMonotonicityTopDown(double max = double.MaxValue, double min = double.MinValue)
+        public void ForceStrictMonotonicityTopDown()
         {
             double[] update = new double[Yvals.Length];
             double upperValue = Yvals[Yvals.Length - 1];
@@ -378,8 +379,8 @@ namespace HEC.FDA.Model.paireddata
 
                 if (Yvals[i] >= upperValue)
                 {
-                    update[i] = upperValue - EPSILON;
-                    upperValue -= EPSILON;
+                    update[i] = upperValue - double.Epsilon;
+                    upperValue -= double.Epsilon;
                 }
                 else
                 {
@@ -389,34 +390,24 @@ namespace HEC.FDA.Model.paireddata
             }
             Yvals = update;
         }
-        public void ForceStrictMonotonicityBottomUp(double max = double.MaxValue, double min = double.MinValue)
+        public void ForceStrictMonotonicityBottomUp()
         {
-            double previousYval = min;
+            double previousYval = Yvals[0];
 
             double[] update = new double[Yvals.Length];
-            int index = 0;
-            foreach (double currentY in Yvals)
+            for (int index = 1; index < Yvals.Length; index++)
             {
+                double currentY = Yvals[index];
                 if (previousYval >= currentY)
                 {
-                    update[index] = previousYval + EPSILON;
-                    previousYval += EPSILON;
+                    update[index] = previousYval + double.Epsilon;
+                    previousYval += double.Epsilon;
                 }
                 else
                 {
-                    //if max is default, this condition does nothing
-                    if (currentY > max)
-                    {
-                        update[index] = max;
-                        previousYval = max;
-                    }
-                    else
-                    {
-                        update[index] = currentY;
-                        previousYval = currentY;
-                    }
+                    update[index] = currentY;
+                    previousYval = currentY;
                 }
-                index++;
             }
             Yvals = update;
         }

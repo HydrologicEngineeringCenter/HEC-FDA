@@ -141,7 +141,7 @@ namespace HEC.FDA.Model.paireddata
                     y[i] = Yvals[i].InverseCDF(probability);
                 }
             PairedData pairedData = new(Xvals, y, CurveMetaData);//mutability leakage on xvals
-            pairedData.ForceMonotonicity();
+            pairedData.ForceWeakMonotonicityBottomUp();
             return pairedData;
         }
         /// <summary>
@@ -180,7 +180,7 @@ namespace HEC.FDA.Model.paireddata
                 }
             }
             PairedData pairedData = new(Xvals, y, CurveMetaData);//mutability leakage on xvals
-            pairedData.ForceMonotonicity();
+            pairedData.ForceWeakMonotonicityBottomUp();
             return pairedData;
         }
 
