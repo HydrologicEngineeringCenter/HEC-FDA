@@ -370,46 +370,37 @@ namespace HEC.FDA.Model.paireddata
         }
         public void ForceStrictMonotonicityTopDown()
         {
-            double[] update = new double[Yvals.Length];
-            double upperValue = Yvals[Yvals.Length - 1];
-            update[Yvals.Length - 1] = upperValue;
+            double upperValue = Yvals[^1];
 
             for (int i = Yvals.Length - 2; i >= 0; i--)
             {
-
                 if (Yvals[i] >= upperValue)
                 {
-                    update[i] = upperValue - double.Epsilon;
                     upperValue -= double.Epsilon;
+                    Yvals[i] = upperValue;
                 }
                 else
                 {
-                    update[i] = Yvals[i];
                     upperValue = Yvals[i];
                 }
             }
-            Yvals = update;
         }
         public void ForceStrictMonotonicityBottomUp()
         {
             double previousYval = Yvals[0];
-
-            double[] update = new double[Yvals.Length];
             for (int index = 1; index < Yvals.Length; index++)
             {
                 double currentY = Yvals[index];
                 if (previousYval >= currentY)
                 {
-                    update[index] = previousYval + double.Epsilon;
                     previousYval += double.Epsilon;
+                    Yvals[index] = previousYval;
                 }
                 else
                 {
-                    update[index] = currentY;
                     previousYval = currentY;
                 }
             }
-            Yvals = update;
         }
         public void SortToIncreasingXVals()
         {
