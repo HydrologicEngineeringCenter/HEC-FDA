@@ -164,5 +164,21 @@ namespace HEC.FDA.ModelTest.unittests
             Assert.Equal(expectedYvals, pairedData.Yvals);
         }
 
+        [Theory]
+        [InlineData(new double[] { 1, 2, 3 }, new double[] { 3, 2, 1 }, new double[] { 3, 3, 3 })]
+        [InlineData(new double[] { 1, 2, 3 }, new double[] { 1, 2, 3 }, new double[] { 1, 2, 3 })]
+        [InlineData(new double[] { 1, 2, 3 }, new double[] { 3, 3, 1 }, new double[] { 3, 3, 3 })]
+        public void ForceWeakMonotonicityBottomUp_Test(double[] xvals, double[] yvals, double[] expectedYvals)
+        {
+            // Arrange
+            PairedData pairedData = new PairedData(xvals, yvals);
+
+            // Act
+            pairedData.ForceWeakMonotonicityBottomUp();
+
+            // Assert
+            Assert.Equal(expectedYvals, pairedData.Yvals);
+        }
+
     }
 }
