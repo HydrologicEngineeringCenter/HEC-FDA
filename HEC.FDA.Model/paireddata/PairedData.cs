@@ -337,38 +337,6 @@ namespace HEC.FDA.Model.paireddata
             return new PairedData(stages, damages);
         }
 
-        // old. here to facilitate regression test. 
-        //public void ForceWeakMonotonicityBottomUp(double max = double.MaxValue, double min = double.MinValue)
-        //{
-        //    double previousYval = min;
-
-        //    double[] update = new double[Yvals.Length];
-        //    int index = 0;
-        //    foreach (double currentY in Yvals)
-        //    {
-        //        if (previousYval >= currentY)
-        //        {
-        //            update[index] = previousYval;
-        //        }
-        //        else
-        //        {
-        //            //if max is default, this condition does nothing
-        //            if (currentY > max)
-        //            {
-        //                update[index] = max;
-        //                previousYval = max;
-        //            }
-        //            else
-        //            {
-        //                update[index] = currentY;
-        //                previousYval = currentY;
-        //            }
-        //        }
-        //        index++;
-        //    }
-        //    Yvals = update;
-        //}
-
         /// <summary>
         /// weak monotonicity demands that the function must be either flat or increasing, and this is enforced by walking the function from the bottom -> up. Effectively capping the minimum value ot the minimum provided. 
         /// </summary>
