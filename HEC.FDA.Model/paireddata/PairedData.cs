@@ -369,6 +369,9 @@ namespace HEC.FDA.Model.paireddata
         //    Yvals = update;
         //}
 
+        /// <summary>
+        /// weak monotonicity demands that the function must be either flat or increasing, and this is enforced by walking the function from the bottom -> up. Effectively capping the minimum value ot the minimum provided. 
+        /// </summary>
         public void ForceWeakMonotonicityBottomUp()
         {
             double previousYval = Yvals[0];
@@ -385,6 +388,10 @@ namespace HEC.FDA.Model.paireddata
                 }
             }
         }
+
+        /// <summary>
+        /// strict monotonicity damands the function be increasing. flat sections are not permitted. this is enforced by walking the function from the top -> down. Effectively capping the maximum value to the max provided.
+        /// </summary>
         public void ForceStrictMonotonicityTopDown()
         {
             double upperValue = Yvals[^1];
@@ -402,6 +409,10 @@ namespace HEC.FDA.Model.paireddata
                 }
             }
         }
+
+        /// <summary>
+        /// strict monotonicity damands the function be increasing. flat sections are not permitted. this is enforced by walking the function from the bottom -> up. Effectively capping the minimum value ot the minimum provided.
+        /// </summary>
         public void ForceStrictMonotonicityBottomUp()
         {
             double previousYval = Yvals[0];
