@@ -91,7 +91,8 @@ internal class Lehman
             leveefailprobs[i] = new Statistics.Distributions.Deterministic(0); //probability at the top must be 1
         }
         leveefailprobs[2] = new Statistics.Distributions.Deterministic(1);
-        UncertainPairedData leveeFragilityFunction = new UncertainPairedData(leveestages, leveefailprobs, "stages", "failure probabilities", "default function");
+        CurveMetaData metaData = new("stages", "failure probabilities", "default function");
+        UncertainPairedData leveeFragilityFunction = new UncertainPairedData(leveestages, leveefailprobs, metaData);
 
         ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
             .WithFlowFrequency(flowFrequency)

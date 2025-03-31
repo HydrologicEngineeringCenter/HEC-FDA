@@ -15,10 +15,7 @@ namespace HEC.FDA.Model.paireddata
 {
     public class UncertainPairedData : ValidationErrorLogger, IPairedDataProducer, ICanBeNull
     {
-        #region Fields 
         private double[] _RandomNumbers;
-        #endregion
-        #region Properties 
         public string XLabel
         {
             get { return CurveMetaData.XLabel; }
@@ -54,30 +51,12 @@ namespace HEC.FDA.Model.paireddata
         public double[] Xvals { get; }
         public IDistribution[] Yvals { get; }
 
-        #endregion
-
-        #region Constructors 
         public UncertainPairedData()
         {
             CurveMetaData = new CurveMetaData();
             AddRules();
         }
-        [Obsolete("This constructor is deprecated. Construct a CurveMetaData, then inject into constructor")]
-        public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name)
-        {
-            Xvals = xs;
-            Yvals = ys;
-            CurveMetaData = new CurveMetaData(xlabel, ylabel, name);
-            AddRules();
-        }
-        [Obsolete("This constructor is deprecated. Construct a CurveMetaData, then inject into constructor")]
-        public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name, string category)
-        {
-            Xvals = xs;
-            Yvals = ys;
-            CurveMetaData = new CurveMetaData(xlabel, ylabel, name, category);
-            AddRules();
-        }
+
         public UncertainPairedData(double[] xs, IDistribution[] ys, CurveMetaData metadata)
         {
             Xvals = xs;
@@ -85,7 +64,6 @@ namespace HEC.FDA.Model.paireddata
             CurveMetaData = metadata;
             AddRules();
         }
-        #endregion
 
         #region Methods 
         public void GenerateRandomNumbers(int seed, long size)
