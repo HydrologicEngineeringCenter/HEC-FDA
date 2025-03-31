@@ -9,13 +9,12 @@ using System.Xml.Linq;
 using HEC.FDA.Model.utilities;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Model.Messaging;
-using Statistics.Graphical;
 using HEC.FDA.Model.paireddata;
 
 namespace HEC.FDA.Model.extensions
 {
     [StoredProperty("GraphicalDistribution")]
-    public class GraphicalDistribution: ValidationErrorLogger
+    public class GraphicalDistribution : ValidationErrorLogger
     {
         #region Properties
         [StoredProperty("LowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant")]
@@ -56,7 +55,7 @@ namespace HEC.FDA.Model.extensions
         /// <param name="userInputExceedanceProbabilities"></param> User-provided exceedance probabilities. There should be at least 8.
         /// <param name="stageOrUnloggedFlowValues"></param> User-provided flow or stage values. A value should correspond to a probability. 
         /// <param name="equivalentRecordLength"></param> The equivalent record length in years.
-      
+
         public GraphicalDistribution(double[] userInputExceedanceProbabilities, double[] stageOrUnloggedFlowValues, int equivalentRecordLength, bool usingStagesNotFlows = true, double higherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant = 0.99, double lowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant = 0.01)
         {
             EquivalentRecordLength = equivalentRecordLength;
@@ -105,8 +104,8 @@ namespace HEC.FDA.Model.extensions
         private void AddRules(double[] exceedanceProbabilities)
         {
             AddSinglePropertyRule(nameof(EquivalentRecordLength), new Rule(() => EquivalentRecordLength > 0, "Equivalent record length must be greater than 0."));
-                AddSinglePropertyRule(nameof(exceedanceProbabilities), new Rule(() => IsArrayValid(exceedanceProbabilities, (a, b) => (a >= b)), "Exceedance Probabilities must be strictly monotonically decreasing"));
-                AddSinglePropertyRule(nameof(StageOrLoggedFlowValues), new Rule(() => IsArrayValid(StageOrLoggedFlowValues, (a, b) => (a <= b)), "Y must be strictly monotonically decreasing"));
+            AddSinglePropertyRule(nameof(exceedanceProbabilities), new Rule(() => IsArrayValid(exceedanceProbabilities, (a, b) => (a >= b)), "Exceedance Probabilities must be strictly monotonically decreasing"));
+            AddSinglePropertyRule(nameof(StageOrLoggedFlowValues), new Rule(() => IsArrayValid(StageOrLoggedFlowValues, (a, b) => (a <= b)), "Y must be strictly monotonically decreasing"));
         }
         private static bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
         {
@@ -176,7 +175,7 @@ namespace HEC.FDA.Model.extensions
 
                 //insert the maximum probability into the first location 
                 ExtrapolatedExceedanceProbabilities.Insert(0, maximumExceedanceProbability);
-               
+
                 if (smallestInputFlowOrStage < 0) { ExtrapolatedFlowOrStageValues.Insert(0, 1.001 * smallestInputFlowOrStage); } //if the first value is negative then make it slightly more negative
 
                 if (smallestInputFlowOrStage > 0)
@@ -187,11 +186,11 @@ namespace HEC.FDA.Model.extensions
                 else if (smallestInputFlowOrStage < -1.0e-4)
                 {
                     ExtrapolatedFlowOrStageValues[0] = 1.001 * smallestInputFlowOrStage;//why are we doing it a second time?
-                }                   
+                }
                 else
                 {
                     ExtrapolatedFlowOrStageValues.Insert(0, -1.0e-4);//so if xl is really close to zero, set the value equal to -1e-4?
-                } 
+                }
             }
             //less frequent end of the frequency curve
             if (ExtrapolatedExceedanceProbabilities.Last() - minimumExceedanceProbability > toleratedDifference)
@@ -251,7 +250,7 @@ namespace HEC.FDA.Model.extensions
             }
 
             double[] _scurve = new double[ExceedanceProbabilities.Length];
-            
+
             for (int i = 1; i < ExceedanceProbabilities.Length - 1; i++)
             {
                 //p is a non-exceedance probability 
@@ -261,29 +260,29 @@ namespace HEC.FDA.Model.extensions
 
                 //hold slope constant and calculate standard error for the first coordinate
                 if (i == 1)
-                { 
+                {
                     p = 1 - ExceedanceProbabilities[i - 1];
                     _scurve[i - 1] = Equation6StandardError(p, slope, EquivalentRecordLength);
 
                 }
                 //hold slope constant and calculate standard error for the last coordinate
-                if (i == ExceedanceProbabilities.Length -2)
+                if (i == ExceedanceProbabilities.Length - 2)
                 {
                     p = 1 - ExceedanceProbabilities[i + 1];
                     double standardErrorSquared = (p * (1 - p)) / (Math.Pow(1 / slope, 2.0D) * EquivalentRecordLength);
-                    _scurve[i +1 ] = Math.Sqrt(standardErrorSquared);
+                    _scurve[i + 1] = Math.Sqrt(standardErrorSquared);
                 }
 
             }
             // Hold standard Error Constant
-                for (int i = ixSlopeHiConst; i < ExceedanceProbabilities.Length; i++)
-                {
-                    _scurve[i] = _scurve[ixSlopeHiConst];
-                }
-                for (int i = 0; i < ixSlopeLoConst; i++)
-                {
-                    _scurve[i] = _scurve[ixSlopeLoConst];
-                }
+            for (int i = ixSlopeHiConst; i < ExceedanceProbabilities.Length; i++)
+            {
+                _scurve[i] = _scurve[ixSlopeHiConst];
+            }
+            for (int i = 0; i < ixSlopeLoConst; i++)
+            {
+                _scurve[i] = _scurve[ixSlopeLoConst];
+            }
             return _scurve;
         }
 
@@ -294,10 +293,10 @@ namespace HEC.FDA.Model.extensions
             double q = stageOrLoggedFlowValues[i];
 
             double p_minus = 1 - exceedanceProbabilities[i - 1];
-            double q_minus = stageOrLoggedFlowValues[i-1];
+            double q_minus = stageOrLoggedFlowValues[i - 1];
 
-            double p_plus = 1 - exceedanceProbabilities[i+1];
-            double q_plus = stageOrLoggedFlowValues[i+1];
+            double p_plus = 1 - exceedanceProbabilities[i + 1];
+            double q_plus = stageOrLoggedFlowValues[i + 1];
 
             //step 2: identify probability margins that feed into the slope calculator 
             double epsilon = 0.00001;
@@ -322,7 +321,7 @@ namespace HEC.FDA.Model.extensions
             double z_minus = standardNormal.InverseCDF(p_minus);
             double z_minusEpsilon = standardNormal.InverseCDF(p_minusEpsilon);
 
-            double q_minusEpsilon = q_minus + (z_minusEpsilon - z_minus)/(z - z_minus) * (q - q_minus);
+            double q_minusEpsilon = q_minus + (z_minusEpsilon - z_minus) / (z - z_minus) * (q - q_minus);
 
             return q_minusEpsilon;
         }
@@ -332,7 +331,7 @@ namespace HEC.FDA.Model.extensions
             double[] stageOrLogFlowStandardErrorsComputed = ComputeStandardDeviations(LowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant, HigherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant);
 
             ContinuousDistribution[] distributionArray = new ContinuousDistribution[stageOrLogFlowStandardErrorsComputed.Length];
-            
+
             if (UsingStagesNotFlows)
             {
                 for (int i = 0; i < stageOrLogFlowStandardErrorsComputed.Length; i++)
@@ -393,7 +392,7 @@ namespace HEC.FDA.Model.extensions
             int i = 0;
             foreach (XElement exceedanceProbability in xElement.Element(probsTag).Elements())
             {
-               if (!double.TryParse(exceedanceProbability.Attribute(probsTag)?.Value, out double prob))
+                if (!double.TryParse(exceedanceProbability.Attribute(probsTag)?.Value, out double prob))
                 {
                     //serves as null object to be returned in case of error
                     GraphicalDistribution graphical = new();
