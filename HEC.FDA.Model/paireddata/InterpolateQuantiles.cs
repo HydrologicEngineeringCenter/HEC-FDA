@@ -1,7 +1,6 @@
-﻿using HEC.FDA.Model.paireddata;
-using Statistics.Distributions;
+﻿using Statistics.Distributions;
 
-namespace Statistics.Graphical
+namespace HEC.FDA.Model.paireddata
 {
     public class InterpolateQuantiles
     {
