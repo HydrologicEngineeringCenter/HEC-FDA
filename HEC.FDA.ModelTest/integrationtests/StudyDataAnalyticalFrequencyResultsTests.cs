@@ -192,7 +192,8 @@ namespace HEC.FDA.ModelTest.integrationtests
             UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, metaData);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stageDamage);
-            UncertainPairedData fragilityCurve = new UncertainPairedData(FragilityStages, FragilityProbabilities, xLabel, yLabel, name);
+            CurveMetaData meta = new(xLabel,yLabel,name);
+            UncertainPairedData fragilityCurve = new UncertainPairedData(FragilityStages, FragilityProbabilities, meta);
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
                 .WithFlowFrequency(flowFrequency)
                 .WithFlowStage(flowStage)

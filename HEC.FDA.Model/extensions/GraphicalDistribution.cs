@@ -2,17 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using Statistics.Distributions;
+using Statistics;
 using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Base.Implementations;
 using System.Xml.Linq;
 using HEC.FDA.Model.utilities;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Model.Messaging;
+using HEC.FDA.Model.paireddata;
 
-namespace Statistics.GraphicalRelationships
+namespace HEC.FDA.Model.extensions
 {
     [StoredProperty("GraphicalDistribution")]
-    public class GraphicalDistribution: ValidationErrorLogger
+    public class GraphicalDistribution : ValidationErrorLogger
     {
         #region Properties
         [StoredProperty("LowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant")]
@@ -50,25 +52,40 @@ namespace Statistics.GraphicalRelationships
         /// See the HEC-FDA Technical Reference for more information on the Less Simple Method
         /// This constructor assumes that exceedance probabilities and flow or stage values have a strictly monotonic relationships.
         /// </summary>
-        /// <param name="exceedanceProbabilities"></param> User-provided exceedance probabilities. There should be at least 8.
+        /// <param name="userInputExceedanceProbabilities"></param> User-provided exceedance probabilities. There should be at least 8.
         /// <param name="stageOrUnloggedFlowValues"></param> User-provided flow or stage values. A value should correspond to a probability. 
         /// <param name="equivalentRecordLength"></param> The equivalent record length in years.
-      
-        public GraphicalDistribution(double[] exceedanceProbabilities, double[] stageOrUnloggedFlowValues, int equivalentRecordLength, bool usingStagesNotFlows = true, double higherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant = 0.99, double lowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant = 0.01)
+
+        public GraphicalDistribution(double[] userInputExceedanceProbabilities, double[] stageOrUnloggedFlowValues, int equivalentRecordLength, bool usingStagesNotFlows = true, double higherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant = 0.99, double lowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant = 0.01)
         {
             EquivalentRecordLength = equivalentRecordLength;
             UsingStagesNotFlows = usingStagesNotFlows;
-            if (UsingStagesNotFlows)
+            PairedData extrapolatedFrequencyFunctionWithStagesOrLoggedFlows;
+            if (usingStagesNotFlows)
             {
-                StageOrLoggedFlowValues = stageOrUnloggedFlowValues;
-            } else
-            {
-                StageOrLoggedFlowValues = LogFlows(stageOrUnloggedFlowValues);
+                extrapolatedFrequencyFunctionWithStagesOrLoggedFlows = ExtrapolateFrequencyFunction(userInputExceedanceProbabilities, stageOrUnloggedFlowValues);
             }
+            else
+            {
+                extrapolatedFrequencyFunctionWithStagesOrLoggedFlows = ExtrapolateFrequencyFunction(userInputExceedanceProbabilities, LogFlows(stageOrUnloggedFlowValues));
+            }
+            ExceedanceProbabilities = FillInputExceedanceProbabilitiesWithRequiredPoints(extrapolatedFrequencyFunctionWithStagesOrLoggedFlows.Xvals);
+            StageOrLoggedFlowValues = InterpolateQuantiles.InterpolateOnX(extrapolatedFrequencyFunctionWithStagesOrLoggedFlows.Xvals, ExceedanceProbabilities, extrapolatedFrequencyFunctionWithStagesOrLoggedFlows.Yvals); ;
             LowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant = lowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant;
             HigherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant = higherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant;
-            AddRules(exceedanceProbabilities);
-            Compute(exceedanceProbabilities);
+            AddRules(userInputExceedanceProbabilities);
+            Validate();
+            if (ErrorLevel >= ErrorLevel.Major)
+            {
+                string message = $"There are major or worse errors associated with a graphical frequency function, confidence intervals cannot be computed." + Environment.NewLine;
+                ErrorMessage errorMessage = new(message, ErrorLevel.Major);
+                ReportMessage(this, new MessageEventArgs(errorMessage));
+            }
+            else
+            {
+                //then we compute uncertainty 
+                StageOrLogFlowDistributions = ConstructContinuousDistributions();
+            }
         }
         private GraphicalDistribution(double lowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant, double higherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant, double[] stageOrLoggedFlowValues, bool usingStagesNotFlows, int equivalentRecordLength, double[] exceedanceProbabilities, ContinuousDistribution[] stageOrLogFlowDistributions)
         {
@@ -84,26 +101,11 @@ namespace Statistics.GraphicalRelationships
         #endregion
 
         #region Methods
-        private void Compute(double[] exceedanceProbabilities)
-        {
-            Validate();
-            if (ErrorLevel >= ErrorLevel.Major)
-            {
-                string message = $"There are major or worse errors associated with a graphical frequency function, confidence intervals cannot be computed." + Environment.NewLine;
-                ErrorMessage errorMessage = new(message, ErrorLevel.Major);
-                ReportMessage(this, new MessageEventArgs(errorMessage));
-            }
-            else
-            {
-                ExtrapolateFrequencyFunction(exceedanceProbabilities);
-                StageOrLogFlowDistributions = ConstructContinuousDistributions();
-            }
-        }
         private void AddRules(double[] exceedanceProbabilities)
         {
             AddSinglePropertyRule(nameof(EquivalentRecordLength), new Rule(() => EquivalentRecordLength > 0, "Equivalent record length must be greater than 0."));
-                AddSinglePropertyRule(nameof(exceedanceProbabilities), new Rule(() => IsArrayValid(exceedanceProbabilities, (a, b) => (a >= b)), "Exceedance Probabilities must be strictly monotonically decreasing"));
-                AddSinglePropertyRule(nameof(StageOrLoggedFlowValues), new Rule(() => IsArrayValid(StageOrLoggedFlowValues, (a, b) => (a <= b)), "Y must be strictly monotonically decreasing"));
+            AddSinglePropertyRule(nameof(exceedanceProbabilities), new Rule(() => IsArrayValid(exceedanceProbabilities, (a, b) => (a >= b)), "Exceedance Probabilities must be strictly monotonically decreasing"));
+            AddSinglePropertyRule(nameof(StageOrLoggedFlowValues), new Rule(() => IsArrayValid(StageOrLoggedFlowValues, (a, b) => (a <= b)), "Y must be strictly monotonically decreasing"));
         }
         private static bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
         {
@@ -116,6 +118,19 @@ namespace Statistics.GraphicalRelationships
                 }
             }
             return true;
+        }
+        private static double[] FillInputExceedanceProbabilitiesWithRequiredPoints(double[] inputExceedanceProbabilities)
+        {
+            List<double> allProbabilities = DoubleGlobalStatics.RequiredExceedanceProbabilities.ToList();
+            foreach (double probability in inputExceedanceProbabilities)
+            {
+                if (!allProbabilities.Contains(probability))
+                {
+                    allProbabilities.Add(probability);
+                }
+            }
+            allProbabilities.Sort((a, b) => b.CompareTo(a));
+            return allProbabilities.ToArray();
         }
         private static double[] LogFlows(double[] unloggedFlows)
         {
@@ -135,66 +150,66 @@ namespace Statistics.GraphicalRelationships
             return loggedFlows;
         }
 
-        //TODO: This method can be refactored for clarity.
-        public void ExtrapolateFrequencyFunction(double[] exceedanceProbabilities)
+        //This method adds a minimum and maximum coordinate to the frequency function, extrapolating beyond what the user provided 
+        public PairedData ExtrapolateFrequencyFunction(double[] exceedanceProbabilities, double[] userProvidedStageOrLoggedFlowValues)
         {
             double toleratedDifference = 0.0001;
             double maximumExceedanceProbability = 0.9999;
             double minimumExceedanceProbability = 0.0001;
 
-            List<double> finalFlowOrStageValues = new();
-            List<double> finalExceedanceProbabilities = new();
+            List<double> ExtrapolatedFlowOrStageValues = new();
+            List<double> ExtrapolatedExceedanceProbabilities = new();
             for (int i = 0; i < exceedanceProbabilities.Length; i++)
             {
-                finalFlowOrStageValues.Add(StageOrLoggedFlowValues[i]);
-                finalExceedanceProbabilities.Add(exceedanceProbabilities[i]);
+                ExtrapolatedFlowOrStageValues.Add(userProvidedStageOrLoggedFlowValues[i]);
+                ExtrapolatedExceedanceProbabilities.Add(exceedanceProbabilities[i]);
             }
 
             //more frequent of the frequency curve
-            if (maximumExceedanceProbability - finalExceedanceProbabilities.First() > toleratedDifference)
+            if (maximumExceedanceProbability - ExtrapolatedExceedanceProbabilities.First() > toleratedDifference)
             { //if the maximum exceedance probability is sufficiently larger than the largest exceedance probabiltiy 
 
 
                 // let x1 be the lowest value in xvals 
-                double smallestInputFlowOrStage = finalFlowOrStageValues[0];
+                double smallestInputFlowOrStage = ExtrapolatedFlowOrStageValues[0];
 
                 //insert the maximum probability into the first location 
-                finalExceedanceProbabilities.Insert(0, maximumExceedanceProbability);
-               
-                if (smallestInputFlowOrStage < 0) { finalFlowOrStageValues.Insert(0, 1.001 * smallestInputFlowOrStage); } //if the first value is negative then make it slightly more negative
+                ExtrapolatedExceedanceProbabilities.Insert(0, maximumExceedanceProbability);
+
+                if (smallestInputFlowOrStage < 0) { ExtrapolatedFlowOrStageValues.Insert(0, 1.001 * smallestInputFlowOrStage); } //if the first value is negative then make it slightly more negative
 
                 if (smallestInputFlowOrStage > 0)
                 {
-                    finalFlowOrStageValues.Insert(0, .999 * smallestInputFlowOrStage);
+                    ExtrapolatedFlowOrStageValues.Insert(0, .999 * smallestInputFlowOrStage);
                 } //insert a slightly smaller value 
 
                 else if (smallestInputFlowOrStage < -1.0e-4)
                 {
-                    finalFlowOrStageValues[0] = 1.001 * smallestInputFlowOrStage;//why are we doing it a second time?
-                }                   
+                    ExtrapolatedFlowOrStageValues[0] = 1.001 * smallestInputFlowOrStage;//why are we doing it a second time?
+                }
                 else
                 {
-                    finalFlowOrStageValues.Insert(0, -1.0e-4);//so if xl is really close to zero, set the value equal to -1e-4?
-                } 
+                    ExtrapolatedFlowOrStageValues.Insert(0, -1.0e-4);//so if xl is really close to zero, set the value equal to -1e-4?
+                }
             }
             //less frequent end of the frequency curve
-            if (finalExceedanceProbabilities.Last() - minimumExceedanceProbability > toleratedDifference)
+            if (ExtrapolatedExceedanceProbabilities.Last() - minimumExceedanceProbability > toleratedDifference)
             {
-                Distributions.Normal standardNormalDistribution = new();
-                double penultimateInputExceedanceProbability = finalExceedanceProbabilities[^2];
-                double lastInputExceedanceProbability = finalExceedanceProbabilities.Last();
+                Normal standardNormalDistribution = new();
+                double penultimateInputExceedanceProbability = ExtrapolatedExceedanceProbabilities[^2];
+                double lastInputExceedanceProbability = ExtrapolatedExceedanceProbabilities.Last();
                 double zValueOfMin = standardNormalDistribution.InverseCDF(minimumExceedanceProbability);
                 double zValueOfPenultimateInputProbability = standardNormalDistribution.InverseCDF(penultimateInputExceedanceProbability);
                 double zValueOfLastInputProbability = standardNormalDistribution.InverseCDF(lastInputExceedanceProbability);
-                double penultimateInputFlowOrStage = finalFlowOrStageValues[^2];
-                double lastInputFlowOrStage = finalFlowOrStageValues.Last();
+                double penultimateInputFlowOrStage = ExtrapolatedFlowOrStageValues[^2];
+                double lastInputFlowOrStage = ExtrapolatedFlowOrStageValues.Last();
                 double c = (zValueOfLastInputProbability - zValueOfPenultimateInputProbability) / (zValueOfMin - zValueOfPenultimateInputProbability); //TODO: figure out what c represents and give it a good name
                 double upperFlowOrStage = ((lastInputFlowOrStage - penultimateInputFlowOrStage) + c * penultimateInputFlowOrStage) / c;
-                finalFlowOrStageValues.Add(upperFlowOrStage);
-                finalExceedanceProbabilities.Add(minimumExceedanceProbability);
+                ExtrapolatedFlowOrStageValues.Add(upperFlowOrStage);
+                ExtrapolatedExceedanceProbabilities.Add(minimumExceedanceProbability);
             }
-            StageOrLoggedFlowValues = finalFlowOrStageValues.ToArray();
-            ExceedanceProbabilities = finalExceedanceProbabilities.ToArray();
+            PairedData extrapolatedFunction = new PairedData(ExtrapolatedExceedanceProbabilities.ToArray(), ExtrapolatedFlowOrStageValues.ToArray());
+            return extrapolatedFunction;
         }
 
         //TODO: This method can be refactored for clarity.  
@@ -235,7 +250,7 @@ namespace Statistics.GraphicalRelationships
             }
 
             double[] _scurve = new double[ExceedanceProbabilities.Length];
-            
+
             for (int i = 1; i < ExceedanceProbabilities.Length - 1; i++)
             {
                 //p is a non-exceedance probability 
@@ -245,29 +260,29 @@ namespace Statistics.GraphicalRelationships
 
                 //hold slope constant and calculate standard error for the first coordinate
                 if (i == 1)
-                { 
+                {
                     p = 1 - ExceedanceProbabilities[i - 1];
                     _scurve[i - 1] = Equation6StandardError(p, slope, EquivalentRecordLength);
 
                 }
                 //hold slope constant and calculate standard error for the last coordinate
-                if (i == ExceedanceProbabilities.Length -2)
+                if (i == ExceedanceProbabilities.Length - 2)
                 {
                     p = 1 - ExceedanceProbabilities[i + 1];
                     double standardErrorSquared = (p * (1 - p)) / (Math.Pow(1 / slope, 2.0D) * EquivalentRecordLength);
-                    _scurve[i +1 ] = Math.Sqrt(standardErrorSquared);
+                    _scurve[i + 1] = Math.Sqrt(standardErrorSquared);
                 }
 
             }
             // Hold standard Error Constant
-                for (int i = ixSlopeHiConst; i < ExceedanceProbabilities.Length; i++)
-                {
-                    _scurve[i] = _scurve[ixSlopeHiConst];
-                }
-                for (int i = 0; i < ixSlopeLoConst; i++)
-                {
-                    _scurve[i] = _scurve[ixSlopeLoConst];
-                }
+            for (int i = ixSlopeHiConst; i < ExceedanceProbabilities.Length; i++)
+            {
+                _scurve[i] = _scurve[ixSlopeHiConst];
+            }
+            for (int i = 0; i < ixSlopeLoConst; i++)
+            {
+                _scurve[i] = _scurve[ixSlopeLoConst];
+            }
             return _scurve;
         }
 
@@ -278,10 +293,10 @@ namespace Statistics.GraphicalRelationships
             double q = stageOrLoggedFlowValues[i];
 
             double p_minus = 1 - exceedanceProbabilities[i - 1];
-            double q_minus = stageOrLoggedFlowValues[i-1];
+            double q_minus = stageOrLoggedFlowValues[i - 1];
 
-            double p_plus = 1 - exceedanceProbabilities[i+1];
-            double q_plus = stageOrLoggedFlowValues[i+1];
+            double p_plus = 1 - exceedanceProbabilities[i + 1];
+            double q_plus = stageOrLoggedFlowValues[i + 1];
 
             //step 2: identify probability margins that feed into the slope calculator 
             double epsilon = 0.00001;
@@ -306,7 +321,7 @@ namespace Statistics.GraphicalRelationships
             double z_minus = standardNormal.InverseCDF(p_minus);
             double z_minusEpsilon = standardNormal.InverseCDF(p_minusEpsilon);
 
-            double q_minusEpsilon = q_minus + (z_minusEpsilon - z_minus)/(z - z_minus) * (q - q_minus);
+            double q_minusEpsilon = q_minus + (z_minusEpsilon - z_minus) / (z - z_minus) * (q - q_minus);
 
             return q_minusEpsilon;
         }
@@ -316,12 +331,12 @@ namespace Statistics.GraphicalRelationships
             double[] stageOrLogFlowStandardErrorsComputed = ComputeStandardDeviations(LowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant, HigherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant);
 
             ContinuousDistribution[] distributionArray = new ContinuousDistribution[stageOrLogFlowStandardErrorsComputed.Length];
-            
+
             if (UsingStagesNotFlows)
             {
                 for (int i = 0; i < stageOrLogFlowStandardErrorsComputed.Length; i++)
                 {
-                    distributionArray[i] = new Distributions.Normal(StageOrLoggedFlowValues[i], stageOrLogFlowStandardErrorsComputed[i]);
+                    distributionArray[i] = new Normal(StageOrLoggedFlowValues[i], stageOrLogFlowStandardErrorsComputed[i]);
                 }
                 return distributionArray;
             }
@@ -329,7 +344,7 @@ namespace Statistics.GraphicalRelationships
             {
                 for (int i = 0; i < stageOrLogFlowStandardErrorsComputed.Length; i++)
                 {
-                    distributionArray[i] = new Distributions.LogNormal(StageOrLoggedFlowValues[i], stageOrLogFlowStandardErrorsComputed[i]);
+                    distributionArray[i] = new LogNormal(StageOrLoggedFlowValues[i], stageOrLogFlowStandardErrorsComputed[i]);
                 }
                 return distributionArray;
             }
@@ -377,7 +392,7 @@ namespace Statistics.GraphicalRelationships
             int i = 0;
             foreach (XElement exceedanceProbability in xElement.Element(probsTag).Elements())
             {
-               if (!double.TryParse(exceedanceProbability.Attribute(probsTag)?.Value, out double prob))
+                if (!double.TryParse(exceedanceProbability.Attribute(probsTag)?.Value, out double prob))
                 {
                     //serves as null object to be returned in case of error
                     GraphicalDistribution graphical = new();

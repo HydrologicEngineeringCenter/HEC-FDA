@@ -1,12 +1,9 @@
 ﻿using System.Collections.Generic;
-using Statistics.GraphicalRelationships;
+using HEC.FDA.Model.extensions;
 using System.Xml.Linq;
 using System;
 using HEC.FDA.Model.interfaces;
 using HEC.MVVMFramework.Model.Messaging;
-using Statistics.Graphical;
-using HEC.FDA.Model.utilities;
-using System.Linq;
 
 namespace HEC.FDA.Model.paireddata
 {
@@ -43,9 +40,8 @@ namespace HEC.FDA.Model.paireddata
         public GraphicalUncertainPairedData(double[] exceedanceProbabilities, double[] flowOrStageValues, int equivalentRecordLength, CurveMetaData curveMetaData, bool usingStagesNotFlows)
         {
             GraphicalDistributionWithLessSimple = new GraphicalDistribution(exceedanceProbabilities, flowOrStageValues, equivalentRecordLength, usingStagesNotFlows);
+            CombinedExceedanceProbabilities = GraphicalDistributionWithLessSimple.ExceedanceProbabilities;
             CurveMetaData = curveMetaData;
-            //combine required and input probabilities 
-            CombinedExceedanceProbabilities = CombineInputAndRequiredExceedanceProbabilities(exceedanceProbabilities);
         }
         private GraphicalUncertainPairedData(double[] combinedExceedanceProbabilities, GraphicalDistribution graphicalDistributionWithLessSimple, CurveMetaData curveMetaData)
         {
@@ -77,37 +73,24 @@ namespace HEC.FDA.Model.paireddata
         }
         public PairedData SamplePairedData(double probability)
         {
-            double[] y = new double[GraphicalDistributionWithLessSimple.StageOrLogFlowDistributions.Length];
+            int numCoords = GraphicalDistributionWithLessSimple.StageOrLogFlowDistributions.Length;
 
-            for (int i = 0; i < GraphicalDistributionWithLessSimple.StageOrLogFlowDistributions.Length; i++)
+            double[] y = new double[numCoords];
+            for (int i = 0; i < numCoords; i++)
             {
-                if (GraphicalDistributionWithLessSimple.UsingStagesNotFlows)
-                {
-                    y[i] = GraphicalDistributionWithLessSimple.StageOrLogFlowDistributions[i].InverseCDF(probability);
-                }
-                else
-                {
-                    y[i] = Math.Log(GraphicalDistributionWithLessSimple.StageOrLogFlowDistributions[i].InverseCDF(probability));
-                }
+                y[i] = GraphicalDistributionWithLessSimple.StageOrLogFlowDistributions[i].InverseCDF(probability);
             }
+
             PairedData pairedData = new(ExceedanceToNonExceedance(GraphicalDistributionWithLessSimple.ExceedanceProbabilities), y, CurveMetaData);
-            bool isMonotonicallyIncreasing = IsMonotonicallyIncreasing(pairedData);
-            if (!isMonotonicallyIncreasing)
+            if (probability < 0.5)
             {
-                pairedData.ForceStrictMonotonicity();
+                pairedData.ForceStrictMonotonicityBottomUp();
             }
-            double[] expandedStageOrLogFlowValues = InterpolateQuantiles.InterpolateOnX(pairedData.Xvals, CombinedExceedanceProbabilities, pairedData.Yvals);
-            if (!GraphicalDistributionWithLessSimple.UsingStagesNotFlows)
+            else
             {
-                double[] tempArray = new double[expandedStageOrLogFlowValues.Length];
-                for (int i = 0; i < expandedStageOrLogFlowValues.Length; i++)
-                {
-                    tempArray[i] = Math.Exp(expandedStageOrLogFlowValues[i]);
-                }
-                expandedStageOrLogFlowValues = tempArray;
+                pairedData.ForceStrictMonotonicityTopDown();
             }
-            PairedData expandedPairedData = new(ExceedanceToNonExceedance(CombinedExceedanceProbabilities), expandedStageOrLogFlowValues, CurveMetaData);
-            return expandedPairedData;
+            return pairedData;
         }
 
         public PairedData SamplePairedData(long iterationNumber, bool computeIsDeterministic = false)
@@ -131,48 +114,7 @@ namespace HEC.FDA.Model.paireddata
                 }
                 probability = _RandomNumbers[iterationNumber];
             }
-
-            for (int i = 0; i < GraphicalDistributionWithLessSimple.StageOrLogFlowDistributions.Length; i++)
-            {
-                if (GraphicalDistributionWithLessSimple.UsingStagesNotFlows)
-                {
-                    y[i] = GraphicalDistributionWithLessSimple.StageOrLogFlowDistributions[i].InverseCDF(probability);
-                }
-                else
-                {
-                    y[i] = Math.Log(GraphicalDistributionWithLessSimple.StageOrLogFlowDistributions[i].InverseCDF(probability));
-                }
-            }
-            PairedData pairedData = new(ExceedanceToNonExceedance(GraphicalDistributionWithLessSimple.ExceedanceProbabilities), y, CurveMetaData);
-            bool isMonotonicallyIncreasing = IsMonotonicallyIncreasing(pairedData);
-            if (!isMonotonicallyIncreasing)
-            {
-                pairedData.ForceStrictMonotonicity();
-            }
-            double[] expandedStageOrLogFlowValues = InterpolateQuantiles.InterpolateOnX(pairedData.Xvals, CombinedExceedanceProbabilities, pairedData.Yvals);
-            if (!GraphicalDistributionWithLessSimple.UsingStagesNotFlows)
-            {
-                double[] tempArray = new double[expandedStageOrLogFlowValues.Length];
-                for (int i = 0; i < expandedStageOrLogFlowValues.Length; i++)
-                {
-                    tempArray[i] = Math.Exp(expandedStageOrLogFlowValues[i]);
-                }
-                expandedStageOrLogFlowValues = tempArray;
-            }
-            PairedData expandedPairedData = new(ExceedanceToNonExceedance(CombinedExceedanceProbabilities), expandedStageOrLogFlowValues, CurveMetaData);
-            return expandedPairedData;
-        }
-
-        private static bool IsMonotonicallyIncreasing(IPairedData pairedData)
-        {
-            for (int i = 1; i < pairedData.Yvals.Length; i++)
-            {
-                if (pairedData.Yvals[i] < pairedData.Yvals[i - 1])
-                {
-                    return false;
-                }
-            }
-            return true;
+            return SamplePairedData(probability);
         }
 
         public bool Equals(GraphicalUncertainPairedData incomingGraphicalUncertainPairedData)
@@ -204,20 +146,6 @@ namespace HEC.FDA.Model.paireddata
                 }
             }
             return true;
-        }
-
-        private static double[] CombineInputAndRequiredExceedanceProbabilities(double[] inputExceedanceProbabilities)
-        {
-            List<double> allProbabilities = DoubleGlobalStatics.RequiredExceedanceProbabilities.ToList();
-            foreach (double probability in inputExceedanceProbabilities)
-            {
-                if (!allProbabilities.Contains(probability))
-                {
-                    allProbabilities.Add(probability);
-                }
-            }
-            allProbabilities.Sort((a, b) => b.CompareTo(a));
-            return allProbabilities.ToArray();
         }
 
         #endregion

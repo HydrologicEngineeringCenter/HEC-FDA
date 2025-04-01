@@ -9,6 +9,7 @@ namespace HEC.FDA.Model.paireddata
     public class PairedData : IPairedData
     {
         #region Fields 
+        private const double EPSILON = double.Epsilon;
         #endregion
 
         #region Properties 
@@ -23,7 +24,7 @@ namespace HEC.FDA.Model.paireddata
                 if (IsArrayValid(Xvals, (a, b) => a >= b) && IsArrayValid(Yvals, (a, b) => a >= b))
                 {
                     return true;
-                }                
+                }
                 else
                 {
                     return false;
@@ -105,9 +106,9 @@ namespace HEC.FDA.Model.paireddata
                 //This is the next LARGER value.
                 index = ~index;
                 int len = Xvals.Length;
-                if (index == len) return Yvals[len-1];
+                if (index == len) return Yvals[len - 1];
 
-                if (index == 0) return Yvals[0]; 
+                if (index == 0) return Yvals[0];
 
                 //Ok. Interpolate Y=mx+b
                 double yIndexMinus1 = Yvals[index - 1];
@@ -121,7 +122,7 @@ namespace HEC.FDA.Model.paireddata
         /// <summary>
         /// Created to provide a method for searching paired data without using binary search. 
         /// </summary>
-        public double f(double x,  ref int indexOfPreviousTopOfSegment)
+        public double f(double x, ref int indexOfPreviousTopOfSegment)
         {
             //We're above the curve
             if (x > Xvals[^1])
@@ -311,7 +312,7 @@ namespace HEC.FDA.Model.paireddata
             {
                 double stageFromStageDamage = Xvals[i];
                 double probabilityOfFailure = systemResponseFunction.f(stageFromStageDamage);
-                double probabilityWeightedDamage = probabilityOfFailure*Yvals[i];
+                double probabilityWeightedDamage = probabilityOfFailure * Yvals[i];
 
                 newXvals.Add(stageFromStageDamage);
                 newYvals.Add(probabilityWeightedDamage);
@@ -324,7 +325,7 @@ namespace HEC.FDA.Model.paireddata
                 {
                     double probabilityOfFailure = systemResponseFunction.Yvals[i];
                     double unweightedDamage = f(fragilityStage);
-                    double probabilityWeightedDamage = probabilityOfFailure*unweightedDamage;
+                    double probabilityWeightedDamage = probabilityOfFailure * unweightedDamage;
                     newXvals.Add(fragilityStage);
                     newYvals.Add(probabilityWeightedDamage);
                 }
@@ -333,75 +334,73 @@ namespace HEC.FDA.Model.paireddata
             double[] damages = newYvals.ToArray();
             //This sorts the stages and sorts the damage based on the sorting of the stages
             Array.Sort(stages, damages);
-            return new PairedData(stages,damages);
+            return new PairedData(stages, damages);
         }
 
-        public void ForceMonotonicity(double max = double.MaxValue, double min = double.MinValue)
+        /// <summary>
+        /// weak monotonicity demands that the function must be either flat or increasing, and this is enforced by walking the function from the bottom -> up. Effectively capping the minimum value ot the minimum provided. 
+        /// </summary>
+        public void ForceWeakMonotonicityBottomUp()
         {
-            double previousYval = min;
-
-            double[] update = new double[Yvals.Length];
-            int index = 0;
-            foreach (double currentY in Yvals)
+            double previousYval = Yvals[0];
+            for (int i = 1; i < Yvals.Length; i++)
             {
+                double currentY = Yvals[i];
                 if (previousYval >= currentY)
                 {
-                    update[index] = previousYval;
+                    Yvals[i] = previousYval;
                 }
                 else
                 {
-                    //if max is default, this condition does nothing
-                    if (currentY > max)
-                    {
-                        update[index] = max;
-                        previousYval = max;
-                    }
-                    else
-                    {
-                        update[index] = currentY;
-                        previousYval = currentY;
-                    }
+                    previousYval = currentY;
                 }
-                index++;
             }
-            Yvals = update;
         }
-        public void ForceStrictMonotonicity(double max = double.MaxValue, double min = double.MinValue)
-        {
-            double epsilon = 0.005;
-            double previousYval = min;
 
-            double[] update = new double[Yvals.Length];
-            int index = 0;
-            foreach (double currentY in Yvals)
+        /// <summary>
+        /// strict monotonicity damands the function be increasing. flat sections are not permitted. this is enforced by walking the function from the top -> down. Effectively capping the maximum value to the max provided.
+        /// </summary>
+        public void ForceStrictMonotonicityTopDown()
+        {
+            double upperValue = Yvals[^1];
+
+            for (int i = Yvals.Length - 2; i >= 0; i--)
             {
-                if (previousYval >= currentY)
+                if (Yvals[i] >= upperValue)
                 {
-                    update[index] = previousYval + epsilon;
-                    previousYval += epsilon;
+                    upperValue -= double.Epsilon;
+                    Yvals[i] = upperValue;
                 }
                 else
                 {
-                    //if max is default, this condition does nothing
-                    if (currentY > max)
-                    {
-                        update[index] = max;
-                        previousYval = max;
-                    }
-                    else
-                    {
-                        update[index] = currentY;
-                        previousYval = currentY;
-                    }
+                    upperValue = Yvals[i];
                 }
-                index++;
             }
-            Yvals = update;
         }
 
+        /// <summary>
+        /// strict monotonicity damands the function be increasing. flat sections are not permitted. this is enforced by walking the function from the bottom -> up. Effectively capping the minimum value ot the minimum provided.
+        /// </summary>
+        public void ForceStrictMonotonicityBottomUp()
+        {
+            double previousYval = Yvals[0];
+            for (int index = 1; index < Yvals.Length; index++)
+            {
+                double currentY = Yvals[index];
+                if (previousYval >= currentY)
+                {
+                    previousYval += double.Epsilon;
+                    Yvals[index] = previousYval;
+                }
+                else
+                {
+                    previousYval = currentY;
+                }
+            }
+        }
         public void SortToIncreasingXVals()
         {
-            Array.Sort(Xvals,Yvals);
+            Array.Sort(Xvals, Yvals);
         }
         public void SortToIncreasingYals()
         {

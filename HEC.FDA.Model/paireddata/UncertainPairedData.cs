@@ -15,10 +15,7 @@ namespace HEC.FDA.Model.paireddata
 {
     public class UncertainPairedData : ValidationErrorLogger, IPairedDataProducer, ICanBeNull
     {
-        #region Fields 
         private double[] _RandomNumbers;
-        #endregion
-        #region Properties 
         public string XLabel
         {
             get { return CurveMetaData.XLabel; }
@@ -54,30 +51,12 @@ namespace HEC.FDA.Model.paireddata
         public double[] Xvals { get; }
         public IDistribution[] Yvals { get; }
 
-        #endregion
-
-        #region Constructors 
         public UncertainPairedData()
         {
             CurveMetaData = new CurveMetaData();
             AddRules();
         }
-        [Obsolete("This constructor is deprecated. Construct a CurveMetaData, then inject into constructor")]
-        public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name)
-        {
-            Xvals = xs;
-            Yvals = ys;
-            CurveMetaData = new CurveMetaData(xlabel, ylabel, name);
-            AddRules();
-        }
-        [Obsolete("This constructor is deprecated. Construct a CurveMetaData, then inject into constructor")]
-        public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name, string category)
-        {
-            Xvals = xs;
-            Yvals = ys;
-            CurveMetaData = new CurveMetaData(xlabel, ylabel, name, category);
-            AddRules();
-        }
+
         public UncertainPairedData(double[] xs, IDistribution[] ys, CurveMetaData metadata)
         {
             Xvals = xs;
@@ -85,7 +64,6 @@ namespace HEC.FDA.Model.paireddata
             CurveMetaData = metadata;
             AddRules();
         }
-        #endregion
 
         #region Methods 
         public void GenerateRandomNumbers(int seed, long size)
@@ -141,7 +119,7 @@ namespace HEC.FDA.Model.paireddata
                     y[i] = Yvals[i].InverseCDF(probability);
                 }
             PairedData pairedData = new(Xvals, y, CurveMetaData);//mutability leakage on xvals
-            pairedData.ForceMonotonicity();
+            pairedData.ForceWeakMonotonicityBottomUp();
             return pairedData;
         }
         /// <summary>
@@ -180,7 +158,7 @@ namespace HEC.FDA.Model.paireddata
                 }
             }
             PairedData pairedData = new(Xvals, y, CurveMetaData);//mutability leakage on xvals
-            pairedData.ForceMonotonicity();
+            pairedData.ForceWeakMonotonicityBottomUp();
             return pairedData;
         }
 
@@ -207,24 +185,7 @@ namespace HEC.FDA.Model.paireddata
             }
             return true;
         }
-        public static IPairedData ConvertToPairedDataAtMeans(UncertainPairedData uncertainPairedData)
-        {
-            UncertainPairedData intermediatePairedData = ConvertToDeterministic(uncertainPairedData);
-            double medianProb = 0.5;
-            return intermediatePairedData.SamplePairedData(medianProb);
-        }
-        public static UncertainPairedData ConvertToDeterministic(UncertainPairedData uncertainPairedData)
-        {
-            Deterministic[] deterministicDistributions = new Deterministic[uncertainPairedData.Xvals.Length];
-            int i = 0;
-            foreach (IDistribution distribution in uncertainPairedData.Yvals)
-            {
-                deterministicDistributions[i] = UncertainToDeterministicDistributionConverter.ConvertDistributionToDeterministic(uncertainPairedData.Yvals[i]);
-                i++;
-            }
-            UncertainPairedData deterministicUncertainPairedData = new(uncertainPairedData.Xvals, deterministicDistributions, uncertainPairedData.CurveMetaData);
-            return deterministicUncertainPairedData;
-        }
+
         public XElement WriteToXML()
         {
             XElement masterElement = new("UncertainPairedData");
@@ -294,53 +255,6 @@ namespace HEC.FDA.Model.paireddata
                 return new UncertainPairedData(xValues, yValues, curveMetaData);
             }
 
-        }
-        public static List<string> ConvertFunctionsToText(List<UncertainPairedData> uncertainPairedData)
-        {
-            List<string> list = new();
-            string header = "Impact Area Row Number," +
-                " Damage Category," +
-                " Asset Category," +
-                " Stage,";
-            for (int i = 0; i < 100; i++)
-            {
-                header += $"{(decimal)i / (decimal)100},";
-            }
-            for (int i = 0; i < 100; i++)
-            {
-                header += $"{(decimal)i / (decimal)100},";
-            }
-            list.Add(header);
-            foreach (UncertainPairedData upd in uncertainPairedData)
-            {
-                List<string> percentilesToText = PercentilesToText(upd);
-                list.AddRange(percentilesToText);
-            }
-            return list;
-        }
-
-        private static List<string> PercentilesToText(UncertainPairedData upd)
-        {
-            List<string> returnStrings = new();
-            for (int i = 0; i < upd.Xvals.Length; i++)
-            {
-                string thisXValData = $"{upd.ImpactAreaID}," +
-                $"{upd.DamageCategory}," +
-                $"{upd.AssetCategory}," +
-                $"{upd.Xvals[i]},";
-                Normal normal = new(((DynamicHistogram)upd.Yvals[i]).Mean, ((DynamicHistogram)upd.Yvals[i]).StandardDeviation);
-                for (int j = 0; j < 100; j ++)
-                {
-                    thisXValData += $"{upd.Yvals[i].InverseCDF(j / 100d)},";
-                }
-                for (int k = 0; k < 100; k++)
-                {
-                    thisXValData += $"{normal.InverseCDF(k/100d)},";
-                }
-                returnStrings.Add(thisXValData);
-            }
-
-            return returnStrings;
         }
 
         public static List<string> ConvertDamagedElementCountToText(List<UncertainPairedData> quantityDamagedElementsUPD, Dictionary<int,string> iaNames)
