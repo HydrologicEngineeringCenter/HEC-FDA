@@ -2,6 +2,7 @@
 using Xunit;
 
 namespace HEC.FDA.ModelTest.unittests;
+[Trait("RunsOn", "Remote")]
 /// <summary>
 /// This test exists just to verify that the random number generator in .NET is consistent across versions, which is explicitly NOT Gauranteed. 
 /// Failure means we need to update the expected values to match the new version of .NET

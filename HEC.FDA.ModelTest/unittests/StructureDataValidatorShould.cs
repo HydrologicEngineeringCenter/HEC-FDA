@@ -1,4 +1,6 @@
-﻿using HEC.FDA.Model.Spatial;
+﻿using Geospatial.Features;
+using Geospatial.IO;
+using HEC.FDA.Model.Spatial;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +10,20 @@ using Utility.Memory;
 using Xunit;
 
 namespace HEC.FDA.ModelTest.unittests;
+[Trait("RunsOn", "Remote")]
 public class StructureDataValidatorShould
 {
-    static PointShapefile pointShapefile = new PointShapefile(Resources.StringResourcePaths.pathToNSIShapefile);
+    private static PointFeatureCollection pointShapefile = GetFeatures(Resources.StringResourcePaths.pathToNSIShapefile);
+
+    private static PointFeatureCollection GetFeatures(string pointShapefilePath)
+    {
+        if(ShapefileIO.TryRead(pointShapefilePath, out PointFeatureCollection collection));
+        {
+            return collection;
+        }
+        throw new Exception("Failed to read shapefile");
+    }
+
     [Fact]
     public void RowHasValuesForColumns_AllFieldsPresent_ReturnsTrue()
     {

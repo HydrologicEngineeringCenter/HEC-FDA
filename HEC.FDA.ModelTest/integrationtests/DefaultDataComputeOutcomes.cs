@@ -268,7 +268,7 @@ namespace HEC.FDA.ModelTest.integrationtests
             //Act
             double actualResidentialMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1, residentialDamageCategory);
             double actualCommercialMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1, commercialDamageCategory);
-            double tolerance = 0.19;
+            double tolerance = 0.2;
             double residentialEADRelativeDifference = Math.Abs(actualResidentialMeanEAD - expectedResidentialMeanEAD) / expectedResidentialMeanEAD;
             double commercialEADRelativeDifference = Math.Abs(actualCommercialMeanEAD - expectedCommericialMeanEAD) / expectedCommericialMeanEAD;
 

@@ -1,4 +1,6 @@
-﻿using HEC.FDA.Model.Spatial;
+﻿using Geospatial.Features;
+using Geospatial.IO;
+using HEC.FDA.Model.Spatial;
 using HEC.FDA.Model.structures;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
@@ -10,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Windows;
+using Utility.Logging;
 
 namespace HEC.FDA.ViewModel.Inventory
 {
@@ -87,7 +90,12 @@ namespace HEC.FDA.ViewModel.Inventory
             {
                 _ColumnSelections.Path = SelectedPath;
                 //Migrating systems here. The above is RASMapper world, the below is the new world. We may be able to eliminate the above validation eventually and try/catch this.
-                _ColumnSelections.PointShapefile = new PointShapefile(SelectedPath);
+                OperationResult success = ShapefileIO.TryRead(SelectedPath, out PointFeatureCollection points);
+                if (!success)
+                {
+                    throw new Exception(success.GetConcatenatedMessages());
+                }
+                _ColumnSelections.PointShapefile = points;
             }
         }
 

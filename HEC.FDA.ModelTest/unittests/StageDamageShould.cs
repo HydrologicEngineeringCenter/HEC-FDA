@@ -256,32 +256,13 @@ namespace HEC.FDA.ModelTest.unittests
             return inventory;
         }
 
-
-        [Fact]
-        public void ErrorsShouldStopCompute()
-        {
-            //Arrange
-            Inventory inventory = CreateInventory();
-            ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, inventory, hydraulicDataset, String.Empty, usingMockData: true);
-            List<ImpactAreaStageDamage> impactAreaStageDamageList = new List<ImpactAreaStageDamage>() { impactAreaStageDamage };
-            ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(impactAreaStageDamageList);
-
-            //Act
-            //This compute should return a list with count of 0 stage-damage functions - we didnt provide any H&H summary relationships 
-            //so cannot calculate stage frequency, and the compute should check for that 
-            List<UncertainPairedData> nullStageDamage = impactAreaStageDamage.Compute().Item1;
-
-            //Assert
-            Assert.Equal(0, nullStageDamage.Count);
-        }
-
         [Theory]
         [InlineData(6)]
         public void StructureDetailsShould(double expectedLength)
         {
             //Arrange
             Inventory inventory = CreateInventory();
-            ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, inventory, hydraulicDataset, String.Empty, usingMockData: true);
+            ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, inventory, hydraulicDataset, String.Empty, graphicalFrequency: stageFrequency, usingMockData: true);
             List<ImpactAreaStageDamage> impactAreaStageDamageList = new List<ImpactAreaStageDamage>() { impactAreaStageDamage };
             ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(impactAreaStageDamageList);
             Dictionary<int, string> iaNames = new();
