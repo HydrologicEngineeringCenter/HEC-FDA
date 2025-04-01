@@ -8,6 +8,10 @@ using HEC.FDA.ViewModel.Watershed;
 using HEC.FDA.Model.structures;
 using Geospatial.GDALAssist;
 using HEC.FDA.Model.Spatial;
+using Geospatial.Features;
+using System.Windows.Documents;
+using Geospatial.IO;
+using Utility.Logging;
 
 namespace HEC.FDA.ViewModel.Inventory
 {
@@ -64,7 +68,7 @@ namespace HEC.FDA.ViewModel.Inventory
         public List<InventoryColumnSelectionsRowItem> GroundElevationRows { get; } = new List<InventoryColumnSelectionsRowItem>();
         public List<InventoryColumnSelectionsRowItem> TerrainElevationRows { get; } = new List<InventoryColumnSelectionsRowItem>();
 
-        public PointShapefile PointShapefile { get; set; }
+        public PointFeatureCollection PointShapefile { get; set; }
 
         public InventoryColumnSelectionsVM()
         {
@@ -158,7 +162,12 @@ namespace HEC.FDA.ViewModel.Inventory
 
         private void PathChanged()
         {
-            PointShapefile = new PointShapefile(Path);
+            OperationResult res = ShapefileIO.TryRead(Path, out PointFeatureCollection points);
+            if (!res)
+            {
+                throw new Exception(res.GetConcatenatedMessages()); 
+            }
+            PointShapefile = points;
             UpdateRows();
         }
 
@@ -201,12 +210,12 @@ namespace HEC.FDA.ViewModel.Inventory
 
         private string[] GetColumnNames()
         {
-            return PointShapefile.ColumnNames;
+            return PointShapefile.AttributeTable.Columns.Select((c) => c.Name).ToArray();
         }
 
         private object[] GetStructureNames()
         {
-            return PointShapefile.GetColumnValues(_StructureIDRow.SelectedItem);
+            return PointShapefile.AttributeTable.Rows.Select((r) => r.ValueAs<string>(_StructureIDRow.SelectedItem)).ToArray();
         }
 
         public static string getTerrainFile()
@@ -345,11 +354,16 @@ namespace HEC.FDA.ViewModel.Inventory
             string[] structureNames = GetStructureNames().Select((name) => name.ToString()).ToArray();
             foreach(int i in rowsWithMissingData)
             {
-                object[] rowValues = PointShapefile.GetRowValues(i, GetColumnNames());
+                object[] rowValues = RowToObjects(PointShapefile.AttributeTable.Rows[i]);
                 missingDataRows.Add(new(structureNames[i], rowValues, missingType));
             }
             return missingDataRows;
         }
+        /// <summary>
+        /// Transforms a TableRow into an object array. Would like to redesign this whole interface to not need this. 
+        /// </summary>
+        private static object[] RowToObjects(Utility.Memory.TableRow row) => Enumerable.Range(0, row.Table.Columns.Count).Select(i => row[i]).ToArray();
+
 
         /// <summary>
         /// Validates that a selection has been made for each required attribute.
@@ -411,15 +425,18 @@ namespace HEC.FDA.ViewModel.Inventory
                 _DescriptionRow.SelectedItem, _NumberOfStructuresRow.SelectedItem);
         }
 
+        /// <summary>
+        /// Returns an array of objects that map to the required columns for the row at the given index. 
+        /// </summary>
         public object[] GetRequiredRowValues(int index)
         {
-            List<string> selectedColumns = new List<string>();
-            foreach (InventoryColumnSelectionsRowItem selection in RequiredRows)
-            {
-                selectedColumns.Add(selection.SelectedItem);
-            }
-            return PointShapefile.GetRowValues(index, selectedColumns.ToArray());
-        }
+            //Get a list of the columns we're actually going to pull data from
+            string[] requiredColumns = RequiredRows.Select((c) => c.SelectedItem).ToArray();
 
-    }
+            //Grab the row we're interested in
+            var row = PointShapefile.AttributeTable.Rows[index];
+
+            return requiredColumns.Select((columnName) => row.Value(columnName)).ToArray();
+        }
+        }
 }
