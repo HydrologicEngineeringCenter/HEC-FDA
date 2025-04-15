@@ -9,6 +9,31 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
 {
     public class DeterministicDataProvider : BaseDataProvider
     {
+        public double[] Xs
+        {
+            get
+            {
+                double[] xs = new double[Data.Count];
+                for(int i = 0; i < Data.Count; i++)
+                {
+                    xs[i] = ((DeterministicRow)Data[i]).X;
+                }
+                return xs;
+            }
+        }
+
+        public double[] Ys
+        {
+            get
+            {
+                double[] ys = new double[Data.Count];
+                for(int i = 0; i < Data.Count; i++)
+                {
+                    ys[i] = ((DeterministicRow)Data[i]).Value;
+                }
+                return ys;
+            }
+        }
         public DeterministicDataProvider()
         {
             Name = "Deterministic";
