@@ -121,6 +121,15 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         {
             ParameterEntryVM.InitializePlotModel();
             ParameterEntryVM.UpdatePlot();
+            //Need to make sure user can see it's a table, and input data.
+            if (MyGraphicalVM.InputDataProvider.Data.Count < 1)
+            {
+                for (int i = 0; i <= 8; i++)
+                {
+                    MyGraphicalVM.InputDataProvider.AddRow(i);
+                }
+                
+            }
             MyGraphicalVM.ComputeConfidenceLimits();
             return;
         }

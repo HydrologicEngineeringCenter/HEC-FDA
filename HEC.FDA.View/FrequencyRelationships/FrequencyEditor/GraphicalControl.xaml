@@ -14,8 +14,8 @@
   <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="*" />
-      <ColumnDefinition Width="*" />
-      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="2*" />
+      <ColumnDefinition Width="2*" />
     </Grid.ColumnDefinitions>
 
     <!--User Entry Column-->
@@ -25,7 +25,9 @@
         <RowDefinition Height="auto" />
       </Grid.RowDefinitions>
       <datagrid:FdaDataGridControl DataContext="{Binding InputDataProvider, Mode=TwoWay}"
-                                   Grid.Row="0" />
+                                   Grid.Row="0"
+                                   Margin="5"
+                                   UseStarSizing="True"/>
       <Button Content=" Compute Confidence Limits "
               Command="{Binding ComputeConfidenceLimitsCommand}"
               Height="25"
@@ -35,9 +37,14 @@
               Grid.Row="1"/>
     </Grid>
 
+    <!--Output Column-->
     <datagrid:FdaDataGridControl DataContext="{Binding OutputDataProvider, Mode=TwoWay}"
-                                 Grid.Column="1" />
-    <oxy:PlotView DataContext="{Binding CalcdPlotModel, Mode=OneWay}"
+                                 Grid.Column="1"
+                                 Margin="5"
+                                 UseStarSizing="True"/>
+    
+    <!--Plot Column-->
+    <oxy:PlotView Model="{Binding CalcdPlotModel, Mode=OneWay}"
                   Grid.Column="2" />
   </Grid>
 </UserControl>

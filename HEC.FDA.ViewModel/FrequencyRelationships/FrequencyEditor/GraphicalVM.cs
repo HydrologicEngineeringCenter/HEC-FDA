@@ -12,6 +12,7 @@ using System.Xml.Linq;
 using System.Linq;
 using Importer;
 using Statistics;
+using HEC.FDA.ViewModel.TableWithPlot.Rows;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor;
 
@@ -65,28 +66,47 @@ public partial class GraphicalVM : ObservableObject
     [RelayCommand]
     public void ComputeConfidenceLimits()
     {
+        if (InputDataProvider.Data.Count == 0)
+        {
+            return;
+        }
         if (CalcdPlotModel == null)
         {
             InitializePlotModel();
         }
 
-        GraphicalUncertainPairedData graphical = GraphicalUncertainPairedData;
-        OutputDataProvider = new GraphicalDataProvider(UseFlow);
+        OutputDataProvider = new GraphicalDataProvider(UseFlow); 
 
-        PairedData upperNonExceedence = graphical.SamplePairedData(0.975);
-        PairedData lowerNonExceedence = graphical.SamplePairedData(.025);
-        PairedData centralTendency = graphical.SamplePairedData(int.MinValue, true);
+        LoadOutputDataTable(out PairedData upperExceedence, out PairedData centralTendency, out PairedData lowerExceedence);
 
         CalcdPlotModel.Series.Clear();
-        AddLineSeriesToPlot(upperNonExceedence, true);
-        AddLineSeriesToPlot(lowerNonExceedence, true);
-        AddLineSeriesToPlot(centralTendency, true);
+        AddLineSeriesToPlot(upperExceedence, true);
+        AddLineSeriesToPlot(lowerExceedence, true);
+        AddLineSeriesToPlot(centralTendency, false);
+        CalcdPlotModel.InvalidatePlot(true);
+    }
+
+    private void LoadOutputDataTable(out PairedData upperNonExceedence, out PairedData lowerNonExceedence, out PairedData centralTendency)
+    {
+        GraphicalUncertainPairedData graphical = GraphicalUncertainPairedData;
+        upperNonExceedence = graphical.SamplePairedData(0.975);
+        lowerNonExceedence = graphical.SamplePairedData(.025);
+        centralTendency = graphical.SamplePairedData(int.MinValue, true);
+
+        for (int i = 0; i < upperNonExceedence.Xvals.Length; i++)
+        {
+            GraphicalRow row = new(1 - upperNonExceedence.Xvals[i], centralTendency.Yvals[i], lowerNonExceedence.Yvals[i], upperNonExceedence.Yvals[i], UseFlow);
+            OutputDataProvider.Data.Add(row);
+        }
+        OutputDataProvider.LinkList();
     }
 
     private void InitializePlotModel()
     {
-        CalcdPlotModel = new();
-        CalcdPlotModel.Title = Name;
+        CalcdPlotModel = new()
+        {
+            Title = Name
+        };
         CalcdPlotModel.Legends.Add(new Legend
         {
             LegendPosition = LegendPosition.BottomRight
@@ -135,9 +155,9 @@ public partial class GraphicalVM : ObservableObject
         NormalDataPoint[] points = new NormalDataPoint[function.Xvals.Length];
         for (int i = 0; i < function.Xvals.Length; i++)
         {
-            double zScore = Normal.StandardNormalInverseCDF(function.Xvals[i]);
+            double zScore = Normal.StandardNormalInverseCDF( function.Xvals[i]);
             double stageOrFlowVal = function.Yvals[i];
-            points[i] = new NormalDataPoint(function.Xvals[i], zScore, stageOrFlowVal);
+            points[i] = new NormalDataPoint(1 - function.Xvals[i], zScore, stageOrFlowVal);
         }
 
         if (isConfidenceLimit) { lineSeries.Color = OxyColors.Blue; lineSeries.LineStyle = LineStyle.Dash; }

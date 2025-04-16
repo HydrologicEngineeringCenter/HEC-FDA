@@ -41,8 +41,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
                 NotifyPropertyChanged();
             }
         }
-        [DisplayAsColumn("2.5% Confidence")]
-        [DisplayAsLine("2.5% Confidence",Enumerables.ColorEnum.Blue,true)]
+        [DisplayAsColumn("2.5% Conf.")]
+        [DisplayAsLine("2.5% Conf.",Enumerables.ColorEnum.Blue,true)]
         public double Confidence025
         {
             get
@@ -51,8 +51,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             }
         }
 
-        [DisplayAsColumn("97.5% Confidence")]
-        [DisplayAsLine("97.5% Confidence", Enumerables.ColorEnum.Blue,true)]
+        [DisplayAsColumn("97.5% Conf.")]
+        [DisplayAsLine("97.5% Conf.", Enumerables.ColorEnum.Blue,true)]
         public double Confidence975 { 
             get
             {
