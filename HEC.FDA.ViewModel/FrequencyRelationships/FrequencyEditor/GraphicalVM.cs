@@ -1,179 +1,216 @@
-﻿using System.Xml.Linq;
-using HEC.FDA.ViewModel.TableWithPlot.Rows;
-using System;
-using HEC.MVVMFramework.ViewModel.Implementations;
-using HEC.FDA.ViewModel.TableWithPlot;
-using HEC.FDA.ViewModel.TableWithPlot.Data;
-using Importer;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using HEC.FDA.Model.paireddata;
+using HEC.FDA.ViewModel.TableWithPlot.Data;
+using HEC.FDA.ViewModel.Utilities;
+using OxyPlot;
+using OxyPlot.Axes;
+using OxyPlot.Legends;
+using OxyPlot.Series;
+using Statistics.Distributions;
+using System.Xml.Linq;
+using System.Linq;
+using Importer;
+using Statistics;
 
-namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
+namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor;
+
+public partial class GraphicalVM : ObservableObject
 {
-    public class GraphicalVM : CurveComponentVM
+    [ObservableProperty]
+    int _equivalentRecordLength;
+
+    [ObservableProperty]
+    bool _useFlow;
+
+    [ObservableProperty]
+    string _xLabel;
+
+    [ObservableProperty]
+    string _yLabel;
+
+    [ObservableProperty]
+    string _name;
+
+    [ObservableProperty]
+    DeterministicDataProvider _inputDataProvider;
+
+    [ObservableProperty]
+    GraphicalDataProvider _outputDataProvider;
+
+    [ObservableProperty]
+    ViewResolvingPlotModel _calcdPlotModel;
+
+    public GraphicalVM(string name, string xlabel, string ylabel)
     {
-        private int _equivalentRecordLength = Utilities.DefaultData.PeriodOfRecord;
-        private bool _useFlow; 
-        private NamedAction _confidenceLimits;
-        public NamedAction ConfidenceLimits 
-        { 
-            get 
-            { 
-                return _confidenceLimits; 
-            } 
-            set 
-            { 
-                _confidenceLimits = value;
-                NotifyPropertyChanged(); 
-            }
-        }
-        public GraphicalUncertainPairedData GraphicalUncertainPairedData
-        { 
-            get{return new GraphicalUncertainPairedData(((GraphicalDataProvider)SelectedItem).Xs, ((GraphicalDataProvider)SelectedItem).Ys, EquivalentRecordLength,new CurveMetaData(XLabel, YLabel, Name), !UseFlow);}
-           
-        }
-        public int EquivalentRecordLength
-        {
-            get{ return _equivalentRecordLength;}
-            set
-            {
-                _equivalentRecordLength = value;
-                NotifyPropertyChanged();
-            }
-        }
-        public bool UseFlow
-        {
-            get { return _useFlow; }
-            set
-            { 
-                _useFlow = value;
-                if (value == true)
-                {
-                    YLabel = Utilities.StringConstants.DISCHARGE;
-                }
-                else
-                {
-                    YLabel = Utilities.StringConstants.STAGE;
-                }
-                NotifyPropertyChanged();
-            }
-        }
-        public GraphicalVM(string name, string xlabel, string ylabel) : base(name, xlabel,ylabel)
-        {
-            Options.Clear();
-            Options.Add(new GraphicalDataProvider(UseFlow));
-            SelectedItem = Options[0];
-            Initialize();
-            UseFlow = true;
-        }
-        public GraphicalVM(XElement vmEle)
-        {
-            LoadFromXML(vmEle);
-            Initialize();
-        }
-        public GraphicalVM(ProbabilityFunction probabilityFunction)
-        {
-            LoadFromProbabilityFunction(probabilityFunction);
-            Initialize();
-        }
-        private void Initialize()
-        {
-            ConfidenceLimits = new MVVMFramework.ViewModel.Implementations.NamedAction
-            {
-                Name = "Display Uncertainty",
-                Action = ConfidenceLimitsAction
-            };
-        }
-        override public XElement ToXML()
-        {
-            XElement ele = base.ToXML();
-            ele.SetAttributeValue(nameof(EquivalentRecordLength), EquivalentRecordLength);
-            ele.SetAttributeValue(nameof(UseFlow), UseFlow);
-            return ele;
-        }
-        override public void LoadFromXML(XElement element)
-        {
-            EquivalentRecordLength = int.Parse(element.Attribute(nameof(EquivalentRecordLength)).Value);
-            UseFlow = bool.Parse(element.Attribute(nameof(UseFlow)).Value);
-            base.LoadFromXML(element);
-        }
-        /// <summary>
-        /// This loads a default GraphicalVM from a ProbabilityFunction Object which is the output of the FDA1.4Import Helper. 
-        /// </summary>
-        /// <param name="pf"></param>
-        public void LoadFromProbabilityFunction(ProbabilityFunction pf)
-        {
-            Options.Clear();
-            Options.Add(new GraphicalDataProvider(UseFlow));
-            SelectedItem = Options[0];
-            Initialize();
-            SelectedItem.Data.Clear();
-            base.Name = Utilities.StringConstants.GRAPHICAL_FREQUENCY;
-            base.XLabel = Utilities.StringConstants.EXCEEDANCE_PROBABILITY;
-            double[] probs = pf.ExceedanceProbability;
-            double[] ys;
-            if (pf.ProbabilityDataTypeId == ProbabilityFunction.ProbabilityDataType.DISCHARGE_FREQUENCY)
-            {
-                ys = pf.Discharge;
-                UseFlow = true; //This will also set the YLabel
-            }
-            else
-            {
-                ys = pf.Stage;
-                UseFlow = false;//This will also set the YLabel
-            }
-
-            for (int i = 0; i < pf.NumberOfGraphicalPoints; i++)
-            {
-                SelectedItem.AddRow(i);
-                SelectedItem.Data[i] = new GraphicalRow(probs[i], ys[i]);
-            }
-            EquivalentRecordLength = pf.EquivalentLengthOfRecord;
-        }
-        private void ConfidenceLimitsAction(object arg1, EventArgs arg2)
-        {
-            ComputeConfidenceLimits();
-        }
-
-        public void ComputeConfidenceLimits()
-        {
-            GraphicalUncertainPairedData graphical = GraphicalUncertainPairedData;
-            PairedData upperNonExceedence = graphical.SamplePairedData(0.975) as PairedData;
-            PairedData lowerNonExceedence = graphical.SamplePairedData(.025) as PairedData;
-            double[] probs = lowerNonExceedence.Xvals;
-
-            foreach (GraphicalRow row in ((GraphicalDataProvider)SelectedItem).Data)
-            {
-                int binarySearchReturn = Array.BinarySearch(probs, 1 - row.X);
-                int index;
-                if (binarySearchReturn < 0)
-                {
-                    index = ~binarySearchReturn;
-                }
-                else
-                {
-                    index = binarySearchReturn;
-                }
-                row.SetConfidenceLimits(Math.Round(lowerNonExceedence.f(probs[index]), 4), Math.Round(upperNonExceedence.f(probs[index]), 4));
-            }
-        }
-
-        public bool Equals(GraphicalVM elem)
-        {
-            bool isEqual = true;
-
-            if (!GraphicalUncertainPairedData.Equals(elem.GraphicalUncertainPairedData))
-            {
-                isEqual = false;
-            }
-            if (EquivalentRecordLength != elem.EquivalentRecordLength)
-            {
-                isEqual = false;
-            }
-            if (UseFlow != elem.UseFlow)
-            {
-                isEqual = false;
-            }        
-            return isEqual;
-        }
+        Name = name;
+        XLabel = xlabel;
+        YLabel = ylabel;
+        UseFlow = true;
     }
+    public GraphicalVM(XElement vmEle)
+    {
+        LoadFromXML(vmEle);
+    }
+    public GraphicalVM(ProbabilityFunction probabilityFunction)
+    {
+        LoadFromProbabilityFunction(probabilityFunction);
+    }
+
+
+    [RelayCommand]
+    public void ComputeConfidenceLimits()
+    {
+        if (CalcdPlotModel == null)
+        {
+            InitializePlotModel();
+        }
+
+        GraphicalUncertainPairedData graphical = GraphicalUncertainPairedData;
+        OutputDataProvider = new GraphicalDataProvider(UseFlow);
+
+        PairedData upperNonExceedence = graphical.SamplePairedData(0.975);
+        PairedData lowerNonExceedence = graphical.SamplePairedData(.025);
+        PairedData centralTendency = graphical.SamplePairedData(int.MinValue, true);
+
+        CalcdPlotModel.Series.Clear();
+        AddLineSeriesToPlot(upperNonExceedence, true);
+        AddLineSeriesToPlot(lowerNonExceedence, true);
+        AddLineSeriesToPlot(centralTendency, true);
+    }
+
+    private void InitializePlotModel()
+    {
+        CalcdPlotModel = new();
+        CalcdPlotModel.Title = Name;
+        CalcdPlotModel.Legends.Add(new Legend
+        {
+            LegendPosition = LegendPosition.BottomRight
+        });
+        SetAxis();
+    }
+
+    private void SetAxis()
+    {
+        LinearAxis xAxis = new()
+        {
+            Position = AxisPosition.Bottom,
+            Title = StringConstants.EXCEEDANCE_PROBABILITY,
+            LabelFormatter = ProbabilityFormatter,
+            Maximum = 3.719, //probability of .9999
+            Minimum = -3.719, //probability of .0001
+            StartPosition = 1,
+            EndPosition = 0
+        };
+        LinearAxis yAxis = new()
+        {
+            Position = AxisPosition.Left,
+            Title = StringConstants.DISCHARGE,
+            Unit = "cfs",
+        };
+        CalcdPlotModel.Axes.Add(xAxis);
+        CalcdPlotModel.Axes.Add(yAxis);
+    }
+
+    private static string ProbabilityFormatter(double d)
+    {
+        Normal standardNormal = new(0, 1);
+        double value = standardNormal.CDF(d);
+        string stringval = value.ToString("0.0000");
+        return stringval;
+    }
+
+    private void AddLineSeriesToPlot(PairedData function, bool isConfidenceLimit = false)
+    {
+        LineSeries lineSeries = new()
+        {
+            TrackerFormatString = "X: {Probability:0.####}, Y: {4:F2} ",
+            CanTrackerInterpolatePoints = false
+        };
+
+        NormalDataPoint[] points = new NormalDataPoint[function.Xvals.Length];
+        for (int i = 0; i < function.Xvals.Length; i++)
+        {
+            double zScore = Normal.StandardNormalInverseCDF(function.Xvals[i]);
+            double stageOrFlowVal = function.Yvals[i];
+            points[i] = new NormalDataPoint(function.Xvals[i], zScore, stageOrFlowVal);
+        }
+
+        if (isConfidenceLimit) { lineSeries.Color = OxyColors.Blue; lineSeries.LineStyle = LineStyle.Dash; }
+        else { lineSeries.Color = OxyColors.Black; }
+
+        lineSeries.ItemsSource = points;
+        lineSeries.DataFieldX = nameof(NormalDataPoint.ZScore);
+        lineSeries.DataFieldY = nameof(NormalDataPoint.Value);
+        CalcdPlotModel.Series.Add(lineSeries);
+    }
+
+    public GraphicalUncertainPairedData GraphicalUncertainPairedData
+    {
+        get { return new GraphicalUncertainPairedData(InputDataProvider.Xs, InputDataProvider.Ys, EquivalentRecordLength, new CurveMetaData(XLabel, YLabel, Name), !UseFlow); }
+
+    }
+
+    #region Saving and Loading
+    //This was a dramatic refactoring of very old code, some of which was saved to disk, so this includes nonsense to be able to forward migrate
+    // Backward Compatible Naming Conventions
+    private const string GRAPHICALVM = "GraphicalVM";
+    private const string DISTRIBUTIONPROVIDERTYPE = "DistributionProviderType";
+    private const string NAME = "Name";
+
+    public XElement ToXML()
+    {
+        XElement ele = new(GRAPHICALVM);
+        ele.SetAttributeValue(nameof(EquivalentRecordLength), EquivalentRecordLength);
+        ele.SetAttributeValue(nameof(UseFlow), UseFlow);
+
+        UncertainPairedData upd = InputDataProvider.ToUncertainPairedData(XLabel, YLabel, Name, "Unspecified", "Unspecified", "Unspecified");
+        XElement child = upd.WriteToXML();
+        child.SetAttributeValue(DISTRIBUTIONPROVIDERTYPE, InputDataProvider.GetType().Name);
+
+        ele.Add(child);
+        return ele;
+    }
+    public void LoadFromXML(XElement element)
+    {
+        EquivalentRecordLength = int.Parse(element.Attribute(nameof(EquivalentRecordLength)).Value);
+        UseFlow = bool.Parse(element.Attribute(nameof(UseFlow)).Value);
+        Name = element.Attribute(NAME)?.Value;
+
+        XElement updEl = element.Elements().First();
+        UncertainPairedData upd = UncertainPairedData.ReadFromXML(updEl);
+        XLabel = upd.XLabel;
+        YLabel = upd.YLabel;
+        Name = upd.Name;
+        InputDataProvider.UpdateFromUncertainPairedData(upd);
+    }
+
+    /// <summary>
+    /// This loads a default GraphicalVM from a ProbabilityFunction Object which is the output of the FDA1.4Import Helper. 
+    /// </summary>
+    /// <param name="pf"></param>
+    public void LoadFromProbabilityFunction(ProbabilityFunction pf)
+    {
+        Name = StringConstants.GRAPHICAL_FREQUENCY;
+        XLabel = StringConstants.EXCEEDANCE_PROBABILITY;
+        double[] probs = pf.ExceedanceProbability;
+        double[] ys;
+        if (pf.ProbabilityDataTypeId == ProbabilityFunction.ProbabilityDataType.DISCHARGE_FREQUENCY)
+        {
+            ys = pf.Discharge;
+            UseFlow = true; //This will also set the YLabel
+        }
+        else
+        {
+            ys = pf.Stage;
+            UseFlow = false;//This will also set the YLabel
+        }
+        IDistribution[] distYs = ys.Select(y => new Deterministic(y)).ToArray();
+        UncertainPairedData upd = new(probs, distYs, new CurveMetaData(XLabel, YLabel, Name));
+        InputDataProvider.UpdateFromUncertainPairedData(upd);
+
+        EquivalentRecordLength = pf.EquivalentLengthOfRecord;
+    }
+    #endregion
 }
+

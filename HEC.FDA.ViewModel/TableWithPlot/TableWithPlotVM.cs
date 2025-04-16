@@ -180,13 +180,6 @@ namespace HEC.FDA.ViewModel.TableWithPlot
             _reverseXAxis = bool.Parse(ele.Attribute(nameof(ReverseXAxis)).Value);
             _logYAxis = bool.Parse(ele.Attribute(nameof(LogYAxis)).Value);
             _normalXAxis = bool.Parse(ele.Attribute(nameof(NormalXAxis)).Value);
-            var elements = ele.Descendants();
-            XElement computeCompElement = elements.First();
-            string componentType = computeCompElement.Name.ToString();
-            if (componentType == "GraphicalVM")
-            {
-                _curveComponentVM = new GraphicalVM(computeCompElement);
-            }
         }
         public UncertainPairedData GetUncertainPairedData()
         {
