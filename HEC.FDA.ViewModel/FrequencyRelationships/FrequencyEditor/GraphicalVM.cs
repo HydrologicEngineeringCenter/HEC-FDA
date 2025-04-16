@@ -41,22 +41,26 @@ public partial class GraphicalVM : ObservableObject
     [ObservableProperty]
     ViewResolvingPlotModel _calcdPlotModel;
 
-    public GraphicalVM(string name, string xlabel, string ylabel)
+    public GraphicalVM(string name, string xlabel, string ylabel): this()
     {
         Name = name;
         XLabel = xlabel;
         YLabel = ylabel;
         UseFlow = true;
     }
-    public GraphicalVM(XElement vmEle)
+    public GraphicalVM(XElement vmEle) : this()
     {
         LoadFromXML(vmEle);
     }
-    public GraphicalVM(ProbabilityFunction probabilityFunction)
+    public GraphicalVM(ProbabilityFunction probabilityFunction): this()
     {
         LoadFromProbabilityFunction(probabilityFunction);
     }
-
+    public GraphicalVM()
+    {
+        InputDataProvider = new();
+        OutputDataProvider = new();
+    }
 
     [RelayCommand]
     public void ComputeConfidenceLimits()
@@ -155,6 +159,7 @@ public partial class GraphicalVM : ObservableObject
     //This was a dramatic refactoring of very old code, some of which was saved to disk, so this includes nonsense to be able to forward migrate
     // Backward Compatible Naming Conventions
     private const string GRAPHICALVM = "GraphicalVM";
+    private const string TABLEWITHPLOTVM = "TableWithPlotVM";
     private const string DISTRIBUTIONPROVIDERTYPE = "DistributionProviderType";
     private const string NAME = "Name";
 
@@ -173,6 +178,10 @@ public partial class GraphicalVM : ObservableObject
     }
     public void LoadFromXML(XElement element)
     {
+        if(element.Name.LocalName.Equals(TABLEWITHPLOTVM))
+        {
+            element = element.Element(GRAPHICALVM);
+        }
         EquivalentRecordLength = int.Parse(element.Attribute(nameof(EquivalentRecordLength)).Value);
         UseFlow = bool.Parse(element.Attribute(nameof(UseFlow)).Value);
         Name = element.Attribute(NAME)?.Value;
@@ -182,6 +191,7 @@ public partial class GraphicalVM : ObservableObject
         XLabel = upd.XLabel;
         YLabel = upd.YLabel;
         Name = upd.Name;
+
         InputDataProvider.UpdateFromUncertainPairedData(upd);
     }
 

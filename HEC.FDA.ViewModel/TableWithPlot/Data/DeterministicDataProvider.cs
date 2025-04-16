@@ -37,12 +37,6 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
         public DeterministicDataProvider()
         {
             Name = "Deterministic";
-            UncertainPairedData uncertainPairedData = DefaultData.GeneralUseDefaultCurve(IDistributionEnum.Deterministic);
-            for (int i = 0; i < uncertainPairedData.Xvals.Length; i++)
-            {
-                Data.Add(new DeterministicRow(uncertainPairedData.Xvals[i], uncertainPairedData.Yvals[i].InverseCDF(.5), IsStrictMonotonic));
-            }
-            LinkList();
         }
 
         public DeterministicDataProvider(bool isStrictMonotonic)
