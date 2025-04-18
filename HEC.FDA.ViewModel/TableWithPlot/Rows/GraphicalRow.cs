@@ -12,7 +12,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
         private double _Confidence025 = 0;
         private double _x;
 
-        [DisplayAsColumn("X Value")]
+        [DisplayAsColumn("Exc. Prob.")]
         public override double X
         {
             get { return _x; }
@@ -25,8 +25,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             }
 
         }
-        [DisplayAsColumn("Y Value")]
-        [DisplayAsLine("Y Value",Enumerables.ColorEnum.Black)]
+        [DisplayAsColumn("Value")]
+        [DisplayAsLine("Value",Enumerables.ColorEnum.Black)]
         public double Value
         {
             get

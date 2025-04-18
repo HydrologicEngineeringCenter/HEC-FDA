@@ -25,10 +25,10 @@ public partial class GraphicalVM : ObservableObject
     bool _useFlow;
 
     [ObservableProperty]
-    string _xLabel;
+    string _xLabel = StringConstants.EXCEEDANCE_PROBABILITY;
 
     [ObservableProperty]
-    string _yLabel;
+    string _yLabel = StringConstants.DISCHARGE;
 
     [ObservableProperty]
     string _name;
@@ -47,7 +47,7 @@ public partial class GraphicalVM : ObservableObject
         Name = name;
         XLabel = xlabel;
         YLabel = ylabel;
-        UseFlow = true;
+        UseFlow = false;
     }
     public GraphicalVM(XElement vmEle) : this()
     {
@@ -59,8 +59,14 @@ public partial class GraphicalVM : ObservableObject
     }
     public GraphicalVM()
     {
-        InputDataProvider = new();
+        InputDataProvider = new(true, true);
         OutputDataProvider = new();
+    }
+
+    partial void OnUseFlowChanged(bool oldValue, bool newValue)
+    {
+        // The following will always use the current value of UseFlow, which is == newValue
+        SetYAxisVariable();
     }
 
     [RelayCommand]
@@ -88,6 +94,11 @@ public partial class GraphicalVM : ObservableObject
 
     private void LoadOutputDataTable(out PairedData upperNonExceedence, out PairedData lowerNonExceedence, out PairedData centralTendency)
     {
+        if (OutputDataProvider.Data.Count > 0)
+        {
+            OutputDataProvider.Data.Clear();
+        }
+
         GraphicalUncertainPairedData graphical = GraphicalUncertainPairedData;
         upperNonExceedence = graphical.SamplePairedData(0.975);
         lowerNonExceedence = graphical.SamplePairedData(.025);
@@ -95,7 +106,7 @@ public partial class GraphicalVM : ObservableObject
 
         for (int i = 0; i < upperNonExceedence.Xvals.Length; i++)
         {
-            GraphicalRow row = new(1 - upperNonExceedence.Xvals[i], centralTendency.Yvals[i], lowerNonExceedence.Yvals[i], upperNonExceedence.Yvals[i], UseFlow);
+            GraphicalRow row = new(1 - upperNonExceedence.Xvals[i], centralTendency.Yvals[i], lowerNonExceedence.Yvals[i], upperNonExceedence.Yvals[i], false);
             OutputDataProvider.Data.Add(row);
         }
         OutputDataProvider.LinkList();
@@ -126,14 +137,33 @@ public partial class GraphicalVM : ObservableObject
             StartPosition = 1,
             EndPosition = 0
         };
+
         LinearAxis yAxis = new()
         {
             Position = AxisPosition.Left,
-            Title = StringConstants.DISCHARGE,
-            Unit = "cfs",
         };
         CalcdPlotModel.Axes.Add(xAxis);
         CalcdPlotModel.Axes.Add(yAxis);
+        SetYAxisVariable();
+    }
+
+    // I'm using the useFlow parameter here because 
+    private void SetYAxisVariable()
+    {
+        if (CalcdPlotModel == null)
+        {
+            return;
+        }
+        if (UseFlow)
+        {
+            CalcdPlotModel.Axes[1].Title = StringConstants.DISCHARGE;
+            CalcdPlotModel.InvalidatePlot(true);
+        }
+        else
+        {
+            CalcdPlotModel.Axes[1].Title = StringConstants.STAGE;
+            CalcdPlotModel.InvalidatePlot(true);
+        }
     }
 
     private static string ProbabilityFormatter(double d)
@@ -155,9 +185,10 @@ public partial class GraphicalVM : ObservableObject
         NormalDataPoint[] points = new NormalDataPoint[function.Xvals.Length];
         for (int i = 0; i < function.Xvals.Length; i++)
         {
-            double zScore = Normal.StandardNormalInverseCDF( function.Xvals[i]);
+            double nonExceedenceProb = 1 - function.Xvals[i];
+            double zScore = Normal.StandardNormalInverseCDF(nonExceedenceProb);
             double stageOrFlowVal = function.Yvals[i];
-            points[i] = new NormalDataPoint(1 - function.Xvals[i], zScore, stageOrFlowVal);
+            points[i] = new NormalDataPoint(nonExceedenceProb, zScore, stageOrFlowVal);
         }
 
         if (isConfidenceLimit) { lineSeries.Color = OxyColors.Blue; lineSeries.LineStyle = LineStyle.Dash; }
