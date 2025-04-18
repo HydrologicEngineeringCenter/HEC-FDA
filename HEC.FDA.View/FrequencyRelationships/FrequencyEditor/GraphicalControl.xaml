@@ -41,6 +41,14 @@
                        Content="Flow"
                        IsChecked="{Binding Path=UseFlow}" />
         </StackPanel>
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Equivalent Record Length" VerticalAlignment="Center" />
+          <TextBox Text="{Binding EquivalentRecordLength}"
+                   Width="40"
+                   FontSize="12"
+                   Margin="5"
+                   HorizontalAlignment="Left" />
+        </StackPanel>
         <Button Content=" Compute Confidence Limits "
                 Command="{Binding ComputeConfidenceLimitsCommand}"
                 Height="25"

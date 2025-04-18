@@ -43,7 +43,7 @@ public class FrequencyElement : ChildElement
             }
             else
             {
-                return _frequencyEditorVM.MyGraphicalVM.GraphicalUncertainPairedData;
+                return _frequencyEditorVM.MyGraphicalVM.CreateGraphicalUncertainPairedData();
             }
         }
     }

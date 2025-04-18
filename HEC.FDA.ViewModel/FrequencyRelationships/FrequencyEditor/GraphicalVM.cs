@@ -13,6 +13,7 @@ using System.Linq;
 using Importer;
 using Statistics;
 using HEC.FDA.ViewModel.TableWithPlot.Rows;
+using System.Security.Permissions;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor;
 
@@ -42,6 +43,9 @@ public partial class GraphicalVM : ObservableObject
     [ObservableProperty]
     ViewResolvingPlotModel _calcdPlotModel;
 
+    /// <summary>
+    /// Creating a new function
+    /// </summary>
     public GraphicalVM(string name, string xlabel, string ylabel): this()
     {
         Name = name;
@@ -49,14 +53,18 @@ public partial class GraphicalVM : ObservableObject
         YLabel = ylabel;
         UseFlow = false;
     }
+
+    /// <summary>
+    /// Loading from disk
+    /// </summary>
     public GraphicalVM(XElement vmEle) : this()
     {
         LoadFromXML(vmEle);
     }
-    public GraphicalVM(ProbabilityFunction probabilityFunction): this()
-    {
-        LoadFromProbabilityFunction(probabilityFunction);
-    }
+
+    /// <summary>
+    /// reflection 
+    /// </summary>
     public GraphicalVM()
     {
         InputDataProvider = new(true, true);
@@ -81,7 +89,7 @@ public partial class GraphicalVM : ObservableObject
             InitializePlotModel();
         }
 
-        OutputDataProvider = new GraphicalDataProvider(UseFlow); 
+        OutputDataProvider = new GraphicalDataProvider(); 
 
         LoadOutputDataTable(out PairedData upperExceedence, out PairedData centralTendency, out PairedData lowerExceedence);
 
@@ -99,7 +107,7 @@ public partial class GraphicalVM : ObservableObject
             OutputDataProvider.Data.Clear();
         }
 
-        GraphicalUncertainPairedData graphical = GraphicalUncertainPairedData;
+        GraphicalUncertainPairedData graphical = CreateGraphicalUncertainPairedData();
         upperNonExceedence = graphical.SamplePairedData(0.975);
         lowerNonExceedence = graphical.SamplePairedData(.025);
         centralTendency = graphical.SamplePairedData(int.MinValue, true);
@@ -199,11 +207,10 @@ public partial class GraphicalVM : ObservableObject
         lineSeries.DataFieldY = nameof(NormalDataPoint.Value);
         CalcdPlotModel.Series.Add(lineSeries);
     }
-
-    public GraphicalUncertainPairedData GraphicalUncertainPairedData
+    public GraphicalUncertainPairedData CreateGraphicalUncertainPairedData()
     {
-        get { return new GraphicalUncertainPairedData(InputDataProvider.Xs, InputDataProvider.Ys, EquivalentRecordLength, new CurveMetaData(XLabel, YLabel, Name), !UseFlow); }
-
+        CurveMetaData data = new(XLabel, YLabel, Name);
+        return new GraphicalUncertainPairedData(InputDataProvider.Xs, InputDataProvider.Ys, EquivalentRecordLength, data, !UseFlow);
     }
 
     #region Saving and Loading

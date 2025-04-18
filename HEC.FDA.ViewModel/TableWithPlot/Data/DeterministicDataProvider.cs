@@ -44,7 +44,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data
             XisDecreasing = xIsDecreasing;
             IsStrictMonotonic = isStrictMonotonic;
             Name = "Deterministic";
-            UncertainPairedData uncertainPairedData = DefaultData.GeneralUseDefaultCurve(IDistributionEnum.Deterministic);
+            UncertainPairedData uncertainPairedData = DefaultData.GraphicalStageFreqDefaultCurve();
             for (int i = 0; i < uncertainPairedData.Xvals.Length; i++)
             {
                 Data.Add(new DeterministicRow(uncertainPairedData.Xvals[i], uncertainPairedData.Yvals[i].InverseCDF(.5), IsStrictMonotonic, xIsDecreasing));
