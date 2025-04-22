@@ -715,6 +715,15 @@ namespace HEC.FDA.ViewModel.Utilities
                     double newLogStDev = logMean * logStDev / 100;
                     retval = new LogNormal(logMean, newLogStDev);
                     break;
+                case IDistributionEnum.Triangular:
+                    Triangular triDist = dist as Triangular;
+                    double mostLikely = triDist.MostLikely;
+                    double min = triDist.Min;
+                    double max = triDist.Max;
+                    double newMin = mostLikely * min / 100;
+                    double newMax = mostLikely * max / 100;
+                    retval = new Triangular(newMin, mostLikely, newMax);                  
+                    break;
             }
             return retval;
         }
