@@ -6,6 +6,7 @@ const string BrennanVM = "BEAM-VM00";
 const string BrennanHome = "BRENNANDESKTOP";
 const string RichardWork = "EIWRW4EFAANB369";
 const string WillWork = "";
+const string JackWork = "IWR-HEC-DN-01";
 
 string pcName = GetPCName();
 
@@ -20,5 +21,9 @@ if (pcName.Equals(RichardWork))
 if (pcName.Equals(WillWork))
 {
     Lehman.EntryPoint();
+}
+if (pcName.Equals(JackWork))
+{
+    Schonherr.EntryPoint();
 }
 static string GetPCName() => Environment.GetEnvironmentVariable("COMPUTERNAME");
