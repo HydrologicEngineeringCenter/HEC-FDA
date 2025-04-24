@@ -14,6 +14,7 @@ using Importer;
 using Statistics;
 using HEC.FDA.ViewModel.TableWithPlot.Rows;
 using System.Security.Permissions;
+using System;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor;
 
@@ -60,6 +61,14 @@ public partial class GraphicalVM : ObservableObject
     public GraphicalVM(XElement vmEle) : this()
     {
         LoadFromXML(vmEle);
+    }
+
+    /// <summary>
+    /// Potentially necessary for 1.4.x import. 
+    /// </summary>
+    public GraphicalVM(ProbabilityFunction pf) : this()
+    {
+        throw new NotImplementedException("This constructor is not implemented yet. Please use the other constructor.");
     }
 
     /// <summary>
