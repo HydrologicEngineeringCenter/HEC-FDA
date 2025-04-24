@@ -694,6 +694,10 @@ namespace HEC.FDA.ViewModel.Utilities
             return ot;
         }
 
+        /// <summary>
+        /// 1.4.x specified distributions with coefficient of variance instead of standard deviation, and specified min and max for triangular as percentages of the mean. 
+        /// This method converts that to the 2.0 standard. 
+        /// </summary>
         private static ContinuousDistribution ConvertRatioValueToFDA2(ContinuousDistribution dist)
         {
             ContinuousDistribution retval = dist;
@@ -715,10 +719,22 @@ namespace HEC.FDA.ViewModel.Utilities
                     double newLogStDev = logMean * logStDev / 100;
                     retval = new LogNormal(logMean, newLogStDev);
                     break;
+                case IDistributionEnum.Triangular:
+                    Triangular triDist = dist as Triangular;
+                    double mostLikely = triDist.MostLikely;
+                    double min = triDist.Min;
+                    double max = triDist.Max;
+                    double newMin = mostLikely * min / 100;
+                    double newMax = mostLikely * max / 100;
+                    retval = new Triangular(newMin, mostLikely, newMax);                  
+                    break;
             }
             return retval;
         }
 
+        /// <summary>
+        /// This translates error distributions for assets whos' central tendency is described in the structure inventory. Most likely value is set to 100, which indicates 100% of the inventory value. 
+        /// </summary>
         private static ContinuousDistribution TranslateStructureValueUncertainty(ErrorDistribution errorDist)
         {
             //It looks like the only options that will actually come in here is Normal, Triangular, Log Normal.
@@ -754,7 +770,7 @@ namespace HEC.FDA.ViewModel.Utilities
             //It looks like the only options that will actually come in here is Normal, Triangular, Log Normal.
             double mean = errorDist.CentralValue;
             //st dev gets reused as min
-            double stDev = errorDist.StandardDeviationOrMin;
+            double stDevOrMin = errorDist.StandardDeviationOrMin;
             double max = errorDist.Maximum;
             ErrorType type = errorDist.ErrorType;
             ContinuousDistribution dist = new Deterministic(mean);
@@ -763,17 +779,20 @@ namespace HEC.FDA.ViewModel.Utilities
                 case ErrorType.NONE:
                     dist = new Deterministic(mean);
                     break;
+                    //ErrorDistribution actually specifies the Coefficient of Variance, so this is a dirty object that will need to be processed later.  
                 case ErrorType.NORMAL:
-                    dist = new Normal(mean, stDev);
+                    dist = new Normal(mean, stDevOrMin);
                     break;
+                    //Error Distribution specifies min and max as percentages of the mean, so this is another dirty object. 
                 case ErrorType.TRIANGULAR:
-                    dist = new Triangular(stDev, mean, max);
+                    dist = new Triangular(stDevOrMin, mean, max);
                     break;
                 case ErrorType.UNIFORM:
                     dist = new Uniform(mean, max);
                     break;
+                //ErrorDistribution actually specifies the Coefficient of Variance, so this is a dirty object that will need to be processed later.  
                 case ErrorType.LOGNORMAL:
-                    dist = new LogNormal(mean, stDev);
+                    dist = new LogNormal(mean, stDevOrMin);
                     break;
             }
             return dist;
