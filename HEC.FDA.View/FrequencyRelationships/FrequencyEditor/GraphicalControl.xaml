@@ -25,14 +25,17 @@
     <!--User Entry Column-->
     <Grid Grid.Column="0">
       <Grid.RowDefinitions>
+        <RowDefinition Height="20" />
         <RowDefinition Height="*" />
         <RowDefinition Height="auto" />
       </Grid.RowDefinitions>
+      <TextBlock Text="Inputs" HorizontalAlignment="Center" FontWeight="Bold"/>
       <datagrid:FdaDataGridControl DataContext="{Binding InputDataProvider, Mode=TwoWay}"
-                                   Grid.Row="0"
+                                   Grid.Row="1"
+                                   x:Name="_userEntryDataGrid"
                                    Margin="5"
                                    UseStarSizing="True"/>
-      <StackPanel Grid.Row="1">
+      <StackPanel Grid.Row="2">
         <StackPanel Orientation="Horizontal">
           <RadioButton Margin="5"
                        Content="Stage"
@@ -42,7 +45,7 @@
                        IsChecked="{Binding Path=UseFlow}" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
-          <TextBlock Text="Equivalent Record Length" VerticalAlignment="Center" />
+          <TextBlock Text="Eq. Record Length" Margin="5" VerticalAlignment="Center" />
           <TextBox Text="{Binding EquivalentRecordLength}"
                    Width="40"
                    FontSize="12"
@@ -54,19 +57,30 @@
                 Height="25"
                 Width="Auto"
                 HorizontalAlignment="Left"
-                Margin="5"
-                Grid.Row="1" />
+                Margin="5" />
       </StackPanel>
 
     </Grid>
 
     <!--Output Column-->
-    <datagrid:FdaDataGridControl DataContext="{Binding OutputDataProvider, Mode=TwoWay}"
-                                 Grid.Column="1"
-                                 Margin="5"
-                                 UseStarSizing="True"/>
-    
-    <!--Plot Column-->
+    <Grid Grid.Column="1">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="20" />
+        <RowDefinition Height="*" />
+      </Grid.RowDefinitions>
+      <TextBlock Text="Outputs"
+                 HorizontalAlignment="Center"
+                 FontWeight="Bold" />
+
+      <datagrid:FdaDataGridControl DataContext="{Binding OutputDataProvider, Mode=TwoWay}"
+                                   Grid.Row="1"
+                                   Margin="5"
+                                   CustomNumberFormat="N5"
+                                   UseStarSizing="True" />
+    </Grid>
+
+
+      <!--Plot Column-->
     <oxy:PlotView Model="{Binding CalcdPlotModel, Mode=OneWay}"
                   Grid.Column="2" />
   </Grid>
