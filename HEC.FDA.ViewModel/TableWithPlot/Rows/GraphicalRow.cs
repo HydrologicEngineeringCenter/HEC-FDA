@@ -25,8 +25,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             }
 
         }
-        [DisplayAsColumn("Value")]
-        [DisplayAsLine("Value",Enumerables.ColorEnum.Black)]
+        [DisplayAsColumn("Median")]
+        [DisplayAsLine("Median",Enumerables.ColorEnum.Black)]
         public double Value
         {
             get
@@ -65,14 +65,14 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
         {
             get
             {
-                return new List<string>() { nameof(Value) };
+                return [nameof(Value)];
             }
         }
         protected override List<string> YMaxProperties
         {
             get
             {
-                return new List<string>() { nameof(Value) };
+                return [nameof(Value)];
             }
         }
         public GraphicalRow(double x, double y, bool isMonotonicallyIncreasing = false) : base(x, new Deterministic(y), isMonotonicallyIncreasing, true)
