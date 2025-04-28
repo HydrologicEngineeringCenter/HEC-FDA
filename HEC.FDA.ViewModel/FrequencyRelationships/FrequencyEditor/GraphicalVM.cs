@@ -109,7 +109,7 @@ public partial class GraphicalVM : ObservableObject
         CalcdPlotModel.InvalidatePlot(true);
     }
 
-    private void LoadOutputDataTable(out PairedData upperNonExceedence, out PairedData lowerNonExceedence, out PairedData centralTendency)
+    private void LoadOutputDataTable(out PairedData upperNonExceedence, out PairedData centralTendency,out PairedData lowerNonExceedence)
     {
         if (OutputDataProvider.Data.Count > 0)
         {
