@@ -30,14 +30,12 @@ namespace HEC.FDA.View.TableWithPlot
 
         public bool AllowAddDeleteRows { get; set; } = true;
         public bool PasteAddsRows { get; set; } = true;
-        //Dependency property to control the column sizing behavior.
-        public static readonly DependencyProperty UseStarSizingProperty = DependencyProperty.Register("UseStarSizing", typeof(bool), typeof(FdaDataGrid), new PropertyMetadata(false));
-
-        public bool UseStarSizing
-        {
-            get { return (bool)GetValue(UseStarSizingProperty); }
-            set { SetValue(UseStarSizingProperty, value); }
-        }
+        public bool UseStarSizing { get;set;}
+        public string CustomNumberFormat { get; set; }
+        /// <summary>
+        /// key = propertyName value = display name
+        /// </summary>
+        public Dictionary<string, string> ColumnNameMappings { get; set; } = [];
 
         public FdaDataGrid()
         {
@@ -451,27 +449,33 @@ namespace HEC.FDA.View.TableWithPlot
         private void myDataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
             e.Cancel = true;
-            if (e.Column.GetType() == typeof(DataGridTextColumn))
+            if (e.Column is DataGridTextColumn dataGridtextColumn)
             {
-                DataGridTextColumn dataGridtextColumn = (DataGridTextColumn)e.Column;
-                FdaDataGrid dataGrid = sender as FdaDataGrid;
                 bool cancel = true;
-                if (dataGrid != null)
+                if (sender is FdaDataGrid dataGrid)
                 {
-                    PropertyInfo[] pilist = dataGrid.Items[0].GetType().GetProperties();
-                    foreach (PropertyInfo pi in pilist)
+                    if (ColumnNameMappings != null && ColumnNameMappings.TryGetValue(e.PropertyName, out string value))
                     {
-                        if (pi.Name == e.PropertyName)
-                        {
-                            DisplayAsColumnAttribute DisplayAsColAttribute = (DisplayAsColumnAttribute)pi.GetCustomAttribute(typeof(DisplayAsColumnAttribute));
-                            if (DisplayAsColAttribute != null)
-                            {
-                                dataGridtextColumn.Header = DisplayAsColAttribute.DisplayName;
-                                cancel = false;
-                            }
-                        }
-
+                        dataGridtextColumn.Header = value;
+                        cancel = false;
                     }
+                    else
+                    {
+                        PropertyInfo[] pilist = dataGrid.Items[0].GetType().GetProperties();
+                        foreach (PropertyInfo pi in pilist)
+                        {
+                            if (pi.Name == e.PropertyName)
+                            {
+                                DisplayAsColumnAttribute DisplayAsColAttribute = pi.GetCustomAttribute<DisplayAsColumnAttribute>();
+                                if (DisplayAsColAttribute != null)
+                                {
+                                    dataGridtextColumn.Header = DisplayAsColAttribute.DisplayName;
+                                    cancel = false;
+                                }
+                            }
+
+                        }
+                    }     
                 }
                 e.Cancel = cancel;
                 if (cancel) { return; }
@@ -483,7 +487,7 @@ namespace HEC.FDA.View.TableWithPlot
                 else
                 {
                     dataGridtextColumn.Width = new DataGridLength(1, DataGridLengthUnitType.Auto);
-            }
+                }
                 Style ers = (Style)Resources["errorStyle"];
                 Style ersG = (Style)Resources["errorStyleGrid"];
                 dataGridtextColumn.EditingElementStyle = ers;
@@ -491,10 +495,17 @@ namespace HEC.FDA.View.TableWithPlot
                 Binding binding = (Binding)dataGridtextColumn.Binding;
                 binding.UpdateSourceTrigger = UpdateSourceTrigger.LostFocus;
                 binding.ValidatesOnNotifyDataErrors = true;
-                //TODO: This approach fixes all of the data grid columns to the same format. I think we could use a way to access the format of certain columns. 
                 if (e.PropertyType == typeof(double) || e.PropertyType == typeof(double?))
                 {
-                    binding.StringFormat = ViewModel.Utilities.StringConstants.DETAILED_DECIMAL_FORMAT;
+                    // Use custom format if specified, otherwise use the default
+                    if (!string.IsNullOrEmpty(CustomNumberFormat))
+                    {
+                        binding.StringFormat = CustomNumberFormat;
+                    }
+                    else
+                    {
+                        binding.StringFormat = ViewModel.Utilities.StringConstants.DETAILED_DECIMAL_FORMAT;
+                    }
                 }
             }
         }
