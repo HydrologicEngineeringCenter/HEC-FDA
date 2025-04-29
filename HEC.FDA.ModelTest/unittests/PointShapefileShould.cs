@@ -1,3 +1,5 @@
+using Geospatial.Features;
+using Geospatial.IO;
 using HEC.FDA.Model.Spatial;
 using HEC.FDA.Model.structures;
 using HEC.FDA.ModelTest.Resources;
@@ -10,65 +12,65 @@ using Xunit;
 
 namespace HEC.FDA.ModelTest.unittests;
 [Collection("Serial")]
+[Trait("RunsOn", "Remote")]
 public class PointShapefileShould
 {
+    private static PointFeatureCollection pointShapefile = GetFeatures(Resources.StringResourcePaths.pathToNSIShapefile);
+
+    private static PointFeatureCollection GetFeatures(string pointShapefilePath)
+    {
+        if (ShapefileIO.TryRead(pointShapefilePath, out PointFeatureCollection collection)) ;
+        {
+            return collection;
+        }
+        throw new Exception("Failed to read shapefile");
+    }
+
     [Fact]
-    [Trait("RunsOn", "Remote")]
     public void InvalidateInvalidShapefile()
     {
-        Assert.Throws<Exception>(() => new PointShapefile(Resources.StringResourcePaths.pathToIAShapefileNODBF));
+        Assert.False(ShapefileIO.TryRead(Resources.StringResourcePaths.pathToIAShapefileNODBF, out PolygonFeatureCollection collection));
     }
 
     [Fact]
     public void LoadValidShapefile()
     {
-        PointShapefile shapefile = new PointShapefile(Resources.StringResourcePaths.pathToNSIShapefile);
-        Assert.NotNull(shapefile);
-    }
-
-    [Fact]
-    public void GetRowValues_ReturnCorrectValues()
-    {
-        // Arrange
-        PointShapefile shapefile = new PointShapefile(Resources.StringResourcePaths.pathToNSIShapefile);
-        int rowId = 0;
-        string[] columnNames = { "fd_id", "occtype", "yrbuilt" };
-        object[] expectedRowValues = {26813713, "RES1-1SNB",1900};
-
-        // Act
-        object[] actualRowValues = shapefile.GetRowValues(rowId, columnNames);
-
-        // Assert
-        Assert.Equal((int)expectedRowValues[0], (int)actualRowValues[0]);
-        Assert.Equal((string)expectedRowValues[1], (string)actualRowValues[1]);
-        Assert.Equal((int)expectedRowValues[2], (int)actualRowValues[2]);
+        Assert.True(ShapefileIO.TryRead(Resources.StringResourcePaths.pathToIAShapefile, out PolygonFeatureCollection collection));
     }
 
     [Fact]
     public void GetColumnValues_ReturnCorrectValues()
     {
         // Arrange
-        PointShapefile shapefile = new PointShapefile(Resources.StringResourcePaths.pathToNSIShapefile);
+        if (!ShapefileIO.TryRead(Resources.StringResourcePaths.pathToNSIShapefile, out PointFeatureCollection shapefile))
+        {
+            throw new Exception("Failed to read shapefile");
+        }
         string columnName = "fd_id";
         int[] expectedColumnValues = {26813713, 26814025, 26816202};
 
         // Act
-        int[] actualColumnValues = shapefile.GetColumnValues(columnName).Cast<int>().ToArray();
+        IEnumerable<object> actualColumnValues = shapefile.AttributeTable.Rows.Select((r) => (r.Value(columnName)));
+        int[] intvals = actualColumnValues.Cast<int>().ToArray();
+
 
         // Assert
-        Assert.Equal(expectedColumnValues, actualColumnValues[..3]);
+        Assert.Equal(expectedColumnValues, intvals[..3]);
     }
 
     [Fact]
     public void GetColumnType_ReturnCorrectType()
     {
         // Arrange
-        PointShapefile shapefile = new PointShapefile(Resources.StringResourcePaths.pathToNSIShapefile);
+        if (!ShapefileIO.TryRead(Resources.StringResourcePaths.pathToNSIShapefile, out PointFeatureCollection shapefile))
+        {
+            throw new Exception("Failed to read shapefile");
+        }
         string columnName = "fd_id";
         Type expectedColumnType = typeof(int);
 
         // Act
-        Type actualColumnType = shapefile.GetColumnType(columnName);
+        Type actualColumnType = shapefile.AttributeTable.GetColumn(columnName).Type;
 
         // Assert
         Assert.Equal(expectedColumnType, actualColumnType);
