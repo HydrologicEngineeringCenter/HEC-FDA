@@ -1,24 +1,15 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 
-namespace HEC.FDA.View.FrequencyRelationships.FrequencyEditor
+namespace HEC.FDA.View.FrequencyRelationships.FrequencyEditor;
+/// <summary>
+/// Interaction logic for NewGraphicalControl.xaml
+/// </summary>
+public partial class GraphicalControl : UserControl
 {
-    public partial class GraphicalControl : UserControl
+    public GraphicalControl()
     {
-        public GraphicalControl()
-        {
-            InitializeComponent();
-            InstanceID = Guid.NewGuid().ToString();
-        }
-
-        public string InstanceID
-        {
-            get { return (string)GetValue(InstanceIDProperty); }
-            set { SetValue(InstanceIDProperty, value); }
-        }
-
-        public static readonly DependencyProperty InstanceIDProperty =
-            DependencyProperty.Register("InstanceID", typeof(string), typeof(GraphicalControl), new PropertyMetadata(string.Empty));
+        InitializeComponent();
+        _userEntryDataGrid.ColumnNameMappings.Add("X", "Exc. Prob");
+        _userEntryDataGrid.ColumnNameMappings.Add("Value", "Median");
     }
 }

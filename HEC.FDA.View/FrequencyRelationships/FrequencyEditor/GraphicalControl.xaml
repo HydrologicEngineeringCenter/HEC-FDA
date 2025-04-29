@@ -1,47 +1,87 @@
 ﻿<UserControl x:Class="HEC.FDA.View.FrequencyRelationships.FrequencyEditor.GraphicalControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:HEC.FDA.View.TableWithPlot"
-             mc:Ignorable="d" 
-             xmlns:v="clr-namespace:HEC.MVVMFramework.View.NamedActionConverters;assembly=HEC.MVVMFramework.View"
-             xmlns:vm ="clr-namespace:HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor;assembly=HEC.FDA.ViewModel"
-             xmlns:conv ="clr-namespace:HEC.FDA.View.Utilities"
-             d:DesignHeight="450" d:DesignWidth="800" d:DataContext="{d:DesignInstance Type=vm:GraphicalVM }" d:Background="AliceBlue">
-  
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:HEC.FDA.View.FrequencyRelationships.FrequencyEditor"
+             xmlns:datagrid="clr-namespace:HEC.FDA.View.TableWithPlot"
+             xmlns:vm="clr-namespace:HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor;assembly=HEC.FDA.ViewModel"
+             xmlns:util="clr-namespace:HEC.FDA.View.Utilities"
+             xmlns:oxy="http://oxyplot.org/wpf"
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance Type=vm:GraphicalVM}">
   <UserControl.Resources>
-    <conv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+    <util:InverseBooleanConverter x:Key="InverseBooleanConverter" />
   </UserControl.Resources>
   <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="35"/>
-            <RowDefinition Height="35"/>
-            <RowDefinition Height="35"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" Grid.Row="0">
-            <Label Content="{Binding Path= Name}"  FontWeight="Bold"/>
-            <Label Content="{Binding Path= Units}"/>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="2*" />
+      <ColumnDefinition Width="2*" />
+    </Grid.ColumnDefinitions>
+
+    <!--User Entry Column-->
+    <Grid Grid.Column="0">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="20" />
+        <RowDefinition Height="*" />
+        <RowDefinition Height="auto" />
+      </Grid.RowDefinitions>
+      <TextBlock Text="Inputs" HorizontalAlignment="Center" FontWeight="Bold"/>
+      <datagrid:FdaDataGridControl DataContext="{Binding InputDataProvider, Mode=TwoWay}"
+                                   Grid.Row="1"
+                                   x:Name="_userEntryDataGrid"
+                                   Margin="5"
+                                   UseStarSizing="True"/>
+      <StackPanel Grid.Row="2">
+        <StackPanel Orientation="Horizontal">
+          <RadioButton Margin="5"
+                       Content="Stage"
+                       IsChecked="{Binding Path=UseFlow, Converter={StaticResource InverseBooleanConverter}}" />
+          <RadioButton Margin="5"
+                       Content="Flow"
+                       IsChecked="{Binding Path=UseFlow}" />
         </StackPanel>
-        
-        <StackPanel Orientation="Horizontal"  Grid.Row="1">
-            <Label Content="Equivalent Record Length: "/>
-            <TextBox Text="{Binding Path=EquivalentRecordLength, Mode=TwoWay}" Width="80" Margin="5"/>
-            <v:NamedActionButton NamedAction="{Binding ConfidenceLimits}" Margin="5" ToolTip="Not Needed For Compute" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Grid.Row="2">
-      <RadioButton Content="Flow"
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Eq. Record Length" Margin="5" VerticalAlignment="Center" />
+          <TextBox Text="{Binding EquivalentRecordLength}"
+                   Width="40"
+                   FontSize="12"
                    Margin="5"
-                   IsChecked="{Binding UseFlow, Mode=TwoWay}"
-                   GroupName="{Binding InstanceID, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                   x:Name="FlowRadioButton"/>
-      <RadioButton Content="Stage"
-                   Margin="5"
-                   IsChecked="{Binding UseFlow, Converter={StaticResource InverseBooleanConverter}, Mode=TwoWay}"
-                   GroupName="{Binding InstanceID, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                   x:Name="StageRadioButton"/>
+                   HorizontalAlignment="Left" />
         </StackPanel>
-        <local:FdaDataGridControl DataContext="{Binding Path =SelectedItem }" UseStarSizing="True"  Grid.Row="3"/>
+        <Button Content=" Compute Confidence Limits "
+                Command="{Binding ComputeConfidenceLimitsCommand}"
+                Height="25"
+                Width="Auto"
+                HorizontalAlignment="Left"
+                Margin="5" />
+      </StackPanel>
+
     </Grid>
+
+    <!--Output Column-->
+    <Grid Grid.Column="1">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="20" />
+        <RowDefinition Height="*" />
+      </Grid.RowDefinitions>
+      <TextBlock Text="Outputs"
+                 HorizontalAlignment="Center"
+                 FontWeight="Bold" />
+
+      <datagrid:FdaDataGridControl DataContext="{Binding OutputDataProvider, Mode=TwoWay}"
+                                   Grid.Row="1"
+                                   Margin="5"
+                                   CustomNumberFormat="N5"
+                                   UseStarSizing="True" />
+    </Grid>
+
+
+      <!--Plot Column-->
+    <oxy:PlotView Model="{Binding CalcdPlotModel, Mode=OneWay}"
+                  Grid.Column="2" />
+  </Grid>
 </UserControl>

@@ -508,7 +508,7 @@ namespace HEC.FDA.ViewModel.Utilities
                 {
                     IsGraphical = true
                 };
-                ((GraphicalVM)vm.GraphicalVM.CurveComponentVM).LoadFromProbabilityFunction(pf);
+                vm.MyGraphicalVM.LoadFromProbabilityFunction(pf);
                 elem = new FrequencyElement(pf.Name, DateTime.Now.ToString(), pf.Description, elemID,vm);
             }
             return elem;

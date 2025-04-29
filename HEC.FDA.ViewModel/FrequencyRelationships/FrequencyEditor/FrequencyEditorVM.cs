@@ -9,7 +9,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
 	public class FrequencyEditorVM:BaseEditorVM
     {
         #region Fields
-        private TableWithPlotVM _graphicalVM;
+        private GraphicalVM _graphicalVM;
         private bool _isGraphical = false; //new windows open with analytical vm open
         #endregion
 
@@ -19,7 +19,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
             get;
             set;
         }
-		public TableWithPlotVM GraphicalVM
+		public GraphicalVM MyGraphicalVM
 		{
 			get { return _graphicalVM; }
 			set { _graphicalVM = value; }
@@ -43,7 +43,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         public FrequencyEditorVM(EditorActionManager actionManager) : base(actionManager)
         {
             ParameterEntryVM = new();
-            GraphicalVM = new TableWithPlotVM(new GraphicalVM(StringConstants.GRAPHICAL_FREQUENCY,StringConstants.EXCEEDANCE_PROBABILITY,StringConstants.DISCHARGE),true,true,true);
+            MyGraphicalVM = new GraphicalVM(StringConstants.GRAPHICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
         }
         /// <summary>
         /// from frequency element
@@ -57,7 +57,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         public FrequencyEditorVM() : base(null)
         {
             ParameterEntryVM = new();
-            GraphicalVM = new TableWithPlotVM(new GraphicalVM(StringConstants.GRAPHICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE), true, true, true);
+            MyGraphicalVM = new GraphicalVM(StringConstants.GRAPHICAL_FREQUENCY, StringConstants.EXCEEDANCE_PROBABILITY, StringConstants.DISCHARGE);
         }
         public FrequencyEditorVM(XElement ele) : base(null)
         {
@@ -70,7 +70,7 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         {
             XElement ele = new(GetType().Name);
             ele.SetAttributeValue(nameof(IsGraphical), IsGraphical);
-            ele.Add(GraphicalVM.ToXML());
+            ele.Add(MyGraphicalVM.ToXML());
             ele.Add(ParameterEntryVM.ToXML());
             return ele;
         }
@@ -78,17 +78,18 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         {
             //Add try parse because people can edit this on disk and be diks. 
             IsGraphical = bool.Parse(ele.Attribute(nameof(IsGraphical)).Value);
-            foreach(XElement childs in ele.Elements())
+            foreach(XElement child in ele.Elements())
             {
-                if (childs.Name.LocalName.Equals(typeof(TableWithPlotVM).Name)){
-                    GraphicalVM = new TableWithPlotVM(childs);
+                string childname = child.Name.LocalName;
+                if (childname.Equals(typeof(TableWithPlotVM).Name) || childname.Equals(typeof(GraphicalVM).Name)){
+                    MyGraphicalVM = new GraphicalVM(child);
                 }
-                else if (childs.Name.LocalName.Equals(typeof(ParameterEntryVM).Name))
+                else if (child.Name.LocalName.Equals(typeof(ParameterEntryVM).Name))
                 {
-                    ParameterEntryVM = new(childs);
+                    ParameterEntryVM = new(child);
                 }
-                else if (childs.Name.LocalName.Equals("AnalyticalVM")) {
-                    BackwardCompatibilityFromXML(childs);
+                else if (child.Name.LocalName.Equals("AnalyticalVM")) {
+                    BackwardCompatibilityFromXML(child);
                 }
             }
         }
@@ -100,11 +101,6 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
                 if (child.Name.LocalName.Equals(typeof(ParameterEntryVM).Name))
                 {
                     ParameterEntryVM = new ParameterEntryVM(child);
-                }
-                else if (child.Name.LocalName.Equals("FitToFlowVM"));
-                {
-                    continue;
-                    //Just ignore it. We don't support fit to flow anymore as of 9/18/2024. No released version ever has or will. 
                 }
             }
         }
@@ -125,7 +121,16 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor
         {
             ParameterEntryVM.InitializePlotModel();
             ParameterEntryVM.UpdatePlot();
-            ((GraphicalVM)(GraphicalVM.CurveComponentVM)).ComputeConfidenceLimits();
+            //Need to make sure user can see it's a table, and input data.
+            if (MyGraphicalVM.InputDataProvider.Data.Count < 1)
+            {
+                for (int i = 0; i <= 8; i++)
+                {
+                    MyGraphicalVM.InputDataProvider.AddRow(i);
+                }
+                
+            }
+            MyGraphicalVM.ComputeConfidenceLimits();
             return;
         }
 

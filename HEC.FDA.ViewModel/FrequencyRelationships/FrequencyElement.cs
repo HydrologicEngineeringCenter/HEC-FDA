@@ -20,7 +20,7 @@ public class FrequencyElement : ChildElement
     #region Properties  
     public XElement FrequencyEditorXML { get => _frequencyEditorVM.ToXML(); }
     public bool IsAnalytical { get => !_frequencyEditorVM.IsGraphical; }
-    public bool GraphicalUsesFlow { get => ((GraphicalVM)(_frequencyEditorVM.GraphicalVM.CurveComponentVM)).UseFlow; }
+    public bool GraphicalUsesFlow { get => _frequencyEditorVM.MyGraphicalVM.UseFlow; }
     public LogPearson3 LPIII
     {
         get
@@ -43,7 +43,7 @@ public class FrequencyElement : ChildElement
             }
             else
             {
-                return ((GraphicalVM)_frequencyEditorVM.GraphicalVM.CurveComponentVM).GraphicalUncertainPairedData;
+                return _frequencyEditorVM.MyGraphicalVM.CreateGraphicalUncertainPairedData();
             }
         }
     }
@@ -98,7 +98,7 @@ public class FrequencyElement : ChildElement
         XElement graphiclVMele = flowFreqElem.Element("GraphicalVM");
         if (graphiclVMele != null)
         {
-            vm.GraphicalVM.CurveComponentVM = new GraphicalVM(graphiclVMele);
+            vm.MyGraphicalVM = new GraphicalVM(graphiclVMele);
         }
         _frequencyEditorVM = vm;
     }
