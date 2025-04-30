@@ -10,6 +10,6 @@ public partial class GraphicalControl : UserControl
     {
         InitializeComponent();
         _userEntryDataGrid.ColumnNameMappings.Add("X", "Exc. Prob");
-        _userEntryDataGrid.ColumnNameMappings.Add("Value", "Median");
+        _userEntryDataGrid.ColumnNameMappings.Add("Value", "Value");
     }
 }
