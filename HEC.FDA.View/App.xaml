@@ -437,9 +437,5 @@
       <computeView:AlternativeCompComputeLogControl />
     </DataTemplate> 
 
-    <DataTemplate DataType="{x:Type IASVM:ViewThresholdsVM}">
-      <IASView:ViewThresholds />
-    </DataTemplate>
-
-  </Application.Resources>
+    </Application.Resources>
 </Application>
