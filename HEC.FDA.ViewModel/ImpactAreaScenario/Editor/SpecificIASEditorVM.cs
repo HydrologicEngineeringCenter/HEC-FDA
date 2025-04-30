@@ -566,22 +566,28 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         #region PlotCurves
         private IPairedDataProducer GetFrequencyRelationshipFunction()
         {
-            IPairedDataProducer retval = null;
-            if (SelectedFrequencyElement != null && SelectedFrequencyElement.ChildElement != null)
+            // Return null if no frequency element is selected
+            if (SelectedFrequencyElement?.ChildElement is not FrequencyElement elem)
             {
-                if (SelectedFrequencyElement.ChildElement is FrequencyElement elem)
-                {
-                    if (elem.IsAnalytical)
-                    {
-                        retval = elem.LPIIIasUPD;
-                    }
-                    else
-                    {
-                        retval = elem.GraphicalUncertainPairedData;
-                    }
-                }
+                return null;
             }
-            return retval;
+
+            // Handle analytical frequency elements
+            //The Y label used in the Scenario editor plot comes from the metadata. We don't do a consistent
+            //job using metadata throughout the compute, so i'm setting it manually here. Same for Graphical below. 
+            if (elem.IsAnalytical)
+            {
+                UncertainPairedData upd = elem.LPIIIasUPD;
+                upd.CurveMetaData.YLabel = StringConstants.DISCHARGE;
+                return upd;
+            }
+
+            // Handle graphical frequency elements
+            elem.GraphicalUncertainPairedData.CurveMetaData.YLabel = elem.GraphicalUsesFlow
+                ? StringConstants.DISCHARGE
+                : StringConstants.STAGE;
+
+            return elem.GraphicalUncertainPairedData;
         }
 
         private UncertainPairedData GetRatingCurveFunction()

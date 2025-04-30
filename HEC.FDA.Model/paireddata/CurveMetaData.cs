@@ -10,8 +10,10 @@ namespace HEC.FDA.Model.paireddata
     {
         [StoredProperty("XLabel")]
         public string XLabel { get; }
+        // I'm opening this property up for modification because we're inconsistent with setting it initially, and as
+        // as stop-gap it's useful to be able to set it properly before it's needed. 
         [StoredProperty("YLabel")]
-        public string YLabel { get; }
+        public string YLabel { get; set; }
         [StoredProperty("Name")]
         public string Name { get; }
         [StoredProperty("DamCat")]

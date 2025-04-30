@@ -3,7 +3,6 @@ using HEC.Plotting.SciChart2D.DataModel;
 using HEC.Plotting.SciChart2D.ViewModel;
 using SciChart.Charting.Model.ChartSeries;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -26,11 +25,13 @@ public abstract class ChartControlBase : BaseViewModel
     //This will probably become 3 lines
     private readonly NumericLineData _data;
     private bool _flipXY;
+    private bool _inverseXAxisProbabilities;
 
     public ChartControlBase(string chartModelUniqueName, string xAxisLabel, string yAxisLabel, string seriesName, bool flipXY = false, bool useProbabilityX = false,
-        AxisAlignment xAxisAlignment = AxisAlignment.Bottom, AxisAlignment yAxisAlignment = AxisAlignment.Left)
+        AxisAlignment xAxisAlignment = AxisAlignment.Bottom, AxisAlignment yAxisAlignment = AxisAlignment.Left, bool inverseXAxisProbabilities = false)
     {
         _flipXY = flipXY;
+        _inverseXAxisProbabilities = inverseXAxisProbabilities;
         ChartVM = new SciChart2DChartViewModel(chartModelUniqueName)
         {
             LegendVisibility = Visibility.Collapsed,
@@ -41,7 +42,7 @@ public abstract class ChartControlBase : BaseViewModel
         _xAxisLabel = xAxisLabel;
         _yAxisLabel = yAxisLabel;
 
-        _data = new NumericLineData(getXValues(), getYValues(), chartModelUniqueName, _seriesName, _xAxisLabel, _yAxisLabel, PlotType.Line)
+        _data = new NumericLineData(GetXValues(inverseXAxisProbabilities), GetYValues(), chartModelUniqueName, _seriesName, _xAxisLabel, _yAxisLabel, PlotType.Line)
         {
             XAxisAlignment = xAxisAlignment,
             YAxisAlignment = yAxisAlignment,
@@ -142,43 +143,35 @@ public abstract class ChartControlBase : BaseViewModel
     {
         if (!_flipXY)
         {
-            _data.SetValues(getXValues(), getYValues());
+            _data.SetValues(GetXValues(_inverseXAxisProbabilities), GetYValues());
         }
         else
         {
-            _data.SetValues(getYValues(), getXValues());
+            _data.SetValues(GetYValues(), GetXValues(_inverseXAxisProbabilities));
         }
     }
-
-    private double[] getXValues()
+    /// <summary>
+    /// Inverse added so we can more easily plot data stored in non-exceedence in exceedence that we're used to.
+    /// </summary>
+    private double[] GetXValues(bool inverse = false)
     {
-        List<double> xVals = new List<double>();
-        if (Function != null)
+        if (Function == null)
         {
-            if (_data.FlipXAxisValues)
-            {
-                foreach (double x in Function.SamplePairedData(iteration:1, computeIsDeterministic:true).Xvals) //TODO: Clean this up. This is stupid to sample to paired data twice. 
-                {
-                    xVals.Add(1 - x);
-                }
-            }
-            else
-            {
-                xVals.AddRange(Function.SamplePairedData(iteration: 1, computeIsDeterministic: true).Xvals);
-            }
+            return [];
         }
-
-        return xVals.ToArray();
+        PairedData pd = Function.SamplePairedData(iteration: int.MinValue, computeIsDeterministic: true);
+        if (inverse)
+        {
+            return [.. pd.Xvals.Select(x => 1 - x)];
+        }
+        return pd.Xvals;
     }
-    private double[] getYValues()
+    private double[] GetYValues()
     {
-        double[] yVals = Array.Empty<double>();
-        if (Function != null)
+        if (Function == null)
         {
-            PairedData pd = Function.SamplePairedData(iteration: 1, computeIsDeterministic: true);
-            yVals = pd.Yvals;
+            return [];
         }
-        return yVals;
-
+        return Function.SamplePairedData(iteration: int.MinValue, computeIsDeterministic: true).Yvals;
     }
 }
