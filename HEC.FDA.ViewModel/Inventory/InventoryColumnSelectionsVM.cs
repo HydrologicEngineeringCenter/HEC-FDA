@@ -215,7 +215,19 @@ namespace HEC.FDA.ViewModel.Inventory
 
         private object[] GetStructureNames()
         {
-            return PointShapefile.AttributeTable.Rows.Select((r) => r.ValueAs<string>(_StructureIDRow.SelectedItem)).ToArray();
+            Type StructureIDColumnType = PointShapefile.AttributeTable.GetColumn(_StructureIDRow.SelectedItem).Type;
+            if (StructureIDColumnType == typeof(string))
+            {
+                return PointShapefile.AttributeTable.Rows.Select((r) => r.ValueAs<string>(_StructureIDRow.SelectedItem)).ToArray();
+            }
+            else if (StructureIDColumnType == typeof(int))
+            {
+                return PointShapefile.AttributeTable.Rows.Select((r) => r.ValueAs<int>(_StructureIDRow.SelectedItem)).Select(i => i.ToString()).ToArray();
+            }
+            else
+            {
+                throw new Exception("Structure ID column must be either a string or an int.");
+            }
         }
 
         public static string getTerrainFile()
