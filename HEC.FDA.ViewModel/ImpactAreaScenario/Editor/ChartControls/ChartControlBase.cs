@@ -19,19 +19,17 @@ public abstract class ChartControlBase : BaseViewModel
     private string _yAxisLabel;
     private string _seriesName;
 
-    public IPairedDataProducer Function { get; set; }
+    public PairedData Function { get; set; }
     public SciChart2DChartViewModel ChartVM { get; private set; }
 
     //This will probably become 3 lines
     private readonly NumericLineData _data;
     private bool _flipXY;
-    private bool _inverseXAxisProbabilities;
 
     public ChartControlBase(string chartModelUniqueName, string xAxisLabel, string yAxisLabel, string seriesName, bool flipXY = false, bool useProbabilityX = false,
-        AxisAlignment xAxisAlignment = AxisAlignment.Bottom, AxisAlignment yAxisAlignment = AxisAlignment.Left, bool inverseXAxisProbabilities = false)
+        AxisAlignment xAxisAlignment = AxisAlignment.Bottom, AxisAlignment yAxisAlignment = AxisAlignment.Left)
     {
         _flipXY = flipXY;
-        _inverseXAxisProbabilities = inverseXAxisProbabilities;
         ChartVM = new SciChart2DChartViewModel(chartModelUniqueName)
         {
             LegendVisibility = Visibility.Collapsed,
@@ -42,7 +40,8 @@ public abstract class ChartControlBase : BaseViewModel
         _xAxisLabel = xAxisLabel;
         _yAxisLabel = yAxisLabel;
 
-        _data = new NumericLineData(GetXValues(inverseXAxisProbabilities), GetYValues(), chartModelUniqueName, _seriesName, _xAxisLabel, _yAxisLabel, PlotType.Line)
+
+        _data = new NumericLineData([], [], chartModelUniqueName, _seriesName, _xAxisLabel, _yAxisLabel, PlotType.Line)
         {
             XAxisAlignment = xAxisAlignment,
             YAxisAlignment = yAxisAlignment,
@@ -134,44 +133,16 @@ public abstract class ChartControlBase : BaseViewModel
         ChartVM = new SciChart2DChartViewModel(ChartVM);
     }
 
-    public void UpdatePlotData(IPairedDataProducer function)
-    {
-        Function = function;
-    }
-
     public virtual void Plot()
     {
-        if (!_flipXY)
+        if (_flipXY)
         {
-            _data.SetValues(GetXValues(_inverseXAxisProbabilities), GetYValues());
+            _data.SetValues(Function.Yvals, Function.Xvals);
         }
         else
         {
-            _data.SetValues(GetYValues(), GetXValues(_inverseXAxisProbabilities));
+            _data.SetValues(Function.Xvals, Function.Yvals);
         }
     }
-    /// <summary>
-    /// Inverse added so we can more easily plot data stored in non-exceedence in exceedence that we're used to.
-    /// </summary>
-    private double[] GetXValues(bool inverse = false)
-    {
-        if (Function == null)
-        {
-            return [];
-        }
-        PairedData pd = Function.SamplePairedData(iteration: int.MinValue, computeIsDeterministic: true);
-        if (inverse)
-        {
-            return [.. pd.Xvals.Select(x => 1 - x)];
-        }
-        return pd.Xvals;
-    }
-    private double[] GetYValues()
-    {
-        if (Function == null)
-        {
-            return [];
-        }
-        return Function.SamplePairedData(iteration: int.MinValue, computeIsDeterministic: true).Yvals;
-    }
+
 }
