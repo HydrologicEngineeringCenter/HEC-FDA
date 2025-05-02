@@ -591,6 +591,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
             PairedData nonExceedencePd = elem.GraphicalUncertainPairedData.SamplePairedData(-1, true);
             PairedData exceedencePd = new([..nonExceedencePd.Xvals.Select(x => 1-x)], nonExceedencePd.Yvals,nonExceedencePd.MetaData);
+            exceedencePd.SortToIncreasingXVals();
             return exceedencePd;
         }
 
@@ -628,6 +629,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             double[] ys = _DamageFrequencyCurve.Yvals;
             CurveMetaData curveMetaData = new("Stage", "Damage", "Stage-Damage", "");
             PairedData pd =  new(xs, ys, curveMetaData);
+            pd.SortToIncreasingXVals();
             return pd;
         }
 
