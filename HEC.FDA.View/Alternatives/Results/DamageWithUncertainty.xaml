@@ -74,7 +74,7 @@
                 Orientation="Horizontal"
                 Visibility="{Binding RateAndPeriodVisible, Converter={StaticResource BoolToVisibilityConverter}}">
       <Label Content="Discount Rate:" />
-      <TextBlock Text="{Binding DiscountRate, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}"
+      <TextBlock Text="{Binding DiscountRate, StringFormat={x:Static utilVM:StringConstants.DETAILED_DECIMAL_FORMAT}}"
                  VerticalAlignment="Center" />
       <Label Content="Period of Analysis:" />
       <TextBlock Text="{Binding PeriodOfAnalysis}"
