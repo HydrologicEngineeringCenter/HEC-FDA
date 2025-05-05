@@ -39,7 +39,7 @@ namespace HEC.FDA.ModelTest.unittests.hydraulics
 
         public void GetWSE(string parentDirectory, string fileName, HydraulicDataSource dataSource, string profileName, bool useTerrainFile, string pathTerrain)
         {
-            StructureSelectionMapping map = new StructureSelectionMapping(false, false, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+            StructureSelectionMapping map = new StructureSelectionMapping(false, false, "TARGET_FID", null, null, null, null, null, null, null, null, null, null, null, null, null);
             HydraulicProfile profile = new HydraulicProfile(.01, fileName, profileName);
             OccupancyType occupancyType = OccupancyType.Builder().WithName("EMPTY").WithDamageCategory("Test").Build(); // need to at least give it a name, and a damage catagory because the structures we create for the inventory store those directly. Should reconsder this for future designs. 
             Dictionary<string, OccupancyType> occupancyTypes = new Dictionary<string, OccupancyType>() { { "EMPTY", occupancyType } };
