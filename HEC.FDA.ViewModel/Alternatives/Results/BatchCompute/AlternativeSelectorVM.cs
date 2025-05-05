@@ -4,6 +4,7 @@ using HEC.FDA.ViewModel.Compute;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Results;
 using HEC.FDA.ViewModel.Results;
 using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
@@ -111,6 +112,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
 
             List<Task<AlternativeResults>> computeTasks = [];
             List<AlternativeElement> alternativeElements = [];
+            StudyPropertiesElement props = StudyCache.GetStudyPropertiesElement();
 
             foreach (ComputeChildRowItem row in altRows)
             {
@@ -123,7 +125,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
                 if (validation.IsValid)
                 {
                     // RunAnnualizationCompute returns a started task.
-                    computeTasks.Add(ComputeAlternativeVM.RunAnnualizationCompute(altElement));
+                    computeTasks.Add(AlternativeComputer.RunAnnualizationCompute(altElement, props));
                 }
                 else
                 {

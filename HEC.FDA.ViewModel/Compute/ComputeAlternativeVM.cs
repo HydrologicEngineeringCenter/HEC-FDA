@@ -44,36 +44,6 @@ namespace HEC.FDA.ViewModel.Compute
         {
             NotifyPropertyChanged(nameof(Job));
         }
-
-        /// <summary>
-        /// Returns a 'cold' task. Does not actually start the task. Not Awaitable. 
-        /// </summary>
-        public static Task<AlternativeResults> RunAnnualizationCompute(AlternativeElement altElem, ProgressReporter reporter = null)
-        {
-            reporter ??= ProgressReporter.None();
-
-            // Group the base and future scenarios for readability.
-            var baseScenario = altElem.BaseScenario;
-            var futureScenario = altElem.FutureScenario;
-
-            // Retrieve the results from each scenario's element.
-            var firstResults = baseScenario.GetElement().Results;
-            var secondResults = futureScenario.GetElement().Results;
-
-            // Retrieve the study properties.
-            var studyProperties = StudyCache.GetStudyPropertiesElement();
-
-            // Start the computation on a separate task.
-            return Task.Run(() => Alternative.AnnualizationCompute(
-                studyProperties.DiscountRate,
-                studyProperties.PeriodOfAnalysis,
-                altElem.ID,
-                firstResults,
-                secondResults,
-                baseScenario.Year,
-                futureScenario.Year,
-                reporter
-            ));
-        }
+        
     }
 }
