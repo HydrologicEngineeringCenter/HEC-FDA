@@ -11,289 +11,304 @@
              xmlns:framework="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=HEC.MVVMFramework.View"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance ViewModel:PropertiesVM}">
-    <UserControl.Resources>
-        <GridLength x:Key="FirstColumnWidth">130</GridLength>
-        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="MonetaryUnits">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="ViewModel:MonetaryUnitsEnum"></x:Type>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="UnitSystems">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="ViewModel:UnitsSystemEnum"></x:Type>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-    </UserControl.Resources>
+  <UserControl.Resources>
+    <GridLength x:Key="FirstColumnWidth">130</GridLength>
+    <ObjectDataProvider MethodName="GetValues"
+                        ObjectType="{x:Type sys:Enum}"
+                        x:Key="MonetaryUnits">
+      <ObjectDataProvider.MethodParameters>
+        <x:Type TypeName="ViewModel:MonetaryUnitsEnum"></x:Type>
+      </ObjectDataProvider.MethodParameters>
+    </ObjectDataProvider>
+    <ObjectDataProvider MethodName="GetValues"
+                        ObjectType="{x:Type sys:Enum}"
+                        x:Key="UnitSystems">
+      <ObjectDataProvider.MethodParameters>
+        <x:Type TypeName="ViewModel:UnitsSystemEnum"></x:Type>
+      </ObjectDataProvider.MethodParameters>
+    </ObjectDataProvider>
+  </UserControl.Resources>
 
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="*" />
       <RowDefinition Height="Auto" />
-   </Grid.RowDefinitions>
+    </Grid.RowDefinitions>
 
-    <Grid Grid.Row="0">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="*" />
-      </Grid.RowDefinitions>
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="{StaticResource FirstColumnWidth}" />
-        <ColumnDefinition Width="*" />
-      </Grid.ColumnDefinitions>
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Auto"
+                  Margin="5,5,5,5"
+                  Grid.Row="0">
+      <Grid Grid.Row="0">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
+        <!-- Study Information Group Box -->
+        <GroupBox Header="Study Information"
+                  Grid.Row="0"
+                  Grid.Column="0">
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="{StaticResource FirstColumnWidth}" />
+              <ColumnDefinition Width="1080"/>
+            </Grid.ColumnDefinitions>
 
-      <Label Content="Study Name:"
-             Grid.Row="0"
-             Grid.Column="0"
-             VerticalAlignment="Center"
-             HorizontalAlignment="Right" />
-      <TextBox Grid.Row="0"
-               Grid.Column="1"
-               VerticalAlignment="Center"
-               HorizontalAlignment="Stretch"
-               Margin="3"
-               IsEnabled="false"
-               Text="{Binding StudyName}" />
-
-      <Label Content="Study Description:"
-             Grid.Row="1"
-             Grid.Column="0"
-             VerticalAlignment="Center"
-             HorizontalAlignment="Right" />
-      <UserControls:TextBoxDescription Grid.Row="1"
-                                       Grid.Column="1"
-                                       Margin="3"
-                                       Text="{Binding StudyDescription}" />
-
-      <Label Content="Study File:"
-             Grid.Row="2"
-             Grid.Column="0"
-             VerticalAlignment="Center"
-             HorizontalAlignment="Right" />
-      <TextBox Grid.Row="2"
-               Grid.Column="1"
-               VerticalAlignment="Center"
-               HorizontalAlignment="Stretch"
-               IsEnabled="false"
-               Margin="3"
-               Text="{Binding StudyPath, Mode=OneWay}" />
-
-      <Label Content="Created By:"
-             Grid.Row="3"
-             Grid.Column="0"
-             VerticalAlignment="Center"
-             HorizontalAlignment="Right" />
-      <TextBox Grid.Row="3"
-               Grid.Column="1"
-               VerticalAlignment="Center"
-               HorizontalAlignment="Stretch"
-               IsEnabled="false"
-               Margin="3"
-               Text="{Binding CreatedBy, Mode=OneWay}" />
-
-      <Label Content="Created Date:"
-             Grid.Row="4"
-             Grid.Column="0"
-             VerticalAlignment="Center"
-             HorizontalAlignment="Right" />
-      <TextBox Grid.Row="4"
-               Grid.Column="1"
-               VerticalAlignment="Center"
-               HorizontalAlignment="Stretch"
-               IsEnabled="false"
-               Margin="3"
-               Text="{Binding CreatedDate, Mode=OneWay}" />
-
-      <Label  Content="Study Notes:"
-              Grid.Row="5"
-              Grid.Column="0"
-              VerticalAlignment="Center"
-              HorizontalAlignment="Right" />
-      <UserControls:TextBoxDescription Text="{Binding StudyNotes}"
-                                       Grid.Row="5"
-                                       Grid.Column="1"
-                                       Margin="0,3,0,3" />
-
-      <GroupBox Header="Discounting Information"
-                Grid.Row="6"
-                Grid.ColumnSpan="2">
-        <Grid>
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="{StaticResource FirstColumnWidth}" />
-            <ColumnDefinition Width="*" />
-          </Grid.ColumnDefinitions>
-          <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-          </Grid.RowDefinitions>
-          <Label Grid.Row="0"
-                 Grid.Column="0"
-                 Content="Discount Rate:"
-                 HorizontalAlignment="Right" />
-          <TextBox Grid.Row="0"
-                   Grid.Column="1"
-                   Text="{Binding DiscountRate, ValidatesOnDataErrors=True}"
-                   Margin="0,3,0,3" />
-
-          <Label Grid.Row="1"
-                 Grid.Column="0"
-                 Content="Period of Analysis:"
-                 HorizontalAlignment="Right" />
-          <TextBox Grid.Row="1"
-                   Grid.Column="1"
-                   Text="{Binding PeriodOfAnalysis, ValidatesOnDataErrors=True}"
-                   Margin="0,3,0,3" />
-        </Grid>
-      </GroupBox>
-
-      <GroupBox Header="Price Information"
-                Grid.Row="7"
-                Grid.ColumnSpan="2"
-                HorizontalAlignment="Stretch">
-        <Grid>
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="{StaticResource FirstColumnWidth}" />
-            <ColumnDefinition Width="*" />
-          </Grid.ColumnDefinitions>
-          <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-          </Grid.RowDefinitions>
-          <Label Content="Surveyed Year:"
-                 Grid.Row="0"
-                 Grid.Column="0"
-                 VerticalAlignment="Center"
-                 HorizontalAlignment="Right" />
-          <TextBox Grid.Row="0"
-                   Grid.Column="1"
+            <Label Content="Study Name:"
+                   Grid.Row="0"
+                   Grid.Column="0"
                    VerticalAlignment="Center"
-                   HorizontalAlignment="Stretch"
-                   Text="{Binding Path=SurveyedYear, ValidatesOnDataErrors=True}" />
+                   HorizontalAlignment="Right" />
+            <TextBox Grid.Row="0"
+                     Grid.Column="1"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Stretch"
+                     Margin="3"
+                     IsEnabled="false"
+                     Text="{Binding StudyName}" />
 
-          <Label Content="Updated Year:"
-                 Grid.Row="1"
-                 Grid.Column="0"
-                 VerticalAlignment="Center"
-                 HorizontalAlignment="Right" />
-          <TextBox Grid.Row="1"
-                   Grid.Column="1"
+            <Label Content="Study Description:"
+                   Grid.Row="1"
+                   Grid.Column="0"
                    VerticalAlignment="Center"
-                   HorizontalAlignment="Stretch"
-                   Text="{Binding Path=UpdatedYear, ValidatesOnDataErrors=True}" />
+                   HorizontalAlignment="Right" />
+            <UserControls:TextBoxDescription Grid.Row="1"
+                                             Grid.Column="1"
+                                             Margin="3"
+                                             Text="{Binding StudyDescription}" />
 
-          <Label Content="Updated Price Index:"
-                 Grid.Row="2"
-                 Grid.Column="0"
-                 VerticalAlignment="Center"
-                 HorizontalAlignment="Right" />
-          <TextBox Grid.Row="2"
-                   Grid.Column="1"
+            <Label Content="Study File:"
+                   Grid.Row="2"
+                   Grid.Column="0"
                    VerticalAlignment="Center"
-                   HorizontalAlignment="Stretch"
-                   Text="{Binding Path=UpdatedPriceIndex, ValidatesOnDataErrors=True}" />
-        </Grid>
-      </GroupBox>
+                   HorizontalAlignment="Right" />
+            <TextBox Grid.Row="2"
+                     Grid.Column="1"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Stretch"
+                     IsEnabled="false"
+                     Margin="3"
+                     Text="{Binding StudyPath, Mode=OneWay}" />
 
-      <GroupBox Header="Convergence Criteria"
-                Grid.Row="8"
-                Grid.ColumnSpan="2">
-        <Grid>
-          <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-          </Grid.RowDefinitions>
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="{StaticResource FirstColumnWidth}" />
-            <ColumnDefinition Width="*" />
-          </Grid.ColumnDefinitions>
+            <Label Content="Created By:"
+                   Grid.Row="3"
+                   Grid.Column="0"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Right" />
+            <TextBox Grid.Row="3"
+                     Grid.Column="1"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Stretch"
+                     IsEnabled="false"
+                     Margin="3"
+                     Text="{Binding CreatedBy, Mode=OneWay}" />
 
-          <Label Content="Confidence (%):"
-                 Grid.Row="0"
-                 HorizontalAlignment="Right" />
-          <TextBox  Text="{Binding Path=ConvergenceCriteria.Confidence, ValidatesOnDataErrors=True}"
-                    Grid.Column="1"
-                    Grid.Row="0"
-                    Margin="5" />
+            <Label Content="Created Date:"
+                   Grid.Row="4"
+                   Grid.Column="0"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Right" />
+            <TextBox Grid.Row="4"
+                     Grid.Column="1"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Stretch"
+                     IsEnabled="false"
+                     Margin="3"
+                     Text="{Binding CreatedDate, Mode=OneWay}" />
 
-          <Label Content="Tolerance (0-1):"
-                 Grid.Row="1"
-                 HorizontalAlignment="Right" />
-          <TextBox  Text="{Binding Path= ConvergenceCriteria.Tolerance, ValidatesOnDataErrors=True}"
-                    Grid.Column="1"
-                    Grid.Row="1"
-                    Margin="5" />
+            <Label  Content="Study Notes:"
+                    Grid.Row="5"
+                    Grid.Column="0"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Right" />
+            <UserControls:TextBoxDescription Text="{Binding StudyNotes}"
+                                             Grid.Row="5"
+                                             Grid.Column="1"
+                                             Margin="0,3,0,3" />
+          </Grid>
+        </GroupBox>
 
-          <Label Content="Minimum Iterations:"
-                 Grid.Row="2"
-                 HorizontalAlignment="Right" />
-          <TextBox  Text="{Binding Path= ConvergenceCriteria.Min, ValidatesOnDataErrors=True}"
-                    Grid.Column="1"
-                    Grid.Row="2"
-                    Margin="5" />
+        <GroupBox Header="Discounting Information"
+                  Grid.Row="1"
+                  Grid.Column="0">
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="{StaticResource FirstColumnWidth}" />
+              <ColumnDefinition Width="1080" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0"
+                   Grid.Column="0"
+                   Content="Discount Rate:"
+                   HorizontalAlignment="Right" />
+            <TextBox Grid.Row="0"
+                     Grid.Column="1"
+                     Text="{Binding DiscountRate, ValidatesOnDataErrors=True}"
+                     Margin="0,3,0,3" />
 
-          <Label Content="Maximum Iterations:"
-                 Grid.Row="3"
-                 HorizontalAlignment="Right" />
-          <TextBox  Text="{Binding Path= ConvergenceCriteria.Max, ValidatesOnDataErrors=True}"
-                    Grid.Column="1"
-                    Grid.Row="3"
-                    Margin="5" />
-        </Grid>
-      </GroupBox>
+            <Label Grid.Row="1"
+                   Grid.Column="0"
+                   Content="Period of Analysis:"
+                   HorizontalAlignment="Right" />
+            <TextBox Grid.Row="1"
+                     Grid.Column="1"
+                     Text="{Binding PeriodOfAnalysis, ValidatesOnDataErrors=True}"
+                     Margin="0,3,0,3" />
+          </Grid>
+        </GroupBox>
 
-      <GroupBox Header="Study Projection"
-                Grid.Row="9"
-                Grid.ColumnSpan="2">
-        <Grid>
-          <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-          </Grid.RowDefinitions>
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="{StaticResource FirstColumnWidth}" />
-            <ColumnDefinition Width="*" />
-          </Grid.ColumnDefinitions>
+        <GroupBox Header="Price Information"
+                  Grid.Row="2"
+                  Grid.Column="0"
+                  HorizontalAlignment="Stretch">
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="{StaticResource FirstColumnWidth}" />
+              <ColumnDefinition Width="1080"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Label Content="Surveyed Year:"
+                   Grid.Row="0"
+                   Grid.Column="0"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Right" />
+            <TextBox Grid.Row="0"
+                     Grid.Column="1"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Stretch"
+                     Text="{Binding Path=SurveyedYear, ValidatesOnDataErrors=True}" />
 
-          <Label Content="Project Projection File"
-                 Grid.Column="0" />
-          <framework:TextBoxFileBrowserControl FileDialogTitle="Select File"
-                                               Filter="*.prj | *.prj"
-                                               Path="{Binding ProjectionPicker.ProjectProjectionPath}"
-                                               Grid.Row="0"
-                                               Grid.Column="1"
-                                               HorizontalAlignment="Stretch"
-                                               VerticalAlignment="Stretch"
-                                               Margin="3,3,3,3" />
-          <TextBlock Text="{Binding ProjectionPicker.ASCIIProjection}"
-                     Grid.Column="0"
-                     Grid.ColumnSpan="2"
-                     Grid.Row="1"
-                     TextWrapping="Wrap" />
+            <Label Content="Updated Year:"
+                   Grid.Row="1"
+                   Grid.Column="0"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Right" />
+            <TextBox Grid.Row="1"
+                     Grid.Column="1"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Stretch"
+                     Text="{Binding Path=UpdatedYear, ValidatesOnDataErrors=True}" />
 
-        </Grid>
-      </GroupBox>
+            <Label Content="Updated Price Index:"
+                   Grid.Row="2"
+                   Grid.Column="0"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Right" />
+            <TextBox Grid.Row="2"
+                     Grid.Column="1"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Stretch"
+                     Text="{Binding Path=UpdatedPriceIndex, ValidatesOnDataErrors=True}" />
+          </Grid>
+        </GroupBox>
 
+        <GroupBox Header="Convergence Criteria"
+                  Grid.Row="3"
+                  Grid.Column="0">
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="{StaticResource FirstColumnWidth}" />
+              <ColumnDefinition Width="1080" />
+            </Grid.ColumnDefinitions>
 
+            <Label Content="Confidence (%):"
+                   Grid.Row="0"
+                   HorizontalAlignment="Right" />
+            <TextBox  Text="{Binding Path=ConvergenceCriteria.Confidence, ValidatesOnDataErrors=True}"
+                      Grid.Column="1"
+                      Grid.Row="0"
+                      Margin="5" />
 
-    </Grid>
+            <Label Content="Tolerance (0-1):"
+                   Grid.Row="1"
+                   HorizontalAlignment="Right" />
+            <TextBox  Text="{Binding Path= ConvergenceCriteria.Tolerance, ValidatesOnDataErrors=True}"
+                      Grid.Column="1"
+                      Grid.Row="1"
+                      Margin="5" />
+
+            <Label Content="Minimum Iterations:"
+                   Grid.Row="2"
+                   HorizontalAlignment="Right" />
+            <TextBox  Text="{Binding Path= ConvergenceCriteria.Min, ValidatesOnDataErrors=True}"
+                      Grid.Column="1"
+                      Grid.Row="2"
+                      Margin="5" />
+
+            <Label Content="Maximum Iterations:"
+                   Grid.Row="3"
+                   HorizontalAlignment="Right" />
+            <TextBox  Text="{Binding Path= ConvergenceCriteria.Max, ValidatesOnDataErrors=True}"
+                      Grid.Column="1"
+                      Grid.Row="3"
+                      Margin="5" />
+          </Grid>
+        </GroupBox>
+
+        <GroupBox Header="Study Projection"
+                  Grid.Row="4"
+                  Grid.Column="0">
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="{StaticResource FirstColumnWidth}" />
+              <ColumnDefinition Width="1080" />
+            </Grid.ColumnDefinitions>
+
+            <Label Content="Project Projection File:"
+                   Grid.Column="0" />
+            <framework:TextBoxFileBrowserControl FileDialogTitle="Select File"
+                                                 Filter="*.prj | *.prj"
+                                                 Path="{Binding ProjectionPicker.ProjectProjectionPath}"
+                                                 Grid.Row="0"
+                                                 Grid.Column="1"
+                                                 HorizontalAlignment="Left"
+                                                 Margin="3,3,3,3" />
+            <TextBlock Text="{Binding ProjectionPicker.ASCIIProjection}"
+                       Grid.Column="0"
+                       Grid.ColumnSpan="2"
+                       Grid.Row="1"
+                       HorizontalAlignment="Left"
+                       TextWrapping="Wrap" />
+          </Grid>
+        </GroupBox>
+      </Grid>
+    </ScrollViewer>
     <Utilities:SaveCloseControl Grid.Row="1"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Bottom"
                                 Margin="5" />
   </Grid>
-
-
-
 </UserControl>
