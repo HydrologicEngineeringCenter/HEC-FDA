@@ -93,7 +93,12 @@ public class StructureFactory
             double val_vehic = row.TryGetValueAs<double>(map.VehicleValueCol, 0);
             double val_other = row.TryGetValueAs<double>(map.OtherValueCol, 0);
             string cbfips = DEFAULT_MISSING_STRING_VALUE;
-            double beginningDamage = row.TryGetValueAs<double>(map.BeginningDamageDepthCol, -found_ht);
+            double bdd_default = DEFAULT_MISSING_NUMBER_VALUE;
+            if (found_ht != DEFAULT_MISSING_NUMBER_VALUE)
+            {
+                bdd_default = -found_ht;
+            }
+            double beginningDamage = row.TryGetValueAs<double>(map.BeginningDamageDepthCol, bdd_default);
             int numStructures = row.TryGetValueAs<int>(map.NumberOfStructuresCol, 1);
             int yearInService = row.TryGetValueAs<int>(map.YearInConstructionCol, DEFAULT_MISSING_NUMBER_VALUE);
 
@@ -123,17 +128,19 @@ public class StructureFactory
     /// </summary>
     private static string GetFID(StructureSelectionMapping map, TableRow row)
     {
-        string name = row.TryGetValueAs(map.StructureIDCol, DEFAULT_MISSING_STRING_VALUE);
-        if (name == DEFAULT_MISSING_STRING_VALUE){
-            {
-                name = row.TryGetValueAs(map.StructureIDCol, DEFAULT_MISSING_NUMBER_VALUE).ToString();
-            }
-        }
-        if (name == DEFAULT_MISSING_NUMBER_VALUE.ToString())
+        Type fidType = row.Table.GetColumn(map.StructureIDCol).Type;
+        if (fidType == typeof(string))
         {
-            name = DEFAULT_MISSING_STRING_VALUE;
+            return row.ValueAs(map.StructureIDCol, DEFAULT_MISSING_NUMBER_VALUE.ToString());
         }
-        return name;
+        else if (fidType == typeof(int))
+        {
+            return row.ValueAs(map.StructureIDCol, DEFAULT_MISSING_NUMBER_VALUE).ToString();
+        }
+        else
+        {
+            throw new Exception("FID Must be int or string");
+        }
     }
 
     public static int GetImpactAreaFID(Geospatial.Vectors.Point point, PolygonFeatureCollection ImpactAreas)

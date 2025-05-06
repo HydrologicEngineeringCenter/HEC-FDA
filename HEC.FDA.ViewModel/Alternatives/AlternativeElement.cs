@@ -230,9 +230,9 @@ namespace HEC.FDA.ViewModel.Alternatives
                 string header = "Compute Log For Alternative: " + Name;
                 DynamicTabVM tab = new(header, vm, "ComputeLog" + Name);
                 Navigate(tab, false, false);
-                Results = await ComputeAlternativeVM.RunAnnualizationCompute(this, batchJob.Reporter);
+                StudyPropertiesElement props = StudyCache.GetStudyPropertiesElement();
+                Results = await AlternativeComputer.RunAnnualizationCompute(this, props, batchJob.Reporter);
                 ViewResults();
-
             }
             else
             {
