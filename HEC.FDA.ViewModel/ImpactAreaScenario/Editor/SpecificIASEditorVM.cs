@@ -570,7 +570,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             // Return null if no frequency element is selected
             if (SelectedFrequencyElement?.ChildElement is not FrequencyElement elem)
             {
-                return null;
+                return new PairedData([], []); ;
             }
 
             // Handle analytical frequency elements
@@ -597,38 +597,47 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private PairedData GetRatingCurveFunction()
         {
-            UncertainPairedData retval = null;
-            if (SelectedRatingCurveElement != null && SelectedRatingCurveElement.ChildElement != null)
+            // If we don't have a rating curve selected, return an empty paired data object: which means the chart remains with no function in it.
+            if (SelectedRatingCurveElement == null || SelectedRatingCurveElement.ChildElement == null)
             {
-                CurveChildElement elem = (CurveChildElement)SelectedRatingCurveElement.ChildElement;
-                retval = elem.CurveComponentVM.SelectedItemToPairedData();
+                return new PairedData([], []);
             }
 
-            return retval.SamplePairedData(-1, true);
+            // Retrieve the selected rating curve element and convert it to PairedData.
+            CurveChildElement elem = (CurveChildElement)SelectedRatingCurveElement.ChildElement;
+            return elem.CurveComponentVM.SelectedItemToPairedData().SamplePairedData(-1, true);
         }
 
         private PairedData GetStageDamageFunction()
         {
-            UncertainPairedData retval = null;
-            if (SelectedDamageCurve != null)
+            // If no damage curve is selected, return an empty paired data object.
+            if (SelectedDamageCurve == null)
             {
-                retval = SelectedDamageCurve.ComputeComponent.SelectedItemToPairedData();
+                return new PairedData([], []);
             }
+
+            // Retrieve the selected stage damage curve and convert it to PairedData.
+            UncertainPairedData retval = SelectedDamageCurve.ComputeComponent.SelectedItemToPairedData();
             return retval.SamplePairedData(-1, true);
         }
 
         private PairedData GetDamageFrequencyFunction()
         {
-
-            //The compute is entirely done in non-exceedence, and the results come out that way as well. Need to convert back to exceedence. 
+            // If no damage frequency curve is available, return null.
             if (_DamageFrequencyCurve == null)
             {
-                return null;
+                return new PairedData([], []);
             }
-            double[] xs = [.. _DamageFrequencyCurve.Xvals.Select(x => 1 - x)];
+
+            // Convert the damage frequency curve from non-exceedance to exceedance probabilities.
+            double[] xs = _DamageFrequencyCurve.Xvals.Select(x => 1 - x).ToArray();
             double[] ys = _DamageFrequencyCurve.Yvals;
-            CurveMetaData curveMetaData = new("Stage", "Damage", "Stage-Damage", "");
-            PairedData pd =  new(xs, ys, curveMetaData);
+
+            // Create metadata for the damage frequency curve.
+            CurveMetaData curveMetaData = new CurveMetaData("Stage", "Damage", "Stage-Damage", "");
+
+            // Create and return the paired data object.
+            PairedData pd = new PairedData(xs, ys, curveMetaData);
             pd.SortToIncreasingXVals();
             return pd;
         }

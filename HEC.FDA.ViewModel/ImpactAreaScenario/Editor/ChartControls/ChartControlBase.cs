@@ -118,7 +118,7 @@ public abstract class ChartControlBase : BaseViewModel
                 throw new NotSupportedException("2D Chart only supports X and Y values.");
         }
 
-        Tuple<double, double> output = new Tuple<double, double>(double.PositiveInfinity, double.NegativeInfinity);
+        Tuple<double, double> output = new Tuple<double, double>(double.NegativeInfinity, double.PositiveInfinity);
 
         if (values.Length > 0)
         {
