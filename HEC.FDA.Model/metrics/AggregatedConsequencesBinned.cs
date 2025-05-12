@@ -39,8 +39,8 @@ namespace HEC.FDA.Model.metrics
         /// </summary>
         public AggregatedConsequencesBinned()
         {
-            DamageCategory = "unassigned - this is a dummy object";
-            AssetCategory = "unassigned - this is a dummy object";
+            DamageCategory = "UNASSIGNED";
+            AssetCategory = "UNASSIGNED";
             RegionID = 0;
             ConvergenceCriteria = new ConvergenceCriteria();
             ConsequenceHistogram = new DynamicHistogram();
