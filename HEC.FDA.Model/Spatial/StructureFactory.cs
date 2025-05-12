@@ -74,7 +74,7 @@ public class StructureFactory
             var row = structurePoints.AttributeTable.Rows[i];
 
             // Get the feature’s ID.
-            string fid = GetFID(map, row).Trim();
+            string fid = GetFID(map.StructureIDCol, row).Trim();
 
             double val_struct = row.TryGetValueAs<double>(map.StructureValueCol, DEFAULT_MISSING_NUMBER_VALUE);
             string occtype = row.TryGetValueAs<string>(map.OccTypeCol, DEFAULT_MISSING_STRING_VALUE).Trim();
@@ -123,23 +123,35 @@ public class StructureFactory
 
 
 
-    /// <summary>
-    /// FID is commonly either string or int. This method will allow us to accept both. Tries to get string, if it fails, tries to get int. If it fails again, returns a default missing string value. 
-    /// </summary>
-    private static string GetFID(StructureSelectionMapping map, TableRow row)
+    /// <summary>  
+    /// Retrieves the Feature Identifier (FID) from a specified column in a table row.  
+    /// The FID can be of type string, int, or double.  
+    /// Attempts to extract the FID as a string first; if unsuccessful, tries to extract it as an int,  
+    /// and finally as a double. If all attempts fail, returns a default missing string value.  
+    /// Throws an exception if the column type is unsupported.  
+    /// </summary>  
+    /// <param name="columnName">The name of the column containing the FID.</param>  
+    /// <param name="row">The table row from which to extract the FID.</param>  
+    /// <returns>The FID as a string.</returns>  
+    /// <exception cref="Exception">Thrown if the column type is not string, int, or double.</exception>
+    public static string GetFID(string columnName, TableRow row)
     {
-        Type fidType = row.Table.GetColumn(map.StructureIDCol).Type;
+        Type fidType = row.Table.GetColumn(columnName).Type;
         if (fidType == typeof(string))
         {
-            return row.ValueAs(map.StructureIDCol, DEFAULT_MISSING_NUMBER_VALUE.ToString());
+            return row.ValueAs<string>(columnName, DEFAULT_MISSING_NUMBER_VALUE.ToString());
         }
         else if (fidType == typeof(int))
         {
-            return row.ValueAs(map.StructureIDCol, DEFAULT_MISSING_NUMBER_VALUE).ToString();
+            return row.ValueAs<int>(columnName, DEFAULT_MISSING_NUMBER_VALUE).ToString();
+        }
+        else if (fidType == typeof(double))
+        {
+            return row.ValueAs<double>(columnName, DEFAULT_MISSING_NUMBER_VALUE).ToString();
         }
         else
         {
-            throw new Exception("FID Must be int or string");
+            throw new Exception("FID Must be int, string, or double");
         }
     }
 
