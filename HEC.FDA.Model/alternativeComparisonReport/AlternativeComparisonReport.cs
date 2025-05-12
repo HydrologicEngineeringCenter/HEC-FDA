@@ -167,7 +167,6 @@ public class AlternativeComparisonReport
         foreach (AlternativeResults alternative in withProjectAlternativesResults)
         {
             StudyAreaConsequencesByQuantile damageReducedAlternative = new(alternative.AlternativeID);
-            pr.ReportMessage($"Compute of the distribution of EqAD reduced for alternative ID {damageReducedAlternative.AlternativeID} has been initiated." + Environment.NewLine);
 
             foreach (ImpactAreaScenarioResults withProjectResults in alternative.FutureYearScenarioResults.ResultsList.Cast<ImpactAreaScenarioResults>())
             {
