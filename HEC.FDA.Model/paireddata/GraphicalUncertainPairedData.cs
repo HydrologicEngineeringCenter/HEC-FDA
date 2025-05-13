@@ -71,6 +71,9 @@ namespace HEC.FDA.Model.paireddata
             }
             return nonExceedanceProbabilities;
         }
+        /// <summary>
+        /// Returns the relationship in Non-Exceedence Probabilities
+        /// </summary>
         public PairedData SamplePairedData(double probability)
         {
             int numCoords = GraphicalDistributionWithLessSimple.StageOrLogFlowDistributions.Length;
@@ -93,6 +96,9 @@ namespace HEC.FDA.Model.paireddata
             return pairedData;
         }
 
+        /// <summary>
+        /// Returns the relationship in Non-Exceedence Probabilities
+        /// </summary>
         public PairedData SamplePairedData(long iterationNumber, bool computeIsDeterministic = false)
         {
             double probability;

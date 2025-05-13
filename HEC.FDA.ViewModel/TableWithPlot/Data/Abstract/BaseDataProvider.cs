@@ -11,6 +11,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Data.Abstract
     public abstract class BaseDataProvider:IDataProvider
     {
         public bool IsStrictMonotonic { get; set; } = false;
+        public bool XisDecreasing { get; set; }
         public string Name { get; set; } 
         public ObservableCollection<object> Data { get; } = new ObservableCollection<object>();
         public double xMax { get; set; } = double.MaxValue;

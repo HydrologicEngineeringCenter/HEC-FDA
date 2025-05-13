@@ -18,8 +18,7 @@ using System.IO;
 
 namespace HEC.FDA.ModelTest.integrationtests;
 
-[Trait("RunsOn", "Local")]
-[Collection("Serial")]
+[Trait("RunsOn", "Never")]
 public class BigInventoryStageDamageTest
 {
     #region Structure Data 

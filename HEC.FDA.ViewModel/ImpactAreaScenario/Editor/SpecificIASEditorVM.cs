@@ -16,6 +16,7 @@ using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 
@@ -548,80 +549,97 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
             //might need to be able to handle no stage damage here elegantly 
 
-                ImpactAreaScenarioSimulation simulation = sc.BuildSimulation();
-                ImpactAreaScenarioResults result = simulation.PreviewCompute();
-                if (result == null)
-                {
-                    MessageBox.Show("Preview Compute returned null result", "Failed Compute", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-                else
-                {
-                    EAD = result.ConsequenceResults.MeanDamage(_selectedDamageCategory, _selectedAssetCategory, CurrentImpactArea.ID);
-                    _DamageFrequencyCurve = result.GetDamageFrequency(_selectedDamageCategory, _selectedAssetCategory);
-                }
-            
+            ImpactAreaScenarioSimulation simulation = sc.BuildSimulation();
+            ImpactAreaScenarioResults result = simulation.PreviewCompute();
+            if (result == null)
+            {
+                MessageBox.Show("Preview Compute returned null result", "Failed Compute", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            else
+            {
+                EAD = result.ConsequenceResults.MeanDamage(_selectedDamageCategory, _selectedAssetCategory, CurrentImpactArea.ID);
+                _DamageFrequencyCurve = result.GetDamageFrequency(_selectedDamageCategory, _selectedAssetCategory);
+            }
+
 
         }
 
         #region PlotCurves
-        private IPairedDataProducer GetFrequencyRelationshipFunction()
+        private PairedData GetFrequencyRelationshipFunction()
         {
-            IPairedDataProducer retval = null;
-            if (SelectedFrequencyElement != null && SelectedFrequencyElement.ChildElement != null)
+            // Return null if no frequency element is selected
+            if (SelectedFrequencyElement?.ChildElement is not FrequencyElement elem)
             {
-                if (SelectedFrequencyElement.ChildElement is FrequencyElement elem)
-                {
-                    if (elem.IsAnalytical)
-                    {
-                        retval = elem.LPIIIasUPD;
-                    }
-                    else
-                    {
-                        retval = elem.GraphicalUncertainPairedData;
-                    }
-                }
+                return new PairedData([], []); ;
             }
-            return retval;
+
+            // Handle analytical frequency elements
+            //The Y label used in the Scenario editor plot comes from the metadata. We don't do a consistent
+            //job using metadata throughout the compute, so i'm setting it manually here. Same for Graphical below. 
+            if (elem.IsAnalytical)
+            {
+                UncertainPairedData upd = elem.LPIIIasUPD;
+                upd.CurveMetaData.YLabel = StringConstants.DISCHARGE;
+                PairedData apd = upd.SamplePairedData(-1, true);
+                return apd;
+            }
+
+            // Handle graphical frequency elements. Graphical Frequencies sample always comes out in non-exceedence, so we have to convert here. 
+            elem.GraphicalUncertainPairedData.CurveMetaData.YLabel = elem.GraphicalUsesFlow
+                ? StringConstants.DISCHARGE
+                : StringConstants.STAGE;
+
+            PairedData nonExceedencePd = elem.GraphicalUncertainPairedData.SamplePairedData(-1, true);
+            PairedData exceedencePd = new([..nonExceedencePd.Xvals.Select(x => 1-x)], nonExceedencePd.Yvals,nonExceedencePd.MetaData);
+            exceedencePd.SortToIncreasingXVals();
+            return exceedencePd;
         }
 
-        private UncertainPairedData GetRatingCurveFunction()
+        private PairedData GetRatingCurveFunction()
         {
-            UncertainPairedData retval = null;
-            if (SelectedRatingCurveElement != null && SelectedRatingCurveElement.ChildElement != null)
+            // If we don't have a rating curve selected, return an empty paired data object: which means the chart remains with no function in it.
+            if (SelectedRatingCurveElement == null || SelectedRatingCurveElement.ChildElement == null)
             {
-                CurveChildElement elem = (CurveChildElement)SelectedRatingCurveElement.ChildElement;
-                retval = elem.CurveComponentVM.SelectedItemToPairedData();
+                return new PairedData([], []);
             }
 
-            return retval;
+            // Retrieve the selected rating curve element and convert it to PairedData.
+            CurveChildElement elem = (CurveChildElement)SelectedRatingCurveElement.ChildElement;
+            return elem.CurveComponentVM.SelectedItemToPairedData().SamplePairedData(-1, true);
         }
 
-        private UncertainPairedData GetStageDamageFunction()
+        private PairedData GetStageDamageFunction()
         {
-            UncertainPairedData retval = null;
-            if (SelectedDamageCurve != null)
+            // If no damage curve is selected, return an empty paired data object.
+            if (SelectedDamageCurve == null)
             {
-                retval = SelectedDamageCurve.ComputeComponent.SelectedItemToPairedData();
+                return new PairedData([], []);
             }
-            return retval;
+
+            // Retrieve the selected stage damage curve and convert it to PairedData.
+            UncertainPairedData retval = SelectedDamageCurve.ComputeComponent.SelectedItemToPairedData();
+            return retval.SamplePairedData(-1, true);
         }
 
-        private UncertainPairedData GetDamageFrequencyFunction()
+        private PairedData GetDamageFrequencyFunction()
         {
-            UncertainPairedData curve = null;
-            if (_DamageFrequencyCurve != null)
+            // If no damage frequency curve is available, return null.
+            if (_DamageFrequencyCurve == null)
             {
-                double[] xs = _DamageFrequencyCurve.Xvals;
-                double[] ys = _DamageFrequencyCurve.Yvals;
-                IDistribution[] yDists = new IDistribution[ys.Length];
-                for (int i = 0; i < ys.Length; i++)
-                {
-                    yDists[i] = new Deterministic(ys[i]);
-                }
-                CurveMetaData curveMetaData = new("Stage", "Damage", "Stage-Damage", "");
-                curve = new UncertainPairedData(xs, yDists, curveMetaData);
+                return new PairedData([], []);
             }
-            return curve;
+
+            // Convert the damage frequency curve from non-exceedance to exceedance probabilities.
+            double[] xs = _DamageFrequencyCurve.Xvals.Select(x => 1 - x).ToArray();
+            double[] ys = _DamageFrequencyCurve.Yvals;
+
+            // Create metadata for the damage frequency curve.
+            CurveMetaData curveMetaData = new CurveMetaData("Stage", "Damage", "Stage-Damage", "");
+
+            // Create and return the paired data object.
+            PairedData pd = new PairedData(xs, ys, curveMetaData);
+            pd.SortToIncreasingXVals();
+            return pd;
         }
 
         public void Plot()
@@ -640,10 +658,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             PreviewCompute();
             //get the current curves and set that data on the chart controls
             //this update call will set the current crosshair data on each one
-            PlotControlVM.FrequencyRelationshipControl.UpdatePlotData(GetFrequencyRelationshipFunction());
-            PlotControlVM.RatingRelationshipControl.UpdatePlotData(GetRatingCurveFunction());
-            PlotControlVM.StageDamageControl.UpdatePlotData(GetStageDamageFunction());
-            UncertainPairedData damageFrequencyCurve = GetDamageFrequencyFunction();
+            PlotControlVM.FrequencyRelationshipControl.Function = GetFrequencyRelationshipFunction();
+            PlotControlVM.RatingRelationshipControl.Function = GetRatingCurveFunction();
+            PlotControlVM.StageDamageControl.Function = GetStageDamageFunction();
+            PairedData damageFrequencyCurve = GetDamageFrequencyFunction();
 
             if (damageFrequencyCurve == null)
             {
@@ -651,7 +669,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 return;
             }
 
-            PlotControlVM.DamageFrequencyControl.UpdatePlotData(damageFrequencyCurve);
+            PlotControlVM.DamageFrequencyControl.Function = damageFrequencyCurve;
             PlotControlVM.Plot();
             ShowWarnings = true;
             ShowEAD = true;

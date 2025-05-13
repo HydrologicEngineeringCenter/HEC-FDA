@@ -250,7 +250,7 @@ namespace HEC.FDA.ViewModel.Study
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show( ex.Message + "\n" + ex.StackTrace + "\n" + ex.InnerException.Message + "\n" + ex.InnerException.StackTrace, "Failed to Open Study", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show( ex.Message + "\n" + ex.StackTrace + "\n" + ex.InnerException?.Message + "\n" + ex.InnerException?.StackTrace, "Failed to Open Study", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             else

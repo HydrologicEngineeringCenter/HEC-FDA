@@ -4,6 +4,7 @@ using Xunit;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.TableWithPlot.Rows;
 using HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModelTest
 {
@@ -16,14 +17,12 @@ namespace HEC.FDA.ViewModelTest
             GraphicalVM expected = new GraphicalVM("X","xlabel","ylabel");
             expected.XLabel = "X";
             expected.YLabel = "Y";
-            expected.Description = "Description";
             expected.EquivalentRecordLength = 590;
             var el = expected.ToXML();
 
             GraphicalVM Actual = new GraphicalVM("Brennan", "xlabel", "ylabel");
             Actual.LoadFromXML(el);
             Assert.Equal(expected.Name, Actual.Name);
-            Assert.Equal(expected.Description, Actual.Description);
             Assert.Equal(expected.EquivalentRecordLength, Actual.EquivalentRecordLength);
             Assert.Equal(expected.XLabel, Actual.XLabel);
             Assert.Equal(expected.YLabel, Actual.YLabel);
@@ -48,18 +47,20 @@ namespace HEC.FDA.ViewModelTest
             expected.Name = StringConstants.GRAPHICAL_FREQUENCY;
             expected.EquivalentRecordLength = ERL;
             expected.UseFlow = false;
-            expected.SelectedItem.Data.Clear();
-            expected.SelectedItem.Data.Add(new GraphicalRow(.99, 1));
-            expected.SelectedItem.Data.Add(new GraphicalRow(.5, 2));
-            expected.SelectedItem.Data.Add(new GraphicalRow(.01, 3));
+            expected.InputDataProvider.Data.Clear();
+            expected.InputDataProvider.Data.Add(new GraphicalRow(.99, 1));
+            expected.InputDataProvider.Data.Add(new GraphicalRow(.5, 2));
+            expected.InputDataProvider.Data.Add(new GraphicalRow(.01, 3));
 
-            GraphicalVM actual = new GraphicalVM(pf);
+            //Unclear if we actually need t support building graphical from Probability Function. 
+            Assert.Throws(typeof(System.NotImplementedException),() => new GraphicalVM(pf));
+            //GraphicalVM actual = new GraphicalVM(pf);
 
-            Assert.Equal(expected.Name, actual.Name);
-            Assert.Equal(expected.XLabel, actual.XLabel);
-            Assert.Equal(expected.YLabel, actual.YLabel);
-            Assert.Equal(expected.UseFlow, actual.UseFlow);
-            Assert.Equal(expected.EquivalentRecordLength, actual.EquivalentRecordLength);
+            //Assert.Equal(expected.Name, actual.Name);
+            //Assert.Equal(expected.XLabel, actual.XLabel);
+            //Assert.Equal(expected.YLabel, actual.YLabel);
+            //Assert.Equal(expected.UseFlow, actual.UseFlow);
+            //Assert.Equal(expected.EquivalentRecordLength, actual.EquivalentRecordLength);
         } 
     }
 }

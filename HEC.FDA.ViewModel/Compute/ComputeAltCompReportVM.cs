@@ -1,113 +1,39 @@
-﻿using HEC.FDA.Model.compute;
-using HEC.FDA.Model.metrics;
-using HEC.FDA.ViewModel.Alternatives;
-using HEC.FDA.ViewModel.Utilities;
-using HEC.MVVMFramework.Base.Implementations;
-using Statistics;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using Visual.Observables;
 
 namespace HEC.FDA.ViewModel.Compute
 {
-    public class ComputeAltCompReportVM:ComputeWithProgressAndMessagesBase
+    public class ComputeAltCompReportVM : BaseViewModel
     {
-        private readonly List<AlternativeResults> AllResults = new();
-        private readonly int _TotalProgressCount;
-        private int _CurrentProgressCount;
+        private BatchJob _job;
 
-        public ComputeAltCompReportVM(AlternativeElement withoutAlt, List<AlternativeElement> withProjAlts, Action<AlternativeComparisonReportResults> callback) : base()
+        public BatchJob Job
         {
-            _TotalProgressCount = withProjAlts.Count + 2;
-            ProgressLabel = StringConstants.ALTERNATIVE_PROGRESS_LABEL;
-
-            List<AlternativeElement> allAlts = new(withProjAlts);
-            allAlts.Add(withoutAlt);
-
-            List<Task> tasks = CreateAlternativeComputeTasks(allAlts);
-
-            Model.alternativeComparisonReport.AlternativeComparisonReport altCompReport = new();
-            altCompReport.ProgressReport += Alt_ProgressReport;
-            MessageVM.InstanceHash.Add(altCompReport.GetHashCode());
-
-            Task.Run(() =>
+            get { return _job; }
+            set
             {
-                foreach (Task t in tasks)
-                {
-                    //todo: could cause infinite loop. maybe pass in milliseconds
-                    t.Wait();
-                }
-                //here we have done all the alt computes. Find the without results from the list of results
-                AlternativeResults withoutResult = FindWithoutProjectResult(withoutAlt.ID);
-                AllResults.Remove(withoutResult);
-
-                int seed = 99;
-                RandomProvider randomProvider = new(seed);
-                ConvergenceCriteria cc = StudyCache.GetStudyPropertiesElement().GetStudyConvergenceCriteria();
-
-                AlternativeComparisonReportResults results = altCompReport.ComputeAlternativeComparisonReport(withoutResult, AllResults);
-                Progress = 100;
-                callback?.Invoke(results);
-            }
-            );
-
-        }
-
-        private void ComputeCompleted(AlternativeResults results)
-        {
-            lock (AllResults)
-            {
-                AllResults.Add(results);
-                _CurrentProgressCount++;
-                double progress = (_CurrentProgressCount / _TotalProgressCount) * 100;
-                Progress = (int)progress;
+                _job = value;
+                NotifyPropertyChanged();
             }
         }
 
-        private List<Task> CreateAlternativeComputeTasks(List<AlternativeElement> allAlts)
+        public ComputeAltCompReportVM(BatchJob batchJob) : base()
         {
-            List<Task> tasks = new();
-
-            foreach (AlternativeElement elem in allAlts)
-            {
-                tasks.Add(Task.Run(() =>
-                {
-                    try
-                    {
-                        elem.ComputeAlternative(ComputeCompleted);
-                    }
-                    catch
-                    {
-                        //todo:
-                    }
-
-                }
-                ));
-            }
-            return tasks;
+            _job = batchJob;
+            _job.ProgressChanged += JobProgressChanged;
+            _job.PropertyChanged += JobPropertyChanged;
         }
 
-        private AlternativeResults FindWithoutProjectResult(int withoutAltID)
+        private void JobProgressChanged(BatchJob sender, double progress)
         {
-            AlternativeResults withoutResult = null;
-            foreach (AlternativeResults result in AllResults)
-            {
-                if (result.AlternativeID == withoutAltID)
-                {
-                    withoutResult = result;
-                    break;
-                }
-            }
-            return withoutResult;
+            NotifyPropertyChanged(nameof(Job));
         }
 
-        private void Alt_ProgressReport(object sender, MVVMFramework.Base.Events.ProgressReportEventArgs progress)
+        private void JobPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (sender is Model.alternativeComparisonReport.AlternativeComparisonReport)
-            {
-                Progress = progress.Progress;
-            }
+            NotifyPropertyChanged(nameof(Job));
         }
 
     }
+
 }

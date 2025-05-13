@@ -41,20 +41,6 @@ public class GraphicalDataProvider : BaseDataProvider
     public GraphicalDataProvider()
     {
         Name = "Deterministic";
-        Data.Add(new GraphicalRow(.99, 458d));
-        Data.Add(new GraphicalRow(.5, 468.33d));
-        Data.Add(new GraphicalRow(.2, 469.97d));
-        Data.Add(new GraphicalRow(.1, 471.95d));
-        Data.Add(new GraphicalRow(.04, 473.06d));
-        Data.Add(new GraphicalRow(.02, 473.66d));
-        Data.Add(new GraphicalRow(.01, 474.53d));
-        Data.Add(new GraphicalRow(.004, 475.11d));
-        Data.Add(new GraphicalRow(.002, 477.4d));
-        LinkList();
-        xMax = .999999999999999999999;
-        xMin = .000000000000000000001;
-        SetGlobalMaxAndMin();
-        AddHandlers();
     }
     public GraphicalDataProvider(bool useFlow)
     {

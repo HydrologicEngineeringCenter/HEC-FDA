@@ -70,7 +70,7 @@ namespace HEC.FDA.Model.extensions
                 extrapolatedFrequencyFunctionWithStagesOrLoggedFlows = ExtrapolateFrequencyFunction(userInputExceedanceProbabilities, LogFlows(stageOrUnloggedFlowValues));
             }
             ExceedanceProbabilities = FillInputExceedanceProbabilitiesWithRequiredPoints(extrapolatedFrequencyFunctionWithStagesOrLoggedFlows.Xvals);
-            StageOrLoggedFlowValues = InterpolateQuantiles.InterpolateOnX(extrapolatedFrequencyFunctionWithStagesOrLoggedFlows.Xvals, ExceedanceProbabilities, extrapolatedFrequencyFunctionWithStagesOrLoggedFlows.Yvals); ;
+            StageOrLoggedFlowValues = InterpolateQuantiles.InterpolateOnX(extrapolatedFrequencyFunctionWithStagesOrLoggedFlows.Xvals, ExceedanceProbabilities, extrapolatedFrequencyFunctionWithStagesOrLoggedFlows.Yvals);
             LowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant = lowerExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant;
             HigherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant = higherExceedanceProbabilityBeyondWhichToHoldStandardErrorConstant;
             AddRules(userInputExceedanceProbabilities);

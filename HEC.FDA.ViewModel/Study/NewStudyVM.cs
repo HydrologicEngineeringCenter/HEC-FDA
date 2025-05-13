@@ -5,15 +5,9 @@ namespace HEC.FDA.ViewModel.Study
 {
     public class NewStudyVM : Editors.BaseEditorVM
     {
-        #region Notes
-        #endregion
-        #region Fields
         private StudyElement _StudyElement;
         private string _Path = "";
         private string _StudyName = "";
-        private string _Description = "";
-        #endregion
-        #region Properties
         public string Path { get { return _Path; }
         set
             {
@@ -36,7 +30,6 @@ namespace HEC.FDA.ViewModel.Study
             }
         }
 
-        #endregion
         #region Constructors
 
         public NewStudyVM(StudyElement studyElement) : base(null)
@@ -81,7 +74,7 @@ namespace HEC.FDA.ViewModel.Study
         }
         public override void Save()
         {
-            _StudyElement.CreateNewStudy(_StudyName, _Path, _Description);
+            _StudyElement.CreateNewStudy(_StudyName, _Path, Description);
         }
 
         #endregion

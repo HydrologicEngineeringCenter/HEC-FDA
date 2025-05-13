@@ -15,15 +15,15 @@ namespace HEC.FDA.ViewModelTest.FrequencyRelationships.FrequencyEditor
             //Assemble
             var ogVM = new FrequencyEditorVM();
             ogVM.IsGraphical = true;
-            ogVM.GraphicalVM.CurveComponentVM.SelectedItem.Data.Add(new GraphicalRow(.001, 10000));
+            ogVM.MyGraphicalVM.InputDataProvider.Data.Add(new DeterministicRow(.001, 10000,true));
             ogVM.ParameterEntryVM.Mean = 4;
 
             //Act
             var newVM = new FrequencyEditorVM(ogVM.ToXML());
 
             //Assert
-            double expectedGraphFlow = ((GraphicalRow)ogVM.GraphicalVM.CurveComponentVM.SelectedItem.Data.Last()).Value;
-            double actualGraphFlow = ((GraphicalRow)newVM.GraphicalVM.CurveComponentVM.SelectedItem.Data.Last()).Value;
+            double expectedGraphFlow = ((DeterministicRow)ogVM.MyGraphicalVM.InputDataProvider.Data.Last()).Value;
+            double actualGraphFlow = ((DeterministicRow)newVM.MyGraphicalVM.InputDataProvider.Data.Last()).Value;
             Assert.Equal(expectedGraphFlow, actualGraphFlow);
 
             Assert.Equal(ogVM.IsGraphical, newVM.IsGraphical);

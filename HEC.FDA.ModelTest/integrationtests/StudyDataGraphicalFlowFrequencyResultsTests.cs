@@ -15,7 +15,7 @@ namespace HEC.FDA.ModelTest.integrationtests
     /// see: https://drive.google.com/file/d/12WJL6ambACQLfqGUwbg7tv_wMxLn-a6t/view?usp=sharing
     /// </summary>
     /// 
-    [Trait("RunsOn", "Local")]
+    [Trait("RunsOn", "Remote")]
     public class StudyDataGraphicalFlowFrequencyResultsTests
     {
         static int equivalentRecordLength = 48;

@@ -12,7 +12,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
         private double _Confidence025 = 0;
         private double _x;
 
-        [DisplayAsColumn("X Value")]
+        [DisplayAsColumn("Exc. Prob.")]
         public override double X
         {
             get { return _x; }
@@ -25,8 +25,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             }
 
         }
-        [DisplayAsColumn("Y Value")]
-        [DisplayAsLine("Y Value",Enumerables.ColorEnum.Black)]
+        [DisplayAsColumn("Median")]
+        [DisplayAsLine("Median",Enumerables.ColorEnum.Black)]
         public double Value
         {
             get
@@ -41,8 +41,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
                 NotifyPropertyChanged();
             }
         }
-        [DisplayAsColumn("2.5% Confidence")]
-        [DisplayAsLine("2.5% Confidence",Enumerables.ColorEnum.Blue,true)]
+        [DisplayAsColumn("2.5% Conf.")]
+        [DisplayAsLine("2.5% Conf.",Enumerables.ColorEnum.Blue,true)]
         public double Confidence025
         {
             get
@@ -51,8 +51,8 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             }
         }
 
-        [DisplayAsColumn("97.5% Confidence")]
-        [DisplayAsLine("97.5% Confidence", Enumerables.ColorEnum.Blue,true)]
+        [DisplayAsColumn("97.5% Conf.")]
+        [DisplayAsLine("97.5% Conf.", Enumerables.ColorEnum.Blue,true)]
         public double Confidence975 { 
             get
             {
@@ -65,14 +65,14 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
         {
             get
             {
-                return new List<string>() { nameof(Value) };
+                return [nameof(Value)];
             }
         }
         protected override List<string> YMaxProperties
         {
             get
             {
-                return new List<string>() { nameof(Value) };
+                return [nameof(Value)];
             }
         }
         public GraphicalRow(double x, double y, bool isMonotonicallyIncreasing = false) : base(x, new Deterministic(y), isMonotonicallyIncreasing, true)
@@ -81,10 +81,17 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             AddSinglePropertyRule(nameof(Value), new Rule(() => { if (PreviousRow == null) return true; return Value > ((GraphicalRow)PreviousRow).Value; }, "Y values are not increasing.", ErrorLevel.Severe));           
         }
 
-        public void SetConfidenceLimits(double conf05, double conf95)
+        public GraphicalRow(double x, double y, double conf025, double conf0975, bool isMonotonicallyIncreasing = false) : base(x, new Deterministic(y), isMonotonicallyIncreasing, true)
         {
-            _Confidence975 = conf95;
-            _Confidence025 = conf05;
+            AddSinglePropertyRule(nameof(Value), new Rule(() => { if (NextRow == null) return true; return Value < ((GraphicalRow)NextRow).Value; }, "Y values are not increasing.", ErrorLevel.Severe));
+            AddSinglePropertyRule(nameof(Value), new Rule(() => { if (PreviousRow == null) return true; return Value > ((GraphicalRow)PreviousRow).Value; }, "Y values are not increasing.", ErrorLevel.Severe));
+            SetConfidenceLimits(conf025, conf0975);
+        }
+
+        public void SetConfidenceLimits(double conf025, double conf975)
+        {
+            _Confidence975 = conf975;
+            _Confidence025 = conf025;
             NotifyPropertyChanged(nameof(Confidence975));
             NotifyPropertyChanged(nameof(Confidence025));
         }

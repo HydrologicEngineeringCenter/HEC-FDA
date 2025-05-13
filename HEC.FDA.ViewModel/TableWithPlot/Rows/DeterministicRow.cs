@@ -54,13 +54,13 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
             }
         }
 
-        public DeterministicRow(double x, double y, bool isStrictMonotonic) : base(x, new Deterministic(y))
+        public DeterministicRow(double x, double y, bool isStrictMonotonic, bool xIsDecreasing = false) : base(x, new Deterministic(y), xIsDecreasing: xIsDecreasing)
         {
             AddSinglePropertyRule(nameof(Value), CreateValuesIncreasingPreviousRowRule(isStrictMonotonic));
             AddSinglePropertyRule(nameof(Value), CreateValuesIncreasingNextRowRule(isStrictMonotonic));
         }
 
-        private IRule CreateValuesIncreasingPreviousRowRule(bool isStrictMonotonic)
+        private Rule CreateValuesIncreasingPreviousRowRule(bool isStrictMonotonic)
         {
             return new Rule(() =>
             {
@@ -84,7 +84,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
                 "Y values are not increasing.", ErrorLevel.Severe);
         }
 
-        private IRule CreateValuesIncreasingNextRowRule(bool isStrictMonotonic)
+        private Rule CreateValuesIncreasingNextRowRule(bool isStrictMonotonic)
         {
             return new Rule(() =>
             {

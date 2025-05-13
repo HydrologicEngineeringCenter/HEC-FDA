@@ -3,7 +3,6 @@ using HEC.Plotting.SciChart2D.DataModel;
 using HEC.Plotting.SciChart2D.ViewModel;
 using SciChart.Charting.Model.ChartSeries;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -20,7 +19,7 @@ public abstract class ChartControlBase : BaseViewModel
     private string _yAxisLabel;
     private string _seriesName;
 
-    public IPairedDataProducer Function { get; set; }
+    public PairedData Function { get; set; }
     public SciChart2DChartViewModel ChartVM { get; private set; }
 
     //This will probably become 3 lines
@@ -41,7 +40,8 @@ public abstract class ChartControlBase : BaseViewModel
         _xAxisLabel = xAxisLabel;
         _yAxisLabel = yAxisLabel;
 
-        _data = new NumericLineData(getXValues(), getYValues(), chartModelUniqueName, _seriesName, _xAxisLabel, _yAxisLabel, PlotType.Line)
+
+        _data = new NumericLineData([], [], chartModelUniqueName, _seriesName, _xAxisLabel, _yAxisLabel, PlotType.Line)
         {
             XAxisAlignment = xAxisAlignment,
             YAxisAlignment = yAxisAlignment,
@@ -118,7 +118,7 @@ public abstract class ChartControlBase : BaseViewModel
                 throw new NotSupportedException("2D Chart only supports X and Y values.");
         }
 
-        Tuple<double, double> output = new Tuple<double, double>(double.PositiveInfinity, double.NegativeInfinity);
+        Tuple<double, double> output = new Tuple<double, double>(double.NegativeInfinity, double.PositiveInfinity);
 
         if (values.Length > 0)
         {
@@ -133,52 +133,16 @@ public abstract class ChartControlBase : BaseViewModel
         ChartVM = new SciChart2DChartViewModel(ChartVM);
     }
 
-    public void UpdatePlotData(IPairedDataProducer function)
-    {
-        Function = function;
-    }
-
     public virtual void Plot()
     {
-        if (!_flipXY)
+        if (_flipXY)
         {
-            _data.SetValues(getXValues(), getYValues());
+            _data.SetValues(Function.Yvals, Function.Xvals);
         }
         else
         {
-            _data.SetValues(getYValues(), getXValues());
+            _data.SetValues(Function.Xvals, Function.Yvals);
         }
     }
 
-    private double[] getXValues()
-    {
-        List<double> xVals = new List<double>();
-        if (Function != null)
-        {
-            if (_data.FlipXAxisValues)
-            {
-                foreach (double x in Function.SamplePairedData(iteration:1, computeIsDeterministic:true).Xvals) //TODO: Clean this up. This is stupid to sample to paired data twice. 
-                {
-                    xVals.Add(1 - x);
-                }
-            }
-            else
-            {
-                xVals.AddRange(Function.SamplePairedData(iteration: 1, computeIsDeterministic: true).Xvals);
-            }
-        }
-
-        return xVals.ToArray();
-    }
-    private double[] getYValues()
-    {
-        double[] yVals = Array.Empty<double>();
-        if (Function != null)
-        {
-            PairedData pd = Function.SamplePairedData(iteration: 1, computeIsDeterministic: true);
-            yVals = pd.Yvals;
-        }
-        return yVals;
-
-    }
 }
