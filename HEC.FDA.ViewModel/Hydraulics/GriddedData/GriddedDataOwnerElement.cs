@@ -51,11 +51,10 @@ namespace HEC.FDA.ViewModel.Hydraulics.GriddedData
         {
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                .WithSiblingRules(this);
-
-            GriddedImporterVM vm = new GriddedImporterVM(actionManager);
-
+            GriddedImporterVM vm = new(actionManager);
             string header = StringConstants.IMPORT_HYDRAULICS_HEADER;
-            DynamicTabVM tab = new DynamicTabVM(header, vm, StringConstants.IMPORT_HYDRAULICS_HEADER);
+            vm.RequestNavigation += Navigate;
+            DynamicTabVM tab = new(header, vm, StringConstants.IMPORT_HYDRAULICS_HEADER);
             Navigate(tab, false, false);
         }
 
