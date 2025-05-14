@@ -223,25 +223,57 @@ namespace StatisticsTests.Histograms
         }
 
         [Theory]
-        [InlineData(2, 3)]
-        [InlineData(3, 4)]
-        public void HistgramToEmpiricalAreEquivalentDistributions(double mean, double standardDeviation)
+        //normal 2, 3 and 3, 4
+        [InlineData(2, 3, -999, 3, 4, -999)]
+        //Tri 
+        [InlineData(3, 4, 7, 6, 6.5, 15)]
+        //Tri
+        [InlineData(3, 4, 7, 6, 15, 15.5)]
+
+        public void HistgramToEmpiricalAreEquivalentDistributions(double mean, double standardDeviationOrMin, double max, double mean2, double standardDeviationOrMin2, double max2)
         {
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
             int sampleSize = 5000;
-            Normal normal = new Normal(mean, standardDeviation);
+
+            Normal normal = new Normal(mean, standardDeviationOrMin);
+            Normal normal2 = new Normal(mean2, standardDeviationOrMin2);
+            Triangular triangular = new Triangular(mean, standardDeviationOrMin, max);
+            Triangular triangular2 = new Triangular(mean2, standardDeviationOrMin2, max2);
+
             List<double> resultCollection = new List<double>();
             Random random = new Random(Seed: 1234);
             for (int i = 0; i < sampleSize; i++)
             {
                 resultCollection.Add(normal.InverseCDF(random.NextDouble()));
             }
+
+            List<double> resultCollection2 = new List<double>();
+            Random random2 = new Random(Seed: 1234);
+            for (int i = 0; i < sampleSize; i++)
+            {
+                resultCollection2.Add(normal2.InverseCDF(random2.NextDouble()));
+            }
+
+            List<double> resultCollection3 = new List<double>();
+            Random random3 = new Random(Seed: 1234);
+            for (int i = 0; i < sampleSize; i++)
+            {
+                resultCollection3.Add(triangular.InverseCDF(random3.NextDouble()));
+            }
+
+            List<double> resultCollection4 = new List<double>();
+            Random random4 = new Random(Seed: 1234);
+            for (int i = 0; i < sampleSize; i++)
+            {
+                resultCollection4.Add(triangular2.InverseCDF(random4.NextDouble()));
+            }
+
             DynamicHistogram histogram = new DynamicHistogram(resultCollection, convergenceCriteria);
             Empirical empirical = DynamicHistogram.ConvertToEmpiricalDistribution(histogram);
             double meanDifference = Math.Abs(empirical.Mean - mean);
             double meanRelativeDifference = meanDifference / mean;
-            double standardDeviationDifference = Math.Abs(empirical.StandardDeviation - standardDeviation);
-            double standardDeviationRelativeDifference = standardDeviationDifference / standardDeviation;
+            double standardDeviationDifference = Math.Abs(empirical.StandardDeviation - standardDeviationOrMin);
+            double standardDeviationRelativeDifference = standardDeviationDifference / standardDeviationOrMin;
             double tolerance = 0.03;
             Assert.True(meanRelativeDifference < tolerance);
             Assert.True(standardDeviationRelativeDifference < tolerance);
