@@ -239,7 +239,8 @@ namespace StatisticsTests.Histograms
             Normal normal2 = new Normal(mean2, standardDeviationOrMin2);
             Triangular triangular = new Triangular(mean, standardDeviationOrMin, max);
             Triangular triangular2 = new Triangular(mean2, standardDeviationOrMin2, max2);
-
+                      
+                        
             List<double> resultCollection = new List<double>();
             Random random = new Random(Seed: 1234);
             for (int i = 0; i < sampleSize; i++)
@@ -267,9 +268,20 @@ namespace StatisticsTests.Histograms
             {
                 resultCollection4.Add(triangular2.InverseCDF(random4.NextDouble()));
             }
-
+                        
+            
             DynamicHistogram histogram = new DynamicHistogram(resultCollection, convergenceCriteria);
+            DynamicHistogram histogram2 = new DynamicHistogram(resultCollection2, convergenceCriteria);
+            DynamicHistogram histogram3 = new DynamicHistogram(resultCollection3, convergenceCriteria);
+            DynamicHistogram histogram4 = new DynamicHistogram(resultCollection4, convergenceCriteria);
+                        
+            
             Empirical empirical = DynamicHistogram.ConvertToEmpiricalDistribution(histogram);
+            Empirical empirical2 = DynamicHistogram.ConvertToEmpiricalDistribution(histogram2);
+            Empirical empirical3 = DynamicHistogram.ConvertToEmpiricalDistribution(histogram3);
+            Empirical empirical4 = DynamicHistogram.ConvertToEmpiricalDistribution(histogram4);
+                       
+            
             double meanDifference = Math.Abs(empirical.Mean - mean);
             double meanRelativeDifference = meanDifference / mean;
             double standardDeviationDifference = Math.Abs(empirical.StandardDeviation - standardDeviationOrMin);
@@ -277,6 +289,36 @@ namespace StatisticsTests.Histograms
             double tolerance = 0.03;
             Assert.True(meanRelativeDifference < tolerance);
             Assert.True(standardDeviationRelativeDifference < tolerance);
+
+            double meanDifference2 = Math.Abs(empirical2.Mean - mean2);
+            double meanRelativeDifference2 = meanDifference2 / mean2;
+            double standardDeviationDifference2 = Math.Abs(empirical2.StandardDeviation - standardDeviationOrMin2);
+            double standardDeviationRelativeDifference2 = standardDeviationDifference2 / standardDeviationOrMin2;
+            double tolerance2 = 0.03;
+            Assert.True(meanRelativeDifference2 < tolerance2);
+            Assert.True(standardDeviationRelativeDifference2 < tolerance2);
+
+            double meanDifference3 = Math.Abs(empirical3.Mean - mean);
+            double meanRelativeDifference3 = meanDifference3 / mean;                    
+            double standardDeviationDifference3 = Math.Abs(empirical3.StandardDeviation - standardDeviationOrMin);
+            double standardDeviationRelativeDifference3 = standardDeviationDifference3 / standardDeviationOrMin;
+            double maxDifference = Math.Abs(empirical3.Max - max);
+            double maxRelativeDifference = maxDifference / max;
+            double tolerance3 = 0.03;
+            Assert.True(meanRelativeDifference3 < tolerance3);
+            Assert.True(standardDeviationRelativeDifference3 < tolerance3);
+            Assert.True(maxRelativeDifference < tolerance3);
+
+            double meanDifference4 = Math.Abs(empirical4.Mean - mean2);
+            double meanRelativeDifference4 = meanDifference4 / mean2;
+            double standardDeviationDifference4 = Math.Abs(empirical4.StandardDeviation - standardDeviationOrMin2);
+            double standardDeviationRelativeDifference4 = standardDeviationDifference4 / standardDeviationOrMin2;
+            double maxDifference2 = Math.Abs(empirical4.Max - max2);
+            double maxRelativeDifference2 = maxDifference2 / max2;
+            double tolerance4 = 0.03;
+            Assert.True(meanRelativeDifference4 < tolerance4);
+            Assert.True(standardDeviationRelativeDifference4 < tolerance4);
+            Assert.True(maxRelativeDifference2 < tolerance4);
 
         }
 
