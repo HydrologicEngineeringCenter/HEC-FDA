@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
-		<PackageReference Include="HEC.RAS.Ras.Mapper" Version="0.1.0.1554-dev" />
+		<PackageReference Include="HEC.RAS.Ras.Mapper" Version="0.1.0.1678-dev" />
 	</ItemGroup>
 
 	<ItemGroup>

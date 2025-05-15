@@ -29,11 +29,5 @@
 		<ProjectReference Include="..\HEC.FDA.ViewModel\HEC.FDA.ViewModel.csproj" />
 		<ProjectReference Include="..\HEC.MVVMFramework.View\HEC.MVVMFramework.View.csproj" />
 	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="OxyPlot.Wpf" Version="2.1.2" />
-		<PackageReference Include="PlottingLibrary2D" Version="1.0.0-beta-gdc08aa8621" />
-		<PackageReference Include="SciChart" Version="6.1.0.13075" />
-	</ItemGroup>
-
+	
 </Project>
