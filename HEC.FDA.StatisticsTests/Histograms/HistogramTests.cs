@@ -521,6 +521,22 @@ public class HistogramTests
     [InlineData(0, 50, 100, 95, 120, 150)] // T1 max close to T2 min
     [InlineData(0, 30, 60, 55, 80, 100)]  // T1 max slightly overlaps T2 min
     [InlineData(0, 40, 80, 75, 90, 110)]  // T1 max and T2 min are adjacent
+     //same set, all skewed high
+    [InlineData(0, 90, 100, 95, 145, 150)] // T1 max close to T2 min
+    [InlineData(0, 55, 60, 55, 95, 100)]  // T1 max slightly overlaps T2 min
+    [InlineData(0, 70, 80, 75, 105, 110)]  // T1 max and T2 min are adjacent
+    //same set, all skewed low
+    [InlineData(0, 10, 100, 95, 100, 150)] // T1 max close to T2 min
+    [InlineData(0, 10, 60, 55, 60, 100)]  // T1 max slightly overlaps T2 min
+    [InlineData(0, 10, 80, 75, 80, 110)]  // T1 max and T2 min are adjacent
+    //same set, skewed low + high
+    [InlineData(0, 10, 100, 95, 145, 150)] // T1 max close to T2 min
+    [InlineData(0, 10, 60, 55, 95, 100)]  // T1 max slightly overlaps T2 min
+    [InlineData(0, 10, 80, 75, 105, 110)]  // T1 max and T2 min are adjacent
+    //same set, skewed high + low
+    [InlineData(0, 90, 100, 95, 100, 150)] // T1 max close to T2 min
+    [InlineData(0, 55, 60, 55, 60, 100)]  // T1 max slightly overlaps T2 min
+    [InlineData(0, 70, 80, 75, 80, 110)]  // T1 max and T2 min are adjacent
     public void HistogramAndEmpiricalDistributionSummaryStatisticsMatchForAdjacentDistributions(
         double t1Min, double t1Mode, double t1Max,
         double t2Min, double t2Mode, double t2Max)
