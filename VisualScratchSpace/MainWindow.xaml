@@ -7,12 +7,6 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <!--<Grid.ColumnDefinitions>
-            <ColumnDefinition Width="23*"/>
-            <ColumnDefinition Width="377*"/>
-        </Grid.ColumnDefinitions>-->
-        <TextBlock Name="tbStatus" FontSize="50"/>
-        <Button Name ="btnToggle" Width="100" Height="50" Content="Run"
-                Click="btnToggle_Click"/>
+        <local:RunButton DataContext="{Binding RunButtonViewModel}"/>
     </Grid>
 </Window>
