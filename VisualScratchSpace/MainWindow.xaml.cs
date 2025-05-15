@@ -6,17 +6,11 @@ namespace VisualScratchSpace;
 /// </summary>
 public partial class MainWindow : Window
 {
-    bool running = false;
+    private MainWindowVM _vm;
     public MainWindow()
     {
         InitializeComponent();
-
-    }
-
-    private void btnToggle_Click(object sender, RoutedEventArgs e)
-    {
-        running = !running;
-        btnToggle.Content = running ? "Stop" : "Run";
-        tbStatus.Text = running ? "Running" : "Stopped";
+        _vm = new MainWindowVM();
+        DataContext = _vm;
     }
 }
