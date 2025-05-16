@@ -23,9 +23,6 @@ namespace HEC.FDA.Model.metrics
         #endregion 
 
         #region Constructors
-        /// <summary>
-        /// This constructor builds a ThreadsafeInlineHistogram. Only use for parallel computes. 
-        /// </summary>
         public AggregatedConsequencesByQuantile()
         {
             DamageCategory = "unassigned";

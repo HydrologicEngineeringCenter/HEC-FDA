@@ -62,6 +62,7 @@ namespace HEC.FDA.Model.alternatives
             alternativeResults.BaseYearScenarioResults = computedResultsBaseYear;
             alternativeResults.FutureYearScenarioResults = computedResultsFutureYear;
 
+            //if scenarios are identical, no need to compute, just use one scenario
             if (computedResultsBaseYear.Equals(computedResultsFutureYear))
             {
                 alternativeResults.ScenariosAreIdentical = true;
@@ -69,8 +70,12 @@ namespace HEC.FDA.Model.alternatives
             }
             else
             {
+                //To keep track of which results have yet to be processed
+                //I think this allows us to handle situations where we have uneven numbers of results 
                 var futureYearResultsList = new List<ImpactAreaScenarioResults>(computedResultsFutureYear.ResultsList);
 
+                //Iterate through the base year and future year Scenario Results simultaneously  
+                //There will be one base year results for each impact area in the impact area set
                 ProcessBaseAndFutureYearScenarioResults(
                     analysisYears,
                     discountRate,
@@ -81,6 +86,10 @@ namespace HEC.FDA.Model.alternatives
                     futureYearResultsList,
                     reporter);
 
+                //UNLIKELY TO HIT THIS CODE 
+                //in case there future year impact area scenario results that did not match to any base year impact area scenario results
+                //in other words, in case there is no damage in a particular impact area in the base year but there is damage in the future year 
+                //or vice versa, such as with managed retreat 
                 if (futureYearResultsList.Count > 0)
                 {
                     ProcessUnmatchedFutureResults(
@@ -172,7 +181,6 @@ namespace HEC.FDA.Model.alternatives
                 }
             }
         }
-
 
         private static void ProcessUnmatchedFutureResults(
             List<int> analysisYears,
@@ -285,8 +293,7 @@ namespace HEC.FDA.Model.alternatives
             var regionID = iterateOnFutureYear ? mlfYearDamageResult.RegionID : baseYearDamageResult.RegionID;
 
             DynamicHistogram dynamicHistogram = new(resultCollection.ToList(), new());
-            AggregatedConsequencesByQuantile ret = new AggregatedConsequencesByQuantile(damageCategory, assetCategory, [.. resultCollection], regionID);
-            return ret;
+            return new AggregatedConsequencesByQuantile(damageCategory, assetCategory, [.. resultCollection], regionID);         
         }
 
         //TODO: these functions should be private, but currently have unit tests 

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace HEC.FDA.Model.metrics
 {
-    public class AlternativeResults : ValidationErrorLogger, IProgressReport
+    public class AlternativeResults : ValidationErrorLogger
     {
         #region Properties
         internal bool ScenariosAreIdentical { get; set; } = false;
@@ -16,8 +16,6 @@ namespace HEC.FDA.Model.metrics
         public StudyAreaConsequencesByQuantile AAEQDamageResults { get; internal set; }
         public List<int> AnalysisYears { get; }
         public int PeriodOfAnalysis { get; }
-        public event ProgressReportedEventHandler ProgressReport;
-
         public bool IsNull { get; }
         internal ScenarioResults BaseYearScenarioResults { get; set; }
         internal ScenarioResults FutureYearScenarioResults { get; set; }
@@ -56,7 +54,7 @@ namespace HEC.FDA.Model.metrics
             AddRules();
         }
         #endregion
-        #region Methods
+
         private void AddRules()
         {
             AddSinglePropertyRule(nameof(AnalysisYears), new Rule(() => AnalysisYears[1] - AnalysisYears[0] >= 1, "The most likely future year must be at least 1 year greater then the base year"));
@@ -212,11 +210,6 @@ namespace HEC.FDA.Model.metrics
         /// The level of aggregation of the distribution of consequences is determined by the arguments used in the method
         /// For example, if you wanted a histogram for residential, impact area 2, all asset categories, then the method call would be as follows:
         /// ThreadsafeInlineHistogram histogram = GetAAEQDamageHistogram(damageCategory: "residential", impactAreaID: 2);
-        /// </summary>
-        /// <param name="impactAreaID"></param>
-        /// <param name="damageCategory"></param>
-        /// <param name="assetCategory"></param>
-        /// <returns></returns>
         public Empirical GetAAEQDamageDistribution(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             if (ScenariosAreIdentical)
@@ -233,10 +226,6 @@ namespace HEC.FDA.Model.metrics
         /// For example, if you wanted a histogram for residential, impact area 2, all asset categories, then the method call would be as follows:
         /// ThreadsafeInlineHistogram histogram = GetBaseYearEADHistogram(damageCategory: "residential", impactAreaID: 2);
         /// </summary>
-        /// <param name="impactAreaID"></param>
-        /// <param name="damageCategory"></param>
-        /// <param name="assetCategory"></param>
-        /// <returns></returns>
         public Empirical GetBaseYearEADDistribution(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             return BaseYearScenarioResults.GetConsequencesDistribution(impactAreaID, damageCategory, assetCategory);
@@ -247,10 +236,6 @@ namespace HEC.FDA.Model.metrics
         /// For example, if you wanted a histogram for residential, impact area 2, all asset categories, then the method call would be as follows:
         /// ThreadsafeInlineHistogram histogram = GetFutureYearEADHistogram(damageCategory: "residential", impactAreaID: 2);
         /// </summary>
-        /// <param name="impactAreaID"></param>
-        /// <param name="damageCategory"></param>
-        /// <param name="assetCategory"></param>
-        /// <returns></returns>
         public Empirical GetFutureYearEADDistribution(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             return FutureYearScenarioResults.GetConsequencesDistribution(impactAreaID, damageCategory, assetCategory);
@@ -263,13 +248,6 @@ namespace HEC.FDA.Model.metrics
                 AAEQDamageResults.ConsequenceResultList.Add(consequenceResultToAdd);
             }
         }
-
-        public void ReportProgress(object sender, ProgressReportEventArgs e)
-        {
-            ProgressReport?.Invoke(sender, e);
-        }
-
-        #endregion
 
     }
 }
