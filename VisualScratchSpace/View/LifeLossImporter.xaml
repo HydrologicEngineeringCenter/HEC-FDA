@@ -48,7 +48,7 @@
             <frameworkControls:TextBoxFileBrowserControl FileDialogTitle="Select File" Filter="*.fia |*.fia"  Path="{Binding SelectedPath}" IsEnabled="{Binding IsCreatingNewElement}" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3" />
         </Grid>
         <Grid Grid.Row="3">
-            <Button Command="{Binding OpenDBCommand}"/>
+            <Button Content="Open" Width="150" Height="100" Command="{Binding OpenDBCommand}"/>
         </Grid>
     </Grid>
 </UserControl>
