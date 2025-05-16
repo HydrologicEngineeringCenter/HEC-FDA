@@ -6,7 +6,8 @@
              xmlns:steadyhdf="clr-namespace:HEC.FDA.ViewModel.Hydraulics.SteadyHDF;assembly=HEC.FDA.ViewModel" 
              xmlns:frameworkControls="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=HEC.MVVMFramework.View"
              xmlns:local="clr-namespace:VisualScratchSpace.View"
-             d:DataContext="{d:DesignInstance Type=steadyhdf:SteadyHDFImporterVM}"
+             xmlns:lifeloss="clr-namespace:VisualScratchSpace.ViewModel"
+             d:DataContext="{d:DesignInstance Type=lifeloss:LifeLossImporterVM}"
              d:Background="AliceBlue"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -45,6 +46,9 @@
             </Grid.ColumnDefinitions>
             <TextBlock Text="FIA Database:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
             <frameworkControls:TextBoxFileBrowserControl FileDialogTitle="Select File" Filter="*.fia |*.fia"  Path="{Binding SelectedPath}" IsEnabled="{Binding IsCreatingNewElement}" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3" />
+        </Grid>
+        <Grid Grid.Row="3">
+            <Button Command="{Binding OpenDBCommand}"/>
         </Grid>
     </Grid>
 </UserControl>
