@@ -71,14 +71,12 @@ namespace HEC.FDA.Model.alternatives
             {
                 //To keep track of which results have yet to be processed
                 //I think this allows us to handle situations where we have uneven numbers of results 
-                List<ImpactAreaScenarioResults> futureYearResultsList = [.. computedResultsFutureYear.ResultsList.Cast<ImpactAreaScenarioResults>()];
+                List<ImpactAreaScenarioResults> futureYearResultsList = [.. computedResultsFutureYear.ResultsList];
 
                 //this quantity assumes uniformity of dimensionality 
-                int integerQuantityImpactAreas = computedResultsBaseYear.ResultsList.Count;
-                double quantityOfImpactAreas = Convert.ToDouble(integerQuantityImpactAreas);
-                int integerQuantityDamCatAssetCatCombos = computedResultsBaseYear.ResultsList[0].ConsequenceResults.ConsequenceResultList.Count;
-                double quantityOfDamageCatAssetCatCombinations = Convert.ToDouble(integerQuantityDamCatAssetCatCombos);
-                double quantityOFDamCatAssetCatImpactAreaCombos = quantityOfImpactAreas * quantityOfDamageCatAssetCatCombinations;
+                int numImpactAreas = computedResultsBaseYear.ResultsList.Count;
+                int numDamCatAssetCatCombos = computedResultsBaseYear.ResultsList[0].ConsequenceResults.ConsequenceResultList.Count;
+                int quantityOFDamCatAssetCatImpactAreaCombos = numImpactAreas * numDamCatAssetCatCombos;
 
                 //Iterate through the base year and future year Scenario Results simultaneously  
                 //There will be one base year results for each impact area in the impact area set
@@ -99,11 +97,10 @@ namespace HEC.FDA.Model.alternatives
         }
 
         private static void ProcessBaseAndFutureYearScenarioResults(List<int> analysisYears, double discountRate, int periodOfAnalysis, ScenarioResults computedResultsBaseYear,
-            ScenarioResults computedResultsFutureYear, AlternativeResults alternativeResults, List<ImpactAreaScenarioResults> futureYearResultsList, double quantityOFDamCatAssetCatImpactAreaCombos, 
+            ScenarioResults computedResultsFutureYear, AlternativeResults alternativeResults, List<ImpactAreaScenarioResults> futureYearResultsList, int quantityOFDamCatAssetCatImpactAreaCombos, 
             ProgressReporter reporter)
         {
-            double progressTicker = 0;
-            foreach (ImpactAreaScenarioResults baseYearResults in computedResultsBaseYear.ResultsList.Cast<ImpactAreaScenarioResults>())
+            foreach (ImpactAreaScenarioResults baseYearResults in computedResultsBaseYear.ResultsList)
             {
                 //Try to get the most likely future result for the impact area to which baseYearResults corresponds 
                 //I must be able to handle null results in case there is damage in the base year but not in the most likely future year 
@@ -116,11 +113,7 @@ namespace HEC.FDA.Model.alternatives
                 //This is again to be able to handle uneven results 
                 //In the case that there is not a matching ConsequenceDistributionResult between analysis years
                 //This is feasbile - you could have commercial damage in the base year but none in the future year 
-                List<AggregatedConsequencesBinned> mlfYearDamageResultsList = new();
-                foreach (AggregatedConsequencesBinned mlfResult in mlfYearResults.ConsequenceResults.ConsequenceResultList)
-                {
-                    mlfYearDamageResultsList.Add(mlfResult);
-                }
+                List<AggregatedConsequencesBinned> mlfYearDamageResultsList = [.. mlfYearResults.ConsequenceResults.ConsequenceResultList];
 
                 //iterate through the base year consequence distribution results
                 //there will be one for each damage category asset category combination
@@ -135,7 +128,7 @@ namespace HEC.FDA.Model.alternatives
                     //I must be able to handle a null ConsequenceDistributionResult in this method to handle uneven results
                     //such as there being base year results for a particular damage category asset category combination but none for the future year
                     //that is unlikely but reasonable 
-                    AggregatedConsequencesByQuantile aaeqResult = IterateOnAAEQ(baseYearDamageResult, mlfYearDamageResult, analysisYears[0], analysisYears[1], periodOfAnalysis, discountRate, false);
+                    AggregatedConsequencesByQuantile aaeqResult = IterateOnAAEQ(baseYearDamageResult, mlfYearDamageResult, analysisYears[0], analysisYears[1], periodOfAnalysis, discountRate, false, reporter);
 
                     //to keep track of having processed most likely future year results 
                     //because there could be more most likely future year results than base year results 
@@ -143,13 +136,6 @@ namespace HEC.FDA.Model.alternatives
 
                     //our aaeq result is complete 
                     alternativeResults.AddConsequenceResults(aaeqResult);
-
-                    //at this level we are reporting progress at the impact area - damage category - asset category level 
-                    //this math is an estimate and depends on the dimensions
-                    progressTicker += 1.0;
-                    double progressRatio = progressTicker / quantityOFDamCatAssetCatImpactAreaCombos;
-
-                    reporter.ReportProgressFraction((float)progressRatio);
                 }
                 //in the event that there are more most likely future year results than base year results 
                 //or simply most likely future year results that were not matched to any base year results 
@@ -247,28 +233,22 @@ namespace HEC.FDA.Model.alternatives
         /// <summary>
         /// Progress reporter added as optional to not change method signature. Should always be passed in.
         /// </summary>
-        private static AggregatedConsequencesByQuantile IterateOnAAEQ(AggregatedConsequencesBinned baseYearDamageResult, AggregatedConsequencesBinned mlfYearDamageResult, int baseYear, int futureYear, int periodOfAnalysis, double discountRate, bool iterateOnFutureYear = true, ProgressReporter reporter = null)
+        private static AggregatedConsequencesByQuantile IterateOnAAEQ(AggregatedConsequencesBinned baseYearDamageResult, AggregatedConsequencesBinned mlfYearDamageResult,
+            int baseYear, int futureYear, int periodOfAnalysis, double discountRate, bool iterateOnFutureYear = true, ProgressReporter reporter = null)
         {
-            if (reporter == null)
-            {
-                reporter = ProgressReporter.None();
-            }
+            reporter ??= ProgressReporter.None();
+
             AggregatedConsequencesByQuantile aaeqResult = new();
             ConvergenceCriteria convergenceCriteria;
             if (iterateOnFutureYear)
             {
                 convergenceCriteria = mlfYearDamageResult.ConvergenceCriteria;
-                Utility.Logging.Message message = new($"Average annual equivalent damage compute for damage category {mlfYearDamageResult.DamageCategory}, asset category {mlfYearDamageResult.AssetCategory}, and impact area ID {mlfYearDamageResult.RegionID} has been initiated.");
-                reporter.ReportMessage(message);
             }
             else
             {
                 convergenceCriteria = baseYearDamageResult.ConvergenceCriteria;
-                Utility.Logging.Message message = new($"Average annual equivalent damage compute for damage category {baseYearDamageResult.DamageCategory}, asset category {baseYearDamageResult.AssetCategory}, and impact area ID {baseYearDamageResult.RegionID} has been initiated.");
-                reporter.ReportMessage(message);
             }
             var resultCollection = new ConcurrentBag<double>();
-
             int probabilitySteps = 2500;
 
             Parallel.For(0, probabilitySteps, i =>
@@ -297,8 +277,6 @@ namespace HEC.FDA.Model.alternatives
             {
                 aaeqResult = new AggregatedConsequencesByQuantile(baseYearDamageResult.DamageCategory, baseYearDamageResult.AssetCategory, resultCollection.ToList(), baseYearDamageResult.RegionID);
             }
-            Utility.Logging.Message msg = new($"Average annual equivalent damage compute for damage category {aaeqResult.DamageCategory}, asset category {aaeqResult.AssetCategory}, and impact area ID {aaeqResult.RegionID} has completed.");
-            reporter.ReportMessage(msg);
             return aaeqResult;
         }
 
@@ -306,9 +284,7 @@ namespace HEC.FDA.Model.alternatives
         //so these will remain public until the unit tests are re-written on the above public method
         public static double ComputeEEAD(double baseYearEAD, int baseYear, double mostLikelyFutureEAD, int mostLikelyFutureYear, int periodOfAnalysis, double discountRate)
         {
-
             //probably instantiate a rng to seed each impact area differently
-
             double[] interpolatedEADs = Interpolate(baseYearEAD, mostLikelyFutureEAD, baseYear, mostLikelyFutureYear, periodOfAnalysis);
             double sumPresentValueEAD = PresentValueCompute(interpolatedEADs, discountRate);
             double averageAnnualEquivalentDamage = IntoAverageAnnualEquivalentTerms(sumPresentValueEAD, periodOfAnalysis, discountRate);
@@ -334,14 +310,14 @@ namespace HEC.FDA.Model.alternatives
         }
         private static double[] Interpolate(double baseYearEAD, double mostLikelyFutureEAD, int baseYear, int mostLikelyFutureYear, int periodOfAnalysis)
         {
-            double yearsBetweenBaseAndMLFInclusive = Convert.ToDouble(mostLikelyFutureYear - baseYear + 1);
+            int yearsBetweenBaseAndMLFInclusive = mostLikelyFutureYear - baseYear + 1;
             double[] interpolatedEADs = new double[periodOfAnalysis];
             interpolatedEADs[0] = baseYearEAD;
             for (int i = 0; i < yearsBetweenBaseAndMLFInclusive; i++)
             {
-                interpolatedEADs[i] = baseYearEAD + (mostLikelyFutureEAD - baseYearEAD) * (i / (yearsBetweenBaseAndMLFInclusive - 1));
+                interpolatedEADs[i] = baseYearEAD + (mostLikelyFutureEAD - baseYearEAD) * ((double)i / (yearsBetweenBaseAndMLFInclusive - 1));
             }
-            for (int i = Convert.ToInt32(yearsBetweenBaseAndMLFInclusive); i < periodOfAnalysis; i++)
+            for (int i = yearsBetweenBaseAndMLFInclusive; i < periodOfAnalysis; i++)
             {
                 interpolatedEADs[i] = mostLikelyFutureEAD;
             }
