@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Diagnostics.Metrics;
 using System.Transactions;
+using System.Linq;
 
 namespace StatisticsTests.Histograms;
 [Trait("RunsOn", "Remote")]
@@ -537,9 +538,78 @@ public class HistogramTests
     [InlineData(0, 90, 100, 95, 100, 150)] // T1 max close to T2 min
     [InlineData(0, 55, 60, 55, 60, 100)]  // T1 max slightly overlaps T2 min
     [InlineData(0, 70, 80, 75, 80, 110)]  // T1 max and T2 min are adjacent
-    public void HistogramAndEmpiricalDistributionSummaryStatisticsMatchForAdjacentDistributions(
+    [InlineData(0, 5, 10, 1000000, 1000005, 1000010)] // Extreme scale difference
+    [InlineData(0.000001, 0.000002, 0.000003, 999999, 999999.5, 1000000)] // Extremely different magnitudes
+    [InlineData(0, 0.1, 0.2, 0, 0.1, 0.2)] // Identical small distributions (bin width issues)
+    public void StackingEmpiricalsMatchesSummingMeans(
         double t1Min, double t1Mode, double t1Max,
         double t2Min, double t2Mode, double t2Max)
+    {
+        // Arrange
+        int sampleSizeT1 = 2000;
+        int sampleSizeT2 = 200;
+        double tolerance = 0.03;
+
+        // Create two triangular distributions
+        Triangular t1 = new Triangular(t1Min, t1Mode, t1Max);
+        Triangular t2 = new Triangular(t2Min, t2Mode, t2Max);
+
+        // Generate samples for T1
+        List<double> samplesT1 = GenerateSamples(t1, sampleSizeT1);
+
+        // Generate samples for T2
+        List<double> samplesT2 = GenerateSamples(t2, sampleSizeT2);
+
+        // Combine samples into a single histogram
+        ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria();
+        DynamicHistogram histogram1 = new DynamicHistogram(min: t1.Min, binWidth: 1, convergenceCriteria);
+        DynamicHistogram histogram2 = new DynamicHistogram(min: t1.Min, binWidth: 1, convergenceCriteria);
+        histogram1.AddObservationsToHistogram(samplesT1.ToArray());
+        histogram2.AddObservationsToHistogram(samplesT2.ToArray());
+
+        // Convert histogram to empirical distribution
+        Empirical empirical1 = DynamicHistogram.ConvertToEmpiricalDistribution(histogram1);
+        Empirical empirical2 = DynamicHistogram.ConvertToEmpiricalDistribution(histogram2);
+        List<Empirical> empircalList = new();
+        empircalList.Add(empirical1);
+        empircalList.Add(empirical2);
+
+        //Stack Empiricals
+        Empirical stackedEmp = Empirical.StackEmpiricalDistributions(empircalList, Empirical.Sum);
+
+        double histoMean = histogram1.Mean + histogram2.Mean;
+        double empListMean = empircalList.Sum(e => e.Mean);
+        double empMean = stackedEmp.Mean;
+        AssertWithinTolerance(histoMean,empListMean,1);
+        AssertWithinTolerance(empListMean, empMean, 1);
+        AssertWithinTolerance(empMean, histoMean, 1);
+
+
+    }
+
+    [Theory]
+    [InlineData(0, 50, 100, 95, 120, 150)] // T1 max close to T2 min
+    [InlineData(0, 30, 60, 55, 80, 100)]  // T1 max slightly overlaps T2 min
+    [InlineData(0, 40, 80, 75, 90, 110)]  // T1 max and T2 min are adjacent
+                                          //same set, all skewed high
+    [InlineData(0, 90, 100, 95, 145, 150)] // T1 max close to T2 min
+    [InlineData(0, 55, 60, 55, 95, 100)]  // T1 max slightly overlaps T2 min
+    [InlineData(0, 70, 80, 75, 105, 110)]  // T1 max and T2 min are adjacent
+    //same set, all skewed low
+    [InlineData(0, 10, 100, 95, 100, 150)] // T1 max close to T2 min
+    [InlineData(0, 10, 60, 55, 60, 100)]  // T1 max slightly overlaps T2 min
+    [InlineData(0, 10, 80, 75, 80, 110)]  // T1 max and T2 min are adjacent
+    //same set, skewed low + high
+    [InlineData(0, 10, 100, 95, 145, 150)] // T1 max close to T2 min
+    [InlineData(0, 10, 60, 55, 95, 100)]  // T1 max slightly overlaps T2 min
+    [InlineData(0, 10, 80, 75, 105, 110)]  // T1 max and T2 min are adjacent
+    //same set, skewed high + low
+    [InlineData(0, 90, 100, 95, 100, 150)] // T1 max close to T2 min
+    [InlineData(0, 55, 60, 55, 60, 100)]  // T1 max slightly overlaps T2 min
+    [InlineData(0, 70, 80, 75, 80, 110)]  // T1 max and T2 min are adjacent
+    public void HistogramAndEmpiricalDistributionSummaryStatisticsMatchForAdjacentDistributions(
+    double t1Min, double t1Mode, double t1Max,
+    double t2Min, double t2Mode, double t2Max)
     {
         // Arrange
         int sampleSizeT1 = 2000;
