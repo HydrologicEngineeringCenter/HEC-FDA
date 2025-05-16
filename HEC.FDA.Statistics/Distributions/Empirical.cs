@@ -126,7 +126,7 @@ namespace Statistics.Distributions
                 valL = valR;
                 cdfL = cdfR;
                 // add interval values
-                for (i = 1; i < SampleSize; ++i)
+                for (i = 1; i < SampleSize-1; ++i)
                 {
                     valR = Quantiles[i];
                     cdfR = CumulativeProbabilities[i];
@@ -137,7 +137,7 @@ namespace Statistics.Distributions
                     cdfL = cdfR;
                 }
                 // add right singleton 
-                i = SampleSize - 1;
+                i = SampleSize-1;
                 valR = Quantiles[i];
                 cdfR = 1.0;
                 stepPDF = cdfR - cdfL;
