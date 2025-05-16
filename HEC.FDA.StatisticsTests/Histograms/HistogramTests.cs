@@ -641,6 +641,39 @@ public class HistogramTests
         AssertWithinTolerance(histogram.Min, empirical.Min, tolerance);
         AssertWithinTolerance(histogram.Max, empirical.Max, tolerance);
     }
+
+    [Theory]
+    [InlineData(0.0, 5.0, 10.0, 500, 0.03)]         // Small, symmetric
+    [InlineData(1000.0, 5000.0, 100.0, 5000, 0.03)] // Large, symmetric
+    [InlineData(0.0, 1.0, 10.0, 50, 0.03)]         // Skewed right
+    [InlineData(0.0, 9.0, 10.0, 50, 0.03)]         // Skewed left
+    [InlineData(1e-6, 5e-6, 1e-5, 50, 0.03)]       // Very small values
+    [InlineData(1e6, 5e6, 1e7, 50, 0.03)]          // Very large values
+    public void EmpiricalMeanWithinFivePercentOfHistogramMean_Triangular(
+        double min, double mode, double max, int sampleSize, double tolerance)
+    {
+        // Generate data
+        Triangular triangular = new Triangular(min, mode, max);
+        Random random = new Random(5678);
+        List<double> data = new List<double>();
+        for (int i = 0; i < sampleSize; i++)
+        {
+            data.Add(triangular.InverseCDF(random.NextDouble()));
+        }
+
+        // Create histogram and empirical
+        DynamicHistogram histogram = new DynamicHistogram(data, new ConvergenceCriteria());
+        Empirical empirical = Empirical.FitToSample(data);
+
+        // Compare means
+        double histogramMean = histogram.Mean;
+        double empiricalMean = empirical.Mean;
+        double relativeDifference = Math.Abs(histogramMean - empiricalMean) / (Math.Abs(histogramMean) > 1e-12 ? Math.Abs(histogramMean) : 1.0);
+
+        Assert.True(relativeDifference < tolerance);
+    }
+
+
     #endregion
 
 
