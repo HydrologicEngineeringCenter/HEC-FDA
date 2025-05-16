@@ -1,4 +1,4 @@
-﻿using Statistics.Histograms;
+﻿ using Statistics.Histograms;
 using System.Data.SQLite;
 using System.Text;
 using Statistics;

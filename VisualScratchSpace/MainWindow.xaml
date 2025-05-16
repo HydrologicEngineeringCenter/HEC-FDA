@@ -9,6 +9,6 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <!--<local:RunButton DataContext="{Binding RunButtonViewModel}"/>-->
-        <view:LifeLossImporter/>
+        <view:LifeLossImporter DataContext="{Binding LifeLossImporterViewModel}"/>
     </Grid>
 </Window>
