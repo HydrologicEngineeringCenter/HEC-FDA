@@ -13,6 +13,7 @@ using System.Threading;
 using System.Diagnostics.Metrics;
 using System.Transactions;
 using System.Linq;
+using System.IO;
 
 namespace StatisticsTests.Histograms;
 [Trait("RunsOn", "Remote")]
@@ -522,7 +523,7 @@ public class HistogramTests
     [InlineData(0, 50, 100, 95, 120, 150)] // T1 max close to T2 min
     [InlineData(0, 30, 60, 55, 80, 100)]  // T1 max slightly overlaps T2 min
     [InlineData(0, 40, 80, 75, 90, 110)]  // T1 max and T2 min are adjacent
-     //same set, all skewed high
+                                          //same set, all skewed high
     [InlineData(0, 90, 100, 95, 145, 150)] // T1 max close to T2 min
     [InlineData(0, 55, 60, 55, 95, 100)]  // T1 max slightly overlaps T2 min
     [InlineData(0, 70, 80, 75, 105, 110)]  // T1 max and T2 min are adjacent
@@ -580,7 +581,7 @@ public class HistogramTests
         double histoMean = histogram1.Mean + histogram2.Mean;
         double empListMean = empircalList.Sum(e => e.Mean);
         double empMean = stackedEmp.Mean;
-        AssertWithinTolerance(histoMean,empListMean,1);
+        AssertWithinTolerance(histoMean, empListMean, 1);
         AssertWithinTolerance(empListMean, empMean, 1);
         AssertWithinTolerance(empMean, histoMean, 1);
 
@@ -671,6 +672,55 @@ public class HistogramTests
         double relativeDifference = Math.Abs(histogramMean - empiricalMean) / (Math.Abs(histogramMean) > 1e-12 ? Math.Abs(histogramMean) : 1.0);
 
         Assert.True(relativeDifference < tolerance);
+    }
+    [Fact]
+    public void EmpiricalAndHistogram_CompareToCSV()
+    {
+        double[] values = new double[]
+        {
+        2409.001089361524,
+        2022.164460092307,
+        1658.039160684073,
+        1336.0197547669698,
+        1028.6174248592583,
+        750.5598676021052,
+        517.7831703470636,
+        241.78132990888628,
+        151.5463244073405,
+        100.26469821998317,
+        100.22417904511144,
+        100.1836598702398,
+        100.14314069536806,
+        100.1026215204964,
+        100.06210234562474,
+        100.02158317075302,
+        91.71515232205769,
+        91.67463314718604,
+        91.63411397231437,
+        91.59359479744265,
+        91.55307562257099,
+        91.5125564476993
+        };
+
+        List<double> valuesAsList = values.ToList();
+        // 2. Create Empirical and DynamicHistogram
+        Empirical empirical = Empirical.FitToSample(valuesAsList);
+        DynamicHistogram histogram = new DynamicHistogram(valuesAsList, new ConvergenceCriteria());
+
+        // 3. Prepare CSV output
+        string outputPath = Path.Combine("C:\\Temp\\", "QuantileComparisonOutput.csv");
+        using (var writer = new StreamWriter(outputPath, false, Encoding.UTF8))
+        {
+            writer.WriteLine("probability,empirical,histogram,relative error");
+            for (double q = 0.01; q < 1.0; q += 0.01)
+            {
+                double empVal = empirical.InverseCDF(q);
+                double histVal = histogram.InverseCDF(q);
+                double denom = Math.Abs(empVal) > 1e-12 ? Math.Abs(empVal) : 1.0;
+                double relError = Math.Abs(empVal - histVal) / denom;
+                writer.WriteLine($"{q},{empVal},{histVal},{relError}");
+            }
+        }
     }
 
 
