@@ -133,63 +133,7 @@ public class ScenarioResults : ValidationErrorLogger
         double consequenceValue = 0;
         foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList.Cast<ImpactAreaScenarioResults>())
         {
-            foreach (AggregatedConsequencesBinned consequenceResult in impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
-            {
-                if (damageCategory == null && assetCategory == null && impactAreaID == utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
-                {
-                    consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
-                }
-                if (damageCategory != null && assetCategory == null && impactAreaID == utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
-                {
-                    if (damageCategory.Equals(consequenceResult.DamageCategory))
-                    {
-                        consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
-                    }
-                }
-                if (damageCategory == null && assetCategory != null && impactAreaID == utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
-                {
-                    if (assetCategory.Equals(consequenceResult.AssetCategory))
-                    {
-                        consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
-                    }
-                }
-                if (damageCategory == null && assetCategory == null && impactAreaID != utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
-                {
-                    if (impactAreaID.Equals(consequenceResult.RegionID))
-                    {
-                        consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
-                    }
-                }
-                if (damageCategory != null && assetCategory != null && impactAreaID == utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
-                {
-                    if (damageCategory.Equals(consequenceResult.DamageCategory) && assetCategory.Equals(consequenceResult.AssetCategory))
-                    {
-                        consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
-                    }
-                }
-                if (damageCategory != null && assetCategory == null && impactAreaID != utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
-                {
-                    if (damageCategory.Equals(consequenceResult.DamageCategory) && impactAreaID.Equals(consequenceResult.RegionID))
-                    {
-                        consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
-                    }
-                }
-                if (damageCategory == null && assetCategory != null && impactAreaID != utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
-                {
-                    if (assetCategory.Equals(consequenceResult.AssetCategory) && impactAreaID.Equals(consequenceResult.RegionID))
-                    {
-                        consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
-                    }
-                }
-                if (damageCategory != null && assetCategory != null && impactAreaID != utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
-                {
-                    if (damageCategory.Equals(consequenceResult.DamageCategory) && assetCategory.Equals(consequenceResult.AssetCategory) && impactAreaID.Equals(consequenceResult.RegionID))
-                    {
-                        return consequenceResult.MeanExpectedAnnualConsequences();
-                    }
-
-                }
-            }
+            consequenceValue += impactAreaScenarioResults.ConsequenceResults.MeanDamage(damageCategory, assetCategory, impactAreaID);
         }
         return consequenceValue;
     }
@@ -244,7 +188,6 @@ public class ScenarioResults : ValidationErrorLogger
     public Empirical GetConsequencesDistribution(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
     {
         List<Empirical> empiricalDistsToStack = [];
-        List<DynamicHistogram> histogramsToStack = [];
 
         foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList)
         {
@@ -264,7 +207,6 @@ public class ScenarioResults : ValidationErrorLogger
                 // Otherwise, collect all matching
                 else if (match)
                 {
-                    histogramsToStack.Add((DynamicHistogram)consequenceResult.ConsequenceHistogram);
                     empiricalDistsToStack.Add(DynamicHistogram.ConvertToEmpiricalDistribution(consequenceResult.ConsequenceHistogram));
                 }
             }
