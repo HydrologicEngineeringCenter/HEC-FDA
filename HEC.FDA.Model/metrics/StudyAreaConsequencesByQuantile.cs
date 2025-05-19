@@ -1,7 +1,10 @@
-﻿using HEC.MVVMFramework.Base.Events;
+﻿using HEC.FDA.Model.metrics.Extensions;
+using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using Statistics.Distributions;
+using Statistics.Histograms;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace HEC.FDA.Model.metrics;
@@ -66,29 +69,9 @@ public class StudyAreaConsequencesByQuantile : Validation
     /// <returns></returns>The mean of consequences
     public double MeanDamage(string damageCategory = null, string assetCategory = null, int impactAreaID = -999)
     {
-        // If all filters are specified, return the exact match immediately
-        if (damageCategory != null && assetCategory != null && impactAreaID != -999)
-        {
-            return GetConsequenceResult(damageCategory, assetCategory, impactAreaID).MeanExpectedAnnualConsequences();
-        }
-
-        double consequenceValue = 0;
-        foreach (AggregatedConsequencesByQuantile consequenceResult in ConsequenceResultList)
-        {
-            bool match = true;
-            if (damageCategory != null && !damageCategory.Equals(consequenceResult.DamageCategory))
-                match = false;
-            if (assetCategory != null && !assetCategory.Equals(consequenceResult.AssetCategory))
-                match = false;
-            if (impactAreaID != -999 && impactAreaID != consequenceResult.RegionID)
-                match = false;
-
-            if (match)
-            {
-                consequenceValue += consequenceResult.MeanExpectedAnnualConsequences();
-            }
-        }
-        return consequenceValue;
+        return ConsequenceResultList
+    .FilterByCategories(damageCategory, assetCategory, impactAreaID)
+    .Sum(result => result.MeanExpectedAnnualConsequences());
     }
     /// <summary>
     /// This method calls the inverse CDF of the damage histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
@@ -103,29 +86,9 @@ public class StudyAreaConsequencesByQuantile : Validation
     /// <returns></returns>the level of consequences exceeded by the specified probability 
     public double ConsequenceExceededWithProbabilityQ(double exceedanceProbability, string damageCategory = null, string assetCategory = null, int impactAreaID = -999)
     {
-        // If all filters are specified, return the exact match immediately
-        if (damageCategory != null && assetCategory != null && impactAreaID != -999)
-        {
-            return GetConsequenceResult(damageCategory, assetCategory, impactAreaID).ConsequenceExceededWithProbabilityQ(exceedanceProbability);
-        }
-
-        double consequenceValue = 0;
-        foreach (AggregatedConsequencesByQuantile consequenceResult in ConsequenceResultList)
-        {
-            bool match = true;
-            if (damageCategory != null && !damageCategory.Equals(consequenceResult.DamageCategory))
-                match = false;
-            if (assetCategory != null && !assetCategory.Equals(consequenceResult.AssetCategory))
-                match = false;
-            if (impactAreaID != -999 && impactAreaID != consequenceResult.RegionID)
-                match = false;
-
-            if (match)
-            {
-                consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
-            }
-        }
-        return consequenceValue;
+        return ConsequenceResultList
+            .FilterByCategories(damageCategory, assetCategory, impactAreaID)
+            .Sum(result => result.ConsequenceExceededWithProbabilityQ(exceedanceProbability));
     }
     /// <summary>
     /// This method returns a consequence result for the given damage category, asset category, and impact area 
@@ -138,18 +101,12 @@ public class StudyAreaConsequencesByQuantile : Validation
     /// <returns></returns>
     public AggregatedConsequencesByQuantile GetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID = -999)
     {
-        for (int i = 0; i < ConsequenceResultList.Count; i++)
+        AggregatedConsequencesByQuantile result = ConsequenceResultList
+            .FilterByCategories(damageCategory, assetCategory, impactAreaID)
+            .FirstOrDefault();
+        if (result != null)
         {
-            if (ConsequenceResultList[i].RegionID.Equals(impactAreaID))
-            {
-                if (ConsequenceResultList[i].DamageCategory.Equals(damageCategory))
-                {
-                    if (ConsequenceResultList[i].AssetCategory.Equals(assetCategory))
-                    {
-                        return (ConsequenceResultList[i]);
-                    }
-                }
-            }
+            return result;
         }
         string message = "The requested damage category - asset category - impact area combination could not be found. An arbitrary object is being returned";
         ErrorMessage errorMessage = new(message, MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
@@ -174,31 +131,12 @@ public class StudyAreaConsequencesByQuantile : Validation
     /// <returns></returns> Aggregated consequences histogram 
     public Empirical GetAggregateEmpiricalDistribution(string damageCategory = null, string assetCategory = null, int impactAreaID = -999)
     {
-        // If all filters are specified, return the exact match immediately
-        if (damageCategory != null && assetCategory != null && impactAreaID != -999)
-        {
-            AggregatedConsequencesByQuantile consequence = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
-            return consequence.ConsequenceDistribution;
-        }
+        var empiricalDistsToStack = ConsequenceResultList
+            .FilterByCategories(damageCategory, assetCategory, impactAreaID)
+            .Select(result => result.ConsequenceDistribution)
+            .ToList();
 
-        List<Empirical> empiricalDistsToStack = [];
-        foreach (AggregatedConsequencesByQuantile consequenceResult in ConsequenceResultList)
-        {
-            bool match = true;
-            if (damageCategory != null && !damageCategory.Equals(consequenceResult.DamageCategory))
-                match = false;
-            if (assetCategory != null && !assetCategory.Equals(consequenceResult.AssetCategory))
-                match = false;
-            if (impactAreaID != -999 && impactAreaID != consequenceResult.RegionID)
-                match = false;
-
-            if (match)
-            {
-                empiricalDistsToStack.Add(consequenceResult.ConsequenceDistribution);
-            }
-        }
-
-        if (empiricalDistsToStack.Count == 0)
+        if (empiricalDistsToStack.Count() == 0)
         {
             string message = "The requested damage category - asset category - impact area combination could not be found. An arbitrary object is being returned";
             ErrorMessage errorMessage = new(message, MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
