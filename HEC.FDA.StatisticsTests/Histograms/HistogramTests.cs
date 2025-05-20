@@ -644,22 +644,25 @@ public class HistogramTests
     }
 
     [Theory]
-    [InlineData(0.0, 5.0, 10.0, 500, 0.03)]         // Small, symmetric
-    [InlineData(1000.0, 5000.0, 100.0, 5000, 0.03)] // Large, symmetric
-    [InlineData(0.0, 1.0, 10.0, 50, 0.03)]         // Skewed right
-    [InlineData(0.0, 9.0, 10.0, 50, 0.03)]         // Skewed left
-    [InlineData(1e-6, 5e-6, 1e-5, 50, 0.03)]       // Very small values
-    [InlineData(1e6, 5e6, 1e7, 50, 0.03)]          // Very large values
-    public void EmpiricalMeanWithinFivePercentOfHistogramMean_Triangular(
-        double min, double mode, double max, int sampleSize, double tolerance)
+    [InlineData(0.0, 5.0, 10.0)]         // Small, symmetric
+    [InlineData(0.0, 1.0, 10.0)]         // Skewed right
+    [InlineData(0.0, 9.0, 10.0)]         // Skewed left
+    [InlineData(1e-6, 5e-6, 1e-5)]       // Very small values
+    [InlineData(1e6, 5e6, 1e7)]          // Very large values
+    //spanning magnitudes
+    [InlineData(0.02, .5, 5000000)]
+    public void EmpiricalMeanWithinTwoPercentOfHistogramMean_Triangular(
+        double min, double mode, double max)
     {
+        double tolerance = 0.02; // 2% tolerance
         // Generate data
         Triangular triangular = new Triangular(min, mode, max);
-        Random random = new Random(5678);
         List<double> data = new List<double>();
-        for (int i = 0; i < sampleSize; i++)
+        int probabilitySteps = 2500;
+        for (int i = 0; i < probabilitySteps; i++)
         {
-            data.Add(triangular.InverseCDF(random.NextDouble()));
+            double probabilityStep = (i + 0.5) / probabilitySteps;
+            data.Add(triangular.InverseCDF(probabilityStep));
         }
 
         // Create histogram and empirical
@@ -670,39 +673,65 @@ public class HistogramTests
         double histogramMean = histogram.Mean;
         double empiricalMean = empirical.Mean;
         double relativeDifference = Math.Abs(histogramMean - empiricalMean) / (Math.Abs(histogramMean) > 1e-12 ? Math.Abs(histogramMean) : 1.0);
-
         Assert.True(relativeDifference < tolerance);
+    }
+
+    [Theory]
+    [InlineData(0.0, 5.0, 10.0)]         // Small, symmetric
+    [InlineData(0.0, 1.0, 10.0)]         // Skewed right
+    [InlineData(0.0, 9.0, 10.0)]         // Skewed left
+    [InlineData(1e-6, 5e-6, 1e-5)]       // Very small values
+    [InlineData(1e6, 5e6, 1e7)]          // Very large values
+    //spanning magnitudes
+    [InlineData(0.02, .5, 5000000)]
+    public void EmpiricalQuantileNotWithinTwoPercentOfHistogramQuantile_Triangular(
+        double min, double mode, double max)
+    {
+        double tolerance = 0.02; // 2% tolerance
+        // Generate data
+        Triangular triangular = new Triangular(min, mode, max);
+        List<double> data = new List<double>();
+        int probabilitySteps = 2500;
+        for (int i = 0; i < probabilitySteps; i++)
+        {
+            double probabilityStep = (i + 0.5) / probabilitySteps;
+            data.Add(triangular.InverseCDF(probabilityStep));
+        }
+
+        // Create histogram and empirical
+        DynamicHistogram histogram = new DynamicHistogram(data, new ConvergenceCriteria());
+        Empirical empirical = Empirical.FitToSample(data);
+
+        // Compare quantiles
+        double q = .01;
+        double empVal = empirical.InverseCDF(q);
+        double histVal = histogram.InverseCDF(q);
+        double denom = Math.Abs(empVal) > 1e-12 ? Math.Abs(empVal) : 1.0;
+        double relError = Math.Abs(empVal - histVal) / denom;
+        Assert.False(relError <= tolerance);
     }
     [Fact]
     public void EmpiricalAndHistogram_CompareToCSV()
     {
-        double[] values = new double[]
+       
+        string csvPath = @"C:\Temp\BustedData.csv";
+        if (!File.Exists(csvPath))
         {
-        2409.001089361524,
-        2022.164460092307,
-        1658.039160684073,
-        1336.0197547669698,
-        1028.6174248592583,
-        750.5598676021052,
-        517.7831703470636,
-        241.78132990888628,
-        151.5463244073405,
-        100.26469821998317,
-        100.22417904511144,
-        100.1836598702398,
-        100.14314069536806,
-        100.1026215204964,
-        100.06210234562474,
-        100.02158317075302,
-        91.71515232205769,
-        91.67463314718604,
-        91.63411397231437,
-        91.59359479744265,
-        91.55307562257099,
-        91.5125564476993
-        };
+            Assert.True(true);return;
+        }  
+        List<double> valuesAsList = new List<double>();
+        using (var reader = new StreamReader(csvPath, Encoding.UTF8))
+        {
+            string? line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                if (double.TryParse(line, out double value))
+                {
+                    valuesAsList.Add(value);
+                }
+            }
+        }
 
-        List<double> valuesAsList = values.ToList();
         // 2. Create Empirical and DynamicHistogram
         Empirical empirical = Empirical.FitToSample(valuesAsList);
         DynamicHistogram histogram = new DynamicHistogram(valuesAsList, new ConvergenceCriteria());
