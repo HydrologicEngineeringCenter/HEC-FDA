@@ -163,23 +163,7 @@ namespace Statistics.Histograms
             //do nothing
             //HACK
         }
-        public double HistogramMean()
-        {
-            if (SampleSize == 0)
-            {
-                return double.NaN;
-            }
-            if (Min == (Max - BinWidth))
-            {
-                return Max + (.5 * BinWidth);
-            }
-            double sum = 0;
-            for (int i = 0; i < BinCounts.Length; i++)
-            {
-                sum += (Min + (i * BinWidth) + (0.5 * BinWidth)) * BinCounts[i];
-            }
-            return sum / SampleSize;
-        }
+
         public double HistogramVariance()
         {
             if (SampleSize == 0)

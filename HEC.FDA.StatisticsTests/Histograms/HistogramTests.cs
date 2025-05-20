@@ -67,13 +67,13 @@ public class HistogramTests
 
 
     [Theory]
-    [InlineData(1, 3.5)]
+    [InlineData(1, 3)]
     public void HistogramStatistics_Mean(double binWidth, double expected)
     {
         double[] data = new double[5] { 1, 2, 3, 4, 5 };
         DynamicHistogram histogram = new DynamicHistogram(binWidth, new ConvergenceCriteria());
         histogram.AddObservationsToHistogram(data);
-        double actual = histogram.HistogramMean();
+        double actual = histogram.Mean;
         Assert.Equal(expected, actual);
     }
 
