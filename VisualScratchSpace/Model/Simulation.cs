@@ -1,9 +1,11 @@
 ﻿namespace VisualScratchSpace.Model
 {
-    public struct Simulation
+    public class Simulation
     {
-        public string Name;
-        public string[] Alternatives;
-        public string[] HazardTimes;
+        public string Name { get; set; } 
+        public List<string> Alternatives { get; set; }
+        public List<string> HazardTimes { get; set; }
+
+
     }
 }
