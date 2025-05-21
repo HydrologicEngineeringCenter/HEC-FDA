@@ -9,11 +9,11 @@ namespace VisualScratchSpace.ViewModel
     public partial class LifeLossImporterVM : ObservableObject
     {
 
-        public ObservableCollection<string> Simulations { get; set; }
+        public ObservableCollection<Simulation> Simulations { get; set; }
         public ObservableCollection<string> Alternatives { get; set; }
         public ObservableCollection<string> HazardTimes { get; set; }        
 
-        private List<Simulation> _simulations;
+        private LifeLossDB _lifeLossDB;
         [ObservableProperty]
         private string _selectedPath;
         [ObservableProperty]
@@ -26,7 +26,7 @@ namespace VisualScratchSpace.ViewModel
         public LifeLossImporterVM()
         {
             SelectedPath = "";
-            Simulations = new ObservableCollection<string>();
+            Simulations = new ObservableCollection<Simulation>();
             Alternatives = new ObservableCollection<string>();
             HazardTimes = new ObservableCollection<string>();
         }
@@ -39,8 +39,20 @@ namespace VisualScratchSpace.ViewModel
             // also want to use the hazard time and alternative name at some point
             if (!SelectedPath.IsNullOrWhiteSpace())
             {
+                Simulations.Clear();
+                Simulation s = new Simulation();
+                s.Name = "sim 1";
+                s.Alternatives = new List<string> { "al11", "al12" };
+                s.HazardTimes = new List<string> { "hz11", "hz12" };
+                Simulation d = new Simulation();
+                d.Name = "sim 2";
+                d.Alternatives = new List<string> { "al21", "al22" };
+                d.HazardTimes = new List<string> { "hz21", "hz22" };
+                Simulations.Add(s);
+                Simulations.Add(d);
                 SelectedPath += "_opened";
             }
+           
         }
 
         partial void OnSelectedSimulationChanged(string value)
@@ -52,6 +64,16 @@ namespace VisualScratchSpace.ViewModel
         {
             Alternatives.Clear();
             HazardTimes.Clear();
+            foreach (Simulation s in Simulations)
+            {
+                if (s.Name == value)
+                {
+                    foreach (string a in s.Alternatives)
+                        Alternatives.Add(a);
+                    foreach (string h in s.HazardTimes) 
+                        HazardTimes.Add(h);
+                }
+            }
         }
     }
 }
