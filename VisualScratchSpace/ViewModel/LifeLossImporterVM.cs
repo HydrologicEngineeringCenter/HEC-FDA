@@ -31,28 +31,25 @@ namespace VisualScratchSpace.ViewModel
             HazardTimes = new ObservableCollection<string>();
         }
 
+        /// <summary>
+        /// Open a LifeSim database and populate combo boxes appropriately
+        /// </summary>
         [RelayCommand]
         public void OpenDB()
         {
-            // this can be a call to a model method opening the DB
-            // TODO: get something from that DB and update something on the UI as proof of concept
-            // also want to use the hazard time and alternative name at some point
             if (!SelectedPath.IsNullOrWhiteSpace())
             {
+                // reset the simulation options
                 Simulations.Clear();
-                Simulation s = new Simulation();
-                s.Name = "sim 1";
-                s.Alternatives = new List<string> { "al11", "al12" };
-                s.HazardTimes = new List<string> { "hz11", "hz12" };
-                Simulation d = new Simulation();
-                d.Name = "sim 2";
-                d.Alternatives = new List<string> { "al21", "al22" };
-                d.HazardTimes = new List<string> { "hz21", "hz22" };
-                Simulations.Add(s);
-                Simulations.Add(d);
-                SelectedPath += "_opened";
+                LifeLossDB db = new LifeLossDB(SelectedPath);
+
+                // add new simulations from the newly selected database
+                List<Simulation> newSimulations = db.UpdateSimulations();
+                foreach (Simulation simulation in newSimulations)
+                {
+                    Simulations.Add(simulation);
+                }
             }
-           
         }
 
         partial void OnSelectedSimulationChanged(string value)
@@ -62,8 +59,11 @@ namespace VisualScratchSpace.ViewModel
 
         private void UpdateSimulationFields(string value)
         {
+            // reset the other options
             Alternatives.Clear();
             HazardTimes.Clear();
+
+            // update options to match the currently selected simulation
             foreach (Simulation s in Simulations)
             {
                 if (s.Name == value)
