@@ -14,6 +14,7 @@ using System.Diagnostics.Metrics;
 using System.Transactions;
 using System.Linq;
 using System.IO;
+using HEC.FDA.StatisticsTest.Resources;
 
 namespace StatisticsTests.Histograms;
 [Trait("RunsOn", "Remote")]
@@ -711,46 +712,89 @@ public class HistogramTests
         Assert.False(relError <= tolerance);
     }
     [Fact]
-    public void EmpiricalAndHistogram_CompareToCSV()
+    public void EmpiricalByConversionAndHistogram_ExtremeSkew()
     {
-       
-        string csvPath = @"C:\Temp\BustedData.csv";
-        if (!File.Exists(csvPath))
+        List<double> valuesAsList = new List<double>(SampleData.VerySkewedDistributionSamples);
+
+        // 2. Create Empirical and DynamicHistogram
+        DynamicHistogram histogram = new DynamicHistogram(valuesAsList, new ConvergenceCriteria());
+        Empirical empirical = DynamicHistogram.ConvertToEmpiricalDistribution(histogram);
+
+        // 3. Assert
+        for (double q = 0.01; q < 1.0; q += 0.01)
         {
-            Assert.True(true);return;
-        }  
-        List<double> valuesAsList = new List<double>();
-        using (var reader = new StreamReader(csvPath, Encoding.UTF8))
+            double empVal = empirical.InverseCDF(q);
+            double histVal = histogram.InverseCDF(q);
+            double denom = Math.Abs(empVal) > 1e-12 ? Math.Abs(empVal) : 1.0;
+            double relError = Math.Abs(empVal - histVal) / denom;
+            Assert.True(relError < 0.05, $"Relative error at q={q} is {relError}, which exceeds the tolerance of 0.05.");
+        }
+    }
+
+    [Fact]
+    public void EmpiricalFitToFlow_vs_Histogram_ExtremeSkewData()
+    {
+        // 1. Create Empirical and DynamicHistogram
+        Empirical empirical = Empirical.FitToSample(SampleData.VerySkewedDistributionSamples.ToList());
+        DynamicHistogram histogram = new DynamicHistogram(SampleData.VerySkewedDistributionSamples.ToList(), new ConvergenceCriteria()); //Histogram has bin width of 1000. 14 bins. Bin counts of 2482,5,3,3,2,1,1,1,0,1,0,0,0,1
+
+        bool writeOutData = false;
+        if (writeOutData)
         {
-            string? line;
-            while ((line = reader.ReadLine()) != null)
+            string outputPath = Path.Combine("C:\\Temp\\", "QuantileComparisonOutput2.csv");
+            using (var writer = new StreamWriter(outputPath, false, Encoding.UTF8))
             {
-                if (double.TryParse(line, out double value))
+                writer.WriteLine("probability,empirical,histogram,relative error");
+                for (double q = 0.01; q < 1.0; q += 0.01)
                 {
-                    valuesAsList.Add(value);
+                    double empVal = empirical.InverseCDF(q);
+                    double histVal = histogram.InverseCDF(q);
+                    double denom = Math.Abs(empVal) > 1e-12 ? Math.Abs(empVal) : 1.0;
+                    double relError = Math.Abs(empVal - histVal) / denom;
+                    writer.WriteLine($"{q},{empVal},{histVal},{relError}");
                 }
             }
         }
 
-        // 2. Create Empirical and DynamicHistogram
-        Empirical empirical = Empirical.FitToSample(valuesAsList);
-        DynamicHistogram histogram = new DynamicHistogram(valuesAsList, new ConvergenceCriteria());
-
-        // 3. Prepare CSV output
-        string outputPath = Path.Combine("C:\\Temp\\", "QuantileComparisonOutput.csv");
-        using (var writer = new StreamWriter(outputPath, false, Encoding.UTF8))
+        //2. Assert
+        for (double q = 0.01; q < 1.0; q += 0.01)
         {
-            writer.WriteLine("probability,empirical,histogram,relative error");
-            for (double q = 0.01; q < 1.0; q += 0.01)
-            {
-                double empVal = empirical.InverseCDF(q);
-                double histVal = histogram.InverseCDF(q);
-                double denom = Math.Abs(empVal) > 1e-12 ? Math.Abs(empVal) : 1.0;
-                double relError = Math.Abs(empVal - histVal) / denom;
-                writer.WriteLine($"{q},{empVal},{histVal},{relError}");
-            }
+            double empVal = empirical.InverseCDF(q);
+            double histVal = histogram.InverseCDF(q);
+            double denom = Math.Abs(empVal) > 1e-12 ? Math.Abs(empVal) : 1.0;
+            double relError = Math.Abs(empVal - histVal) / denom;
+            Assert.True(relError < 0.05, $"Relative error at q={q} is {relError}, which exceeds the tolerance of 0.05.");
         }
     }
+
+    [Theory]
+    [InlineData(new double[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 })]
+    [InlineData(new double[] { 10, 20, 30, 40, 50 })]
+    [InlineData(new double[] { 100, 200, 300, 400, 500 })]
+    [MemberData(nameof(GetVerySkewedSampleData))]
+    public void Histogram_Mean_Equals_HistogramMean_Method_Theory(double[] data)
+    {
+        // Arrange
+        DynamicHistogram histogram = new DynamicHistogram();
+        histogram.AddObservationsToHistogram(data);
+
+        // Act
+        double meanProperty = histogram.Mean;
+        double meanMethod = histogram.HistogramMean();
+
+        // Assert
+        double relativeError = 1 - Math.Abs(meanProperty / meanMethod);
+        Assert.True(relativeError < .05); 
+    }
+
+    public static IEnumerable<object[]> GetVerySkewedSampleData()
+    {
+        yield return new object[] { HEC.FDA.StatisticsTest.Resources.SampleData.VerySkewedDistributionSamples};
+    }
+
+    
+
+
 
 
     #endregion
