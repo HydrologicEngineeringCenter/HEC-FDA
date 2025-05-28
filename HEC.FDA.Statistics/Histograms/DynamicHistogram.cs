@@ -164,6 +164,24 @@ namespace Statistics.Histograms
             //HACK
         }
 
+        public double HistogramMean()
+        {
+            if (SampleSize == 0)
+            {
+                return double.NaN;
+            }
+            if (Min == (Max - BinWidth))
+            {
+                return Max + (.5 * BinWidth);
+            }
+            double sum = 0;
+            for (int i = 0; i < BinCounts.Length; i++)
+            {
+                sum += (Min + (i * BinWidth) + (0.5 * BinWidth)) * BinCounts[i];
+            }
+            return sum / SampleSize;
+        }
+
         public double HistogramVariance()
         {
             if (SampleSize == 0)
@@ -782,25 +800,9 @@ namespace Statistics.Histograms
             return Convert.ToInt64(Math.Min(remainingIters, biggestGuess));
         }
 
-        public string Print(bool round = false)
-        {
-            string histogram = $"This histogram consists of the following bin starts and bin counts:" + Environment.NewLine;
-            for (int i = 0; i < BinCounts.Length; i++)
-            {
-                histogram += $"Bin Start: {Min + BinWidth * i}, Bin Count: {BinCounts[i]}" + Environment.NewLine;
-            }
-            return histogram;
-        }
-
-        public string Requirements(bool printNotes)
-        {
-            string message = "The histogram minimally requires a bin width or a list of observations and convergence criteria.";
-            return message;
-        }
-
         public IDistribution Sample(double[] packetOfRandomNumbers)
         {
-            if (packetOfRandomNumbers.Length < SampleSize) throw new ArgumentException($"The parametric bootstrap sample cannot be constructed using the {Print(true)} distribution. It requires at least {SampleSize} random value but only {packetOfRandomNumbers.Length} were provided.");
+            if (packetOfRandomNumbers.Length < SampleSize) throw new ArgumentException($"The parametric bootstrap sample cannot be constructed using the distribution. It requires at least {SampleSize} random value but only {packetOfRandomNumbers.Length} were provided.");
             double[] samples = new double[SampleSize];
             for (int i = 0; i < SampleSize; i++) samples[i] = this.InverseCDF(packetOfRandomNumbers[i]);
             return this.Fit(samples);

@@ -6,6 +6,7 @@ using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Model.Messaging;
 using Statistics.Distributions;
 using Statistics.Histograms;
+using HEC.FDA.Model.metrics.Extensions;
 
 namespace HEC.FDA.Model.metrics;
 
@@ -153,25 +154,9 @@ public class ScenarioResults : ValidationErrorLogger
         double consequenceValue = 0;
         foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList)
         {
-            foreach (AggregatedConsequencesBinned consequenceResult in impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
-            {
-                bool match =
-                    (damageCategory == null || damageCategory.Equals(consequenceResult.DamageCategory)) &&
-                    (assetCategory == null || assetCategory.Equals(consequenceResult.AssetCategory)) &&
-                    (impactAreaID == utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE || impactAreaID.Equals(consequenceResult.RegionID));
-
-                // If all filters are specified, return immediately on exact match
-                if (damageCategory != null && assetCategory != null && impactAreaID != utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
-                {
-                    if (match)
-                        return consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
-                }
-                // Otherwise, collect all matching
-                else if (match)
-                {
-                    consequenceValue += consequenceResult.ConsequenceExceededWithProbabilityQ(exceedanceProbability);
-                }
-            }
+            consequenceValue += impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList
+               .FilterByCategories(damageCategory, assetCategory, impactAreaID)
+               .Sum((x) => x.ConsequenceHistogram.InverseCDF(exceedanceProbability));
         }
         return consequenceValue;
     }
@@ -191,24 +176,13 @@ public class ScenarioResults : ValidationErrorLogger
 
         foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList)
         {
-            foreach (AggregatedConsequencesBinned consequenceResult in impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
-            {
-                bool match =
-                    (damageCategory == null || damageCategory.Equals(consequenceResult.DamageCategory)) &&
-                    (assetCategory == null || assetCategory.Equals(consequenceResult.AssetCategory)) &&
-                    (impactAreaID == utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE || impactAreaID.Equals(consequenceResult.RegionID));
+            var filtered = impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList
+                .FilterByCategories(damageCategory, assetCategory, impactAreaID)
+                .Select((h) => DynamicHistogram.ConvertToEmpiricalDistribution(h.ConsequenceHistogram));
 
-                // If all filters are specified, return immediately on exact match
-                if (damageCategory != null && assetCategory != null && impactAreaID != utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
-                {
-                    if (match)
-                        return DynamicHistogram.ConvertToEmpiricalDistribution(consequenceResult.ConsequenceHistogram);
-                }
-                // Otherwise, collect all matching
-                else if (match)
-                {
-                    empiricalDistsToStack.Add(DynamicHistogram.ConvertToEmpiricalDistribution(consequenceResult.ConsequenceHistogram));
-                }
+            foreach (var consequenceResult in filtered)
+            {
+                empiricalDistsToStack.Add(consequenceResult);
             }
         }
 
@@ -225,7 +199,7 @@ public class ScenarioResults : ValidationErrorLogger
         }
     }
     public void AddResults(ImpactAreaScenarioResults resultsToAdd)
-    { 
+    {
         ResultsList.Add(resultsToAdd);
     }
     public ImpactAreaScenarioResults GetResults(int impactAreaID)
@@ -288,14 +262,14 @@ public class ScenarioResults : ValidationErrorLogger
     public static ScenarioResults ReadFromXML(XElement xElement)
     {
         ScenarioResults scenarioResults = new();
-        
+
         foreach (XElement element in xElement.Elements())
         {
             ImpactAreaScenarioResults impactAreaScenarioResults = ImpactAreaScenarioResults.ReadFromXML(element);
             scenarioResults.AddResults(impactAreaScenarioResults);
         }
 
-        if(xElement.Attribute(COMPUTE_DATE) != null)
+        if (xElement.Attribute(COMPUTE_DATE) != null)
         {
             string computeDate = xElement.Attribute(COMPUTE_DATE).Value;
             scenarioResults.ComputeDate = computeDate;
