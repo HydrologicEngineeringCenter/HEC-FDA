@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using Utility.Progress;
 using Statistics.Histograms;
+using Statistics.Distributions;
 namespace HEC.FDA.Model.alternatives
 {
     public static class Alternative
@@ -92,13 +93,7 @@ namespace HEC.FDA.Model.alternatives
                 //or vice versa, such as with managed retreat 
                 if (futureYearResultsList.Count > 0)
                 {
-                    ProcessUnmatchedFutureResults(
-                        analysisYears,
-                        discountRate,
-                        periodOfAnalysis,
-                        computedResultsBaseYear,
-                        alternativeResults,
-                        futureYearResultsList);
+                    throw new Exception("Unmatched future results not properly accounted for");
                 }
             }
 
@@ -174,7 +169,7 @@ namespace HEC.FDA.Model.alternatives
                         analysisYears[1],
                         periodOfAnalysis,
                         discountRate,
-                        false,
+                        true,
                         reporter);
 
                     alternativeResults.AddConsequenceResults(aaeqResult);
@@ -182,82 +177,12 @@ namespace HEC.FDA.Model.alternatives
             }
         }
 
-        private static void ProcessUnmatchedFutureResults(
-            List<int> analysisYears,
-            double discountRate,
-            int periodOfAnalysis,
-            ScenarioResults computedResultsBaseYear,
-            AlternativeResults alternativeResults,
-            List<ImpactAreaScenarioResults> futureYearResultsList)
-        {
-            foreach (var futureYearResults in futureYearResultsList)
-            {
-                var baseYearResults = computedResultsBaseYear.GetResults(futureYearResults.ImpactAreaID);
-                var baseYearDamageResultsList = new List<AggregatedConsequencesBinned>(baseYearResults.ConsequenceResults.ConsequenceResultList);
-
-                foreach (var futureYearDamageResult in futureYearResults.ConsequenceResults.ConsequenceResultList)
-                {
-                    var baseYearDamageResult = baseYearResults.ConsequenceResults.GetConsequenceResult(
-                        futureYearDamageResult.DamageCategory,
-                        futureYearDamageResult.AssetCategory,
-                        futureYearDamageResult.RegionID);
-
-                    var aaeqResult = IterateOnAAEQ(
-                        baseYearDamageResult,
-                        futureYearDamageResult,
-                        analysisYears[0],
-                        analysisYears[1],
-                        periodOfAnalysis,
-                        discountRate);
-
-                    baseYearDamageResultsList.Remove(baseYearDamageResult);
-                    alternativeResults.AddConsequenceResults(aaeqResult);
-                }
-
-                if (baseYearDamageResultsList.Count > 0)
-                {
-                    foreach (var baseYearDamageResult in baseYearDamageResultsList)
-                    {
-                        var futureYearDamageResult = futureYearResults.ConsequenceResults.GetConsequenceResult(
-                            baseYearDamageResult.DamageCategory,
-                            baseYearDamageResult.AssetCategory,
-                            baseYearDamageResult.RegionID);
-
-                        var aaeqResult = IterateOnAAEQ(
-                            baseYearDamageResult,
-                            futureYearDamageResult,
-                            analysisYears[0],
-                            analysisYears[1],
-                            periodOfAnalysis,
-                            discountRate,
-                            false);
-
-                        alternativeResults.AddConsequenceResults(aaeqResult);
-
-                        throw new Exception("The alternative compute reached an illogical stream of combinations. The alternative compute was aborted");
-                    }
-                }
-            }
-        }
-
-
         private static bool CanCompute(int baseYear, int futureYear, int periodOfAnalysis)
         {
-            bool canCompute = true;
-            if (baseYear > futureYear)
-            {
-                canCompute = false;
-            }
-            int differenceBetweenBaseAndFutureYearInclusive = futureYear - baseYear + 1;
-            if (differenceBetweenBaseAndFutureYearInclusive < 2)
-            {
-                canCompute = false;
-            }
-            if (differenceBetweenBaseAndFutureYearInclusive > periodOfAnalysis)
-            {
-                canCompute = false;
-            }
-            return canCompute;
+            int difference = futureYear - baseYear + 1;
+            return baseYear <= futureYear
+                && difference >= 2
+                && difference <= periodOfAnalysis;
         }
 
         private static AggregatedConsequencesByQuantile IterateOnAAEQ(
@@ -276,7 +201,7 @@ namespace HEC.FDA.Model.alternatives
                 ? mlfYearDamageResult.ConvergenceCriteria
                 : baseYearDamageResult.ConvergenceCriteria;
 
-            int probabilitySteps = 2500;
+            int probabilitySteps = 25000;
             var resultCollection = new ConcurrentBag<double>();
 
             Parallel.For(0, probabilitySteps, i =>
@@ -292,8 +217,17 @@ namespace HEC.FDA.Model.alternatives
             var assetCategory = iterateOnFutureYear ? mlfYearDamageResult.AssetCategory : baseYearDamageResult.AssetCategory;
             var regionID = iterateOnFutureYear ? mlfYearDamageResult.RegionID : baseYearDamageResult.RegionID;
 
-            DynamicHistogram dynamicHistogram = new(resultCollection.ToList(), new());
-            return new AggregatedConsequencesByQuantile(damageCategory, assetCategory, [.. resultCollection], regionID);         
+            // Debug: create histogram and empirical distribution from resultCollection
+            var resultList = resultCollection.ToList();
+            var debugHistogram = new DynamicHistogram(resultList, convergenceCriteria);
+            var debugEmpirical = Empirical.FitToSample(resultList);
+            if ((debugHistogram.Mean - debugEmpirical.Mean) / debugEmpirical.Mean > .05)
+            {
+                Console.WriteLine("Help");
+            }
+            // You can set a breakpoint here or log debugHistogram/debugEmpirical as needed
+
+            return new AggregatedConsequencesByQuantile(damageCategory, assetCategory, resultList, regionID);
         }
 
         //TODO: these functions should be private, but currently have unit tests 
