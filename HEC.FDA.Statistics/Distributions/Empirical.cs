@@ -142,8 +142,8 @@ namespace Statistics.Distributions
                 cdfR = 1.0;
                 stepPDF = cdfR - cdfL;
                 mean += valR * stepPDF;
-                return mean;
-            }
+            return mean;
+        }
         }
 
         public double ComputeMedian()
@@ -435,7 +435,7 @@ namespace Statistics.Distributions
 
         public XElement WriteToXML()
         {
-            XElement masterElem = new("Empirical Distribution");
+            XElement masterElem = new("Empirical_Distribution");
             masterElem.SetAttributeValue("Ordinate_Count", SampleSize);
             for (int i = 0; i < SampleSize; i++)
             {
