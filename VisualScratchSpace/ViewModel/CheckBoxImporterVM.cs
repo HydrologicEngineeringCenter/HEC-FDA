@@ -7,20 +7,20 @@ using VisualScratchSpace.Model;
 namespace VisualScratchSpace.ViewModel;
 public partial class CheckBoxImporterVM : ObservableObject
 {
-    public ObservableCollection<Simulation> Simulations { get; set; }
-    public ObservableCollection<CheckableItem> Alternatives { get; set; }
-    public ObservableCollection<CheckableItem> HazardTimes { get; set; }
+    public ObservableCollection<Simulation> SimulationsComboBox { get; set; }
+    public ObservableCollection<CheckableItem> AlternativesCheckBox { get; set; }
+    public ObservableCollection<CheckableItem> HazardTimesCheckBox { get; set; }
 
     [ObservableProperty]
-    private string _selectedPath;
+    private string _selectedPath = "";
     [ObservableProperty]
-    private string _selectedSimulation;
+    private string _selectedSimulation = "";
 
     public CheckBoxImporterVM()
     {
-        Simulations = new();
-        Alternatives = new();
-        HazardTimes = new();
+        SimulationsComboBox = [];
+        AlternativesCheckBox = [];
+        HazardTimesCheckBox = [];
     }
 
     [RelayCommand]
@@ -30,14 +30,14 @@ public partial class CheckBoxImporterVM : ObservableObject
             return;
 
         // reset the simulation options
-        Simulations.Clear();
-        LifeLossDB db = new LifeLossDB(SelectedPath);
+        SimulationsComboBox.Clear();
+        LifeLossDB db = new(SelectedPath);
 
         // add new simulations from the newly selected database
         List<Simulation> newSimulations = db.UpdateSimulations();
         foreach (Simulation simulation in newSimulations)
         {
-            Simulations.Add(simulation);
+            SimulationsComboBox.Add(simulation);
         }
     }
 
@@ -49,23 +49,22 @@ public partial class CheckBoxImporterVM : ObservableObject
     private void UpdateSimulationFields(string value)
     {
         // reset the other options
-        Alternatives.Clear();
-        HazardTimes.Clear();
+        AlternativesCheckBox.Clear();
+        HazardTimesCheckBox.Clear();
 
         // update options to match the currently selected simulation
-        foreach (Simulation s in Simulations)
+        foreach (Simulation s in SimulationsComboBox)
         {
             if (s.Name == value)
             {
                 foreach (string a in s.Alternatives)
-                    Alternatives.Add(new CheckableItem { Name = a });
+                    AlternativesCheckBox.Add(new CheckableItem { Name = a });
                 foreach (string h in s.HazardTimes)
                 {
                     int time = int.Parse(h);
                     // display name in military time format
-                    HazardTimes.Add(new CheckableItem { Name = time < 10 ? $"0{time}00" : $"{time}00" });
-                }
-                    
+                    HazardTimesCheckBox.Add(new CheckableItem { Name = time < 10 ? $"0{time}00" : $"{time}00" });
+                } 
             }
         }
     }

@@ -41,7 +41,7 @@
             </Grid.ColumnDefinitions>
             <TextBlock Text="Simulation Name:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
             <ComboBox Grid.Column="1" Margin="5" 
-                      ItemsSource="{Binding Simulations}" 
+                      ItemsSource="{Binding SimulationsComboBox}" 
                       DisplayMemberPath="Name"
                       SelectedValuePath="Name"
                       SelectedValue="{Binding SelectedSimulation}"/>    
@@ -59,7 +59,7 @@
 
             <TextBlock Text="Alternatives:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5"/>
             <StackPanel Margin="5" Grid.Row="1" Grid.Column="0">
-                <ItemsControl ItemsSource="{Binding Alternatives}">
+                <ItemsControl ItemsSource="{Binding AlternativesCheckBox}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <CheckBox Content="{Binding Name}"
@@ -72,12 +72,12 @@
 
             <TextBlock Text="Hazard Times:" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5"/>
             <StackPanel Margin="5" Grid.Row="1" Grid.Column="1">
-                <ItemsControl ItemsSource="{Binding HazardTimes}">
+                <ItemsControl ItemsSource="{Binding HazardTimesCheckBox}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <CheckBox Content="{Binding Name}"
-                          IsChecked="{Binding IsChecked, Mode=TwoWay}"
-                          Margin="4"/>
+                                      IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                                      Margin="4"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

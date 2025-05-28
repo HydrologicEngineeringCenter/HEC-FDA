@@ -18,7 +18,7 @@ namespace VisualScratchSpace.Model
 
         public List<Simulation> UpdateSimulations()
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.Append("SELECT ");
             for (int i = 0; i < lifelossColumns.Length; i++)
             {
@@ -28,7 +28,7 @@ namespace VisualScratchSpace.Model
             }
             sb.Append(" FROM Simulations_Lookup_Table");
             string query = sb.ToString();
-            List<Simulation> simulations = new List<Simulation>();
+            List<Simulation> simulations = [];
 
             try
             {
@@ -39,12 +39,13 @@ namespace VisualScratchSpace.Model
 
                 while (reader.Read())
                 {
-                    Simulation simulation = new Simulation();
-
-                    // Name is 0th selection
-                    simulation.Name = reader.GetString(0);
-                    // Alternatives are 1st selection
-                    simulation.Alternatives = reader.GetString(1).Split(','); // Alternatives are in csv string format
+                    Simulation simulation = new()
+                    {
+                        // Name is 0th selection
+                        Name = reader.GetString(0),
+                        // Alternatives are 1st selection
+                        Alternatives = reader.GetString(1).Split(',') // Alternatives are in csv string format
+                    };
                     // Hazard Times are in the 2nd through 12th selections                                                           
                     for (int i = 2; i <= 12; i++)
                     {
