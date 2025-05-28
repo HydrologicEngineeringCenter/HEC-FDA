@@ -13,7 +13,6 @@ namespace VisualScratchSpace.ViewModel
         public ObservableCollection<string> Alternatives { get; set; }
         public ObservableCollection<string> HazardTimes { get; set; }        
 
-        private LifeLossDB _lifeLossDB;
         [ObservableProperty]
         private string _selectedPath;
         [ObservableProperty]
@@ -35,20 +34,20 @@ namespace VisualScratchSpace.ViewModel
         /// Open a LifeSim database and populate combo boxes appropriately
         /// </summary>
         [RelayCommand]
-        public void OpenDB()
+        public void OpenDB() 
         {
-            if (!SelectedPath.IsNullOrWhiteSpace())
-            {
-                // reset the simulation options
-                Simulations.Clear();
-                LifeLossDB db = new LifeLossDB(SelectedPath);
+            if (SelectedPath.IsNullOrWhiteSpace())
+                return;
 
-                // add new simulations from the newly selected database
-                List<Simulation> newSimulations = db.UpdateSimulations();
-                foreach (Simulation simulation in newSimulations)
-                {
-                    Simulations.Add(simulation);
-                }
+            // reset the simulation options
+            Simulations.Clear();
+            LifeLossDB db = new LifeLossDB(SelectedPath);
+
+            // add new simulations from the newly selected database
+            List<Simulation> newSimulations = db.UpdateSimulations();
+            foreach (Simulation simulation in newSimulations)
+            {
+                Simulations.Add(simulation);
             }
         }
 
@@ -72,7 +71,7 @@ namespace VisualScratchSpace.ViewModel
                         Alternatives.Add(a);
                     foreach (string h in s.HazardTimes) 
                         HazardTimes.Add(h);
-                }
+                } 
             }
         }
     }
