@@ -59,6 +59,13 @@ public partial class CheckBoxImporterVM : ObservableObject
             {
                 foreach (string a in s.Alternatives)
                     Alternatives.Add(new CheckableItem { Name = a });
+                foreach (string h in s.HazardTimes)
+                {
+                    int time = int.Parse(h);
+                    // display name in military time format
+                    HazardTimes.Add(new CheckableItem { Name = time < 10 ? $"0{time}00" : $"{time}00" });
+                }
+                    
             }
         }
     }
