@@ -86,12 +86,14 @@ namespace VisualScratchSpace.Model
             using SQLiteConnection connection = new SQLiteConnection(_connectionString);
             connection.Open();
 
+            // get every matching table for each prefix and put them in one final list
             foreach (string prefix in prefixes)
             {
                 List<string> tables = GetMatchingTables(prefix, connection);
                 allMatchingTables.AddRange(tables);
             }
             
+            // query each table in the final list for life loss
             foreach (string tableName in allMatchingTables)
             {
                 string query = $"SELECT (LL_In_StructuresU65 + LL_In_StructuresO65 + LL_Caught) FROM \"{tableName}\";";
@@ -114,6 +116,7 @@ namespace VisualScratchSpace.Model
             List<string> matchingTables = [];
             using SQLiteCommand command = new(findTablesQuery, connection);
 
+            // pattern match the simnulation + alternative + time and find all matching tables
             command.Parameters.AddWithValue("@pattern", prefix + "%");
             using SQLiteDataReader reader = command.ExecuteReader();   
             while (reader.Read())
