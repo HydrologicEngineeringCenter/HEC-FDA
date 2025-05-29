@@ -8,4 +8,7 @@ public partial class CheckableItem : ObservableObject
 
     [ObservableProperty]
     private bool _isChecked = true;
+
+    [ObservableProperty]
+    private string _value;
 }

@@ -6,7 +6,7 @@
     public class Simulation
     {
         public string Name { get; set; } 
-        public string[] Alternatives { get; set; }
-        public List<string> HazardTimes { get; set; } = new();
+        public string[] Alternatives { get; set; } // array because we use .Split() on the alternatives csv which returns an array
+        public List<string> HazardTimes { get; set; } = new(); // list because we do not know how many hazard times there will be
     }
 }

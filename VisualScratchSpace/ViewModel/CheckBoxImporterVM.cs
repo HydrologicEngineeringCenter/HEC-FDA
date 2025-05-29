@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.HighPerformance;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SciChart.Core.Extensions;
 using System.Collections.ObjectModel;
@@ -41,6 +42,21 @@ public partial class CheckBoxImporterVM : ObservableObject
         }
     }
 
+    [RelayCommand]
+    public void Display()
+    {
+        List<string> selectedAlernatives = [];
+        List<string> selectedHazardTimes = [];
+        foreach (CheckableItem a in AlternativesCheckBox)
+            if (a.IsChecked) selectedAlernatives.Add(a.Name);
+        foreach (CheckableItem h in HazardTimesCheckBox)
+            if (h.IsChecked) selectedHazardTimes.Add(h.Value);
+
+        List<string> prefixes = LifeLossDB.GetSimulationTablePrefixes(SelectedSimulation, selectedAlernatives.ToArray(), selectedHazardTimes.ToArray());
+        LifeLossDB db = new(SelectedPath);
+        db.QueryMatchingTables(prefixes.ToArray());
+    }
+
     partial void OnSelectedSimulationChanged(string value)
     {
         UpdateSimulationFields(value);
@@ -63,7 +79,7 @@ public partial class CheckBoxImporterVM : ObservableObject
                 {
                     int time = int.Parse(h);
                     // display name in military time format
-                    HazardTimesCheckBox.Add(new CheckableItem { Name = time < 10 ? $"0{time}00" : $"{time}00" });
+                    HazardTimesCheckBox.Add(new CheckableItem { Name = time < 10 ? $"0{time}00" : $"{time}00", Value = time.ToString() });
                 } 
             }
         }

@@ -83,5 +83,13 @@
                 </ItemsControl>
             </StackPanel>
         </Grid>
+
+        <Grid Grid.Row="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="80"/>
+            </Grid.ColumnDefinitions>
+            <Button Content="Import" Command="{Binding DisplayCommand}" Grid.Column="1" Margin="5"/>
+        </Grid>
     </Grid>
 </UserControl>

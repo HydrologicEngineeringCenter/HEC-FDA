@@ -1,4 +1,6 @@
-﻿using System.Data.SQLite;
+﻿using Statistics;
+using Statistics.Histograms;
+using System.Data.SQLite;
 using System.Text;
 
 namespace VisualScratchSpace.Model
@@ -7,14 +9,27 @@ namespace VisualScratchSpace.Model
     {
         private string _connectionString;
 
+        private static string[] lifelossColumns = {"Name", "Alternatives", "Time_2", "Time_4",
+                                                   "Time_6, Time_8", "Time_10", "Time_12",
+                                                   "Time_14", "Time_16", "Time_18", "Time_20", "Time_22"};
+
         public LifeLossDB(string dbpath)
         {
             _connectionString = $"Data Source={dbpath}";
         }
 
-        static string[] lifelossColumns = {"Name", "Alternatives", "Time_2", "Time_4",
-                                                   "Time_6, Time_8", "Time_10", "Time_12",
-                                                   "Time_14", "Time_16", "Time_18", "Time_20", "Time_22"};
+        public static List<string> GetSimulationTablePrefixes(string simulation, string[] alternatives, string[] hazardTimes)
+        {
+            List<string> prefixes = [];
+            for (int i = 0; i < alternatives.Length; i++)
+            {
+                for (int j = 0; j < hazardTimes.Length; j++)
+                {
+                    prefixes.Add($"{simulation}>Results_By_Iteration>{alternatives[i]}>{hazardTimes[j]}");
+                }
+            }
+            return prefixes;
+        }
 
         public List<Simulation> UpdateSimulations()
         {
@@ -64,5 +79,47 @@ namespace VisualScratchSpace.Model
             }
             return simulations;
         }
+
+        public void QueryMatchingTables(string[] prefixes)
+        {
+            List<string> allMatchingTables = [];
+            using SQLiteConnection connection = new SQLiteConnection(_connectionString);
+            connection.Open();
+
+            foreach (string prefix in prefixes)
+            {
+                List<string> tables = GetMatchingTables(prefix, connection);
+                allMatchingTables.AddRange(tables);
+            }
+            
+            foreach (string tableName in allMatchingTables)
+            {
+                string query = $"SELECT (LL_In_StructuresU65 + LL_In_StructuresO65 + LL_Caught) FROM \"{tableName}\";";
+                using SQLiteCommand command = new(query, connection);
+                using SQLiteDataReader reader = command.ExecuteReader();
+                List<double> vals = [];
+                while (reader.Read())
+                {
+                    double val = (long)reader[0];
+                    vals.Add(val);
+                }
+                ConvergenceCriteria cc = new();
+                DynamicHistogram histogram = new DynamicHistogram(vals, cc);
+            }
+        }
+
+        private List<string> GetMatchingTables(string prefix, SQLiteConnection connection)
+        {
+            string findTablesQuery = "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE @pattern;";
+            List<string> matchingTables = [];
+            using SQLiteCommand command = new(findTablesQuery, connection);
+
+            command.Parameters.AddWithValue("@pattern", prefix + "%");
+            using SQLiteDataReader reader = command.ExecuteReader();   
+            while (reader.Read())
+                matchingTables.Add(reader.GetString(0));
+
+            return matchingTables;
+        }   
     }
 }
