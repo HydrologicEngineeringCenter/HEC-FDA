@@ -126,7 +126,7 @@ namespace Statistics.Histograms
                 _Max = value;
             }
         }
-        public double Mean
+        public double SampleMean
         {
             get
             {
@@ -138,7 +138,7 @@ namespace Statistics.Histograms
                 _SampleMean = value;
             }
         }
-        public double Variance
+        public double SampleVariance
         {
             get
             {
@@ -151,7 +151,7 @@ namespace Statistics.Histograms
             get
             {
                 //force is triggered on variance.
-                return Math.Pow(Variance, 0.5);
+                return Math.Pow(SampleVariance, 0.5);
             }
         }
         public Int64 SampleSize
@@ -239,7 +239,7 @@ namespace Statistics.Histograms
         private bool IsZeroValued()
         {
             bool isZeroValued = false;
-            bool meanIsZero = Mean == 0;
+            bool meanIsZero = SampleMean == 0;
             bool standardDeviationIsZero = StandardDeviation == 0;
             if (meanIsZero && standardDeviationIsZero)
             {
@@ -612,7 +612,7 @@ namespace Statistics.Histograms
                 }
                 if (HistogramIsSingleValued)
                 {
-                    return Mean;
+                    return SampleMean;
                 }
                 if (_SampleSize == 0)
                 {

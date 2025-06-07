@@ -217,15 +217,7 @@ namespace HEC.FDA.Model.alternatives
             var assetCategory = iterateOnFutureYear ? mlfYearDamageResult.AssetCategory : baseYearDamageResult.AssetCategory;
             var regionID = iterateOnFutureYear ? mlfYearDamageResult.RegionID : baseYearDamageResult.RegionID;
 
-            // Debug: create histogram and empirical distribution from resultCollection
             var resultList = resultCollection.ToList();
-            var debugHistogram = new DynamicHistogram(resultList, convergenceCriteria);
-            var debugEmpirical = Empirical.FitToSample(resultList);
-            if ((debugHistogram.Mean - debugEmpirical.Mean) / debugEmpirical.Mean > .05)
-            {
-                Console.WriteLine("Help");
-            }
-            // You can set a breakpoint here or log debugHistogram/debugEmpirical as needed
 
             return new AggregatedConsequencesByQuantile(damageCategory, assetCategory, resultList, regionID);
         }
