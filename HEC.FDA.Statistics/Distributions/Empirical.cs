@@ -47,12 +47,12 @@ namespace Statistics.Distributions
             Median = 0;
             StandardDeviation = 0;
             Variance = 0;
-            Min = 0; 
+            Min = 0;
             Max = 0;
             CumulativeProbabilities = new double[] { 0 };
             Quantiles = new double[] { 0 };
             _Constructed = true;
-            
+
         }
 
         public Empirical(double[] probabilities, double[] observationValues)
@@ -76,7 +76,7 @@ namespace Statistics.Distributions
         }
         public void BuildFromProperties()
         {
-            
+
             SampleSize = Quantiles.Length;
             Mean = ComputeMean();
             Median = ComputeMedian();
@@ -90,7 +90,8 @@ namespace Statistics.Distributions
         private void AddRules()
         {
             AddSinglePropertyRule(nameof(SampleSize),
-                new Rule(() => {
+                new Rule(() =>
+                {
                     return SampleSize > 0;
                 },
                 "SampleSize must be greater than 0.",
@@ -126,7 +127,7 @@ namespace Statistics.Distributions
                 valL = valR;
                 cdfL = cdfR;
                 // add interval values
-                for (i = 1; i < SampleSize-1; ++i)
+                for (i = 1; i < SampleSize - 1; ++i)
                 {
                     valR = Quantiles[i];
                     cdfR = CumulativeProbabilities[i];
@@ -137,13 +138,13 @@ namespace Statistics.Distributions
                     cdfL = cdfR;
                 }
                 // add right singleton 
-                i = SampleSize-1;
+                i = SampleSize - 1;
                 valR = Quantiles[i];
                 cdfR = 1.0;
                 stepPDF = cdfR - cdfL;
                 mean += valR * stepPDF;
-            return mean;
-        }
+                return mean;
+            }
         }
 
         public double ComputeMedian()
@@ -176,14 +177,14 @@ namespace Statistics.Distributions
             int bins = 250;
             double valueStep = range / bins;
             double[] cumulativeFrequencies = new double[bins];
-            for(int i = 0; i < bins; i++)
+            for (int i = 0; i < bins; i++)
             {
                 double cumulativeValueStep = Min + valueStep * i;
                 double cumulativeProbability = CDF(cumulativeValueStep);
                 cumulativeFrequencies[i] = cumulativeProbability;
             }
             return (Min, valueStep, cumulativeFrequencies);
-            
+
         }
 
         private double ComputeVariance()
@@ -431,7 +432,7 @@ namespace Statistics.Distributions
         {
             return x1 - x2;
         }
-       
+
 
         public XElement WriteToXML()
         {

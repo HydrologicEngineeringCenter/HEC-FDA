@@ -35,7 +35,7 @@ namespace HEC.FDA.ViewModel.TableWithPlot.Rows
         {
             get
             {
-                return ((IHistogram)Y).Mean;
+                return ((IHistogram)Y).SampleMean;
             }
         }
         [DisplayAsLine("95th Percentile")]

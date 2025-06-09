@@ -44,7 +44,7 @@ namespace Statistics.Distributions
                     returnedDistribution = new Deterministic(unloggedNormalMean);
                     break;
                 case IDistributionEnum.IHistogram:
-                    double mean = ((Histograms.IHistogram)iDistribution).Mean;
+                    double mean = ((Histograms.IHistogram)iDistribution).SampleMean;
                     returnedDistribution = new Deterministic(mean);
                     break;
             } 

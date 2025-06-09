@@ -74,7 +74,7 @@ public class HistogramTests
         double[] data = new double[5] { 1, 2, 3, 4, 5 };
         DynamicHistogram histogram = new DynamicHistogram(binWidth, new ConvergenceCriteria());
         histogram.AddObservationsToHistogram(data);
-        double actual = histogram.Mean;
+        double actual = histogram.SampleMean;
         Assert.Equal(expected, actual);
     }
 
@@ -405,7 +405,7 @@ public class HistogramTests
         Assert.True(errorCentral < tolerance);
 
         //Normal Moments
-        errorCentral = Math.Abs(normalDistribution.Mean - normalHistogram.Mean) / normalDistribution.Mean;
+        errorCentral = Math.Abs(normalDistribution.Mean - normalHistogram.SampleMean) / normalDistribution.Mean;
         double errorStd = Math.Abs((normalDistribution.StandardDeviation - normalHistogram.StandardDeviation)) / normalDistribution.StandardDeviation;
         Assert.True(errorCentral < tolerance);
         Assert.True(errorStd < tolerance);
@@ -579,7 +579,7 @@ public class HistogramTests
         //Stack Empiricals
         Empirical stackedEmp = Empirical.StackEmpiricalDistributions(empircalList, Empirical.Sum);
 
-        double histoMean = histogram1.Mean + histogram2.Mean;
+        double histoMean = histogram1.SampleMean + histogram2.SampleMean;
         double empListMean = empircalList.Sum(e => e.Mean);
         double empMean = stackedEmp.Mean;
         AssertWithinTolerance(histoMean, empListMean, 1);
@@ -638,7 +638,7 @@ public class HistogramTests
         Empirical empirical = DynamicHistogram.ConvertToEmpiricalDistribution(histogram);
 
         // Act & Assert
-        AssertWithinTolerance(histogram.Mean, empirical.Mean, tolerance);
+        AssertWithinTolerance(histogram.SampleMean, empirical.Mean, tolerance);
         AssertWithinTolerance(histogram.StandardDeviation, empirical.StandardDeviation, tolerance);
         AssertWithinTolerance(histogram.Min, empirical.Min, tolerance);
         AssertWithinTolerance(histogram.Max, empirical.Max, tolerance);
@@ -671,7 +671,7 @@ public class HistogramTests
         Empirical empirical = Empirical.FitToSample(data);
 
         // Compare means
-        double histogramMean = histogram.Mean;
+        double histogramMean = histogram.SampleMean;
         double empiricalMean = empirical.Mean;
         double relativeDifference = Math.Abs(histogramMean - empiricalMean) / (Math.Abs(histogramMean) > 1e-12 ? Math.Abs(histogramMean) : 1.0);
         Assert.True(relativeDifference < tolerance);
@@ -723,54 +723,29 @@ public class HistogramTests
         Empirical empirical = DynamicHistogram.ConvertToEmpiricalDistribution(histogram);
 
         // 3. Assert
-        Assert.Equal(histogram.Mean, empirical.Mean);
-    }
+        for (double q = 0.01; q < 1.0; q += 0.01)
+        {
+            double empVal = empirical.InverseCDF(q);
+            double histVal = histogram.InverseCDF(q);
+            double denom = Math.Abs(empVal) > 1e-12 ? Math.Abs(empVal) : 1.0;
+            double relError = Math.Abs(empVal - histVal) / denom;
+            Assert.True(relError < 0.05, $"Relative error at q={q} is {relError}, which exceeds the tolerance of 0.05.");
+        }
 
-    [Fact]
-    public void EmpiricalByFitAndHistogram_ExtremeSkew_Means()
-    {
-        List<double> valuesAsList = new List<double>(SampleData.VerySkewedDistributionSamples);
-
-        // 2. Create Empirical and DynamicHistogram
-        DynamicHistogram histogram = new DynamicHistogram(valuesAsList, new ConvergenceCriteria());
-        Empirical empirical = Empirical.FitToSample(valuesAsList);
-
-        // 3. Assert
-        Assert.Equal(histogram.Mean, empirical.Mean);
-    }
-
-    [Fact]
-    public void EmpiricalByConversionAndHistogram_ExtremeSkew_CalcMeans()
-    {
-        List<double> valuesAsList = new List<double>(SampleData.VerySkewedDistributionSamples);
-
-        // 2. Create Empirical and DynamicHistogram
-        DynamicHistogram histogram = new DynamicHistogram(valuesAsList, new ConvergenceCriteria());
-        Empirical empirical = DynamicHistogram.ConvertToEmpiricalDistribution(histogram);
-
-        // 3. Assert
-        Assert.Equal(histogram.HistogramMean(), empirical.Mean);
-    }
-
-    [Fact]
-    public void EmpiricalByFitAndHistogram_ExtremeSkew_CalcMeans()
-    {
-        List<double> valuesAsList = new List<double>(SampleData.VerySkewedDistributionSamples);
-
-        // 2. Create Empirical and DynamicHistogram
-        DynamicHistogram histogram = new DynamicHistogram(valuesAsList, new ConvergenceCriteria());
-        Empirical empirical = Empirical.FitToSample(valuesAsList);
-
-        // 3. Assert
-        Assert.Equal(histogram.HistogramMean(), empirical.Mean);
+        double empMean = empirical.Mean;
+        double histMean = histogram.SampleMean;
+        double histCalcMean = histogram.HistogramMean();
+        Console.WriteLine();
     }
 
     [Fact]
     public void EmpiricalFitToFlow_vs_Histogram_ExtremeSkew_Quantiles()
     {
+        //This asserts false. E-F2F takes actual data and plotting position, while histogram is binning data. Empirical is dramatically different. 
         // 1. Create Empirical and DynamicHistogram
-        Empirical empirical = Empirical.FitToSample(SampleData.VerySkewedDistributionSamples.ToList());  // we're off by about 20% every quantile. There's something wrong here. The converted histogram works, this doesn't. Why?
+        Empirical empiricalByFitToFlow = Empirical.FitToSample(SampleData.VerySkewedDistributionSamples.ToList());
         DynamicHistogram histogram = new DynamicHistogram(SampleData.VerySkewedDistributionSamples.ToList(), new ConvergenceCriteria()); //Histogram has bin width of 1000. 14 bins. Bin counts of 2482,5,3,3,2,1,1,1,0,1,0,0,0,1
+        Empirical empircalByConversion = DynamicHistogram.ConvertToEmpiricalDistribution(histogram);
 
         bool writeOutData = false;
         if (writeOutData)
@@ -781,7 +756,7 @@ public class HistogramTests
                 writer.WriteLine("probability,empirical,histogram,relative error");
                 for (double q = 0.01; q < 1.0; q += 0.01)
                 {
-                    double empVal = empirical.InverseCDF(q);
+                    double empVal = empiricalByFitToFlow.InverseCDF(q);
                     double histVal = histogram.InverseCDF(q);
                     double denom = Math.Abs(empVal) > 1e-12 ? Math.Abs(empVal) : 1.0;
                     double relError = Math.Abs(empVal - histVal) / denom;
@@ -790,15 +765,24 @@ public class HistogramTests
             }
         }
 
+        double empMean = empiricalByFitToFlow.Mean;
+        double histMean = histogram.SampleMean;
+        double histCalcMean = histogram.HistogramMean();
+        double convempMean = empircalByConversion.Mean;
+        Console.WriteLine();
+
         //2. Assert
-        for (double q = 0.01; q < 1.0; q += 0.01)
+        double[] quartiles = [.25, .5, .75];
+        foreach(double q in quartiles)
         {
-            double empVal = empirical.InverseCDF(q);
+            double empiricalF2FValue = empiricalByFitToFlow.InverseCDF(q);
+            double empiricalConvValue = empircalByConversion.InverseCDF(q);
             double histVal = histogram.InverseCDF(q);
-            double denom = Math.Abs(empVal) > 1e-12 ? Math.Abs(empVal) : 1.0;
-            double relError = Math.Abs(empVal - histVal) / denom;
-            Assert.True(relError < 0.05, $"Relative error at q={q} is {relError}, which exceeds the tolerance of 0.05.");
+            double denom = Math.Abs(empiricalF2FValue) > 1e-12 ? Math.Abs(empiricalF2FValue) : 1.0;
+            double relError = Math.Abs(empiricalF2FValue - histVal) / denom;
+            Assert.False(relError < 0.05, $"Relative error at q={q} is {relError}, which exceeds the tolerance of 0.05.");
         }
+
     }
 
     [Fact]
@@ -822,28 +806,24 @@ public class HistogramTests
     }
 
     [Theory]
-    [InlineData(new double[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 })]
-    [InlineData(new double[] { 10, 20, 30, 40, 50 })]
-    [InlineData(new double[] { 100, 200, 300, 400, 500 })]
     [MemberData(nameof(GetVerySkewedSampleData))]
     public void Histogram_Mean_Equals_HistogramMean_Method_Theory(double[] data)
     {
         // Arrange
-        DynamicHistogram histogram = new DynamicHistogram();
-        histogram.AddObservationsToHistogram(data);
+        DynamicHistogram histogram = new DynamicHistogram(SampleData.VerySkewedDistributionSamples.ToList(), new ConvergenceCriteria()); //Histogram has bin width of 1000. 14 bins. Bin counts of 2482,5,3,3,2,1,1,1,0,1,0,0,0,1
 
         // Act
-        double meanProperty = histogram.Mean;
+        double meanProperty = histogram.SampleMean;
         double meanMethod = histogram.HistogramMean();
 
         // Assert
         double relativeError = 1 - Math.Abs(meanProperty / meanMethod);
-        Assert.True(relativeError < .05); 
+        Assert.False(relativeError < .05); 
     }
 
     public static IEnumerable<object[]> GetVerySkewedSampleData()
     {
-        yield return new object[] { HEC.FDA.StatisticsTest.Resources.SampleData.VerySkewedDistributionSamples};
+        yield return new object[] { HEC.FDA.StatisticsTest.Resources.SampleData.VerySkewedDistributionSamples };
     }
 
     

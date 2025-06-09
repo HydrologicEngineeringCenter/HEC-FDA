@@ -105,7 +105,7 @@ public class AggregatedConsequencesBinned
 
     internal double MeanExpectedAnnualConsequences()
     {
-        return ConsequenceHistogram.Mean;
+        return ConsequenceHistogram.SampleMean;
     }
 
     internal double ConsequenceExceededWithProbabilityQ(double exceedanceProbability)
