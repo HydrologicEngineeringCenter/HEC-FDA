@@ -711,8 +711,10 @@ public class HistogramTests
         double relError = Math.Abs(empVal - histVal) / denom;
         Assert.False(relError <= tolerance);
     }
+
+
     [Fact]
-    public void EmpiricalByConversionAndHistogram_ExtremeSkew()
+    public void EmpiricalByConversionAndHistogram_ExtremeSkew_Means()
     {
         List<double> valuesAsList = new List<double>(SampleData.VerySkewedDistributionSamples);
 
@@ -721,21 +723,53 @@ public class HistogramTests
         Empirical empirical = DynamicHistogram.ConvertToEmpiricalDistribution(histogram);
 
         // 3. Assert
-        for (double q = 0.01; q < 1.0; q += 0.01)
-        {
-            double empVal = empirical.InverseCDF(q);
-            double histVal = histogram.InverseCDF(q);
-            double denom = Math.Abs(empVal) > 1e-12 ? Math.Abs(empVal) : 1.0;
-            double relError = Math.Abs(empVal - histVal) / denom;
-            Assert.True(relError < 0.05, $"Relative error at q={q} is {relError}, which exceeds the tolerance of 0.05.");
-        }
+        Assert.Equal(histogram.Mean, empirical.Mean);
     }
 
     [Fact]
-    public void EmpiricalFitToFlow_vs_Histogram_ExtremeSkewData()
+    public void EmpiricalByFitAndHistogram_ExtremeSkew_Means()
+    {
+        List<double> valuesAsList = new List<double>(SampleData.VerySkewedDistributionSamples);
+
+        // 2. Create Empirical and DynamicHistogram
+        DynamicHistogram histogram = new DynamicHistogram(valuesAsList, new ConvergenceCriteria());
+        Empirical empirical = Empirical.FitToSample(valuesAsList);
+
+        // 3. Assert
+        Assert.Equal(histogram.Mean, empirical.Mean);
+    }
+
+    [Fact]
+    public void EmpiricalByConversionAndHistogram_ExtremeSkew_CalcMeans()
+    {
+        List<double> valuesAsList = new List<double>(SampleData.VerySkewedDistributionSamples);
+
+        // 2. Create Empirical and DynamicHistogram
+        DynamicHistogram histogram = new DynamicHistogram(valuesAsList, new ConvergenceCriteria());
+        Empirical empirical = DynamicHistogram.ConvertToEmpiricalDistribution(histogram);
+
+        // 3. Assert
+        Assert.Equal(histogram.HistogramMean(), empirical.Mean);
+    }
+
+    [Fact]
+    public void EmpiricalByFitAndHistogram_ExtremeSkew_CalcMeans()
+    {
+        List<double> valuesAsList = new List<double>(SampleData.VerySkewedDistributionSamples);
+
+        // 2. Create Empirical and DynamicHistogram
+        DynamicHistogram histogram = new DynamicHistogram(valuesAsList, new ConvergenceCriteria());
+        Empirical empirical = Empirical.FitToSample(valuesAsList);
+
+        // 3. Assert
+        Assert.Equal(histogram.HistogramMean(), empirical.Mean);
+    }
+
+    [Fact]
+    public void EmpiricalFitToFlow_vs_Histogram_ExtremeSkew_Quantiles()
     {
         // 1. Create Empirical and DynamicHistogram
-        Empirical empirical = Empirical.FitToSample(SampleData.VerySkewedDistributionSamples.ToList());
+        Empirical empirical = Empirical.FitToSample(SampleData.VerySkewedDistributionSamples.ToList());  // we're off by about 20% every quantile. There's something wrong here. The converted histogram works, this doesn't. Why?
         DynamicHistogram histogram = new DynamicHistogram(SampleData.VerySkewedDistributionSamples.ToList(), new ConvergenceCriteria()); //Histogram has bin width of 1000. 14 bins. Bin counts of 2482,5,3,3,2,1,1,1,0,1,0,0,0,1
 
         bool writeOutData = false;
@@ -757,6 +791,26 @@ public class HistogramTests
         }
 
         //2. Assert
+        for (double q = 0.01; q < 1.0; q += 0.01)
+        {
+            double empVal = empirical.InverseCDF(q);
+            double histVal = histogram.InverseCDF(q);
+            double denom = Math.Abs(empVal) > 1e-12 ? Math.Abs(empVal) : 1.0;
+            double relError = Math.Abs(empVal - histVal) / denom;
+            Assert.True(relError < 0.05, $"Relative error at q={q} is {relError}, which exceeds the tolerance of 0.05.");
+        }
+    }
+
+    [Fact]
+    public void EmpiricalByConversionAndHistogram_ExtremeSkew_Quantiles()
+    {
+        List<double> valuesAsList = new List<double>(SampleData.VerySkewedDistributionSamples);
+
+        // 2. Create Empirical and DynamicHistogram
+        DynamicHistogram histogram = new DynamicHistogram(valuesAsList, new ConvergenceCriteria());
+        Empirical empirical = DynamicHistogram.ConvertToEmpiricalDistribution(histogram);
+
+        // 3. Assert
         for (double q = 0.01; q < 1.0; q += 0.01)
         {
             double empVal = empirical.InverseCDF(q);
