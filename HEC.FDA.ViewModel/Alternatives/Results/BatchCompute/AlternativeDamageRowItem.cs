@@ -64,7 +64,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
 
             foreach(int impactAreaID in impactAreaIds)
             {
-                double mean = altElem.Results.MeanAAEQDamage(impactAreaID);
+                double mean = altElem.Results.SampleMeanAAEQDamage(impactAreaID);
                 double point75 = altElem.Results.AAEQDamageExceededWithProbabilityQ(.75,impactAreaID);
                 double point5 = altElem.Results.AAEQDamageExceededWithProbabilityQ( .5, impactAreaID);
                 double point25 = altElem.Results.AAEQDamageExceededWithProbabilityQ( .25, impactAreaID);

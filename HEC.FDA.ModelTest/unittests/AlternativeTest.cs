@@ -97,17 +97,17 @@ namespace HEC.FDA.ModelTest.unittests
             double errorAAEQExceededWithProb = Math.Abs(differenceAAEQExceededWithProb / actualAAEQExceededWithProb);
             Assert.True(errorAAEQExceededWithProb < tolerance);
 
-            double actualMeanAAEQ = alternativeResults.MeanAAEQDamage(impactAreaID, damCat, assetCat);
+            double actualMeanAAEQ = alternativeResults.SampleMeanAAEQDamage(impactAreaID, damCat, assetCat);
             double differenceAAEQMean = actualMeanAAEQ - expectedMeanAAEQ;
             double errorMeanAAEQ = Math.Abs(differenceAAEQMean / actualMeanAAEQ);
             Assert.True(errorMeanAAEQ < tolerance);
 
-            double actualBaseYearEAD = alternativeResults.MeanBaseYearEAD(impactAreaID, damCat, assetCat);
+            double actualBaseYearEAD = alternativeResults.SampleMeanBaseYearEAD(impactAreaID, damCat, assetCat);
             double differenceActualBaseYearEAD = actualBaseYearEAD - expectedBaseYearEAD;
             double errorBaseYearEAD = Math.Abs(differenceActualBaseYearEAD / actualBaseYearEAD);
             Assert.True(errorBaseYearEAD < tolerance);
 
-            double actualFutureYearEAD = alternativeResults.MeanFutureYearEAD(impactAreaID, damCat, assetCat);
+            double actualFutureYearEAD = alternativeResults.SampleMeanFutureYearEAD(impactAreaID, damCat, assetCat);
             double differenceActualFutureYearEAD = actualFutureYearEAD - expectedFutureYearEAD;
             double errorFutureYearEAD = Math.Abs(differenceActualFutureYearEAD / actualFutureYearEAD);
             Assert.True(errorFutureYearEAD < tolerance);

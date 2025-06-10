@@ -49,7 +49,7 @@ namespace HEC.FDA.ViewModel.Results
            
             foreach (int impactAreaID in impactAreaIds)
             {
-                    double Mean = results.MeanExpectedAnnualConsequences(impactAreaID);
+                    double Mean = results.SampleMeanExpectedAnnualConsequences(impactAreaID);
                     double point75 = results.ConsequencesExceededWithProbabilityQ(.75, impactAreaID);
                     double point5 = results.ConsequencesExceededWithProbabilityQ(.50, impactAreaID);
                     double point25 = results.ConsequencesExceededWithProbabilityQ(.25, impactAreaID);

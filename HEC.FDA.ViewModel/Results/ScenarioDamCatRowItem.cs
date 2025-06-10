@@ -53,7 +53,7 @@ namespace HEC.FDA.ViewModel.Results
                 {
                     foreach (string assetCat in assetCats)
                     {
-                        double mean = results.MeanExpectedAnnualConsequences(impactAreaID, damCat, assetCat);
+                        double mean = results.SampleMeanExpectedAnnualConsequences(impactAreaID, damCat, assetCat);
                         ScenarioDamCatRowItem row = new(name, analysisYear, impactAreaIdToName[impactAreaID], damCat, assetCat, mean);
                         rowItems.Add(row);
                     }

@@ -213,13 +213,21 @@ namespace HEC.FDA.Model.alternatives
                 resultCollection.Add(aaeqDamage);
             });
 
+            //compute sample mean EqAD 
+            double eadSampleMeanBase = baseYearDamageResult.ConsequenceHistogram.SampleMean;
+            double eadSampleMeanFuture = mlfYearDamageResult.ConsequenceHistogram.SampleMean;
+            double meanEqad = ComputeEEAD(eadSampleMeanBase, baseYear, eadSampleMeanFuture, futureYear, periodOfAnalysis, discountRate);
+            // end
+
             var damageCategory = iterateOnFutureYear ? mlfYearDamageResult.DamageCategory : baseYearDamageResult.DamageCategory;
             var assetCategory = iterateOnFutureYear ? mlfYearDamageResult.AssetCategory : baseYearDamageResult.AssetCategory;
             var regionID = iterateOnFutureYear ? mlfYearDamageResult.RegionID : baseYearDamageResult.RegionID;
-
             var resultList = resultCollection.ToList();
 
-            return new AggregatedConsequencesByQuantile(damageCategory, assetCategory, resultList, regionID);
+            Empirical empResult = Empirical.FitToSample(resultList);
+            empResult.SampleMean = meanEqad;
+            AggregatedConsequencesByQuantile result = new(damageCategory, assetCategory, empResult, regionID);
+            return result;
         }
 
         //TODO: these functions should be private, but currently have unit tests 

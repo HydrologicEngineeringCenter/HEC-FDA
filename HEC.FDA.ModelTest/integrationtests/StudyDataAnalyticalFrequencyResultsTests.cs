@@ -99,7 +99,7 @@ namespace HEC.FDA.ModelTest.integrationtests
                 .WithStageDamages(stageDamageList)
                 .Build();
             ImpactAreaScenarioResults results = simulation.PreviewCompute();
-            double difference = expected - results.ConsequenceResults.MeanDamage(damCat, assetCat, impactAreaID);
+            double difference = expected - results.ConsequenceResults.SampleMeanDamage(damCat, assetCat, impactAreaID);
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .016);
         }
@@ -126,7 +126,7 @@ namespace HEC.FDA.ModelTest.integrationtests
 
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations);
             ImpactAreaScenarioResults results = simulation.Compute(convergenceCriteria);
-            double difference = expected - results.ConsequenceResults.MeanDamage(damCat, assetCat, impactAreaID);
+            double difference = expected - results.ConsequenceResults.SampleMeanDamage(damCat, assetCat, impactAreaID);
             double relativeDifference = Math.Abs(difference / expected);
             Assert.True(relativeDifference < .032);
         }
@@ -168,7 +168,7 @@ namespace HEC.FDA.ModelTest.integrationtests
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1000, maxIterations: iterations);
             ImpactAreaScenarioResults results = simulation.Compute(convergenceCriteria);
 
-            double differenceEAD = expectedEAD - results.ConsequenceResults.MeanDamage(damCat, assetCat, impactAreaID);
+            double differenceEAD = expectedEAD - results.ConsequenceResults.SampleMeanDamage(damCat, assetCat, impactAreaID);
             double relativeDifferenceEAD = Math.Abs(differenceEAD / expectedEAD);
             Assert.True(relativeDifferenceEAD < .06);
             SystemPerformanceResults systemPerformanceResults = results.PerformanceByThresholds.GetThreshold(0).SystemPerformanceResults;
@@ -203,7 +203,7 @@ namespace HEC.FDA.ModelTest.integrationtests
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: iterations);
             ImpactAreaScenarioResults results = simulation.Compute(convergenceCriteria);
 
-            double differenceEAD = expectedEAD - results.ConsequenceResults.MeanDamage(damCat, assetCat, impactAreaID);
+            double differenceEAD = expectedEAD - results.ConsequenceResults.SampleMeanDamage(damCat, assetCat, impactAreaID);
             double relativeDifferenceEAD = Math.Abs(differenceEAD / expectedEAD);
             Assert.True(relativeDifferenceEAD < .06);
             SystemPerformanceResults systemPerformanceResults = results.PerformanceByThresholds.GetThreshold(0).SystemPerformanceResults;

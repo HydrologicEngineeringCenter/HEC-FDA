@@ -26,11 +26,6 @@ public class StudyAreaConsequencesByQuantile : Validation
         ConsequenceResultList.Add(dummyConsequenceDistributionResult);
         IsNull = true;
     }
-    internal StudyAreaConsequencesByQuantile(bool isNull)
-    {
-        ConsequenceResultList = [];
-        IsNull = isNull;
-    }
     internal StudyAreaConsequencesByQuantile(int alternativeID)
     {
         ConsequenceResultList = [];
@@ -67,11 +62,11 @@ public class StudyAreaConsequencesByQuantile : Validation
     /// <param name="assetCategory"></param> either structure, content, etc...the default is null
     /// <param name="impactAreaID"></param> the default is the null value -999
     /// <returns></returns>The mean of consequences
-    public double MeanDamage(string damageCategory = null, string assetCategory = null, int impactAreaID = -999)
+    public double SampleMeanDamage(string damageCategory = null, string assetCategory = null, int impactAreaID = -999)
     {
         return ConsequenceResultList
     .FilterByCategories(damageCategory, assetCategory, impactAreaID)
-    .Sum(result => result.MeanExpectedAnnualConsequences());
+    .Sum(result => result.ConsequenceSampleMean());
     }
     /// <summary>
     /// This method calls the inverse CDF of the damage histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 

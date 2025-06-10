@@ -34,10 +34,10 @@ namespace Statistics.Histograms
         internal bool ConvergedOnMax { get; private set; } = false;
 
         public bool IsConverged { get; private set; } = false;
-        public Int64 ConvergedIteration { get; private set; } = int.MinValue;
+        public long ConvergedIteration { get; private set; } = int.MinValue;
         public double BinWidth { get; private set; }
         public ConvergenceCriteria ConvergenceCriteria { get; }
-        public Int64[] BinCounts { get; private set; } = Array.Empty<long>();
+        public long[] BinCounts { get; private set; } = [];
         public double Min { get; private set; }
         public double Max { get; set; }
         public double SampleMean { get; private set; } = 10;
@@ -55,7 +55,7 @@ namespace Statistics.Histograms
                 return Math.Pow(SampleVariance, 0.5);
             }
         }
-        public Int64 SampleSize { get; private set; }
+        public long SampleSize { get; private set; }
 
         public IDistributionEnum Type
         {
@@ -546,7 +546,7 @@ namespace Statistics.Histograms
                 // This propogates the Sample Mean into empirical,
                 //this is different, in some cases VERY different from the calculated mean, which is calc'd on construction.  
                 //This relates to the PR # 1262, which is a bug fix for the empirical distribution.
-                Mean = histogram.SampleMean
+                SampleMean = histogram.SampleMean
             };
             return newEmp;
         }

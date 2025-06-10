@@ -27,7 +27,12 @@ namespace Statistics.Distributions
 
         #region IDistributionProperties
         public override IDistributionEnum Type => IDistributionEnum.Empirical;
-
+        /// <summary>
+        /// Mean of the sample used to fit the distribution. May vary from the calculated mean represented in the qauntiles of this class due to 
+        /// the impacts of binning from the histogram aggregation of results. Especailly pronounced in highly skewed distributions represented by the histogram.
+        /// Must be set from outside this class. Specifically not calculated from the Quantiles stored here. 
+        /// </summary>
+        public double SampleMean {get;set;}
         public double Mean { get; set; }
         public double Median { get; set; }
         public double StandardDeviation { get; set; }
@@ -417,11 +422,21 @@ namespace Statistics.Distributions
                 }
                 cumulativeProbabilities[i] = probabilityStep;
                 stackedInvCDFs[i] = stackedValue;
-                Thread.Sleep(0);
 
             });
 
-            return FitToSample(stackedInvCDFs.ToList());
+            //Handle the sample mean separately
+            double stackedMean = 0;
+            for (int j = 0; j < empiricalDistributionsForStacking.Count; j++)
+            {
+                stackedMean = addOrSubtract(stackedMean, empiricalDistributionsForStacking[j].SampleMean);
+            }
+            //end
+
+            Empirical empirical = FitToSample([.. stackedInvCDFs]);
+            empirical.SampleMean = stackedMean;
+            //Handle the Sample mean here/ 
+            return empirical;
         }
 
         public static double Sum(double x1, double x2)
@@ -473,7 +488,14 @@ namespace Statistics.Distributions
                 }
                 i++;
             }
-            return new Empirical(cumulativeProbabilities, observationValues);
+            
+            Empirical empirical = new(cumulativeProbabilities, observationValues);
+            string sampleMean = element.Attribute("SampleMean")?.Value;
+            if (sampleMean != null)
+            {
+                empirical.SampleMean = Convert.ToDouble(sampleMean);
+            }
+            return empirical;
         }
         public static Empirical FitToSample(List<double> sample)
         {

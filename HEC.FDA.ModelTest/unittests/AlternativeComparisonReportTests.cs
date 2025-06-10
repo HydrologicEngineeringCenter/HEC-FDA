@@ -151,19 +151,19 @@ namespace HEC.FDA.ModelTest.unittests
             //double differenceAAEQ = actualAAEQReduced - expectedAAEQReduced;
             //double aaeqError = Math.Abs(differenceAAEQ / expectedAAEQReduced);
 
-            double actualBaseYearEADReducedDamCat1 = alternativeComparisonReportResults.MeanBaseYearEADReduced(withAlternativeIdentifier, impactAreaIdentifier, damCat1);
+            double actualBaseYearEADReducedDamCat1 = alternativeComparisonReportResults.SampleMeanBaseYearEADReduced(withAlternativeIdentifier, impactAreaIdentifier, damCat1);
             double differenceEADReducedBaseYearDamCat1 = Math.Abs(actualBaseYearEADReducedDamCat1 - expectedEADReducedBaseYearDamCat1);
             double eadErrorBaseDamCat1 = differenceEADReducedBaseYearDamCat1 / expectedEADReducedBaseYearDamCat1;
 
-            double actualFutureYearEADReducedDamCat1 = alternativeComparisonReportResults.MeanFutureYearEADReduced(withAlternativeIdentifier, impactAreaIdentifier, damCat1);
+            double actualFutureYearEADReducedDamCat1 = alternativeComparisonReportResults.SampleMeanFutureYearEADReduced(withAlternativeIdentifier, impactAreaIdentifier, damCat1);
             double differenceEADReducedFutureYearDamCat1 = Math.Abs(actualFutureYearEADReducedDamCat1 - expectedEADReducedFutureYearDamCat1);
             double eadErrorFutureDamCat1 = differenceEADReducedFutureYearDamCat1 / expectedEADReducedFutureYearDamCat1;
 
-            double actualBaseYearEADReducedDamCat2 = alternativeComparisonReportResults.MeanBaseYearEADReduced(withAlternativeIdentifier, impactAreaIdentifier, damCat2);
+            double actualBaseYearEADReducedDamCat2 = alternativeComparisonReportResults.SampleMeanBaseYearEADReduced(withAlternativeIdentifier, impactAreaIdentifier, damCat2);
             double differenceEADReducedBaseYearDamCat2 = Math.Abs(actualBaseYearEADReducedDamCat2 - expectedEADReducedBaseYearDamCat2);
             double eadErrorBaseDamCat2 = differenceEADReducedBaseYearDamCat2 / expectedEADReducedBaseYearDamCat2;
 
-            double actualFutureYearEADReducedDamCat2 = alternativeComparisonReportResults.MeanFutureYearEADReduced(withAlternativeIdentifier, impactAreaIdentifier, damCat2);
+            double actualFutureYearEADReducedDamCat2 = alternativeComparisonReportResults.SampleMeanFutureYearEADReduced(withAlternativeIdentifier, impactAreaIdentifier, damCat2);
             double differenceFutureYearEADReducedDamCat2 = Math.Abs(actualFutureYearEADReducedDamCat2 - expectedEADReducedFutureYearDamCat2);
             double eadErrorFutureDamCat2;
 
@@ -438,11 +438,11 @@ namespace HEC.FDA.ModelTest.unittests
             double differenceAAEQ = actualAAEQReduced - expectedAAEQReduced;
             double aaeqError = Math.Abs(differenceAAEQ / expectedAAEQReduced);
 
-            double actualBaseYearEADReduced = alternativeComparisonReportResults.MeanBaseYearEADReduced(withAlternativeIdentifier, impactAreaIdentifier, residentialDamCat, assetCategory);
+            double actualBaseYearEADReduced = alternativeComparisonReportResults.SampleMeanBaseYearEADReduced(withAlternativeIdentifier, impactAreaIdentifier, residentialDamCat, assetCategory);
             double differenceEADReducedBaseYear = Math.Abs(actualBaseYearEADReduced - expectedEADReducedBaseYear);
             double eadErrorBase = differenceEADReducedBaseYear / expectedEADReducedBaseYear;
 
-            double actualFutureYearEADReduced = alternativeComparisonReportResults.MeanFutureYearEADReduced(withAlternativeIdentifier, impactAreaIdentifier, residentialDamCat, assetCategory);
+            double actualFutureYearEADReduced = alternativeComparisonReportResults.SampleMeanFutureYearEADReduced(withAlternativeIdentifier, impactAreaIdentifier, residentialDamCat, assetCategory);
             double differenceEADReducedFutureYear = Math.Abs(actualFutureYearEADReduced - expectedEADReducedFutureYear);
             double eadErrorFuture = differenceEADReducedFutureYear / expectedEADReducedFutureYear;
 
@@ -451,12 +451,12 @@ namespace HEC.FDA.ModelTest.unittests
             Assert.True(eadErrorBase < tolerance);
             Assert.True(eadErrorFuture < tolerance);
 
-            double expectedBaseYearEADWithoutProject = withoutProjectAlternativeResults.MeanBaseYearEAD(impactAreaIdentifier, residentialDamCat, assetCategory);
-            double actualBaseYearEADWithoutProject = alternativeComparisonReportResults.MeanWithoutProjectBaseYearEAD(impactAreaIdentifier, residentialDamCat, assetCategory);
+            double expectedBaseYearEADWithoutProject = withoutProjectAlternativeResults.SampleMeanBaseYearEAD(impactAreaIdentifier, residentialDamCat, assetCategory);
+            double actualBaseYearEADWithoutProject = alternativeComparisonReportResults.SampleMeanWithoutProjectBaseYearEAD(impactAreaIdentifier, residentialDamCat, assetCategory);
             Assert.Equal(expectedBaseYearEADWithoutProject, actualBaseYearEADWithoutProject);
 
-            double expectedAAEQWithProject = withProjectAlternativeResults.MeanAAEQDamage(impactAreaIdentifier, residentialDamCat, assetCategory);
-            double actualAAEQWithProject = alternativeComparisonReportResults.MeanWithProjectAAEQDamage(withAlternativeIdentifier, impactAreaIdentifier, residentialDamCat, assetCategory);
+            double expectedAAEQWithProject = withProjectAlternativeResults.SampleMeanAAEQDamage(impactAreaIdentifier, residentialDamCat, assetCategory);
+            double actualAAEQWithProject = alternativeComparisonReportResults.SampleMeanWithProjectAAEQDamage(withAlternativeIdentifier, impactAreaIdentifier, residentialDamCat, assetCategory);
             Assert.Equal(expectedAAEQWithProject, actualAAEQWithProject);
 
 

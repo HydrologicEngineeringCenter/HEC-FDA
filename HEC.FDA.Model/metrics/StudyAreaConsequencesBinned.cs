@@ -286,11 +286,11 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
     /// <param name="assetCategory"></param> either structure, content, etc...the default is null
     /// <param name="impactAreaID"></param> the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
     /// <returns></returns>The mean of consequences
-    public double MeanDamage(string damageCategory = null, string assetCategory = null, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
+    public double SampleMeanDamage(string damageCategory = null, string assetCategory = null, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
     {
         return ConsequenceResultList
     .FilterByCategories(damageCategory, assetCategory, impactAreaID)
-    .Sum(result => result.MeanExpectedAnnualConsequences());
+    .Sum(result => result.SampleMeanExpectedAnnualConsequences());
     }
     /// <summary>
     /// This method calls the inverse CDF of the damage histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 

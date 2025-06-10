@@ -557,7 +557,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             }
             else
             {
-                EAD = result.ConsequenceResults.MeanDamage(_selectedDamageCategory, _selectedAssetCategory, CurrentImpactArea.ID);
+                EAD = result.ConsequenceResults.SampleMeanDamage(_selectedDamageCategory, _selectedAssetCategory, CurrentImpactArea.ID);
                 _DamageFrequencyCurve = result.GetDamageFrequency(_selectedDamageCategory, _selectedAssetCategory);
             }
 

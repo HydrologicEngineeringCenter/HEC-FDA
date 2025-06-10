@@ -38,11 +38,11 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             {
                 if (damageMeasureYear == DamageMeasureYear.Base)
                 {
-                    Rows.Add(new DamageCategoryRowItem(damCat, alternativeResults.MeanBaseYearEAD(damageCategory: damCat)));
+                    Rows.Add(new DamageCategoryRowItem(damCat, alternativeResults.SampleMeanBaseYearEAD(damageCategory: damCat)));
                 }
                 else
                 {
-                    Rows.Add(new DamageCategoryRowItem(damCat, alternativeResults.MeanFutureYearEAD(damageCategory: damCat)));
+                    Rows.Add(new DamageCategoryRowItem(damCat, alternativeResults.SampleMeanFutureYearEAD(damageCategory: damCat)));
                 }
             }
         }
@@ -58,7 +58,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             List<string> damCats = alternativeResults.GetDamageCategories();
             foreach (string damCat in damCats)
             {
-                Rows.Add(new DamageCategoryRowItem(damCat, alternativeResults.MeanAAEQDamage(damageCategory: damCat)));
+                Rows.Add(new DamageCategoryRowItem(damCat, alternativeResults.SampleMeanAAEQDamage(damageCategory: damCat)));
             }
         }
 
@@ -84,13 +84,13 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                 {
                     
                     case DamageMeasureYear.Base:
-                        Rows.Add(new DamageCategoryRowItem(damCat, alternativeCompReportResults.MeanBaseYearEADReduced(altID, damageCategory: damCat)));
+                        Rows.Add(new DamageCategoryRowItem(damCat, alternativeCompReportResults.SampleMeanBaseYearEADReduced(altID, damageCategory: damCat)));
                         break;
                     case DamageMeasureYear.Future:
-                        Rows.Add(new DamageCategoryRowItem(damCat, alternativeCompReportResults.MeanFutureYearEADReduced(altID, damageCategory: damCat)));
+                        Rows.Add(new DamageCategoryRowItem(damCat, alternativeCompReportResults.SampleMeanFutureYearEADReduced(altID, damageCategory: damCat)));
                         break;
                     case DamageMeasureYear.AAEQ:
-                        Rows.Add(new DamageCategoryRowItem(damCat, alternativeCompReportResults.MeanAAEQDamageReduced(altID, damageCategory: damCat)));
+                        Rows.Add(new DamageCategoryRowItem(damCat, alternativeCompReportResults.SampleMeanAAEQDamageReduced(altID, damageCategory: damCat)));
                         break;
                 }
             }

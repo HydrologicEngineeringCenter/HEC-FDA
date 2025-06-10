@@ -213,9 +213,9 @@ namespace HEC.FDA.ModelTest.integrationtests
             Empirical empiricalEADDistribution = alternativeResults.GetBaseYearEADDistribution(impactAreaID1, commercialDamageCategory);
 
             //Act
-            double actualCommercialMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1, commercialDamageCategory);
-            double actualResidentialMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1, residentialDamageCategory);
-            double actualMeanAAEQ = alternativeResults.MeanAAEQDamage(impactAreaID1, commercialDamageCategory);
+            double actualCommercialMeanEAD = scenarioResults.SampleMeanExpectedAnnualConsequences(impactAreaID1, commercialDamageCategory);
+            double actualResidentialMeanEAD = scenarioResults.SampleMeanExpectedAnnualConsequences(impactAreaID1, residentialDamageCategory);
+            double actualMeanAAEQ = alternativeResults.SampleMeanAAEQDamage(impactAreaID1, commercialDamageCategory);
             double actualCommercialMeanEADFromAnotherSource = empiricalEADDistribution.Mean;
             double tolerance = 0.11;
             double strictTolerance = 0.01;
@@ -266,8 +266,8 @@ namespace HEC.FDA.ModelTest.integrationtests
             ScenarioResults scenarioResults = scenario.Compute(convergenceCriteria);
 
             //Act
-            double actualResidentialMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1, residentialDamageCategory);
-            double actualCommercialMeanEAD = scenarioResults.MeanExpectedAnnualConsequences(impactAreaID1, commercialDamageCategory);
+            double actualResidentialMeanEAD = scenarioResults.SampleMeanExpectedAnnualConsequences(impactAreaID1, residentialDamageCategory);
+            double actualCommercialMeanEAD = scenarioResults.SampleMeanExpectedAnnualConsequences(impactAreaID1, commercialDamageCategory);
             double tolerance = 0.2;
             double residentialEADRelativeDifference = Math.Abs(actualResidentialMeanEAD - expectedResidentialMeanEAD) / expectedResidentialMeanEAD;
             double commercialEADRelativeDifference = Math.Abs(actualCommercialMeanEAD - expectedCommericialMeanEAD) / expectedCommericialMeanEAD;

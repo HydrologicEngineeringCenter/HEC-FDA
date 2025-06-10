@@ -103,7 +103,7 @@ public class AggregatedConsequencesBinned
 
     }
 
-    internal double MeanExpectedAnnualConsequences()
+    internal double SampleMeanExpectedAnnualConsequences()
     {
         return ConsequenceHistogram.SampleMean;
     }

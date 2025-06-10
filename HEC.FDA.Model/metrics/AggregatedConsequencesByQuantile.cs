@@ -67,9 +67,9 @@ namespace HEC.FDA.Model.metrics
 
         #region Methods
         
-        internal double MeanExpectedAnnualConsequences()
+        internal double ConsequenceSampleMean()
         {
-            return ConsequenceDistribution.Mean;
+            return ConsequenceDistribution.SampleMean;
         }
 
         internal double ConsequenceExceededWithProbabilityQ(double exceedanceProbability)
