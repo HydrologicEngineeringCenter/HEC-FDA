@@ -146,7 +146,7 @@ namespace HEC.FDA.ModelTest.unittests
             List<AlternativeResults> withProjectAlternativeResultsList = new List<AlternativeResults>();
             withProjectAlternativeResultsList.Add(withProjectAlternativeResults);
 
-            AlternativeComparisonReportResults alternativeComparisonReportResults = new AlternativeComparisonReport().ComputeAlternativeComparisonReport(withoutProjectAlternativeResults, withProjectAlternativeResultsList);
+            AlternativeComparisonReportResults alternativeComparisonReportResults = AlternativeComparisonReport.ComputeAlternativeComparisonReport(withoutProjectAlternativeResults, withProjectAlternativeResultsList);
             //double actualAAEQReduced = alternativeComparisonReportResults.AAEQDamageReducedExceededWithProbabilityQ(exceedanceProbability, withAlternativeIdentifier, impactAreaIdentifier, damCat, assetCategory);
             //double differenceAAEQ = actualAAEQReduced - expectedAAEQReduced;
             //double aaeqError = Math.Abs(differenceAAEQ / expectedAAEQReduced);
@@ -297,7 +297,7 @@ namespace HEC.FDA.ModelTest.unittests
             List<AlternativeResults> withProjectAlternativeResultsList = new List<AlternativeResults>();
             withProjectAlternativeResultsList.Add(withProjectAlternativeResults);
 
-            AlternativeComparisonReportResults alternativeComparisonReportResults = new AlternativeComparisonReport().ComputeAlternativeComparisonReport(withoutProjectAlternativeResults, withProjectAlternativeResultsList);
+            AlternativeComparisonReportResults alternativeComparisonReportResults = AlternativeComparisonReport.ComputeAlternativeComparisonReport(withoutProjectAlternativeResults, withProjectAlternativeResultsList);
             List<string> reportedDamCats = alternativeComparisonReportResults.GetDamageCategories();
 
             List<string> expectedList = new List<string>() { damCat };
@@ -433,7 +433,7 @@ namespace HEC.FDA.ModelTest.unittests
             List<AlternativeResults> withProjectAlternativeResultsList = new List<AlternativeResults>();
             withProjectAlternativeResultsList.Add(withProjectAlternativeResults);
 
-            AlternativeComparisonReportResults alternativeComparisonReportResults = new AlternativeComparisonReport().ComputeAlternativeComparisonReport(withoutProjectAlternativeResults, withProjectAlternativeResultsList);
+            AlternativeComparisonReportResults alternativeComparisonReportResults = AlternativeComparisonReport.ComputeAlternativeComparisonReport(withoutProjectAlternativeResults, withProjectAlternativeResultsList);
             double actualAAEQReduced = alternativeComparisonReportResults.AAEQDamageReducedExceededWithProbabilityQ(exceedanceProbability, withAlternativeIdentifier, impactAreaIdentifier, residentialDamCat, assetCategory);
             double differenceAAEQ = actualAAEQReduced - expectedAAEQReduced;
             double aaeqError = Math.Abs(differenceAAEQ / expectedAAEQReduced);

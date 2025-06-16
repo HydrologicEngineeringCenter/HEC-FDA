@@ -142,8 +142,7 @@ public class AlternativeComparisonReportElement : ChildElement
                 withProjAltsResults[i] = await AlternativeComputer.RunAnnualizationCompute(withProjAlts[i], props);
             }
 
-            Model.alternativeComparisonReport.AlternativeComparisonReport altCompReport = new();
-            _Results = await Task.Run(() => altCompReport.ComputeAlternativeComparisonReport(woAltResult, withProjAltsResults, batchJob.Reporter));
+            _Results = await Task.Run(() => Model.alternativeComparisonReport.AlternativeComparisonReport.ComputeAlternativeComparisonReport(woAltResult, withProjAltsResults, batchJob.Reporter));
             ViewResults();
         }
     }

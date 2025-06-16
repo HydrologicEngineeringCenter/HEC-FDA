@@ -111,7 +111,8 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     /// <returns></returns>
     public double SampleMeanBaseYearEADReduced(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
     {
-        return GetConsequencesReducedResultsForGivenAlternative(alternativeID, true, true).SampleMeanDamage(damageCategory, assetCategory, impactAreaID);
+        StudyAreaConsequencesByQuantile results = GetConsequencesReducedResultsForGivenAlternative(alternativeID, true, true);
+        return results.SampleMeanDamage(damageCategory, assetCategory, impactAreaID);
     }
     /// <summary>
     /// This method gets the mean future year ead reduced between the with- and without-project conditions for a given with-project condition, 
