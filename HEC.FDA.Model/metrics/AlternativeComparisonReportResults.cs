@@ -8,42 +8,19 @@ namespace HEC.FDA.Model.metrics;
 
 public class AlternativeComparisonReportResults : ValidationErrorLogger
 {   //TODO: save a year 
-    #region Fields
 
-    private readonly List<StudyAreaConsequencesByQuantile> _AaeqReducedResultsList;
+    //results of the alternative comparison
+    private readonly List<StudyAreaConsequencesByQuantile> _AaeqReducedResultsList; // somehow this guy is coming in with calculated mean 0. zero for all quantiles, and a negative sample mean. 
     private readonly List<StudyAreaConsequencesByQuantile> _BaseYearEADReducedResultsList;
     private readonly List<StudyAreaConsequencesByQuantile> _FutureYearEADReducedResultsList;
+
+    //input to the alternative comparison. 
     private readonly List<AlternativeResults> _WithProjectAlternativeResults;
     private readonly AlternativeResults _WithoutProjectAlternativeResults;
 
-    #endregion
-
-    #region Properties 
-    internal bool IsNull { get; }
-    public List<int> Years
-    {
-        get
-        {
-            return _WithoutProjectAlternativeResults.AnalysisYears;
-        }
-    }
-
-    #endregion
+    public List<int> Years => _WithoutProjectAlternativeResults.AnalysisYears;
 
     #region Constructor
-    public AlternativeComparisonReportResults()
-    {
-        IsNull = true;
-        _AaeqReducedResultsList = new List<StudyAreaConsequencesByQuantile>();
-        StudyAreaConsequencesByQuantile dummyAaeqResults = new();
-        _AaeqReducedResultsList.Add(dummyAaeqResults);
-        _BaseYearEADReducedResultsList = new List<StudyAreaConsequencesByQuantile>();
-        StudyAreaConsequencesByQuantile dummyBaseYearResults = new();
-        _BaseYearEADReducedResultsList.Add(dummyBaseYearResults);
-        _FutureYearEADReducedResultsList = new List<StudyAreaConsequencesByQuantile>();
-        StudyAreaConsequencesByQuantile dummyFutureYearResults = new();
-        _FutureYearEADReducedResultsList.Add(dummyFutureYearResults);
-    }
     internal AlternativeComparisonReportResults(IEnumerable<AlternativeResults> withProjectAlternativeResults, AlternativeResults withoutProjectAlternativeResults, List<StudyAreaConsequencesByQuantile> aaeqResults, List<StudyAreaConsequencesByQuantile> baseYearEADResults, List<StudyAreaConsequencesByQuantile> futureYearEADResults)
     {
         _WithProjectAlternativeResults = [.. withProjectAlternativeResults];
