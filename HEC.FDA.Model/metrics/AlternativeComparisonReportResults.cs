@@ -265,8 +265,8 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     {
         List<StudyAreaConsequencesByQuantile> listToSearch;
         if (!getEADResults) { listToSearch = _AaeqReducedResultsList; }
-        else if (getEADResults && getBaseYearResults) { listToSearch = _BaseYearEADReducedResultsList; }
-        else if (getEADResults && !getBaseYearResults) { listToSearch = _FutureYearEADReducedResultsList; }
+        else if (getEADResults && getBaseYearResults) { listToSearch = _BaseYearEADReducedResultsList; } //why the fuck are you 1?
+        else if (getEADResults && !getBaseYearResults) { listToSearch = _FutureYearEADReducedResultsList; } //Sample mean stupid negative. 
         else { throw new System.ArgumentException("An illogical combination of arguments was provided"); }
         foreach (StudyAreaConsequencesByQuantile consequenceDistResults in listToSearch)
         {

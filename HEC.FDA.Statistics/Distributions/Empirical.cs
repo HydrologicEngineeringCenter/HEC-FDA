@@ -425,9 +425,9 @@ namespace Statistics.Distributions
 
             });
 
-            //Handle the sample mean separately
-            double stackedMean = 0;
-            for (int j = 0; j < empiricalDistributionsForStacking.Count; j++)
+            //Handle the sample mean separately -- THIS IS FUCKED
+            double stackedMean = empiricalDistributionsForStacking[0].SampleMean;
+            for (int j = 1; j < empiricalDistributionsForStacking.Count; j++)
             {
                 stackedMean = addOrSubtract(stackedMean, empiricalDistributionsForStacking[j].SampleMean);
             }

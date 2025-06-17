@@ -122,22 +122,6 @@ public static class AlternativeComparisonReport
         return singleEmpiricalDistributionOfConsequences;
     }
 
-    private static List<StudyAreaConsequencesByQuantile> ComputeDistributionEADReduced(AlternativeResults withoutProjectAlternativeResults, IEnumerable<AlternativeResults> withProjectAlternativesResults,
-        AlternativeComparisonReportType type, ProgressReporter pr)
-    {
-        switch (type)
-        {
-            case AlternativeComparisonReportType.BaseYearEADReduced:
-                List<ScenarioResults> withProj = [.. withProjectAlternativesResults.Select(x => x.BaseYearScenarioResults)];
-                return ComputeDistributionEADReduced(withoutProjectAlternativeResults.AlternativeID, withoutProjectAlternativeResults.BaseYearScenarioResults, withProj, pr);
-            case AlternativeComparisonReportType.FutureYearEADReduced:
-                List<ScenarioResults> withProjFut = [.. withProjectAlternativesResults.Select(x => x.FutureYearScenarioResults)];
-                return ComputeDistributionEADReduced(withoutProjectAlternativeResults.AlternativeID, withoutProjectAlternativeResults.FutureYearScenarioResults, withProjFut, pr);
-            default:
-                throw new ArgumentOutOfRangeException(nameof(type), type, null);
-        }
-    }
-
     /// <summary>
     /// Computes the distribution of Expected Annual Damages (EAD) reduced for a given alternative
     /// by comparing with-project and without-project scenario results.
@@ -148,24 +132,49 @@ public static class AlternativeComparisonReport
     /// <param name="pr">Progress reporter for logging and progress updates.</param>
     /// <returns>A list of StudyAreaConsequencesByQuantile representing the EAD reduced for each alternative.</returns>
     private static List<StudyAreaConsequencesByQuantile> ComputeDistributionEADReduced(
-        int alternativeID,
-        ScenarioResults withoutProjectScenarioResults,
-        IEnumerable<ScenarioResults> withProjectScenarioResultsList,
-        ProgressReporter pr = null)
+        AlternativeResults withoutProjectAlternativeResults, IEnumerable<AlternativeResults> withProjectAlternativesResults,
+        AlternativeComparisonReportType type, ProgressReporter pr)
     {
+        ScenarioResults withoutProjectScenarioResults;
+        IEnumerable<ScenarioResults> withProjectScenarioResultsList;
+
+        switch (type)
+        {
+            case AlternativeComparisonReportType.BaseYearEADReduced:
+                List<ScenarioResults> withProj = [.. withProjectAlternativesResults.Select(x => x.BaseYearScenarioResults)];
+                withoutProjectScenarioResults = withoutProjectAlternativeResults.BaseYearScenarioResults;
+                withProjectScenarioResultsList = withProj;
+                break;
+            case AlternativeComparisonReportType.FutureYearEADReduced:
+                List<ScenarioResults> withProjFut = [.. withProjectAlternativesResults.Select(x => x.FutureYearScenarioResults)];
+                withoutProjectScenarioResults = withoutProjectAlternativeResults.FutureYearScenarioResults;
+                withProjectScenarioResultsList = withProjFut;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(type), type, null);
+        }
+
         pr = pr ?? ProgressReporter.None();
         // List to hold the EAD reduced results for all alternatives
         List<StudyAreaConsequencesByQuantile> damageReducedAlternatives = [];
 
         // Loop through each with-project scenario result
-        foreach (ScenarioResults withProjectFutureScenarioResults in withProjectScenarioResultsList)
+        foreach (AlternativeResults withProjResults in withProjectAlternativesResults)
         {
+            int alternativeID = withProjResults.AlternativeID;
+            ScenarioResults withProjResultsList = type switch
+            {
+                AlternativeComparisonReportType.BaseYearEADReduced => withProjResults.BaseYearScenarioResults,
+                AlternativeComparisonReportType.FutureYearEADReduced => withProjResults.FutureYearScenarioResults,
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null),
+            };
+
             // Create a new StudyAreaConsequencesByQuantile for the current alternative
             StudyAreaConsequencesByQuantile damageReducedAlternative = new(alternativeID);
             pr.ReportMessage($"Calculating EAD reduced for alternative ID {damageReducedAlternative.AlternativeID}." + Environment.NewLine);
 
             // Loop through each impact area scenario result in the with-project scenario
-            foreach (ImpactAreaScenarioResults withProjectResults in withProjectFutureScenarioResults.ResultsList)
+            foreach (ImpactAreaScenarioResults withProjectResults in withProjResultsList.ResultsList)
             {
                 // Get the corresponding without-project results for the same impact area
                 ImpactAreaScenarioResults withoutProjectResults = withoutProjectScenarioResults.GetResults(withProjectResults.ImpactAreaID);
