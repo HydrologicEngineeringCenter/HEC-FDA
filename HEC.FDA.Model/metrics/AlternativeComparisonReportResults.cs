@@ -3,6 +3,7 @@ using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using Statistics.Distributions;
 using HEC.MVVMFramework.Model.Messaging;
+using System.Linq;
 
 namespace HEC.FDA.Model.metrics;
 
@@ -35,53 +36,26 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     //These methods now assume that the same impact areas are in all three results lists - a reasonable assumption 
     //How could they not? What could happen that could cause different impact areas or damage categories to be in different results?  
     //We could cycle through each of the three lists, but that seems unnecessary 
-    public List<int> GetImpactAreaIDs()
+    public List<int> GetImpactAreaIDs() 
     {
-        List<int> impactAreaIDs = new();
-        foreach (StudyAreaConsequencesByQuantile consequenceReducedResults in _AaeqReducedResultsList)
-        {
-            foreach (AggregatedConsequencesByQuantile consequenceResult in consequenceReducedResults.ConsequenceResultList)
-            {
-                if (!impactAreaIDs.Contains(consequenceResult.RegionID))
-                {
-                    impactAreaIDs.Add(consequenceResult.RegionID);
-                }
-            }
-
-        }
-        return impactAreaIDs;
+        return _AaeqReducedResultsList
+        .SelectMany(x => x.ConsequenceResultList.Select(r => r.RegionID))
+        .Distinct()
+        .ToList();
     }
     public List<string> GetAssetCategories()
     {
-        List<string> assetCats = new();
-        foreach (StudyAreaConsequencesByQuantile consequenceReducedResults in _AaeqReducedResultsList)
-        {
-            foreach (AggregatedConsequencesByQuantile consequenceResult in consequenceReducedResults.ConsequenceResultList)
-            {
-                if (!assetCats.Contains(consequenceResult.AssetCategory))
-                {
-                    assetCats.Add(consequenceResult.AssetCategory);
-                }
-            }
-
-        }
-        return assetCats;
+        return _AaeqReducedResultsList
+        .SelectMany(x => x.ConsequenceResultList.Select(r => r.AssetCategory))
+        .Distinct()
+        .ToList();
     }
     public List<string> GetDamageCategories()
     {
-        List<string> damCats = new();
-        foreach (StudyAreaConsequencesByQuantile consequenceReducedResults in _AaeqReducedResultsList)
-        {
-            foreach (AggregatedConsequencesByQuantile consequenceResult in consequenceReducedResults.ConsequenceResultList)
-            {
-                if (!damCats.Contains(consequenceResult.DamageCategory))
-                {
-                    damCats.Add(consequenceResult.DamageCategory);
-                }
-            }
-
-        }
-        return damCats;
+        return _AaeqReducedResultsList
+        .SelectMany(x => x.ConsequenceResultList.Select(r => r.DamageCategory))
+        .Distinct()
+        .ToList();
     }
     /// <summary>
     /// This method gets the mean aaeq damage reduced between the with- and without-project conditions for a given with-project condition, 
@@ -163,12 +137,6 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     /// For example, if you wanted the aaeq damage exceeded with probability .98 for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
     /// double consequenceValue = AAEQDamageReducedExceededWithProbabilityQ(.98, 1, damageCategory: "residential", impactAreaID: 2);
     /// </summary>
-    /// <param name="exceedanceProbability"></param>
-    /// <param name="alternativeID"></param>
-    /// <param name="impactAreaID"></param>
-    /// <param name="damageCategory"></param> either residential, commercial, etc...
-    /// <param name="assetCategory"></param> either structure, content, etc...
-    /// <returns></returns>
     public double AAEQDamageReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
     {
         return GetConsequencesReducedResultsForGivenAlternative(alternativeID).ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
@@ -179,11 +147,6 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     /// For example, if you wanted the aaeq damage exceeded with probability .98 for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
     /// double consequenceValue = BaseYearEADReducedExceededWithProbabilityQ(.98, 1, damageCategory: "residential", impactAreaID: 2);
     /// </summary>
-    /// <param name="exceedanceProbability"></param>
-    /// <param name="alternativeID"></param>
-    /// <param name="impactAreaID"></param>
-    /// <param name="damageCategory"></param> either residential, commercial, etc...
-    /// <param name="assetCategory"></param> either structure, content, etc...
     /// <returns></returns>
     public double BaseYearEADReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
     {
@@ -195,12 +158,6 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     /// For example, if you wanted the aaeq damage exceeded with probability .98 for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
     /// double consequenceValue = FutureYearEADReducedExceededWithProbabilityQ(.98, 1, damageCategory: "residential", impactAreaID: 2);
     /// </summary>
-    /// <param name="exceedanceProbability"></param>
-    /// <param name="alternativeID"></param>
-    /// <param name="impactAreaID"></param>
-    /// <param name="damageCategory"></param> either residential, commercial, etc...
-    /// <param name="assetCategory"></param> either structure, content, etc...
-    /// <returns></returns>
     public double FutureYearEADReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
     {
         return GetConsequencesReducedResultsForGivenAlternative(alternativeID, true).ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
@@ -211,11 +168,6 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     /// For example, if you wanted a histogram for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
     /// IHistogram histogram = GetAlternativeResultsHistogram(1, damageCategory: "residential", impactAreaID: 2);
     /// </summary>
-    /// <param name="alternativeID"></param>
-    /// <param name="impactAreaID"></param>
-    /// <param name="damageCategory"></param>
-    /// <param name="assetCategory"></param>
-    /// <returns></returns>
     public Empirical GetAAEQReducedResultsHistogram(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
     {
         StudyAreaConsequencesByQuantile aaeqResults = GetConsequencesReducedResultsForGivenAlternative(alternativeID);
@@ -227,11 +179,6 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     /// For example, if you wanted a histogram for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
     /// IHistogram histogram = GetBaseYearEADReducedResultsHistogram(1, damageCategory: "residential", impactAreaID: 2);
     /// </summary>
-    /// <param name="alternativeID"></param>
-    /// <param name="impactAreaID"></param>
-    /// <param name="damageCategory"></param>
-    /// <param name="assetCategory"></param>
-    /// <returns></returns>
     public Empirical GetBaseYearEADReducedResultsHistogram(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
     {
         StudyAreaConsequencesByQuantile eadResults = GetConsequencesReducedResultsForGivenAlternative(alternativeID, true, true);
@@ -243,11 +190,6 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     /// For example, if you wanted a histogram for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
     /// IHistogram histogram = GetFutureYearEADReducedResultsHistogram(1, damageCategory: "residential", impactAreaID: 2);
     /// </summary>
-    /// <param name="alternativeID"></param>
-    /// <param name="impactAreaID"></param>
-    /// <param name="damageCategory"></param>
-    /// <param name="assetCategory"></param>
-    /// <returns></returns>
     public Empirical GetFutureYearEADReducedResultsHistogram(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
     {
         StudyAreaConsequencesByQuantile eadResults = GetConsequencesReducedResultsForGivenAlternative(alternativeID, true);
