@@ -32,8 +32,8 @@ public class AggregatedConsequencesBinned
     /// </summary>
     public AggregatedConsequencesBinned()
     {
-        DamageCategory = "unassigned - this is a dummy object";
-        AssetCategory = "unassigned - this is a dummy object";
+        DamageCategory = "UNASSIGNED";
+        AssetCategory = "UNASSIGNED";
         RegionID = 0;
         ConvergenceCriteria = new ConvergenceCriteria();
         ConsequenceHistogram = new DynamicHistogram();
@@ -41,7 +41,6 @@ public class AggregatedConsequencesBinned
         IsNull = true;
         _TempResults = new double[ConvergenceCriteria.IterationCount];
         _TempCounts = new double[ConvergenceCriteria.IterationCount];
-
     }
     public AggregatedConsequencesBinned(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID)
     {

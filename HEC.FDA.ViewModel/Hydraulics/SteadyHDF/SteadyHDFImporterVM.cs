@@ -19,20 +19,19 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
 {
     public partial class SteadyHDFImporterVM : BaseEditorVM
     {
-        #region Fields
         private string _SelectedPath;
-        #endregion
-
-        #region Properties
         public string SelectedPath
         {
             get { return _SelectedPath; }
             set { _SelectedPath = value; PopulateRows(value); NotifyPropertyChanged(); }
         }
 
-        public ObservableCollection<WaterSurfaceElevationRowItemVM> ListOfRows { get; } = new ObservableCollection<WaterSurfaceElevationRowItemVM>();
-        #endregion
-        #region Constructors
+        public ObservableCollection<WaterSurfaceElevationRowItemVM> ListOfRows { get; } = [];
+
+        /// <summary>
+        /// creating a new new node. 
+        /// </summary>
+        /// <param name="actionManager"></param>
         public SteadyHDFImporterVM(EditorActionManager actionManager) : base(actionManager)
         {
             AddRule(nameof(ListOfRows), () => ListOfRows.Count > 0, "Invalid file selected.");
@@ -53,8 +52,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
                 AddRow(pp.ProfileName, path, pp.Probability, false);
             }
         }
-        #endregion
-        #region Commands
         [RelayCommand]
         private void OpenStudyProperties()
         {
@@ -63,15 +60,11 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             DynamicTabVM tab = new(StringConstants.STUDY_PROPERTIES, vm, StringConstants.PROPERTIES);
             Navigate(tab, false, false);
         }
-        #endregion
-        #region Voids
         public void AddRow(string name, string path, double probability, bool isEnabled = true)
         {
             WaterSurfaceElevationRowItemVM newRow = new(name, path, probability, isEnabled);
             ListOfRows.Add(newRow);
         }
-
-        #region validation
         private FdaValidationResult ValidateImporter()
         {
             FdaValidationResult vr = new();
@@ -88,8 +81,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             }
             return vr;
         }
-
-        #endregion
 
         private static FdaValidationResult IsFileValid(string file)
         {
@@ -113,7 +104,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
 
             return vr;
         }
-
         public void PopulateRows(string fullpath)
         {
             FdaValidationResult vr = new();
@@ -143,7 +133,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
                 }
             }
         }
-
         private static string[] GetProfileNamesFromFilePath(string fullpath)
         {
             string[] profileNames = null;
@@ -159,7 +148,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             }
             return profileNames;
         }
-
         public override void Save()
         {
             FdaValidationResult validResult = ValidateImporter();
@@ -179,7 +167,6 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
                 MessageBox.Show(validResult.ErrorMessage, "Invalid Values", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
         private void RenameDirectoryInStudy()
         {
             if (!Name.Equals(OriginalElement.Name))
@@ -227,8 +214,5 @@ namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
             HydraulicElement elemToSave = new(Name, Description, newPathProbs, HydraulicDataSource.SteadyHDF, OriginalElement.ID);
             base.Save(elemToSave);
         }
-
-
-        #endregion
     }
 }
