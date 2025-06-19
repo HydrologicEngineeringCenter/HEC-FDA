@@ -171,7 +171,6 @@ public static class AlternativeComparisonReport
 
             // Create a new StudyAreaConsequencesByQuantile for the current alternative
             StudyAreaConsequencesByQuantile damageReducedAlternative = new(alternativeID);
-            pr.ReportMessage($"Calculating EAD reduced for alternative ID {damageReducedAlternative.AlternativeID}." + Environment.NewLine);
 
             // Loop through each impact area scenario result in the with-project scenario
             foreach (ImpactAreaScenarioResults withProjectResults in withProjResultsList.ResultsList)
@@ -220,7 +219,6 @@ public static class AlternativeComparisonReport
             }
             // Add the results for this alternative to the overall list
             damageReducedAlternatives.Add(damageReducedAlternative);
-            pr.ReportMessage($"Compute of the distribution of EqAD reduced for alternative ID {damageReducedAlternative.AlternativeID} has completed." + Environment.NewLine);
         }
         // Return the list of EAD reduced results for all alternatives
         return damageReducedAlternatives;

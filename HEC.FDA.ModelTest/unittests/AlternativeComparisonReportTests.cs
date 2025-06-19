@@ -147,9 +147,6 @@ namespace HEC.FDA.ModelTest.unittests
             withProjectAlternativeResultsList.Add(withProjectAlternativeResults);
 
             AlternativeComparisonReportResults alternativeComparisonReportResults = AlternativeComparisonReport.ComputeAlternativeComparisonReport(withoutProjectAlternativeResults, withProjectAlternativeResultsList);
-            //double actualAAEQReduced = alternativeComparisonReportResults.AAEQDamageReducedExceededWithProbabilityQ(exceedanceProbability, withAlternativeIdentifier, impactAreaIdentifier, damCat, assetCategory);
-            //double differenceAAEQ = actualAAEQReduced - expectedAAEQReduced;
-            //double aaeqError = Math.Abs(differenceAAEQ / expectedAAEQReduced);
 
             double actualBaseYearEADReducedDamCat1 = alternativeComparisonReportResults.SampleMeanBaseYearEADReduced(withAlternativeIdentifier, impactAreaIdentifier, damCat1);
             double differenceEADReducedBaseYearDamCat1 = Math.Abs(actualBaseYearEADReducedDamCat1 - expectedEADReducedBaseYearDamCat1);
@@ -446,7 +443,7 @@ namespace HEC.FDA.ModelTest.unittests
             double differenceEADReducedFutureYear = Math.Abs(actualFutureYearEADReduced - expectedEADReducedFutureYear);
             double eadErrorFuture = differenceEADReducedFutureYear / expectedEADReducedFutureYear;
 
-            double tolerance = 0.11;
+            double tolerance = 0.1;
             Assert.True(aaeqError < tolerance);
             Assert.True(eadErrorBase < tolerance);
             Assert.True(eadErrorFuture < tolerance);
