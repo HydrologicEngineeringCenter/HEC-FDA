@@ -167,7 +167,7 @@ public static class AlternativeComparisonReport
                 AlternativeComparisonReportType.BaseYearEADReduced => withProjResults.BaseYearScenarioResults,
                 AlternativeComparisonReportType.FutureYearEADReduced => withProjResults.FutureYearScenarioResults,
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, null),
-
+            };
 
             // Create a new StudyAreaConsequencesByQuantile for the current alternative
             StudyAreaConsequencesByQuantile damageReducedAlternative = new(alternativeID);
