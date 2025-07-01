@@ -1,7 +1,10 @@
 ﻿using Geospatial.Features;
 using Geospatial.IO;
+using HEC.FDA.Model.hydraulics.enums;
 using HEC.FDA.Model.Spatial.Extensions;
+using OSGeo.OGR;
 using RasMapperLib;
+using RasMapperLib.Mapping;
 using RasMapperLib.Utilities;
 using Utility.Logging;
 
@@ -31,5 +34,19 @@ public class GeospatialHelpers
             }
         }        
         return result;
+    }
+
+    public static float[] GetStageFromHDF(PointMs pts, string hydraulicsPath)
+    {
+        var rasResult = new RASResults(hydraulicsPath);
+        var rasGeometry = rasResult.Geometry;
+        var rasWSMap = new RASResultsMap(rasResult, MapTypes.Elevation);
+        RASGeometryMapPoints mapPixels = rasGeometry.MapPixels(pts);
+        float[] WSE = null;
+        int profileIndex = RASResultsMap.MaxProfileIndex;
+
+        float[] mockTerrainElevs = new float[pts.Count];
+        rasResult.ComputeSwitch(rasWSMap, mapPixels, profileIndex, mockTerrainElevs, null, ref WSE);
+        return WSE;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.HighPerformance;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using RasMapperLib;
 using SciChart.Core.Extensions;
 using System.Collections.ObjectModel;
 using VisualScratchSpace.Model;
@@ -45,17 +46,28 @@ public partial class CheckBoxImporterVM : ObservableObject
     [RelayCommand]
     public void Import()
     {
-        List<string> selectedAlernatives = [];
+        if (SelectedPath.IsNullOrWhiteSpace())
+            return;
+
+        List<string> selectedAlternatives = [];
         List<string> selectedHazardTimes = [];
         foreach (CheckableItem a in AlternativesCheckBox)
-            if (a.IsChecked) selectedAlernatives.Add(a.Name);
+            if (a.IsChecked) selectedAlternatives.Add(a.Name);
         foreach (CheckableItem h in HazardTimesCheckBox)
             if (h.IsChecked) selectedHazardTimes.Add(h.Value);
 
-        List<string> prefixes = LifeLossDB.GetSimulationTablePrefixes(SelectedSimulation, selectedAlernatives.ToArray(), selectedHazardTimes.ToArray());
+        List<string> prefixes = LifeLossDB.GetSimulationTablePrefixes(SelectedSimulation, selectedAlternatives.ToArray(), selectedHazardTimes.ToArray());
         LifeLossDB db = new(SelectedPath);
         //db.QueryMatchingTables(prefixes.ToArray());
-        db.CreateSummaryZonePointPairs(SelectedSummarySetPath, SelectedPointsPath); 
+        LifeLossPlotter plotter = new(db);
+        Dictionary<string, PointM>? summaryZonePointPairs = plotter.CreateSummaryZonePointPairs(SelectedSummarySetPath, SelectedPointsPath);
+        if (summaryZonePointPairs == null) return;
+
+        foreach (string summaryZone in summaryZonePointPairs.Keys)
+        {
+            PointMs indexPoint = [summaryZonePointPairs[summaryZone]];
+            plotter.CreatePairedData(selectedAlternatives.ToArray(), indexPoint, SelectedHydraulicsFolder);
+        }
     }
 
     partial void OnSelectedPathChanged(string value)

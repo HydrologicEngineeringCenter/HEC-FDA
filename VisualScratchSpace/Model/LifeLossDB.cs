@@ -20,8 +20,6 @@ namespace VisualScratchSpace.Model
                                                    "Time_6, Time_8", "Time_10", "Time_12",
                                                    "Time_14", "Time_16", "Time_18", "Time_20", "Time_22"};
 
-        private Dictionary<string, string> alternativeHydraulicsPairs = new();
-
         public LifeLossDB(string dbpath)
         {
             _connectionString = $"Data Source={dbpath}";
@@ -78,7 +76,6 @@ namespace VisualScratchSpace.Model
                     }
                     simulations.Add(simulation);
                 }
-                CreateAlternativeHydraulicsPairs(connection);
             }
             catch (Exception ex)
             {
@@ -120,9 +117,23 @@ namespace VisualScratchSpace.Model
             }
         }
 
-        public Dictionary<string, PointM>? CreateSummaryZonePointPairs(string summarySetPath, string indexPointsPath)
+        public Dictionary<string, string> CreateAlternativeHydraulicsPairs()
         {
-            return GeospatialHelpers.QueryPolygons(summarySetPath, indexPointsPath);
+            using SQLiteConnection connection = new SQLiteConnection(_connectionString);
+            connection.Open();
+
+            string query = "SELECT Name, Hydraulic_Scenario FROM Alternatives_Lookup_Table";
+            using var command = new SQLiteCommand(query, connection);
+            using var reader = command.ExecuteReader();
+
+            Dictionary<string, string> res = new();
+            while (reader.Read())
+            {
+                string alternativeName = reader.GetString(0);
+                string hydraulicsName = reader.GetString(1);
+                res[alternativeName] = hydraulicsName;
+            }
+            return res;
         }
 
         private List<string> GetMatchingTables(string prefix, SQLiteConnection connection)
@@ -133,26 +144,11 @@ namespace VisualScratchSpace.Model
 
             // pattern match the simnulation + alternative + time and find all matching tables
             command.Parameters.AddWithValue("@pattern", prefix + "%");
-            using SQLiteDataReader reader = command.ExecuteReader();   
+            using SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
                 matchingTables.Add(reader.GetString(0));
 
             return matchingTables;
-        }   
-
-        private void CreateAlternativeHydraulicsPairs(SQLiteConnection connection)
-        {
-            string query = "SELECT Name, Hydraulic_Scenario FROM Alternatives_Lookup_Table";
-            using var command = new SQLiteCommand(query, connection);
-            using var reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                string alternativeName = reader.GetString(0);
-                string hydraulicsName = reader.GetString(1);
-                alternativeHydraulicsPairs[alternativeName] = hydraulicsName;
-            }
         }
-
-        
     }
 }
