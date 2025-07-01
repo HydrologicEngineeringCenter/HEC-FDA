@@ -16,6 +16,8 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -27,11 +29,9 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="110"/>
                 <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="80"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Text="Lifeloss Database:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
-            <frameworkControls:TextBoxFileBrowserControl FileDialogTitle="Select File" Filter="*.fia |*.fia"  Path="{Binding SelectedPath}" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-            <Button Content="Open" Command="{Binding OpenDBCommand}" Grid.Column="2" Margin="5"/>
+            <TextBlock Text="LifeSim Database:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <frameworkControls:TextBoxFileBrowserControl FileDialogTitle="Select File" Filter="*.fia |*.fia"  Path="{Binding SelectedPath}" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,3,0"/>
         </Grid>
 
         <Grid Grid.Row="1">
@@ -84,12 +84,39 @@
             </StackPanel>
         </Grid>
 
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="110"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Index Points:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <frameworkControls:TextBoxFileBrowserControl FileDialogTitle="Select File" Filter="*.shp |*.shp"  Path="{Binding SelectedPointsPath}" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,3,0"/>
+        </Grid>
+
+        <Grid Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="110"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Summary Set:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <frameworkControls:TextBoxFileBrowserControl FileDialogTitle="Select File" Filter="*.shp |*.shp"  Path="{Binding SelectedSummarySetPath}" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,3,0"/>
+        </Grid>
+
         <Grid Grid.Row="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="110"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Hydraulics:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <frameworkControls:TextBoxFolderBrowserControl Path="{Binding SelectedHydraulicsFolder}" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,3,0"/>
+        </Grid>
+
+        <Grid Grid.Row="7">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="80"/>
             </Grid.ColumnDefinitions>
-            <Button Content="Import" Command="{Binding DisplayCommand}" Grid.Column="1" Margin="5"/>
+            <Button Content="Import" Command="{Binding ImportCommand}" Grid.Column="1" Margin="5"/>
         </Grid>
     </Grid>
 </UserControl>

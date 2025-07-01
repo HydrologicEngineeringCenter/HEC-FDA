@@ -8,8 +8,14 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
         <!--<local:RunButton DataContext="{Binding RunButtonViewModel}"/>-->
         <!--<view:LifeLossImporter DataContext="{Binding LifeLossImporterViewModel}"/>-->
-        <view:CheckBoxImporter DataContext="{Binding CheckBoxImporterViewModel}"/>
+        <view:CheckBoxImporter Grid.Row="0" DataContext="{Binding CheckBoxImporterViewModel}"/>
     </Grid>
 </Window>

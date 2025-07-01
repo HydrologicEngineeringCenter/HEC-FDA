@@ -44,11 +44,11 @@ namespace VisualScratchSpace.ViewModel
             LifeLossDB db = new LifeLossDB(SelectedPath);
 
             // add new simulations from the newly selected database
-            List<Simulation> newSimulations = db.UpdateSimulations();
-            foreach (Simulation simulation in newSimulations)
-            {
-                Simulations.Add(simulation);
-            }
+            //List<Simulation> newSimulations = db.UpdateSimulations();
+            //foreach (Simulation simulation in newSimulations)
+            //{
+            //    Simulations.Add(simulation);
+            //}
         }
 
         partial void OnSelectedSimulationChanged(string value)

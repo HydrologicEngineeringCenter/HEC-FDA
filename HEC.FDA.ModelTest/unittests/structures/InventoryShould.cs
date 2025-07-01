@@ -76,7 +76,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
         [Fact]
         public void GetGroundElevationFromTerrain()
         {
-            float[] groundelevs = RASHelper.SamplePointsFromRaster(pathToNSIShapefile, pathToTerrainHDF,Projection.FromFile(pathToMuncieProjection));
+            float[] groundelevs = RASHelper.SamplePointsFromTerrain(pathToNSIShapefile, pathToTerrainHDF,Projection.FromFile(pathToMuncieProjection));
             Assert.Equal(682, groundelevs.Length);
             Assert.Equal(947.0004, groundelevs[0], 1);
         }

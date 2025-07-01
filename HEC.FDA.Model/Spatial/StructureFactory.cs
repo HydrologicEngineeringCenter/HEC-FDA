@@ -64,7 +64,7 @@ public class StructureFactory
         float[] groundelevs = []; //initialized so we can ref it later even if we don't update it.
         if (updateGroundElevFromTerrain)
         {
-            groundelevs = RASHelper.SamplePointsFromRaster(structurePoints.Features, terrrainFilePath);
+            groundelevs = RASHelper.SamplePointsFromTerrain(structurePoints.Features, terrrainFilePath);
         }
 
         // 4. Now loop through each feature in the point collection.

@@ -1,7 +1,14 @@
 ﻿using Statistics;
 using Statistics.Histograms;
 using System.Data.SQLite;
+using System.Runtime.Intrinsics.Arm;
 using System.Text;
+using System.Windows.Markup;
+using Geospatial.IO;
+using Geospatial.Features;
+using Utility.Logging;
+using RasMapperLib;
+
 
 namespace VisualScratchSpace.Model
 {
@@ -12,6 +19,8 @@ namespace VisualScratchSpace.Model
         private static string[] lifelossColumns = {"Name", "Alternatives", "Time_2", "Time_4",
                                                    "Time_6, Time_8", "Time_10", "Time_12",
                                                    "Time_14", "Time_16", "Time_18", "Time_20", "Time_22"};
+
+        private Dictionary<string, string> alternativeHydraulicsPairs = new();
 
         public LifeLossDB(string dbpath)
         {
@@ -49,9 +58,9 @@ namespace VisualScratchSpace.Model
             {
                 using SQLiteConnection connection = new SQLiteConnection(_connectionString);
                 connection.Open();
+
                 using var command = new SQLiteCommand(query, connection);
                 using var reader = command.ExecuteReader();
-
                 while (reader.Read())
                 {
                     Simulation simulation = new()
@@ -69,6 +78,7 @@ namespace VisualScratchSpace.Model
                     }
                     simulations.Add(simulation);
                 }
+                CreateAlternativeHydraulicsPairs(connection);
             }
             catch (Exception ex)
             {
@@ -110,6 +120,11 @@ namespace VisualScratchSpace.Model
             }
         }
 
+        public Dictionary<string, PointM>? CreateSummaryZonePointPairs(string summarySetPath, string indexPointsPath)
+        {
+            return GeospatialHelpers.QueryPolygons(summarySetPath, indexPointsPath);
+        }
+
         private List<string> GetMatchingTables(string prefix, SQLiteConnection connection)
         {
             string findTablesQuery = "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE @pattern;";
@@ -124,5 +139,20 @@ namespace VisualScratchSpace.Model
 
             return matchingTables;
         }   
+
+        private void CreateAlternativeHydraulicsPairs(SQLiteConnection connection)
+        {
+            string query = "SELECT Name, Hydraulic_Scenario FROM Alternatives_Lookup_Table";
+            using var command = new SQLiteCommand(query, connection);
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                string alternativeName = reader.GetString(0);
+                string hydraulicsName = reader.GetString(1);
+                alternativeHydraulicsPairs[alternativeName] = hydraulicsName;
+            }
+        }
+
+        
     }
 }

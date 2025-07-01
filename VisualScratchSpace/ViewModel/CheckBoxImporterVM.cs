@@ -16,6 +16,12 @@ public partial class CheckBoxImporterVM : ObservableObject
     private string _selectedPath = "";
     [ObservableProperty]
     private string _selectedSimulation = "";
+    [ObservableProperty]
+    private string _selectedPointsPath = "";
+    [ObservableProperty]
+    private string _selectedSummarySetPath = "";
+    [ObservableProperty]
+    private string _selectedHydraulicsFolder = "";
 
     public CheckBoxImporterVM()
     {
@@ -24,8 +30,35 @@ public partial class CheckBoxImporterVM : ObservableObject
         HazardTimesCheckBox = [];
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     [RelayCommand]
-    public void OpenDB()
+    public void CreateStageLLGraphs()
+    {
+
+    }
+
+    /// <summary>
+    /// Generate histograms for tables matching the selected alternatives and hazard times
+    /// </summary>
+    [RelayCommand]
+    public void Import()
+    {
+        List<string> selectedAlernatives = [];
+        List<string> selectedHazardTimes = [];
+        foreach (CheckableItem a in AlternativesCheckBox)
+            if (a.IsChecked) selectedAlernatives.Add(a.Name);
+        foreach (CheckableItem h in HazardTimesCheckBox)
+            if (h.IsChecked) selectedHazardTimes.Add(h.Value);
+
+        List<string> prefixes = LifeLossDB.GetSimulationTablePrefixes(SelectedSimulation, selectedAlernatives.ToArray(), selectedHazardTimes.ToArray());
+        LifeLossDB db = new(SelectedPath);
+        //db.QueryMatchingTables(prefixes.ToArray());
+        db.CreateSummaryZonePointPairs(SelectedSummarySetPath, SelectedPointsPath); 
+    }
+
+    partial void OnSelectedPathChanged(string value)
     {
         if (SelectedPath.IsNullOrWhiteSpace())
             return;
@@ -40,21 +73,6 @@ public partial class CheckBoxImporterVM : ObservableObject
         {
             SimulationsComboBox.Add(simulation);
         }
-    }
-
-    [RelayCommand]
-    public void Display()
-    {
-        List<string> selectedAlernatives = [];
-        List<string> selectedHazardTimes = [];
-        foreach (CheckableItem a in AlternativesCheckBox)
-            if (a.IsChecked) selectedAlernatives.Add(a.Name);
-        foreach (CheckableItem h in HazardTimesCheckBox)
-            if (h.IsChecked) selectedHazardTimes.Add(h.Value);
-
-        List<string> prefixes = LifeLossDB.GetSimulationTablePrefixes(SelectedSimulation, selectedAlernatives.ToArray(), selectedHazardTimes.ToArray());
-        LifeLossDB db = new(SelectedPath);
-        db.QueryMatchingTables(prefixes.ToArray());
     }
 
     partial void OnSelectedSimulationChanged(string value)
