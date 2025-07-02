@@ -59,17 +59,21 @@ public partial class CheckBoxImporterVM : ObservableObject
         List<string> prefixes = LifeLossDB.GetSimulationTablePrefixes(SelectedSimulation, selectedAlternatives.ToArray(), selectedHazardTimes.ToArray());
         LifeLossDB db = new(SelectedPath);
         //db.QueryMatchingTables(prefixes.ToArray());
-        LifeLossPlotter plotter = new(db);
-        Dictionary<string, PointM>? summaryZonePointPairs = plotter.CreateSummaryZonePointPairs(SelectedSummarySetPath, SelectedPointsPath);
+        Dictionary<string, PointM>? summaryZonePointPairs = LifeLossPlotter.CreateSummaryZonePointPairs(SelectedSummarySetPath, SelectedPointsPath);
         if (summaryZonePointPairs == null) return;
+        LifeLossPlotter plotter = new(db, SelectedSimulation, SelectedHydraulicsFolder, selectedAlternatives.ToArray(), selectedHazardTimes.ToArray());
 
         foreach (string summaryZone in summaryZonePointPairs.Keys)
         {
             PointMs indexPoint = [summaryZonePointPairs[summaryZone]];
-            plotter.CreatePairedData(selectedAlternatives.ToArray(), indexPoint, SelectedHydraulicsFolder);
+            plotter.CreatePairedData(summaryZone, indexPoint);
         }
     }
 
+    /// <summary>
+    /// Update the combobox of simulations available to the user when a new .fia database is imported
+    /// </summary>
+    /// <param name="value"></param>
     partial void OnSelectedPathChanged(string value)
     {
         if (SelectedPath.IsNullOrWhiteSpace())

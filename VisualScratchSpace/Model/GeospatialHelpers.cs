@@ -28,7 +28,7 @@ public class GeospatialHelpers
                 if (polygons[j].Contains(points[i]))
                 {
                     var row = polygons.AttributeTable.Rows[j];
-                    string summaryZone = row.TryGetValueAs("Name", $"Polygon {j.ToString()}");
+                    string summaryZone = row.TryGetValueAs("Name", $"Polygon {j.ToString()}").TrimEnd();
                     result[summaryZone] = Converter.ConvertPtM(points[i]);
                 }
             }

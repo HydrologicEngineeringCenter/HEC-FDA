@@ -89,10 +89,11 @@ namespace VisualScratchSpace.Model
 
         public void QueryMatchingTables(string[] prefixes)
         {
-            List<string> allMatchingTables = [];
             using SQLiteConnection connection = new SQLiteConnection(_connectionString);
             connection.Open();
 
+            List<string> allMatchingTables = [];
+            
             // get every matching table for each prefix and put them in one final list
             foreach (string prefix in prefixes)
             {
@@ -103,18 +104,25 @@ namespace VisualScratchSpace.Model
             // query each table in the final list for life loss
             foreach (string tableName in allMatchingTables)
             {
-                string query = $"SELECT (LL_In_StructuresU65 + LL_In_StructuresO65 + LL_Caught) FROM \"{tableName}\";";
-                using SQLiteCommand command = new(query, connection);
-                using SQLiteDataReader reader = command.ExecuteReader();
-                List<double> vals = [];
-                while (reader.Read())
-                {
-                    double val = (long)reader[0];
-                    vals.Add(val);
-                }
-                ConvergenceCriteria cc = new();
-                DynamicHistogram histogram = new DynamicHistogram(vals, cc);
+                QueryLifeLossTable(tableName);
             }
+        }
+
+        public DynamicHistogram QueryLifeLossTable(string tableName)
+        {
+            using SQLiteConnection connection = new SQLiteConnection(_connectionString);
+            connection.Open();
+            string query = $"SELECT (LL_In_StructuresU65 + LL_In_StructuresO65 + LL_Caught) FROM \"{tableName}\";";
+            using SQLiteCommand command = new(query, connection);
+            using SQLiteDataReader reader = command.ExecuteReader();
+            List<double> vals = [];
+            while (reader.Read())
+            {
+                double val = (long)reader[0];
+                vals.Add(val);
+            }
+            ConvergenceCriteria cc = new();
+            return new DynamicHistogram(vals, cc);
         }
 
         public Dictionary<string, string> CreateAlternativeHydraulicsPairs()
@@ -134,6 +142,26 @@ namespace VisualScratchSpace.Model
                 res[alternativeName] = hydraulicsName;
             }
             return res;
+        }
+
+        public string SummarySetName(string simulationName)
+        {
+
+            string prefix = simulationName + ">Summary_Polygon_Set>";
+            string query = "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE @pattern;";
+
+            using SQLiteConnection connection = new SQLiteConnection(_connectionString);
+            connection.Open();
+            using SQLiteCommand command = new(query, connection);
+            command.Parameters.AddWithValue("@pattern", prefix + "%");
+            using SQLiteDataReader reader = command.ExecuteReader();
+            string summarySetName = "";
+            while (reader.Read())
+            {
+                string tableName = reader.GetString(0);
+                summarySetName = tableName.Split('>').Last();
+            }
+            return summarySetName;
         }
 
         private List<string> GetMatchingTables(string prefix, SQLiteConnection connection)
