@@ -1,12 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HEC.FDA.Model.paireddata;
-using HEC.FDA.ViewModel.FrequencyRelationships;
 using OxyPlot;
 using OxyPlot.Series;
-using RasMapperLib;
 using SciChart.Core.Extensions;
-using Statistics.Distributions;
 using System.Collections.ObjectModel;
 using VisualScratchSpace.Model;
 
@@ -18,8 +15,8 @@ public partial class CheckBoxImporterVM : ObservableObject
     public ObservableCollection<CheckableItem> AlternativesCheckBox { get; set; }
     public ObservableCollection<CheckableItem> HazardTimesCheckBox { get; set; }
 
-    private int plotIndex = 0;
-    private List<LifeLossRelationship> data = new();
+    private int _plotIndex = 0;
+    private List<LifeLossFunction> _lifeLossFunctions = new();
 
     [ObservableProperty]
     private string _selectedPath = "";
@@ -41,57 +38,42 @@ public partial class CheckBoxImporterVM : ObservableObject
     }
 
     /// <summary>
-    /// 
-    /// </summary>
-    [RelayCommand]
-    public void CreateStageLLGraphs()
-    {
-
-    }
-
-    /// <summary>
-    /// Generate histograms for tables matching the selected alternatives and hazard times
+    /// Import the selected simulation parametes to create associated functions and plots
     /// </summary>
     [RelayCommand]
     public void Import()
     {
-        if (SelectedPath.IsNullOrWhiteSpace())
-            return;
+        if (SelectedPath.IsNullOrWhiteSpace() || SelectedSimulation.IsNullOrWhiteSpace() || SelectedHydraulicsFolder.IsNullOrWhiteSpace()) return;
+        if (AlternativesCheckBox.IsEmpty() || HazardTimesCheckBox.IsEmpty()) return;
 
-        List<string> selectedAlternatives = [];
-        List<string> selectedHazardTimes = [];
+        // determine which parameters have been selected
+        Simulation currentSimulation = new(SelectedSimulation, SelectedHydraulicsFolder);
         foreach (CheckableItem a in AlternativesCheckBox)
-            if (a.IsChecked) selectedAlternatives.Add(a.Name);
+            if (a.IsChecked) currentSimulation.Alternatives.Add(a.Name);
         foreach (CheckableItem h in HazardTimesCheckBox)
-            if (h.IsChecked) selectedHazardTimes.Add(h.Value);
+            if (h.IsChecked) currentSimulation.HazardTimes.Add(h.Value);
 
-        List<string> prefixes = LifeLossDB.GetSimulationTablePrefixes(SelectedSimulation, selectedAlternatives.ToArray(), selectedHazardTimes.ToArray());
-        LifeLossDB db = new(SelectedPath);
-        //db.QueryMatchingTables(prefixes.ToArray());
-        Dictionary<string, PointM>? summaryZonePointPairs = LifeLossPlotter.CreateSummaryZonePointPairs(SelectedSummarySetPath, SelectedPointsPath);
-        if (summaryZonePointPairs == null) return;
-        LifeLossPlotter plotter = new(db, SelectedSimulation, SelectedHydraulicsFolder, selectedAlternatives.ToArray(), selectedHazardTimes.ToArray());
+        // send those parameters to the a generator
+        LifeLossFunctionGenerator generator = new(SelectedPath, currentSimulation);
 
-        data.Clear();
-        foreach (string summaryZone in summaryZonePointPairs.Keys)
-        {
-            PointMs indexPoint = [summaryZonePointPairs[summaryZone]];
-            var lifeLossPlots = plotter.CreatePairedData(summaryZone, indexPoint);
-            foreach (LifeLossRelationship relationship in lifeLossPlots)
-            {
-                relationship.SummaryZone = summaryZone;
-            }
-            data.AddRange(lifeLossPlots);
-        }
-        plotIndex = 0;
-        ChangePlot(plotIndex);
+        if (SelectedSummarySetPath.IsNullOrWhiteSpace() || SelectedPointsPath.IsNullOrWhiteSpace()) return;
+
+        // generate associated functions for the selected parameters and plot the first one
+        _lifeLossFunctions.Clear();
+        _lifeLossFunctions = generator.CreateLifeLossFunctions(SelectedSummarySetPath, SelectedPointsPath);
+        _plotIndex = 0;
+        ChangePlot(_plotIndex);
     }
 
+    /// <summary>
+    /// Cycle through all plots and loop back to start once the end is passed
+    /// </summary>
     [RelayCommand]
     public void NextPlot()
     {
-        plotIndex = (plotIndex + 1) % data.Count;
-        ChangePlot(plotIndex);
+        if (_lifeLossFunctions.IsEmpty()) return;
+        _plotIndex = (_plotIndex + 1) % _lifeLossFunctions.Count;
+        ChangePlot(_plotIndex);
     }
 
     /// <summary>
@@ -100,8 +82,7 @@ public partial class CheckBoxImporterVM : ObservableObject
     /// <param name="value"></param>
     partial void OnSelectedPathChanged(string value)
     {
-        if (SelectedPath.IsNullOrWhiteSpace())
-            return;
+        if (SelectedPath.IsNullOrWhiteSpace()) return;
 
         // reset the simulation options
         SimulationsComboBox.Clear();
@@ -115,54 +96,62 @@ public partial class CheckBoxImporterVM : ObservableObject
         }
     }
 
+    /// <summary>
+    /// Update the alternative and hazard time checkboxes when a new simulation is selected
+    /// </summary>
+    /// <param name="value"></param>
     partial void OnSelectedSimulationChanged(string value)
-    {
-        UpdateSimulationFields(value);
-    }
-
-    private void UpdateSimulationFields(string value)
     {
         // reset the other options
         AlternativesCheckBox.Clear();
         HazardTimesCheckBox.Clear();
 
         // update options to match the currently selected simulation
-        foreach (Simulation s in SimulationsComboBox)
+        foreach (Simulation simulation in SimulationsComboBox)
         {
-            if (s.Name == value)
+            if (simulation.Name == value)
             {
-                foreach (string a in s.Alternatives)
-                    AlternativesCheckBox.Add(new CheckableItem { Name = a });
-                foreach (string h in s.HazardTimes)
+                foreach (string alternative in simulation.Alternatives)
+                    AlternativesCheckBox.Add(new CheckableItem { Name = alternative });
+                foreach (string hazardTime in simulation.HazardTimes)
                 {
-                    int time = int.Parse(h);
+                    int time = int.Parse(hazardTime);
                     // display name in military time format
                     HazardTimesCheckBox.Add(new CheckableItem { Name = time < 10 ? $"0{time}00" : $"{time}00", Value = time.ToString() });
-                } 
+                }
             }
         }
     }
 
+    /// <summary>
+    /// Update the plot displayed in the UI
+    /// </summary>
+    /// <param name="next">The index of the plot to be switched to</param>
     private void ChangePlot(int next)
     {
-        LifeLossRelationship relationship = data[next];
-        UncertainPairedData d = relationship.Data;
-        var upper = d.SamplePairedData(0.975);
-        var lower = d.SamplePairedData(0.025);
-        var mid = d.SamplePairedData(0.5);
+        LifeLossFunction relationship = _lifeLossFunctions[next];
+        UncertainPairedData uncertainData = relationship.Data;
+        var upper = uncertainData.SamplePairedData(0.975);
+        var lower = uncertainData.SamplePairedData(0.025);
+        var mid = uncertainData.SamplePairedData(0.5);
 
         MyModel.Series.Clear();
         AddLineSeriesToPlot(upper, true);
         AddLineSeriesToPlot(lower, true);
         AddLineSeriesToPlot(mid);
 
-        MyModel.ResetAllAxes();
+        MyModel.ResetAllAxes(); // recenter on the newly plotted lines
         int time = int.Parse(relationship.HazardTime);
         string formattedTime = time < 10 ? $" 0{time}00" : $" {time}00";
         MyModel.Title = relationship.SummaryZone + formattedTime;
         MyModel.InvalidatePlot(true);
     }
 
+    /// <summary>
+    /// Add a single line series to a plot
+    /// </summary>
+    /// <param name="function"></param>
+    /// <param name="isConfidenceLimit"></param>
     private void AddLineSeriesToPlot(PairedData function, bool isConfidenceLimit = false)
     {
         LineSeries lineSeries = new();

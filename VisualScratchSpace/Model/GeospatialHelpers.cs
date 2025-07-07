@@ -1,8 +1,6 @@
 ﻿using Geospatial.Features;
 using Geospatial.IO;
-using HEC.FDA.Model.hydraulics.enums;
 using HEC.FDA.Model.Spatial.Extensions;
-using OSGeo.OGR;
 using RasMapperLib;
 using RasMapperLib.Mapping;
 using RasMapperLib.Utilities;
@@ -12,13 +10,19 @@ namespace VisualScratchSpace.Model;
 
 public class GeospatialHelpers
 {
-    public static Dictionary<string, PointM>? QueryPolygons(string polygonPath, string pointsPath)
+    /// <summary>
+    /// Create a map of summary zone names (polygons) to their associated index points
+    /// </summary>
+    /// <param name="polygonPath"></param>
+    /// <param name="pointsPath"></param>
+    /// <returns></returns>
+    public static Dictionary<string, PointM> QueryPolygons(string polygonPath, string pointsPath)
     {
         OperationResult polygonResult = ShapefileIO.TryRead(polygonPath, out PolygonFeatureCollection polygons);
-        if (!polygonResult.Result) return null;
+        if (!polygonResult.Result) return new Dictionary<string, PointM>();
 
         OperationResult pointsResult = ShapefileIO.TryRead(pointsPath, out PointFeatureCollection points);
-        if (!pointsResult.Result) return null;
+        if (!pointsResult.Result) return new Dictionary<string, PointM>();
 
         Dictionary<string, PointM> result = new();
         for (int i = 0; i < points.Count; i++)
@@ -36,6 +40,12 @@ public class GeospatialHelpers
         return result;
     }
 
+    /// <summary>
+    /// Get stages/WSE from a RAS result at specified points
+    /// </summary>
+    /// <param name="pts"></param>
+    /// <param name="hydraulicsPath"></param>
+    /// <returns></returns>
     public static float[] GetStageFromHDF(PointMs pts, string hydraulicsPath)
     {
         var rasResult = new RASResults(hydraulicsPath);

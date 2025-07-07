@@ -1,13 +1,7 @@
 ﻿using Statistics;
 using Statistics.Histograms;
 using System.Data.SQLite;
-using System.Runtime.Intrinsics.Arm;
 using System.Text;
-using System.Windows.Markup;
-using Geospatial.IO;
-using Geospatial.Features;
-using Utility.Logging;
-using RasMapperLib;
 
 
 namespace VisualScratchSpace.Model
@@ -15,8 +9,7 @@ namespace VisualScratchSpace.Model
     public class LifeLossDB
     {
         private string _connectionString;
-
-        private static string[] lifelossColumns = {"Name", "Alternatives", "Time_2", "Time_4",
+        private static string[] _lifelossColumns = {"Name", "Alternatives", "Time_2", "Time_4",
                                                    "Time_6, Time_8", "Time_10", "Time_12",
                                                    "Time_14", "Time_16", "Time_18", "Time_20", "Time_22"};
 
@@ -25,27 +18,18 @@ namespace VisualScratchSpace.Model
             _connectionString = $"Data Source={dbpath}";
         }
 
-        public static List<string> GetSimulationTablePrefixes(string simulation, string[] alternatives, string[] hazardTimes)
-        {
-            List<string> prefixes = [];
-            for (int i = 0; i < alternatives.Length; i++)
-            {
-                for (int j = 0; j < hazardTimes.Length; j++)
-                {
-                    prefixes.Add($"{simulation}>Results_By_Iteration>{alternatives[i]}>{hazardTimes[j]}");
-                }
-            }
-            return prefixes;
-        }
-
+        /// <summary>
+        /// Change the list of simulations available to the user to select from
+        /// </summary>
+        /// <returns></returns>
         public List<Simulation> UpdateSimulations()
         {
             StringBuilder sb = new();
             sb.Append("SELECT ");
-            for (int i = 0; i < lifelossColumns.Length; i++)
+            for (int i = 0; i < _lifelossColumns.Length; i++)
             {
-                sb.Append(lifelossColumns[i]);
-                if (i < lifelossColumns.Length - 1)
+                sb.Append(_lifelossColumns[i]);
+                if (i < _lifelossColumns.Length - 1)
                     sb.Append(", ");
             }
             sb.Append(" FROM Simulations_Lookup_Table");
@@ -61,13 +45,11 @@ namespace VisualScratchSpace.Model
                 using var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    Simulation simulation = new()
-                    {
-                        // Name is 0th selection
-                        Name = reader.GetString(0),
-                        // Alternatives are 1st selection
-                        Alternatives = reader.GetString(1).Split(',') // Alternatives are in csv string format
-                    };
+                    string name = reader.GetString(0); // Name is 0th selection
+                    Simulation simulation = new Simulation(name);
+
+                    simulation.Alternatives = reader.GetString(1).Split(',').ToList(); // Alternatives are 1st selection and in csv string format
+
                     // Hazard Times are in the 2nd through 12th selections                                                           
                     for (int i = 2; i <= 12; i++)
                     {
@@ -80,34 +62,15 @@ namespace VisualScratchSpace.Model
             catch (Exception ex)
             {
                 // debugging
-                Simulation simulation = new Simulation();
-                simulation.Name = ex.Message;
-                simulations.Add(simulation);
             }
             return simulations;
         }
 
-        public void QueryMatchingTables(string[] prefixes)
-        {
-            using SQLiteConnection connection = new SQLiteConnection(_connectionString);
-            connection.Open();
-
-            List<string> allMatchingTables = [];
-            
-            // get every matching table for each prefix and put them in one final list
-            foreach (string prefix in prefixes)
-            {
-                List<string> tables = GetMatchingTables(prefix, connection);
-                allMatchingTables.AddRange(tables);
-            }
-            
-            // query each table in the final list for life loss
-            foreach (string tableName in allMatchingTables)
-            {
-                QueryLifeLossTable(tableName);
-            }
-        }
-
+        /// <summary>
+        /// Create a histogram of life loss data from a given table
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <returns></returns>
         public DynamicHistogram QueryLifeLossTable(string tableName)
         {
             using SQLiteConnection connection = new SQLiteConnection(_connectionString);
@@ -125,6 +88,10 @@ namespace VisualScratchSpace.Model
             return new DynamicHistogram(vals, cc);
         }
 
+        /// <summary>
+        /// Create map of alternative names to their associated hydraulics folders
+        /// </summary>
+        /// <returns></returns>
         public Dictionary<string, string> CreateAlternativeHydraulicsPairs()
         {
             using SQLiteConnection connection = new SQLiteConnection(_connectionString);
@@ -144,6 +111,11 @@ namespace VisualScratchSpace.Model
             return res;
         }
 
+        /// <summary>
+        /// Get the summary set name for a given simulation
+        /// </summary>
+        /// <param name="simulationName"></param>
+        /// <returns></returns>
         public string SummarySetName(string simulationName)
         {
 
@@ -162,21 +134,6 @@ namespace VisualScratchSpace.Model
                 summarySetName = tableName.Split('>').Last();
             }
             return summarySetName;
-        }
-
-        private List<string> GetMatchingTables(string prefix, SQLiteConnection connection)
-        {
-            string findTablesQuery = "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE @pattern;";
-            List<string> matchingTables = [];
-            using SQLiteCommand command = new(findTablesQuery, connection);
-
-            // pattern match the simnulation + alternative + time and find all matching tables
-            command.Parameters.AddWithValue("@pattern", prefix + "%");
-            using SQLiteDataReader reader = command.ExecuteReader();
-            while (reader.Read())
-                matchingTables.Add(reader.GetString(0));
-
-            return matchingTables;
         }
     }
 }
