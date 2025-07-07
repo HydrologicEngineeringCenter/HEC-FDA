@@ -1,4 +1,9 @@
-﻿using RasMapperLib;
+﻿using HEC.FDA.Model.paireddata;
+using HEC.FDA.ViewModel.FrequencyRelationships;
+using OxyPlot.Series;
+using OxyPlot;
+using RasMapperLib;
+using Statistics.Distributions;
 using Statistics.Histograms;
 using System;
 using System.Collections.Generic;
@@ -33,8 +38,9 @@ public class LifeLossPlotter
         return GeospatialHelpers.QueryPolygons(summarySetPath, indexPointsPath);
     }
 
-    public void CreatePairedData(string summaryZone, PointMs points)
+    public List<LifeLossRelationship> CreatePairedData(string summaryZone, PointMs points)
     {
+        // (alternative name, hazard time)
         Dictionary<(string, string), DynamicHistogram> histogramDict = new();
         Dictionary<string, float> alternativeStagePairs = new();
         foreach (string alternative in Alternatives)
@@ -50,6 +56,31 @@ public class LifeLossPlotter
                 histogramDict[(alternative, hazardTime)] = histogram;
             }   
         }
+        List<LifeLossRelationship> lifeLossRelationships = new();
         // make the plots
+        foreach (string hazardTime in HazardTimes)
+        {
+            List<double> stages = new();
+            List<DynamicHistogram> histograms = new();
+            foreach (var ((alternative, time), histogram) in histogramDict)
+            {
+                if (time == hazardTime)
+                {
+                    stages.Add(alternativeStagePairs[alternative]);
+                    histograms.Add(histogram);
+                }
+            }
+            var stageArray = stages.ToArray();
+            var histogramArray = histograms.ToArray();
+            Array.Sort(stageArray, histogramArray);
+            UncertainPairedData data = new(stageArray, histogramArray, new CurveMetaData());
+            LifeLossRelationship llr = new();
+            llr.HazardTime = hazardTime;
+            llr.Data = data;
+            lifeLossRelationships.Add(llr);
+        }
+        return lifeLossRelationships;
     }
+
+    
 }

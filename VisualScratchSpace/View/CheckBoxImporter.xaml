@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:VisualScratchSpace.View"
              xmlns:frameworkControls="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=HEC.MVVMFramework.View"
              xmlns:vm="clr-namespace:VisualScratchSpace.ViewModel"
+             xmlns:oxy="http://oxyplot.org/wpf"
              d:DataContext="{d:DesignInstance Type=vm:CheckBoxImporterVM}"
              d:Background="AliceBlue"
              mc:Ignorable="d" 
@@ -111,12 +112,18 @@
             <frameworkControls:TextBoxFolderBrowserControl Path="{Binding SelectedHydraulicsFolder}" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,3,0"/>
         </Grid>
 
+        <Grid Grid.Row="6">
+            <oxy:PlotView Model="{Binding MyModel, Mode=OneWay}"/>
+        </Grid>
+
         <Grid Grid.Row="7">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="80"/>
             </Grid.ColumnDefinitions>
             <Button Content="Import" Command="{Binding ImportCommand}" Grid.Column="1" Margin="5"/>
+            <Button Content="Next Plot" Command="{Binding NextPlotCommand}" Grid.Column="2" Margin="5"/>
         </Grid>
     </Grid>
 </UserControl>
