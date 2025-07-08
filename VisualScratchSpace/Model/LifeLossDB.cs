@@ -6,6 +6,9 @@ using System.Text;
 
 namespace VisualScratchSpace.Model
 {
+    /// <summary>
+    /// Handles operations for querying .fia databases imported from LifeSim
+    /// </summary>
     public class LifeLossDB
     {
         private string _connectionString;

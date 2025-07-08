@@ -6,6 +6,7 @@ using OxyPlot.Series;
 using SciChart.Core.Extensions;
 using System.Collections.ObjectModel;
 using VisualScratchSpace.Model;
+using VisualScratchSpace.Model.Saving;
 
 namespace VisualScratchSpace.ViewModel;
 public partial class CheckBoxImporterVM : ObservableObject
@@ -74,6 +75,14 @@ public partial class CheckBoxImporterVM : ObservableObject
         if (_lifeLossFunctions.IsEmpty()) return;
         _plotIndex = (_plotIndex + 1) % _lifeLossFunctions.Count;
         ChangePlot(_plotIndex);
+    }
+
+    [RelayCommand]
+    public void SavePlots()
+    {
+        string dbpath = @"C:\FDA_Test_Data\WKS20230525\WKS20230525\save-test.db";
+        PlotSaver ps = new(dbpath, _lifeLossFunctions);
+        ps.SaveToSQLite();
     }
 
     /// <summary>
