@@ -24,11 +24,11 @@ public partial class CheckBoxImporterVM : ObservableObject
     [ObservableProperty]
     private string _selectedSimulation = "";
     [ObservableProperty]
-    private string _selectedPointsPath = "";
+    private string _selectedPointsPath = @"C:\FDA_Test_Data\WKS20230525\WKS20230525\index_points.shp";
     [ObservableProperty]
-    private string _selectedSummarySetPath = "";
+    private string _selectedSummarySetPath = @"C:\FDA_Test_Data\WKS20230525\WKS20230525\summary_set.shp";
     [ObservableProperty]
-    private string _selectedHydraulicsFolder = "";
+    private string _selectedHydraulicsFolder = @"C:\FDA_Test_Data\WKS20230525\WKS20230525\Hydraulic_Data";
 
     public CheckBoxImporterVM()
     {
