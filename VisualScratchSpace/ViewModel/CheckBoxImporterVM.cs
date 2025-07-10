@@ -81,9 +81,22 @@ public partial class CheckBoxImporterVM : ObservableObject
     public void SavePlots()
     {
         string dbpath = @"C:\FDA_Test_Data\WKS20230525\WKS20230525\save-test.db";
-        PlotSaver ps = new(dbpath, _lifeLossFunctions);
-        ps.SaveToSQLite();
+        PlotSaver ps = new(dbpath);
+        foreach (LifeLossFunction llf in _lifeLossFunctions)
+        {
+            ps.SaveToSQLite(llf);
+        }
     }
+
+    [RelayCommand]
+    public void LoadPlots()
+    {
+        string dbpath = @"C:\FDA_Test_Data\WKS20230525\WKS20230525\save-test.db";
+        PlotSaver ps = new(dbpath);
+        string[] simulations = { "IH and Lower 20230430", "MH 20230429" }; 
+        PlotFilter filter = new() { Simulations = simulations };
+        ps.ReadFromSQLite(filter);
+    } 
 
     /// <summary>
     /// Update the combobox of simulations available to the user when a new .fia database is imported
@@ -151,8 +164,8 @@ public partial class CheckBoxImporterVM : ObservableObject
 
         MyModel.ResetAllAxes(); // recenter on the newly plotted lines
         int time = int.Parse(relationship.HazardTime);
-        string formattedTime = time < 10 ? $" 0{time}00" : $" {time}00";
-        MyModel.Title = relationship.SummaryZone + formattedTime;
+        string formattedTime = time < 10 ? $"0{time}00" : $"{time}00";
+        MyModel.Title = $"{relationship.SimulationName}: {relationship.SummaryZone} {formattedTime}";
         MyModel.InvalidatePlot(true);
     }
 

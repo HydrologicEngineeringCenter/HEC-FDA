@@ -29,8 +29,8 @@ namespace Statistics.Histograms
                 return IsSingleValued();
             }
         }
-        internal double SampleMax { get; private set; }
-        internal double SampleMin { get; private set; }
+        public double SampleMax { get; private set; }
+        public double SampleMin { get; private set; }
         internal bool ConvergedOnMax { get; private set; } = false;
 
         public bool IsConverged { get; private set; } = false;

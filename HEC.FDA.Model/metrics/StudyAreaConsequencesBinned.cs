@@ -60,6 +60,7 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
             AggregatedConsequencesBinned newDamageResult = new(damageCategory, assetCategory, convergenceCriteria, impactAreaID);
             ConsequenceResultList.Add(newDamageResult);
         }
+        // REALLY LOOKS LIKE WE SHOULD BE ADDING THE RESULT TO CONSEQUENCE RESULT LIST HERE - TODO - BBB
     }
     //public for testing purposes
     public void AddExistingConsequenceResultObject(AggregatedConsequencesBinned consequenceResultToAdd)

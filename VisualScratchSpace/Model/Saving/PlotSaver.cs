@@ -1,116 +1,160 @@
-﻿using HEC.FDA.Model.alternatives;
-using Microsoft.Extensions.Primitives;
-using SciChart.Core.Extensions;
+﻿using SciChart.Core.Extensions;
 using Statistics.Histograms;
 using System.Data;
 using System.Data.SQLite;
-using System.Text;
-using System.Windows.Markup;
+using System.Security.Cryptography;
 
 namespace VisualScratchSpace.Model.Saving;
-public class PlotSaver : ISQLiteSaver
+public class PlotSaver : ISQLiteSaver<LifeLossFunction>
 {
-    private string _connectionString;
-    private List<LifeLossFunction> _lifeLossFunctions;
+    private const string LL_TABLE_NAME = "Life_Loss";
+    private static readonly string _createQuery = 
+        $@"CREATE TABLE IF NOT EXISTS ""{LL_TABLE_NAME}"" (
+            Id INTEGER PRIMARY KEY AUTOINCREMENT,
+            Simulation TEXT NOT NULL,
+            Alternative TEXT NOT NULL, 
+            Stage REAL NOT NULL,
+            Hazard_Time TEXT NULL,
+            Summary_Zone TEXT NOT NULL,
+            Min REAL NOT NULL,
+            Bin_Width REAL NOT NULL,
+            Sample_Size INTEGER NOT NULL,
+            Sample_Mean REAL NOT NULL,
+            Sample_Variance REAL NOT NULL,
+            Sample_Min REAL NOT NULL,
+            Sample_Max REAL NOT NULL,
+            Bin_Counts TEXT NOT NULL,
+            UNIQUE(Simulation, Alternative, Hazard_Time, Summary_Zone)
+        );";
+    private static readonly string _insertQuery =
+        $@"INSERT OR IGNORE INTO ""{LL_TABLE_NAME}"" (
+            Simulation, 
+            Alternative, 
+            Stage,
+            Hazard_Time,
+            Summary_Zone,
+            Min,
+            Bin_Width,
+            Sample_Size,
+            Sample_Mean,
+            Sample_Variance,
+            Sample_Min,
+            Sample_Max,
+            Bin_Counts
+        )
+        VALUES (
+            @sim,
+            @alt,
+            @stg,
+            @hz_t,
+            @s_z,
+            @min,
+            @bin_w,
+            @s_size,
+            @s_mean,
+            @s_var,
+            @s_min,
+            @s_max,
+            @bin_cts
+        )";
 
-    public PlotSaver(string dbpath, List<LifeLossFunction> funcs)
+    private string _connectionString;
+    private SQLiteConnection _connection;
+
+    public PlotSaver(string dbpath)
     {
-        _connectionString = $"Data Source={dbpath}"; ;
-        _lifeLossFunctions = funcs ;
+        _connectionString = $"Data Source={dbpath}";
+        _connection = new SQLiteConnection(_connectionString);
+        _connection.Open(); 
     }
 
-    public void SaveToSQLite()
+    public void SaveToSQLite(LifeLossFunction llf)
     {
-        if (_lifeLossFunctions.IsEmpty()) return;
+        if (llf == null) return;
 
-        using var connection = new SQLiteConnection(_connectionString);
-        connection.Open();
-        using var transaction = connection.BeginTransaction();
+        using var transaction = _connection.BeginTransaction();
 
-        using var createCommand = new SQLiteCommand(connection) { Transaction = transaction };
-        foreach (LifeLossFunction function in _lifeLossFunctions) { }
-        CreateTable(_lifeLossFunctions[0], createCommand);
+        CreateTable(_connection, transaction); // more efficient for SQL to check if table exists than checking a flag in this class
 
-        using var insertCommand = new SQLiteCommand(connection) { Transaction = transaction };
-        insertCommand.Parameters.Add("@alt", DbType.String);
-        insertCommand.Parameters.Add("@stg", DbType.Double);
-        for (int i = 0; i < 12; i++)
-        {
-            insertCommand.Parameters.Add($"@bin{i}", DbType.Int64);
-        }
-        InsertIntoTable(_lifeLossFunctions[0], insertCommand);
+        using var insertCommand = new SQLiteCommand(_connection) { Transaction = transaction };
+        BuildInsertCommand(insertCommand); 
+        InsertIntoTable(insertCommand, llf);
 
         transaction.Commit();
     }
 
-    private void CreateTable(LifeLossFunction llf, SQLiteCommand cmd)
+    public List<LifeLossFunction> ReadFromSQLite(SQLiteFilter filter, bool selectAll = false)
     {
-        string tableName = GetTableName(llf);
-        string createTableQuery = BuildCreateTableQuery(llf);
-        cmd.CommandText = createTableQuery;
+        if (filter is not PlotFilter pf) throw new ArgumentException();
+
+        using var selectCommand = new SQLiteCommand(_connection);
+        string query;
+        if (selectAll)
+        {
+            query = $@"SELECT * FROM {LL_TABLE_NAME}";
+        }
+        else
+        {
+            query = pf.BuildSelect(LL_TABLE_NAME, out IReadOnlyDictionary<string, object> parameters);
+            foreach (var parameterPair in parameters) 
+                selectCommand.Parameters.AddWithValue(parameterPair.Key, parameterPair.Value);
+        }
+        selectCommand.CommandText = query;    
+
+        return null;
+    }
+
+    public void Dispose()
+    {
+        _connection.Dispose();
+    }
+
+    private void CreateTable(SQLiteConnection connection, SQLiteTransaction transaction)
+    {
+        using var cmd = new SQLiteCommand(connection) { Transaction = transaction };
+        cmd.CommandText = _createQuery;
         cmd.ExecuteNonQuery();
     }
 
-    private string BuildCreateTableQuery(LifeLossFunction llf)
+    private void InsertIntoTable(SQLiteCommand cmd, LifeLossFunction llf)
     {
-        string tableName = GetTableName(llf);
-        StringBuilder sb = new StringBuilder();
-        string baseQuery =
-            $@"CREATE TABLE IF NOT EXISTS ""{tableName}""(
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Alternative TEXT NOT NULL, 
-                    Stage REAL NOT NULL,";
-        sb.Append(baseQuery);
-        DynamicHistogram histogram = (DynamicHistogram)llf.Data.Yvals[0]; // asserting that every histogram for each plot will have the same # of bins
-        for (int i = 0; i < histogram.BinCounts.Length; i++)
-        {
-            sb.Append($"Bin_{i} INTEGER NOT NULL,");
-        }
-        sb.Append("UNIQUE(Alternative));");
-        return sb.ToString();
-    }
-
-    private void InsertIntoTable(LifeLossFunction llf, SQLiteCommand cmd)
-    {
-        string insertQuery = BuildInsertQuery(llf);
-        cmd.CommandText = insertQuery;
         for (int i = 0; i < llf.AlternativeNames.Length; i++)
         {
+            cmd.Parameters["@sim"].Value = llf.SimulationName;
             cmd.Parameters["@alt"].Value = llf.AlternativeNames[i];
             cmd.Parameters["@stg"].Value = llf.Data.Xvals[i];
+            cmd.Parameters["@hz_t"].Value = llf.HazardTime;
+            cmd.Parameters["@s_z"].Value = llf.SummaryZone;
+
             DynamicHistogram histogram = (DynamicHistogram)llf.Data.Yvals[i];
-            for (int j = 0; j < histogram.BinCounts.Length; j++)
-            {
-                cmd.Parameters[$"@bin{j}"].Value = histogram.BinCounts[j];
-            }
+            cmd.Parameters["@min"].Value = histogram.Min;
+            cmd.Parameters["@bin_w"].Value = histogram.BinWidth;
+            cmd.Parameters["@s_size"].Value = histogram.SampleSize;
+            cmd.Parameters["@s_mean"].Value = histogram.SampleMean;
+            cmd.Parameters["@s_var"].Value = histogram.SampleVariance;
+            cmd.Parameters["@s_min"].Value = histogram.SampleMin;
+            cmd.Parameters["@s_max"].Value = histogram.SampleMax;
+            cmd.Parameters["@bin_cts"].Value = string.Join(",", histogram.BinCounts);
+
             cmd.ExecuteNonQuery();
         }
     }
 
-    private string BuildInsertQuery(LifeLossFunction llf)
+    private void BuildInsertCommand(SQLiteCommand cmd)
     {
-        string tableName = GetTableName(llf);
-        StringBuilder sb = new StringBuilder();
-        sb.Append($@"INSERT OR IGNORE INTO ""{tableName}""(Alternative, Stage,");
-        DynamicHistogram histogram = (DynamicHistogram)llf.Data.Yvals[0]; // asserting that every histogram for each plot will have the same # of bins
-        for (int i = 0; i < histogram.BinCounts.Length; i++)
-        {
-            sb.Append(i < histogram.BinCounts.Length - 1 ? $"Bin_{i}," : $"Bin_{i}");
-        }
-        
-        sb.Append(") VALUES (@alt, @stg,");
-        for (int i = 0; i < histogram.BinCounts.Length; i++)
-        {
-            sb.Append(i < histogram.BinCounts.Length - 1 ? $"@bin{i}," : $"@bin{i}");
-        }
-        sb.Append(");");
-
-        string q = sb.ToString();
-        return q;
-    }
-
-    private string GetTableName(LifeLossFunction function)
-    {
-        return $"{function.SimulationName}_{function.SummaryZone}_{function.HazardTime}";
+        cmd.CommandText = _insertQuery;
+        cmd.Parameters.Add("@sim",      DbType.String);
+        cmd.Parameters.Add("@alt",      DbType.String);
+        cmd.Parameters.Add("@stg",      DbType.Double);
+        cmd.Parameters.Add("@hz_t",     DbType.String);
+        cmd.Parameters.Add("@s_z",      DbType.String);
+        cmd.Parameters.Add("@min",      DbType.Double);
+        cmd.Parameters.Add("@bin_w",    DbType.Double);
+        cmd.Parameters.Add("@s_size",   DbType.Int64);
+        cmd.Parameters.Add("@s_mean",   DbType.Double);
+        cmd.Parameters.Add("@s_var",    DbType.Double);
+        cmd.Parameters.Add("@s_min",     DbType.Double);
+        cmd.Parameters.Add("@s_max",    DbType.Double);
+        cmd.Parameters.Add("@bin_cts",  DbType.String);
     }
 }

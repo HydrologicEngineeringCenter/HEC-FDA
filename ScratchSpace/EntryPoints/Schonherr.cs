@@ -29,7 +29,7 @@ internal class Schonherr
         ConvergenceCriteria cc = new();
         DynamicHistogram histogram = new(vals, cc); // bin size of 1 because we are dealing with ints?
         //histogram.AddObservationsToHistogram(vals.ToArray());
-        Console.WriteLine(histogram.Print());
+        //Console.WriteLine(histogram.Print());
         connection.Close();
     }
 
