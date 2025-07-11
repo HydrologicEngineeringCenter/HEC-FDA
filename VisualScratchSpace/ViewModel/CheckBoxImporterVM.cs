@@ -94,8 +94,11 @@ public partial class CheckBoxImporterVM : ObservableObject
         string dbpath = @"C:\FDA_Test_Data\WKS20230525\WKS20230525\save-test.db";
         PlotSaver ps = new(dbpath);
         string[] simulations = { "IH and Lower 20230430", "MH 20230429" }; 
-        PlotFilter filter = new() { Simulations = simulations };
-        ps.ReadFromSQLite(filter);
+        PlotFilter filter = new() { Simulation = simulations };
+        _lifeLossFunctions.Clear();
+        _lifeLossFunctions = ps.ReadFromSQLite(filter);
+        _plotIndex = 0;
+        ChangePlot(_plotIndex);
     } 
 
     /// <summary>
@@ -151,6 +154,8 @@ public partial class CheckBoxImporterVM : ObservableObject
     /// <param name="next">The index of the plot to be switched to</param>
     private void ChangePlot(int next)
     {
+        if (_lifeLossFunctions.IsNullOrEmpty()) return;
+
         LifeLossFunction relationship = _lifeLossFunctions[next];
         UncertainPairedData uncertainData = relationship.Data;
         var upper = uncertainData.SamplePairedData(0.975);

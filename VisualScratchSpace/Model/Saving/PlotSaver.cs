@@ -2,7 +2,9 @@
 using Statistics.Histograms;
 using System.Data;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace VisualScratchSpace.Model.Saving;
 public class PlotSaver : ISQLiteSaver<LifeLossFunction>
@@ -88,18 +90,34 @@ public class PlotSaver : ISQLiteSaver<LifeLossFunction>
         if (filter is not PlotFilter pf) throw new ArgumentException();
 
         using var selectCommand = new SQLiteCommand(_connection);
-        string query;
+        StringBuilder querySB = new();
         if (selectAll)
         {
-            query = $@"SELECT * FROM {LL_TABLE_NAME}";
+            querySB.Append($@"SELECT * FROM {LL_TABLE_NAME}");
         }
         else
         {
-            query = pf.BuildSelect(LL_TABLE_NAME, out IReadOnlyDictionary<string, object> parameters);
+            querySB = pf.BuildSelect(LL_TABLE_NAME, out IReadOnlyDictionary<string, object> parameters);
             foreach (var parameterPair in parameters) 
                 selectCommand.Parameters.AddWithValue(parameterPair.Key, parameterPair.Value);
         }
-        selectCommand.CommandText = query;    
+        querySB.Append(@" ORDER BY ""Simulation"", ""Summary_Zone"", ""Hazard_Time"", ""Stage"";");
+        selectCommand.CommandText = querySB.ToString();    
+
+        using var reader = selectCommand.ExecuteReader();
+
+        StringBuilder sb = new StringBuilder();
+        while (reader.Read())
+        {
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+               if(i > 0) sb.Append(',');
+               sb.Append(reader.GetValue(i));
+            }
+            sb.AppendLine();
+        }
+
+        Debug.WriteLine(sb.ToString());
 
         return null;
     }
