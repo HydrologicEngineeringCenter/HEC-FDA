@@ -1,13 +1,9 @@
 ﻿using System.Reflection;
 using System.Text;
 
-[AttributeUsage(AttributeTargets.Property)]
-public sealed class ColumnAttribute : Attribute
-{
-    public ColumnAttribute(string name) => Name = name;
-    public string Name { get; }
-}
-
+/// <summary>
+/// Abstract class for providing a filter to a SQLite command
+/// </summary>
 public abstract class SQLiteFilter
 {
     /// <summary>
@@ -25,14 +21,13 @@ public abstract class SQLiteFilter
 
         foreach (PropertyInfo prop in GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
         {
-            // we only care about T[] or IReadOnlyCollection<T>
-            if (!prop.PropertyType.IsArray) continue;
-
+            if (!prop.PropertyType.IsArray) continue; // we only want array properties
             var array = (Array?)prop.GetValue(this);
             if (array is null || array.Length == 0) continue;
 
-            string colName = prop.GetCustomAttribute<ColumnAttribute>()?.Name ?? prop.Name;
-
+            string colName = prop.Name;
+            
+            // final return is formatted "WHERE col1 IN (@p1) AND col2 in (@p2, @p3) AND col3..."
             if (firstClause)
             {
                 sql.Append(" WHERE ");
@@ -53,7 +48,6 @@ public abstract class SQLiteFilter
             }
             sql.Append('"').Append(colName).Append("\" IN (").Append(string.Join(',', placeholders)).Append(')');
         }
-
         parameters = dict;
         return sql;
     }

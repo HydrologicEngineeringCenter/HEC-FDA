@@ -81,7 +81,7 @@ public partial class CheckBoxImporterVM : ObservableObject
     public void SavePlots()
     {
         string dbpath = @"C:\FDA_Test_Data\WKS20230525\WKS20230525\save-test.db";
-        PlotSaver ps = new(dbpath);
+        LifeLossPlotSaver ps = new(dbpath);
         foreach (LifeLossFunction llf in _lifeLossFunctions)
         {
             ps.SaveToSQLite(llf);
@@ -92,13 +92,25 @@ public partial class CheckBoxImporterVM : ObservableObject
     public void LoadPlots()
     {
         string dbpath = @"C:\FDA_Test_Data\WKS20230525\WKS20230525\save-test.db";
-        PlotSaver ps = new(dbpath);
-        string[] simulations = { "IH and Lower 20230430", "MH 20230429" }; 
-        PlotFilter filter = new() { Simulation = simulations };
-        _lifeLossFunctions.Clear();
-        _lifeLossFunctions = ps.ReadFromSQLite(filter);
-        _plotIndex = 0;
-        ChangePlot(_plotIndex);
+        LifeLossPlotSaver ps = new(dbpath);
+        string[] simulations = { "IH and Lower 20230430" };
+        string[] summaryZones = {  };
+        string[] hazardTimes = {  };
+        PlotFilter filter = new() 
+        { 
+            Simulation = simulations, 
+            Summary_Zone = summaryZones, 
+            Hazard_Time = hazardTimes 
+        };
+        
+        List<LifeLossFunction> loadedFunctions = ps.ReadFromSQLite(filter);
+        if (!loadedFunctions.IsEmpty())
+        {
+            _lifeLossFunctions.Clear();
+            _lifeLossFunctions = loadedFunctions;
+            _plotIndex = 0;
+            ChangePlot(_plotIndex);
+        }
     } 
 
     /// <summary>

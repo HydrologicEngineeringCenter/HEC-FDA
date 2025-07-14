@@ -40,7 +40,7 @@ namespace Statistics.Histograms
         public long[] BinCounts { get; private set; } = [];
         public double Min { get; private set; }
         public double Max { get; set; }
-        public double SampleMean { get; private set; } = 10;
+        public double SampleMean { get; private set; }
         public double SampleVariance
         {
             get
@@ -131,9 +131,22 @@ namespace Statistics.Histograms
             ConvergenceCriteria = convergenceCriteria;
             SampleSize = sampleSize;
         }
+        public DynamicHistogram(double min, double binWidth, Int64[] binCounts, double sampleMean, double sampleVariance, double sampleMin, double sampleMax, ConvergenceCriteria convergenceCriteria)
+        {
+            Min = min;
+            BinWidth = binWidth;
+            BinCounts = binCounts;
+            Max = Min + BinCounts.Length * BinWidth;
+            SampleSize = BinCounts.Sum();
+            SampleMean = sampleMean;
+            _SampleVariance = sampleVariance;
+            SampleMin = sampleMin;
+            SampleMax = sampleMax;
+            ConvergenceCriteria = convergenceCriteria;
+        }
         #endregion
         #region Functions
-       
+
 
 
         public void ForceDeQueue()

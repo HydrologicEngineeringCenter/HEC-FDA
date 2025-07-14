@@ -91,7 +91,7 @@ public class LifeLossFunctionGenerator
         return lifeLossRelationships;
     }
 
-    private readonly record struct StageAssociations
+    private readonly record struct LifeLossFunctionEntry
     (
         double Stage,
         DynamicHistogram Histogram,
@@ -100,22 +100,22 @@ public class LifeLossFunctionGenerator
 
     private LifeLossFunction BuildLifeLossFunctionForTime(string hazardTime, string summaryZone, Dictionary<string, double> stageByAlt, Dictionary<(string alt, string time), DynamicHistogram> histByAltTime)
     {
-        var rows = new List<StageAssociations>();
+        var entries = new List<LifeLossFunctionEntry>();
 
         foreach (string alt in _alternativeNames)
-            if (histByAltTime.TryGetValue((alt, hazardTime), out var hist)) rows.Add(new StageAssociations(stageByAlt[alt], hist, alt));
+            if (histByAltTime.TryGetValue((alt, hazardTime), out var hist)) entries.Add(new LifeLossFunctionEntry(stageByAlt[alt], hist, alt));
 
-        rows.Sort((a, b) => a.Stage.CompareTo(b.Stage));
+        entries.Sort((a, b) => a.Stage.CompareTo(b.Stage));
 
-        int n = rows.Count;
+        int n = entries.Count;
         var stages = new double[n];
         var histograms = new DynamicHistogram[n];
         var alternatives = new string[n];
         for (int i = 0; i < n; i++)
         {
-            stages[i] = rows[i].Stage;
-            histograms[i] = rows[i].Histogram;
-            alternatives[i] = rows[i].Alternative;
+            stages[i] = entries[i].Stage;
+            histograms[i] = entries[i].Histogram;
+            alternatives[i] = entries[i].Alternative;
         }
 
         var upd = new UncertainPairedData(stages, histograms, new CurveMetaData());
