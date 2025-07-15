@@ -3,6 +3,7 @@ using Statistics.Histograms;
 using System.Data;
 using System.Data.SQLite;
 using System.Text;
+using System.Transactions;
 
 namespace VisualScratchSpace.Model.Saving;
 
@@ -59,7 +60,10 @@ public class LifeLossPlotSaver : SQLiteSaverBase<LifeLossFunction>
             @bin_cts
         )";
 
-    public LifeLossPlotSaver(string dbpath) : base(dbpath) { } // calls the base class constructor to initialize the SQLite connection
+    public LifeLossPlotSaver(string dbpath) : base(dbpath) // calls the base class constructor to initialize the SQLite connection
+    {
+        CreateTable(_connection); // more efficient for SQL to check if table exists than checking a flag in this class
+    }
 
     /// <summary>
     /// Saves a single life loss function to SQLite. Creates the life loss table in SQLite if it does not exist yet
@@ -70,9 +74,6 @@ public class LifeLossPlotSaver : SQLiteSaverBase<LifeLossFunction>
         if (llf == null) return;
 
         using var transaction = _connection.BeginTransaction();
-
-        CreateTable(_connection, transaction); // more efficient for SQL to check if table exists than checking a flag in this class
-
         using var insertCommand = new SQLiteCommand(_connection) { Transaction = transaction };
         BuildInsertCommand(insertCommand); 
         InsertIntoTable(insertCommand, llf); // we reuse the same command with the same parameter placeholders, changing their values each time the command is executed
@@ -166,9 +167,9 @@ public class LifeLossPlotSaver : SQLiteSaverBase<LifeLossFunction>
         return histogram;
     }
 
-    private void CreateTable(SQLiteConnection connection, SQLiteTransaction transaction)
+    private void CreateTable(SQLiteConnection connection)
     {
-        using var cmd = new SQLiteCommand(connection) { Transaction = transaction };
+        using var cmd = new SQLiteCommand(connection);
         cmd.CommandText = _createCommandText;
         cmd.ExecuteNonQuery();
     }

@@ -1,6 +1,10 @@
-﻿using HEC.FDA.Model.paireddata;
+﻿using HEC.FDA.Model.alternatives;
+using HEC.FDA.Model.paireddata;
 using RasMapperLib;
+using SciChart.Core.Extensions;
 using Statistics.Histograms;
+using System.IO;
+using VisualScratchSpace.Model.Saving;
 
 namespace VisualScratchSpace.Model;
 
@@ -10,6 +14,7 @@ namespace VisualScratchSpace.Model;
 public class LifeLossFunctionGenerator
 {
     private readonly LifeLossDB _db;
+    private readonly LifeLossPlotSaver _saver = new(@"C:\FDA_Test_Data\WKS20230525\WKS20230525\save-test.db");
     private readonly Dictionary<string, string> _hydraulicsFolderByAlternative;
     private readonly string _summarySetName;
     private Dictionary<string, PointM> _indexPointBySummaryZone; // not readonly because we reassign its pointer in CreateLifeLossFunctions, too costly to do in constructor?
@@ -47,14 +52,75 @@ public class LifeLossFunctionGenerator
         foreach (string summaryZone in _indexPointBySummaryZone.Keys)
         {
             // creating points array of size 1 because that RAS API needs an array
-            // this can be avoided and I can get all stages with one API call if I can guarantee that the order is preserved upon return from RAS
-            // i.e. if I pass {pt1, pt2, pt3}, is the returned array from RAS {pt1_WSE, pt2_WSE, pt3_WSE}, or could the order have been changed
             PointMs indexPoint = [_indexPointBySummaryZone[summaryZone]]; 
 
-            List<LifeLossFunction> functions = CreateLifeLossRelationships(summaryZone, indexPoint);
+            List<LifeLossFunction> functions = CreateLifeLossFunctionsForSummaryZone(summaryZone, indexPoint);
             lifeLossFunctions.AddRange(functions); // AddRange because we are adding a list to another list
         }
         return lifeLossFunctions;
+    }
+
+    private List<LifeLossFunction> CreateLifeLossFunctionsForSummaryZone(string summaryZone, PointMs indexPoint)
+    {
+        PlotFilter allPF = new()
+        {
+            Simulation = [_simulationName],
+            Summary_Zone = [summaryZone],
+            Alternative = _alternativeNames,
+            Hazard_Time = _hazardTimes,
+        };
+
+        List<LifeLossFunction> existingFunctions = _saver.ReadFromSQLite(allPF);
+        var seenStages = new Dictionary<(string simulation, string summaryZone, string alternative), double>();
+        var seenHistograms = new Dictionary<(string simulation, string summaryZone, string alternative, string hazardTime), DynamicHistogram>();
+
+        foreach (LifeLossFunction llf  in existingFunctions)
+        {
+            for (int i = 0; i < llf.AlternativeNames.Length; i++)
+            {
+                seenStages[(llf.SimulationName, llf.SummaryZone, llf.AlternativeNames[i])] = llf.Data.Xvals[i];
+                seenHistograms[(llf.SimulationName, llf.SummaryZone, llf.AlternativeNames[i], llf.HazardTime)] = (DynamicHistogram)llf.Data.Yvals[i];
+            }
+        }
+
+        bool newEntries = false;
+        foreach (string hazardTime in _hazardTimes)
+        {
+            bool newEntry = false;
+            List<double> stages = new();
+            List<DynamicHistogram> histograms = new();
+            foreach (string alternative in _alternativeNames)
+            {
+                if (!seenStages.TryGetValue((_simulationName, summaryZone, alternative), out double stage))
+                {
+                    newEntry = true; newEntries = true;
+                    string associatedHydraulicsFolder = _hydraulicsFolderByAlternative[alternative];
+                    string hdf = Path.Combine(_topLevelHydraulicsFolder, associatedHydraulicsFolder, $"{associatedHydraulicsFolder}.hdf"); // asserting that the HDF file name is always in this format
+                    float[] computedStage = GeospatialHelpers.GetStageFromHDF(indexPoint, hdf);
+                    stage = (double)computedStage[0]; // GetStageFromHDF returns an array with one value in it (RAS API), so we get the first (and only) value
+                    seenStages[(_simulationName, summaryZone, alternative)] = stage;
+                }
+                stages.Add(stage); // getting the stage that is already saved in the DB
+
+                if (!seenHistograms.TryGetValue((_simulationName, summaryZone, alternative, hazardTime), out DynamicHistogram? histogram))
+                {
+                    newEntry = true; newEntries = true;
+                    string tableName = $"{_simulationName}>Results_By_Iteration>{alternative}>{hazardTime}>{_summarySetName}>{summaryZone}";
+                    histogram = _db.QueryLifeLossTable(tableName);
+                    seenHistograms[(_simulationName, summaryZone, alternative, hazardTime)] = histogram;
+                }
+                histograms.Add(histogram);
+            }
+            if (newEntry) 
+            {
+                UncertainPairedData upd = new(stages.ToArray(), histograms.ToArray(), new CurveMetaData());
+                LifeLossFunction llf = new(upd, _alternativeNames, _simulationName, summaryZone, hazardTime);
+                _saver.SaveToSQLite(llf);
+            } 
+        }
+
+        if (!newEntries) return existingFunctions;
+        return _saver.ReadFromSQLite(allPF);
     }
 
     /// <summary>
@@ -79,7 +145,7 @@ public class LifeLossFunctionGenerator
                 string tableName = $"{_simulationName}>Results_By_Iteration>{alternative}>{hazardTime}>{_summarySetName}>{summaryZone}";
                 DynamicHistogram histogram = _db.QueryLifeLossTable(tableName);
                 histogramsByAlternativeTime[(alternative, hazardTime)] = histogram;
-            }   
+            }
         }
 
         List<LifeLossFunction> lifeLossRelationships = new();
