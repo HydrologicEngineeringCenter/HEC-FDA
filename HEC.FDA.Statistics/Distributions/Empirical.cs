@@ -511,8 +511,6 @@ namespace Statistics.Distributions
             {
                 probs[i] = (double)i / count;
             }
-
-            Debug.Assert(min<=max); //temporary debugging
             
             return new Empirical(probs, sample.ToArray(), min, max);
         }
