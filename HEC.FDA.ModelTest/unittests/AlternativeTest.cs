@@ -224,7 +224,7 @@ namespace HEC.FDA.ModelTest.unittests
         [InlineData(35000, 2023, 50000, 2047, 50, .03, 44279.92)]
         public void ComputeEEAD_Test(double baseYearEAD, int baseYear, double mostLikelyFutureEAD, int mostLikelyFutureYear, int periodOfAnalysis, double discountRate, double expected)
         {
-            double actual = Alternative.ComputeEEAD(baseYearEAD, baseYear, mostLikelyFutureEAD, mostLikelyFutureYear, periodOfAnalysis, discountRate);
+            double actual = Alternative.ComputeEqad(baseYearEAD, baseYear, mostLikelyFutureEAD, mostLikelyFutureYear, periodOfAnalysis, discountRate);
             Assert.Equal(expected, actual, .01);
         }
     }
