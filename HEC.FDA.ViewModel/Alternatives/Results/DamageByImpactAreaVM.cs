@@ -45,7 +45,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                         double futureMean = results.SampleMeanFutureYearEAD(impactAreaID: id);
                         Rows.Add(new ImpactAreaRowItem(impactAreaName, futureMean)); 
                         break;
-                    case DamageMeasureYear.AAEQ:
+                    case DamageMeasureYear.Eqad:
                         double mean = results.SampleMeanEqad(impactAreaID: id);
                         Rows.Add(new ImpactAreaRowItem(impactAreaName, mean)); 
                         break;
@@ -84,8 +84,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                         double futureMean = results.SampleMeanFutureYearEADReduced(altID, impactAreaID: id);
                         Rows.Add(new ImpactAreaRowItem(impactAreaName, futureMean));
                         break;
-                    case DamageMeasureYear.AAEQ:
-                        double mean = results.SampleMeanAAEQDamageReduced(altID, impactAreaID: id);
+                    case DamageMeasureYear.Eqad:
+                        double mean = results.SampleMeanEqadReduced(altID, impactAreaID: id);
                         Rows.Add(new ImpactAreaRowItem(impactAreaName, mean));
                         break;
                 }

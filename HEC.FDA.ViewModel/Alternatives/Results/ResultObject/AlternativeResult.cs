@@ -3,10 +3,10 @@
     public class AlternativeResult
     {
         public EADResult EADResult{get;}
-        public AAEQResult AAEQResult { get;  }
+        public EqadResult AAEQResult { get;  }
         public string Name { get;  }
 
-        public AlternativeResult(string name, EADResult eadResult, AAEQResult aaeqResult)
+        public AlternativeResult(string name, EADResult eadResult, EqadResult aaeqResult)
         {
             Name = name;
             EADResult = eadResult;

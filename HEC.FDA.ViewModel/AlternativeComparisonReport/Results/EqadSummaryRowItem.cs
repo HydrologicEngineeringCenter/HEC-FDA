@@ -2,35 +2,41 @@
 
 namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
 {
-    public class AggregatedAAEQSummaryRowItem
+    public class EqadSummaryRowItem
     {
         [DisplayAsColumn("Impact Area")]
         public string ImpactArea { get; set; }
+        [DisplayAsColumn("Damage Category")]
+        public string DamCat { get; set; }
+        [DisplayAsColumn("Asset Category")]
+        public string AssetCat { get; set; }
         [DisplayAsColumn("Without Project Alternative")]
         public string WithoutProjAlternative { get; set; }
         [DisplayAsColumn("Without Project EqAD")]
-        public double WithoutProjAAEQ { get; set; }
+        public double WithoutProjEqad { get; set; }
         [DisplayAsColumn("With Project Alternative")]
         public string WithProjAlternative { get; set; }
         [DisplayAsColumn("With Project EqAD")]
-        public double WithProjAAEQ { get; set; }
+        public double WithProjEqad { get; set; }
         [DisplayAsColumn("Mean EqAD Reduced")]
-        public double AAEQDamageReduced { get; set; }
-        [DisplayAsColumn("25th Percentile EqAD Reduced")] // This is intentionally swapped 1-x
+        public double EqadReduced { get; set; }
+        [DisplayAsColumn("25th Percentile EqAD Reduced")]// This is intentionally swapped 1-x
         public double Point75 { get; set; }
         [DisplayAsColumn("50th Percentile EqAD Reduced")]
         public double Point5 { get; set; }
         [DisplayAsColumn("75th Percentile EqAD Reduced")] // This is intentionally swapped 1-x
         public double Point25 { get; set; }
-        public AggregatedAAEQSummaryRowItem(string impactArea, string withoutName, double withoutAAEQDamage, string withProjName, double withProjAAEQ,
-            double AAEQReduced, double point75, double point5, double point25)
+        public EqadSummaryRowItem(string impactArea, string damcat, string assetcat,string withoutName, double withoutEqadDamage, string withProjName, double withProjEqad, 
+            double eqadReduced, double point75, double point5, double point25)
         {
             ImpactArea = impactArea;
+            DamCat = damcat;
+            AssetCat = assetcat;
             WithoutProjAlternative = withoutName;
-            WithoutProjAAEQ = withoutAAEQDamage;
+            WithoutProjEqad = withoutEqadDamage;
             WithProjAlternative = withProjName;
-            WithProjAAEQ = withProjAAEQ;
-            AAEQDamageReduced = AAEQReduced;
+            WithProjEqad = withProjEqad;
+            EqadReduced = eqadReduced;
             Point75 = point75;
             Point5 = point5;
             Point25 = point25;

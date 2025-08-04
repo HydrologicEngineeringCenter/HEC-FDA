@@ -11,7 +11,7 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
 {   //TODO: save a year 
 
     //results of the alternative comparison
-    private readonly List<StudyAreaConsequencesByQuantile> _AaeqReducedResultsList; // somehow this guy is coming in with calculated mean 0. zero for all quantiles, and a negative sample mean. 
+    private readonly List<StudyAreaConsequencesByQuantile> _EqadReducedResultsList; // somehow this guy is coming in with calculated mean 0. zero for all quantiles, and a negative sample mean. 
     private readonly List<StudyAreaConsequencesByQuantile> _BaseYearEADReducedResultsList;
     private readonly List<StudyAreaConsequencesByQuantile> _FutureYearEADReducedResultsList;
 
@@ -22,11 +22,11 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     public List<int> Years => _WithoutProjectAlternativeResults.AnalysisYears;
 
     #region Constructor
-    internal AlternativeComparisonReportResults(IEnumerable<AlternativeResults> withProjectAlternativeResults, AlternativeResults withoutProjectAlternativeResults, List<StudyAreaConsequencesByQuantile> aaeqResults, List<StudyAreaConsequencesByQuantile> baseYearEADResults, List<StudyAreaConsequencesByQuantile> futureYearEADResults)
+    internal AlternativeComparisonReportResults(IEnumerable<AlternativeResults> withProjectAlternativeResults, AlternativeResults withoutProjectAlternativeResults, List<StudyAreaConsequencesByQuantile> eqadResults, List<StudyAreaConsequencesByQuantile> baseYearEADResults, List<StudyAreaConsequencesByQuantile> futureYearEADResults)
     {
         _WithProjectAlternativeResults = [.. withProjectAlternativeResults];
         _WithoutProjectAlternativeResults = withoutProjectAlternativeResults;
-        _AaeqReducedResultsList = aaeqResults;
+        _EqadReducedResultsList = eqadResults;
         _BaseYearEADReducedResultsList = baseYearEADResults;
         _FutureYearEADReducedResultsList = futureYearEADResults;
     }
@@ -38,37 +38,37 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     //We could cycle through each of the three lists, but that seems unnecessary 
     public List<int> GetImpactAreaIDs() 
     {
-        return _AaeqReducedResultsList
+        return _EqadReducedResultsList
         .SelectMany(x => x.ConsequenceResultList.Select(r => r.RegionID))
         .Distinct()
         .ToList();
     }
     public List<string> GetAssetCategories()
     {
-        return _AaeqReducedResultsList
+        return _EqadReducedResultsList
         .SelectMany(x => x.ConsequenceResultList.Select(r => r.AssetCategory))
         .Distinct()
         .ToList();
     }
     public List<string> GetDamageCategories()
     {
-        return _AaeqReducedResultsList
+        return _EqadReducedResultsList
         .SelectMany(x => x.ConsequenceResultList.Select(r => r.DamageCategory))
         .Distinct()
         .ToList();
     }
     /// <summary>
-    /// This method gets the mean aaeq damage reduced between the with- and without-project conditions for a given with-project condition, 
+    /// This method gets the mean EqAD damage reduced between the with- and without-project conditions for a given with-project condition, 
     /// impact area, damage category, and asset category combination. 
     ///  The level of aggregation of  consequences is determined by the arguments used in the method
-    /// For example, if you wanted the mean aaeq damage reduced for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
-    /// double consequenceValue = MeanAAEQDamageReduced(1, damageCategory: "residential", impactAreaID: 2);        /// </summary>
+    /// For example, if you wanted the mean EqAD damage reduced for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
+    /// double consequenceValue = MeanEqADDamageReduced(1, damageCategory: "residential", impactAreaID: 2);        /// </summary>
     /// <param name="alternativeID"></param>
     /// <param name="impactAreaID"></param>
     /// <param name="damageCategory"></param> either residential, commercial, etc...
     /// <param name="assetCategory"></param> either structure, content, etc...
     /// <returns></returns>
-    public double SampleMeanAAEQDamageReduced(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+    public double SampleMeanEqadReduced(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
     {
         return GetConsequencesReducedResultsForGivenAlternative(alternativeID).SampleMeanDamage(damageCategory, assetCategory, impactAreaID);
     }
@@ -121,30 +121,30 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
         AlternativeResults alternativeResults = GetAlternativeResults(alternativeID);
         return alternativeResults.SampleMeanFutureYearEAD(impactAreaID, damageCategory, assetCategory);
     }
-    public double SampleMeanWithProjectAAEQDamage(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+    public double SampleMeanWithProjectEqad(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
     {
         AlternativeResults alternativeResults = GetAlternativeResults(alternativeID);
         return alternativeResults.SampleMeanEqad(impactAreaID, damageCategory, assetCategory);
     }
-    public double SampleMeanWithoutProjectAAEQDamage(int impactArea = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+    public double SampleMeanWithoutProjectEqad(int impactArea = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
     {
         return _WithoutProjectAlternativeResults.SampleMeanEqad(impactArea, damageCategory, assetCategory);
     }
 
     /// <summary>
-    /// This method calls the inverse CDF of aaeq damage reduced histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
+    /// This method calls the inverse CDF of EqAD damage reduced histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
     ///  The level of aggregation of  consequences is determined by the arguments used in the method
-    /// For example, if you wanted the aaeq damage exceeded with probability .98 for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
-    /// double consequenceValue = AAEQDamageReducedExceededWithProbabilityQ(.98, 1, damageCategory: "residential", impactAreaID: 2);
+    /// For example, if you wanted the EqAD damage exceeded with probability .98 for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
+    /// double consequenceValue = EqadReducedExceededWithProbabilityQ(.98, 1, damageCategory: "residential", impactAreaID: 2);
     /// </summary>
-    public double AAEQDamageReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+    public double EqadReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
     {
         return GetConsequencesReducedResultsForGivenAlternative(alternativeID).ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
     }
     /// <summary>
     /// This method calls the inverse CDF of base year ead reduced histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
     ///  The level of aggregation of  consequences is determined by the arguments used in the method
-    /// For example, if you wanted the aaeq damage exceeded with probability .98 for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
+    /// For example, if you wanted the EqAD damage exceeded with probability .98 for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
     /// double consequenceValue = BaseYearEADReducedExceededWithProbabilityQ(.98, 1, damageCategory: "residential", impactAreaID: 2);
     /// </summary>
     /// <returns></returns>
@@ -155,7 +155,7 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     /// <summary>
     /// This method calls the inverse CDF of future year ead reduced histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
     ///  The level of aggregation of  consequences is determined by the arguments used in the method
-    /// For example, if you wanted the aaeq damage exceeded with probability .98 for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
+    /// For example, if you wanted the EqAD damage exceeded with probability .98 for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
     /// double consequenceValue = FutureYearEADReducedExceededWithProbabilityQ(.98, 1, damageCategory: "residential", impactAreaID: 2);
     /// </summary>
     public double FutureYearEADReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
@@ -168,10 +168,10 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     /// For example, if you wanted a histogram for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
     /// IHistogram histogram = GetAlternativeResultsHistogram(1, damageCategory: "residential", impactAreaID: 2);
     /// </summary>
-    public Empirical GetAAEQReducedResultsHistogram(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+    public Empirical GetEqadReducedResultsHistogram(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
     {
-        StudyAreaConsequencesByQuantile aaeqResults = GetConsequencesReducedResultsForGivenAlternative(alternativeID);
-        return aaeqResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID);
+        StudyAreaConsequencesByQuantile eqadResults = GetConsequencesReducedResultsForGivenAlternative(alternativeID);
+        return eqadResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID);
     }
     /// <summary>
     /// This method gets the histogram (distribution) of base year ead reduced for the given damage category(ies), asset category(ies), and impact area(s)
@@ -200,13 +200,13 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
         StudyAreaConsequencesByQuantile consequenceResults = GetConsequencesReducedResultsForGivenAlternative(consequenceDistributionResults.AlternativeID, isEADResults, isBaseYearResults);
         if (consequenceResults.IsNull)
         {
-            _AaeqReducedResultsList.Add(consequenceDistributionResults);
+            _EqadReducedResultsList.Add(consequenceDistributionResults);
         }
     }
     internal StudyAreaConsequencesByQuantile GetConsequencesReducedResultsForGivenAlternative(int alternativeID, bool getEADResults = false, bool getBaseYearResults = false)
     {
         List<StudyAreaConsequencesByQuantile> listToSearch;
-        if (!getEADResults) { listToSearch = _AaeqReducedResultsList; }
+        if (!getEADResults) { listToSearch = _EqadReducedResultsList; }
         else if (getEADResults && getBaseYearResults) { listToSearch = _BaseYearEADReducedResultsList; } //why the fuck are you 1?
         else if (getEADResults && !getBaseYearResults) { listToSearch = _FutureYearEADReducedResultsList; } //Sample mean stupid negative. 
         else { throw new System.ArgumentException("An illogical combination of arguments was provided"); }

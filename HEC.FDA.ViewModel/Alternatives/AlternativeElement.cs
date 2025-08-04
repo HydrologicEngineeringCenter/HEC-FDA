@@ -211,7 +211,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             YearResult yr2 = new(analysisYears.Max(), new DamageWithUncertaintyVM(results, DamageMeasureYear.Future), new DamageByImpactAreaVM(results, DamageMeasureYear.Future), new DamageByDamCatVM(results, DamageMeasureYear.Future));
 
             EADResult eadResult = new(new List<YearResult>() { yr1, yr2 });
-            AAEQResult aaeqResult = new(new DamageWithUncertaintyVM( results, DamageMeasureYear.AAEQ, discountRate, period), new DamageByImpactAreaVM( results, DamageMeasureYear.AAEQ, discountRate, period), new DamageByDamCatVM(results, discountRate, period));
+            EqadResult aaeqResult = new(new DamageWithUncertaintyVM( results, DamageMeasureYear.Eqad, discountRate, period), new DamageByImpactAreaVM( results, DamageMeasureYear.Eqad, discountRate, period), new DamageByDamCatVM(results, discountRate, period));
             AlternativeResult altResult = new(Name, eadResult, aaeqResult);
 
             return altResult;
