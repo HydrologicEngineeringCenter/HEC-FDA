@@ -215,7 +215,7 @@ namespace HEC.FDA.ModelTest.integrationtests
             //Act
             double actualCommercialMeanEAD = scenarioResults.SampleMeanExpectedAnnualConsequences(impactAreaID1, commercialDamageCategory);
             double actualResidentialMeanEAD = scenarioResults.SampleMeanExpectedAnnualConsequences(impactAreaID1, residentialDamageCategory);
-            double actualMeanAAEQ = alternativeResults.SampleMeanAAEQDamage(impactAreaID1, commercialDamageCategory);
+            double actualMeanAAEQ = alternativeResults.SampleMeanEqad(impactAreaID1, commercialDamageCategory);
             double actualCommercialMeanEADFromAnotherSource = empiricalEADDistribution.Mean;
             double tolerance = 0.11;
             double strictTolerance = 0.01;

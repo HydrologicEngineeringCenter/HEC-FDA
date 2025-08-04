@@ -53,7 +53,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
                 {
                     foreach(string assetCat in assetCats)
                     {
-                        Empirical dist = altElem.Results.GetAAEQDamageDistribution(impactAreaID, damCat, assetCat);
+                        Empirical dist = altElem.Results.GetEqadDistribution(impactAreaID, damCat, assetCat);
                         double mean = Math.Round(dist.Mean, 2);
                         AlternativeDamCatRowItem row = new(Name, impactAreaIdToName[impactAreaID], assetCat, damCat, mean);
                         rowItems.Add(row);

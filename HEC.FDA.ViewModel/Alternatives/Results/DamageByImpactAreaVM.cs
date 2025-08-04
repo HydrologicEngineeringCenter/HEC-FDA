@@ -46,7 +46,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                         Rows.Add(new ImpactAreaRowItem(impactAreaName, futureMean)); 
                         break;
                     case DamageMeasureYear.AAEQ:
-                        double mean = results.SampleMeanAAEQDamage(impactAreaID: id);
+                        double mean = results.SampleMeanEqad(impactAreaID: id);
                         Rows.Add(new ImpactAreaRowItem(impactAreaName, mean)); 
                         break;
                 }

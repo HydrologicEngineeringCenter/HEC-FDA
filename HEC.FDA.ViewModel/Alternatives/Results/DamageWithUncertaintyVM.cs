@@ -54,7 +54,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                     QuartileLabel = QUARTILE_EAD;
                     break;
                 case DamageMeasureYear.AAEQ:
-                    Mean = results.SampleMeanAAEQDamage();
+                    Mean = results.SampleMeanEqad();
                     QuartileLabel = QUARTILE_EQAD;
                     break;
             }
@@ -133,7 +133,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                     empirical = altResults.GetFutureYearEADDistribution();
                     break;
                 case DamageMeasureYear.AAEQ:
-                    empirical = altResults.GetAAEQDamageDistribution();
+                    empirical = altResults.GetEqadDistribution();
                     break;
             }
 
@@ -298,7 +298,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                         yValues.Add(results.FutureYearEADDamageExceededWithProbabilityQ(x));
                         break;
                     case DamageMeasureYear.AAEQ:
-                        yValues.Add(results.AAEQDamageExceededWithProbabilityQ(x));
+                        yValues.Add(results.EqadExceededWithProbabilityQ(x));
                         break;
                 }
             }

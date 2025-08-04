@@ -92,12 +92,12 @@ namespace HEC.FDA.ModelTest.unittests
                 baseScenarioResults, futureScenarioResults,baseYear, futureYear);
             double tolerance = 0.01;
 
-            double actualAAEQExceededWithProb = alternativeResults.AAEQDamageExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damCat, assetCat);
+            double actualAAEQExceededWithProb = alternativeResults.EqadExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damCat, assetCat);
             double differenceAAEQExceededWithProb = actualAAEQExceededWithProb - expectedAAEQDamageExceededWithAnyProbability;
             double errorAAEQExceededWithProb = Math.Abs(differenceAAEQExceededWithProb / actualAAEQExceededWithProb);
             Assert.True(errorAAEQExceededWithProb < tolerance);
 
-            double actualMeanAAEQ = alternativeResults.SampleMeanAAEQDamage(impactAreaID, damCat, assetCat);
+            double actualMeanAAEQ = alternativeResults.SampleMeanEqad(impactAreaID, damCat, assetCat);
             double differenceAAEQMean = actualMeanAAEQ - expectedMeanAAEQ;
             double errorMeanAAEQ = Math.Abs(differenceAAEQMean / actualMeanAAEQ);
             Assert.True(errorMeanAAEQ < tolerance);

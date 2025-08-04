@@ -73,11 +73,11 @@ public static class AlternativeComparisonReport
 
             StudyAreaConsequencesByQuantile damageReducedOneAlternative = new(withProjectAlternativeResults.AlternativeID);
 
-            List<AggregatedConsequencesByQuantile> withoutProjectConsequenceDistList = [.. withoutProjectAlternativeResults.AAEQDamageResults.ConsequenceResultList];
+            List<AggregatedConsequencesByQuantile> withoutProjectConsequenceDistList = [.. withoutProjectAlternativeResults.EqadDamageResults.ConsequenceResultList];
 
-            foreach (AggregatedConsequencesByQuantile withProjectDamageResult in withProjectAlternativeResults.AAEQDamageResults.ConsequenceResultList)
+            foreach (AggregatedConsequencesByQuantile withProjectDamageResult in withProjectAlternativeResults.EqadDamageResults.ConsequenceResultList)
             {
-                AggregatedConsequencesByQuantile withoutProjectDamageResult = withoutProjectAlternativeResults.AAEQDamageResults.GetConsequenceResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, withProjectDamageResult.RegionID); //GetAAEQDamageHistogram;
+                AggregatedConsequencesByQuantile withoutProjectDamageResult = withoutProjectAlternativeResults.EqadDamageResults.GetConsequenceResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, withProjectDamageResult.RegionID); //GetAAEQDamageHistogram;
                 withoutProjectConsequenceDistList.Remove(withoutProjectDamageResult);
 
 
@@ -88,7 +88,7 @@ public static class AlternativeComparisonReport
             {
                 foreach (AggregatedConsequencesByQuantile withoutProjectDamageResult in withoutProjectConsequenceDistList)
                 {
-                    AggregatedConsequencesByQuantile withProjectDamageResult = withProjectAlternativeResults.AAEQDamageResults.GetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID);
+                    AggregatedConsequencesByQuantile withProjectDamageResult = withProjectAlternativeResults.EqadDamageResults.GetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID);
                     AggregatedConsequencesByQuantile damageReducedResult = IterateOnConsequenceDistributionResult(withProjectDamageResult, withoutProjectDamageResult, pr, false);
                     damageReducedOneAlternative.AddExistingConsequenceResultObject(damageReducedResult);
                 }
@@ -141,12 +141,12 @@ public static class AlternativeComparisonReport
         switch (type)
         {
             case AlternativeComparisonReportType.BaseYearEADReduced:
-                List<ScenarioResults> withProj = [.. withProjectAlternativesResults.Select(x => x.BaseYearScenarioResults)];
+                List<ScenarioResults> withProj = withProjectAlternativesResults.Select(x => x.BaseYearScenarioResults).ToList();
                 withoutProjectScenarioResults = withoutProjectAlternativeResults.BaseYearScenarioResults;
                 withProjectScenarioResultsList = withProj;
                 break;
             case AlternativeComparisonReportType.FutureYearEADReduced:
-                List<ScenarioResults> withProjFut = [.. withProjectAlternativesResults.Select(x => x.FutureYearScenarioResults)];
+                List<ScenarioResults> withProjFut = withProjectAlternativesResults.Select(x => x.FutureYearScenarioResults).ToList();
                 withoutProjectScenarioResults = withoutProjectAlternativeResults.FutureYearScenarioResults;
                 withProjectScenarioResultsList = withProjFut;
                 break;

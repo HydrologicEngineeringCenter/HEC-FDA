@@ -124,11 +124,11 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     public double SampleMeanWithProjectAAEQDamage(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
     {
         AlternativeResults alternativeResults = GetAlternativeResults(alternativeID);
-        return alternativeResults.SampleMeanAAEQDamage(impactAreaID, damageCategory, assetCategory);
+        return alternativeResults.SampleMeanEqad(impactAreaID, damageCategory, assetCategory);
     }
     public double SampleMeanWithoutProjectAAEQDamage(int impactArea = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
     {
-        return _WithoutProjectAlternativeResults.SampleMeanAAEQDamage(impactArea, damageCategory, assetCategory);
+        return _WithoutProjectAlternativeResults.SampleMeanEqad(impactArea, damageCategory, assetCategory);
     }
 
     /// <summary>

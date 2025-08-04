@@ -58,7 +58,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             List<string> damCats = alternativeResults.GetDamageCategories();
             foreach (string damCat in damCats)
             {
-                Rows.Add(new DamageCategoryRowItem(damCat, alternativeResults.SampleMeanAAEQDamage(damageCategory: damCat)));
+                Rows.Add(new DamageCategoryRowItem(damCat, alternativeResults.SampleMeanEqad(damageCategory: damCat)));
             }
         }
 
