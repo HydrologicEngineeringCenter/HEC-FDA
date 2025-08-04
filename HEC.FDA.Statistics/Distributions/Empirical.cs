@@ -8,6 +8,7 @@ using Utilities;
 using System.Threading.Tasks;
 using System.Threading;
 using Statistics.Histograms;
+using System.Diagnostics;
 
 namespace Statistics.Distributions
 {
@@ -425,7 +426,7 @@ namespace Statistics.Distributions
 
             });
 
-            //Handle the sample mean separately -- THIS IS FUCKED
+            //Handle the sample mean separately
             double stackedMean = empiricalDistributionsForStacking[0].SampleMean;
             for (int j = 1; j < empiricalDistributionsForStacking.Count; j++)
             {
@@ -501,18 +502,19 @@ namespace Statistics.Distributions
         {
             int count = sample.Count;
             double[] probs = new double[count];
-            double min = Double.MaxValue;
-            double max = Double.MinValue;
-            sample.Sort();//check if ascending or decending
-            double[] sampleArray = new double[sample.Count];
-            for (int i = 0; i < sample.Count; i++)
+
+            sample.Sort(); //always sorts ascending
+            double min = sample[0];
+            double max = sample[^1];
+
+            for (int i = 0; i < count; i++)
             {
-                if (sample[i] > max) max = sample[i];
-                if (sample[i] < min) min = sample[i];
-                probs[i] = (double)i / (double)count;
-                sampleArray[i] = sample[i];
+                probs[i] = (double)i / count;
             }
-            return new Empirical(probs, sampleArray, min, max);
+
+            Debug.Assert(min<=max); //temporary debugging
+            
+            return new Empirical(probs, sample.ToArray(), min, max);
         }
         //TODO: I don't think it makes sense for Fit to not be static 
         //Try to change that 
@@ -520,14 +522,14 @@ namespace Statistics.Distributions
         {
             int count = sample.Length;
             double[] probs = new double[count];
-            double min = Double.MaxValue;
-            double max = Double.MinValue;
-            Array.Sort(sample);//check if ascending or decending
+
+            Array.Sort(sample);//ascending
+            double min = sample[0];
+            double max = sample[^1];
+
             for (int i = 0; i < sample.Length; i++)
             {
-                if (sample[i] > max) max = sample[i];
-                if (sample[i] < min) min = sample[i];
-                probs[i] = (double)i / (double)count;
+                probs[i] = (double)i / count;
             }
             return new Empirical(probs, sample, min, max);
         }

@@ -204,6 +204,11 @@ namespace HEC.FDA.Model.alternatives
             int probabilitySteps = 25000;
             var resultCollection = new ConcurrentBag<double>();
 
+            //we're taking the EAD from base year and the most likely future year, and computing the EqAD for 25000 samples from the histograms, walking in small probabilty steps through both. 
+            // ex. we take the EAD from base at .01, the EAD from future at .01 and compute the EAD for .01. 
+            //We then take that value and add it to the result collection. Using that collection as the sample, we fit an empirical distribution to it. 
+
+            //The mean is done separately, because the SampleMeans of the Consequence histograms may not be the mean of those histograms. Sample mean is propograted from the original sample data. 
             Parallel.For(0, probabilitySteps, i =>
             {
                 double probabilityStep = (i + 0.5) / probabilitySteps;
