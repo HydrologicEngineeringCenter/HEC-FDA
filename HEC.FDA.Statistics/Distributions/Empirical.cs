@@ -61,6 +61,10 @@ namespace Statistics.Distributions
 
         }
 
+        /// <summary>
+        /// The probabilies and observation values must be in ascending order, and are assumed to be linked as coordinates. 
+        /// Counts should be equal. 
+        /// </summary>
         public Empirical(double[] probabilities, double[] observationValues)
         {
             CumulativeProbabilities = probabilities;
@@ -70,13 +74,17 @@ namespace Statistics.Distributions
             BuildFromProperties();
             AddRules();
         }
+        /// <summary>
+        /// The probabilies and observation values must be in ascending order, and are assumed to be linked as coordinates. 
+        /// Counts should be equal. Min and max should be equal to the first and last values in the observationValues array.
+        /// </summary>
         public Empirical(double[] probabilities, double[] observationValues, double min, double max)
         {
             CumulativeProbabilities = probabilities;
             Quantiles = observationValues;
             Min = min;
             Max = max;
-            Truncated = true;
+            Truncated = true; //Not sure this is true. 
             BuildFromProperties();
             AddRules();
         }

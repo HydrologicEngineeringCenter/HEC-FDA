@@ -205,11 +205,24 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     }
     internal StudyAreaConsequencesByQuantile GetConsequencesReducedResultsForGivenAlternative(int alternativeID, bool getEADResults = false, bool getBaseYearResults = false)
     {
+        //Three logical cases here: We want EqAD results, we want base year EAD results, or we want future year EAD results.
         List<StudyAreaConsequencesByQuantile> listToSearch;
-        if (!getEADResults) { listToSearch = _EqadReducedResultsList; }
-        else if (getEADResults && getBaseYearResults) { listToSearch = _BaseYearEADReducedResultsList; } //why the fuck are you 1?
-        else if (getEADResults && !getBaseYearResults) { listToSearch = _FutureYearEADReducedResultsList; } //Sample mean stupid negative. 
-        else { throw new System.ArgumentException("An illogical combination of arguments was provided"); }
+        if (!getEADResults) 
+        { 
+            listToSearch = _EqadReducedResultsList;
+        }
+        else if (getEADResults && getBaseYearResults)
+        {
+            listToSearch = _BaseYearEADReducedResultsList;
+        } 
+        else if (getEADResults && !getBaseYearResults) 
+        { 
+            listToSearch = _FutureYearEADReducedResultsList;
+        } 
+        else
+        {
+            throw new System.ArgumentException("An illogical combination of arguments was provided");
+        }
         foreach (StudyAreaConsequencesByQuantile consequenceDistResults in listToSearch)
         {
             if (consequenceDistResults.AlternativeID.Equals(alternativeID))

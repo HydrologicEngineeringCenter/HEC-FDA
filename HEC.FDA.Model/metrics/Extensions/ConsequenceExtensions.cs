@@ -6,7 +6,8 @@ namespace HEC.FDA.Model.metrics.Extensions;
 public static class ConsequenceExtensions
 {
     /// <summary>
-    /// Filters a collection of AggregatedConsequencesByQuantile based on damage category, asset category, and impact area
+    /// Filters a collection of AggregatedConsequencesByQuantile based on damage category, asset category, and impact area.
+    /// Failure to match returns an empty IEnumerable. 
     /// </summary>
     public static IEnumerable<AggregatedConsequencesByQuantile> FilterByCategories(
         this IEnumerable<AggregatedConsequencesByQuantile> consequences,
@@ -22,6 +23,7 @@ public static class ConsequenceExtensions
 
     /// <summary>
     /// Filters a collection of AggregatedConsequencesBinned based on damage category, asset category, and impact area
+    /// Failure to match returns an empty IEnumerable. 
     /// </summary>
     public static IEnumerable<AggregatedConsequencesBinned> FilterByCategories(
         this IEnumerable<AggregatedConsequencesBinned> consequences,
