@@ -27,7 +27,12 @@ namespace Statistics.Distributions
 
         #region IDistributionProperties
         public override IDistributionEnum Type => IDistributionEnum.Empirical;
-
+        /// <summary>
+        /// Mean of the sample used to fit the distribution. May vary from the calculated mean represented in the qauntiles of this class due to 
+        /// the impacts of binning from the histogram aggregation of results. Especailly pronounced in highly skewed distributions represented by the histogram.
+        /// Must be set from outside this class. Specifically not calculated from the Quantiles stored here. 
+        /// </summary>
+        public double SampleMean {get;set;}
         public double Mean { get; set; }
         public double Median { get; set; }
         public double StandardDeviation { get; set; }
@@ -47,12 +52,12 @@ namespace Statistics.Distributions
             Median = 0;
             StandardDeviation = 0;
             Variance = 0;
-            Min = 0; 
+            Min = 0;
             Max = 0;
             CumulativeProbabilities = new double[] { 0 };
             Quantiles = new double[] { 0 };
             _Constructed = true;
-            
+
         }
 
         public Empirical(double[] probabilities, double[] observationValues)
@@ -76,7 +81,7 @@ namespace Statistics.Distributions
         }
         public void BuildFromProperties()
         {
-            
+
             SampleSize = Quantiles.Length;
             Mean = ComputeMean();
             Median = ComputeMedian();
@@ -90,7 +95,8 @@ namespace Statistics.Distributions
         private void AddRules()
         {
             AddSinglePropertyRule(nameof(SampleSize),
-                new Rule(() => {
+                new Rule(() =>
+                {
                     return SampleSize > 0;
                 },
                 "SampleSize must be greater than 0.",
@@ -126,7 +132,7 @@ namespace Statistics.Distributions
                 valL = valR;
                 cdfL = cdfR;
                 // add interval values
-                for (i = 1; i < SampleSize; ++i)
+                for (i = 1; i < SampleSize - 1; ++i)
                 {
                     valR = Quantiles[i];
                     cdfR = CumulativeProbabilities[i];
@@ -176,14 +182,14 @@ namespace Statistics.Distributions
             int bins = 250;
             double valueStep = range / bins;
             double[] cumulativeFrequencies = new double[bins];
-            for(int i = 0; i < bins; i++)
+            for (int i = 0; i < bins; i++)
             {
                 double cumulativeValueStep = Min + valueStep * i;
                 double cumulativeProbability = CDF(cumulativeValueStep);
                 cumulativeFrequencies[i] = cumulativeProbability;
             }
             return (Min, valueStep, cumulativeFrequencies);
-            
+
         }
 
         private double ComputeVariance()
@@ -416,11 +422,21 @@ namespace Statistics.Distributions
                 }
                 cumulativeProbabilities[i] = probabilityStep;
                 stackedInvCDFs[i] = stackedValue;
-                Thread.Sleep(0);
 
             });
 
-            return FitToSample(stackedInvCDFs.ToList());
+            //Handle the sample mean separately -- THIS IS FUCKED
+            double stackedMean = empiricalDistributionsForStacking[0].SampleMean;
+            for (int j = 1; j < empiricalDistributionsForStacking.Count; j++)
+            {
+                stackedMean = addOrSubtract(stackedMean, empiricalDistributionsForStacking[j].SampleMean);
+            }
+            //end
+
+            Empirical empirical = FitToSample([.. stackedInvCDFs]);
+            empirical.SampleMean = stackedMean;
+            //Handle the Sample mean here/ 
+            return empirical;
         }
 
         public static double Sum(double x1, double x2)
@@ -431,11 +447,11 @@ namespace Statistics.Distributions
         {
             return x1 - x2;
         }
-       
+
 
         public XElement WriteToXML()
         {
-            XElement masterElem = new("Empirical Distribution");
+            XElement masterElem = new("Empirical_Distribution");
             masterElem.SetAttributeValue("Ordinate_Count", SampleSize);
             for (int i = 0; i < SampleSize; i++)
             {
@@ -472,7 +488,14 @@ namespace Statistics.Distributions
                 }
                 i++;
             }
-            return new Empirical(cumulativeProbabilities, observationValues);
+            
+            Empirical empirical = new(cumulativeProbabilities, observationValues);
+            string sampleMean = element.Attribute("SampleMean")?.Value;
+            if (sampleMean != null)
+            {
+                empirical.SampleMean = Convert.ToDouble(sampleMean);
+            }
+            return empirical;
         }
         public static Empirical FitToSample(List<double> sample)
         {

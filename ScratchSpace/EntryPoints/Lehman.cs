@@ -110,7 +110,7 @@ internal class Lehman
 
         ImpactAreaScenarioResults results = simulation.Compute(convergenceCriteria);
 
-        double EAD = results.ConsequenceResults.MeanDamage(damageCategory, assetCategory, impactAreaID);
+        double EAD = results.ConsequenceResults.SampleMeanDamage(damageCategory, assetCategory, impactAreaID);
         Console.WriteLine("EAD was " + EAD);
         double meanActualAEP = results.MeanAEP(impactAreaID);
         Console.WriteLine("AEP was " + meanActualAEP);

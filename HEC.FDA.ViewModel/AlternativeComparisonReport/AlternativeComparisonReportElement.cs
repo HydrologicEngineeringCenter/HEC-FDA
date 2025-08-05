@@ -142,8 +142,7 @@ public class AlternativeComparisonReportElement : ChildElement
                 withProjAltsResults[i] = await AlternativeComputer.RunAnnualizationCompute(withProjAlts[i], props);
             }
 
-            Model.alternativeComparisonReport.AlternativeComparisonReport altCompReport = new();
-            _Results = await Task.Run(() => altCompReport.ComputeAlternativeComparisonReport(woAltResult, withProjAltsResults, batchJob.Reporter));
+            _Results = await Task.Run(() => Model.alternativeComparisonReport.AlternativeComparisonReport.ComputeAlternativeComparisonReport(woAltResult, withProjAltsResults, batchJob.Reporter));
             ViewResults();
         }
     }
@@ -200,12 +199,12 @@ public class AlternativeComparisonReportElement : ChildElement
                 {
                     foreach (string assetType in results.GetAssetCategories())
                     {
-                        double withProjEAD = results.MeanWithProjectFutureYearEAD(altID, impactAreaID, damcat, assetType);
-                        double eadReduced = results.MeanFutureYearEADReduced(altID, impactAreaID, damcat, assetType);
+                        double withProjEAD = results.SampleMeanWithProjectFutureYearEAD(altID, impactAreaID, damcat, assetType);
+                        double eadReduced = results.SampleMeanFutureYearEADReduced(altID, impactAreaID, damcat, assetType);
                         double point75 = results.FutureYearEADReducedExceededWithProbabilityQ(.75, altID, impactAreaID, damcat, assetType);
                         double point5 = results.FutureYearEADReducedExceededWithProbabilityQ(.5, altID, impactAreaID, damcat, assetType);
                         double point25 = results.FutureYearEADReducedExceededWithProbabilityQ(.25, altID, impactAreaID, damcat, assetType);
-                        double eadWithoutProjDamage = results.MeanWithoutProjectFutureYearEAD(impactAreaID, damcat, assetType);
+                        double eadWithoutProjDamage = results.SampleMeanWithoutProjectFutureYearEAD(impactAreaID, damcat, assetType);
                         EADSummaryRowItem row = new(impactAreaNames[impactAreaID], damcat, assetType, withoutProjName, eadWithoutProjDamage, withProjName, withProjEAD, eadReduced, point75, point5, point25);
                         eadSummaryRowItems.Add(row);
                     }
@@ -226,12 +225,12 @@ public class AlternativeComparisonReportElement : ChildElement
             string withProjName = GetAlternativeElementFromID(altID).Name;
             foreach (int impactAreaID in results.GetImpactAreaIDs())
             {
-                double withProjEAD = results.MeanWithProjectFutureYearEAD(altID, impactAreaID);
-                double eadReduced = results.MeanFutureYearEADReduced(altID, impactAreaID);
+                double withProjEAD = results.SampleMeanWithProjectFutureYearEAD(altID, impactAreaID);
+                double eadReduced = results.SampleMeanFutureYearEADReduced(altID, impactAreaID);
                 double point75 = results.FutureYearEADReducedExceededWithProbabilityQ(.75, altID, impactAreaID);
                 double point5 = results.FutureYearEADReducedExceededWithProbabilityQ(.5, altID, impactAreaID);
                 double point25 = results.FutureYearEADReducedExceededWithProbabilityQ(.25, altID, impactAreaID);
-                double eadWithoutProjDamage = results.MeanWithoutProjectFutureYearEAD(impactAreaID);
+                double eadWithoutProjDamage = results.SampleMeanWithoutProjectFutureYearEAD(impactAreaID);
                 AggregatedEADSummaryRowItem row = new(impactAreaNames[impactAreaID], withoutProjName, eadWithoutProjDamage, withProjName, withProjEAD, eadReduced, point75, point5, point25);
                 eadSummaryRowItems.Add(row);
             }
@@ -256,12 +255,12 @@ public class AlternativeComparisonReportElement : ChildElement
                 {
                     foreach (string assetType in results.GetAssetCategories())
                     {
-                        double withProjEAD = results.MeanWithProjectBaseYearEAD(altID, impactAreaID, damcat, assetType);
-                        double eadReduced = results.MeanBaseYearEADReduced(altID, impactAreaID, damcat, assetType);
+                        double withProjEAD = results.SampleMeanWithProjectBaseYearEAD(altID, impactAreaID, damcat, assetType);
+                        double eadReduced = results.SampleMeanBaseYearEADReduced(altID, impactAreaID, damcat, assetType);
                         double point75 = results.BaseYearEADReducedExceededWithProbabilityQ(.75, altID, impactAreaID, damcat, assetType);
                         double point5 = results.BaseYearEADReducedExceededWithProbabilityQ(.5, altID, impactAreaID, damcat, assetType);
                         double point25 = results.BaseYearEADReducedExceededWithProbabilityQ(.25, altID, impactAreaID, damcat, assetType);
-                        double eadWithoutProjDamage = results.MeanWithoutProjectBaseYearEAD(impactAreaID, damcat, assetType);
+                        double eadWithoutProjDamage = results.SampleMeanWithoutProjectBaseYearEAD(impactAreaID, damcat, assetType);
                         EADSummaryRowItem row = new(impactAreaNames[impactAreaID],damcat, assetType, withoutProjName, eadWithoutProjDamage, withProjName, withProjEAD, eadReduced, point75, point5, point25);
                         eadSummaryRowItems.Add(row);
                     }
@@ -281,12 +280,12 @@ public class AlternativeComparisonReportElement : ChildElement
             string withProjName = GetAlternativeElementFromID(altID).Name;
             foreach (int impactAreaID in results.GetImpactAreaIDs())
             {
-                double withProjEAD = results.MeanWithProjectBaseYearEAD(altID, impactAreaID);
-                double eadReduced = results.MeanBaseYearEADReduced(altID, impactAreaID);
+                double withProjEAD = results.SampleMeanWithProjectBaseYearEAD(altID, impactAreaID);
+                double eadReduced = results.SampleMeanBaseYearEADReduced(altID, impactAreaID);
                 double point75 = results.BaseYearEADReducedExceededWithProbabilityQ(.75, altID, impactAreaID);
                 double point5 = results.BaseYearEADReducedExceededWithProbabilityQ(.5, altID, impactAreaID);
                 double point25 = results.BaseYearEADReducedExceededWithProbabilityQ(.25, altID, impactAreaID);
-                double eadWithoutProjDamage = results.MeanWithoutProjectBaseYearEAD(impactAreaID); 
+                double eadWithoutProjDamage = results.SampleMeanWithoutProjectBaseYearEAD(impactAreaID); 
                 AggregatedEADSummaryRowItem row = new(impactAreaNames[impactAreaID], withoutProjName, eadWithoutProjDamage, withProjName, withProjEAD, eadReduced, point75, point5, point25);
                 eadSummaryRowItems.Add(row);
             }
@@ -309,12 +308,12 @@ public class AlternativeComparisonReportElement : ChildElement
                 {
                     foreach (string assetType in results.GetAssetCategories())
                     {
-                        double withProjAAEQ = results.MeanWithProjectAAEQDamage(altID, impactAreaID, damcat, assetType);
-                        double aaeqReduced = results.MeanAAEQDamageReduced(altID, impactAreaID, damcat, assetType);
+                        double withProjAAEQ = results.SampleMeanWithProjectAAEQDamage(altID, impactAreaID, damcat, assetType);
+                        double aaeqReduced = results.SampleMeanAAEQDamageReduced(altID, impactAreaID, damcat, assetType);
                         double point75 = results.AAEQDamageReducedExceededWithProbabilityQ(.75, altID, impactAreaID, damcat, assetType);
                         double point5 = results.AAEQDamageReducedExceededWithProbabilityQ(.5, altID, impactAreaID, damcat, assetType);
                         double point25 = results.AAEQDamageReducedExceededWithProbabilityQ(.25, altID, impactAreaID, damcat, assetType);
-                        double aaeqWithoutProjDamage = results.MeanWithoutProjectAAEQDamage(impactAreaID, damcat, assetType);
+                        double aaeqWithoutProjDamage = results.SampleMeanWithoutProjectAAEQDamage(impactAreaID, damcat, assetType);
                         AAEQSummaryRowItem row = new(impactAreaNames[impactAreaID], damcat, assetType, withoutProjName, aaeqWithoutProjDamage, withProjName, withProjAAEQ, aaeqReduced, point75, point5, point25);
                         aaeqSummaryRowItems.Add(row);
                     }
@@ -336,12 +335,12 @@ public class AlternativeComparisonReportElement : ChildElement
             string withProjName = GetAlternativeElementFromID(altID).Name;
             foreach (int impactAreaID in results.GetImpactAreaIDs())
             {
-                double withProjAAEQ = results.MeanWithProjectAAEQDamage(altID, impactAreaID);
-                double aaeqReduced = results.MeanAAEQDamageReduced(altID, impactAreaID);
+                double withProjAAEQ = results.SampleMeanWithProjectAAEQDamage(altID, impactAreaID);
+                double aaeqReduced = results.SampleMeanAAEQDamageReduced(altID, impactAreaID);
                 double point75 = results.AAEQDamageReducedExceededWithProbabilityQ(.75, altID, impactAreaID);
                 double point5 = results.AAEQDamageReducedExceededWithProbabilityQ(.5, altID, impactAreaID);
                 double point25 = results.AAEQDamageReducedExceededWithProbabilityQ(.25, altID, impactAreaID);
-                double aaeqWithoutProjDamage = results.MeanWithoutProjectAAEQDamage(impactAreaID);
+                double aaeqWithoutProjDamage = results.SampleMeanWithoutProjectAAEQDamage(impactAreaID);
                 AggregatedAAEQSummaryRowItem row = new(impactAreaNames[impactAreaID], withoutProjName, aaeqWithoutProjDamage, withProjName, withProjAAEQ, aaeqReduced, point75, point5, point25);
                 aaeqSummaryRowItems.Add(row);
             }

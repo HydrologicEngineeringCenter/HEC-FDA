@@ -126,7 +126,7 @@ namespace HEC.FDA.Model.metrics
 
         public double MeanAEP()
         {
-            return GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram.Mean;
+            return GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram.SampleMean;
         }
 
         public double MedianAEP()

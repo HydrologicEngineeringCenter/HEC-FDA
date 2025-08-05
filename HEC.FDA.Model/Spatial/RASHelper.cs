@@ -18,7 +18,7 @@ namespace HEC.FDA.Model.Spatial;
 
 public static class RASHelper
 {
-    public static float[] SamplePointsFromRaster(string pointShapefilePath, string rasterPath, Projection rasterProjection)
+    public static float[] SamplePointsFromTerrain(string pointShapefilePath, string rasterPath, Projection rasterProjection)
     {
         OperationResult or = ShapefileIO.TryRead(pointShapefilePath, out PointFeatureCollection pointFeatures, rasterProjection);
         if (!or.Result)
@@ -26,9 +26,9 @@ public static class RASHelper
             throw new Exception("Failed to read shapefile: " + pointShapefilePath);
         }
         IVectorCollection<Geospatial.Vectors.Point> points = pointFeatures.Features;
-        return SamplePointsFromRaster(points, rasterPath);
+        return SamplePointsFromTerrain(points, rasterPath);
     }
-    public static float[] SamplePointsFromRaster(IVectorCollection<Geospatial.Vectors.Point> points, string rasterPath)
+    public static float[] SamplePointsFromTerrain(IVectorCollection<Geospatial.Vectors.Point> points, string rasterPath)
     {
         string extension = System.IO.Path.GetExtension(rasterPath);
         float[] groundelevs;

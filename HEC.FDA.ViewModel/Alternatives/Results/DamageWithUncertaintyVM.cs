@@ -46,15 +46,15 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             switch (damageMeasureYear)
             {
                 case DamageMeasureYear.Base:
-                    Mean = results.MeanBaseYearEAD();
+                    Mean = results.SampleMeanBaseYearEAD();
                     QuartileLabel = QUARTILE_EAD;
                     break;
                 case DamageMeasureYear.Future:
-                    Mean = results.MeanFutureYearEAD();
+                    Mean = results.SampleMeanFutureYearEAD();
                     QuartileLabel = QUARTILE_EAD;
                     break;
                 case DamageMeasureYear.AAEQ:
-                    Mean = results.MeanAAEQDamage();
+                    Mean = results.SampleMeanAAEQDamage();
                     QuartileLabel = QUARTILE_EQAD;
                     break;
             }
@@ -83,15 +83,15 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             switch (damageMeasureYear)
             {
                 case DamageMeasureYear.Base:
-                    Mean = altCompReport.MeanBaseYearEADReduced(altID);
+                    Mean = altCompReport.SampleMeanBaseYearEADReduced(altID);
                     QuartileLabel = QUARTILE_REDUCED_EAD;
                     break;
                 case DamageMeasureYear.Future:
-                    Mean = altCompReport.MeanFutureYearEADReduced(altID);
+                    Mean = altCompReport.SampleMeanFutureYearEADReduced(altID);
                     QuartileLabel = QUARTILE_REDUCED_EAD;
                     break;
                 case DamageMeasureYear.AAEQ:
-                    Mean = altCompReport.MeanAAEQDamageReduced(altID);
+                    Mean = altCompReport.SampleMeanAAEQDamageReduced(altID);
                     QuartileLabel = QUARTILE_REDUCED_EQAD;
                     break;
             }

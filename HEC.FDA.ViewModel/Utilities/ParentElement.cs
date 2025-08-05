@@ -5,13 +5,9 @@ namespace HEC.FDA.ViewModel.Utilities
 {
     public abstract class ParentElement: BaseFdaElement
     {
-        #region Notes
-        #endregion
         #region Fields
         protected ObservableCollection<BaseFdaElement> _Elements;
 
-        #endregion
-        #region Properties
         #endregion
         #region Constructors
         public ParentElement(): base()

@@ -29,19 +29,19 @@ namespace Statistics.Histograms
                 return IsSingleValued();
             }
         }
-        internal double SampleMax { get; private set; }
-        internal double SampleMin { get; private set; }
+        public double SampleMax { get; private set; }
+        public double SampleMin { get; private set; }
         internal bool ConvergedOnMax { get; private set; } = false;
 
         public bool IsConverged { get; private set; } = false;
-        public Int64 ConvergedIteration { get; private set; } = int.MinValue;
+        public long ConvergedIteration { get; private set; } = int.MinValue;
         public double BinWidth { get; private set; }
         public ConvergenceCriteria ConvergenceCriteria { get; }
-        public Int64[] BinCounts { get; private set; } = Array.Empty<long>();
+        public long[] BinCounts { get; private set; } = [];
         public double Min { get; private set; }
         public double Max { get; set; }
-        public double Mean { get; private set; } = 10;
-        public double Variance
+        public double SampleMean { get; private set; }
+        public double SampleVariance
         {
             get
             {
@@ -52,10 +52,10 @@ namespace Statistics.Histograms
         {
             get
             {
-                return Math.Pow(Variance, 0.5);
+                return Math.Pow(SampleVariance, 0.5);
             }
         }
-        public Int64 SampleSize { get; private set; }
+        public long SampleSize { get; private set; }
 
         public IDistributionEnum Type
         {
@@ -131,31 +131,22 @@ namespace Statistics.Histograms
             ConvergenceCriteria = convergenceCriteria;
             SampleSize = sampleSize;
         }
+        public DynamicHistogram(double min, double binWidth, long[] binCounts, double sampleMean, double sampleVariance, double sampleMin, double sampleMax, ConvergenceCriteria convergenceCriteria)
+        {
+            Min = min;
+            BinWidth = binWidth;
+            BinCounts = binCounts;
+            Max = Min + BinCounts.Length * BinWidth;
+            SampleSize = BinCounts.Sum();
+            SampleMean = sampleMean;
+            _SampleVariance = sampleVariance;
+            SampleMin = sampleMin;
+            SampleMax = sampleMax;
+            ConvergenceCriteria = convergenceCriteria;
+        }
         #endregion
         #region Functions
-        public double Skewness()
-        {
-            double deviation = 0, deviation2 = 0, deviation3 = 0;
-            if (SampleSize == 0)
-            {
-                return double.NaN;
-            }
-            if (Min == (Max - BinWidth))
-            {
-                return 0.0;
-            }
-            for (int i = 0; i < BinCounts.Length; i++)
-            {
-                double midpoint = Min + (i * BinWidth) + (0.5 * BinWidth);
 
-                deviation += midpoint - Mean;
-                deviation2 += deviation * deviation;
-                deviation3 += deviation2 * deviation;
-
-            }
-            double skewness = SampleSize > 2 ? deviation3 / SampleSize / Math.Pow(Variance, 3 / 2) : 0;
-            return skewness;
-        }
 
 
         public void ForceDeQueue()
@@ -163,6 +154,7 @@ namespace Statistics.Histograms
             //do nothing
             //HACK
         }
+
         public double HistogramMean()
         {
             if (SampleSize == 0)
@@ -180,6 +172,7 @@ namespace Statistics.Histograms
             }
             return sum / SampleSize;
         }
+
         public double HistogramVariance()
         {
             if (SampleSize == 0)
@@ -200,7 +193,7 @@ namespace Statistics.Histograms
             {
                 double midpoint = Min + (i * BinWidth) + (0.5 * BinWidth);
 
-                double deviation = midpoint - Mean;
+                double deviation = midpoint - SampleMean;
                 deviation2 += deviation * deviation;
 
             }
@@ -231,7 +224,7 @@ namespace Statistics.Histograms
                 {
                     SampleMax = observation;
                     SampleMin = observation;
-                    Mean = observation;
+                    SampleMean = observation;
                     _SampleVariance = 0;
                     if (_minHasNotBeenSet)
                     {
@@ -246,9 +239,9 @@ namespace Statistics.Histograms
                     if (observation > SampleMax) SampleMax = observation;
                     if (observation < SampleMin) SampleMin = observation;
                     SampleSize += 1;
-                    double tmpMean = Mean + ((observation - Mean) / (double)SampleSize);
-                    _SampleVariance = ((((double)(SampleSize - 2) / (double)(SampleSize - 1)) * _SampleVariance) + (Math.Pow(observation - Mean, 2)) / (double)SampleSize);
-                    Mean = tmpMean;
+                    double tmpMean = SampleMean + ((observation - SampleMean) / (double)SampleSize);
+                    _SampleVariance = ((((double)(SampleSize - 2) / (double)(SampleSize - 1)) * _SampleVariance) + (Math.Pow(observation - SampleMean, 2)) / (double)SampleSize);
+                    SampleMean = tmpMean;
                 }
                 int quantityAdditionalBins;
                 if (observation < Min)
@@ -378,7 +371,7 @@ namespace Statistics.Histograms
             Min = 0;
             BinWidth = 1;
             SampleMax = 0;
-            Mean = 0;
+            SampleMean = 0;
             _SampleVariance = 0;
             SampleMin = 0;
             SampleSize = 1;
@@ -480,7 +473,7 @@ namespace Statistics.Histograms
                 }
                 if (HistogramIsSingleValued)
                 {
-                    return Mean;
+                    return SampleMean;
                 }
                 if (SampleSize == 0)
                 {
@@ -550,7 +543,6 @@ namespace Statistics.Histograms
             }
         }
 
-
         public static Empirical ConvertToEmpiricalDistribution(IHistogram histogram)
         {
             int probabilitySteps = 2500;
@@ -562,7 +554,14 @@ namespace Statistics.Histograms
                 cumulativeProbabilities[i] = probabilityStep;
                 invCDS[i] = histogram.InverseCDF(probabilityStep);
             }
-            return new Empirical(cumulativeProbabilities, invCDS);
+            Empirical newEmp = new(cumulativeProbabilities, invCDS)
+            {
+                // This propogates the Sample Mean into empirical,
+                //this is different, in some cases VERY different from the calculated mean, which is calc'd on construction.  
+                //This relates to the PR # 1262, which is a bug fix for the empirical distribution.
+                SampleMean = histogram.SampleMean
+            };
+            return newEmp;
         }
 
         public XElement ToXML()
@@ -572,7 +571,7 @@ namespace Statistics.Histograms
             masterElem.SetAttributeValue("Max", Max);
             masterElem.SetAttributeValue("Bin_Width", BinWidth);
             masterElem.SetAttributeValue("Sample_Size", SampleSize);
-            masterElem.SetAttributeValue("Sample_Mean", Mean);
+            masterElem.SetAttributeValue("Sample_Mean", SampleMean);
             masterElem.SetAttributeValue("Sample_Variance", _SampleVariance);
             masterElem.SetAttributeValue("Sample_Min", SampleMin);
             masterElem.SetAttributeValue("Sample_Max", SampleMax);
@@ -643,7 +642,7 @@ namespace Statistics.Histograms
             bool minNotSet = false;
             DynamicHistogram histogram = new(min, max, binWidth, sampleSize, binCounts, convergenceCriteria)
             {
-                Mean = sampleMean,
+                SampleMean = sampleMean,
                 _SampleVariance = sampleVariance,
                 SampleMin = sampleMin,
                 SampleMax = sampleMax,
@@ -798,25 +797,9 @@ namespace Statistics.Histograms
             return Convert.ToInt64(Math.Min(remainingIters, biggestGuess));
         }
 
-        public string Print(bool round = false)
-        {
-            string histogram = $"This histogram consists of the following bin starts and bin counts:" + Environment.NewLine;
-            for (int i = 0; i < BinCounts.Length; i++)
-            {
-                histogram += $"Bin Start: {Min + BinWidth * i}, Bin Count: {BinCounts[i]}" + Environment.NewLine;
-            }
-            return histogram;
-        }
-
-        public string Requirements(bool printNotes)
-        {
-            string message = "The histogram minimally requires a bin width or a list of observations and convergence criteria.";
-            return message;
-        }
-
         public IDistribution Sample(double[] packetOfRandomNumbers)
         {
-            if (packetOfRandomNumbers.Length < SampleSize) throw new ArgumentException($"The parametric bootstrap sample cannot be constructed using the {Print(true)} distribution. It requires at least {SampleSize} random value but only {packetOfRandomNumbers.Length} were provided.");
+            if (packetOfRandomNumbers.Length < SampleSize) throw new ArgumentException($"The parametric bootstrap sample cannot be constructed using the distribution. It requires at least {SampleSize} random value but only {packetOfRandomNumbers.Length} were provided.");
             double[] samples = new double[SampleSize];
             for (int i = 0; i < SampleSize; i++) samples[i] = this.InverseCDF(packetOfRandomNumbers[i]);
             return this.Fit(samples);
@@ -830,7 +813,7 @@ namespace Statistics.Histograms
         private bool IsZeroValued()
         {
             bool isZeroValued = false;
-            bool meanIsZero = Mean == 0;
+            bool meanIsZero = SampleMean == 0;
             bool standardDeviationIsZero = StandardDeviation == 0;
             if (meanIsZero && standardDeviationIsZero)
             {

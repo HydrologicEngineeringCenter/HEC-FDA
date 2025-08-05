@@ -8,8 +8,6 @@ namespace HEC.FDA.ViewModel.StageTransforms
 {
     public class RatingCurveOwnerElement : ParentElement
     {
-        #region Notes
-        #endregion
 
         #region Constructors
         public RatingCurveOwnerElement( ) : base()

@@ -14,8 +14,8 @@ namespace Statistics.Histograms
         Int64[] BinCounts { get; }
         double Min { get;  }
         double Max { get;  }
-        double Mean { get; }
-        double Variance { get; }
+        double SampleMean { get; }
+        double SampleVariance { get; }
         double StandardDeviation { get; }
         ConvergenceCriteria ConvergenceCriteria { get; }
         #endregion

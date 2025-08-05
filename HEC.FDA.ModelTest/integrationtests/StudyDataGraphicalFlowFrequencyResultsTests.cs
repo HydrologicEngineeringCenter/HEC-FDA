@@ -80,7 +80,7 @@ namespace HEC.FDA.ModelTest.integrationtests
                 .Build();
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1000, maxIterations: 10000);
             ImpactAreaScenarioResults results = simulation.Compute(convergenceCriteria);
-            double difference = Math.Abs(expected - results.ConsequenceResults.MeanDamage(damCat, assetCat, impactAreaID));
+            double difference = Math.Abs(expected - results.ConsequenceResults.SampleMeanDamage(damCat, assetCat, impactAreaID));
             double relativeDifference = difference / expected;
             double tolerance = 0.055;
             //TODO: there are errors with the compute that are causing null results to be returned 

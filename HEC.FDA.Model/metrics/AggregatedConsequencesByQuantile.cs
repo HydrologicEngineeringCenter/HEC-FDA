@@ -23,9 +23,6 @@ namespace HEC.FDA.Model.metrics
         #endregion 
 
         #region Constructors
-        /// <summary>
-        /// This constructor builds a ThreadsafeInlineHistogram. Only use for parallel computes. 
-        /// </summary>
         public AggregatedConsequencesByQuantile()
         {
             DamageCategory = "unassigned";
@@ -70,9 +67,9 @@ namespace HEC.FDA.Model.metrics
 
         #region Methods
         
-        internal double MeanExpectedAnnualConsequences()
+        internal double ConsequenceSampleMean()
         {
-            return ConsequenceDistribution.Mean;
+            return ConsequenceDistribution.SampleMean;
         }
 
         internal double ConsequenceExceededWithProbabilityQ(double exceedanceProbability)

@@ -254,7 +254,7 @@ namespace HEC.FDA.ViewModel.Inventory
             {
                 throw;
             }
-            _StructureElevations.AddRange(RASHelper.SamplePointsFromRaster(Path, getTerrainFile(), projection));
+            _StructureElevations.AddRange(RASHelper.SamplePointsFromTerrain(Path, getTerrainFile(), projection));
             List<int> idsWithNoElevation = new List<int>();
             for (int i = 0; i < _StructureElevations.Count(); i++)
             {

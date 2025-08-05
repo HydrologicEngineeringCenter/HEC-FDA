@@ -38,15 +38,15 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                 switch (damageMeasureYear)
                 {
                     case DamageMeasureYear.Base:
-                        double baseMean = results.MeanBaseYearEAD(impactAreaID: id);
+                        double baseMean = results.SampleMeanBaseYearEAD(impactAreaID: id);
                         Rows.Add(new ImpactAreaRowItem(impactAreaName, baseMean));
                         break;
                     case DamageMeasureYear.Future:
-                        double futureMean = results.MeanFutureYearEAD(impactAreaID: id);
+                        double futureMean = results.SampleMeanFutureYearEAD(impactAreaID: id);
                         Rows.Add(new ImpactAreaRowItem(impactAreaName, futureMean)); 
                         break;
                     case DamageMeasureYear.AAEQ:
-                        double mean = results.MeanAAEQDamage(impactAreaID: id);
+                        double mean = results.SampleMeanAAEQDamage(impactAreaID: id);
                         Rows.Add(new ImpactAreaRowItem(impactAreaName, mean)); 
                         break;
                 }
@@ -77,15 +77,15 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                 switch (damageMeasureYear)
                 {
                     case DamageMeasureYear.Base:
-                        double baseMean = results.MeanBaseYearEADReduced(altID, impactAreaID: id);
+                        double baseMean = results.SampleMeanBaseYearEADReduced(altID, impactAreaID: id);
                         Rows.Add(new ImpactAreaRowItem(impactAreaName, baseMean));
                         break;
                     case DamageMeasureYear.Future:
-                        double futureMean = results.MeanFutureYearEADReduced(altID, impactAreaID: id);
+                        double futureMean = results.SampleMeanFutureYearEADReduced(altID, impactAreaID: id);
                         Rows.Add(new ImpactAreaRowItem(impactAreaName, futureMean));
                         break;
                     case DamageMeasureYear.AAEQ:
-                        double mean = results.MeanAAEQDamageReduced(altID, impactAreaID: id);
+                        double mean = results.SampleMeanAAEQDamageReduced(altID, impactAreaID: id);
                         Rows.Add(new ImpactAreaRowItem(impactAreaName, mean));
                         break;
                 }
