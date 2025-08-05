@@ -1,5 +1,5 @@
 ﻿namespace VisualScratchSpace.Model.Saving;
-public class PlotFilter : SQLiteFilter
+public class LifeLossFunctionFilter : SQLiteFilter
 {
     public string[] Simulation { get; init; } = Array.Empty<string>();
     public string[] Summary_Zone { get; init; } = Array.Empty<string>();

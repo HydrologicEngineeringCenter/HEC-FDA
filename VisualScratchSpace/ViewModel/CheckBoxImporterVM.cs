@@ -12,7 +12,7 @@ namespace VisualScratchSpace.ViewModel;
 public partial class CheckBoxImporterVM : ObservableObject
 {
     public PlotModel MyModel { get; set; }
-    public ObservableCollection<Simulation> SimulationsComboBox { get; set; }
+    public ObservableCollection<LifeSimSimulation> SimulationsComboBox { get; set; }
     public ObservableCollection<CheckableItem> AlternativesCheckBox { get; set; }
     public ObservableCollection<CheckableItem> HazardTimesCheckBox { get; set; }
 
@@ -48,7 +48,7 @@ public partial class CheckBoxImporterVM : ObservableObject
         if (AlternativesCheckBox.IsEmpty() || HazardTimesCheckBox.IsEmpty()) return;
 
         // determine which parameters have been selected
-        Simulation currentSimulation = new(SelectedSimulation, SelectedHydraulicsFolder);
+        LifeSimSimulation currentSimulation = new(SelectedSimulation, SelectedHydraulicsFolder);
         foreach (CheckableItem a in AlternativesCheckBox)
             if (a.IsChecked) currentSimulation.Alternatives.Add(a.Name);
         foreach (CheckableItem h in HazardTimesCheckBox)
@@ -75,42 +75,6 @@ public partial class CheckBoxImporterVM : ObservableObject
         if (_lifeLossFunctions.IsEmpty()) return;
         _plotIndex = (_plotIndex + 1) % _lifeLossFunctions.Count;
         ChangePlot(_plotIndex);
-    }
-
-    [RelayCommand]
-    public void SavePlots()
-    {
-        string dbpath = @"C:\FDA_Test_Data\WKS20230525\WKS20230525\save-test.db";
-        LifeLossPlotSaver ps = new(dbpath);
-        foreach (LifeLossFunction llf in _lifeLossFunctions)
-        {
-            ps.SaveToSQLite(llf);
-        }
-    }
-
-    [RelayCommand]
-    public void LoadPlots()
-    {
-        string dbpath = @"C:\FDA_Test_Data\WKS20230525\WKS20230525\save-test.db";
-        LifeLossPlotSaver ps = new(dbpath);
-        string[] simulations = { "IH and Lower 20230430" };
-        string[] summaryZones = {  };
-        string[] hazardTimes = {  };
-        PlotFilter filter = new() 
-        { 
-            Simulation = simulations, 
-            Summary_Zone = summaryZones, 
-            Hazard_Time = hazardTimes 
-        };
-        
-        List<LifeLossFunction> loadedFunctions = ps.ReadFromSQLite(filter);
-        if (!loadedFunctions.IsEmpty())
-        {
-            _lifeLossFunctions.Clear();
-            _lifeLossFunctions = loadedFunctions;
-            _plotIndex = 0;
-            ChangePlot(_plotIndex);
-        }
     } 
 
     /// <summary>
@@ -126,8 +90,8 @@ public partial class CheckBoxImporterVM : ObservableObject
         LifeLossDB db = new(SelectedPath);
 
         // add new simulations from the newly selected database
-        List<Simulation> newSimulations = db.UpdateSimulations();
-        foreach (Simulation simulation in newSimulations)
+        List<LifeSimSimulation> newSimulations = db.UpdateSimulations();
+        foreach (LifeSimSimulation simulation in newSimulations)
         {
             SimulationsComboBox.Add(simulation);
         }
@@ -144,7 +108,7 @@ public partial class CheckBoxImporterVM : ObservableObject
         HazardTimesCheckBox.Clear();
 
         // update options to match the currently selected simulation
-        foreach (Simulation simulation in SimulationsComboBox)
+        foreach (LifeSimSimulation simulation in SimulationsComboBox)
         {
             if (simulation.Name == value)
             {

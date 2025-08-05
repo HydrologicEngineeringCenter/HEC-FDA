@@ -131,7 +131,7 @@ namespace Statistics.Histograms
             ConvergenceCriteria = convergenceCriteria;
             SampleSize = sampleSize;
         }
-        public DynamicHistogram(double min, double binWidth, Int64[] binCounts, double sampleMean, double sampleVariance, double sampleMin, double sampleMax, ConvergenceCriteria convergenceCriteria)
+        public DynamicHistogram(double min, double binWidth, long[] binCounts, double sampleMean, double sampleVariance, double sampleMin, double sampleMax, ConvergenceCriteria convergenceCriteria)
         {
             Min = min;
             BinWidth = binWidth;

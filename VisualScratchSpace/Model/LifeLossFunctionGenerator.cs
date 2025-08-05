@@ -14,7 +14,7 @@ namespace VisualScratchSpace.Model;
 public class LifeLossFunctionGenerator
 {
     private readonly LifeLossDB _db;
-    private readonly LifeLossPlotSaver _saver = new(@"C:\FDA_Test_Data\WKS20230525\WKS20230525\save-test.db");
+    private readonly LifeLossFunctionSaver _saver = new(@"C:\FDA_Test_Data\WKS20230525\WKS20230525\save-test.db");
     private readonly Dictionary<string, string> _hydraulicsFolderByAlternative;
     private readonly string _summarySetName;
     private Dictionary<string, PointM> _indexPointBySummaryZone; // not readonly because we reassign its pointer in CreateLifeLossFunctions, too costly to do in constructor?
@@ -23,7 +23,7 @@ public class LifeLossFunctionGenerator
     private readonly string[] _alternativeNames;
     private readonly string[] _hazardTimes;
 
-    public LifeLossFunctionGenerator(string selectedPath, Simulation simulation)
+    public LifeLossFunctionGenerator(string selectedPath, LifeSimSimulation simulation)
     {
         _db = new LifeLossDB(selectedPath);
         _hydraulicsFolderByAlternative = _db.CreateAlternativeHydraulicsPairs();
@@ -69,7 +69,7 @@ public class LifeLossFunctionGenerator
     private List<LifeLossFunction> CreateLifeLossFunctionsForSummaryZone(string summaryZone, PointMs indexPoint)
     {
         // if any of the functions we are asking for are already present in the database, grab them first
-        PlotFilter allPF = new()
+        LifeLossFunctionFilter allPF = new()
         {
             Simulation = [_simulationName],
             Summary_Zone = [summaryZone],

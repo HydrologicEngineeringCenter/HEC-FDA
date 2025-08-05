@@ -4,7 +4,7 @@ namespace VisualScratchSpace.Model
     /// <summary>
     /// Simple data structure representing the fields which comprise a LifeSim simulation
     /// </summary>
-    public class Simulation
+    public class LifeSimSimulation
     {
         public string Name { get; }
         public string HydraulicsFolder { get; }
@@ -12,7 +12,7 @@ namespace VisualScratchSpace.Model
         public List<string> HazardTimes { get; }
         public Dictionary<string, PointM> SummarySet { get; set; }
 
-        public Simulation(string name, string hydraulicsFolder = "")
+        public LifeSimSimulation(string name, string hydraulicsFolder = "")
         {
             Name = name;
             HydraulicsFolder = hydraulicsFolder;

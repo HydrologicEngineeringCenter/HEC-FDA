@@ -10,7 +10,7 @@ namespace VisualScratchSpace.Model.Saving;
 /// <summary>
 /// Object with the ability to save and read life loss functions to and from  SQLite database
 /// </summary>
-public class LifeLossPlotSaver : SQLiteSaverBase<LifeLossFunction>
+public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
 {
     private const string LL_TABLE_NAME = "Life_Loss";
     private static readonly string _createCommandText = 
@@ -60,7 +60,7 @@ public class LifeLossPlotSaver : SQLiteSaverBase<LifeLossFunction>
             @bin_cts
         )";
 
-    public LifeLossPlotSaver(string dbpath) : base(dbpath) // calls the base class constructor to initialize the SQLite connection
+    public LifeLossFunctionSaver(string dbpath) : base(dbpath) // calls the base class constructor to initialize the SQLite connection
     {
         CreateTable(_connection); // more efficient for SQL to check if table exists than checking a flag in this class
     }
@@ -90,7 +90,7 @@ public class LifeLossPlotSaver : SQLiteSaverBase<LifeLossFunction>
     /// <exception cref="ArgumentException"></exception>
     public override List<LifeLossFunction> ReadFromSQLite(SQLiteFilter filter, bool selectAll = false)
     {
-        if (filter is not PlotFilter plotFilter) throw new ArgumentException();
+        if (filter is not LifeLossFunctionFilter plotFilter) throw new ArgumentException();
 
         using var selectCommand = new SQLiteCommand(_connection);
         BuildSelectCommand(selectCommand, plotFilter, selectAll);

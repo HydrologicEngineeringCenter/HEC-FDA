@@ -25,7 +25,7 @@ namespace VisualScratchSpace.Model
         /// Change the list of simulations available to the user to select from
         /// </summary>
         /// <returns></returns>
-        public List<Simulation> UpdateSimulations()
+        public List<LifeSimSimulation> UpdateSimulations()
         {
             StringBuilder sb = new();
             sb.Append("SELECT ");
@@ -37,7 +37,7 @@ namespace VisualScratchSpace.Model
             }
             sb.Append(" FROM Simulations_Lookup_Table");
             string query = sb.ToString();
-            List<Simulation> simulations = [];
+            List<LifeSimSimulation> simulations = [];
 
             try
             {
@@ -49,7 +49,7 @@ namespace VisualScratchSpace.Model
                 while (reader.Read())
                 {
                     string name = reader.GetString(0); // Name is 0th selection
-                    Simulation simulation = new Simulation(name);
+                    LifeSimSimulation simulation = new LifeSimSimulation(name);
 
                     simulation.Alternatives = reader.GetString(1).Split(',').ToList(); // Alternatives are 1st selection and in csv string format
 
