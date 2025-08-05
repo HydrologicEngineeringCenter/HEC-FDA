@@ -87,7 +87,7 @@ public partial class CheckBoxImporterVM : ObservableObject
 
         // reset the simulation options
         SimulationsComboBox.Clear();
-        LifeLossDB db = new(SelectedPath);
+        LifeSimDatabase db = new(SelectedPath);
 
         // add new simulations from the newly selected database
         List<LifeSimSimulation> newSimulations = db.UpdateSimulations();

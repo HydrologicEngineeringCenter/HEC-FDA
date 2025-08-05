@@ -9,14 +9,14 @@ namespace VisualScratchSpace.Model
     /// <summary>
     /// Handles operations for querying .fia databases imported from LifeSim
     /// </summary>
-    public class LifeLossDB
+    public class LifeSimDatabase
     {
         private string _connectionString;
         private static string[] _lifelossColumns = {"Name", "Alternatives", "Time_2", "Time_4",
                                                    "Time_6, Time_8", "Time_10", "Time_12",
                                                    "Time_14", "Time_16", "Time_18", "Time_20", "Time_22"};
 
-        public LifeLossDB(string dbpath)
+        public LifeSimDatabase(string dbpath)
         {
             _connectionString = $"Data Source={dbpath}";
         }

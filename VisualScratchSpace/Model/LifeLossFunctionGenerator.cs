@@ -13,8 +13,7 @@ namespace VisualScratchSpace.Model;
 /// </summary>
 public class LifeLossFunctionGenerator
 {
-    private readonly LifeLossDB _db;
-    private readonly LifeLossFunctionSaver _saver = new(@"C:\FDA_Test_Data\WKS20230525\WKS20230525\save-test.db");
+    private readonly LifeSimDatabase _db;
     private readonly Dictionary<string, string> _hydraulicsFolderByAlternative;
     private readonly string _summarySetName;
     private Dictionary<string, PointM> _indexPointBySummaryZone; // not readonly because we reassign its pointer in CreateLifeLossFunctions, too costly to do in constructor?
@@ -25,7 +24,7 @@ public class LifeLossFunctionGenerator
 
     public LifeLossFunctionGenerator(string selectedPath, LifeSimSimulation simulation)
     {
-        _db = new LifeLossDB(selectedPath);
+        _db = new LifeSimDatabase(selectedPath);
         _hydraulicsFolderByAlternative = _db.CreateAlternativeHydraulicsPairs();
         _summarySetName = _db.SummarySetName(simulation.Name);
         _indexPointBySummaryZone = simulation.SummarySet;
@@ -76,7 +75,8 @@ public class LifeLossFunctionGenerator
             Alternative = _alternativeNames,
             Hazard_Time = _hazardTimes,
         };
-        List<LifeLossFunction> existingFunctions = _saver.ReadFromSQLite(allPF);
+        using LifeLossFunctionSaver saver = new(@"C:\FDA_Test_Data\WKS20230525\WKS20230525\save-test.db");
+        List<LifeLossFunction> existingFunctions = saver.ReadFromSQLite(allPF);
         // set up dictionaries for stages and histograms already in the DB, allows us to make O(1) lookups instead of recomputing
         var seenStages = new Dictionary<(string simulation, string summaryZone, string alternative), double>();
         var seenHistograms = new Dictionary<(string simulation, string summaryZone, string alternative, string hazardTime), DynamicHistogram>();
@@ -122,10 +122,10 @@ public class LifeLossFunctionGenerator
             {
                 UncertainPairedData upd = new(stages.ToArray(), histograms.ToArray(), new CurveMetaData());
                 LifeLossFunction llf = new(upd, _alternativeNames, _simulationName, summaryZone, hazardTime);
-                _saver.SaveToSQLite(llf); 
+                saver.SaveToSQLite(llf); 
             } 
         }
         if (!newEntries) return existingFunctions;
-        return _saver.ReadFromSQLite(allPF); // this call is needed to order the functions (uses ORDER BY in the SELECT statement)
+        return saver.ReadFromSQLite(allPF); // this call is needed to order the functions (uses ORDER BY in the SELECT statement)
     }
 }
