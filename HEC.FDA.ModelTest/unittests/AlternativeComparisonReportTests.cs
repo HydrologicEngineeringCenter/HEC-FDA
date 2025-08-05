@@ -429,7 +429,7 @@ namespace HEC.FDA.ModelTest.unittests
 
             List<AlternativeResults> withProjectAlternativeResultsList = new List<AlternativeResults>();
             withProjectAlternativeResultsList.Add(withProjectAlternativeResults);
-            //should be alternative Identifier 2
+
             AlternativeComparisonReportResults alternativeComparisonReportResults = AlternativeComparisonReport.ComputeAlternativeComparisonReport(withoutProjectAlternativeResults, withProjectAlternativeResultsList);
             double actualEqadReduced = alternativeComparisonReportResults.EqadReducedExceededWithProbabilityQ(exceedanceProbability, withAlternativeIdentifier, impactAreaIdentifier, residentialDamCat, assetCategory);
             double differenceEqad = actualEqadReduced - expectedEqadReduced;
