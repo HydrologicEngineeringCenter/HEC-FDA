@@ -20,6 +20,7 @@ using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF;
 using HEC.FDA.ViewModel.Hydraulics.SteadyHDF;
 using HEC.FDA.ViewModel.IndexPoints;
+using HEC.FDA.ViewModel.LifeLoss;
 
 namespace HEC.FDA.ViewModel.Study
 {
@@ -44,6 +45,7 @@ namespace HEC.FDA.ViewModel.Study
         public event AddElementEventHandler LeveeAdded;
         public event AddElementEventHandler StageDamageAdded;
         public event AddElementEventHandler StructureInventoryAdded;
+        public event AddElementEventHandler StageLifeLossAdded;
         public event AddElementEventHandler IASElementAdded;
         public event AddElementEventHandler AlternativeAdded;
         public event AddElementEventHandler OccTypeElementAdded;
@@ -60,6 +62,7 @@ namespace HEC.FDA.ViewModel.Study
         public event AddElementEventHandler LeveeRemoved;
         public event AddElementEventHandler StageDamageRemoved;
         public event AddElementEventHandler StructureInventoryRemoved;
+        public event AddElementEventHandler StageLifeLossRemoved;
         public event AddElementEventHandler IASElementRemoved;
         public event AddElementEventHandler AlternativeRemoved;
         public event AddElementEventHandler OccTypeElementRemoved;
@@ -76,6 +79,7 @@ namespace HEC.FDA.ViewModel.Study
         public event UpdateElementEventHandler LeveeUpdated;
         public event UpdateElementEventHandler StageDamageUpdated;
         public event UpdateElementEventHandler StructureInventoryUpdated;
+        public event UpdateElementEventHandler StageLifeLossUpdated;
         public event UpdateElementEventHandler IASElementUpdated;
         public event UpdateElementEventHandler OccTypeElementUpdated;
         public event UpdateElementEventHandler AlternativeUpdated;
@@ -94,6 +98,7 @@ namespace HEC.FDA.ViewModel.Study
         public List<LateralStructureElement> LeveeElements { get; } = new List<LateralStructureElement>();
         public List<AggregatedStageDamageElement> StageDamageElements { get; } = new List<AggregatedStageDamageElement>();
         public List<InventoryElement> StructureInventoryElements { get; } = new List<InventoryElement>();
+        public List<StageLifeLossElement> StageLifeLossElements { get; } = new List<StageLifeLossElement>();
         public List<IASElement> IASElementSets { get; } = new List<IASElement>();
         public List<AlternativeElement> AlternativeElements { get; } = new List<AlternativeElement>();
         public List<AlternativeComparisonReportElement> AlternativeCompReports { get; } = new List<AlternativeComparisonReportElement>();
@@ -109,6 +114,7 @@ namespace HEC.FDA.ViewModel.Study
         public AggregatedStageDamageOwnerElement StageDamageParent { get; set; }
         public OccupancyTypesOwnerElement OccTypeParent { get; set; }
         public StructureInventoryOwnerElement StructureInventoryParent { get; set; }
+        public LifeLossOwnerElement LifeLossParent { get; set; }
         public IASOwnerElement IASParent { get; set; }
         public AlternativeOwnerElement AlternativeParent { get; set; }
         public AlternativeComparisonReportOwnerElement AlternativeComparisonReportParent { get; set; }
@@ -190,6 +196,11 @@ namespace HEC.FDA.ViewModel.Study
                 RemoveElementFromList(StageDamageElements, elem);
                 StageDamageRemoved?.Invoke(this, elementAddedEventArgs);
             }
+            else if (elem.GetType() == typeof(StageLifeLossElement))
+            {
+                RemoveElementFromList(StageLifeLossElements, elem);
+                StageLifeLossRemoved?.Invoke(this, elementAddedEventArgs);
+            }
             else if (elem.GetType() == typeof(IASElement))
             {
                 RemoveElementFromList(IASElementSets, elem);
@@ -200,10 +211,10 @@ namespace HEC.FDA.ViewModel.Study
                 RemoveElementFromList(AlternativeElements, elem);
                 AlternativeRemoved?.Invoke(this, elementAddedEventArgs);
             }
-            else if(elem is AlternativeComparisonReportElement)
+            else if (elem is AlternativeComparisonReportElement)
             {
                 RemoveElementFromList(AlternativeCompReports, elem);
-                AlternativeCompReportRemoved?.Invoke(this, elementAddedEventArgs);    
+                AlternativeCompReportRemoved?.Invoke(this, elementAddedEventArgs);
             }
         }
 
@@ -289,6 +300,11 @@ namespace HEC.FDA.ViewModel.Study
                 StageDamageElements.Add((AggregatedStageDamageElement)elem);
                 StageDamageAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
+            else if (elem is StageLifeLossElement)
+            {
+                StageLifeLossElements.Add((StageLifeLossElement)elem);
+                StageLifeLossAdded?.Invoke(this, new ElementAddedEventArgs(elem));
+            }
             else if (elem is IASElement )
             {
                 IASElementSets.Add((IASElement)elem);
@@ -355,6 +371,10 @@ namespace HEC.FDA.ViewModel.Study
             else if (newElement is AggregatedStageDamageElement )
             {
                 UpdateStageDamageElement( (AggregatedStageDamageElement)newElement);
+            }
+            else if (newElement is AggregatedStageDamageElement)
+            {
+                UpdateStageLifeLossElement((StageLifeLossElement)newElement);
             }
             else if (newElement is IASElement )
             {
@@ -475,6 +495,17 @@ namespace HEC.FDA.ViewModel.Study
                 StageDamageUpdated?.Invoke(this, new ElementUpdatedEventArgs( newElement));
             }
         }
+
+        public void UpdateStageLifeLossElement(StageLifeLossElement newElement)
+        {
+            int index = StageLifeLossElements.FindIndex(elem => elem.ID == newElement.ID);
+            if (index != -1)
+            {
+                StageLifeLossElements[index] = newElement;
+                StageLifeLossUpdated?.Invoke(this, new ElementUpdatedEventArgs(newElement));
+            }
+        }
+
         public void UpdateIASElement( IASElement newElement)
         {
             int index = IASElementSets.FindIndex(elem => elem.ID == newElement.ID);
@@ -579,6 +610,10 @@ namespace HEC.FDA.ViewModel.Study
             {
                 retVal.AddRange(StageDamageElements);
             }
+            else if (element is LifeLossOwnerElement)
+            {
+                retVal.AddRange(StageLifeLossElements);
+            }
             else if (element is IASOwnerElement)
             {
                 retVal.AddRange(IASElementSets);
@@ -638,6 +673,10 @@ namespace HEC.FDA.ViewModel.Study
             {
                 return StageDamageParent as T;
             }
+            if (parentType == typeof(LifeLossOwnerElement))
+            {
+                return LifeLossParent as T;
+            }
             if (parentType == typeof(IASOwnerElement))
             {
                 return IASParent as T;
@@ -695,6 +734,10 @@ namespace HEC.FDA.ViewModel.Study
             else if (childElementType == typeof(AggregatedStageDamageElement))
             {
                 retVal.AddRange(StageDamageElements);
+            }
+            else if (childElementType == typeof(StageLifeLossElement))
+            {
+                retVal.AddRange(StageLifeLossElements);
             }
             else if (childElementType == typeof(IASElement))
             {
@@ -771,6 +814,10 @@ namespace HEC.FDA.ViewModel.Study
             else if (childElementType == typeof(AggregatedStageDamageElement))
             {
                 childElem = StageDamageElements.Where(elem => elem.ID == ID).FirstOrDefault();
+            }
+            else if (childElementType == typeof(StageLifeLossElement))
+            {
+                childElem = StageLifeLossElements.Where(elem => elem.ID == ID).FirstOrDefault();
             }
             else if (childElementType == typeof(IASElement))
             {

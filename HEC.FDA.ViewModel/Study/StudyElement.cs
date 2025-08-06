@@ -25,6 +25,7 @@ using HEC.FDA.ViewModel.Inventory;
 using HEC.FDA.ViewModel.Alternatives;
 using HEC.FDA.ViewModel.AggregatedStageDamage;
 using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.ViewModel.LifeLoss;
 
 namespace HEC.FDA.ViewModel.Study
 {
@@ -328,6 +329,9 @@ namespace HEC.FDA.ViewModel.Study
                 InventoryOwnerElement inv = new InventoryOwnerElement();
                 inv.AddBaseElements(cache);
                 AddElement(inv);
+
+                LifeLossOwnerElement ll = new LifeLossOwnerElement();
+                AddElement(ll);
 
                 IASOwnerElement c = new IASOwnerElement();
                 AddElement(c);
