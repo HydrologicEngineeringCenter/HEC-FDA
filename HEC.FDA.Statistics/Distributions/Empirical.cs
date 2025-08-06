@@ -6,9 +6,8 @@ using System.Linq;
 using System.Xml.Linq;
 using Utilities;
 using System.Threading.Tasks;
-using System.Threading;
-using Statistics.Histograms;
-using System.Diagnostics;
+using Statistics;
+using HEC.FDA.Statistics;
 
 namespace Statistics.Distributions
 {
@@ -22,7 +21,7 @@ namespace Statistics.Distributions
         /// Cumulative probabilities are non-exceedance probabilities ONLY
         /// </summary>
         public double[] CumulativeProbabilities;
-        public double[] Quantiles;
+        public double[] Quantiles; //value
 
         #endregion
 
@@ -113,52 +112,19 @@ namespace Statistics.Distributions
             //TODO: Add rule to test if not monotonically increasing
             //This should never occur because we only add data in probability steps 
         }
-        #endregion
-
-        #region EmpiricalFunctions
-        private double ComputeMean()
+        public double ComputeMean()
         {
+            //This functionality was originally duplicated in paired data, and was ripped out to this static method. 
+            //The case below replicates prior functionality not shared with paired data.
             if (SampleSize == 0)
             {
-                return 0.0;
+                return 0;
             }
-            else if (SampleSize == 1)
+            if (Quantiles.Length == 1) 
             {
-                return Quantiles[0];
+                return 1;
             }
-            else
-            {
-                double mean = 0;
-                Int64 i;
-                double stepPDF, stepVal;
-                double valL, valR, cdfL, cdfR;
-                // left singleton
-                i = 0;
-                valR = Quantiles[i];
-                cdfR = CumulativeProbabilities[i];
-                stepPDF = cdfR - 0.0;
-                mean += valR * stepPDF;
-                valL = valR;
-                cdfL = cdfR;
-                // add interval values
-                for (i = 1; i < SampleSize - 1; ++i)
-                {
-                    valR = Quantiles[i];
-                    cdfR = CumulativeProbabilities[i];
-                    stepPDF = cdfR - cdfL;
-                    stepVal = (valL + valR) / 2.0;
-                    mean += stepPDF * stepVal;
-                    valL = valR;
-                    cdfL = cdfR;
-                }
-                // add right singleton 
-                i = SampleSize - 1;
-                valR = Quantiles[i];
-                cdfR = 1.0;
-                stepPDF = cdfR - cdfL;
-                mean += valR * stepPDF;
-                return mean;
-            }
+           return Mathematics.IntegrateTrapezoidal(CumulativeProbabilities, Quantiles );
         }
 
         public double ComputeMedian()
