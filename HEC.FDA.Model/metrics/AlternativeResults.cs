@@ -11,7 +11,7 @@ namespace HEC.FDA.Model.metrics
         #region Properties
         internal bool ScenariosAreIdentical { get; set; } = false;
         public int AlternativeID {get;}
-        public StudyAreaConsequencesByQuantile EqadDamageResults { get; internal set; }
+        public StudyAreaConsequencesByQuantile EqadResults { get; internal set; }
         public List<int> AnalysisYears { get; }
         public int PeriodOfAnalysis { get; }
         public bool IsNull { get; }
@@ -24,7 +24,7 @@ namespace HEC.FDA.Model.metrics
         {
             IsNull = true;
             AlternativeID = 0;
-            EqadDamageResults = new StudyAreaConsequencesByQuantile(AlternativeID);
+            EqadResults = new StudyAreaConsequencesByQuantile(AlternativeID);
             BaseYearScenarioResults = new ScenarioResults();
             FutureYearScenarioResults = new ScenarioResults();
             AnalysisYears = new List<int>() { 2030, 2049 };
@@ -37,7 +37,7 @@ namespace HEC.FDA.Model.metrics
         {
             AlternativeID = id;
             PeriodOfAnalysis = periodOfAnalysis;
-            EqadDamageResults = new StudyAreaConsequencesByQuantile(id);
+            EqadResults = new StudyAreaConsequencesByQuantile(id);
             IsNull = false;
             AnalysisYears = analysisYears;
             AddRules();
@@ -45,7 +45,7 @@ namespace HEC.FDA.Model.metrics
         internal AlternativeResults(StudyAreaConsequencesByQuantile studyAreaConsequencesByQuantile, int id, List<int> analysisYears, int periodOfAnalysis, bool isNull)
         {
             AlternativeID = id;
-            EqadDamageResults = studyAreaConsequencesByQuantile;
+            EqadResults = studyAreaConsequencesByQuantile;
             IsNull = isNull;
             AnalysisYears = analysisYears;
             PeriodOfAnalysis = periodOfAnalysis;
@@ -61,9 +61,9 @@ namespace HEC.FDA.Model.metrics
         public List<int> GetImpactAreaIDs()
         {
             List<int> impactAreaIDs = new();
-            if (EqadDamageResults.ConsequenceResultList.Count != 0)
+            if (EqadResults.ConsequenceResultList.Count != 0)
             {
-                foreach (AggregatedConsequencesByQuantile consequence in EqadDamageResults.ConsequenceResultList)
+                foreach (AggregatedConsequencesByQuantile consequence in EqadResults.ConsequenceResultList)
                 {
                     if (!impactAreaIDs.Contains(consequence.RegionID))
                     {
@@ -76,9 +76,9 @@ namespace HEC.FDA.Model.metrics
         public List<string> GetAssetCategories()
         {
             List<string> assetCats = new();
-            if (EqadDamageResults.ConsequenceResultList.Count != 0)
+            if (EqadResults.ConsequenceResultList.Count != 0)
             {
-                foreach (AggregatedConsequencesByQuantile consequence in EqadDamageResults.ConsequenceResultList)
+                foreach (AggregatedConsequencesByQuantile consequence in EqadResults.ConsequenceResultList)
                 {
                     if (!assetCats.Contains(consequence.AssetCategory))
                     {
@@ -91,9 +91,9 @@ namespace HEC.FDA.Model.metrics
         public List<string> GetDamageCategories()
         {
             List<string> damageCats = new();
-            if (EqadDamageResults.ConsequenceResultList.Count != 0)
+            if (EqadResults.ConsequenceResultList.Count != 0)
             {
-                foreach (AggregatedConsequencesByQuantile consequence in EqadDamageResults.ConsequenceResultList)
+                foreach (AggregatedConsequencesByQuantile consequence in EqadResults.ConsequenceResultList)
                 {
                     if (!damageCats.Contains(consequence.DamageCategory))
                     {
@@ -121,7 +121,7 @@ namespace HEC.FDA.Model.metrics
             } 
             else
             {
-                return EqadDamageResults.SampleMeanDamage(damageCategory, assetCategory, impactAreaID);
+                return EqadResults.SampleMeanDamage(damageCategory, assetCategory, impactAreaID);
             }
         }
         /// <summary>
@@ -172,7 +172,7 @@ namespace HEC.FDA.Model.metrics
             }
             else
             {
-                return EqadDamageResults.ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
+                return EqadResults.ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
             }
         }
         /// <summary>
@@ -217,7 +217,7 @@ namespace HEC.FDA.Model.metrics
                 return BaseYearScenarioResults.GetConsequencesDistribution(impactAreaID, damageCategory, assetCategory);
             } else
             {
-                return EqadDamageResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID);
+                return EqadResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID);
             }
         }
         /// <summary>
@@ -242,10 +242,10 @@ namespace HEC.FDA.Model.metrics
         }
         internal void AddConsequenceResults(AggregatedConsequencesByQuantile consequenceResultToAdd)
         {
-            AggregatedConsequencesByQuantile consequenceResults = EqadDamageResults.GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
+            AggregatedConsequencesByQuantile consequenceResults = EqadResults.GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
             if (consequenceResults.IsNull)
             {
-                EqadDamageResults.ConsequenceResultList.Add(consequenceResultToAdd);
+                EqadResults.ConsequenceResultList.Add(consequenceResultToAdd);
             }
         }
 

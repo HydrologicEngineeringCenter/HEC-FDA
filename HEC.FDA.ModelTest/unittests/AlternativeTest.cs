@@ -34,7 +34,7 @@ namespace HEC.FDA.ModelTest.unittests
         [InlineData(239260.1814, 239260.1814, 150000, 300000, 150000, 300000, 50, .0275, 2023, 2050, 1, 2.0)]
         [InlineData(150000, 150000, 150000, 150000, 150000, 150000, 50, .0275, 2023, 2072, 1, 1.0)]//if base year EAD = future year EAD then EAD = EqAD
         [InlineData(150000, 150000, 150000, 150000, 150000, 150000, 50, .0275, 2023, 2050, 1, 1.0)]//if base year EAD = future year EAD then EAD = EqAD
-        public void AlternativeResults_Test(double expectedEqadExceededWithAnyProbability, double expectedMeanAAEQ, double expectedBaseYearEAD, double expectedFutureYearEAD, double expectedBaseYearDamageExceededWithAnyProb, double expectedFutureYearDamageExceededWithAnyProb, int poa, double discountRate, int baseYear, int futureYear, int iterations, double futureDamageFractionOfExistingDamage)
+        public void AlternativeResults_Test(double expectedEqadExceededWithAnyProbability, double expectedMeanEqad, double expectedBaseYearEAD, double expectedFutureYearEAD, double expectedBaseYearDamageExceededWithAnyProb, double expectedFutureYearDamageExceededWithAnyProb, int poa, double discountRate, int baseYear, int futureYear, int iterations, double futureDamageFractionOfExistingDamage)
         {
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
             ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
@@ -98,7 +98,7 @@ namespace HEC.FDA.ModelTest.unittests
             Assert.True(errorEqadExceededWithProb < tolerance);
 
             double actualMeanEqad = alternativeResults.SampleMeanEqad(impactAreaID, damCat, assetCat);
-            double differenceEqadMean = actualMeanEqad - expectedMeanAAEQ;
+            double differenceEqadMean = actualMeanEqad - expectedMeanEqad;
             double errorMeanEqad = Math.Abs(differenceEqadMean / actualMeanEqad);
             Assert.True(errorMeanEqad < tolerance);
 

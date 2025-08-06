@@ -26,14 +26,14 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
         public double Point5 { get; set; }
         [DisplayAsColumn("75th Percentile EqAD Reduced")] // This is intentionally swapped 1-x
         public double Point25 { get; set; }
-        public EqadSummaryRowItem(string impactArea, string damcat, string assetcat,string withoutName, double withoutEqadDamage, string withProjName, double withProjEqad, 
+        public EqadSummaryRowItem(string impactArea, string damcat, string assetcat,string withoutName, double withoutEqad, string withProjName, double withProjEqad, 
             double eqadReduced, double point75, double point5, double point25)
         {
             ImpactArea = impactArea;
             DamCat = damcat;
             AssetCat = assetcat;
             WithoutProjAlternative = withoutName;
-            WithoutProjEqad = withoutEqadDamage;
+            WithoutProjEqad = withoutEqad;
             WithProjAlternative = withProjName;
             WithProjEqad = withProjEqad;
             EqadReduced = eqadReduced;

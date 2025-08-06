@@ -62,7 +62,7 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     /// impact area, damage category, and asset category combination. 
     ///  The level of aggregation of  consequences is determined by the arguments used in the method
     /// For example, if you wanted the mean EqAD damage reduced for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
-    /// double consequenceValue = MeanEqADDamageReduced(1, damageCategory: "residential", impactAreaID: 2);        /// </summary>
+    /// double consequenceValue = MeanEqadReduced(1, damageCategory: "residential", impactAreaID: 2);        /// </summary>
     /// <param name="alternativeID"></param>
     /// <param name="impactAreaID"></param>
     /// <param name="damageCategory"></param> either residential, commercial, etc...

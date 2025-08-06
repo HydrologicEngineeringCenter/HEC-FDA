@@ -33,7 +33,7 @@ public static class AlternativeComparisonReport
             return null;
         }
 
-        _EqadResults = ComputeDistributionOfEqadDamageReduced(withoutProjectAlternativeResults, withProjectAlternativesResults, pr);
+        _EqadResults = ComputeDistributionOfEqadReduced(withoutProjectAlternativeResults, withProjectAlternativesResults, pr);
         pr.ReportProgress(33);
 
         _BaseYearEADResults = ComputeDistributionEADReduced(withoutProjectAlternativeResults, withProjectAlternativesResults, AlternativeComparisonReportType.BaseYearEADReduced, pr);
@@ -63,7 +63,7 @@ public static class AlternativeComparisonReport
         return OperationResult.Success();
     }
 
-    private static List<StudyAreaConsequencesByQuantile> ComputeDistributionOfEqadDamageReduced(AlternativeResults withoutProjectAlternativeResults, IEnumerable<AlternativeResults> withProjectAlternativesResults, ProgressReporter pr)
+    private static List<StudyAreaConsequencesByQuantile> ComputeDistributionOfEqadReduced(AlternativeResults withoutProjectAlternativeResults, IEnumerable<AlternativeResults> withProjectAlternativesResults, ProgressReporter pr)
     {
         //We calculate a list of many empirical distributions of consequences - one for each with-project alternative 
         List<StudyAreaConsequencesByQuantile> damagesReducedAllAlternatives = [];
@@ -73,11 +73,11 @@ public static class AlternativeComparisonReport
 
             StudyAreaConsequencesByQuantile damageReducedOneAlternative = new(withProjectAlternativeResults.AlternativeID);
 
-            List<AggregatedConsequencesByQuantile> withoutProjectConsequenceDistList = [.. withoutProjectAlternativeResults.EqadDamageResults.ConsequenceResultList];
+            List<AggregatedConsequencesByQuantile> withoutProjectConsequenceDistList = [.. withoutProjectAlternativeResults.EqadResults.ConsequenceResultList];
 
-            foreach (AggregatedConsequencesByQuantile withProjectDamageResult in withProjectAlternativeResults.EqadDamageResults.ConsequenceResultList)
+            foreach (AggregatedConsequencesByQuantile withProjectDamageResult in withProjectAlternativeResults.EqadResults.ConsequenceResultList)
             {
-                AggregatedConsequencesByQuantile withoutProjectDamageResult = withoutProjectAlternativeResults.EqadDamageResults.GetConsequenceResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, withProjectDamageResult.RegionID); //GetEqadHistogram;
+                AggregatedConsequencesByQuantile withoutProjectDamageResult = withoutProjectAlternativeResults.EqadResults.GetConsequenceResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, withProjectDamageResult.RegionID); //GetEqadHistogram;
                 withoutProjectConsequenceDistList.Remove(withoutProjectDamageResult);
 
 
@@ -88,7 +88,7 @@ public static class AlternativeComparisonReport
             {
                 foreach (AggregatedConsequencesByQuantile withoutProjectDamageResult in withoutProjectConsequenceDistList)
                 {
-                    AggregatedConsequencesByQuantile withProjectDamageResult = withProjectAlternativeResults.EqadDamageResults.GetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID);
+                    AggregatedConsequencesByQuantile withProjectDamageResult = withProjectAlternativeResults.EqadResults.GetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID);
                     AggregatedConsequencesByQuantile damageReducedResult = IterateOnConsequenceDistributionResult(withProjectDamageResult, withoutProjectDamageResult, pr, false);
                     damageReducedOneAlternative.AddExistingConsequenceResultObject(damageReducedResult);
                 }
