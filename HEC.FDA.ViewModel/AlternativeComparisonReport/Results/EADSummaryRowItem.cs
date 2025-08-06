@@ -28,17 +28,17 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
         [DisplayAsColumn("75th Percentile EAD Reduced")] //This is intentionally swapped 1-x 
         public double Point25 { get; set; }
 
-
-        public EADSummaryRowItem(string impactArea, string damcat, string assetcat, string withoutName, double withoutAAEQDamage, string withProjName, double withProjAAEQ, double AAEQReduced, double point75, double point5, double point25 )
+        ///TODO: SHould this be EADor EQAD?
+        public EADSummaryRowItem(string impactArea, string damcat, string assetcat, string withoutName, double withoutEqad, string withProjName, double withProjEqad, double eqadReduced, double point75, double point5, double point25 )
         {
             ImpactArea = impactArea;
             DamCat = damcat;
             AssetCat = assetcat;
             WithoutProjAlternative = withoutName;
-            WithoutProjEAD = withoutAAEQDamage;
+            WithoutProjEAD = withoutEqad;
             WithProjAlternative = withProjName;
-            WithProjEAD = withProjAAEQ;
-            EADDamageReduced = AAEQReduced;
+            WithProjEAD = withProjEqad;
+            EADDamageReduced = eqadReduced;
             Point75 = point75;
             Point5 = point5;
             Point25 = point25;

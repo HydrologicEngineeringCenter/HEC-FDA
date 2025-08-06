@@ -3,14 +3,14 @@
     public class AlternativeResult
     {
         public EADResult EADResult{get;}
-        public EqadResult AAEQResult { get;  }
+        public EqadResult EqadResult { get;  }
         public string Name { get;  }
 
-        public AlternativeResult(string name, EADResult eadResult, EqadResult aaeqResult)
+        public AlternativeResult(string name, EADResult eadResult, EqadResult eqadResult)
         {
             Name = name;
             EADResult = eadResult;
-            AAEQResult = aaeqResult;
+            EqadResult = eqadResult;
         }
 
     }

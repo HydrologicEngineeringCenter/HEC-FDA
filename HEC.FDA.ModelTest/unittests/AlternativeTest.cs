@@ -32,9 +32,9 @@ namespace HEC.FDA.ModelTest.unittests
         [Theory]
         [InlineData(208213.8061, 208213.8061, 150000, 300000, 150000, 300000, 50, .0275, 2023, 2072, 1, 2.0)]
         [InlineData(239260.1814, 239260.1814, 150000, 300000, 150000, 300000, 50, .0275, 2023, 2050, 1, 2.0)]
-        [InlineData(150000, 150000, 150000, 150000, 150000, 150000, 50, .0275, 2023, 2072, 1, 1.0)]//if base year EAD = future year EAD then EAD = AAEQ
-        [InlineData(150000, 150000, 150000, 150000, 150000, 150000, 50, .0275, 2023, 2050, 1, 1.0)]//if base year EAD = future year EAD then EAD = AAEQ
-        public void AlternativeResults_Test(double expectedAAEQDamageExceededWithAnyProbability, double expectedMeanAAEQ, double expectedBaseYearEAD, double expectedFutureYearEAD, double expectedBaseYearDamageExceededWithAnyProb, double expectedFutureYearDamageExceededWithAnyProb, int poa, double discountRate, int baseYear, int futureYear, int iterations, double futureDamageFractionOfExistingDamage)
+        [InlineData(150000, 150000, 150000, 150000, 150000, 150000, 50, .0275, 2023, 2072, 1, 1.0)]//if base year EAD = future year EAD then EAD = EqAD
+        [InlineData(150000, 150000, 150000, 150000, 150000, 150000, 50, .0275, 2023, 2050, 1, 1.0)]//if base year EAD = future year EAD then EAD = EqAD
+        public void AlternativeResults_Test(double expectedEqadExceededWithAnyProbability, double expectedMeanAAEQ, double expectedBaseYearEAD, double expectedFutureYearEAD, double expectedBaseYearDamageExceededWithAnyProb, double expectedFutureYearDamageExceededWithAnyProb, int poa, double discountRate, int baseYear, int futureYear, int iterations, double futureDamageFractionOfExistingDamage)
         {
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: iterations, maxIterations: iterations);
             ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
@@ -92,15 +92,15 @@ namespace HEC.FDA.ModelTest.unittests
                 baseScenarioResults, futureScenarioResults,baseYear, futureYear);
             double tolerance = 0.01;
 
-            double actualAAEQExceededWithProb = alternativeResults.EqadExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damCat, assetCat);
-            double differenceAAEQExceededWithProb = actualAAEQExceededWithProb - expectedAAEQDamageExceededWithAnyProbability;
-            double errorAAEQExceededWithProb = Math.Abs(differenceAAEQExceededWithProb / actualAAEQExceededWithProb);
-            Assert.True(errorAAEQExceededWithProb < tolerance);
+            double actualEqadExceededWithProb = alternativeResults.EqadExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damCat, assetCat);
+            double differenceEqadExceededWithProb = actualEqadExceededWithProb - expectedEqadExceededWithAnyProbability;
+            double errorEqadExceededWithProb = Math.Abs(differenceEqadExceededWithProb / actualEqadExceededWithProb);
+            Assert.True(errorEqadExceededWithProb < tolerance);
 
-            double actualMeanAAEQ = alternativeResults.SampleMeanEqad(impactAreaID, damCat, assetCat);
-            double differenceAAEQMean = actualMeanAAEQ - expectedMeanAAEQ;
-            double errorMeanAAEQ = Math.Abs(differenceAAEQMean / actualMeanAAEQ);
-            Assert.True(errorMeanAAEQ < tolerance);
+            double actualMeanEqad = alternativeResults.SampleMeanEqad(impactAreaID, damCat, assetCat);
+            double differenceEqadMean = actualMeanEqad - expectedMeanAAEQ;
+            double errorMeanEqad = Math.Abs(differenceEqadMean / actualMeanEqad);
+            Assert.True(errorMeanEqad < tolerance);
 
             double actualBaseYearEAD = alternativeResults.SampleMeanBaseYearEAD(impactAreaID, damCat, assetCat);
             double differenceActualBaseYearEAD = actualBaseYearEAD - expectedBaseYearEAD;

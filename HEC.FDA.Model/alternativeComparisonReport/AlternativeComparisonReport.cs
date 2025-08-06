@@ -18,7 +18,7 @@ public static class AlternativeComparisonReport
 {
     public static AlternativeComparisonReportResults ComputeAlternativeComparisonReport(AlternativeResults withoutProjectAlternativeResults, IEnumerable<AlternativeResults> withProjectAlternativesResults, ProgressReporter pr = null)
     {
-        List<StudyAreaConsequencesByQuantile> _AAEqResults;
+        List<StudyAreaConsequencesByQuantile> _EqadResults;
         List<StudyAreaConsequencesByQuantile> _BaseYearEADResults;
         List<StudyAreaConsequencesByQuantile> _FutureYearEADResults;
 
@@ -33,7 +33,7 @@ public static class AlternativeComparisonReport
             return null;
         }
 
-        _AAEqResults = ComputeDistributionOfAAEQDamageReduced(withoutProjectAlternativeResults, withProjectAlternativesResults, pr);
+        _EqadResults = ComputeDistributionOfEqadDamageReduced(withoutProjectAlternativeResults, withProjectAlternativesResults, pr);
         pr.ReportProgress(33);
 
         _BaseYearEADResults = ComputeDistributionEADReduced(withoutProjectAlternativeResults, withProjectAlternativesResults, AlternativeComparisonReportType.BaseYearEADReduced, pr);
@@ -43,7 +43,7 @@ public static class AlternativeComparisonReport
         pr.ReportMessage("Alternative comparison report results processing complete." + Environment.NewLine);
         pr.ReportProgress(100);
 
-        return new AlternativeComparisonReportResults(withProjectAlternativesResults, withoutProjectAlternativeResults, _AAEqResults, _BaseYearEADResults, _FutureYearEADResults);
+        return new AlternativeComparisonReportResults(withProjectAlternativesResults, withoutProjectAlternativeResults, _EqadResults, _BaseYearEADResults, _FutureYearEADResults);
     }
 
     private static OperationResult ValidateAlternativeResults(AlternativeResults withoutProjectAlternativeResults, IEnumerable<AlternativeResults> withProjectAlternativesResults)
@@ -63,7 +63,7 @@ public static class AlternativeComparisonReport
         return OperationResult.Success();
     }
 
-    private static List<StudyAreaConsequencesByQuantile> ComputeDistributionOfAAEQDamageReduced(AlternativeResults withoutProjectAlternativeResults, IEnumerable<AlternativeResults> withProjectAlternativesResults, ProgressReporter pr)
+    private static List<StudyAreaConsequencesByQuantile> ComputeDistributionOfEqadDamageReduced(AlternativeResults withoutProjectAlternativeResults, IEnumerable<AlternativeResults> withProjectAlternativesResults, ProgressReporter pr)
     {
         //We calculate a list of many empirical distributions of consequences - one for each with-project alternative 
         List<StudyAreaConsequencesByQuantile> damagesReducedAllAlternatives = [];
@@ -77,7 +77,7 @@ public static class AlternativeComparisonReport
 
             foreach (AggregatedConsequencesByQuantile withProjectDamageResult in withProjectAlternativeResults.EqadDamageResults.ConsequenceResultList)
             {
-                AggregatedConsequencesByQuantile withoutProjectDamageResult = withoutProjectAlternativeResults.EqadDamageResults.GetConsequenceResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, withProjectDamageResult.RegionID); //GetAAEQDamageHistogram;
+                AggregatedConsequencesByQuantile withoutProjectDamageResult = withoutProjectAlternativeResults.EqadDamageResults.GetConsequenceResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, withProjectDamageResult.RegionID); //GetEqadHistogram;
                 withoutProjectConsequenceDistList.Remove(withoutProjectDamageResult);
 
 

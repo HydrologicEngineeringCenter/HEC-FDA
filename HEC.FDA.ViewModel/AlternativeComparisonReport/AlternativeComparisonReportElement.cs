@@ -165,11 +165,11 @@ public class AlternativeComparisonReportElement : ChildElement
     private List<SpecificAltCompReportResultsVM> CreateResults()
     {
         List<SpecificAltCompReportResultsVM> results = new();
-        List<EqadSummaryRowItem> aAEQSummaryRowItems = CreateAAEQSummaryTable(_Results);
+        List<EqadSummaryRowItem> eqadSummaryRowItems = CreateEqadSummaryTable(_Results);
         List<EADSummaryRowItem> eADBaseSummaryRowItems = CreateEADBaseYearSummaryTable(_Results);
         List<EADSummaryRowItem> eADFutureSummaryRowItems = CreateEADFutureYearSummaryTable(_Results);
 
-        List<AggregatedEqadSummaryRowItem> aAEQAggregatedSummaryRowItems = CreateAggregatedAAEQSummaryTable(_Results);
+        List<AggregatedEqadSummaryRowItem> eqadAggregatedSummaryRowItems = CreateAggregatedEqadSummaryTable(_Results);
         List<AggregatedEADSummaryRowItem> eADAggregatedSummaryRowItems = CreateAggregatedEADFutureYearSummaryTable(_Results);
         List<AggregatedEADSummaryRowItem> eADAggregatedBaseSummaryRowItems = CreateAggregatedEADBaseYearSummaryTable(_Results);
         foreach (int altID in WithProjAltIDs)
@@ -178,7 +178,7 @@ public class AlternativeComparisonReportElement : ChildElement
             results.Add(specificAltCompReportResultsVM);
         }
 
-        SpecificAltCompReportResultsVM summaryOption = new SummaryVM(eADBaseSummaryRowItems, eADFutureSummaryRowItems, aAEQSummaryRowItems, eADAggregatedBaseSummaryRowItems, eADAggregatedSummaryRowItems,  aAEQAggregatedSummaryRowItems, _Results.Years);
+        SpecificAltCompReportResultsVM summaryOption = new SummaryVM(eADBaseSummaryRowItems, eADFutureSummaryRowItems, eqadSummaryRowItems, eADAggregatedBaseSummaryRowItems, eADAggregatedSummaryRowItems,  eqadAggregatedSummaryRowItems, _Results.Years);
         results.Add(summaryOption);
         return results;
         
@@ -293,9 +293,9 @@ public class AlternativeComparisonReportElement : ChildElement
         return eadSummaryRowItems;
     }
 
-    private List<EqadSummaryRowItem> CreateAAEQSummaryTable(AlternativeComparisonReportResults results)
+    private List<EqadSummaryRowItem> CreateEqadSummaryTable(AlternativeComparisonReportResults results)
     {
-        List<EqadSummaryRowItem> aaeqSummaryRowItems = [];
+        List<EqadSummaryRowItem> eqadSummaryRowItems = [];
         Dictionary<int, string> impactAreaNames = IASElement.GetImpactAreaNamesFromIDs();
         string withoutProjName = GetAlternativeElementFromID(WithoutProjAltID).Name;
         
@@ -315,17 +315,17 @@ public class AlternativeComparisonReportElement : ChildElement
                         double point25 = results.EqadReducedExceededWithProbabilityQ(.25, altID, impactAreaID, damcat, assetType);
                         double eqadWithoutProjDamage = results.SampleMeanWithoutProjectEqad(impactAreaID, damcat, assetType);
                         EqadSummaryRowItem row = new(impactAreaNames[impactAreaID], damcat, assetType, withoutProjName, eqadWithoutProjDamage, withProjName, withProjEqad, eqadReduced, point75, point5, point25);
-                        aaeqSummaryRowItems.Add(row);
+                        eqadSummaryRowItems.Add(row);
                     }
                 }
 
             }
         }
-        return aaeqSummaryRowItems;
+        return eqadSummaryRowItems;
     }
-    private List<AggregatedEqadSummaryRowItem> CreateAggregatedAAEQSummaryTable(AlternativeComparisonReportResults results)
+    private List<AggregatedEqadSummaryRowItem> CreateAggregatedEqadSummaryTable(AlternativeComparisonReportResults results)
     {
-        List<AggregatedEqadSummaryRowItem> aaeqSummaryRowItems = [];
+        List<AggregatedEqadSummaryRowItem> eqadSummaryRowItems = [];
         Dictionary<int, string> impactAreaNames = IASElement.GetImpactAreaNamesFromIDs();
         string withoutProjName = GetAlternativeElementFromID(WithoutProjAltID).Name;
 
@@ -335,17 +335,17 @@ public class AlternativeComparisonReportElement : ChildElement
             string withProjName = GetAlternativeElementFromID(altID).Name;
             foreach (int impactAreaID in results.GetImpactAreaIDs())
             {
-                double withProjAAEQ = results.SampleMeanWithProjectEqad(altID, impactAreaID);
-                double aaeqReduced = results.SampleMeanEqadReduced(altID, impactAreaID);
+                double withProjEqad = results.SampleMeanWithProjectEqad(altID, impactAreaID);
+                double eqadReduced = results.SampleMeanEqadReduced(altID, impactAreaID);
                 double point75 = results.EqadReducedExceededWithProbabilityQ(.75, altID, impactAreaID);
                 double point5 = results.EqadReducedExceededWithProbabilityQ(.5, altID, impactAreaID);
                 double point25 = results.EqadReducedExceededWithProbabilityQ(.25, altID, impactAreaID);
-                double aaeqWithoutProjDamage = results.SampleMeanWithoutProjectEqad(impactAreaID);
-                AggregatedEqadSummaryRowItem row = new(impactAreaNames[impactAreaID], withoutProjName, aaeqWithoutProjDamage, withProjName, withProjAAEQ, aaeqReduced, point75, point5, point25);
-                aaeqSummaryRowItems.Add(row);
+                double eqadWithoutProjDamage = results.SampleMeanWithoutProjectEqad(impactAreaID);
+                AggregatedEqadSummaryRowItem row = new(impactAreaNames[impactAreaID], withoutProjName, eqadWithoutProjDamage, withProjName, withProjEqad, eqadReduced, point75, point5, point25);
+                eqadSummaryRowItems.Add(row);
             }
         }
-        return aaeqSummaryRowItems;
+        return eqadSummaryRowItems;
     }
 
     public List<AlternativeElement> GetWithProjectAlternatives()
@@ -451,10 +451,10 @@ public class AlternativeComparisonReportElement : ChildElement
         YearResult yr1 = new YearResult(baseYear, new DamageWithUncertaintyVM(_Results, withProjID, DamageMeasureYear.Base), new DamageByImpactAreaVM(_Results, withProjID, DamageMeasureYear.Base), new DamageByDamCatVM(_Results, DamageMeasureYear.Base, withProjID));
         YearResult yr2 = new YearResult(futureYear, new DamageWithUncertaintyVM(_Results, withProjID, DamageMeasureYear.Future), new DamageByImpactAreaVM(_Results, withProjID, DamageMeasureYear.Future), new DamageByDamCatVM(_Results, DamageMeasureYear.Future, withProjID));
 
-        EqadResult aaeqResult = new EqadResult(new DamageWithUncertaintyVM(_Results, withProjID, DamageMeasureYear.Eqad, discountRate, period), new DamageByImpactAreaVM(_Results, withProjID, DamageMeasureYear.Eqad, discountRate, period), new DamageByDamCatVM(_Results, DamageMeasureYear.Eqad, withProjID, discountRate, period));
+        EqadResult eqadResult = new EqadResult(new DamageWithUncertaintyVM(_Results, withProjID, DamageMeasureYear.Eqad, discountRate, period), new DamageByImpactAreaVM(_Results, withProjID, DamageMeasureYear.Eqad, discountRate, period), new DamageByDamCatVM(_Results, DamageMeasureYear.Eqad, withProjID, discountRate, period));
 
         EADResult eadResult = new EADResult(new List<YearResult>() { yr1, yr2 });
-        AlternativeResult altResult = new AlternativeResult(withProjName, eadResult, aaeqResult);
+        AlternativeResult altResult = new AlternativeResult(withProjName, eadResult, eqadResult);
 
         return new SpecificAltCompReportResultsVM(altResult);
     }

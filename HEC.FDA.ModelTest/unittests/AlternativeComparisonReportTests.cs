@@ -452,9 +452,9 @@ namespace HEC.FDA.ModelTest.unittests
             double actualBaseYearEADWithoutProject = alternativeComparisonReportResults.SampleMeanWithoutProjectBaseYearEAD(impactAreaIdentifier, residentialDamCat, assetCategory);
             Assert.Equal(expectedBaseYearEADWithoutProject, actualBaseYearEADWithoutProject);
 
-            double expectedAAEQWithProject = withProjectAlternativeResults.SampleMeanEqad(impactAreaIdentifier, residentialDamCat, assetCategory);
-            double actualAAEQWithProject = alternativeComparisonReportResults.SampleMeanWithProjectEqad(withAlternativeIdentifier, impactAreaIdentifier, residentialDamCat, assetCategory);
-            Assert.Equal(expectedAAEQWithProject, actualAAEQWithProject);
+            double expectedEqADWithProject = withProjectAlternativeResults.SampleMeanEqad(impactAreaIdentifier, residentialDamCat, assetCategory);
+            double actualEqADWithProject = alternativeComparisonReportResults.SampleMeanWithProjectEqad(withAlternativeIdentifier, impactAreaIdentifier, residentialDamCat, assetCategory);
+            Assert.Equal(expectedEqADWithProject, actualEqADWithProject);
 
 
         }
