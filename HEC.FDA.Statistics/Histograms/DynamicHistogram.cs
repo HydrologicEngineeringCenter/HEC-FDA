@@ -29,8 +29,8 @@ namespace Statistics.Histograms
                 return IsSingleValued();
             }
         }
-        internal double SampleMax { get; private set; }
-        internal double SampleMin { get; private set; }
+        public double SampleMax { get; private set; }
+        public double SampleMin { get; private set; }
         internal bool ConvergedOnMax { get; private set; } = false;
 
         public bool IsConverged { get; private set; } = false;
@@ -40,7 +40,7 @@ namespace Statistics.Histograms
         public long[] BinCounts { get; private set; } = [];
         public double Min { get; private set; }
         public double Max { get; set; }
-        public double SampleMean { get; private set; } = 10;
+        public double SampleMean { get; private set; }
         public double SampleVariance
         {
             get
@@ -130,6 +130,19 @@ namespace Statistics.Histograms
             BinCounts = binCounts;
             ConvergenceCriteria = convergenceCriteria;
             SampleSize = sampleSize;
+        }
+        public DynamicHistogram(double min, double binWidth, long[] binCounts, double sampleMean, double sampleVariance, double sampleMin, double sampleMax, ConvergenceCriteria convergenceCriteria)
+        {
+            Min = min;
+            BinWidth = binWidth;
+            BinCounts = binCounts;
+            Max = Min + BinCounts.Length * BinWidth;
+            SampleSize = BinCounts.Sum();
+            SampleMean = sampleMean;
+            _SampleVariance = sampleVariance;
+            SampleMin = sampleMin;
+            SampleMax = sampleMax;
+            ConvergenceCriteria = convergenceCriteria;
         }
         #endregion
         #region Functions

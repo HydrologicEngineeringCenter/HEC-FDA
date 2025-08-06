@@ -13,8 +13,6 @@ namespace HEC.FDA.ViewModel
     /// </summary>
     public abstract class BaseFdaElement : BaseViewModel
     {
-        #region Notes
-        #endregion
         #region Fields
         private List<NamedAction> _Actions;
         private CustomHeaderVM _CustomTreeViewHeader;
@@ -26,7 +24,6 @@ namespace HEC.FDA.ViewModel
         #endregion
 
         #region Properties
-
         public string Name
         {
             get { return _Name; }
