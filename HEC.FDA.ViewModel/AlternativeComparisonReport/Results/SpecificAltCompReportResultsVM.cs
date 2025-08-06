@@ -113,7 +113,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
             {
                 YearsVisible = false;
                 SelectedReport = DAMAGE_WITH_UNCERTAINTY;
-                CurrentResultVM = AlternativeResult.AAEQResult.DamageWithUncertaintyVM;
+                CurrentResultVM = AlternativeResult.EqadResult.DamageWithUncertaintyVM;
             }
         }
         private void SelectedReportChanged()
@@ -127,7 +127,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
                     }
                     else if (EqAD.Equals(_SelectedDamageMeasure))
                     {
-                        CurrentResultVM = AlternativeResult.AAEQResult.DamageWithUncertaintyVM;
+                        CurrentResultVM = AlternativeResult.EqadResult.DamageWithUncertaintyVM;
                     }
                     break;
                 case DAMAGE_BY_IMPACT_AREA:
@@ -137,7 +137,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
                     }
                     else if (EqAD.Equals(_SelectedDamageMeasure))
                     {
-                        CurrentResultVM = AlternativeResult.AAEQResult.DamageByImpactAreaVM;
+                        CurrentResultVM = AlternativeResult.EqadResult.DamageByImpactAreaVM;
                     }
                     break;
                 case DAMAGE_BY_DAMAGE_CATEGORY:
@@ -147,7 +147,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
                     }
                     else if (EqAD.Equals(_SelectedDamageMeasure))
                     {
-                        CurrentResultVM = AlternativeResult.AAEQResult.DamageByDamCatVM;
+                        CurrentResultVM = AlternativeResult.EqadResult.DamageByDamCatVM;
                     }
                     break;
             }

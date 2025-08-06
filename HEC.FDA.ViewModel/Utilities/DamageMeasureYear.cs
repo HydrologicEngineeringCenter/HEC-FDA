@@ -4,6 +4,6 @@
     {
         Base,
         Future,
-        AAEQ
+        Eqad
     }
 }

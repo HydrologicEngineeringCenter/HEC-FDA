@@ -193,5 +193,54 @@ namespace StatisticsTests.Distributions
 
 
         }
+
+        [Fact]
+        public void ComputeMean_ReturnsCorrectMean_ForKnownDistribution()
+        {
+            // Arrange
+            // Example: 3 points, quantiles = [1, 2, 3], cumulative probabilities = [0.2, 0.5, 1.0]
+            double[] quantiles = { 1.0, 2.0, 3.0 };
+            double[] cumulativeProbabilities = { 0.2, 0.5, 1.0 };
+            var empirical = new Empirical(cumulativeProbabilities, quantiles);
+
+
+            // Act
+            double mean = empirical.ComputeMean();
+            double left = (1.0 * 0.2) / 2;
+            double middle = (1.0 * (0.5 - 0.2) + (.5-.2) * (2.0-1.0) /2.0);
+            double right = (2.0 * (1.0 - 0.5)) + (3-2)*(1-.5)/2;
+            double expectedMean =  left + middle + right;
+
+            // Assert
+            Assert.Equal(expectedMean, mean,1);
+        }
+
+        [Fact]
+        public void ComputeMean_ReturnsZero_ForEmptySample()
+        {
+            // Arrange
+            var empirical = new Empirical();
+
+            // Act
+            double mean = empirical.ComputeMean();
+
+            // Assert
+            Assert.Equal(0.0, mean, 1);
+        }
+
+        [Fact]
+        public void ComputeMean_ReturnsValue_ForSingleSample()
+        {
+            // Arrange
+            double[] quantiles = { 5.0 };
+            double[] cumulativeProbabilities = { 1.0 };
+            var empirical = new Empirical(cumulativeProbabilities, quantiles);
+
+            // Act
+            double mean = empirical.ComputeMean();
+
+            // Assert
+            Assert.Equal(5.0, mean, 6);
+        }
     }
 }

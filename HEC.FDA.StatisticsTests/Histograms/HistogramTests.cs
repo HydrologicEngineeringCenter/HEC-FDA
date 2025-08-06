@@ -735,7 +735,6 @@ public class HistogramTests
         double empMean = empirical.Mean;
         double histMean = histogram.SampleMean;
         double histCalcMean = histogram.HistogramMean();
-        Console.WriteLine();
     }
 
     [Fact]

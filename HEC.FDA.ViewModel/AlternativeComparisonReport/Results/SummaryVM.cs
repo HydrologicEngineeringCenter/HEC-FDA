@@ -6,8 +6,8 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
     public class SummaryVM : SpecificAltCompReportResultsVM
     {
 
-        public List<AAEQSummaryRowItem> AAEQSummaryRows { get; }
-        public List<AggregatedAAEQSummaryRowItem> AggAAEQSummaryRows { get; }
+        public List<EqadSummaryRowItem> EqadSummaryRows { get; }
+        public List<AggregatedEqadSummaryRowItem> AggEqadSummaryRows { get; }
 
         public List<EADSummaryRowItem> BaseEADSummaryRows { get; }
         public List<AggregatedEADSummaryRowItem> AggBaseEADSummaryRows { get; }
@@ -17,16 +17,16 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
 
         public string BaseYearLabel { get; }
         public string FutureYearLabel { get; }
-        public string AAEQLabel { get; }
+        public string EqadLabel { get; }
         public string AggBaseYearLabel { get; }
         public string AggFutureYearLabel { get; }
-        public string AggAAEQLabel { get; }
+        public string AggEqadLabel { get; }
 
-        public SummaryVM(List<EADSummaryRowItem> baseYearSummary, List<EADSummaryRowItem> futureYearSummary, List<AAEQSummaryRowItem> aaeqSummary, 
-            List<AggregatedEADSummaryRowItem> aggBaseYearSummary, List<AggregatedEADSummaryRowItem> aggFutureYearSummary, List<AggregatedAAEQSummaryRowItem> aggAAEQSummary, List<int> years) :base()
+        public SummaryVM(List<EADSummaryRowItem> baseYearSummary, List<EADSummaryRowItem> futureYearSummary, List<EqadSummaryRowItem> eqadSummary, 
+            List<AggregatedEADSummaryRowItem> aggBaseYearSummary, List<AggregatedEADSummaryRowItem> aggFutureYearSummary, List<AggregatedEqadSummaryRowItem> aggEqadSummary, List<int> years) :base()
         {
-            AAEQSummaryRows = aaeqSummary;
-            AggAAEQSummaryRows = aggAAEQSummary;
+            EqadSummaryRows = eqadSummary;
+            AggEqadSummaryRows = aggEqadSummary;
             BaseEADSummaryRows = baseYearSummary;
             AggBaseEADSummaryRows = aggBaseYearSummary;
             FutureEADSummaryRows = futureYearSummary;
@@ -34,11 +34,11 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
 
             BaseYearLabel = "Base Year Expected Annual Damage Reduced by Damage and Asset Category " + years[0];
             FutureYearLabel = "Future Year Expected Annual Damage Reduced by Damage and Asset Category " + years[1];
-            AAEQLabel = "Equivalent Annual Damage Distribution (EqAD) Reduced by Damage and Asset Category";
+            EqadLabel = "Equivalent Annual Damage Distribution (EqAD) Reduced by Damage and Asset Category";
 
             AggBaseYearLabel = "Base Year Expected Annual Damage Reduced Distribution " + years[0];
             AggFutureYearLabel = "Future Year Expected Annual Damage Reduced Distribution " + years[1];
-            AggAAEQLabel = "Equivalent Annual Damage (EqAD) Reduced Distribution";
+            AggEqadLabel = "Equivalent Annual Damage (EqAD) Reduced Distribution";
         }
 
     }
