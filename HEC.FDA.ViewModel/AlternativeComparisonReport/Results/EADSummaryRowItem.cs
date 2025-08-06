@@ -20,7 +20,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
         [DisplayAsColumn("With Project EAD")]
         public double WithProjEAD { get; set; }
         [DisplayAsColumn("Mean EAD Reduced")]
-        public double EADDamageReduced { get; set; }
+        public double EADReduced { get; set; }
         [DisplayAsColumn("25th Percentile EAD Reduced")] //This is intentionally swapped 1-x 
         public double Point75 { get; set; }
         [DisplayAsColumn("50th Percentile EAD Reduced")]
@@ -28,17 +28,16 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
         [DisplayAsColumn("75th Percentile EAD Reduced")] //This is intentionally swapped 1-x 
         public double Point25 { get; set; }
 
-        ///TODO: SHould this be EADor EQAD?
-        public EADSummaryRowItem(string impactArea, string damcat, string assetcat, string withoutName, double withoutEqad, string withProjName, double withProjEqad, double eqadReduced, double point75, double point5, double point25 )
+        public EADSummaryRowItem(string impactArea, string damcat, string assetcat, string withoutName, double withoutEad, string withProjName, double withProjEqad, double eadReduced, double point75, double point5, double point25 )
         {
             ImpactArea = impactArea;
             DamCat = damcat;
             AssetCat = assetcat;
             WithoutProjAlternative = withoutName;
-            WithoutProjEAD = withoutEqad;
+            WithoutProjEAD = withoutEad;
             WithProjAlternative = withProjName;
             WithProjEAD = withProjEqad;
-            EADDamageReduced = eqadReduced;
+            EADReduced = eadReduced;
             Point75 = point75;
             Point5 = point5;
             Point25 = point25;
