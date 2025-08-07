@@ -330,9 +330,6 @@ namespace HEC.FDA.ViewModel.Study
                 inv.AddBaseElements(cache);
                 AddElement(inv);
 
-                LifeLossOwnerElement ll = new LifeLossOwnerElement();
-                AddElement(ll);
-
                 IASOwnerElement c = new IASOwnerElement();
                 AddElement(c);
 

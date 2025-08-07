@@ -9,11 +9,12 @@ public class LifeLossOwnerElement : ParentElement
 {
     public LifeLossOwnerElement(): base()
     {
-        Name = "Life Loss";
+        Name = "Aggregated Stage-Life Loss Functions";
         CustomTreeViewHeader = new CustomHeaderVM(Name);
+        IsBold = false;
         NamedAction add = new()
         {
-            Header = "Import LifeSim Database",
+            Header = "Import LifeSim Database...",
             Action = AddNew
         };
         List<NamedAction> localActions = new()

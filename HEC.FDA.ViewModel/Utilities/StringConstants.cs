@@ -126,7 +126,7 @@
         public const string CREATE_LATERAL_STRUCTURES_HEADER = "Create New Lateral Structure";
         public const string IMPORT_LATERAL_STRUCTURES_FROM_OLD_NAME = "Lateral Structures";
 
-        public const string ECONOMICS = "Economics";
+        public const string CONSEQUENCES = "Consequences";
 
         public const string OCCUPANCY_TYPES = "Occupancy Types";
         public const string EDIT_OCCTYPE_MENU = "Edit Occupancy Types...";
