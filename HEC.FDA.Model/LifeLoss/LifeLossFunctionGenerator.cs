@@ -1,11 +1,11 @@
-﻿using HEC.FDA.Model.alternatives;
+﻿using HEC.FDA.Model.LifeLoss.Saving;
 using HEC.FDA.Model.paireddata;
 using RasMapperLib;
 using Statistics.Histograms;
+using System.Collections.Generic;
 using System.IO;
-using VisualScratchSpace.Model.Saving;
 
-namespace VisualScratchSpace.Model;
+namespace HEC.FDA.Model.LifeLoss;
 
 /// <summary>
 /// Creates a list of life loss functions for each summary zone in simulation for a given set of alternatives and hazard times
@@ -103,12 +103,12 @@ public class LifeLossFunctionGenerator
                     string associatedHydraulicsFolder = _hydraulicsFolderByAlternative[alternative];
                     string hdf = Path.Combine(_topLevelHydraulicsFolder, associatedHydraulicsFolder, $"{associatedHydraulicsFolder}.hdf"); // asserting that the HDF file name is always in this format
                     float[] computedStage = GeospatialHelpers.GetStageFromHDF(indexPoint, hdf);
-                    stage = (double)computedStage[0]; // GetStageFromHDF returns an array with one value in it (RAS API), so we get the first (and only) value
+                    stage = computedStage[0]; // GetStageFromHDF returns an array with one value in it (RAS API), so we get the first (and only) value
                     seenStages[(_simulationName, summaryZone, alternative)] = stage;
                 }
                 stages.Add(stage);
 
-                if (!seenHistograms.TryGetValue((_simulationName, summaryZone, alternative, hazardTime), out DynamicHistogram? histogram)) // checking if the histogram already exists in the DB
+                if (!seenHistograms.TryGetValue((_simulationName, summaryZone, alternative, hazardTime), out DynamicHistogram histogram)) // checking if the histogram already exists in the DB
                 {
                     newEntry = true; newEntries = true;
                     string tableName = $"{_simulationName}>Results_By_Iteration>{alternative}>{hazardTime}>{_summarySetName}>{summaryZone}";
