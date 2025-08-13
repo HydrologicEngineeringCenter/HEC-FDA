@@ -14,7 +14,18 @@
     <UserControl.Resources>
         <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     <conv:NullImageConverter x:Key="NullImageConverter"/>
-  </UserControl.Resources>
+        <Style x:Key="HoverableBorder" TargetType="Border">
+            <!-- default background so we get hit‐testing -->
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="CornerRadius" Value="6"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FFE0F0FF"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    <Border Style="{StaticResource HoverableBorder}" Padding="4,0,4,0">
     <Grid>
         <StackPanel Orientation="Horizontal" >
             <Grid>
@@ -22,7 +33,7 @@
                     <ColumnDefinition Width="20" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="30" />
+                    <!--<ColumnDefinition Width="30" /> -->
                 </Grid.ColumnDefinitions>
 
         <Image Grid.Column="0" Name="image_Image" Source="{Binding Path=ImageSource, Converter= {StaticResource NullImageConverter}}" />
@@ -33,4 +44,5 @@
         </StackPanel>
             
     </Grid>
+    </Border>
 </UserControl>
