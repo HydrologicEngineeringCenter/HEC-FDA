@@ -1,10 +1,10 @@
 ﻿using Geospatial.Features;
 using Geospatial.IO;
-using System.Collections.Generic;
 using HEC.FDA.Model.Spatial.Extensions;
 using RasMapperLib;
 using RasMapperLib.Mapping;
 using RasMapperLib.Utilities;
+using System.Collections.Generic;
 using Utility.Logging;
 
 namespace HEC.FDA.Model.LifeLoss;
@@ -17,7 +17,7 @@ public class GeospatialHelpers
     /// <param name="polygonPath"></param>
     /// <param name="pointsPath"></param>
     /// <returns></returns>
-    public static Dictionary<string, PointM> QueryPolygons(string polygonPath, string pointsPath)
+    public static Dictionary<string, PointM> QueryPolygons(string polygonPath, string pointsPath, string summarySetUniqueName)
     {
         OperationResult polygonResult = ShapefileIO.TryRead(polygonPath, out PolygonFeatureCollection polygons);
         if (!polygonResult.Result) return new Dictionary<string, PointM>();
@@ -33,11 +33,11 @@ public class GeospatialHelpers
                 if (polygons[j].Contains(points[i]))
                 {
                     var row = polygons.AttributeTable.Rows[j];
-                    string summaryZone = row.TryGetValueAs("Name", $"Polygon {j.ToString()}").TrimEnd();
+                    string summaryZone = row.TryGetValueAs(summarySetUniqueName, $"Polygon {j}").TrimEnd();
                     result[summaryZone] = Converter.ConvertPtM(points[i]);
                 }
             }
-        }        
+        }
         return result;
     }
 

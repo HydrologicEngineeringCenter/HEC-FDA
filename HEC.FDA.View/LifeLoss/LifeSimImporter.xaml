@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:HEC.FDA.View.LifeLoss"
              xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=HEC.FDA.UserControls"
              xmlns:frameworkControls="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=HEC.MVVMFramework.View"
+             xmlns:oxy="http://oxyplot.org/wpf"
              xmlns:lifeloss="clr-namespace:HEC.FDA.ViewModel.LifeLoss;assembly=HEC.FDA.ViewModel"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance Type=lifeloss:LifeSimImporterVM}"
@@ -16,6 +17,7 @@
             <RowDefinition Height="35"/>
             <RowDefinition Height="35"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         
         <Grid Grid.Row="0">
@@ -52,7 +54,6 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-            
                 <Grid Grid.Row="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="35"/>
@@ -63,7 +64,7 @@
                         <ColumnDefinition Width="120" />
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    
+
                     <Label Grid.Row="0" Grid.Column="0" Content="Hydraulics:" HorizontalAlignment="Right"/>
                     <ComboBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Margin="5"  ItemsSource="{Binding WaterSurfaceElevations}" SelectedItem="{Binding SelectedWaterSurfaceElevation}" DisplayMemberPath="Name"/>
 
@@ -73,7 +74,7 @@
                     <Label Grid.Row="2" Grid.Column="0" Content="LifeSim Simulation:" HorizontalAlignment="Right" />
                     <ComboBox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" Margin="5"  ItemsSource="{Binding Simulations}" SelectedItem="{Binding SelectedSimulation}" DisplayMemberPath="Name"/>
                 </Grid>
-            
+
                 <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -87,7 +88,7 @@
 
                 <TextBlock Text="LifeSim Alternatives:" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5"/>
                 <StackPanel Margin="5" Grid.Row="1" Grid.Column="1">
-                    <ItemsControl ItemsSource="{Binding Alternatives}">
+                    <ItemsControl ItemsSource="{Binding LifeSimAlternatives}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <CheckBox Content="{Binding Name}"
@@ -112,8 +113,14 @@
                 </StackPanel>
             </Grid>
             
-            <Button Grid.Row="2" Grid.Column="3" Content="Compute Curves" Width="100" HorizontalAlignment="Right" Height="22" Margin="5"/>
+            <Button Grid.Row="2" Grid.Column="3" Content="Compute Curves" Command="{Binding ComputeCurvesCommand}" Width="100" HorizontalAlignment="Right" Height="22" Margin="5"/>
+
+            
+
         </Grid>
         </GroupBox>
+        <Grid Grid.Row="4">
+            <oxy:PlotView Model="{Binding MyModel, Mode=OneWay}"/>
+        </Grid>
     </Grid>
 </UserControl>

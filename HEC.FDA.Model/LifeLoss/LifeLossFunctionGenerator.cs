@@ -39,24 +39,26 @@ public class LifeLossFunctionGenerator
     /// <param name="summarySetPath">Path to the summary set shape file</param>
     /// <param name="indexPointsPath">Path to the index points shape file</param>
     /// <returns></returns>
-    public List<LifeLossFunction> CreateLifeLossFunctions(string summarySetPath, string indexPointsPath)
+    public List<LifeLossFunction> CreateLifeLossFunctionsAsync(string summarySetPath, string indexPointsPath, string summarySetUniqueName)
     {
         List<LifeLossFunction> lifeLossFunctions = new();
 
         // create the map of summary zone names to their corresponding index points
-        _indexPointBySummaryZone = GeospatialHelpers.QueryPolygons(summarySetPath, indexPointsPath);
+        _indexPointBySummaryZone = GeospatialHelpers.QueryPolygons(summarySetPath, indexPointsPath, summarySetUniqueName);
 
         // create life loss functions for each hazard time within each summary zone
         foreach (string summaryZone in _indexPointBySummaryZone.Keys)
         {
             // creating points array of size 1 because that RAS API needs an array
-            PointMs indexPoint = [_indexPointBySummaryZone[summaryZone]]; 
+            PointMs indexPoint = [_indexPointBySummaryZone[summaryZone]];
 
             List<LifeLossFunction> functions = CreateLifeLossFunctionsForSummaryZone(summaryZone, indexPoint);
             lifeLossFunctions.AddRange(functions); // AddRange because we are adding a list to another list
         }
         return lifeLossFunctions;
     }
+
+    //private List<LifeLossFunction> CreateLifeLossFunctions
 
     /// <summary>
     /// Return a list of life loss functions for a given summary zone
@@ -79,7 +81,7 @@ public class LifeLossFunctionGenerator
         // set up dictionaries for stages and histograms already in the DB, allows us to make O(1) lookups instead of recomputing
         var seenStages = new Dictionary<(string simulation, string summaryZone, string alternative), double>();
         var seenHistograms = new Dictionary<(string simulation, string summaryZone, string alternative, string hazardTime), DynamicHistogram>();
-        foreach (LifeLossFunction llf  in existingFunctions)
+        foreach (LifeLossFunction llf in existingFunctions)
         {
             for (int i = 0; i < llf.AlternativeNames.Length; i++)
             {
@@ -121,8 +123,8 @@ public class LifeLossFunctionGenerator
             {
                 UncertainPairedData upd = new(stages.ToArray(), histograms.ToArray(), new CurveMetaData());
                 LifeLossFunction llf = new(upd, _alternativeNames, _simulationName, summaryZone, hazardTime);
-                saver.SaveToSQLite(llf); 
-            } 
+                saver.SaveToSQLite(llf);
+            }
         }
         if (!newEntries) return existingFunctions;
         return saver.ReadFromSQLite(allPF); // this call is needed to order the functions (uses ORDER BY in the SELECT statement)
