@@ -61,7 +61,7 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         set { _SelectedIndexPoints = value; NotifyPropertyChanged(); }
     }
 
-    public ObservableCollection<LifeSimSimulation> Simulations { get; set; }
+    public ObservableCollection<LifeSimSimulation> Simulations { get; set; } = [];
     public LifeSimSimulation SelectedSimulation
     {
         get { return _SelectedSimuation; }
@@ -92,21 +92,28 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         }
     }
 
-    public ObservableCollection<CheckableItem> LifeSimAlternatives { get; set; }
-    public ObservableCollection<CheckableItem> HazardTimes { get; set; }
-    public PlotModel MyModel { get; set; }
+    public ObservableCollection<CheckableItem> LifeSimAlternatives { get; set; } = [];
+    public ObservableCollection<CheckableItem> HazardTimes { get; set; } = [];
+    public PlotModel MyModel { get; set; } = new();
     private int _plotIndex = 0;
     private List<LifeLossFunction> _lifeLossFunctions = [];
     #endregion
 
+    // called when creating new element
     public IndexPointsLifeLossVM()
     {
-        Simulations = [];
-        LifeSimAlternatives = [];
-        HazardTimes = [];
-        MyModel = new PlotModel();
         LoadHydraulics();
         LoadIndexPoints();
+        SubscribeToLiveUpdateEvents();
+    }
+
+    // called when opening existing element editor
+    public IndexPointsLifeLossVM(int hydraulicsID, int indexPointsID)
+    {
+        LoadHydraulics();
+        SelectHydraulics(hydraulicsID);
+        LoadIndexPoints();
+        SelectIndexPoints(indexPointsID);
         SubscribeToLiveUpdateEvents();
     }
 
@@ -173,6 +180,7 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         }
     }
 
+
     private void LoadIndexPoints()
     {
         List<IndexPointsElement> indexPoints = StudyCache.GetChildElementsOfType<IndexPointsElement>();
@@ -183,6 +191,30 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         if (indexPoints.Count > 0)
         {
             SelectedIndexPoints = IndexPoints[0];
+        }
+    }
+
+    private void SelectHydraulics(int id)
+    {
+        foreach (HydraulicElement hyd in Hydraulics)
+        {
+            if (hyd.ID == id)
+            {
+                SelectedHydraulics = hyd;
+                return;
+            }
+        }
+    }
+
+    private void SelectIndexPoints(int id)
+    {
+        foreach (IndexPointsElement idx in IndexPoints)
+        {
+            if (idx.ID == id)
+            {
+                SelectedIndexPoints = idx;
+                return;
+            }
         }
     }
 

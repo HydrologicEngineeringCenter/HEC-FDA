@@ -1,4 +1,6 @@
-﻿using HEC.FDA.ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Utilities;
+using System;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.LifeLoss;
@@ -17,13 +19,15 @@ public class StageLifeLossElement : ChildElement
         SelectedHydraulics = selectedHydraulics;
         SelectedIndexPoints = selectedIndexPoints;
 
-        AddDefaultActions();
+        AddDefaultActions(EditStageLifeLossCurves);
     }
 
     // gets called when loading the element from sqlite
     public StageLifeLossElement(XElement elementXML, int id) : base(elementXML, id)
     {
-        AddDefaultActions();
+        SelectedHydraulics = Convert.ToInt32(elementXML.Attribute(SELECTED_HYDRAULICS).Value);
+        SelectedIndexPoints = Convert.ToInt32(elementXML.Attribute(SELECTED_INDEX_POINTS).Value);
+        AddDefaultActions(EditStageLifeLossCurves);
     }
 
 
@@ -34,6 +38,17 @@ public class StageLifeLossElement : ChildElement
         stageLifeLossElem.SetAttributeValue(SELECTED_HYDRAULICS, SelectedHydraulics);
         stageLifeLossElem.SetAttributeValue(SELECTED_INDEX_POINTS, SelectedIndexPoints);
         return stageLifeLossElem;
+    }
+
+    private void EditStageLifeLossCurves(object arg1, EventArgs arg2)
+    {
+        EditorActionManager actionManager = new EditorActionManager().WithSiblingRules(this);
+
+        LifeSimImporterVM vm = new(this, actionManager);
+
+        string title = "Edit " + vm.Name;
+        DynamicTabVM tab = new(title, vm, "EditStageLifeLossElement" + Name);
+        Navigate(tab, false, true);
     }
 }
 

@@ -22,6 +22,17 @@ public partial class LifeSimImporterVM : BaseEditorVM
         CurrentVM = _indexPointsVM;
     }
 
+    // this constructor is for editing an existing stage-LL element
+    public LifeSimImporterVM(ChildElement elem, EditorActionManager actionManager) : base(elem, actionManager)
+    {
+        StageLifeLossElement element = (StageLifeLossElement)elem;
+        Name = element.Name;
+        Description = element.Description;
+        _indexPointsVM = new(element.SelectedHydraulics, element.SelectedIndexPoints);
+        RegisterChildViewModel(_indexPointsVM);
+        CurrentVM = _indexPointsVM;
+    }
+
     public override void Save()
     {
         FdaValidationResult vr = _indexPointsVM.ValidateForm();
