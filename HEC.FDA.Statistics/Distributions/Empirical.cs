@@ -123,7 +123,7 @@ namespace Statistics.Distributions
             {
                 return 1;
             }
-           return Mathematics.IntegrateTrapezoidal(CumulativeProbabilities, Quantiles );
+           return Mathematics.IntegrateCDF<double>(CumulativeProbabilities, Quantiles );
         }
 
         public double ComputeMedian()

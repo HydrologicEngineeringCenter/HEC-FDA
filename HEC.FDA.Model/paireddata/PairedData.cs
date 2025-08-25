@@ -270,7 +270,7 @@ namespace HEC.FDA.Model.paireddata
         public double integrate()
         {
             //This functionality was extracted to a static method to be shared with empirical.cs, which uses the same logic. 
-            return Statistics.Mathematics.IntegrateTrapezoidal(Xvals, Yvals);
+            return Statistics.Mathematics.IntegrateCDF<double>(Xvals, Yvals);
         }
 
         /// <summary>
