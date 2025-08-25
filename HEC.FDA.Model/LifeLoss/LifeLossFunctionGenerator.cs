@@ -4,6 +4,7 @@ using RasMapperLib;
 using Statistics.Histograms;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace HEC.FDA.Model.LifeLoss;
 
@@ -39,14 +40,21 @@ public class LifeLossFunctionGenerator
     /// <param name="summarySetPath">Path to the summary set shape file</param>
     /// <param name="indexPointsPath">Path to the index points shape file</param>
     /// <returns></returns>
-    public List<LifeLossFunction> CreateLifeLossFunctionsAsync(string summarySetPath, string indexPointsPath, string summarySetUniqueName)
+    public async Task<List<LifeLossFunction>> CreateLifeLossFunctionsAsync(string summarySetPath, string indexPointsPath, string summarySetUniqueName)
     {
         List<LifeLossFunction> lifeLossFunctions = new();
 
         // create the map of summary zone names to their corresponding index points
         _indexPointBySummaryZone = GeospatialHelpers.QueryPolygons(summarySetPath, indexPointsPath, summarySetUniqueName);
 
-        // create life loss functions for each hazard time within each summary zone
+        lifeLossFunctions = await Task.Run(CreateLifeLossFunctions);
+
+        return lifeLossFunctions;
+    }
+
+    private List<LifeLossFunction> CreateLifeLossFunctions()
+    {
+        List<LifeLossFunction> lifeLossFunctions = [];
         foreach (string summaryZone in _indexPointBySummaryZone.Keys)
         {
             // creating points array of size 1 because that RAS API needs an array
@@ -57,8 +65,6 @@ public class LifeLossFunctionGenerator
         }
         return lifeLossFunctions;
     }
-
-    //private List<LifeLossFunction> CreateLifeLossFunctions
 
     /// <summary>
     /// Return a list of life loss functions for a given summary zone

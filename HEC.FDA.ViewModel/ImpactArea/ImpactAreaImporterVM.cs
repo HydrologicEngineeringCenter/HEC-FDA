@@ -3,7 +3,6 @@ using HEC.FDA.Model.Spatial;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
-using RasMapperLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -82,20 +81,16 @@ namespace HEC.FDA.ViewModel.ImpactArea
                 }
                 else
                 {
-
-                    PolygonFeatureLayer pfl = new("unused", _selectedPath);
-                    UniqueNames = pfl.ColumnNames();
+                    ShapefileHelper shp = new(SelectedPath);
+                    UniqueNames = shp.GetColumns();
                 }
             }
         }
 
         public void LoadTheRows()
         {
-            PolygonFeatureLayer pfl = new("ThisNameIsnotUsed", SelectedPath);
-            List<string> columnNames = pfl.ColumnNames();
-            List<object> columnVals = pfl.GetValuesFromColumn(SelectedUniqueNameColumnHeader);
-
-            List<string> names = columnVals.Select(x => x.ToString()).ToList();
+            ShapefileHelper shp = new(SelectedPath);
+            List<string> names = shp.GetColumnValues(SelectedUniqueNameColumnHeader);
             if (names.Count == names.Distinct().Count()) // if the names are unique
             {
                 ListOfRows.Clear();

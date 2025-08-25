@@ -1,7 +1,6 @@
 ﻿using Geospatial.Features;
 using Geospatial.IO;
 using HEC.FDA.Model.Spatial.Extensions;
-using System;
 using System.Collections.Generic;
 
 namespace HEC.FDA.Model.Spatial;
@@ -13,17 +12,17 @@ public class ShapefileHelper
         _shpPath = shpPath;
     }
 
-    public Dictionary<string, Type> GetColumns()
+    public List<string> GetColumns()
     {
         ShapefileIO.TryRead(_shpPath, out PolygonFeatureCollection polygons);
         var columns = polygons.AttributeTable.Columns;
 
-        Dictionary<string, Type> columnMap = [];
+        List<string> columnNames = [];
         foreach (var column in columns)
         {
-            columnMap[column.Name] = column.Type;
+            columnNames.Add(column.Name);
         }
-        return columnMap;
+        return columnNames;
     }
 
     public List<string> GetColumnValues(string column)
@@ -39,6 +38,11 @@ public class ShapefileHelper
                 int intValue = rows[i].TryGetValueAs(column, 0);
                 values.Add(intValue.ToString());
             }
+            else if (columnType == typeof(long))
+            {
+                long longValue = rows[i].TryGetValueAs(column, 0);
+                values.Add(longValue.ToString());
+            }
             else if (columnType == typeof(double))
             {
                 double doubleValue = rows[i].TryGetValueAs(column, 0.0);
@@ -48,6 +52,11 @@ public class ShapefileHelper
             {
                 string stringValue = rows[i].TryGetValueAs(column, string.Empty);
                 values.Add(stringValue);
+            }
+            else if (columnType == typeof(bool))
+            {
+                bool boolVal = rows[i].TryGetValueAs(column, false);
+                values.Add(boolVal.ToString());
             }
             else
             {

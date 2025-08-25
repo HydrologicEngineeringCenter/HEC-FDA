@@ -7,9 +7,9 @@ internal class Schonherr
     {
         ShapefileHelper bad = new(@"C:\FDA_Test_Data\WKS20230525\WKS20230525\re-exported.shp");
         var badColumns = bad.GetColumns();
-        foreach (KeyValuePair<string, Type> kvp in badColumns)
+        foreach (string kvp in badColumns)
         {
-            Console.WriteLine($"Key = {kvp.Key}, Value = {kvp.Value}");
+            Console.WriteLine(kvp);
         }
 
         Console.WriteLine("\r\nName:");

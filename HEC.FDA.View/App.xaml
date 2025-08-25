@@ -443,6 +443,10 @@
     <DataTemplate DataType="{x:Type LifeLossVM:LifeSimImporterVM}">
         <LifeLossView:LifeSimImporter />
     </DataTemplate>
+      
+    <DataTemplate DataType="{x:Type LifeLossVM:IndexPointsLifeLossVM}">
+        <LifeLossView:IndexPointsLifeLoss />
+    </DataTemplate>
 
     </Application.Resources>
 </Application>

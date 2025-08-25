@@ -10,6 +10,7 @@ using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.IndexPoints;
 using HEC.FDA.ViewModel.Inventory;
 using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.ViewModel.LifeLoss;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Study;
@@ -46,6 +47,7 @@ namespace HEC.FDA.ViewModel.Saving
             {typeof(LateralStructureElement), "lateral_structures" },
             {typeof(OccupancyTypesElement), "occupancy_types" },
             {typeof(AggregatedStageDamageElement), "stage_damage_relationships" },
+            {typeof(StageLifeLossElement), "stage_life_loss_relationships_lookup" },
             {typeof(StageDischargeElement), "stage_discharge_relationships" },
             {typeof(InventoryElement), "structure_inventories"},
             {typeof(StudyPropertiesElement), "study_properties" },
@@ -57,7 +59,7 @@ namespace HEC.FDA.ViewModel.Saving
             string table = TypeToTableDict[typeof(T)];
             return new SavingBase<T>(StudyCacheForSaving, table);
         }
-        
+
 
         public static IElementManager GetElementManager(ChildElement elem)
         {
@@ -73,7 +75,7 @@ namespace HEC.FDA.ViewModel.Saving
         {
             return new TerrainElementPersistenceManager(StudyCacheForSaving, TypeToTableDict[typeof(TerrainElement)]);
         }
-        
+
         public static IASPersistenceManager GetIASManager()
         {
             return new IASPersistenceManager(StudyCacheForSaving, TypeToTableDict[typeof(IASElement)]);
