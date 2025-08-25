@@ -41,12 +41,12 @@ namespace StatisticsTests.Distributions
         }
 
         //In this test, we show that our empirical distribution mimics a parametric distribution
-        //only by sampling 2500 probability steps 
+        //only by sampling 3000 probability steps 
         [Theory]
-        [InlineData(1234, 2500, 0, 1)]
-        [InlineData(4321, 2500, 1, 2)]
-        [InlineData(2345, 2500, 2, 3)]
-        [InlineData(5432, 2500, 3, 4)]
+        [InlineData(1234, 3000, 0, 1)]
+        [InlineData(4321, 3000, 1, 2)]
+        [InlineData(2345, 3000, 2, 3)]
+        [InlineData(5432, 3000, 3, 4)]
         public void EmpiricalSummaryStatisticsNonMonotonic_Tests(int seed, int sampleSize, double inputMean, double inputStandardDeviation)
         {
             Random random = new Random(seed);
