@@ -41,7 +41,7 @@
           </StackPanel>
         </Border>
 
-        <!--AAEQ By Damage Cat-->
+        <!--EQAD By Damage Cat-->
         <Border BorderBrush="Gray"
                 BorderThickness="1"
                 Grid.Row="1"

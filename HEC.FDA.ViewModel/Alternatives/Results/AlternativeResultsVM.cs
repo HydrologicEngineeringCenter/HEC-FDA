@@ -44,16 +44,16 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
         {
             if (DAMAGE_WITH_UNCERTAINTY.Equals(SelectedReport))
             {
-                CurrentResultVM = AlternativeResult.AAEQResult.DamageWithUncertaintyVM;
+                CurrentResultVM = AlternativeResult.EqadResult.DamageWithUncertaintyVM;
 
             }
             else if (DAMAGE_BY_IMPACT_AREA.Equals(SelectedReport))
             {
-                CurrentResultVM = AlternativeResult.AAEQResult.DamageByImpactAreaVM;
+                CurrentResultVM = AlternativeResult.EqadResult.DamageByImpactAreaVM;
             }
             else if (DAMAGE_BY_DAMAGE_CATEGORY.Equals(SelectedReport))
             {
-                CurrentResultVM = AlternativeResult.AAEQResult.DamageByDamCatVM;
+                CurrentResultVM = AlternativeResult.EqadResult.DamageByDamCatVM;
 
             }
         }

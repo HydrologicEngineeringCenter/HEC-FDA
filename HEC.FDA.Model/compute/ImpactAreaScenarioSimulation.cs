@@ -1,5 +1,4 @@
 using HEC.FDA.Model.extensions;
-using HEC.FDA.Model.interfaces;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.utilities;
@@ -8,13 +7,13 @@ using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Model.Messaging;
-using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Statistics;
 
 namespace HEC.FDA.Model.compute
 {

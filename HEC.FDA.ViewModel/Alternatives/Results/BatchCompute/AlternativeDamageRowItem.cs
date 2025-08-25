@@ -64,10 +64,10 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
 
             foreach(int impactAreaID in impactAreaIds)
             {
-                double mean = altElem.Results.SampleMeanAAEQDamage(impactAreaID);
-                double point75 = altElem.Results.AAEQDamageExceededWithProbabilityQ(.75,impactAreaID);
-                double point5 = altElem.Results.AAEQDamageExceededWithProbabilityQ( .5, impactAreaID);
-                double point25 = altElem.Results.AAEQDamageExceededWithProbabilityQ( .25, impactAreaID);
+                double mean = altElem.Results.SampleMeanEqad(impactAreaID);
+                double point75 = altElem.Results.EqadExceededWithProbabilityQ(.75,impactAreaID);
+                double point5 = altElem.Results.EqadExceededWithProbabilityQ( .5, impactAreaID);
+                double point25 = altElem.Results.EqadExceededWithProbabilityQ( .25, impactAreaID);
                 AlternativeDamageRowItem row = new(Name, impactAreaIdToName[impactAreaID], baseYear,futureYear, DiscountRate, PeriodOfAnalysis, mean, point75, point5, point25);
                 rowItems.Add(row);
             }

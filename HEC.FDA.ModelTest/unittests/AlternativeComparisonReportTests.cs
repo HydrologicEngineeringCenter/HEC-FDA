@@ -317,7 +317,7 @@ namespace HEC.FDA.ModelTest.unittests
         [Theory]
         [InlineData(51442, 36500, 75000, 50, .0275, 2023, 2072, 1, 7.5)]
         [InlineData(59410, 36500, 75000, 50, .0275, 2023, 2050, 1, 7.5)]
-        public void ComputeAAEQDamage(double expectedAAEQReduced, double expectedEADReducedBaseYear, double expectedEADReducedFutureYear, int poa, double discountRate, int baseYear, int futureYear, int iterations, double topOfLeveeElevation)
+        public void ComputeEqad(double expectedEqadReduced, double expectedEADReducedBaseYear, double expectedEADReducedFutureYear, int poa, double discountRate, int baseYear, int futureYear, int iterations, double topOfLeveeElevation)
         {
             double[] FlowXs = { 0, 100000 };
             double[] StageXs = { 0, 15, 30 };
@@ -429,11 +429,11 @@ namespace HEC.FDA.ModelTest.unittests
 
             List<AlternativeResults> withProjectAlternativeResultsList = new List<AlternativeResults>();
             withProjectAlternativeResultsList.Add(withProjectAlternativeResults);
-            //should be alternative Identifier 2
+
             AlternativeComparisonReportResults alternativeComparisonReportResults = AlternativeComparisonReport.ComputeAlternativeComparisonReport(withoutProjectAlternativeResults, withProjectAlternativeResultsList);
-            double actualAAEQReduced = alternativeComparisonReportResults.AAEQDamageReducedExceededWithProbabilityQ(exceedanceProbability, withAlternativeIdentifier, impactAreaIdentifier, residentialDamCat, assetCategory);
-            double differenceAAEQ = actualAAEQReduced - expectedAAEQReduced;
-            double aaeqError = Math.Abs(differenceAAEQ / expectedAAEQReduced);
+            double actualEqadReduced = alternativeComparisonReportResults.EqadReducedExceededWithProbabilityQ(exceedanceProbability, withAlternativeIdentifier, impactAreaIdentifier, residentialDamCat, assetCategory);
+            double differenceEqad = actualEqadReduced - expectedEqadReduced;
+            double EqadError = Math.Abs(differenceEqad / expectedEqadReduced);
 
             double actualBaseYearEADReduced = alternativeComparisonReportResults.SampleMeanBaseYearEADReduced(withAlternativeIdentifier, impactAreaIdentifier, residentialDamCat, assetCategory);
             double differenceEADReducedBaseYear = Math.Abs(actualBaseYearEADReduced - expectedEADReducedBaseYear);
@@ -444,7 +444,7 @@ namespace HEC.FDA.ModelTest.unittests
             double eadErrorFuture = differenceEADReducedFutureYear / expectedEADReducedFutureYear;
 
             double tolerance = 0.1;
-            Assert.True(aaeqError < tolerance);
+            Assert.True(EqadError < tolerance);
             Assert.True(eadErrorBase < tolerance);
             Assert.True(eadErrorFuture < tolerance);
 
@@ -452,9 +452,9 @@ namespace HEC.FDA.ModelTest.unittests
             double actualBaseYearEADWithoutProject = alternativeComparisonReportResults.SampleMeanWithoutProjectBaseYearEAD(impactAreaIdentifier, residentialDamCat, assetCategory);
             Assert.Equal(expectedBaseYearEADWithoutProject, actualBaseYearEADWithoutProject);
 
-            double expectedAAEQWithProject = withProjectAlternativeResults.SampleMeanAAEQDamage(impactAreaIdentifier, residentialDamCat, assetCategory);
-            double actualAAEQWithProject = alternativeComparisonReportResults.SampleMeanWithProjectAAEQDamage(withAlternativeIdentifier, impactAreaIdentifier, residentialDamCat, assetCategory);
-            Assert.Equal(expectedAAEQWithProject, actualAAEQWithProject);
+            double expectedEqADWithProject = withProjectAlternativeResults.SampleMeanEqad(impactAreaIdentifier, residentialDamCat, assetCategory);
+            double actualEqADWithProject = alternativeComparisonReportResults.SampleMeanWithProjectEqad(withAlternativeIdentifier, impactAreaIdentifier, residentialDamCat, assetCategory);
+            Assert.Equal(expectedEqADWithProject, actualEqADWithProject);
 
 
         }
