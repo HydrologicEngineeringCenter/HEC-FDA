@@ -1,4 +1,4 @@
-﻿namespace HEC.FDA.Statistics;
+﻿namespace Statistics;
 public static class Mathematics
 {
     /// <summary>

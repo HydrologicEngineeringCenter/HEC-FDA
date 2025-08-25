@@ -7,7 +7,6 @@ using System.Xml.Linq;
 using Utilities;
 using System.Threading.Tasks;
 using Statistics;
-using HEC.FDA.Statistics;
 
 namespace Statistics.Distributions
 {
