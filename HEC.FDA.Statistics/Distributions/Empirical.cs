@@ -121,7 +121,7 @@ namespace Statistics.Distributions
             }
             if (Quantiles.Length == 1) 
             {
-                return 1;
+                return Quantiles[0];
             }
            return Mathematics.IntegrateCDF<double>(CumulativeProbabilities, Quantiles );
         }
