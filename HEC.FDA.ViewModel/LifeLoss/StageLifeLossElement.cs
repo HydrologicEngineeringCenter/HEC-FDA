@@ -19,7 +19,7 @@ public class StageLifeLossElement : ChildElement
         SelectedHydraulics = selectedHydraulics;
         SelectedIndexPoints = selectedIndexPoints;
 
-        AddDefaultActions(EditStageLifeLossCurves);
+        AddDefaultActions(EditStageLifeLossCurves, StringConstants.EDIT_STAGE_LIFE_LOSS_FUNCTION);
     }
 
     // gets called when loading the element from sqlite
@@ -27,7 +27,7 @@ public class StageLifeLossElement : ChildElement
     {
         SelectedHydraulics = Convert.ToInt32(elementXML.Attribute(SELECTED_HYDRAULICS).Value);
         SelectedIndexPoints = Convert.ToInt32(elementXML.Attribute(SELECTED_INDEX_POINTS).Value);
-        AddDefaultActions(EditStageLifeLossCurves);
+        AddDefaultActions(EditStageLifeLossCurves, StringConstants.EDIT_STAGE_LIFE_LOSS_FUNCTION);
     }
 
 

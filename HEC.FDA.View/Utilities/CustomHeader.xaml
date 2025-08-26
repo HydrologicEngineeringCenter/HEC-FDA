@@ -13,8 +13,8 @@
              d:DesignHeight="25" d:DesignWidth="300">
     <UserControl.Resources>
         <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-    <conv:NullImageConverter x:Key="NullImageConverter"/>
-  </UserControl.Resources>
+        <conv:NullImageConverter x:Key="NullImageConverter"/>
+    </UserControl.Resources>
     <Grid>
         <StackPanel Orientation="Horizontal" >
             <Grid>
@@ -25,12 +25,12 @@
                     <ColumnDefinition Width="30" />
                 </Grid.ColumnDefinitions>
 
-        <Image Grid.Column="0" Name="image_Image" Source="{Binding Path=ImageSource, Converter= {StaticResource NullImageConverter}}" />
+                <Image Grid.Column="0" Name="image_Image" Source="{Binding Path=ImageSource, Converter= {StaticResource NullImageConverter}}" />
                 <TextBlock Grid.Column="1" Name="txt_Name" Text="{Binding Path=Name}" Margin="5,0,0,0" ToolTip="{Binding Tooltip}" />
-        <Image Grid.Column="2" Name="txt_Decoration" Source="{Binding Path=Decoration, Converter= {StaticResource NullImageConverter}}" />
+                <Image Grid.Column="2" Name="txt_Decoration" Source="{Binding Path=Decoration, Converter= {StaticResource NullImageConverter}}" />
             </Grid>
-            
+
         </StackPanel>
-            
+
     </Grid>
 </UserControl>

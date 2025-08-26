@@ -147,6 +147,8 @@
         public const string EDIT_STAGE_DAMAGE_MENU = "Edit Stage-Damage Functions...";
         public const string EXPORT_STAGE_DAMAGE_MENU = "Export Structure Detail...";
 
+        public const string EDIT_STAGE_LIFE_LOSS_FUNCTION = "Edit Stage-Life Loss Functions...";
+
         public const string IMPORT_STAGE_DAMAGE_FROM_OLD_NAME = "Stage-Damage Functions";
 
         public const string SCENARIOS = "Scenarios";
@@ -241,7 +243,7 @@
         public static string CreateLastEditTooltip(string lastEditDate)
         {
             string tooltip = null;
-            if(lastEditDate != null)
+            if (lastEditDate != null)
             {
                 tooltip = "Last edited " + lastEditDate;
             }
