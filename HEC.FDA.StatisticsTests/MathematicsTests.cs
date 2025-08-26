@@ -5,7 +5,6 @@ using Statistics;
 
 namespace StatisticsTests
 {
-    [ExcludeFromCodeCoverage]
     [Trait("RunsOn", "Remote")]
     public class MathematicsTests
     {
