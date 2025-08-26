@@ -56,7 +56,7 @@ public static class Mathematics
 
     /// <summary>
     /// IBinaryFloatingPointIeee754<T> means float and double
-    /// Spans work arrays
+    /// Spans is more performant and flexible way to work with arrays
     /// </summary>
     public static T RealIntegrateTrapezoidal<T>(Span<T> xVals, Span<T> yVals) where T : IBinaryFloatingPointIeee754<T>
     {
