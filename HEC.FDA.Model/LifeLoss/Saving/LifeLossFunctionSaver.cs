@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 using System.Text;
-using System.Transactions;
 
 namespace HEC.FDA.Model.LifeLoss.Saving;
 
@@ -14,8 +13,8 @@ namespace HEC.FDA.Model.LifeLoss.Saving;
 /// </summary>
 public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
 {
-    private const string LL_TABLE_NAME = "Life_Loss";
-    private static readonly string _createCommandText = 
+    private const string LL_TABLE_NAME = "stage_life_loss_relationships";
+    private static readonly string _createCommandText =
         $@"CREATE TABLE IF NOT EXISTS ""{LL_TABLE_NAME}"" (
             Id INTEGER PRIMARY KEY AUTOINCREMENT,
             Simulation TEXT NOT NULL,
@@ -77,7 +76,7 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
 
         using var transaction = _connection.BeginTransaction();
         using var insertCommand = new SQLiteCommand(_connection) { Transaction = transaction };
-        BuildInsertCommand(insertCommand); 
+        BuildInsertCommand(insertCommand);
         InsertIntoTable(insertCommand, llf); // we reuse the same command with the same parameter placeholders, changing their values each time the command is executed
 
         transaction.Commit(); // commit everything at the end instead of many times for each insert command
@@ -110,7 +109,7 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
             if (currentSim == null || currentSZ == null || currentHT == null) return; // means we have not read anything yet, do not want to create a life loss function yet
 
             UncertainPairedData data = new(stages.ToArray(), histograms.ToArray(), new CurveMetaData());
-            LifeLossFunction llf = new(data, alternatives.ToArray(), currentSim, currentSZ, currentHT);
+            LifeLossFunction llf = new(-1, data, alternatives.ToArray(), currentSim, currentSZ, currentHT);
             result.Add(llf);
 
             // reset the lists of life loss function parameters
@@ -213,18 +212,18 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
     {
         cmd.CommandText = _insertCommandText;
         // each parameter has a placeholder formatted "@param" which gets filled in when this command is executed
-        cmd.Parameters.Add("@sim",      DbType.String);
-        cmd.Parameters.Add("@alt",      DbType.String);
-        cmd.Parameters.Add("@stg",      DbType.Double);
-        cmd.Parameters.Add("@hz_t",     DbType.String);
-        cmd.Parameters.Add("@s_z",      DbType.String);
-        cmd.Parameters.Add("@min",      DbType.Double);
-        cmd.Parameters.Add("@bin_w",    DbType.Double);
-        cmd.Parameters.Add("@s_mean",   DbType.Double);
-        cmd.Parameters.Add("@s_var",    DbType.Double);
-        cmd.Parameters.Add("@s_min",    DbType.Double);
-        cmd.Parameters.Add("@s_max",    DbType.Double);
-        cmd.Parameters.Add("@bin_cts",  DbType.String);
+        cmd.Parameters.Add("@sim", DbType.String);
+        cmd.Parameters.Add("@alt", DbType.String);
+        cmd.Parameters.Add("@stg", DbType.Double);
+        cmd.Parameters.Add("@hz_t", DbType.String);
+        cmd.Parameters.Add("@s_z", DbType.String);
+        cmd.Parameters.Add("@min", DbType.Double);
+        cmd.Parameters.Add("@bin_w", DbType.Double);
+        cmd.Parameters.Add("@s_mean", DbType.Double);
+        cmd.Parameters.Add("@s_var", DbType.Double);
+        cmd.Parameters.Add("@s_min", DbType.Double);
+        cmd.Parameters.Add("@s_max", DbType.Double);
+        cmd.Parameters.Add("@bin_cts", DbType.String);
     }
 
     /// <summary>

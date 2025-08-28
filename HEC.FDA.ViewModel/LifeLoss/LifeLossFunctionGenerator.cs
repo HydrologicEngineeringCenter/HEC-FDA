@@ -1,12 +1,14 @@
-﻿using HEC.FDA.Model.LifeLoss.Saving;
+﻿using HEC.FDA.Model.LifeLoss;
+using HEC.FDA.Model.LifeLoss.Saving;
 using HEC.FDA.Model.paireddata;
+using HEC.FDA.ViewModel.Storage;
 using RasMapperLib;
 using Statistics.Histograms;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace HEC.FDA.Model.LifeLoss;
+namespace HEC.FDA.ViewModel.LifeLoss;
 
 /// <summary>
 /// Creates a list of life loss functions for each summary zone in simulation for a given set of alternatives and hazard times
@@ -60,7 +62,7 @@ public class LifeLossFunctionGenerator
             // creating points array of size 1 because that RAS API needs an array
             PointMs indexPoint = [_indexPointBySummaryZone[summaryZone]];
 
-            List<LifeLossFunction> functions = CreateLifeLossFunctionsForSummaryZone(summaryZone, indexPoint);
+            List<LifeLossFunction> functions = CreateLifeLossFunctionsForSummaryZone2(summaryZone, indexPoint);
             lifeLossFunctions.AddRange(functions); // AddRange because we are adding a list to another list
         }
         return lifeLossFunctions;
@@ -82,7 +84,8 @@ public class LifeLossFunctionGenerator
             Alternative = _alternativeNames,
             Hazard_Time = _hazardTimes,
         };
-        using LifeLossFunctionSaver saver = new(@"C:\FDA_Test_Data\WKS20230525\WKS20230525\save-test.db");
+        string projFile = Connection.Instance.ProjectFile;
+        using LifeLossFunctionSaver saver = new(projFile);
         List<LifeLossFunction> existingFunctions = saver.ReadFromSQLite(allPF);
         // set up dictionaries for stages and histograms already in the DB, allows us to make O(1) lookups instead of recomputing
         var seenStages = new Dictionary<(string simulation, string summaryZone, string alternative), double>();
@@ -128,11 +131,69 @@ public class LifeLossFunctionGenerator
             if (newEntry) // we had at least one new entry for the function which was just built, so save the function to SQLite
             {
                 UncertainPairedData upd = new(stages.ToArray(), histograms.ToArray(), new CurveMetaData());
-                LifeLossFunction llf = new(upd, _alternativeNames, _simulationName, summaryZone, hazardTime);
+                LifeLossFunction llf = new(-1, upd, _alternativeNames, _simulationName, summaryZone, hazardTime);
                 saver.SaveToSQLite(llf);
             }
         }
         if (!newEntries) return existingFunctions;
         return saver.ReadFromSQLite(allPF); // this call is needed to order the functions (uses ORDER BY in the SELECT statement)
+    }
+
+
+
+    private List<LifeLossFunction> CreateLifeLossFunctionsForSummaryZone2(string summaryZone, PointMs indexPoint)
+    {
+        Dictionary<string, double> stageByAlternative = [];
+        List<LifeLossFunction> functions = [];
+        foreach (string hazardTime in _hazardTimes)
+        {
+            List<double> stages = [];
+            List<DynamicHistogram> histograms = [];
+            string[] alternatives = [.. _alternativeNames]; // create a copy of the alternative names because we are sorting, don't want to sort in place as we iterate through (although I think it would still work)
+            foreach (string alternative in alternatives)
+            {
+                if (!stageByAlternative.TryGetValue(alternative, out double stage))
+                {
+                    string associatedHydraulicsFolder = _hydraulicsFolderByAlternative[alternative];
+                    string hdf = Path.Combine(_topLevelHydraulicsFolder, associatedHydraulicsFolder, $"{associatedHydraulicsFolder}.hdf");
+                    float[] computedStage = GeospatialHelpers.GetStageFromHDF(indexPoint, hdf); // costly compute
+                    stage = computedStage[0];
+                    stageByAlternative[alternative] = stage; // cache the stages. same for any time of day (only associated with alternative, not time)
+                }
+                stages.Add(stage);
+                string tableName = $"{_simulationName}>Results_By_Iteration>{alternative}>{hazardTime}>{_summarySetName}>{summaryZone}";
+                DynamicHistogram histogram = _db.QueryLifeLossTable(tableName);
+                histograms.Add(histogram);
+
+            }
+            List<Entry> entries = [];
+            for (int i = 0; i < stages.Count; i++)
+            {
+                entries.Add(new Entry
+                {
+                    Alternative = alternatives[i],
+                    Stage = stages[i],
+                    Histogram = histograms[i]
+                });
+            }
+            entries.Sort((e1, e2) => e1.Stage.CompareTo(e2.Stage)); // the stages will not necessarily be in order, but we need them to be for UPD
+            for (int i = 0; i < entries.Count; i++)
+            {
+                alternatives[i] = entries[i].Alternative;
+                stages[i] = entries[i].Stage;
+                histograms[i] = entries[i].Histogram;
+            }
+            UncertainPairedData upd = new(stages.ToArray(), histograms.ToArray(), new CurveMetaData());
+            LifeLossFunction llf = new(-1, upd, alternatives, _simulationName, summaryZone, hazardTime);
+            functions.Add(llf);
+        }
+        return functions;
+    }
+
+    private class Entry
+    {
+        public string Alternative;
+        public double Stage;
+        public DynamicHistogram Histogram;
     }
 }

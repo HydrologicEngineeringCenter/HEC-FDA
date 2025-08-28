@@ -14,7 +14,7 @@ public partial class LifeSimImporterVM : BaseEditorVM
 
     private IndexPointsLifeLossVM _indexPointsVM;
 
-    // this constructor is for creating a brand new stage-LL element
+    // this constructor is called when creating a brand new stage-LL element
     public LifeSimImporterVM(EditorActionManager actionManager) : base(actionManager)
     {
         _indexPointsVM = new IndexPointsLifeLossVM();
@@ -22,7 +22,7 @@ public partial class LifeSimImporterVM : BaseEditorVM
         CurrentVM = _indexPointsVM;
     }
 
-    // this constructor is for editing an existing stage-LL element
+    // this constructor is called when editing an existing stage-LL element
     public LifeSimImporterVM(ChildElement elem, EditorActionManager actionManager) : base(elem, actionManager)
     {
         StageLifeLossElement element = (StageLifeLossElement)elem;
@@ -43,7 +43,8 @@ public partial class LifeSimImporterVM : BaseEditorVM
             int hydraulicsID = _indexPointsVM.SelectedHydraulics.ID;
             int indexPointsID = _indexPointsVM.SelectedIndexPoints.ID;
             StageLifeLossElement elemToSave = new(Name, lastEditDate, Description, id, hydraulicsID, indexPointsID);
-            Save(elemToSave); // base editor's save
+            Save(elemToSave); // base editor's save, saves the metadeta as XML
+            //SaveSQLite(_indexpointsVM.LifeLossFunctions) // save the curves to SQLite
         }
     }
 

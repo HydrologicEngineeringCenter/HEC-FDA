@@ -29,7 +29,7 @@ public abstract class SQLiteFilter
             if (array is null || array.Length == 0) continue;
 
             string colName = prop.Name;
-            
+
             // final return is formatted "WHERE col1 IN (@p1) AND col2 in (@p2, @p3) AND col3..."
             if (firstClause)
             {

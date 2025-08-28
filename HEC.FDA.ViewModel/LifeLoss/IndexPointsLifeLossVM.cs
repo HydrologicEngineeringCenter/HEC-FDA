@@ -223,8 +223,11 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
     {
         if (LifeSimAlternatives.IsEmpty() || HazardTimes.IsEmpty()) return;
 
+        // CURRENTLY USING THIS FOLDER, WILL CHANGE TO ACTUAL PROJECT FOLDER ONCE I REFACTOR
+        // HOW THE GENERATOR READS IN HYDRAULICS
         string hydraulicsFolder = @"C:\FDA_Test_Data\WKS20230525\WKS20230525\Hydraulic_Data";
         //string hydraulicsFolder = Connection.Instance.HydraulicsDirectory;
+
         LifeSimSimulation currentSimulation = new(SelectedSimulation.Name, hydraulicsFolder);
         foreach (CheckableItem a in LifeSimAlternatives)
             if (a.IsChecked) currentSimulation.Alternatives.Add(a.Name);
