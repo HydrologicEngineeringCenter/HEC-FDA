@@ -62,7 +62,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         #endregion
         #region Constructors
 
-        public IASElement(string name, string description, string creationDate, string year, int stageDamageElementID, int nonFailureStageDamageID, bool hasNonFailureStageDamage, List<SpecificIAS> elems, int id) 
+        public IASElement(string name, string description, string creationDate, string year, int stageDamageElementID, int nonFailureStageDamageID, bool hasNonFailureStageDamage, List<SpecificIAS> elems, int id)
             : base(name, creationDate, description, id)
         {
             StageDamageID = stageDamageElementID;
@@ -80,7 +80,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// <param name="xml"></param>
         public IASElement(XElement setElem, int id) : base(setElem,id)
         {
-           
+
             AnalysisYear = setElem.Attribute(YEAR).Value;
             StageDamageID = int.Parse(setElem.Attribute(STAGE_DAMAGE_ID).Value);
             //the non-failure stuff is a new addition. Check that it exists first for backwards compatibility.
@@ -97,9 +97,13 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             }
 
             IEnumerable<XElement> iasElements = setElem.Elements("IAS");
-            foreach(XElement elem in iasElements)
+            foreach (XElement elem in iasElements)
             {
-                SpecificIASElements.Add(new SpecificIAS(elem));
+                //SpecificIAS needs ot know about the non-failure stage damage so pass that info along.
+                SpecificIAS specificIAS = new(elem);
+                specificIAS.HasNonFailureStageDamage = HasNonFailureStageDamage;
+                specificIAS.NonFailureStageDamageID = NonFailureStageDamageID;
+                SpecificIASElements.Add(specificIAS);
             }
 
             XElement resultsElem = setElem.Element("ScenarioResults");
@@ -185,7 +189,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             Dictionary<int, string> impactAreaNames = [];
             foreach (ImpactAreaRowItem row in impactAreaRows)
             {
-                impactAreaNames.Add(row.ID, row.Name);  
+                impactAreaNames.Add(row.ID, row.Name);
             }
             return impactAreaNames;
         }
@@ -204,7 +208,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         }
 
         private void ViewResults(object arg1, EventArgs arg2)
-        {          
+        {
             List<SpecificIASResultVM> results = GetResults();
             if (results.Count>0)
             {
@@ -218,7 +222,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 MessageBox.Show("There are no results to display.", "No Results", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
-        
+
         public FdaValidationResult CanCompute()
         {
             FdaValidationResult vr = new();
@@ -248,7 +252,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         {
             Results = results;
             Application.Current.Dispatcher.Invoke(
-            (Action)(() => 
+            (Action)(() =>
             {
                 this.UpdateComputeDate = true;
                 PersistenceFactory.GetIASManager().SaveExisting(this);
@@ -259,7 +263,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 {
                     ViewResults(this, new EventArgs());
                 }
-                
+
             }));
         }
         #endregion

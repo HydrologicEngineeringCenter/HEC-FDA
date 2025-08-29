@@ -125,17 +125,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         public SpecificIAS(XElement iasElem)
         {
             ImpactAreaID = int.Parse(iasElem.Attribute(IMPACT_AREA).Value);
-            //this is new, check if it exists first for backwards compatibility. 
-            XAttribute hasNonFailure = iasElem.Attribute(HAS_NON_FAILURE_STAGE_DAMAGE);
-            if(hasNonFailure != null)
-            {
-                HasNonFailureStageDamage = Boolean.Parse(hasNonFailure.Value);
-            }
-            else
-            {
-                HasNonFailureStageDamage = false;
-            }
-
+            // WARNING: Two properties of SpecificIAS : HasNonFailureStageDamage, and
+            // NonFailureStageDamageID are not saved as part of this object, but in the parent element. 
+            // They must be passed down after creation through this method.
             FlowFreqID = int.Parse(iasElem.Element(FREQUENCY_RELATIONSHIP).Attribute(ID).Value);
             InflowOutflowID = int.Parse(iasElem.Element(INFLOW_OUTFLOW).Attribute(ID).Value);
             RatingID = int.Parse(iasElem.Element(RATING).Attribute(ID).Value);
