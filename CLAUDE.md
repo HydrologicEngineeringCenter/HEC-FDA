@@ -76,10 +76,17 @@ dotnet test --filter "FullyQualifiedName=HEC.FDA.ModelTest.unittests.StageDamage
 
 ## Development Setup
 
+### Prerequisites
+- .NET 9.0 SDK
+- Visual Studio 2022 or later (for WPF development)
+- Windows OS (WPF application)
+
 ### NuGet Configuration
-The project requires two NuGet sources:
+The project requires multiple NuGet sources configured in `nuget.config`:
 1. **HEC Nexus**: https://www.hec.usace.army.mil/nexus/repository/fda-nuget/
-2. **GitHub Packages**: See [GitHub Discussion #170](https://github.com/HydrologicEngineeringCenter/HEC-FDA/discussions/170)
+2. **GitHub Packages**: Requires Personal Access Token - See [GitHub Discussion #170](https://github.com/HydrologicEngineeringCenter/HEC-FDA/discussions/170)
+3. **DSS NuGet**: https://www.hec.usace.army.mil/nexus/repository/dss/
+4. **RAS Public/Private**: Requires DevNet credentials for private repository
 
 ### Publishing
 ```bash
@@ -110,3 +117,33 @@ Most domain objects follow an "Element" pattern where:
 
 ### Data Import
 The Importer namespace handles migration from FDA1 format using DBF file readers and data transformation classes.
+
+## Common Development Tasks
+
+### Running the Application
+```bash
+# Run the main WPF application
+dotnet run --project HEC.FDA.View/HEC.FDA.View.csproj
+```
+
+### Working with Tests
+When modifying domain models or computation logic, ensure tests pass:
+- Model layer changes: Run `HEC.FDA.ModelTest`
+- Statistics changes: Run `HEC.FDA.StatisticsTest`
+- ViewModel changes: Run `HEC.FDA.ViewModelTest`
+
+### Database
+The application uses SQLite for local persistence of FDA elements (scenarios, alternatives, hydraulics, etc.)
+
+## Code Conventions
+
+### Naming
+- Elements: `*Element` suffix for domain objects
+- ViewModels: `*VM` suffix
+- Owner elements: `*OwnerElement` for collection managers
+- Test classes: `*Should` or `*Test` suffix
+
+### Testing Patterns
+- Unit tests use descriptive method names explaining what is being tested
+- Integration tests include realistic scenario data
+- Tests for statistical computations verify convergence and accuracy
