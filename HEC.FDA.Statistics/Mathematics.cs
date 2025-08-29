@@ -4,6 +4,7 @@ using System.Numerics;
 namespace Statistics;
 public static class Mathematics
 {
+    [Obsolete]
     /// <summary>
     ///Calcualtes the area under the curve across the range of x values using trapizoidal integration. 
     ///Assumes X an Y vals are increasing from 0. Assumes an additional x ord of 1, and y ordinate equal to the last one in the array.
