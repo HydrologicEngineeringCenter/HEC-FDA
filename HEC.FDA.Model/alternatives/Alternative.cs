@@ -203,8 +203,7 @@ namespace HEC.FDA.Model.alternatives
 
             int probabilitySteps = 25000;
             var resultCollection = new ConcurrentBag<double>();
-
-            //we're taking the EAD from base year and the most likely future year, and computing the EqAD for 25000 samples from the histograms, walking in small probabilty steps through both. 
+            //We compute the nth quantile of EqAD from the nth quantile of the base year EAD distribution and the nth quantile of the most likely future year EAD distribution, where n is determined by walking through 25,000 probability steps."
             // ex. we take the EAD from base at .01, the EAD from future at .01 and compute the EAD for .01. 
             //We then take that value and add it to the result collection. Using that collection as the sample, we fit an empirical distribution to it. 
 
