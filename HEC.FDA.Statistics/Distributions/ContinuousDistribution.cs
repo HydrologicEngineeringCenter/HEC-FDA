@@ -20,7 +20,7 @@ namespace Statistics
         [Stored(Name = "SampleSize", type = typeof(Int32))]
         public Int64 SampleSize { get; set; }
         [Stored(Name = "Truncated", type = typeof(bool))]
-        public bool Truncated { get; protected set; }
+        public virtual bool Truncated { get; protected set; } = false;
         #endregion
 
         #region Methods

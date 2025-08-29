@@ -38,6 +38,8 @@ namespace Statistics.Distributions
         public double Variance { get; set; }
         public double Min { get; set; }
         public double Max { get; set; }
+        //Really only used for truncated normal or truncated lognormal dists, but exists on the parent Continuous Distribution class, so appears here. 
+        public sealed override bool Truncated => false; 
 
         #endregion
 
@@ -82,7 +84,6 @@ namespace Statistics.Distributions
             Quantiles = observationValues;
             Min = min;
             Max = max;
-            Truncated = true; //Not sure this is true. 
             BuildFromProperties();
             AddRules();
         }
