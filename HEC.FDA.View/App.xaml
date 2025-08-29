@@ -248,8 +248,8 @@
     <DataTemplate DataType="{x:Type AlternativeCompReportResultsVM:EADSummaryVM }">
       <AlternativeCompReportResultsView:EADSummary />
     </DataTemplate>
-    <DataTemplate DataType="{x:Type AlternativeCompReportResultsVM:AAEQSummaryVM }">
-      <AlternativeCompReportResultsView:AAEQSummary />
+    <DataTemplate DataType="{x:Type AlternativeCompReportResultsVM:EqadSummaryVM }">
+      <AlternativeCompReportResultsView:EqadSummary />
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type AlternativeResultsVM:AlternativeResultsVM }">

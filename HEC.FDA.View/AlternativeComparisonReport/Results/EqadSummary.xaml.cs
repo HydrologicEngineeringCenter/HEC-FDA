@@ -3,11 +3,11 @@
 namespace HEC.FDA.View.AlternativeComparisonReport.Results
 {
     /// <summary>
-    /// Interaction logic for AAEQSummary.xaml
+    /// Interaction logic for EqadSummary.xaml
     /// </summary>
-    public partial class AAEQSummary : UserControl
+    public partial class EqadSummary : UserControl
     {
-        public AAEQSummary()
+        public EqadSummary()
         {
             InitializeComponent();
         }

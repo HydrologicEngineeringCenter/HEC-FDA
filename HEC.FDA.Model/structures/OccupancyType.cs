@@ -1,5 +1,5 @@
 ﻿using HEC.FDA.Model.paireddata;
-using HEC.FDA.Model.interfaces;
+using Statistics;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Base.Events;

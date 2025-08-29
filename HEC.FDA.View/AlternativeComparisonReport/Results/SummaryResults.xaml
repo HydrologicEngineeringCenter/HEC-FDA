@@ -79,17 +79,17 @@
           </StackPanel>
         </Border>
 
-        <!--Period of Analysis AAEQ-->
+        <!--Period of Analysis Eqad-->
         <Border BorderBrush="Gray"
                 BorderThickness="1"
                 Grid.Row="2"
                 HorizontalAlignment="Left">
           <StackPanel>
-            <TextBlock Text="{Binding AggAAEQLabel}"
+            <TextBlock Text="{Binding AggEqadLabel}"
                        HorizontalAlignment="Center"
                        Margin="5" />
 
-            <twp:FdaDataGrid ItemsSource="{Binding AggAAEQSummaryRows}"
+            <twp:FdaDataGrid ItemsSource="{Binding AggEqadSummaryRows}"
                              AutoGeneratingColumn="FdaDataGrid_AutoGeneratingColumn"
                              AutoGenerateColumns="True"
                              HorizontalAlignment="Left"
@@ -156,17 +156,17 @@
           </StackPanel>
         </Border>
 
-        <!--Period of Analysis AAEQ-->
+        <!--Period of Analysis EqAD-->
         <Border BorderBrush="Gray"
                 BorderThickness="1"
                 Grid.Row="5"
                 HorizontalAlignment="Left">
           <StackPanel>
-            <TextBlock Text="{Binding AAEQLabel}"
+            <TextBlock Text="{Binding EqadLabel}"
                        HorizontalAlignment="Center"
                        Margin="5" />
 
-            <twp:FdaDataGrid ItemsSource="{Binding AAEQSummaryRows}"
+            <twp:FdaDataGrid ItemsSource="{Binding EqadSummaryRows}"
                              AutoGeneratingColumn="FdaDataGrid_AutoGeneratingColumn"
                              AutoGenerateColumns="True"
                              HorizontalAlignment="Left"

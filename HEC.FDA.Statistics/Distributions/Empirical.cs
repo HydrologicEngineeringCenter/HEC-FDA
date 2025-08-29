@@ -6,8 +6,7 @@ using System.Linq;
 using System.Xml.Linq;
 using Utilities;
 using System.Threading.Tasks;
-using System.Threading;
-using Statistics.Histograms;
+using Statistics;
 
 namespace Statistics.Distributions
 {
@@ -21,7 +20,7 @@ namespace Statistics.Distributions
         /// Cumulative probabilities are non-exceedance probabilities ONLY
         /// </summary>
         public double[] CumulativeProbabilities;
-        public double[] Quantiles;
+        public double[] Quantiles; //value
 
         #endregion
 
@@ -39,6 +38,8 @@ namespace Statistics.Distributions
         public double Variance { get; set; }
         public double Min { get; set; }
         public double Max { get; set; }
+        //Really only used for truncated normal or truncated lognormal dists, but exists on the parent Continuous Distribution class, so appears here. 
+        public sealed override bool Truncated => false; 
 
         #endregion
 
@@ -60,6 +61,10 @@ namespace Statistics.Distributions
 
         }
 
+        /// <summary>
+        /// The probabilies and observation values must be in ascending order, and are assumed to be linked as coordinates. 
+        /// Counts should be equal. 
+        /// </summary>
         public Empirical(double[] probabilities, double[] observationValues)
         {
             CumulativeProbabilities = probabilities;
@@ -69,13 +74,16 @@ namespace Statistics.Distributions
             BuildFromProperties();
             AddRules();
         }
+        /// <summary>
+        /// The probabilies and observation values must be in ascending order, and are assumed to be linked as coordinates. 
+        /// Counts should be equal. Min and max should be equal to the first and last values in the observationValues array.
+        /// </summary>
         public Empirical(double[] probabilities, double[] observationValues, double min, double max)
         {
             CumulativeProbabilities = probabilities;
             Quantiles = observationValues;
             Min = min;
             Max = max;
-            Truncated = true;
             BuildFromProperties();
             AddRules();
         }
@@ -104,52 +112,19 @@ namespace Statistics.Distributions
             //TODO: Add rule to test if not monotonically increasing
             //This should never occur because we only add data in probability steps 
         }
-        #endregion
-
-        #region EmpiricalFunctions
-        private double ComputeMean()
+        public double ComputeMean()
         {
+            //This functionality was originally duplicated in paired data, and was ripped out to this static method. 
+            //The case below replicates prior functionality not shared with paired data.
             if (SampleSize == 0)
             {
-                return 0.0;
+                return 0;
             }
-            else if (SampleSize == 1)
+            if (Quantiles.Length == 1) 
             {
                 return Quantiles[0];
             }
-            else
-            {
-                double mean = 0;
-                Int64 i;
-                double stepPDF, stepVal;
-                double valL, valR, cdfL, cdfR;
-                // left singleton
-                i = 0;
-                valR = Quantiles[i];
-                cdfR = CumulativeProbabilities[i];
-                stepPDF = cdfR - 0.0;
-                mean += valR * stepPDF;
-                valL = valR;
-                cdfL = cdfR;
-                // add interval values
-                for (i = 1; i < SampleSize - 1; ++i)
-                {
-                    valR = Quantiles[i];
-                    cdfR = CumulativeProbabilities[i];
-                    stepPDF = cdfR - cdfL;
-                    stepVal = (valL + valR) / 2.0;
-                    mean += stepPDF * stepVal;
-                    valL = valR;
-                    cdfL = cdfR;
-                }
-                // add right singleton 
-                i = SampleSize - 1;
-                valR = Quantiles[i];
-                cdfR = 1.0;
-                stepPDF = cdfR - cdfL;
-                mean += valR * stepPDF;
-                return mean;
-            }
+           return Mathematics.IntegrateCDF<double>(CumulativeProbabilities, Quantiles );
         }
 
         public double ComputeMedian()
@@ -425,7 +400,7 @@ namespace Statistics.Distributions
 
             });
 
-            //Handle the sample mean separately -- THIS IS FUCKED
+            //Handle the sample mean separately
             double stackedMean = empiricalDistributionsForStacking[0].SampleMean;
             for (int j = 1; j < empiricalDistributionsForStacking.Count; j++)
             {
@@ -501,18 +476,17 @@ namespace Statistics.Distributions
         {
             int count = sample.Count;
             double[] probs = new double[count];
-            double min = Double.MaxValue;
-            double max = Double.MinValue;
-            sample.Sort();//check if ascending or decending
-            double[] sampleArray = new double[sample.Count];
-            for (int i = 0; i < sample.Count; i++)
+
+            sample.Sort(); //always sorts ascending
+            double min = sample[0];
+            double max = sample[^1];
+
+            for (int i = 0; i < count; i++)
             {
-                if (sample[i] > max) max = sample[i];
-                if (sample[i] < min) min = sample[i];
-                probs[i] = (double)i / (double)count;
-                sampleArray[i] = sample[i];
+                probs[i] = (double)i / count;
             }
-            return new Empirical(probs, sampleArray, min, max);
+            
+            return new Empirical(probs, sample.ToArray(), min, max);
         }
         //TODO: I don't think it makes sense for Fit to not be static 
         //Try to change that 
@@ -520,14 +494,14 @@ namespace Statistics.Distributions
         {
             int count = sample.Length;
             double[] probs = new double[count];
-            double min = Double.MaxValue;
-            double max = Double.MinValue;
-            Array.Sort(sample);//check if ascending or decending
+
+            Array.Sort(sample);//ascending
+            double min = sample[0];
+            double max = sample[^1];
+
             for (int i = 0; i < sample.Length; i++)
             {
-                if (sample[i] > max) max = sample[i];
-                if (sample[i] < min) min = sample[i];
-                probs[i] = (double)i / (double)count;
+                probs[i] = (double)i / count;
             }
             return new Empirical(probs, sample, min, max);
         }

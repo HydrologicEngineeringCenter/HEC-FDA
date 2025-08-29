@@ -58,7 +58,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             List<string> damCats = alternativeResults.GetDamageCategories();
             foreach (string damCat in damCats)
             {
-                Rows.Add(new DamageCategoryRowItem(damCat, alternativeResults.SampleMeanAAEQDamage(damageCategory: damCat)));
+                Rows.Add(new DamageCategoryRowItem(damCat, alternativeResults.SampleMeanEqad(damageCategory: damCat)));
             }
         }
 
@@ -89,8 +89,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                     case DamageMeasureYear.Future:
                         Rows.Add(new DamageCategoryRowItem(damCat, alternativeCompReportResults.SampleMeanFutureYearEADReduced(altID, damageCategory: damCat)));
                         break;
-                    case DamageMeasureYear.AAEQ:
-                        Rows.Add(new DamageCategoryRowItem(damCat, alternativeCompReportResults.SampleMeanAAEQDamageReduced(altID, damageCategory: damCat)));
+                    case DamageMeasureYear.Eqad:
+                        Rows.Add(new DamageCategoryRowItem(damCat, alternativeCompReportResults.SampleMeanEqadReduced(altID, damageCategory: damCat)));
                         break;
                 }
             }

@@ -146,7 +146,7 @@ namespace Statistics.Histograms
         }
         #endregion
         #region Functions
-
+       
 
 
         public void ForceDeQueue()

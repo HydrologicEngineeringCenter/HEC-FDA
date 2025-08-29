@@ -25,14 +25,14 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
         public double Point25 { get; set; }
 
 
-        public AggregatedEADSummaryRowItem(string impactArea, string withoutName, double withoutAAEQDamage, string withProjName, double withProjAAEQ, double AAEQReduced, double point75, double point5, double point25)
+        public AggregatedEADSummaryRowItem(string impactArea, string withoutName, double withoutEqad, string withProjName, double withProjEqad, double eqadReduced, double point75, double point5, double point25)
         {
             ImpactArea = impactArea;
             WithoutProjAlternative = withoutName;
-            WithoutProjEAD = withoutAAEQDamage;
+            WithoutProjEAD = withoutEqad;
             WithProjAlternative = withProjName;
-            WithProjEAD = withProjAAEQ;
-            EADDamageReduced = AAEQReduced;
+            WithProjEAD = withProjEqad;
+            EADDamageReduced = eqadReduced;
             Point75 = point75;
             Point5 = point5;
             Point25 = point25;
