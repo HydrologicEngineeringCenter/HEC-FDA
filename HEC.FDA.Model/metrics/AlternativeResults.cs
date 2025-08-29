@@ -112,7 +112,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="damageCategory"></param> either residential, commercial, etc...the default is null
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param> the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
-        /// <returns></returns>The mean of EqAD 
+        /// <returns>The mean of EqAD</returns> 
         public double SampleMeanEqad(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             if (ScenariosAreIdentical)
@@ -133,7 +133,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="damageCategory"></param> either residential, commercial, etc...the default is null
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param> the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
-        /// <returns></returns>The mean of ead damage for base year 
+        /// <returns>The mean of ead damage for base year </returns>
         public double SampleMeanBaseYearEAD(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             return BaseYearScenarioResults.SampleMeanExpectedAnnualConsequences(impactAreaID, damageCategory, assetCategory);
@@ -147,7 +147,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="damageCategory"></param> either residential, commercial, etc...the default is null
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param> the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
-        /// <returns></returns>The mean of ead damage for future year 
+        /// <returns>The mean of ead damage for future year </returns>
         public double SampleMeanFutureYearEAD(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
                 return FutureYearScenarioResults.SampleMeanExpectedAnnualConsequences(impactAreaID, damageCategory, assetCategory);
@@ -163,7 +163,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="exceedanceProbability"></param>
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param>the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
-        /// <returns></returns>the level of EqAD damage exceeded by the specified probability 
+        /// <returns>the level of EqAD damage exceeded by the specified probability</returns> 
         public double EqadExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             if (ScenariosAreIdentical)
@@ -185,7 +185,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="exceedanceProbability"></param>
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param>the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
-        /// <returns></returns>the level of EAD damage exceeded by the specified probability 
+        /// <returns>the level of EAD damage exceeded by the specified probability </returns>
         public double BaseYearEADDamageExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             return BaseYearScenarioResults.ConsequencesExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damageCategory, assetCategory);
@@ -200,7 +200,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="exceedanceProbability"></param>
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param>the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
-        /// <returns></returns>the level of EAD damage exceeded by the specified probability 
+        /// <returns>the level of EAD damage exceeded by the specified probability</returns> 
         public double FutureYearEADDamageExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             return FutureYearScenarioResults.ConsequencesExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damageCategory, assetCategory);
