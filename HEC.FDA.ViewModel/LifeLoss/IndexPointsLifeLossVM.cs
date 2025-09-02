@@ -95,8 +95,9 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
     public ObservableCollection<CheckableItem> LifeSimAlternatives { get; set; } = [];
     public ObservableCollection<CheckableItem> HazardTimes { get; set; } = [];
     public PlotModel MyModel { get; set; } = new();
+    public List<LifeLossFunction> LifeLossFunctions { get; private set; } = [];
     private int _plotIndex = 0;
-    private List<LifeLossFunction> _lifeLossFunctions = [];
+
     #endregion
 
     // called when creating new element
@@ -236,10 +237,10 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         LifeLossFunctionGenerator generator = new(SelectedPath, currentSimulation);
         string indexPointsFile = GetIndexPointsFile();
         string impactAreasFile = GetImpactAreaFile();
-        _lifeLossFunctions.Clear();
+        LifeLossFunctions.Clear();
         List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
         string uniqueImpactAreaHeader = impactAreaElements[0].UniqueNameColumnHeader;
-        _lifeLossFunctions = await generator.CreateLifeLossFunctionsAsync(impactAreasFile, indexPointsFile, uniqueImpactAreaHeader);
+        LifeLossFunctions = await generator.CreateLifeLossFunctionsAsync(impactAreasFile, indexPointsFile, uniqueImpactAreaHeader);
         _plotIndex = 0;
         ChangePlot(_plotIndex);
     }
@@ -282,9 +283,9 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
     /// <param name="next">The index of the plot to be switched to</param>
     private void ChangePlot(int next)
     {
-        if (_lifeLossFunctions.IsNullOrEmpty()) return;
+        if (LifeLossFunctions.IsNullOrEmpty()) return;
 
-        LifeLossFunction relationship = _lifeLossFunctions[next];
+        LifeLossFunction relationship = LifeLossFunctions[next];
         UncertainPairedData uncertainData = relationship.Data;
         var upper = uncertainData.SamplePairedData(0.975);
         var lower = uncertainData.SamplePairedData(0.025);

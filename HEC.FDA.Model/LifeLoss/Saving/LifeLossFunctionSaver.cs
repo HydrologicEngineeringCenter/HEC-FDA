@@ -17,6 +17,7 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
     private static readonly string _createCommandText =
         $@"CREATE TABLE IF NOT EXISTS ""{LL_TABLE_NAME}"" (
             Id INTEGER PRIMARY KEY AUTOINCREMENT,
+            ElementId INTEGER NOT NULL,
             Simulation TEXT NOT NULL,
             Alternative TEXT NOT NULL, 
             Stage REAL NOT NULL,
@@ -33,6 +34,7 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
         );"; // UNIQUE functionally means we cannot overwrite with this command, and cannot add a duplicate. 
     private static readonly string _insertCommandText =
         $@"INSERT OR IGNORE INTO ""{LL_TABLE_NAME}"" (
+            ElementId,
             Simulation, 
             Alternative, 
             Stage,
@@ -47,6 +49,7 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
             Bin_Counts
         )
         VALUES (
+            @elem_id,
             @sim,
             @alt,
             @stg,
@@ -185,6 +188,7 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
         // reuse the same command each time and just fill in values for each parameter
         for (int i = 0; i < llf.AlternativeNames.Length; i++)
         {
+            cmd.Parameters["@elem_id"].Value = llf.ElementID;
             cmd.Parameters["@sim"].Value = llf.SimulationName;
             cmd.Parameters["@alt"].Value = llf.AlternativeNames[i];
             cmd.Parameters["@stg"].Value = llf.Data.Xvals[i];
@@ -212,6 +216,7 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
     {
         cmd.CommandText = _insertCommandText;
         // each parameter has a placeholder formatted "@param" which gets filled in when this command is executed
+        cmd.Parameters.Add("@elem_id", DbType.Int32);
         cmd.Parameters.Add("@sim", DbType.String);
         cmd.Parameters.Add("@alt", DbType.String);
         cmd.Parameters.Add("@stg", DbType.Double);

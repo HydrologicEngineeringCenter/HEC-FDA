@@ -14,6 +14,8 @@ public abstract class SQLiteSaverBase<T> : ISQLiteSaver<T>
 
         _connection = new SQLiteConnection(_connectionString);
         _connection.Open();
+        using var pragma = new SQLiteCommand("PRAGMA foreign_keys = ON;", _connection); // have to do this for every connection if using multiple, enforces foregin key rules
+        pragma.ExecuteNonQuery();
     }
 
     public abstract void SaveToSQLite(T item);

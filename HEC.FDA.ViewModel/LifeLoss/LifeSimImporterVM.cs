@@ -1,6 +1,8 @@
-﻿using HEC.FDA.ViewModel.Editors;
+﻿using HEC.FDA.Model.LifeLoss;
+using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Utilities;
 using System;
+using System.Collections.Generic;
 
 namespace HEC.FDA.ViewModel.LifeLoss;
 public partial class LifeSimImporterVM : BaseEditorVM
@@ -44,7 +46,15 @@ public partial class LifeSimImporterVM : BaseEditorVM
             int indexPointsID = _indexPointsVM.SelectedIndexPoints.ID;
             StageLifeLossElement elemToSave = new(Name, lastEditDate, Description, id, hydraulicsID, indexPointsID);
             Save(elemToSave); // base editor's save, saves the metadeta as XML
-            //SaveSQLite(_indexpointsVM.LifeLossFunctions) // save the curves to SQLite
+            SaveFunctionsToSQLite(_indexPointsVM.LifeLossFunctions); // save the curves to SQLite
+        }
+    }
+
+    private void SaveFunctionsToSQLite(List<LifeLossFunction> functions)
+    {
+        foreach (LifeLossFunction function in functions)
+        {
+
         }
     }
 
