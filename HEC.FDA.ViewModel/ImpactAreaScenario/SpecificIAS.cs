@@ -121,8 +121,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// <summary>
         /// This ctor is used to load elements from the database.
         /// WARNING: Two properties of SpecificIAS : HasNonFailureStageDamage, and
-        // NonFailureStageDamageID are not saved as part of this object, but in the parent element. 
-        // They must be passed down after creation 
+        /// NonFailureStageDamageID are not saved as part of this object, but in the parent element. 
+        /// They must be passed down after creation 
         /// </summary>
         /// <param name="iasElem"></param>
         public SpecificIAS(XElement iasElem)
