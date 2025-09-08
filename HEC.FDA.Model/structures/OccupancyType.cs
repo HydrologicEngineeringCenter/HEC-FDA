@@ -1,10 +1,9 @@
-﻿using HEC.FDA.Model.paireddata;
-using Statistics;
-using HEC.MVVMFramework.Base.Implementations;
+﻿using System;
+using HEC.FDA.Model.paireddata;
 using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Model.Messaging;
-using System;
 
 namespace HEC.FDA.Model.structures
 { //TODO: add messaging and validation 
@@ -121,9 +120,8 @@ namespace HEC.FDA.Model.structures
         {
             if (ErrorLevel >= ErrorLevel.Major)
             {
-                Message message = new($"Occupancy type {Name} has at least one major error and cannot be sampled. An arbitrary set of sampled parameters is being returned");
-                ReportMessage(this, new MessageEventArgs(message));
-                return new DeterministicOccupancyType();
+                string message = $"Occupancy type {Name} has at least one major error and cannot be sampled.";
+                throw new Exception(message);
             }
             //damage functions
             IPairedData structDamagePairedData = _StructureDepthPercentDamageFunction.SamplePairedData(probability);
@@ -183,9 +181,8 @@ namespace HEC.FDA.Model.structures
         {
             if (ErrorLevel >= ErrorLevel.Major)
             {
-                Message message = new($"Occupancy type {Name} has at least one major error and cannot be sampled. An arbitrary set of sampled parameters is being returned");
-                ReportMessage(this, new MessageEventArgs(message));
-                return new DeterministicOccupancyType();
+                string message = $"Occupancy type {Name} has at least one major error and cannot be sampled.";
+                throw new Exception(message);
             }
             //damage functions
             IPairedData structDamagePairedData = _StructureDepthPercentDamageFunction.SamplePairedData(iteration, computeIsDeterministic);
