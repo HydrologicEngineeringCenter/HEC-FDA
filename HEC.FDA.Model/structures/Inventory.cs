@@ -1,15 +1,14 @@
-﻿using Geospatial.GDALAssist;
-using HEC.FDA.Model.interfaces;
-using RasMapperLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using HEC.MVVMFramework.Base.Enumerations;
-using HEC.MVVMFramework.Model.Messaging;
+using Geospatial.GDALAssist;
 using HEC.FDA.Model.metrics;
+using HEC.FDA.Model.Spatial;
+using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
-using HEC.FDA.Model.Spatial;
+using HEC.MVVMFramework.Model.Messaging;
+using RasMapperLib;
 using Statistics;
 using Utility.Logging;
 
@@ -294,15 +293,7 @@ namespace HEC.FDA.Model.structures
                 {
                     DeterministicOccupancyType dt = null;
                     var dtIdx = _occTypeIndices[i];
-                    if (dtIdx == -1)
-                    {
-                        // Shouldnt create a new one, but repros prior bevehaior
-                        dt = new DeterministicOccupancyType();
-                    }
-                    else
-                    {
-                        dt = deterministicOccupancyType[dtIdx];
-                    }
+                    dt = deterministicOccupancyType[dtIdx];
                     for (int j = 0; j < nPf; j++)
                     {
                         float wse = _invertedWSEL[i, j];
