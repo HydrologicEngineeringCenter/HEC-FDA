@@ -10,7 +10,7 @@ namespace HEC.FDA.Model.LifeLoss
         /// <summary>
         /// The ID of the Stage Life Loss element which this function belongs to.
         /// </summary>
-        public int ElementID { get; }
+        public int ElementID { get; set; }
         public UncertainPairedData Data { get; }
         public string SimulationName { get; }
         public string SummaryZone { get; set; }

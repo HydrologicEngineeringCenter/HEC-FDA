@@ -53,6 +53,11 @@ namespace HEC.FDA.ViewModel.Saving
             {typeof(StudyPropertiesElement), "study_properties" },
         };
 
+        public static string GetTableName(Type type)
+        {
+            return TypeToTableDict[type];
+        }
+
         public static IElementManager GetElementManager<T>()
             where T : ChildElement
         {

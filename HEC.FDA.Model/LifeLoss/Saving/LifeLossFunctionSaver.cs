@@ -30,7 +30,8 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
             Sample_Min REAL NOT NULL,
             Sample_Max REAL NOT NULL,
             Bin_Counts TEXT NOT NULL,
-            UNIQUE(Simulation, Alternative, Hazard_Time, Summary_Zone) 
+            FOREIGN KEY(ElementId) REFERENCES ""stage_life_loss_relationships_lookup""(ID) ON DELETE CASCADE,
+            UNIQUE(Id, Simulation, Alternative, Hazard_Time, Summary_Zone)
         );"; // UNIQUE functionally means we cannot overwrite with this command, and cannot add a duplicate. 
     private static readonly string _insertCommandText =
         $@"INSERT OR IGNORE INTO ""{LL_TABLE_NAME}"" (

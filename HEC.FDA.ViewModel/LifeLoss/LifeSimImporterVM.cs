@@ -1,5 +1,7 @@
 ﻿using HEC.FDA.Model.LifeLoss;
+using HEC.FDA.Model.LifeLoss.Saving;
 using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
@@ -45,16 +47,25 @@ public partial class LifeSimImporterVM : BaseEditorVM
             int hydraulicsID = _indexPointsVM.SelectedHydraulics.ID;
             int indexPointsID = _indexPointsVM.SelectedIndexPoints.ID;
             StageLifeLossElement elemToSave = new(Name, lastEditDate, Description, id, hydraulicsID, indexPointsID);
+
+            // this exists to separate the editing of the metadata and relationships
+            // in stage-damage, changing just one character in the name would require every single histogram to be re-saved 
+            bool curveEditorHasChanges = CurrentVM.HasChanges;
             Save(elemToSave); // base editor's save, saves the metadeta as XML
-            SaveFunctionsToSQLite(_indexPointsVM.LifeLossFunctions); // save the curves to SQLite
+            SaveFunctionsToSQLite(_indexPointsVM.LifeLossFunctions, id, curveEditorHasChanges); // save the curves to SQLite
         }
     }
 
-    private void SaveFunctionsToSQLite(List<LifeLossFunction> functions)
+    private void SaveFunctionsToSQLite(List<LifeLossFunction> functions, int id, bool curveEditorHasChanges)
     {
+        if (!curveEditorHasChanges) return;
+
+        string projFile = Connection.Instance.ProjectFile;
+        LifeLossFunctionSaver saver = new(projFile);
         foreach (LifeLossFunction function in functions)
         {
-
+            function.ElementID = id;
+            saver.SaveToSQLite(function);
         }
     }
 
