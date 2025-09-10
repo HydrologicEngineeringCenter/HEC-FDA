@@ -32,7 +32,13 @@ public partial class LifeSimImporterVM : BaseEditorVM
         StageLifeLossElement element = (StageLifeLossElement)elem;
         Name = element.Name;
         Description = element.Description;
-        _indexPointsVM = new(element.SelectedHydraulics, element.SelectedIndexPoints);
+        _indexPointsVM = new(
+            element.LifeSimDatabasePath,
+            element.SelectedHydraulics,
+            element.SelectedIndexPoints,
+            element.SelectedSimulation,
+            element.SelectedAlternatives,
+            element.SelectedHazardTimes);
         RegisterChildViewModel(_indexPointsVM);
         CurrentVM = _indexPointsVM;
     }
@@ -44,9 +50,27 @@ public partial class LifeSimImporterVM : BaseEditorVM
         {
             string lastEditDate = DateTime.Now.ToString("G");
             int id = GetID();
+            string selectedPath = _indexPointsVM.SelectedPath;
             int hydraulicsID = _indexPointsVM.SelectedHydraulics.ID;
             int indexPointsID = _indexPointsVM.SelectedIndexPoints.ID;
-            StageLifeLossElement elemToSave = new(Name, lastEditDate, Description, id, hydraulicsID, indexPointsID);
+            string selectedSimulation = _indexPointsVM.SelectedSimulation?.Name ?? "";
+            List<string> selectedAlternatives = [];
+            foreach (CheckableItem alternative in _indexPointsVM.LifeSimAlternatives)
+                if (alternative.IsChecked) selectedAlternatives.Add(alternative.Name);
+            List<string> selectedHazardTimes = [];
+            foreach (CheckableItem hazardTime in _indexPointsVM.HazardTimes)
+                if (hazardTime.IsChecked) selectedHazardTimes.Add(hazardTime.Name);
+
+            LifeSimImporterConfig config = new()
+            {
+                LifeSimDatabasePath = selectedPath,
+                SelectedHydraulics = hydraulicsID,
+                SelectedIndexPoints = indexPointsID,
+                SelectedSimulation = selectedSimulation,
+                SelectedAlternatives = selectedAlternatives,
+                SelectedHazardTimes = selectedHazardTimes,
+            };
+            StageLifeLossElement elemToSave = new(Name, lastEditDate, Description, id, config);
 
             // this exists to separate the editing of the metadata and relationships
             // in stage-damage, changing just one character in the name would require every single histogram to be re-saved 

@@ -20,17 +20,18 @@ namespace HEC.FDA.ViewModel.LifeLoss;
 public partial class IndexPointsLifeLossVM : BaseViewModel
 {
     #region Properties
-    private string _SelectedPath;
-    private HydraulicElement _SelectedHydraulics;
-    private IndexPointsElement _SelectedIndexPoints;
-    private LifeSimSimulation _SelectedSimuation;
+    private string _selectedPath;
+    private HydraulicElement _selectedHydraulics;
+    private IndexPointsElement _selectedIndexPoints;
+    private LifeSimSimulation _selectedSimuation;
+    private ObservableCollection<LifeSimSimulation> _simulations = [];
 
     public string SelectedPath
     {
-        get { return _SelectedPath; }
+        get { return _selectedPath; }
         set
         {
-            _SelectedPath = value;
+            _selectedPath = value;
             NotifyPropertyChanged();
             OnSelectedPathChanged();
         }
@@ -45,29 +46,31 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         List<LifeSimSimulation> newSimulations = db.UpdateSimulations();
         foreach (LifeSimSimulation simulation in newSimulations)
             Simulations.Add(simulation);
+        if (Simulations.Count > 0)
+            SelectedSimulation = Simulations[0];
     }
 
     public ObservableCollection<HydraulicElement> Hydraulics { get; } = new();
     public HydraulicElement SelectedHydraulics
     {
-        get { return _SelectedHydraulics; }
-        set { _SelectedHydraulics = value; NotifyPropertyChanged(); }
+        get { return _selectedHydraulics; }
+        set { _selectedHydraulics = value; NotifyPropertyChanged(); }
     }
 
     public ObservableCollection<IndexPointsElement> IndexPoints { get; } = new();
     public IndexPointsElement SelectedIndexPoints
     {
-        get { return _SelectedIndexPoints; }
-        set { _SelectedIndexPoints = value; NotifyPropertyChanged(); }
+        get { return _selectedIndexPoints; }
+        set { _selectedIndexPoints = value; NotifyPropertyChanged(); }
     }
 
-    public ObservableCollection<LifeSimSimulation> Simulations { get; set; } = [];
+    public ObservableCollection<LifeSimSimulation> Simulations { get { return _simulations; } set { _simulations = value; } }
     public LifeSimSimulation SelectedSimulation
     {
-        get { return _SelectedSimuation; }
+        get { return _selectedSimuation; }
         set
         {
-            _SelectedSimuation = value;
+            _selectedSimuation = value;
             NotifyPropertyChanged();
             OnSelectedSimulationChanged(value);
         }
@@ -109,12 +112,22 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
     }
 
     // called when opening existing element editor
-    public IndexPointsLifeLossVM(int hydraulicsID, int indexPointsID)
+    public IndexPointsLifeLossVM(
+        string LifeSimDataBasePath,
+        int hydraulicsID,
+        int indexPointsID,
+        string selectedSimulation,
+        List<string> selectedAlternatives,
+        List<string> selectedHazardTimes)
     {
+        SelectedPath = LifeSimDataBasePath;
         LoadHydraulics();
         SelectHydraulics(hydraulicsID);
         LoadIndexPoints();
         SelectIndexPoints(indexPointsID);
+        SelectSimulation(selectedSimulation);
+        SelectAlternatives(selectedAlternatives);
+        SelectHazardTimes(selectedHazardTimes);
         SubscribeToLiveUpdateEvents();
     }
 
@@ -216,6 +229,40 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
                 SelectedIndexPoints = idx;
                 return;
             }
+        }
+    }
+
+    private void SelectSimulation(string selectedSimulation)
+    {
+        foreach (LifeSimSimulation simulation in Simulations)
+        {
+            string name = simulation.Name;
+            if (name == selectedSimulation)
+            {
+                SelectedSimulation = simulation;
+            }
+        }
+    }
+
+    private void SelectAlternatives(List<string> selectedAlternativers)
+    {
+        foreach (CheckableItem alternative in LifeSimAlternatives)
+        {
+            alternative.IsChecked = false;
+            string name = alternative.Name;
+            if (selectedAlternativers.Contains(name))
+                alternative.IsChecked = true;
+        }
+    }
+
+    private void SelectHazardTimes(List<string> selectedHazardTimes)
+    {
+        foreach (CheckableItem ht in HazardTimes)
+        {
+            ht.IsChecked = false;
+            string name = ht.Name;
+            if (selectedHazardTimes.Contains(name))
+                ht.IsChecked = true;
         }
     }
 
