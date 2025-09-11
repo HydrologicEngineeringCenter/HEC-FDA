@@ -50,26 +50,7 @@ public partial class LifeSimImporterVM : BaseEditorVM
         {
             string lastEditDate = DateTime.Now.ToString("G");
             int id = GetID();
-            string selectedPath = _indexPointsVM.SelectedPath;
-            int hydraulicsID = _indexPointsVM.SelectedHydraulics.ID;
-            int indexPointsID = _indexPointsVM.SelectedIndexPoints.ID;
-            string selectedSimulation = _indexPointsVM.SelectedSimulation?.Name ?? "";
-            List<string> selectedAlternatives = [];
-            foreach (CheckableItem alternative in _indexPointsVM.LifeSimAlternatives)
-                if (alternative.IsChecked) selectedAlternatives.Add(alternative.Name);
-            List<string> selectedHazardTimes = [];
-            foreach (CheckableItem hazardTime in _indexPointsVM.HazardTimes)
-                if (hazardTime.IsChecked) selectedHazardTimes.Add(hazardTime.Name);
-
-            LifeSimImporterConfig config = new()
-            {
-                LifeSimDatabasePath = selectedPath,
-                SelectedHydraulics = hydraulicsID,
-                SelectedIndexPoints = indexPointsID,
-                SelectedSimulation = selectedSimulation,
-                SelectedAlternatives = selectedAlternatives,
-                SelectedHazardTimes = selectedHazardTimes,
-            };
+            LifeSimImporterConfig config = BuildIndexPointsImporterConfig(_indexPointsVM);
             StageLifeLossElement elemToSave = new(Name, lastEditDate, Description, id, config);
 
             // this exists to separate the editing of the metadata and relationships
@@ -78,6 +59,31 @@ public partial class LifeSimImporterVM : BaseEditorVM
             Save(elemToSave); // base editor's save, saves the metadeta as XML
             SaveFunctionsToSQLite(_indexPointsVM.LifeLossFunctions, id, curveEditorHasChanges); // save the curves to SQLite
         }
+    }
+
+    private LifeSimImporterConfig BuildIndexPointsImporterConfig(IndexPointsLifeLossVM indexPointsLifeLossVM)
+    {
+        string selectedPath = indexPointsLifeLossVM.SelectedPath;
+        int hydraulicsID = indexPointsLifeLossVM.SelectedHydraulics.ID;
+        int indexPointsID = indexPointsLifeLossVM.SelectedIndexPoints.ID;
+        string selectedSimulation = indexPointsLifeLossVM.SelectedSimulation?.Name ?? "";
+        List<string> selectedAlternatives = [];
+        foreach (CheckableItem alternative in indexPointsLifeLossVM.LifeSimAlternatives)
+            if (alternative.IsChecked) selectedAlternatives.Add(alternative.Name);
+        List<string> selectedHazardTimes = [];
+        foreach (CheckableItem hazardTime in indexPointsLifeLossVM.HazardTimes)
+            if (hazardTime.IsChecked) selectedHazardTimes.Add(hazardTime.Name);
+
+        LifeSimImporterConfig config = new()
+        {
+            LifeSimDatabasePath = selectedPath,
+            SelectedHydraulics = hydraulicsID,
+            SelectedIndexPoints = indexPointsID,
+            SelectedSimulation = selectedSimulation,
+            SelectedAlternatives = selectedAlternatives,
+            SelectedHazardTimes = selectedHazardTimes,
+        };
+        return config;
     }
 
     private void SaveFunctionsToSQLite(List<LifeLossFunction> functions, int id, bool curveEditorHasChanges)
