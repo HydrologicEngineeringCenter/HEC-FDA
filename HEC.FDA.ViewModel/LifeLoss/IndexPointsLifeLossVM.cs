@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using HEC.FDA.Model.LifeLoss;
+using HEC.FDA.Model.LifeLoss.Saving;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.ImpactArea;
@@ -137,6 +138,7 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
 
     // called when opening existing element editor
     public IndexPointsLifeLossVM(
+        int elementID,
         string LifeSimDataBasePath,
         int hydraulicsID,
         int indexPointsID,
@@ -152,6 +154,7 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         SelectSimulation(selectedSimulation);
         SelectAlternatives(selectedAlternatives);
         SelectHazardTimes(selectedHazardTimes);
+        LoadStageLifeLossRelationships(elementID);
         SubscribeToLiveUpdateEvents();
     }
 
@@ -288,6 +291,18 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
             if (selectedHazardTimes.Contains(name))
                 ht.IsChecked = true;
         }
+    }
+
+    private void LoadStageLifeLossRelationships(int elementID)
+    {
+        string projFile = Connection.Instance.ProjectFile;
+        LifeLossFunctionSaver saver = new(projFile);
+        LifeLossFunctionFilter filter = new() { ElementId = [elementID] };
+        List<LifeLossFunction> functions = saver.ReadFromSQLite(filter);
+        LifeLossFunctions.Clear();
+        LifeLossFunctions = functions;
+        _plotIndex = 0;
+        ChangePlot(_plotIndex);
     }
 
     [RelayCommand]

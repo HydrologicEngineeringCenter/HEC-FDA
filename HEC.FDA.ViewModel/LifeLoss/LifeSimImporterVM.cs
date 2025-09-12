@@ -33,6 +33,7 @@ public partial class LifeSimImporterVM : BaseEditorVM
         Name = element.Name;
         Description = element.Description;
         _indexPointsVM = new(
+            element.ID,
             element.LifeSimDatabasePath,
             element.SelectedHydraulics,
             element.SelectedIndexPoints,
