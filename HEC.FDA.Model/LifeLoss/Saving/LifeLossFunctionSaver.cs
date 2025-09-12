@@ -148,6 +148,13 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
         return result;
     }
 
+    public override void DeleteFromSQLite(SQLiteFilter filter)
+    {
+        using var deleteCommand = new SQLiteCommand(_connection);
+        BuildDeleteCommand(deleteCommand, filter);
+        deleteCommand.ExecuteNonQuery();
+    }
+
     /// <summary>
     /// Reads the SQLite data back into a histogram object
     /// </summary>
@@ -257,6 +264,15 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
         }
         querySB.Append(@" ORDER BY ""Simulation"", ""Summary_Zone"", ""Hazard_Time"" DESC, ""Stage"";"); // hazard time is descending because we want "2" to be read before "14" as strings
         cmd.CommandText = querySB.ToString();
+    }
+
+    private void BuildDeleteCommand(SQLiteCommand cmd, SQLiteFilter filter)
+    {
+        StringBuilder sql = new();
+        sql = filter.BuildDelete(LL_TABLE_NAME, out IReadOnlyDictionary<string, object> parameters);
+        foreach (var parameterPair in parameters)
+            cmd.Parameters.AddWithValue(parameterPair.Key, parameterPair.Value);
+        cmd.CommandText = sql.ToString();
     }
 
 }

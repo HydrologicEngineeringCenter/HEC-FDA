@@ -25,6 +25,8 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
     private IndexPointsElement _selectedIndexPoints;
     private LifeSimSimulation _selectedSimuation;
     private ObservableCollection<LifeSimSimulation> _simulations = [];
+    private ObservableCollection<CheckableItem> _lifesimAlternatives = [];
+    private ObservableCollection<CheckableItem> _hazardTimes = [];
 
     public string SelectedPath
     {
@@ -64,7 +66,11 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         set { _selectedIndexPoints = value; NotifyPropertyChanged(); }
     }
 
-    public ObservableCollection<LifeSimSimulation> Simulations { get { return _simulations; } set { _simulations = value; } }
+    public ObservableCollection<LifeSimSimulation> Simulations
+    {
+        get { return _simulations; }
+        set { _simulations = value; }
+    }
     public LifeSimSimulation SelectedSimulation
     {
         get { return _selectedSimuation; }
@@ -95,10 +101,28 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         }
     }
 
-    public ObservableCollection<CheckableItem> LifeSimAlternatives { get; set; } = [];
-    public ObservableCollection<CheckableItem> HazardTimes { get; set; } = [];
+    public ObservableCollection<CheckableItem> LifeSimAlternatives
+    {
+        get { return _lifesimAlternatives; }
+        set
+        {
+            _lifesimAlternatives = value;
+            NotifyPropertyChanged();
+        }
+    }
+    public ObservableCollection<CheckableItem> HazardTimes
+    {
+        get { return _hazardTimes; }
+        set
+        {
+            _hazardTimes = value;
+            NotifyPropertyChanged();
+        }
+    }
+
     public PlotModel MyModel { get; set; } = new();
     public List<LifeLossFunction> LifeLossFunctions { get; private set; } = [];
+    public bool WasRecomputed { get; private set; } = false;
     private int _plotIndex = 0;
 
     #endregion
@@ -290,6 +314,7 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         LifeLossFunctions = await generator.CreateLifeLossFunctionsAsync(impactAreasFile, indexPointsFile, uniqueImpactAreaHeader);
         _plotIndex = 0;
         ChangePlot(_plotIndex);
+        WasRecomputed = true;
     }
 
     public FdaValidationResult ValidateForm()
@@ -322,6 +347,14 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         string directory = Path.Combine(Connection.Instance.IndexPointsDirectory, SelectedIndexPoints.Name);
         string file = Directory.GetFiles(directory, "*.shp")[0];
         return file;
+    }
+
+    [RelayCommand]
+    public void NextPlot()
+    {
+        if (LifeLossFunctions.IsEmpty()) return;
+        _plotIndex = (_plotIndex + 1) % LifeLossFunctions.Count;
+        ChangePlot(_plotIndex);
     }
 
     /// <summary>

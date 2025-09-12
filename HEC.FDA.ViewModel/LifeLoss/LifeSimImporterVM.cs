@@ -55,9 +55,8 @@ public partial class LifeSimImporterVM : BaseEditorVM
 
             // this exists to separate the editing of the metadata and relationships
             // in stage-damage, changing just one character in the name would require every single histogram to be re-saved 
-            bool curveEditorHasChanges = CurrentVM.HasChanges;
             Save(elemToSave); // base editor's save, saves the metadeta as XML
-            SaveFunctionsToSQLite(_indexPointsVM.LifeLossFunctions, id, curveEditorHasChanges); // save the curves to SQLite
+            SaveFunctionsToSQLite(_indexPointsVM.LifeLossFunctions, id); // save the curves to SQLite
         }
     }
 
@@ -86,12 +85,19 @@ public partial class LifeSimImporterVM : BaseEditorVM
         return config;
     }
 
-    private void SaveFunctionsToSQLite(List<LifeLossFunction> functions, int id, bool curveEditorHasChanges)
+    private void SaveFunctionsToSQLite(List<LifeLossFunction> functions, int id)
     {
-        if (!curveEditorHasChanges) return;
+        // only save relationships if they were recomputed
+        if (!_indexPointsVM.WasRecomputed)
+            return;
 
         string projFile = Connection.Instance.ProjectFile;
         LifeLossFunctionSaver saver = new(projFile);
+        LifeLossFunctionFilter filter = new()
+        {
+            ElementId = [id],
+        };
+        saver.DeleteFromSQLite(filter);
         foreach (LifeLossFunction function in functions)
         {
             function.ElementID = id;
