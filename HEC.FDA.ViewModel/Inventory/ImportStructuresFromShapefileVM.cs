@@ -257,7 +257,7 @@ namespace HEC.FDA.ViewModel.Inventory
             //this short circuits and lets FID be either int or string. it's handled in the importer. 
             if (fieldName == StructureSelectionMapping.STRUCTURE_ID)
             {
-                if (actualType == typeof(int) || actualType == typeof(string))
+                if (actualType == typeof(int) || actualType == typeof(string) || actualType == typeof(double))
                 {
                     return;
                 }
