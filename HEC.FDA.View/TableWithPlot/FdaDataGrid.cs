@@ -48,6 +48,14 @@ namespace HEC.FDA.View.TableWithPlot
 
         private void OnPreviewKeyDown(object sender, KeyEventArgs e)
         {
+            // Handle Ctrl+C in preview to prevent default WPF copy behavior
+            if ((Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)) && e.Key == Key.C)
+            {
+                CopyClipBoard(this, e);
+                e.Handled = true; // Prevent the default copy behavior
+                return;
+            }
+            
             if (IsLastRowSelected())
             {
                 if (e.Key == Key.Enter)
