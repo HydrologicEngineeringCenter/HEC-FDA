@@ -77,12 +77,13 @@ public class StructureFactory
             string fid = GetFID(map.StructureIDCol, row).Trim();
 
             double val_struct = row.TryGetValueAs<double>(map.StructureValueCol, DEFAULT_MISSING_NUMBER_VALUE);
-            string occtype = row.TryGetValueAs<string>(map.OccTypeCol, DEFAULT_MISSING_STRING_VALUE).Trim();
-            if (!occTypes.TryGetValue(occtype, out OccupancyType occ))
+            string occtypeInputName = row.TryGetValueAs<string>(map.OccTypeCol, DEFAULT_MISSING_STRING_VALUE).Trim();
+            if (!occTypes.TryGetValue(occtypeInputName, out OccupancyType occ))
             {
-                return OperationResult.Fail($"Occupancy type {occtype} not found in the list of occupancy types.");
+                return OperationResult.Fail($"Occupancy type {occtypeInputName} not found in the list of occupancy types.");
             }
             string st_damcat = occ.DamageCategory;
+            string occtypeActualName = occ.Name;
 
             double found_ht = row.TryGetValueAs<double>(map.FoundationHeightCol, DEFAULT_MISSING_NUMBER_VALUE);
             double ground_elv = updateGroundElevFromTerrain ? groundelevs[i] : row.TryGetValueAs<double>(map.GroundElevCol, DEFAULT_MISSING_NUMBER_VALUE);
@@ -110,7 +111,7 @@ public class StructureFactory
 
             // Create and add the new Structure.
             structures.Add(new Structure(
-                fid, point, ff_elev, val_struct, st_damcat, occtype,
+                fid, point, ff_elev, val_struct, st_damcat, occtypeActualName,
                 impactAreaID, val_cont, val_vehic, val_other,
                 cbfips, beginningDamage, ground_elv, found_ht,
                 yearInService, numStructures, notes, description));
