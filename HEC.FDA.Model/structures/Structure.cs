@@ -295,7 +295,7 @@ namespace HEC.FDA.Model.structures
                 }
             }
             // couldn't find occupancy type
-            throw new Exception($"Failed fo find OccupancyType Named: {OccTypeName} referenced by structure ID: {Fid}");
+            throw new Exception($"Failed to find OccupancyType Named: {OccTypeName} referenced by structure ID: {Fid}");
         }
 
         internal static string ProduceDetailsHeader()
