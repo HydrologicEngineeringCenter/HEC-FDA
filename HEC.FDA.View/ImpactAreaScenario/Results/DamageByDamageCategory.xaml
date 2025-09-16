@@ -34,7 +34,7 @@
                         <TextBlock Text="Damage Category" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding EAD, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" Width="*">
+                <DataGridTextColumn Binding="{Binding EAD, StringFormat=C2}" Width="*">
                     <DataGridTextColumn.Header>
                         <TextBlock Name="ead_textblock" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>

@@ -208,7 +208,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             {
                 DataFieldX = nameof(NormalDataPoint.ZScore),
                 DataFieldY = nameof(NormalDataPoint.Value),
-                TrackerFormatString = "X: {Probability:0.####}, Y: {Value:F2}",
+                TrackerFormatString = "X: {Probability:0.####}, Y: {Value:C0}",
                 Title = StringConstants.EAD_DISTRIBUTION,
             };
             var points = new NormalDataPoint[empirical.CumulativeProbabilities.Length];
@@ -249,7 +249,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                 Position = AxisPosition.Left,
                 Title = yaxisLabel,
                 MinorTickSize = 0,
-                Unit = "$",
+                StringFormat = "C0",
             };
             MyPlot.Axes.Add(x);
             MyPlot.Axes.Add(y);
