@@ -26,7 +26,7 @@
 
     <StackPanel Grid.Row="0" Orientation="Horizontal">
       <Label Content="Mean:" />
-      <TextBlock Text="{Binding Mean, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}" 
+      <TextBlock Text="{Binding Mean, StringFormat=C2}" 
                  VerticalAlignment="Center"/>
     </StackPanel>
     <controls:CopyPasteDataGrid Grid.Row="1" Grid.Column="0"  ItemsSource="{Binding Rows}" AutoGenerateColumns="False" 
@@ -39,7 +39,7 @@
             <TextBlock Text="Quartile of EAD Distribution" TextWrapping="Wrap" />
           </DataGridTextColumn.Header>
         </DataGridTextColumn>
-        <DataGridTextColumn Binding="{Binding Value, StringFormat={x:Static utilVM:StringConstants.DEFAULT_UNIT_FORMAT}}"
+        <DataGridTextColumn Binding="{Binding Value, StringFormat=C2}"
                             Width="*">
           <DataGridTextColumn.Header>
             <TextBlock Text="Quartile Value" TextWrapping="Wrap" />
