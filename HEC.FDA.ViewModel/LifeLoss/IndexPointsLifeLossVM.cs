@@ -16,6 +16,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Utility.Extensions;
 
 namespace HEC.FDA.ViewModel.LifeLoss;
 public partial class IndexPointsLifeLossVM : BaseViewModel
@@ -28,6 +29,7 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
     private ObservableCollection<LifeSimSimulation> _simulations = [];
     private ObservableCollection<CheckableItem> _lifesimAlternatives = [];
     private ObservableCollection<CheckableItem> _hazardTimes = [];
+    private LifeLossFunction _selectedFunction;
 
     public string SelectedPath
     {
@@ -121,8 +123,25 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         }
     }
 
+    public LifeLossFunction SelectedFunction
+    {
+        get { return _selectedFunction; }
+        set
+        {
+            _selectedFunction = value;
+            NotifyPropertyChanged();
+            OnSelectedFunctionChanged(value);
+        }
+    }
+    private void OnSelectedFunctionChanged(LifeLossFunction function)
+    {
+        if (function == null) return;
+        int index = function.FunctionID - 1;
+        ChangePlot(index);
+    }
+
     public PlotModel MyModel { get; set; } = new();
-    public List<LifeLossFunction> LifeLossFunctions { get; private set; } = [];
+    public ObservableCollection<LifeLossFunction> LifeLossFunctions { get; private set; } = [];
     public bool WasRecomputed { get; private set; } = false;
     private int _plotIndex = 0;
 
@@ -300,7 +319,7 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         LifeLossFunctionFilter filter = new() { ElementId = [elementID] };
         List<LifeLossFunction> functions = saver.ReadFromSQLite(filter);
         LifeLossFunctions.Clear();
-        LifeLossFunctions = functions;
+        LifeLossFunctions.AddRange(functions);
         _plotIndex = 0;
         ChangePlot(_plotIndex);
     }
@@ -326,7 +345,9 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         LifeLossFunctions.Clear();
         List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
         string uniqueImpactAreaHeader = impactAreaElements[0].UniqueNameColumnHeader;
-        LifeLossFunctions = await generator.CreateLifeLossFunctionsAsync(impactAreasFile, indexPointsFile, uniqueImpactAreaHeader);
+        List<LifeLossFunction> newFunctions = await generator.CreateLifeLossFunctionsAsync(impactAreasFile, indexPointsFile, uniqueImpactAreaHeader);
+        LifeLossFunctions.Clear();
+        LifeLossFunctions.AddRange(newFunctions);
         _plotIndex = 0;
         ChangePlot(_plotIndex);
         WasRecomputed = true;

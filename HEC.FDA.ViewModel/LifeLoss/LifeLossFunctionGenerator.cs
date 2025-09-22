@@ -56,6 +56,7 @@ public class LifeLossFunctionGenerator
 
     private List<LifeLossFunction> CreateLifeLossFunctions()
     {
+        int functionID = 1;
         List<LifeLossFunction> lifeLossFunctions = [];
         foreach (string summaryZone in _indexPointBySummaryZone.Keys)
         {
@@ -63,6 +64,11 @@ public class LifeLossFunctionGenerator
             PointMs indexPoint = [_indexPointBySummaryZone[summaryZone]];
 
             List<LifeLossFunction> functions = CreateLifeLossFunctionsForSummaryZone2(summaryZone, indexPoint);
+            foreach (LifeLossFunction function in functions)
+            {
+                function.FunctionID = functionID;
+                functionID++;
+            }
             lifeLossFunctions.AddRange(functions); // AddRange because we are adding a list to another list
         }
         return lifeLossFunctions;
@@ -131,7 +137,7 @@ public class LifeLossFunctionGenerator
             if (newEntry) // we had at least one new entry for the function which was just built, so save the function to SQLite
             {
                 UncertainPairedData upd = new(stages.ToArray(), histograms.ToArray(), new CurveMetaData());
-                LifeLossFunction llf = new(-1, upd, _alternativeNames, _simulationName, summaryZone, hazardTime);
+                LifeLossFunction llf = new(-1, -1, upd, _alternativeNames, _simulationName, summaryZone, hazardTime);
                 saver.SaveToSQLite(llf);
             }
         }
@@ -184,7 +190,7 @@ public class LifeLossFunctionGenerator
                 histograms[i] = entries[i].Histogram;
             }
             UncertainPairedData upd = new(stages.ToArray(), histograms.ToArray(), new CurveMetaData());
-            LifeLossFunction llf = new(-1, upd, alternatives, _simulationName, summaryZone, hazardTime);
+            LifeLossFunction llf = new(-1, -1, upd, alternatives, _simulationName, summaryZone, hazardTime);
             functions.Add(llf);
         }
         return functions;

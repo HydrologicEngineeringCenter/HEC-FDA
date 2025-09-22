@@ -18,6 +18,7 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
         $@"CREATE TABLE IF NOT EXISTS ""{LL_TABLE_NAME}"" (
             Id INTEGER PRIMARY KEY AUTOINCREMENT,
             ElementId INTEGER NOT NULL,
+            FunctionId INTEGER NOT NULL,
             Simulation TEXT NOT NULL,
             Alternative TEXT NOT NULL, 
             Stage REAL NOT NULL,
@@ -36,6 +37,7 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
     private static readonly string _insertCommandText =
         $@"INSERT OR IGNORE INTO ""{LL_TABLE_NAME}"" (
             ElementId,
+            FunctionId,
             Simulation, 
             Alternative, 
             Stage,
@@ -51,6 +53,7 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
         )
         VALUES (
             @elem_id,
+            @func_id,
             @sim,
             @alt,
             @stg,
@@ -101,6 +104,7 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
         BuildSelectCommand(selectCommand, plotFilter, selectAll);
         using var reader = selectCommand.ExecuteReader();
 
+        int functionID = -1;
         List<LifeLossFunction> result = new();
         string currentSim = null, currentSZ = null, currentHT = null;
         List<string> alternatives = new();
@@ -113,7 +117,7 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
             if (currentSim == null || currentSZ == null || currentHT == null) return; // means we have not read anything yet, do not want to create a life loss function yet
 
             UncertainPairedData data = new(stages.ToArray(), histograms.ToArray(), new CurveMetaData());
-            LifeLossFunction llf = new(-1, data, alternatives.ToArray(), currentSim, currentSZ, currentHT);
+            LifeLossFunction llf = new(-1, functionID, data, alternatives.ToArray(), currentSim, currentSZ, currentHT);
             result.Add(llf);
 
             // reset the lists of life loss function parameters
@@ -126,6 +130,7 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
 
         while (reader.Read())
         {
+            int f = reader.GetInt32(reader.GetOrdinal("FunctionId"));
             string sim = reader.GetString(reader.GetOrdinal("Simulation"));
             string sz = reader.GetString(reader.GetOrdinal("Summary_Zone"));
             string ht = reader.GetString(reader.GetOrdinal("Hazard_Time"));
@@ -139,6 +144,7 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
                 currentSim = sim;
                 currentSZ = sz;
                 currentHT = ht;
+                functionID = f;
             }
             alternatives.Add(reader.GetString(reader.GetOrdinal("Alternative")));
             stages.Add(reader.GetDouble(reader.GetOrdinal("Stage")));
@@ -197,6 +203,7 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
         for (int i = 0; i < llf.AlternativeNames.Length; i++)
         {
             cmd.Parameters["@elem_id"].Value = llf.ElementID;
+            cmd.Parameters["@func_id"].Value = llf.FunctionID;
             cmd.Parameters["@sim"].Value = llf.SimulationName;
             cmd.Parameters["@alt"].Value = llf.AlternativeNames[i];
             cmd.Parameters["@stg"].Value = llf.Data.Xvals[i];
@@ -225,6 +232,7 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
         cmd.CommandText = _insertCommandText;
         // each parameter has a placeholder formatted "@param" which gets filled in when this command is executed
         cmd.Parameters.Add("@elem_id", DbType.Int32);
+        cmd.Parameters.Add("@func_id", DbType.Int32);
         cmd.Parameters.Add("@sim", DbType.String);
         cmd.Parameters.Add("@alt", DbType.String);
         cmd.Parameters.Add("@stg", DbType.Double);
@@ -262,7 +270,7 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
             foreach (var parameterPair in parameters)
                 cmd.Parameters.AddWithValue(parameterPair.Key, parameterPair.Value);
         }
-        querySB.Append(@" ORDER BY ""Simulation"", ""Summary_Zone"", ""Hazard_Time"" DESC, ""Stage"";"); // hazard time is descending because we want "2" to be read before "14" as strings
+        querySB.Append(@" ORDER BY ""FunctionId"", ""Simulation"", ""Summary_Zone"", ""Hazard_Time"" DESC, ""Stage"";"); // hazard time is descending because we want "2" to be read before "14" as strings
         cmd.CommandText = querySB.ToString();
     }
 
