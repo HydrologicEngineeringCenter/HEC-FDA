@@ -315,7 +315,7 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
     {
         string projFile = Connection.Instance.ProjectFile;
         LifeLossFunctionSaver saver = new(projFile);
-        LifeLossFunctionFilter filter = new() { ElementId = [elementID] };
+        LifeLossFunctionFilter filter = new() { Element_ID = [elementID] };
         List<LifeLossFunction> functions = saver.ReadFromSQLite(filter);
         LifeLossFunctions.Clear();
         LifeLossFunctions.AddRange(functions);

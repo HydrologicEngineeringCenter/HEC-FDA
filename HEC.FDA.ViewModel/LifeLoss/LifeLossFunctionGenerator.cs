@@ -1,7 +1,5 @@
 ﻿using HEC.FDA.Model.LifeLoss;
-using HEC.FDA.Model.LifeLoss.Saving;
 using HEC.FDA.Model.paireddata;
-using HEC.FDA.ViewModel.Storage;
 using RasMapperLib;
 using Statistics.Histograms;
 using System.Collections.Generic;
@@ -63,7 +61,7 @@ public class LifeLossFunctionGenerator
             // creating points array of size 1 because that RAS API needs an array
             PointMs indexPoint = [_indexPointBySummaryZone[summaryZone]];
 
-            List<LifeLossFunction> functions = CreateLifeLossFunctionsForSummaryZone2(summaryZone, indexPoint);
+            List<LifeLossFunction> functions = CreateLifeLossFunctionsForSummaryZone(summaryZone, indexPoint);
             foreach (LifeLossFunction function in functions)
             {
                 function.FunctionID = functionID;
@@ -81,73 +79,6 @@ public class LifeLossFunctionGenerator
     /// <param name="indexPoint"></param>
     /// <returns></returns>
     private List<LifeLossFunction> CreateLifeLossFunctionsForSummaryZone(string summaryZone, PointMs indexPoint)
-    {
-        // if any of the functions we are asking for are already present in the database, grab them first
-        LifeLossFunctionFilter allPF = new()
-        {
-            Simulation = [_simulationName],
-            Summary_Zone = [summaryZone],
-            Alternative = _alternativeNames,
-            Hazard_Time = _hazardTimes,
-        };
-        string projFile = Connection.Instance.ProjectFile;
-        using LifeLossFunctionSaver saver = new(projFile);
-        List<LifeLossFunction> existingFunctions = saver.ReadFromSQLite(allPF);
-        // set up dictionaries for stages and histograms already in the DB, allows us to make O(1) lookups instead of recomputing
-        var seenStages = new Dictionary<(string simulation, string summaryZone, string alternative), double>();
-        var seenHistograms = new Dictionary<(string simulation, string summaryZone, string alternative, string hazardTime), DynamicHistogram>();
-        foreach (LifeLossFunction llf in existingFunctions)
-        {
-            for (int i = 0; i < llf.AlternativeNames.Length; i++)
-            {
-                seenStages[(llf.SimulationName, llf.SummaryZone, llf.AlternativeNames[i])] = llf.Data.Xvals[i];
-                seenHistograms[(llf.SimulationName, llf.SummaryZone, llf.AlternativeNames[i], llf.HazardTime)] = (DynamicHistogram)llf.Data.Yvals[i];
-            }
-        }
-
-        bool newEntries = false; // if this flag remains false, we can just return the existing functions because we only read functions already in the DB
-        foreach (string hazardTime in _hazardTimes)
-        {
-            // build one function
-            bool newEntry = false; // this flag signals whether the function being built has any new entries not already present in the DB
-            List<double> stages = new();
-            List<DynamicHistogram> histograms = new();
-            foreach (string alternative in _alternativeNames)
-            {
-                if (!seenStages.TryGetValue((_simulationName, summaryZone, alternative), out double stage)) // checking if the stage already exists in the DB
-                {
-                    newEntry = true; newEntries = true;
-                    string associatedHydraulicsFolder = _hydraulicsFolderByAlternative[alternative];
-                    string hdf = Path.Combine(_topLevelHydraulicsFolder, associatedHydraulicsFolder, $"{associatedHydraulicsFolder}.hdf"); // asserting that the HDF file name is always in this format
-                    float[] computedStage = GeospatialHelpers.GetStageFromHDF(indexPoint, hdf);
-                    stage = computedStage[0]; // GetStageFromHDF returns an array with one value in it (RAS API), so we get the first (and only) value
-                    seenStages[(_simulationName, summaryZone, alternative)] = stage;
-                }
-                stages.Add(stage);
-
-                if (!seenHistograms.TryGetValue((_simulationName, summaryZone, alternative, hazardTime), out DynamicHistogram histogram)) // checking if the histogram already exists in the DB
-                {
-                    newEntry = true; newEntries = true;
-                    string tableName = $"{_simulationName}>Results_By_Iteration>{alternative}>{hazardTime}>{_summarySetName}>{summaryZone}";
-                    histogram = _db.QueryLifeLossTable(tableName);
-                    seenHistograms[(_simulationName, summaryZone, alternative, hazardTime)] = histogram;
-                }
-                histograms.Add(histogram);
-            }
-            if (newEntry) // we had at least one new entry for the function which was just built, so save the function to SQLite
-            {
-                UncertainPairedData upd = new(stages.ToArray(), histograms.ToArray(), new CurveMetaData());
-                LifeLossFunction llf = new(-1, -1, upd, _alternativeNames, _simulationName, summaryZone, hazardTime);
-                saver.SaveToSQLite(llf);
-            }
-        }
-        if (!newEntries) return existingFunctions;
-        return saver.ReadFromSQLite(allPF); // this call is needed to order the functions (uses ORDER BY in the SELECT statement)
-    }
-
-
-
-    private List<LifeLossFunction> CreateLifeLossFunctionsForSummaryZone2(string summaryZone, PointMs indexPoint)
     {
         Dictionary<string, double> stageByAlternative = [];
         List<LifeLossFunction> functions = [];

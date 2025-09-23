@@ -97,7 +97,7 @@ public partial class LifeSimImporterVM : BaseEditorVM
         LifeLossFunctionSaver saver = new(projFile);
         LifeLossFunctionFilter filter = new()
         {
-            ElementId = [id],
+            Element_ID = [id],
         };
         saver.DeleteFromSQLite(filter);
         foreach (LifeLossFunction function in functions)
