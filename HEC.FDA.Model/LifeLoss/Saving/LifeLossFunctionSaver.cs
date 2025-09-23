@@ -13,60 +13,68 @@ namespace HEC.FDA.Model.LifeLoss.Saving;
 /// </summary>
 public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
 {
-    private const string LL_TABLE_NAME = "stage_life_loss_relationships";
     private static readonly string _createCommandText =
-        $@"CREATE TABLE IF NOT EXISTS ""{LL_TABLE_NAME}"" (
-            Id INTEGER PRIMARY KEY AUTOINCREMENT,
-            ElementId INTEGER NOT NULL,
-            FunctionId INTEGER NOT NULL,
-            Simulation TEXT NOT NULL,
-            Alternative TEXT NOT NULL, 
-            Stage REAL NOT NULL,
-            Hazard_Time TEXT NULL,
-            Summary_Zone TEXT NOT NULL,
-            Min REAL NOT NULL,
-            Bin_Width REAL NOT NULL,
-            Sample_Mean REAL NOT NULL,
-            Sample_Variance REAL NOT NULL,
-            Sample_Min REAL NOT NULL,
-            Sample_Max REAL NOT NULL,
-            Bin_Counts TEXT NOT NULL,
-            FOREIGN KEY(ElementId) REFERENCES ""stage_life_loss_relationships_lookup""(ID) ON DELETE CASCADE,
-            UNIQUE(Id, Simulation, Alternative, Hazard_Time, Summary_Zone)
+        $@"
+            CREATE TABLE IF NOT EXISTS {LifeLossStringConstants.LL_TABLE_NAME} (
+            {LifeLossStringConstants.ID_HEADER}           INTEGER PRIMARY KEY AUTOINCREMENT,
+            {LifeLossStringConstants.ELEMENT_ID_HEADER}   INTEGER NOT NULL,
+            {LifeLossStringConstants.FUNCTION_ID_HEADER}  INTEGER NOT NULL,
+            {LifeLossStringConstants.SIMULATION_HEADER}   TEXT    NOT NULL,
+            {LifeLossStringConstants.ALTERNATIVE_HEADER}  TEXT    NOT NULL,
+            {LifeLossStringConstants.STAGE_HEADER}        REAL    NOT NULL,
+            {LifeLossStringConstants.HAZARD_TIME_HEADER}  TEXT    NULL,
+            {LifeLossStringConstants.SUMMARY_ZONE_HEADER} TEXT    NOT NULL,
+            {LifeLossStringConstants.MIN_HEADER}          REAL    NOT NULL,
+            {LifeLossStringConstants.BIN_WIDTH_HEADER}    REAL    NOT NULL,
+            {LifeLossStringConstants.SAMPLE_MEAN_HEADER}  REAL    NOT NULL,
+            {LifeLossStringConstants.SAMPLE_VARIANCE_HEADER} REAL NOT NULL,
+            {LifeLossStringConstants.SAMPLE_MIN_HEADER}   REAL    NOT NULL,
+            {LifeLossStringConstants.SAMPLE_MAX_HEADER}   REAL    NOT NULL,
+            {LifeLossStringConstants.BIN_COUNTS_HEADER}   TEXT    NOT NULL,
+            FOREIGN KEY({LifeLossStringConstants.ELEMENT_ID_HEADER}) 
+                REFERENCES {LifeLossStringConstants.LL_LOOKUP_TABLE_NAME}(ID) ON DELETE CASCADE,
+            UNIQUE(
+                {LifeLossStringConstants.ID_HEADER},
+                {LifeLossStringConstants.SIMULATION_HEADER},
+                {LifeLossStringConstants.ALTERNATIVE_HEADER},
+                {LifeLossStringConstants.HAZARD_TIME_HEADER},
+                {LifeLossStringConstants.SUMMARY_ZONE_HEADER}
+            )
         );"; // UNIQUE functionally means we cannot overwrite with this command, and cannot add a duplicate. 
     private static readonly string _insertCommandText =
-        $@"INSERT OR IGNORE INTO ""{LL_TABLE_NAME}"" (
-            ElementId,
-            FunctionId,
-            Simulation, 
-            Alternative, 
-            Stage,
-            Hazard_Time,
-            Summary_Zone,
-            Min,
-            Bin_Width,
-            Sample_Mean,
-            Sample_Variance,
-            Sample_Min,
-            Sample_Max,
-            Bin_Counts
-        )
-        VALUES (
-            @elem_id,
-            @func_id,
-            @sim,
-            @alt,
-            @stg,
-            @hz_t,
-            @s_z,
-            @min,
-            @bin_w,
-            @s_mean,
-            @s_var,
-            @s_min,
-            @s_max,
-            @bin_cts
-        )";
+        $@"
+            INSERT OR IGNORE INTO {LifeLossStringConstants.LL_TABLE_NAME} (
+                {LifeLossStringConstants.ELEMENT_ID_HEADER},
+                {LifeLossStringConstants.FUNCTION_ID_HEADER},
+                {LifeLossStringConstants.SIMULATION_HEADER},
+                {LifeLossStringConstants.ALTERNATIVE_HEADER},
+                {LifeLossStringConstants.STAGE_HEADER},
+                {LifeLossStringConstants.HAZARD_TIME_HEADER},
+                {LifeLossStringConstants.SUMMARY_ZONE_HEADER},
+                {LifeLossStringConstants.MIN_HEADER},
+                {LifeLossStringConstants.BIN_WIDTH_HEADER},
+                {LifeLossStringConstants.SAMPLE_MEAN_HEADER},
+                {LifeLossStringConstants.SAMPLE_VARIANCE_HEADER},
+                {LifeLossStringConstants.SAMPLE_MIN_HEADER},
+                {LifeLossStringConstants.SAMPLE_MAX_HEADER},
+                {LifeLossStringConstants.BIN_COUNTS_HEADER}
+            )
+            VALUES (
+                {LifeLossStringConstants.ELEMENT_ID_PARAMETER},
+                {LifeLossStringConstants.FUNCTION_ID_PARAMETER},
+                {LifeLossStringConstants.SIMULATION_PARAMETER},
+                {LifeLossStringConstants.ALTERNATIVE_PARAMETER},
+                {LifeLossStringConstants.STAGE_PARAMETER},
+                {LifeLossStringConstants.HAZARD_TIME_PARAMETER},
+                {LifeLossStringConstants.SUMMARY_ZONE_PARAMETER},
+                {LifeLossStringConstants.MIN_PARAMETER},
+                {LifeLossStringConstants.BIN_WIDTH_PARAMETER},
+                {LifeLossStringConstants.SAMPLE_MEAN_PARAMETER},
+                {LifeLossStringConstants.SAMPLE_VARIANCE_PARAMETER},
+                {LifeLossStringConstants.SAMPLE_MIN_PARAMETER},
+                {LifeLossStringConstants.SAMPLE_MAX_PARAMETER},
+                {LifeLossStringConstants.BIN_COUNTS_PARAMETER}
+            );";
 
     public LifeLossFunctionSaver(string dbpath) : base(dbpath) // calls the base class constructor to initialize the SQLite connection
     {
@@ -130,10 +138,10 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
 
         while (reader.Read())
         {
-            int f = reader.GetInt32(reader.GetOrdinal("FunctionId"));
-            string sim = reader.GetString(reader.GetOrdinal("Simulation"));
-            string sz = reader.GetString(reader.GetOrdinal("Summary_Zone"));
-            string ht = reader.GetString(reader.GetOrdinal("Hazard_Time"));
+            int f = reader.GetInt32(reader.GetOrdinal(LifeLossStringConstants.FUNCTION_ID_HEADER));
+            string sim = reader.GetString(reader.GetOrdinal(LifeLossStringConstants.SIMULATION_HEADER));
+            string sz = reader.GetString(reader.GetOrdinal(LifeLossStringConstants.SUMMARY_ZONE_HEADER));
+            string ht = reader.GetString(reader.GetOrdinal(LifeLossStringConstants.HAZARD_TIME_HEADER));
 
             // a lifeloss function is unique iff it's comprised of a unique combination of simulation name, summary zone, and hazard time
             // the data being read in from the DB is ordered by simulation, then summary zone, then hazard time, then stage
@@ -146,8 +154,8 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
                 currentHT = ht;
                 functionID = f;
             }
-            alternatives.Add(reader.GetString(reader.GetOrdinal("Alternative")));
-            stages.Add(reader.GetDouble(reader.GetOrdinal("Stage")));
+            alternatives.Add(reader.GetString(reader.GetOrdinal(LifeLossStringConstants.ALTERNATIVE_HEADER)));
+            stages.Add(reader.GetDouble(reader.GetOrdinal(LifeLossStringConstants.STAGE_HEADER)));
             histograms.Add(DeserializeSQLiteHistogram(reader));
         }
         AddCurrent(); // add the final function to the result
@@ -169,13 +177,13 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
     /// <exception cref="FormatException"></exception>
     private static DynamicHistogram DeserializeSQLiteHistogram(SQLiteDataReader reader)
     {
-        double min = reader.GetDouble(reader.GetOrdinal("Min"));
-        double binWidth = reader.GetDouble(reader.GetOrdinal("Bin_Width"));
-        double sampleMean = reader.GetDouble(reader.GetOrdinal("Sample_Mean"));
-        double sampleVariance = reader.GetDouble(reader.GetOrdinal("Sample_Variance"));
-        double sampleMin = reader.GetDouble(reader.GetOrdinal("Sample_Min"));
-        double sampleMax = reader.GetDouble(reader.GetOrdinal("Sample_Max"));
-        string[] binCountsString = reader.GetString(reader.GetOrdinal("Bin_Counts")).Split(',');
+        double min = reader.GetDouble(reader.GetOrdinal(LifeLossStringConstants.MIN_HEADER));
+        double binWidth = reader.GetDouble(reader.GetOrdinal(LifeLossStringConstants.BIN_WIDTH_HEADER));
+        double sampleMean = reader.GetDouble(reader.GetOrdinal(LifeLossStringConstants.SAMPLE_MEAN_HEADER));
+        double sampleVariance = reader.GetDouble(reader.GetOrdinal(LifeLossStringConstants.SAMPLE_VARIANCE_HEADER));
+        double sampleMin = reader.GetDouble(reader.GetOrdinal(LifeLossStringConstants.SAMPLE_MIN_HEADER));
+        double sampleMax = reader.GetDouble(reader.GetOrdinal(LifeLossStringConstants.SAMPLE_MAX_HEADER));
+        string[] binCountsString = reader.GetString(reader.GetOrdinal(LifeLossStringConstants.BIN_COUNTS_HEADER)).Split(',');
         long[] binCounts = new long[binCountsString.Length];
         for (int i = 0; i < binCountsString.Length; i++)
         {
@@ -185,7 +193,7 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
         return histogram;
     }
 
-    private void CreateTable(SQLiteConnection connection)
+    private static void CreateTable(SQLiteConnection connection)
     {
         using var cmd = new SQLiteCommand(connection);
         cmd.CommandText = _createCommandText;
@@ -197,27 +205,27 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
     /// </summary>
     /// <param name="cmd"></param>
     /// <param name="llf"></param>
-    private void InsertIntoTable(SQLiteCommand cmd, LifeLossFunction llf)
+    private static void InsertIntoTable(SQLiteCommand cmd, LifeLossFunction llf)
     {
         // reuse the same command each time and just fill in values for each parameter
         for (int i = 0; i < llf.AlternativeNames.Length; i++)
         {
-            cmd.Parameters["@elem_id"].Value = llf.ElementID;
-            cmd.Parameters["@func_id"].Value = llf.FunctionID;
-            cmd.Parameters["@sim"].Value = llf.SimulationName;
-            cmd.Parameters["@alt"].Value = llf.AlternativeNames[i];
-            cmd.Parameters["@stg"].Value = llf.Data.Xvals[i];
-            cmd.Parameters["@hz_t"].Value = llf.HazardTime;
-            cmd.Parameters["@s_z"].Value = llf.SummaryZone;
+            cmd.Parameters[LifeLossStringConstants.ELEMENT_ID_PARAMETER].Value = llf.ElementID;
+            cmd.Parameters[LifeLossStringConstants.FUNCTION_ID_PARAMETER].Value = llf.FunctionID;
+            cmd.Parameters[LifeLossStringConstants.SIMULATION_PARAMETER].Value = llf.SimulationName;
+            cmd.Parameters[LifeLossStringConstants.ALTERNATIVE_PARAMETER].Value = llf.AlternativeNames[i];
+            cmd.Parameters[LifeLossStringConstants.STAGE_PARAMETER].Value = llf.Data.Xvals[i];
+            cmd.Parameters[LifeLossStringConstants.HAZARD_TIME_PARAMETER].Value = llf.HazardTime;
+            cmd.Parameters[LifeLossStringConstants.SUMMARY_ZONE_PARAMETER].Value = llf.SummaryZone;
 
             DynamicHistogram histogram = (DynamicHistogram)llf.Data.Yvals[i];
-            cmd.Parameters["@min"].Value = histogram.Min;
-            cmd.Parameters["@bin_w"].Value = histogram.BinWidth;
-            cmd.Parameters["@s_mean"].Value = histogram.SampleMean;
-            cmd.Parameters["@s_var"].Value = histogram.SampleVariance;
-            cmd.Parameters["@s_min"].Value = histogram.SampleMin;
-            cmd.Parameters["@s_max"].Value = histogram.SampleMax;
-            cmd.Parameters["@bin_cts"].Value = string.Join(",", histogram.BinCounts);
+            cmd.Parameters[LifeLossStringConstants.MIN_PARAMETER].Value = histogram.Min;
+            cmd.Parameters[LifeLossStringConstants.BIN_WIDTH_PARAMETER].Value = histogram.BinWidth;
+            cmd.Parameters[LifeLossStringConstants.SAMPLE_MEAN_PARAMETER].Value = histogram.SampleMean;
+            cmd.Parameters[LifeLossStringConstants.SAMPLE_VARIANCE_PARAMETER].Value = histogram.SampleVariance;
+            cmd.Parameters[LifeLossStringConstants.SAMPLE_MIN_PARAMETER].Value = histogram.SampleMin;
+            cmd.Parameters[LifeLossStringConstants.SAMPLE_MAX_PARAMETER].Value = histogram.SampleMax;
+            cmd.Parameters[LifeLossStringConstants.BIN_COUNTS_PARAMETER].Value = string.Join(",", histogram.BinCounts);
 
             cmd.ExecuteNonQuery();
         }
@@ -227,24 +235,39 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
     /// Constructs the INSERT command data structure 
     /// </summary>
     /// <param name="cmd"></param>
-    private void BuildInsertCommand(SQLiteCommand cmd)
+    private static void BuildInsertCommand(SQLiteCommand cmd)
     {
         cmd.CommandText = _insertCommandText;
+
         // each parameter has a placeholder formatted "@param" which gets filled in when this command is executed
-        cmd.Parameters.Add("@elem_id", DbType.Int32);
-        cmd.Parameters.Add("@func_id", DbType.Int32);
-        cmd.Parameters.Add("@sim", DbType.String);
-        cmd.Parameters.Add("@alt", DbType.String);
-        cmd.Parameters.Add("@stg", DbType.Double);
-        cmd.Parameters.Add("@hz_t", DbType.String);
-        cmd.Parameters.Add("@s_z", DbType.String);
-        cmd.Parameters.Add("@min", DbType.Double);
-        cmd.Parameters.Add("@bin_w", DbType.Double);
-        cmd.Parameters.Add("@s_mean", DbType.Double);
-        cmd.Parameters.Add("@s_var", DbType.Double);
-        cmd.Parameters.Add("@s_min", DbType.Double);
-        cmd.Parameters.Add("@s_max", DbType.Double);
-        cmd.Parameters.Add("@bin_cts", DbType.String);
+        cmd.Parameters.Add(
+            LifeLossStringConstants.ELEMENT_ID_PARAMETER, DbType.Int32);
+        cmd.Parameters.Add(
+            LifeLossStringConstants.FUNCTION_ID_PARAMETER, DbType.Int32);
+        cmd.Parameters.Add(
+            LifeLossStringConstants.SIMULATION_PARAMETER, DbType.String);
+        cmd.Parameters.Add(
+            LifeLossStringConstants.ALTERNATIVE_PARAMETER, DbType.String);
+        cmd.Parameters.Add(
+            LifeLossStringConstants.STAGE_PARAMETER, DbType.Double);
+        cmd.Parameters.Add(
+            LifeLossStringConstants.HAZARD_TIME_PARAMETER, DbType.String);
+        cmd.Parameters.Add(
+            LifeLossStringConstants.SUMMARY_ZONE_PARAMETER, DbType.String);
+        cmd.Parameters.Add(
+            LifeLossStringConstants.MIN_PARAMETER, DbType.Double);
+        cmd.Parameters.Add(
+            LifeLossStringConstants.BIN_WIDTH_PARAMETER, DbType.Double);
+        cmd.Parameters.Add(
+            LifeLossStringConstants.SAMPLE_MEAN_PARAMETER, DbType.Double);
+        cmd.Parameters.Add(
+            LifeLossStringConstants.SAMPLE_VARIANCE_PARAMETER, DbType.Double);
+        cmd.Parameters.Add(
+            LifeLossStringConstants.SAMPLE_MIN_PARAMETER, DbType.Double);
+        cmd.Parameters.Add(
+            LifeLossStringConstants.SAMPLE_MAX_PARAMETER, DbType.Double);
+        cmd.Parameters.Add(
+            LifeLossStringConstants.BIN_COUNTS_PARAMETER, DbType.String);
     }
 
     /// <summary>
@@ -253,31 +276,38 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
     /// <param name="cmd"></param>
     /// <param name="filter"></param>
     /// <param name="selectAll"></param>
-    private void BuildSelectCommand(SQLiteCommand cmd, SQLiteFilter filter, bool selectAll)
+    private static void BuildSelectCommand(SQLiteCommand cmd, SQLiteFilter filter, bool selectAll)
     {
         StringBuilder querySB = new();
         if (selectAll)
         {
             // simple select all command
-            querySB.Append($@"SELECT * FROM {LL_TABLE_NAME}");
+            querySB.Append($@"SELECT * FROM {LifeLossStringConstants.LL_TABLE_NAME}");
         }
         else
         {
             // add parameters to the command if we are only selecting specific entries
             // same idea as adding parameters in BuildInsertCommand(), except here we add parameters and their values simultaneously
             // we are not reusing the command so we do not add parameters once and then set at different points, we just do both at once
-            querySB = filter.BuildSelect(LL_TABLE_NAME, out IReadOnlyDictionary<string, object> parameters);
+            querySB = filter.BuildSelect(LifeLossStringConstants.LL_TABLE_NAME, out IReadOnlyDictionary<string, object> parameters);
             foreach (var parameterPair in parameters)
                 cmd.Parameters.AddWithValue(parameterPair.Key, parameterPair.Value);
         }
-        querySB.Append(@" ORDER BY ""FunctionId"", ""Simulation"", ""Summary_Zone"", ""Hazard_Time"" DESC, ""Stage"";"); // hazard time is descending because we want "2" to be read before "14" as strings
+        querySB.Append($@"
+                            ORDER BY
+                            ""{LifeLossStringConstants.FUNCTION_ID_HEADER}"",
+                            ""{LifeLossStringConstants.SIMULATION_HEADER}"",
+                            ""{LifeLossStringConstants.SUMMARY_ZONE_HEADER}"",
+                            ""{LifeLossStringConstants.HAZARD_TIME_HEADER}"" DESC,
+                            ""{LifeLossStringConstants.STAGE_HEADER}"";
+                        "); // hazard time is descending because we want "2" to be read before "14" as strings
         cmd.CommandText = querySB.ToString();
     }
 
-    private void BuildDeleteCommand(SQLiteCommand cmd, SQLiteFilter filter)
+    private static void BuildDeleteCommand(SQLiteCommand cmd, SQLiteFilter filter)
     {
         StringBuilder sql = new();
-        sql = filter.BuildDelete(LL_TABLE_NAME, out IReadOnlyDictionary<string, object> parameters);
+        sql = filter.BuildDelete(LifeLossStringConstants.LL_TABLE_NAME, out IReadOnlyDictionary<string, object> parameters);
         foreach (var parameterPair in parameters)
             cmd.Parameters.AddWithValue(parameterPair.Key, parameterPair.Value);
         cmd.CommandText = sql.ToString();

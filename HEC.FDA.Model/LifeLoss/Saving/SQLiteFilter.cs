@@ -19,38 +19,8 @@ public abstract class SQLiteFilter
         var sql = new StringBuilder($"SELECT * FROM \"{tableName}\"");
         var dict = new Dictionary<string, object>();
 
-        bool firstClause = true;
-        int paramIndex = 0;
+        AppendClauses(sql, dict);
 
-        foreach (PropertyInfo prop in GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
-        {
-            if (!prop.PropertyType.IsArray) continue; // we only want array properties
-            var array = (Array?)prop.GetValue(this);
-            if (array is null || array.Length == 0) continue;
-
-            string colName = prop.Name;
-
-            // final return is formatted "WHERE col1 IN (@p1) AND col2 in (@p2, @p3) AND col3..."
-            if (firstClause)
-            {
-                sql.Append(" WHERE ");
-                firstClause = false;
-            }
-            else
-            {
-                sql.Append(" AND ");
-            }
-
-            // build "col IN (@p0,@p1,…)"
-            var placeholders = new List<string>();
-            foreach (object? value in array)
-            {
-                string p = $"@p{paramIndex++}";
-                placeholders.Add(p);
-                dict[p] = value ?? DBNull.Value;
-            }
-            sql.Append('"').Append(colName).Append("\" IN (").Append(string.Join(',', placeholders)).Append(')');
-        }
         parameters = dict;
         return sql;
     }
@@ -77,7 +47,9 @@ public abstract class SQLiteFilter
             var array = (Array?)prop.GetValue(this);
             if (array is null || array.Length == 0) continue;
 
-            string colName = prop.Name;
+            // get the column name from the attribute, and if it does not exist, default to property name
+            var colAttr = prop.GetCustomAttribute<SQLColumnAttribute>();
+            string colName = colAttr?.ColumnName ?? prop.Name;
 
             // final return is formatted "WHERE col1 IN (@p1) AND col2 in (@p2, @p3) AND col3..."
             if (firstClause)

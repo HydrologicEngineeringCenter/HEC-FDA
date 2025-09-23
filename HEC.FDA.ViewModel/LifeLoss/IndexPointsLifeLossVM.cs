@@ -143,7 +143,6 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
     public PlotModel MyModel { get; set; } = new();
     public ObservableCollection<LifeLossFunction> LifeLossFunctions { get; private set; } = [];
     public bool WasRecomputed { get; private set; } = false;
-    private int _plotIndex = 0;
 
     #endregion
 
@@ -320,8 +319,7 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         List<LifeLossFunction> functions = saver.ReadFromSQLite(filter);
         LifeLossFunctions.Clear();
         LifeLossFunctions.AddRange(functions);
-        _plotIndex = 0;
-        ChangePlot(_plotIndex);
+        ChangePlot(0);
     }
 
     [RelayCommand]
@@ -348,8 +346,7 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         List<LifeLossFunction> newFunctions = await generator.CreateLifeLossFunctionsAsync(impactAreasFile, indexPointsFile, uniqueImpactAreaHeader);
         LifeLossFunctions.Clear();
         LifeLossFunctions.AddRange(newFunctions);
-        _plotIndex = 0;
-        ChangePlot(_plotIndex);
+        ChangePlot(0);
         WasRecomputed = true;
     }
 
@@ -383,14 +380,6 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         string directory = Path.Combine(Connection.Instance.IndexPointsDirectory, SelectedIndexPoints.Name);
         string file = Directory.GetFiles(directory, "*.shp")[0];
         return file;
-    }
-
-    [RelayCommand]
-    public void NextPlot()
-    {
-        if (LifeLossFunctions.IsEmpty()) return;
-        _plotIndex = (_plotIndex + 1) % LifeLossFunctions.Count;
-        ChangePlot(_plotIndex);
     }
 
     /// <summary>
