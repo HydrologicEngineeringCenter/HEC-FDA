@@ -7,7 +7,7 @@ public interface ISQLiteSaver<T> : IDisposable
 {
     public void SaveToSQLite(T item);
 
-    public List<T> ReadFromSQLite(SQLiteFilter filter, bool selectAll = false);
+    public List<T> ReadFromSQLite(SQLiteFilter filter);
 
     public void DeleteFromSQLite(SQLiteFilter filter);
 }

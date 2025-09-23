@@ -19,7 +19,7 @@ public abstract class SQLiteSaverBase<T> : ISQLiteSaver<T>
     }
 
     public abstract void SaveToSQLite(T item);
-    public abstract List<T> ReadFromSQLite(SQLiteFilter filter, bool selectAll = false);
+    public abstract List<T> ReadFromSQLite(SQLiteFilter filter);
     public abstract void DeleteFromSQLite(SQLiteFilter filter);
 
     public void Dispose() => _connection.Dispose();

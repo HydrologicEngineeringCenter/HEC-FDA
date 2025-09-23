@@ -104,25 +104,25 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
     /// <param name="selectAll">False by default. Set to true to select all from the database</param>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
-    public override List<LifeLossFunction> ReadFromSQLite(SQLiteFilter filter, bool selectAll = false)
+    public override List<LifeLossFunction> ReadFromSQLite(SQLiteFilter filter)
     {
         if (filter is not LifeLossFunctionFilter plotFilter) throw new ArgumentException();
 
         using var selectCommand = new SQLiteCommand(_connection);
-        BuildSelectCommand(selectCommand, plotFilter, selectAll);
+        BuildSelectCommand(selectCommand, plotFilter);
         using var reader = selectCommand.ExecuteReader();
 
         int functionID = -1;
-        List<LifeLossFunction> result = new();
+        List<LifeLossFunction> result = [];
+        List<string> alternatives = [];
+        List<double> stages = [];
+        List<DynamicHistogram> histograms = [];
         string currentSim = null, currentSZ = null, currentHT = null;
-        List<string> alternatives = new();
-        List<double> stages = new();
-        List<DynamicHistogram> histograms = new();
 
         // local function to push life loss functions to the result list once they have been fully read
         void AddCurrent()
         {
-            if (currentSim == null || currentSZ == null || currentHT == null) return; // means we have not read anything yet, do not want to create a life loss function yet
+            if (functionID == -1) return; // means we have not read anything yet, do not want to create a life loss function yet
 
             UncertainPairedData data = new(stages.ToArray(), histograms.ToArray(), new CurveMetaData());
             LifeLossFunction llf = new(-1, functionID, data, alternatives.ToArray(), currentSim, currentSZ, currentHT);
@@ -138,21 +138,17 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
 
         while (reader.Read())
         {
-            int f = reader.GetInt32(reader.GetOrdinal(LifeLossStringConstants.FUNCTION_ID_HEADER));
-            string sim = reader.GetString(reader.GetOrdinal(LifeLossStringConstants.SIMULATION_HEADER));
-            string sz = reader.GetString(reader.GetOrdinal(LifeLossStringConstants.SUMMARY_ZONE_HEADER));
-            string ht = reader.GetString(reader.GetOrdinal(LifeLossStringConstants.HAZARD_TIME_HEADER));
+            int currentFunctionID = reader.GetInt32(reader.GetOrdinal(LifeLossStringConstants.FUNCTION_ID_HEADER));
 
-            // a lifeloss function is unique iff it's comprised of a unique combination of simulation name, summary zone, and hazard time
-            // the data being read in from the DB is ordered by simulation, then summary zone, then hazard time, then stage
-            // if the simulation, summary zone, or hazard time changes with a subsequent read, we MUST be reading a new function
-            if (sim != currentSim || sz != currentSZ || ht != currentHT)
+            // the rows we read in are ordered by function ID (look at BuildSelect to see the SELECT command)
+            // so, when a new function ID is read, we know we are reading a new life loss function
+            if (currentFunctionID != functionID)
             {
                 AddCurrent(); // we are at a new lifeloss function, so add the previous to the result
-                currentSim = sim;
-                currentSZ = sz;
-                currentHT = ht;
-                functionID = f;
+                currentSim = reader.GetString(reader.GetOrdinal(LifeLossStringConstants.SIMULATION_HEADER));
+                currentSZ = reader.GetString(reader.GetOrdinal(LifeLossStringConstants.SUMMARY_ZONE_HEADER));
+                currentHT = reader.GetString(reader.GetOrdinal(LifeLossStringConstants.HAZARD_TIME_HEADER));
+                functionID = currentFunctionID;
             }
             alternatives.Add(reader.GetString(reader.GetOrdinal(LifeLossStringConstants.ALTERNATIVE_HEADER)));
             stages.Add(reader.GetDouble(reader.GetOrdinal(LifeLossStringConstants.STAGE_HEADER)));
@@ -276,31 +272,23 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
     /// <param name="cmd"></param>
     /// <param name="filter"></param>
     /// <param name="selectAll"></param>
-    private static void BuildSelectCommand(SQLiteCommand cmd, SQLiteFilter filter, bool selectAll)
+    private static void BuildSelectCommand(SQLiteCommand cmd, SQLiteFilter filter)
     {
         StringBuilder querySB = new();
-        if (selectAll)
-        {
-            // simple select all command
-            querySB.Append($@"SELECT * FROM {LifeLossStringConstants.LL_TABLE_NAME}");
-        }
-        else
-        {
-            // add parameters to the command if we are only selecting specific entries
-            // same idea as adding parameters in BuildInsertCommand(), except here we add parameters and their values simultaneously
-            // we are not reusing the command so we do not add parameters once and then set at different points, we just do both at once
-            querySB = filter.BuildSelect(LifeLossStringConstants.LL_TABLE_NAME, out IReadOnlyDictionary<string, object> parameters);
-            foreach (var parameterPair in parameters)
-                cmd.Parameters.AddWithValue(parameterPair.Key, parameterPair.Value);
-        }
+
+        // add parameters to the command if we are only selecting specific entries
+        // same idea as adding parameters in BuildInsertCommand(), except here we add parameters and their values simultaneously
+        // we are not reusing the command so we do not add parameters once and then set at different points, we just do both at once
+        querySB = filter.BuildSelect(LifeLossStringConstants.LL_TABLE_NAME, out IReadOnlyDictionary<string, object> parameters);
+        foreach (var parameterPair in parameters)
+            cmd.Parameters.AddWithValue(parameterPair.Key, parameterPair.Value);
+
+        // order the rows first by function ID to group functions together, then by stage to sort the histograms in ascending order
         querySB.Append($@"
                             ORDER BY
-                            ""{LifeLossStringConstants.FUNCTION_ID_HEADER}"",
-                            ""{LifeLossStringConstants.SIMULATION_HEADER}"",
-                            ""{LifeLossStringConstants.SUMMARY_ZONE_HEADER}"",
-                            ""{LifeLossStringConstants.HAZARD_TIME_HEADER}"" DESC,
-                            ""{LifeLossStringConstants.STAGE_HEADER}"";
-                        "); // hazard time is descending because we want "2" to be read before "14" as strings
+                            {LifeLossStringConstants.FUNCTION_ID_HEADER},
+                            {LifeLossStringConstants.STAGE_HEADER};
+                        ");
         cmd.CommandText = querySB.ToString();
     }
 
