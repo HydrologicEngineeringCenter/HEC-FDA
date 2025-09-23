@@ -380,11 +380,6 @@ namespace HEC.FDA.Model.paireddata
         {
             Array.Sort(Xvals, Yvals);
         }
-        public void SortToIncreasingYals()
-        {
-            Array.Sort(Xvals, Yvals);
-        }
-
         #endregion
     }
 }
