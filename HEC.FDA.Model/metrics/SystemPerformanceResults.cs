@@ -137,6 +137,19 @@ namespace HEC.FDA.Model.metrics
         internal double AEPWithGivenAssurance(double assurance)
         {
             double aepWithGivenAssurance = GetAssurance(AEP_ASSURANCE_TYPE).AssuranceHistogram.InverseCDF(assurance);
+
+            //AEP with given assurance can come back slightly higher than 1
+            //for histograms where the vast majority of AEPs are near 0.9999
+            //not a situation where AEPs are actually greater than 1
+            //this validation corrects for that histogram binning imperfection
+            //for the specific purpose of assurance of AEP
+            //in the edge case where the majority of AEPs are near 0.9999
+            //occurs where threshold stage is really low relative to stage-frequency function 
+            if (aepWithGivenAssurance > 1)
+            {
+                aepWithGivenAssurance = 1;
+            }
+
             return aepWithGivenAssurance;
         }
 
