@@ -39,7 +39,7 @@ jobs:
         $zipUrl = "https://s3.hecdev.net/ras-public-data/ras-GDAL-3.9.1.zip"
         $zipPath = "${pwd}/downloaded.zip"
         Invoke-WebRequest -Uri $zipUrl -OutFile $zipPath
-        Expand-Archive -Path $zipPath -DestinationPath ${{ env.PUBLISH_OUT }}
+        Expand-Archive -Path $zipPath -DestinationPath $PUBLISH_OUT
 
     - name: Create version number
       shell: pwsh
@@ -53,15 +53,7 @@ jobs:
     - name: Publish
       shell: pwsh
       run: |
-        dotnet publish -c Release -v quiet /p:Version=${{ env.VERSION }} -o $PUBLISH_OUT ${{ env.PROJECT_NAME }} --self-contained true
-      
-    - name: Download and unzip file
-      shell: pwsh
-      run: |
-        $zipUrl = "https://s3.hecdev.net/ras-public-data/ras-GDAL-3.9.1.zip"
-        $zipPath = "${pwd}/downloaded.zip"
-        Invoke-WebRequest -Uri $zipUrl -OutFile $zipPath
-        Expand-Archive -Path $zipPath -DestinationPath ${{ env.PUBLISH_OUT }}
+        dotnet publish -c Release -v quiet /p:Version=${{ env.VERSION }} -o ${{ env.PUBLISH_OUT }} ${{ env.PROJECT_NAME }} --self-contained true
 
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4
