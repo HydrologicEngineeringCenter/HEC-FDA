@@ -35,7 +35,7 @@ jobs:
       run: |
         $PUBLISH_OUT = "${pwd}/TO-PACKAGE/"
         echo "PUBLISH_OUT=$PUBLISH_OUT" >> $env:GITHUB_ENV
-        echo "RAS_GDAL=$PUBLISH_OUT" >> $env:GITHUB_ENV
+        echo "RAS_GDAL=$PUBLISH_OUT/GDAL/" >> $env:GITHUB_ENV
         $zipUrl = "https://s3.hecdev.net/ras-public-data/ras-GDAL-3.9.1.zip"
         $zipPath = "${pwd}/downloaded.zip"
         Invoke-WebRequest -Uri $zipUrl -OutFile $zipPath
