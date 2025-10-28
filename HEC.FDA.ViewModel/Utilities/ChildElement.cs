@@ -23,10 +23,10 @@ namespace HEC.FDA.ViewModel.Utilities
 
         #endregion
         #region Properties
-        public string LastEditDate 
-        { 
-            get; 
-            set; 
+        public string LastEditDate
+        {
+            get;
+            set;
         } = "";
         public int ID { get; set; }
         public bool IsOpenInTabOrWindow { get; set; }
@@ -95,8 +95,15 @@ namespace HEC.FDA.ViewModel.Utilities
                 Action = Rename
             };
 
+            NamedAction duplicateElement = new(this)
+            {
+                Header = "Duplicate",
+                Action = DuplicateElement
+            };
+
             localActions.Add(removeElement);
             localActions.Add(renameElement);
+            localActions.Add(duplicateElement);
 
             Actions = localActions;
         }
@@ -107,19 +114,19 @@ namespace HEC.FDA.ViewModel.Utilities
         {
             RenameVM renameViewModel = new(this, CloneElement);
             string header = "Rename";
-            DynamicTabVM tab = new(header, renameViewModel, "Rename",false,false);
+            DynamicTabVM tab = new(header, renameViewModel, "Rename", false, false);
             Navigate(tab);
         }
 
         public virtual void RemoveElement(object sender, EventArgs e)
         {
             MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure you want to delete '" + Name + "'?", "Delete " + Name + "?", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if(messageBoxResult == MessageBoxResult.Yes)
+            if (messageBoxResult == MessageBoxResult.Yes)
             {
-                if(this is IHaveStudyFiles)
+                if (this is IHaveStudyFiles)
                 {
                     bool success = StudyFilesManager.DeleteDirectory(Name, GetType());
-                    if(success)
+                    if (success)
                     {
                         PersistenceFactory.GetElementManager(this).Remove(this);
                     }
@@ -129,6 +136,24 @@ namespace HEC.FDA.ViewModel.Utilities
                     PersistenceFactory.GetElementManager(this).Remove(this);
                 }
             }
+        }
+
+        public virtual void DuplicateElement(object sender, EventArgs e)
+        {
+            MessageBoxResult messageBoxResult = MessageBox.Show("Would you like to duplicate '" + Name + "'?", "Duplicate " + Name + "?", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (messageBoxResult != MessageBoxResult.Yes)
+                return;
+
+            var clonedElement = CloneElement();
+            string originalName = clonedElement.Name;
+            string duplicateName = "Copy of " + originalName;
+            clonedElement.Name = duplicateName;
+            clonedElement.UpdateTreeViewHeader(duplicateName);
+
+            IElementManager savingManager = PersistenceFactory.GetElementManager(clonedElement);
+            int id = savingManager.GetNextAvailableId();
+            clonedElement.ID = id;
+            savingManager.SaveNew(clonedElement);
         }
 
         /// <summary>
@@ -162,15 +187,15 @@ namespace HEC.FDA.ViewModel.Utilities
         public bool AreHeaderDataEqual(ChildElement elem)
         {
             bool isEqual = true;
-            if(!Name.Equals(elem.Name))
+            if (!Name.Equals(elem.Name))
             {
                 isEqual = false;
             }
-            if(!Description.Equals(elem.Description))
+            if (!Description.Equals(elem.Description))
             {
                 isEqual = false;
             }
-            if(!LastEditDate.Equals(elem.LastEditDate))
+            if (!LastEditDate.Equals(elem.LastEditDate))
             {
                 isEqual = false;
             }
