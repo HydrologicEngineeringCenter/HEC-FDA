@@ -69,7 +69,7 @@ namespace HEC.FDA.ViewModel.Utilities
         }
         #endregion
 
-        public void AddDefaultActions(Action<object, EventArgs> editAction = null, string actionHeader = "")
+        public void AddDefaultActions(Action<object, EventArgs> editAction = null, string actionHeader = "", bool canDuplicate = true)
         {
             List<NamedAction> localActions = new();
 
@@ -95,15 +95,18 @@ namespace HEC.FDA.ViewModel.Utilities
                 Action = Rename
             };
 
-            NamedAction duplicateElement = new(this)
-            {
-                Header = "Duplicate",
-                Action = DuplicateElement
-            };
-
             localActions.Add(removeElement);
             localActions.Add(renameElement);
-            localActions.Add(duplicateElement);
+
+            if (canDuplicate)
+            {
+                NamedAction duplicateElement = new(this)
+                {
+                    Header = "Duplicate...",
+                    Action = DuplicateElement
+                };
+                localActions.Add(duplicateElement);
+            }
 
             Actions = localActions;
         }
