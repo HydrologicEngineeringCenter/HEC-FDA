@@ -140,21 +140,12 @@ namespace HEC.FDA.ViewModel.Utilities
 
         public virtual void DuplicateElement(object sender, EventArgs e)
         {
-            MessageBoxResult messageBoxResult = MessageBox.Show("Would you like to duplicate '" + Name + "'?", "Duplicate " + Name + "?", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (messageBoxResult != MessageBoxResult.Yes)
-                return;
-
             var clonedElement = CloneElement();
-            string originalName = clonedElement.Name;
-            string duplicateName = "Copy of " + originalName;
-            clonedElement.Name = duplicateName;
-            clonedElement.UpdateTreeViewHeader(duplicateName);
-
-            IElementManager savingManager = PersistenceFactory.GetElementManager(clonedElement);
-            int id = savingManager.GetNextAvailableId();
-            clonedElement.ID = id;
-            savingManager.SaveNew(clonedElement);
+            DuplicateVM dupVM = new(clonedElement);
+            DynamicTabVM tab = new("Duplicate", dupVM, "Duplicate", false, false);
+            Navigate(tab);
         }
+
 
         /// <summary>
         /// I think this is only being used for renaming elements.
