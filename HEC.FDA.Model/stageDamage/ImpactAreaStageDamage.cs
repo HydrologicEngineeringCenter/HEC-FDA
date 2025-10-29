@@ -15,8 +15,10 @@ using Statistics.Distributions;
 using Statistics.Histograms;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Utility.Progress;
 
 namespace HEC.FDA.Model.stageDamage
 {
@@ -65,8 +67,8 @@ namespace HEC.FDA.Model.stageDamage
         public Inventory Inventory { get; }
         public int ImpactAreaID { get; }
 
-        public event ProgressReportedEventHandler ProgressReport;
-        public event MessageReportedEventHandler MessageReport;
+        public event MVVMFramework.Base.Events.ProgressReportedEventHandler ProgressReport;
+        public event MVVMFramework.Base.Events.MessageReportedEventHandler MessageReport;
         #endregion
 
         #region Constructor
@@ -258,8 +260,9 @@ namespace HEC.FDA.Model.stageDamage
         /// W.S.Profile
         /// </summary>
         /// <returns></returns>
-        public (List<UncertainPairedData>, List<UncertainPairedData>) Compute(bool computeIsDeterministic = false)
+        public (List<UncertainPairedData>, List<UncertainPairedData>) Compute(bool computeIsDeterministic = false, ProgressReporter reporter = null)
         {
+            reporter ??= ProgressReporter.None();
             Validate();
             (List<UncertainPairedData>, List<UncertainPairedData>) results = new(new List<UncertainPairedData>(), new List<UncertainPairedData>());
             if (ErrorLevel >= ErrorLevel.Major)
@@ -354,10 +357,12 @@ namespace HEC.FDA.Model.stageDamage
 
             //damage for each stage
             List<StudyAreaConsequencesBinned> consequenceDistributionResults = CreateConsequenceDistributionResults(damageCategory);
+            Debug.WriteLine("Results Count = " + consequenceDistributionResults.Count);
             int iterationsPerComputeChunk = _ConvergenceCriteria.IterationCount;
             int computeChunkQuantity = Convert.ToInt32(_ConvergenceCriteria.MinIterations / iterationsPerComputeChunk);
             int sampleSize = 0;
             bool stageDamageFunctionsAreNotConverged = true;
+
             while (stageDamageFunctionsAreNotConverged)
             {
 
@@ -369,8 +374,13 @@ namespace HEC.FDA.Model.stageDamage
                 /// Iteration
                 /// Structure
                 /// W.S.Profile
+                Debug.WriteLine(ImpactAreaID);
+                Debug.WriteLine(damageCategory);
+                Debug.WriteLine("iterations per chunk = " + iterationsPerComputeChunk.ToString());
+                Debug.WriteLine("compute chunks = " + computeChunkQuantity.ToString());
                 for (int computeChunk = 0; computeChunk < computeChunkQuantity; computeChunk++)
                 {
+                    Debug.WriteLine($"ChunksIdx =" + computeChunk);
                     /// Begins the fifth loop of the Scenario Stage Damage Compute. 
                     /// Scenario SD 
                     /// Impact Area SD 
@@ -394,9 +404,7 @@ namespace HEC.FDA.Model.stageDamage
                         inventoryAndWaterTupled.Item1.ResetStructureWaterIndexTracking();
                         sampleSize += 1;
                     }
-                    double percentComplete = sampleSize / _ConvergenceCriteria.MaxIterations;
-                    ReportProgress(this, new ProgressReportEventArgs((int)percentComplete));
-                    DumpDataIntoDistributions(ref consequenceDistributionResults);
+                   DumpDataIntoDistributions(ref consequenceDistributionResults);
                 }
                 stageDamageFunctionsAreNotConverged = IsTheFunctionNotConverged(consequenceDistributionResults);
                 if (stageDamageFunctionsAreNotConverged)

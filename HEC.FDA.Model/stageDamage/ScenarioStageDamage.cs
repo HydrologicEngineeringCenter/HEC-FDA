@@ -1,8 +1,13 @@
-﻿using System.Collections.Generic;
-using HEC.FDA.Model.paireddata;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading;
 using HEC.FDA.Model.interfaces;
-using System;
+using HEC.FDA.Model.paireddata;
 using RasMapperLib;
+using Utility.Matrices;
+using Utility.Progress;
 
 namespace HEC.FDA.Model.stageDamage
 {
@@ -35,16 +40,27 @@ namespace HEC.FDA.Model.stageDamage
         /// W.S.Profile
         /// </summary>
         /// <returns></returns>
-        public (List<UncertainPairedData>, List<UncertainPairedData>) Compute(bool computeIsDeterministic = false)
+        public (List<UncertainPairedData>, List<UncertainPairedData>) Compute( bool computeIsDeterministic = false, ProgressReporter reporter = null)
         {
-            (List<UncertainPairedData>, List<UncertainPairedData>) scenarioStageDamageResults = new(new List<UncertainPairedData>(), new List<UncertainPairedData>());
-
-            foreach (ImpactAreaStageDamage impactAreaStageDamage in _ImpactAreaStageDamage)
+            reporter ??= ProgressReporter.None();
+            Stopwatch sw = new();
+            sw.Start();
+            reporter.ReportMessage("Beginning Scenario Stage Damage Compute");
+            (List<UncertainPairedData>, List<UncertainPairedData>) scenarioStageDamageResults = new([], []);
+            int countImpactAreas = _ImpactAreaStageDamage.Count;
+            for(int i = 0; i< countImpactAreas; i++)
             {
+                ImpactAreaStageDamage impactAreaStageDamage = _ImpactAreaStageDamage[i];
+                reporter.ReportMessage($"Starting Impact Area ID:{impactAreaStageDamage.ImpactAreaID}, Elapsed time: {sw.Elapsed}");
+                reporter.ReportMessage($"Structure Count: {impactAreaStageDamage.Inventory.Structures.Count}");
                 (List<UncertainPairedData>, List<UncertainPairedData>) impactAreaStageDamageResults = impactAreaStageDamage.Compute(computeIsDeterministic);
                 scenarioStageDamageResults.Item1.AddRange(impactAreaStageDamageResults.Item1);
                 scenarioStageDamageResults.Item2.AddRange(impactAreaStageDamageResults.Item2);
+                reporter.ReportProgressFraction(((float)i+1) / countImpactAreas);
             }
+            reporter.ReportProgressFraction(1f);
+            reporter.ReportTaskCompleted(sw.Elapsed);
+            sw.Stop();
             return scenarioStageDamageResults;
         }
 
