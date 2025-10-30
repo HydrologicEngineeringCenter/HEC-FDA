@@ -1,48 +1,102 @@
-﻿<UserControl x:Class="HEC.FDA.View.Utilities.CustomHeader"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:HEC.FDA.View.Utilities"
-             xmlns:gif="http://wpfanimatedgif.codeplex.com"
-             xmlns:utils="clr-namespace:HEC.FDA.View.Utilities"
-             xmlns:utilities="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel" 
-             d:DataContext="{d:DesignInstance Type=utilities:CustomHeaderVM}"
-             xmlns:conv="clr-namespace:HEC.FDA.View.Utilities.Converters"
-             mc:Ignorable="d" 
-             d:DesignHeight="25" d:DesignWidth="300">
-    <UserControl.Resources>
-        <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-    <conv:NullImageConverter x:Key="NullImageConverter"/>
-        <Style x:Key="HoverableBorder" TargetType="Border">
-            <!-- default background so we get hit‐testing -->
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="CornerRadius" Value="6"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#FFE0F0FF"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-    </UserControl.Resources>
-    <Border Style="{StaticResource HoverableBorder}" Padding="4,0,4,0">
-    <Grid>
-        <StackPanel Orientation="Horizontal" >
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="20" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <!--<ColumnDefinition Width="30" /> -->
-                </Grid.ColumnDefinitions>
+﻿<UserControl
+  x:Class="HEC.FDA.View.Utilities.CustomHeader"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:local="clr-namespace:HEC.FDA.View.Utilities"
+  xmlns:gif="http://wpfanimatedgif.codeplex.com"
+  xmlns:utils="clr-namespace:HEC.FDA.View.Utilities"
+  xmlns:utilities="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
+  d:DataContext="{d:DesignInstance Type=utilities:CustomHeaderVM}"
+  xmlns:conv="clr-namespace:HEC.FDA.View.Utilities.Converters"
+  mc:Ignorable="d"
+  d:DesignHeight="25"
+  d:DesignWidth="300">
+  <UserControl.Resources>
+    <utils:BoolToVisibilityConverter
+      x:Key="BoolToVisibilityConverter" />
+    <conv:NullImageConverter
+      x:Key="NullImageConverter" />
+    <conv:NullImageToCollapsed
+      x:Key="NullToCollapsed" />
+    <conv:NullImageToVisible
+      x:Key="NullToVisible" />
+    <Style
+      x:Key="HoverableBorder"
+      TargetType="Border">
+      <!-- default background so we get hit‐testing -->
+      <Setter
+        Property="Background"
+        Value="Transparent" />
+      <Setter
+        Property="CornerRadius"
+        Value="4" />
+      <Style.Triggers>
+        <Trigger
+          Property="IsMouseOver"
+          Value="True">
+          <Setter
+            Property="Background"
+            Value="#FFE0F0FF" />
+        </Trigger>
+      </Style.Triggers>
+    </Style>
+  </UserControl.Resources>
+  <Grid>
 
-        <Image Grid.Column="0" Name="image_Image" Source="{Binding Path=ImageSource, Converter= {StaticResource NullImageConverter}}" />
-                <TextBlock Grid.Column="1" Name="txt_Name" Text="{Binding Path=Name}" Margin="5,0,0,0" ToolTip="{Binding Tooltip}" />
-        <Image Grid.Column="2" Name="txt_Decoration" Source="{Binding Path=Decoration, Converter= {StaticResource NullImageConverter}}" />
-            </Grid>
-            
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition
+        Width="auto" />
+      <ColumnDefinition
+        Width="auto" />
+    </Grid.ColumnDefinitions>
+
+    <!-- Spacer for indenting the headers without images -->
+    <Border
+      Grid.Column="0"
+      Width="25"
+      Visibility="{Binding Path=ImageSource, Converter={StaticResource NullToVisible}}" />
+
+    <Border
+      Grid.Column="1"
+      Style="{StaticResource HoverableBorder}"
+      Padding="2,0,2,0">
+      <Grid>
+        <StackPanel
+          Orientation="Horizontal">
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition
+                Width="Auto" />
+              <ColumnDefinition
+                Width="Auto" />
+              <ColumnDefinition
+                Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Image
+              Grid.Column="0"
+              Name="image_Image"
+              Source="{Binding Path=ImageSource, Converter= {StaticResource NullImageConverter}}"
+              Visibility="{Binding Path=ImageSource, Converter={StaticResource NullToCollapsed}}"
+              Width="20"
+              Margin="0,0,5,0"/>
+            <TextBlock
+              Grid.Column="1"
+              Name="txt_Name"
+              Text="{Binding Path=Name}"
+              ToolTip="{Binding Tooltip}"/>
+            <Image
+              Grid.Column="2"
+              Name="txt_Decoration"
+              Source="{Binding Path=Decoration, Converter= {StaticResource NullImageConverter}}" />
+          </Grid>
+
         </StackPanel>
-            
-    </Grid>
+
+      </Grid>
     </Border>
+  </Grid>
+  
 </UserControl>
