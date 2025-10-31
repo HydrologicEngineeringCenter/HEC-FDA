@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="HEC.RAS.Ras.Mapper" Version="0.1.0.1678-dev" />
+    <PackageReference Include="HEC.RAS.Ras.Mapper" Version="0.1.0.1822-dev" />
     <PackageReference Include="OxyPlot.Wpf" Version="2.2.0" />
   </ItemGroup>
 

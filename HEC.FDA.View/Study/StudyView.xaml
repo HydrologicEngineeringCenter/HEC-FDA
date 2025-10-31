@@ -45,7 +45,7 @@
             </Setter>
         </Style>
     </UserControl.Resources>
-    
+
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -53,7 +53,7 @@
             <RowDefinition Height="5" />
             <RowDefinition Height="Auto" MinHeight="27"/>
         </Grid.RowDefinitions>
-        
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250" MinWidth="100" />
             <ColumnDefinition Width="*"  />
@@ -74,17 +74,18 @@
         </Menu>
 
         <TreeView Grid.Row="1" MinWidth="80"  Name="StudyTreeView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding CurrentStudyElement.Elements, Mode=TwoWay}" >
-                        <TreeView.ItemContainerStyle>
-                            <Style TargetType="{x:Type TreeViewItem}">
-                                <Setter Property="Header" Value="{Binding CustomTreeViewHeader}"/>
-                                <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
-                                <Setter Property="ItemsSource" Value="{Binding Elements, Mode=TwoWay}"/>
-                                <Setter Property="FontSize" Value="{Binding FontSize}" />
-                                <Setter Property="FontWeight" Value="{Binding IsBold,Converter={StaticResource BoolToBoldConverter}}" />
-                                <Setter Property="ContextMenu" Value="{Binding Actions, Converter={StaticResource converter }}"/>
-                                <Setter Property="ToolTip" Value="{Binding ToolTip}"/>
-                            </Style>
-                        </TreeView.ItemContainerStyle>
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="Header" Value="{Binding CustomTreeViewHeader}"/>
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
+                    <Setter Property="ItemsSource" Value="{Binding Elements, Mode=TwoWay}"/>
+                    <Setter Property="FontSize" Value="{Binding FontSize}" />
+                    <Setter Property="FontWeight" Value="{Binding IsBold,Converter={StaticResource BoolToBoldConverter}}" />
+                    <Setter Property="ContextMenu" Value="{Binding Actions, Converter={StaticResource converter }}"/>
+                    <Setter Property="ToolTip" Value="{Binding ToolTip}"/>
+                    <!--<Setter Property="Focusable" Value="False"/> uncomment to turn off blue highlighting on left click-->
+                </Style>
+            </TreeView.ItemContainerStyle>
         </TreeView>
 
         <utils:TabControlNoReload  x:Name="DynamicTabControl"  Grid.Row="1" Grid.Column="1" ItemsSource="{Binding TabFactoryInstance.Tabs}" 

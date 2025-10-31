@@ -1,7 +1,6 @@
 ﻿using HEC.FDA.Model.alternatives;
 using HEC.FDA.Model.paireddata;
 using RasMapperLib;
-using SciChart.Core.Extensions;
 using Statistics.Histograms;
 using System.IO;
 using VisualScratchSpace.Model.Saving;
