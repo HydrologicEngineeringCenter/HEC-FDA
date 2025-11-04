@@ -1,7 +1,5 @@
-﻿using HEC.FDA.Model.compute;
-using HEC.FDA.Model.hydraulics;
+﻿using HEC.FDA.Model.hydraulics;
 using HEC.FDA.Model.hydraulics.Interfaces;
-using HEC.FDA.Model.interfaces;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.structures;
@@ -11,13 +9,11 @@ using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Model.Messaging;
 using Statistics;
-using Statistics.Distributions;
 using Statistics.Histograms;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using Utility.Progress;
 
 namespace HEC.FDA.Model.stageDamage
@@ -107,15 +103,15 @@ namespace HEC.FDA.Model.stageDamage
         {
             //set bottom coordinate quantity 
             //take 1-prob from hydraulic profiles to convert exceedance to non-exceedance
-            double stageAtAEPofMostFrequentHydraulicsProfile = _StageFrequency.f(1-_HydraulicDataset.HydraulicProfiles.First().Probability);
+            double stageAtAEPofMostFrequentHydraulicsProfile = _StageFrequency.f(1 - _HydraulicDataset.HydraulicProfiles.First().Probability);
             double rangeOfStagesAtBottom = stageAtAEPofMostFrequentHydraulicsProfile - _MinStageForArea;
-            _BottomExtrapolationPoints = Convert.ToInt32(Math.Ceiling(rangeOfStagesAtBottom/FEET_PER_COORDINATE));
+            _BottomExtrapolationPoints = Convert.ToInt32(Math.Ceiling(rangeOfStagesAtBottom / FEET_PER_COORDINATE));
             //require at least 4 coordinates at the bottom
             if (_BottomExtrapolationPoints < MINIMUM_EXTRAPOLATION_COORDINATES) { _BottomExtrapolationPoints = MINIMUM_EXTRAPOLATION_COORDINATES; }
 
             //set middle coordinate quantity 
             //take 1-prob from hydraulic profiles to convert exceedance to non-exceedance
-            double stageAtAEPofLeastFrequentHydraulicsProfile = _StageFrequency.f(1-_HydraulicDataset.HydraulicProfiles.Last().Probability);
+            double stageAtAEPofLeastFrequentHydraulicsProfile = _StageFrequency.f(1 - _HydraulicDataset.HydraulicProfiles.Last().Probability);
             double middleRange = stageAtAEPofLeastFrequentHydraulicsProfile - stageAtAEPofMostFrequentHydraulicsProfile;
             //based upon the range of stages between most frequent and least frequent AEP in hydraulics and the number of intervals to be interpolated 
             //number of intervals to be interpolated is the number of hydraulic profiles minus 1
@@ -125,9 +121,9 @@ namespace HEC.FDA.Model.stageDamage
 
             //set top coordinate quantity
             double rangeOfStagesAtTop = _MaxStageForArea - stageAtAEPofLeastFrequentHydraulicsProfile;
-            _TopExtrapolationPoints = Convert.ToInt32(Math.Ceiling(rangeOfStagesAtTop/FEET_PER_COORDINATE));
+            _TopExtrapolationPoints = Convert.ToInt32(Math.Ceiling(rangeOfStagesAtTop / FEET_PER_COORDINATE));
             //require at least four coordinates at the top 
-            if ( _TopExtrapolationPoints < MINIMUM_EXTRAPOLATION_COORDINATES) { _TopExtrapolationPoints = MINIMUM_EXTRAPOLATION_COORDINATES; }
+            if (_TopExtrapolationPoints < MINIMUM_EXTRAPOLATION_COORDINATES) { _TopExtrapolationPoints = MINIMUM_EXTRAPOLATION_COORDINATES; }
         }
 
         /// <summary>
@@ -219,7 +215,7 @@ namespace HEC.FDA.Model.stageDamage
             {
                 if (_DischargeStage != null)
                 {
-                    Tuple<double[], double[]> flowFreqAsTuple = _AnalyticalFlowFrequency.ToCoordinates(exceedence:false);
+                    Tuple<double[], double[]> flowFreqAsTuple = _AnalyticalFlowFrequency.ToCoordinates(exceedence: false);
                     PairedData flowFrequencyPairedData = new(flowFreqAsTuple.Item1, flowFreqAsTuple.Item2);
                     if (_UnregulatedRegulated != null)
                     {
@@ -260,7 +256,7 @@ namespace HEC.FDA.Model.stageDamage
         /// W.S.Profile
         /// </summary>
         /// <returns></returns>
-        public (List<UncertainPairedData>, List<UncertainPairedData>) Compute(bool computeIsDeterministic = false, ProgressReporter reporter = null)
+        public (List<UncertainPairedData>, List<UncertainPairedData>) Compute(bool computeIsDeterministic = false, ProgressReporter reporter = null, Stopwatch sw = null)
         {
             reporter ??= ProgressReporter.None();
             Validate();
@@ -288,15 +284,17 @@ namespace HEC.FDA.Model.stageDamage
                     (List<double>, List<float[]>) wsesAtEachStructureByProfile = _HydraulicDataset.GetHydraulicDatasetInFloatsWithProbabilities(Inventory, _HydraulicParentDirectory);
                     _StagesAtIndexLocation = ComputeStagesAtIndexLocation(wsesAtEachStructureByProfile.Item1);
                     //Run the compute by dam cat to simplify data collection 
+                    int damcatIdx = 0;
+                    int damcatCount = damCats.Count;
                     foreach (string damageCategory in damCats)
                     {
-
+                        var subPr = reporter.SubTask($"Damage Category {damageCategory} Compute", (float)damcatIdx / damcatCount, 1f / damcatCount);
                         (Inventory, List<float[]>) inventoryAndWaterTupled = Inventory.GetInventoryAndWaterTrimmedToDamageCategory(damageCategory, wsesAtEachStructureByProfile.Item2);
-
+                        subPr.ReportMessage($"{sw?.Elapsed:hh\\:mm\\:ss\\.fff}         Starting compute for {damageCategory}...");
 
                         //There will be one ConsequenceDistributionResults object for each stage in the stage-damage function
                         //Each ConsequenceDistributionResults object holds a ConsequenceDistributionResult for each asset cat
-                        List<StudyAreaConsequencesBinned> consequenceDistributionResults = ComputeDamageWithUncertaintyAllCoordinates(damageCategory, inventoryAndWaterTupled, wsesAtEachStructureByProfile.Item1, computeIsDeterministic);
+                        List<StudyAreaConsequencesBinned> consequenceDistributionResults = ComputeDamageWithUncertaintyAllCoordinates(damageCategory, inventoryAndWaterTupled, wsesAtEachStructureByProfile.Item1, computeIsDeterministic, subPr, sw);
 
                         //there should be four UncertainPairedData objects - one for each asset cat of the given dam cat level compute 
                         (List<UncertainPairedData>, List<UncertainPairedData>) tempResultsList = StudyAreaConsequencesBinned.ToUncertainPairedData(_StagesAtIndexLocation.ToList(), consequenceDistributionResults, ImpactAreaID);
@@ -305,6 +303,8 @@ namespace HEC.FDA.Model.stageDamage
                         //quantity damaged elements
                         results.Item2.AddRange(tempResultsList.Item2);
                         //clear data
+                        subPr.ReportProgress(100);
+                        damcatIdx++;
                     }
                     return results;
                 }
@@ -352,8 +352,15 @@ namespace HEC.FDA.Model.stageDamage
         /// <param name="inventoryAndWaterTupled"></param>
         /// <param name="profileProbabilities"></param>
         /// <returns></returns>
-        private List<StudyAreaConsequencesBinned> ComputeDamageWithUncertaintyAllCoordinates(string damageCategory, (Inventory, List<float[]>) inventoryAndWaterTupled, List<double> profileProbabilities, bool computeIsDeterministic)
+        private List<StudyAreaConsequencesBinned> ComputeDamageWithUncertaintyAllCoordinates(
+            string damageCategory,
+            (Inventory, List<float[]>) inventoryAndWaterTupled,
+            List<double> profileProbabilities,
+            bool computeIsDeterministic,
+            ProgressReporter reporter = null,
+            Stopwatch sw = null)
         {
+            reporter ??= ProgressReporter.None();
 
             //damage for each stage
             List<StudyAreaConsequencesBinned> consequenceDistributionResults = CreateConsequenceDistributionResults(damageCategory);
@@ -363,9 +370,11 @@ namespace HEC.FDA.Model.stageDamage
             int sampleSize = 0;
             bool stageDamageFunctionsAreNotConverged = true;
 
+            reporter.ReportMessage($"{sw.Elapsed:hh\\:mm\\:ss\\.fff}                Converging...");
             while (stageDamageFunctionsAreNotConverged)
             {
-
+                int totalSteps = iterationsPerComputeChunk * computeChunkQuantity;
+                int stepIdx = 0;
                 /// Begins the fourth loop of the Scenario Stage Damage Compute. 
                 /// Scenario SD 
                 /// Impact Area SD 
@@ -380,6 +389,7 @@ namespace HEC.FDA.Model.stageDamage
                 Debug.WriteLine("compute chunks = " + computeChunkQuantity.ToString());
                 for (int computeChunk = 0; computeChunk < computeChunkQuantity; computeChunk++)
                 {
+                    //var computeChunkPr = reporter.SubTask($"Compute Chunk {computeChunk}", (float)computeChunk / computeChunkQuantity, 1f / computeChunkQuantity);
                     Debug.WriteLine($"ChunksIdx =" + computeChunk);
                     /// Begins the fifth loop of the Scenario Stage Damage Compute. 
                     /// Scenario SD 
@@ -391,7 +401,8 @@ namespace HEC.FDA.Model.stageDamage
                     /// W.S.Profile
                     for (int thisChunkIteration = 0; thisChunkIteration < iterationsPerComputeChunk; thisChunkIteration++)
                     {
-                        
+                        var iterationPr = reporter.SubTask($"Iteration {thisChunkIteration}", (float)stepIdx / totalSteps, 1f / totalSteps);
+
                         //this is the only sampling taking place in the aggregated stage-damage compute with uncertainty
                         //the sampling takes place by the overall compute iteration number so that for each iteration the same random numbers are retrieved 
                         int thisComputeIteration = computeChunk * iterationsPerComputeChunk + thisChunkIteration;
@@ -403,8 +414,12 @@ namespace HEC.FDA.Model.stageDamage
                         ComputeUpperStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, thisChunkIteration);
                         inventoryAndWaterTupled.Item1.ResetStructureWaterIndexTracking();
                         sampleSize += 1;
+
+                        iterationPr.ReportProgress(100);
+                        stepIdx++;
                     }
-                   DumpDataIntoDistributions(ref consequenceDistributionResults);
+                    DumpDataIntoDistributions(ref consequenceDistributionResults);
+                    //computeChunkPr.ReportProgress(100);
                 }
                 stageDamageFunctionsAreNotConverged = IsTheFunctionNotConverged(consequenceDistributionResults);
                 if (stageDamageFunctionsAreNotConverged)
@@ -414,6 +429,7 @@ namespace HEC.FDA.Model.stageDamage
                     computeChunkQuantity = 100;
                 }
             }
+            reporter.ReportMessage($"{sw.Elapsed:hh\\:mm\\:ss\\.fff}                Converged");
             return consequenceDistributionResults;
         }
 
@@ -652,7 +668,7 @@ namespace HEC.FDA.Model.stageDamage
         internal List<string> ProduceImpactAreaStructureDetails(Dictionary<int, string> impactAreaNames)
         {
             //this list will be the size of the number of structures + 1 where the first string is the header
-            List<DeterministicOccupancyType> deterministicOccupancyTypes = Inventory.SampleOccupancyTypes(iteration:1, computeIsDeterministic: true);
+            List<DeterministicOccupancyType> deterministicOccupancyTypes = Inventory.SampleOccupancyTypes(iteration: 1, computeIsDeterministic: true);
             List<string> structureDetails = Inventory.StructureDetails(deterministicOccupancyTypes, impactAreaNames);
             //here I need to add to structure details: occ types, impact area,
             StagesToStrings(ref structureDetails);
@@ -663,7 +679,7 @@ namespace HEC.FDA.Model.stageDamage
             foreach (IHydraulicProfile hydraulicProfile in _HydraulicDataset.HydraulicProfiles)
             {
                 float[] stagesAtStructures = hydraulicProfile.GetWSE(Inventory.GetPointMs(), _HydraulicDataset.DataSource, _HydraulicParentDirectory);
- 
+
 
                 List<ConsequenceResult> consequenceResultList = new();
                 for (int i = 0; i < stagesAtStructures.Length; i++)
@@ -691,7 +707,7 @@ namespace HEC.FDA.Model.stageDamage
                 //that will go in structureDetails[0]
                 structureDetails[0] += $"{assetType} Damage At {_HydraulicDataset.HydraulicProfiles[i].Probability}AEP,";
 
-                List < ConsequenceResult > consequenceResultList = deterministicOccupancyType[i];
+                List<ConsequenceResult> consequenceResultList = deterministicOccupancyType[i];
 
                 if (assetType == StringGlobalConstants.STRUCTURE_ASSET_CATEGORY)
                 {
@@ -801,7 +817,7 @@ namespace HEC.FDA.Model.stageDamage
                 }
             }
             Inventory.Validate();
-            if(Inventory.ErrorLevel > ErrorLevel)
+            if (Inventory.ErrorLevel > ErrorLevel)
             {
                 HasErrors = true;
                 ErrorLevel = Inventory.ErrorLevel;
