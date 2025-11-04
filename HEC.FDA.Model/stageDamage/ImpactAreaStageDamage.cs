@@ -364,7 +364,7 @@ namespace HEC.FDA.Model.stageDamage
 
             //damage for each stage
             List<StudyAreaConsequencesBinned> consequenceDistributionResults = CreateConsequenceDistributionResults(damageCategory);
-            Debug.WriteLine("Results Count = " + consequenceDistributionResults.Count);
+            //Debug.WriteLine("Results Count = " + consequenceDistributionResults.Count);
             int iterationsPerComputeChunk = _ConvergenceCriteria.IterationCount;
             int computeChunkQuantity = Convert.ToInt32(_ConvergenceCriteria.MinIterations / iterationsPerComputeChunk);
             int sampleSize = 0;
@@ -373,8 +373,6 @@ namespace HEC.FDA.Model.stageDamage
             reporter.ReportMessage($"{sw.Elapsed:hh\\:mm\\:ss\\.fff}                Converging...");
             while (stageDamageFunctionsAreNotConverged)
             {
-                int totalSteps = iterationsPerComputeChunk * computeChunkQuantity;
-                int stepIdx = 0;
                 /// Begins the fourth loop of the Scenario Stage Damage Compute. 
                 /// Scenario SD 
                 /// Impact Area SD 
@@ -383,14 +381,16 @@ namespace HEC.FDA.Model.stageDamage
                 /// Iteration
                 /// Structure
                 /// W.S.Profile
-                Debug.WriteLine(ImpactAreaID);
-                Debug.WriteLine(damageCategory);
-                Debug.WriteLine("iterations per chunk = " + iterationsPerComputeChunk.ToString());
-                Debug.WriteLine("compute chunks = " + computeChunkQuantity.ToString());
+                //Debug.WriteLine(ImpactAreaID);
+                //Debug.WriteLine(damageCategory);
+                //Debug.WriteLine("iterations per chunk = " + iterationsPerComputeChunk.ToString());
+                //Debug.WriteLine("compute chunks = " + computeChunkQuantity.ToString());
                 for (int computeChunk = 0; computeChunk < computeChunkQuantity; computeChunk++)
                 {
+                    var computeChunkPr = reporter.SubTask($"Iteration {computeChunk}", (float)computeChunk / computeChunkQuantity, 1f / computeChunkQuantity);
+
                     //var computeChunkPr = reporter.SubTask($"Compute Chunk {computeChunk}", (float)computeChunk / computeChunkQuantity, 1f / computeChunkQuantity);
-                    Debug.WriteLine($"ChunksIdx =" + computeChunk);
+                    //Debug.WriteLine($"ChunksIdx =" + computeChunk);
                     /// Begins the fifth loop of the Scenario Stage Damage Compute. 
                     /// Scenario SD 
                     /// Impact Area SD 
@@ -401,7 +401,7 @@ namespace HEC.FDA.Model.stageDamage
                     /// W.S.Profile
                     for (int thisChunkIteration = 0; thisChunkIteration < iterationsPerComputeChunk; thisChunkIteration++)
                     {
-                        var iterationPr = reporter.SubTask($"Iteration {thisChunkIteration}", (float)stepIdx / totalSteps, 1f / totalSteps);
+                        // adding another subtask here seems to slow down the compute, too much reporting
 
                         //this is the only sampling taking place in the aggregated stage-damage compute with uncertainty
                         //the sampling takes place by the overall compute iteration number so that for each iteration the same random numbers are retrieved 
@@ -414,12 +414,9 @@ namespace HEC.FDA.Model.stageDamage
                         ComputeUpperStageDamage(ref consequenceDistributionResults, damageCategory, deterministicOccTypes, inventoryAndWaterTupled, profileProbabilities, thisChunkIteration);
                         inventoryAndWaterTupled.Item1.ResetStructureWaterIndexTracking();
                         sampleSize += 1;
-
-                        iterationPr.ReportProgress(100);
-                        stepIdx++;
                     }
                     DumpDataIntoDistributions(ref consequenceDistributionResults);
-                    //computeChunkPr.ReportProgress(100);
+                    computeChunkPr.ReportProgress(100);
                 }
                 stageDamageFunctionsAreNotConverged = IsTheFunctionNotConverged(consequenceDistributionResults);
                 if (stageDamageFunctionsAreNotConverged)
