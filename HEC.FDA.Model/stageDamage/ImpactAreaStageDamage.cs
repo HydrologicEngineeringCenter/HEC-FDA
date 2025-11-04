@@ -387,9 +387,8 @@ namespace HEC.FDA.Model.stageDamage
                 //Debug.WriteLine("compute chunks = " + computeChunkQuantity.ToString());
                 for (int computeChunk = 0; computeChunk < computeChunkQuantity; computeChunk++)
                 {
-                    var computeChunkPr = reporter.SubTask($"Iteration {computeChunk}", (float)computeChunk / computeChunkQuantity, 1f / computeChunkQuantity);
+                    var computeChunkPr = reporter.SubTask($"Compute Chunk {computeChunk}", (float)computeChunk / computeChunkQuantity, 1f / computeChunkQuantity);
 
-                    //var computeChunkPr = reporter.SubTask($"Compute Chunk {computeChunk}", (float)computeChunk / computeChunkQuantity, 1f / computeChunkQuantity);
                     //Debug.WriteLine($"ChunksIdx =" + computeChunk);
                     /// Begins the fifth loop of the Scenario Stage Damage Compute. 
                     /// Scenario SD 
