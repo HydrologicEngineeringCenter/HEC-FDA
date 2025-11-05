@@ -1,8 +1,10 @@
-﻿using System;
+﻿using HEC.FDA.ViewModel.Utilities;
+using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Xml.Linq;
-using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
@@ -16,15 +18,16 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         #region Properties
 
-        public List<OccupancyType> ListOfOccupancyTypes { get; set; } = new List<OccupancyType>();       
+        public List<OccupancyType> ListOfOccupancyTypes { get; set; } = new List<OccupancyType>();
 
         #endregion
         #region Constructors
 
-        public OccupancyTypesElement( string name, string lastEditDate, string description,  List<OccupancyType> listOfOccTypes, int id):base(name, lastEditDate, description, id)
+        public OccupancyTypesElement(string name, string lastEditDate, string description, List<OccupancyType> listOfOccTypes, int id) : base(name, lastEditDate, description, id)
         {
             ListOfOccupancyTypes = listOfOccTypes;
             AddDefaultActions(EditOccupancyTypes, StringConstants.EDIT_OCCTYPE_MENU);
+            AddExportAction();
         }
 
         public OccupancyTypesElement(XElement occtypeElem, int id) : base(occtypeElem, id)
@@ -36,7 +39,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 ListOfOccupancyTypes.Add(new OccupancyType(ot));
             }
             AddDefaultActions(EditOccupancyTypes, StringConstants.EDIT_OCCTYPE_MENU);
-
+            AddExportAction();
         }
         public override XElement ToXML()
         {
@@ -74,5 +77,43 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             return dams.ToList<String>();
         }
 
+        private void AddExportAction()
+        {
+            NamedAction exportToXML = new()
+            {
+                Header = "Export to XML...",
+                Action = ExportToXML
+            };
+            Actions.Insert(1, exportToXML);
+        }
+
+        private void ExportToXML(object arg1, EventArgs args)
+        {
+            var sfd = new SaveFileDialog
+            {
+                Title = "Save XML",
+                Filter = "XML files (*.xml)|*.xml|All files (*.*)|*.*",
+                FileName = $"{Name}.xml",
+                DefaultExt = ".xml",
+                AddExtension = true,
+                OverwritePrompt = true,
+                RestoreDirectory = true,
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+            };
+
+            if (sfd.ShowDialog() == true)
+            {
+                try
+                {
+                    this.ToXML().Save(sfd.FileName);
+
+                    MessageBox.Show("Saved.", "XML", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to save XML:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
     }
 }
