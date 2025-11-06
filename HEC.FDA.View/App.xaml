@@ -178,6 +178,11 @@
       <UtilitiesView:ImportFromFDA1 />
     </DataTemplate>
 
+    <DataTemplate
+      DataType="{x:Type OccupancyTypesVM:OccupancyTypesImporterXMLVM}">
+      <OccupancyTypesView:OccupancyTypesImporterXML />
+    </DataTemplate>
+
     <!--Occupancy Types Controls Region-->
 
     <DataTemplate DataType="{x:Type OccupancyTypesVM:ValueUncertaintyVM }">
