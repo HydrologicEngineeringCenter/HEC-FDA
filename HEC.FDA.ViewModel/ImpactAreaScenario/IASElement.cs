@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Windows;
-using System.Xml.Linq;
-using HEC.FDA.Model.metrics;
+﻿using HEC.FDA.Model.metrics;
 using HEC.FDA.ViewModel.Compute;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.ImpactArea;
@@ -11,6 +6,10 @@ using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Results;
 using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Windows;
+using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario
 {
@@ -34,7 +33,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
         #region Properties
         public bool UpdateComputeDate { get; set; }
-        public ScenarioResults Results{get; set;}
+        public ScenarioResults Results { get; set; }
 
         public string AnalysisYear
         {
@@ -54,7 +53,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         }
         public bool HasNonFailureStageDamage
         {
-            get;set;
+            get; set;
         }
 
         public List<SpecificIAS> SpecificIASElements { get; } = new List<SpecificIAS>();
@@ -68,7 +67,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             StageDamageID = stageDamageElementID;
             NonFailureStageDamageID = nonFailureStageDamageID;
             HasNonFailureStageDamage = hasNonFailureStageDamage;
-            SpecificIASElements.AddRange( elems);
+            SpecificIASElements.AddRange(elems);
             AnalysisYear = year;
 
             AddActions();
@@ -78,14 +77,14 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// The ctor used to load an element set from the database.
         /// </summary>
         /// <param name="xml"></param>
-        public IASElement(XElement setElem, int id) : base(setElem,id)
+        public IASElement(XElement setElem, int id) : base(setElem, id)
         {
 
             AnalysisYear = setElem.Attribute(YEAR).Value;
             StageDamageID = int.Parse(setElem.Attribute(STAGE_DAMAGE_ID).Value);
             //the non-failure stuff is a new addition. Check that it exists first for backwards compatibility.
             XAttribute nonFailureID = setElem.Attribute(NON_FAILURE_STAGE_DAMAGE_ID);
-            if(nonFailureID != null)
+            if (nonFailureID != null)
             {
                 NonFailureStageDamageID = int.Parse(nonFailureID.Value);
                 HasNonFailureStageDamage = Boolean.Parse(setElem.Attribute(HAS_NON_FAILURE_STAGE_DAMAGE).Value);
@@ -107,7 +106,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             }
 
             XElement resultsElem = setElem.Element("ScenarioResults");
-            if(resultsElem != null)
+            if (resultsElem != null)
             {
                 Results = ScenarioResults.ReadFromXML(resultsElem);
             }
@@ -183,7 +182,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             }
             return results;
         }
-        public static Dictionary<int,string> GetImpactAreaNamesFromIDs()
+        public static Dictionary<int, string> GetImpactAreaNamesFromIDs()
         {
             List<ImpactAreaRowItem> impactAreaRows = GetStudyImpactAreaRowItems();
             Dictionary<int, string> impactAreaNames = [];
@@ -196,9 +195,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         private static string GetImpactAreaNameFromID(List<ImpactAreaRowItem> rows, int id)
         {
             string rowName = null;
-            foreach(ImpactAreaRowItem row in rows)
+            foreach (ImpactAreaRowItem row in rows)
             {
-                if(row.ID == id)
+                if (row.ID == id)
                 {
                     rowName = row.Name;
                     break;
@@ -210,7 +209,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         private void ViewResults(object arg1, EventArgs arg2)
         {
             List<SpecificIASResultVM> results = GetResults();
-            if (results.Count>0)
+            if (results.Count > 0)
             {
                 ScenarioResultsVM resultViewer = new(results);
                 string header = "Results for " + Name;
@@ -278,11 +277,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
             setElement.Add(CreateHeaderElement());
 
-            foreach(SpecificIAS elem in SpecificIASElements)
+            foreach (SpecificIAS elem in SpecificIASElements)
             {
                 setElement.Add(elem.WriteToXML());
             }
-            if(Results != null)
+            if (Results != null)
             {
                 XElement resultsElem = Results.WriteToXML();
                 setElement.Add(resultsElem);
