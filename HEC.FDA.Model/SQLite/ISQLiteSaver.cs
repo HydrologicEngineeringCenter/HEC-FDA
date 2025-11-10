@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace HEC.FDA.Model.LifeLoss.Saving;
+namespace HEC.FDA.Model.SQLite;
 
 public interface ISQLiteSaver<T> : IDisposable
 {

@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.SQLite;
 using Statistics.Histograms;
 using System;
 using System.Collections.Generic;

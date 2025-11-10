@@ -27,7 +27,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
             ListOfOccupancyTypes = listOfOccTypes;
             AddDefaultActions(EditOccupancyTypes, StringConstants.EDIT_OCCTYPE_MENU);
-            AddExportAction();
+            AddExportActions();
         }
 
         public OccupancyTypesElement(XElement occtypeElem, int id) : base(occtypeElem, id)
@@ -39,7 +39,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 ListOfOccupancyTypes.Add(new OccupancyType(ot));
             }
             AddDefaultActions(EditOccupancyTypes, StringConstants.EDIT_OCCTYPE_MENU);
-            AddExportAction();
+            AddExportActions();
         }
         public override XElement ToXML()
         {
@@ -77,7 +77,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             return dams.ToList<String>();
         }
 
-        private void AddExportAction()
+        private void AddExportActions()
         {
             NamedAction exportToXML = new()
             {
@@ -114,6 +114,11 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                     MessageBox.Show($"Failed to save XML:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+        }
+
+        private void ExportToSQLite(object arg1, EventArgs args)
+        {
+
         }
     }
 }

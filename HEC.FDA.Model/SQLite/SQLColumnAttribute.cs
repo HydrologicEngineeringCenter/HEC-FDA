@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace HEC.FDA.Model.LifeLoss.Saving;
+namespace HEC.FDA.Model.SQLite;
 
 [AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
 public sealed class SQLColumnAttribute : Attribute

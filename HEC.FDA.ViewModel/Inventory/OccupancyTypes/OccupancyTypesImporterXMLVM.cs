@@ -23,7 +23,7 @@ public partial class OccupancyTypesImporterXMLVM : BaseEditorVM
     {
         // this will only be called when creating a new element (importing)
         XElement occtypesRoot = XElement.Load(Path);
-        // have to find a new valid ID becaue this XML file could have come from any FDA study, IDs are scoped to studies
+        // have to find a new valid ID because this XML file could have come from any FDA study, IDs are scoped to studies
         int id = Saving.PersistenceFactory.GetElementManager<OccupancyTypesElement>().GetNextAvailableId();
 
         XElement header = occtypesRoot.Element("Header");

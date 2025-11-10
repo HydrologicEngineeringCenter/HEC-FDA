@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 
-namespace HEC.FDA.Model.LifeLoss.Saving;
+namespace HEC.FDA.Model.SQLite;
 /// <summary>
 /// Abstract class for providing a filter to a SQLite command
 /// </summary>

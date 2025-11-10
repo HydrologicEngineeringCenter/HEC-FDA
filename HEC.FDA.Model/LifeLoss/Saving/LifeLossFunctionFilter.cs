@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HEC.FDA.Model.SQLite;
+using System;
+
 
 namespace HEC.FDA.Model.LifeLoss.Saving;
 public class LifeLossFunctionFilter : SQLiteFilter

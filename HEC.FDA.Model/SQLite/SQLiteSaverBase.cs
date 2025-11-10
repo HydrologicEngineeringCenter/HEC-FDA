@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SQLite;
 
-namespace HEC.FDA.Model.LifeLoss.Saving;
+namespace HEC.FDA.Model.SQLite;
 public abstract class SQLiteSaverBase<T> : ISQLiteSaver<T>
 {
     protected readonly string _connectionString;
