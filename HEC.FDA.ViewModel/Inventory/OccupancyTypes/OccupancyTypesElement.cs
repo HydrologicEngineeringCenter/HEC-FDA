@@ -1,7 +1,7 @@
 ﻿using HEC.FDA.ViewModel.Utilities;
-using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Linq;
 using System.Windows;
 using System.Xml.Linq;
@@ -85,11 +85,17 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 Action = ExportToXML
             };
             Actions.Insert(1, exportToXML);
+            NamedAction exportToSQLite = new()
+            {
+                Header = "Export to SQLite...",
+                Action = ExportToSQLite
+            };
+            Actions.Insert(2, exportToSQLite);
         }
 
         private void ExportToXML(object arg1, EventArgs args)
         {
-            var sfd = new SaveFileDialog
+            var sfd = new Microsoft.Win32.SaveFileDialog
             {
                 Title = "Save XML",
                 Filter = "XML files (*.xml)|*.xml|All files (*.*)|*.*",
@@ -101,23 +107,58 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
             };
 
-            if (sfd.ShowDialog() == true)
-            {
-                try
-                {
-                    this.ToXML().Save(sfd.FileName);
+            if (sfd.ShowDialog() == false)
+                return;
 
-                    MessageBox.Show("Saved.", "XML", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Failed to save XML:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+            try
+            {
+                this.ToXML().Save(sfd.FileName);
+                System.Windows.MessageBox.Show("Saved.", "XML", MessageBoxButton.OK, MessageBoxImage.Information);
             }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Failed to save XML:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
         }
 
         private void ExportToSQLite(object arg1, EventArgs args)
         {
+            var sfd = new Microsoft.Win32.SaveFileDialog
+            {
+                Title = "Save SQLite",
+                Filter = "SQLite files (*.sqlite)|*.sqlite|All files (*.*)|*.*",
+                FileName = $"{Name}.sqlite",
+                DefaultExt = ".sqlite",
+                AddExtension = true,
+                OverwritePrompt = true,
+                RestoreDirectory = true,
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+            };
+
+            if (sfd.ShowDialog() == false)
+                return;
+
+            try
+            {
+                var xml = this.ToXML();
+                string dbPath = sfd.FileName;
+                string source = $"Data Source={dbPath}";
+                using var conn = new SQLiteConnection(source);
+                conn.Open();
+                using var cmd = conn.CreateCommand();
+                cmd.CommandText = @"
+        CREATE TABLE IF NOT EXISTS Items (Id INTEGER PRIMARY KEY, Name TEXT NOT NULL);
+        INSERT INTO Items (Name) VALUES (@name);";
+                cmd.Parameters.AddWithValue("@name", xml);
+                cmd.ExecuteNonQuery();
+                System.Windows.MessageBox.Show("Saved.", "SQLite", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Failed to save SQLite:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
 
         }
     }
