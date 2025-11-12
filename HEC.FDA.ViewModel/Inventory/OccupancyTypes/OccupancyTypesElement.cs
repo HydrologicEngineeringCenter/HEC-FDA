@@ -1,7 +1,7 @@
-﻿using HEC.FDA.ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.Inventory.OccupancyTypes.SQLiteSaving;
+using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
 using System.Linq;
 using System.Windows;
 using System.Xml.Linq;
@@ -141,17 +141,22 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
             try
             {
-                var xml = this.ToXML();
                 string dbPath = sfd.FileName;
-                string source = $"Data Source={dbPath}";
-                using var conn = new SQLiteConnection(source);
-                conn.Open();
-                using var cmd = conn.CreateCommand();
-                cmd.CommandText = @"
-        CREATE TABLE IF NOT EXISTS Items (Id INTEGER PRIMARY KEY, Name TEXT NOT NULL);
-        INSERT INTO Items (Name) VALUES (@name);";
-                cmd.Parameters.AddWithValue("@name", xml);
-                cmd.ExecuteNonQuery();
+                using OccupancyTypeSaver saver = new(dbPath);
+                foreach (var occtype in ListOfOccupancyTypes)
+                    saver.SaveToSQLite(occtype);
+
+
+                //        var xml = this.ToXML();
+                //        string source = $"Data Source={dbPath}";
+                //        using var conn = new SQLiteConnection(source);
+                //        conn.Open();
+                //        using var cmd = conn.CreateCommand();
+                //        cmd.CommandText = @"
+                //CREATE TABLE IF NOT EXISTS Items (Id INTEGER PRIMARY KEY, Name TEXT NOT NULL);
+                //INSERT INTO Items (Name) VALUES (@name);";
+                //        cmd.Parameters.AddWithValue("@name", xml);
+                //        cmd.ExecuteNonQuery();
                 System.Windows.MessageBox.Show("Saved.", "SQLite", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
