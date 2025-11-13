@@ -41,6 +41,7 @@ public abstract class SQLiteFilter
         bool firstClause = true;
         int paramIndex = 0;
 
+        // if there are no properties in the filter, this will not run and the statement will be a select/delete all
         foreach (PropertyInfo prop in GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
         {
             if (!prop.PropertyType.IsArray) continue; // we only want array properties

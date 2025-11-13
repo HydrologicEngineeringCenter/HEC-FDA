@@ -183,6 +183,11 @@
       <OccupancyTypesView:OccupancyTypesImporterXML />
     </DataTemplate>
 
+    <DataTemplate
+      DataType="{x:Type OccupancyTypesVM:OccupancyTypesImporterSQLiteVM}">
+      <OccupancyTypesView:OccupancyTypesImporterSQLite />
+    </DataTemplate>
+
     <!--Occupancy Types Controls Region-->
 
     <DataTemplate DataType="{x:Type OccupancyTypesVM:ValueUncertaintyVM }">
