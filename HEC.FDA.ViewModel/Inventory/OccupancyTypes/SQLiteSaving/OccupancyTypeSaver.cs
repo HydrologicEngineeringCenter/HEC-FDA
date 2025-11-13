@@ -6,16 +6,20 @@ using System.Data.SQLite;
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes.SQLiteSaving;
 public class OccupancyTypeSaver : SQLiteSaverBase<OccupancyType>
 {
-    private static readonly string _createCommandText =
+    private static readonly string _createMetadataTableCommandText =
         $@"
-            CREATE TABLE IF NOT EXISTS {OccupancyTypesSQLiteConstants.OT_LOOKUP_TABLE_NAME} (
-                {OccupancyTypesSQLiteConstants.ID_HEADER}       INTEGER PRIMARY KEY AUTOINCREMENT,
+            CREATE TABLE IF NOT EXISTS {OccupancyTypesSQLiteConstants.METADATA_TABLE_NAME} (
+                {OccupancyTypesSQLiteConstants.METADATA_ID_HEADER}       INTEGER PRIMARY KEY AUTOINCREMENT,
                 {OccupancyTypesSQLiteConstants.XML_HEADER}      TEXT NOT NULL
             );";
 
+    private static readonly string _createOccupancyTypesTableCommandText =
+        $@"
+            CREATE TABLE IF NOT EXISTS";
+
     private static readonly string _insertCommandText =
         $@"
-            INSERT OR IGNORE INTO {OccupancyTypesSQLiteConstants.OT_LOOKUP_TABLE_NAME} (
+            INSERT OR IGNORE INTO {OccupancyTypesSQLiteConstants.METADATA_TABLE_NAME} (
                 {OccupancyTypesSQLiteConstants.XML_HEADER}            
             )
             VALUES (
@@ -49,7 +53,7 @@ public class OccupancyTypeSaver : SQLiteSaverBase<OccupancyType>
     private static void CreateTable(SQLiteConnection connection)
     {
         using var cmd = new SQLiteCommand(connection);
-        cmd.CommandText = _createCommandText;
+        cmd.CommandText = _createMetadataTableCommandText;
         cmd.ExecuteNonQuery();
     }
 
