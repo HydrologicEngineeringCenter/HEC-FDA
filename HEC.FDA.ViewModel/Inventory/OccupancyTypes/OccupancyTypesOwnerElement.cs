@@ -38,10 +38,15 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             importFromXML.Header = "Import Occupancy Types From XML...";
             importFromXML.Action = ImportFromXml;
 
+            NamedAction importFromSQLite = new NamedAction();
+            importFromSQLite.Header = "Import Occupancy Types From SQLite...";
+            importFromSQLite.Action = ImportFromSQLite;
+
             List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(createNew);
             localActions.Add(importFromFile);
             localActions.Add(importFromXML);
+            localActions.Add(importFromSQLite);
 
             Actions = localActions;
 
@@ -90,6 +95,15 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             EditorActionManager actionManager = new EditorActionManager().WithSiblingRules(this);
             OccupancyTypesImporterXMLVM vm = new(actionManager);
             string header = "Import Occupancy Types From XML";
+            DynamicTabVM tab = new(header, vm, header);
+            Navigate(tab, false, false);
+        }
+
+        private void ImportFromSQLite(object arg1, EventArgs args)
+        {
+            EditorActionManager actionManager = new EditorActionManager().WithSiblingRules(this);
+            OccupancyTypesImporterSQLiteVM vm = new(actionManager);
+            string header = "Import Occupancy Types From SQLite";
             DynamicTabVM tab = new(header, vm, header);
             Navigate(tab, false, false);
         }
