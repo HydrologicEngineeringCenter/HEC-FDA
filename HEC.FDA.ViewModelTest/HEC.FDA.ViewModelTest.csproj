@@ -9,7 +9,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="HEC.RAS.Ras.Mapper" Version="0.1.0.1554-dev" />
+		<PackageReference Include="HEC.RAS.Ras.Mapper" Version="0.1.0.1822-dev" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.0-release-24373-02" />
 		<PackageReference Include="xunit" Version="2.8.1" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="2.8.1">

@@ -26,6 +26,7 @@ namespace HEC.FDA.ViewModel.Study
         event FDACache.AddElementEventHandler LeveeAdded;
         event FDACache.AddElementEventHandler StageDamageAdded;
         event FDACache.AddElementEventHandler StructureInventoryAdded;
+        event FDACache.AddElementEventHandler StageLifeLossAdded;
         event FDACache.AddElementEventHandler IASElementAdded;
         event FDACache.AddElementEventHandler OccTypeElementAdded;
 
@@ -42,6 +43,7 @@ namespace HEC.FDA.ViewModel.Study
         event FDACache.AddElementEventHandler LeveeRemoved;
         event FDACache.AddElementEventHandler StageDamageRemoved;
         event FDACache.AddElementEventHandler StructureInventoryRemoved;
+        event FDACache.AddElementEventHandler StageLifeLossRemoved;
         event FDACache.AddElementEventHandler IASElementRemoved;
         event FDACache.AddElementEventHandler OccTypeElementRemoved;
 
@@ -58,6 +60,7 @@ namespace HEC.FDA.ViewModel.Study
         event FDACache.UpdateElementEventHandler LeveeUpdated;
         event FDACache.UpdateElementEventHandler StageDamageUpdated;
         event FDACache.UpdateElementEventHandler StructureInventoryUpdated;
+        event FDACache.UpdateElementEventHandler StageLifeLossUpdated;
         event FDACache.UpdateElementEventHandler IASElementUpdated;
         event FDACache.UpdateElementEventHandler OccTypeElementUpdated;
 

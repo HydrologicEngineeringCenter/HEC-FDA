@@ -10,6 +10,7 @@ using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.IndexPoints;
 using HEC.FDA.ViewModel.Inventory;
 using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.ViewModel.LifeLoss;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Watershed;
 using System;
@@ -39,14 +40,14 @@ namespace HEC.FDA.ViewModel.Utilities
             {typeof(StageDischargeElement), IMAGE_PREFIX + "RatingCurve.png" },
             {typeof(InventoryElement), IMAGE_PREFIX + "StructureInventory.png"},
             {typeof(OccupancyTypesElement), IMAGE_PREFIX + "StructureInventory.png"},
-
+            {typeof(StageLifeLossElement), IMAGE_PREFIX + "lifesim.png" }
         };
 
         public static readonly string FAILURE_IMAGE = IMAGE_PREFIX + "FailureFunction.png";
         //<a target="_blank" href="https://icons8.com/icon/PE5vY419cmPT/caution">Caution</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
         public static readonly string GREEN_CHECKMARK_IMAGE = IMAGE_PREFIX + "greenCheckmark.png";
-        public static readonly string ERROR_IMAGE = IMAGE_PREFIX + "errorMark.png"; 
-        public static readonly string CAUTION_IMAGE = IMAGE_PREFIX + "cautionMark.png"; 
+        public static readonly string ERROR_IMAGE = IMAGE_PREFIX + "errorMark.png";
+        public static readonly string CAUTION_IMAGE = IMAGE_PREFIX + "cautionMark.png";
 
         public static string GetImage(Type childElementType)
         {
@@ -58,6 +59,6 @@ namespace HEC.FDA.ViewModel.Utilities
             return image;
         }
 
-  
+
     }
 }

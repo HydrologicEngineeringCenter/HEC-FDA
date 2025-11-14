@@ -1,30 +1,31 @@
-﻿using HEC.FDA.ViewModel.AlternativeComparisonReport;
+﻿using HEC.FDA.ViewModel.AggregatedStageDamage;
+using HEC.FDA.ViewModel.AlternativeComparisonReport;
+using HEC.FDA.ViewModel.Alternatives;
 using HEC.FDA.ViewModel.FlowTransforms;
+using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.GeoTech;
+using HEC.FDA.ViewModel.Hydraulics;
+using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
+using HEC.FDA.ViewModel.IndexPoints;
+using HEC.FDA.ViewModel.Inventory;
+using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+using HEC.FDA.ViewModel.LifeLoss;
 using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Tabs;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.FDA.ViewModel.Watershed;
-using HEC.FDA.ViewModel.Hydraulics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using System.Windows.Controls;
 using System.Windows;
-using HEC.FDA.ViewModel.StageTransforms;
-using HEC.FDA.ViewModel.IndexPoints;
-using HEC.FDA.ViewModel.Hydraulics.GriddedData;
-using HEC.FDA.ViewModel.FrequencyRelationships;
-using HEC.FDA.ViewModel.Inventory;
-using HEC.FDA.ViewModel.Alternatives;
-using HEC.FDA.ViewModel.AggregatedStageDamage;
-using HEC.FDA.ViewModel.Inventory.OccupancyTypes;
+using System.Windows.Controls;
 
 namespace HEC.FDA.ViewModel.Study
 {
@@ -147,8 +148,8 @@ namespace HEC.FDA.ViewModel.Study
             while (idx < registrykey.ValueCount && registrystudies.Count < 5)
             {
                 object regKey = registrykey.GetValue(idx.ToString());
-                if(regKey != null) { registrynextline = regKey.ToString(); }
-                 
+                if (regKey != null) { registrynextline = regKey.ToString(); }
+
                 if (File.Exists(registrynextline))
                 {
                     registrystudies.Add(registrynextline);
@@ -186,9 +187,9 @@ namespace HEC.FDA.ViewModel.Study
             NewStudyVM vm = new NewStudyVM(this);
             string header = "Create New Study";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "StudyElement");
-            Navigate( tab, false,false);
+            Navigate(tab, false, false);
         }
-      
+
         public void CreateNewStudy(string studyName, string folderPathForNewStudy, string description)
         {
             TabController.Instance.CloseTabsAndWindowsOpeningNewStudy();
@@ -220,13 +221,13 @@ namespace HEC.FDA.ViewModel.Study
         public void StudyProperties()
         {
             List<StudyPropertiesElement> studyProps = StudyCache.GetChildElementsOfType<StudyPropertiesElement>();
-            if(studyProps.Count>0)
+            if (studyProps.Count > 0)
             {
-                PropertiesVM prop =  new PropertiesVM(studyProps[0]);
+                PropertiesVM prop = new PropertiesVM(studyProps[0]);
                 string header = "Study Properties";
                 DynamicTabVM tab = new DynamicTabVM(header, prop, "Properties");
-                Navigate(tab,false,false);
-            } 
+                Navigate(tab, false, false);
+            }
         }
 
         public void OpenStudyFromFilePath(string name, string path)
@@ -250,7 +251,7 @@ namespace HEC.FDA.ViewModel.Study
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show( ex.Message + "\n" + ex.StackTrace + "\n" + ex.InnerException?.Message + "\n" + ex.InnerException?.StackTrace, "Failed to Open Study", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(ex.Message + "\n" + ex.StackTrace + "\n" + ex.InnerException?.Message + "\n" + ex.InnerException?.StackTrace, "Failed to Open Study", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             else
@@ -273,7 +274,7 @@ namespace HEC.FDA.ViewModel.Study
             ExistingStudyVM ESVM = new ExistingStudyVM(this);
             string header = "Open Study";
             DynamicTabVM tab = new DynamicTabVM(header, ESVM, "OpenStudy");
-            Navigate( tab, false, false);
+            Navigate(tab, false, false);
         }
 
         private void CreateLogFile()
@@ -346,20 +347,21 @@ namespace HEC.FDA.ViewModel.Study
 
         private void LoadElementsFromDB()
         {
-            PersistenceFactory.GetElementManager<StageDischargeElement>().Load(); 
-            PersistenceFactory.GetElementManager<TerrainElement>().Load(); 
-            PersistenceFactory.GetElementManager<ImpactAreaElement>().Load(); 
-            PersistenceFactory.GetElementManager<IndexPointsElement>().Load(); 
-            PersistenceFactory.GetElementManager<HydraulicElement>().Load(); 
-            PersistenceFactory.GetElementManager<FrequencyElement>().Load(); 
-            PersistenceFactory.GetElementManager<InflowOutflowElement>().Load(); 
-            PersistenceFactory.GetElementManager<ExteriorInteriorElement>().Load(); 
-            PersistenceFactory.GetElementManager<LateralStructureElement>().Load(); 
-            PersistenceFactory.GetElementManager<AggregatedStageDamageElement>().Load(); 
-            PersistenceFactory.GetElementManager<InventoryElement>().Load(); 
-            PersistenceFactory.GetElementManager<IASElement>().Load(); 
-            PersistenceFactory.GetElementManager<AlternativeElement>().Load(); 
-            PersistenceFactory.GetElementManager<AlternativeComparisonReportElement>().Load(); 
+            PersistenceFactory.GetElementManager<StageDischargeElement>().Load();
+            PersistenceFactory.GetElementManager<TerrainElement>().Load();
+            PersistenceFactory.GetElementManager<ImpactAreaElement>().Load();
+            PersistenceFactory.GetElementManager<IndexPointsElement>().Load();
+            PersistenceFactory.GetElementManager<HydraulicElement>().Load();
+            PersistenceFactory.GetElementManager<FrequencyElement>().Load();
+            PersistenceFactory.GetElementManager<InflowOutflowElement>().Load();
+            PersistenceFactory.GetElementManager<ExteriorInteriorElement>().Load();
+            PersistenceFactory.GetElementManager<LateralStructureElement>().Load();
+            PersistenceFactory.GetElementManager<AggregatedStageDamageElement>().Load();
+            PersistenceFactory.GetElementManager<StageLifeLossElement>().Load();
+            PersistenceFactory.GetElementManager<InventoryElement>().Load();
+            PersistenceFactory.GetElementManager<IASElement>().Load();
+            PersistenceFactory.GetElementManager<AlternativeElement>().Load();
+            PersistenceFactory.GetElementManager<AlternativeComparisonReportElement>().Load();
             PersistenceFactory.GetElementManager<OccupancyTypesElement>().Load();
             PersistenceFactory.GetElementManager<StudyPropertiesElement>().Load();
         }

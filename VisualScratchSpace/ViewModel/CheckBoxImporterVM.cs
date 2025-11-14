@@ -6,7 +6,6 @@ using OxyPlot.Series;
 using SciChart.Core.Extensions;
 using System.Collections.ObjectModel;
 using VisualScratchSpace.Model;
-using VisualScratchSpace.Model.Saving;
 
 namespace VisualScratchSpace.ViewModel;
 public partial class CheckBoxImporterVM : ObservableObject
@@ -75,7 +74,7 @@ public partial class CheckBoxImporterVM : ObservableObject
         if (_lifeLossFunctions.IsEmpty()) return;
         _plotIndex = (_plotIndex + 1) % _lifeLossFunctions.Count;
         ChangePlot(_plotIndex);
-    } 
+    }
 
     /// <summary>
     /// Update the combobox of simulations available to the user when a new .fia database is imported
