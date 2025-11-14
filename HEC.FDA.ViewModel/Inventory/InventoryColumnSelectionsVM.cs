@@ -211,9 +211,15 @@ namespace HEC.FDA.ViewModel.Inventory
 
         private string[] GetColumnNamesWithClearOption()
         {
-            var columnNames = GetColumnNames().ToList();
-            columnNames.Insert(0, ""); // Add empty string as first option for clearing
-            return columnNames.ToArray();
+            var columnNames = GetColumnNames();
+            string[] columnNamesWithClear = new string[columnNames.Length + 1]; //note length + 1
+            columnNamesWithClear[0] = ""; //first option is blank
+            for (int i = 0; i < columnNames.Length; i++) 
+            {
+                //starts at 1, because 0 is clear. no index OOR because of length + 1
+                columnNamesWithClear[i + 1] = columnNames[i]; 
+            }
+            return columnNamesWithClear;
         }
 
         private string[] GetColumnNames()
