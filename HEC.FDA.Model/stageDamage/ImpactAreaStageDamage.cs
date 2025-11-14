@@ -370,7 +370,7 @@ namespace HEC.FDA.Model.stageDamage
             int sampleSize = 0;
             bool stageDamageFunctionsAreNotConverged = true;
 
-            reporter.ReportMessage($"{sw.Elapsed:hh\\:mm\\:ss\\.fff}                Converging...");
+            reporter.ReportMessage($"{sw?.Elapsed:hh\\:mm\\:ss\\.fff}                Converging...");
             while (stageDamageFunctionsAreNotConverged)
             {
                 /// Begins the fourth loop of the Scenario Stage Damage Compute. 
@@ -425,7 +425,7 @@ namespace HEC.FDA.Model.stageDamage
                     computeChunkQuantity = 100;
                 }
             }
-            reporter.ReportMessage($"{sw.Elapsed:hh\\:mm\\:ss\\.fff}                Converged");
+            reporter.ReportMessage($"{sw?.Elapsed:hh\\:mm\\:ss\\.fff}                Converged");
             return consequenceDistributionResults;
         }
 
