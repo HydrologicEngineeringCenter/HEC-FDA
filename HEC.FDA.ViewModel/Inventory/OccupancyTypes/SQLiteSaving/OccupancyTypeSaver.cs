@@ -54,6 +54,23 @@ public class OccupancyTypeSaver : SQLiteSaverBase<OccupancyType>
                 {OccupancyTypesSQLiteConstants.METADATA_LASTEDIT_PARAMETER}            
             );";
 
+    private static readonly string _insertOcctypeCommandText =
+       $@"
+            INSERT OR IGNORE INTO {OccupancyTypesSQLiteConstants.OCCTYPES_TABLE_NAME} (
+                {OccupancyTypesSQLiteConstants.OCCTYPES_ID_HEADER},            
+                {OccupancyTypesSQLiteConstants.OCCTYPES_NAME_HEADER},            
+                {OccupancyTypesSQLiteConstants.OCCTYPES_DESCRIPTION_HEADER},            
+                {OccupancyTypesSQLiteConstants.OCCTYPES_DAMCAT_HEADER},            
+                {OccupancyTypesSQLiteConstants.OCCTYPES_FOUND_UNCERTAINTY_HEADER}            
+            )
+            VALUES (
+                {OccupancyTypesSQLiteConstants.OCCTYPES_ID_PARAMETER},            
+                {OccupancyTypesSQLiteConstants.OCCTYPES_NAME_PARAMETER},            
+                {OccupancyTypesSQLiteConstants.OCCTYPES_DESCRIPTION_PARAMETER},            
+                {OccupancyTypesSQLiteConstants.OCCTYPES_DAMCAT_PARAMETER},            
+                {OccupancyTypesSQLiteConstants.OCCTYPES_FOUND_UNCERTAINTY_PARAMETER}            
+            );";
+
     public OccupancyTypeSaver(string dbPath) : base(dbPath)
     {
         CreateTables(_connection);
