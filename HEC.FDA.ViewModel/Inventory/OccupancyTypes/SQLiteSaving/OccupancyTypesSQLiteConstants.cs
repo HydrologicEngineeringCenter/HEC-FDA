@@ -11,7 +11,6 @@ public static class OccupancyTypesSQLiteConstants
     public const string METADATA_NAME_HEADER = "Name";
     public const string METADATA_DESCRIPTION_HEADER = "Description";
     public const string METADATA_LASTEDIT_HEADER = "LastEditDate";
-    public const string XML_HEADER = "XML";
 
     // Occtypes headers
     public const string OCCTYPES_ID_HEADER = "ID";
@@ -29,15 +28,14 @@ public static class OccupancyTypesSQLiteConstants
     public const string ASSETS_SELECTEDCURVENAME_HEADER = "SelectedCurveName";
     public const string ASSETS_DISTOPTIONS_HEADER = "DistributionOptions";
     public const string ASSETS_DESCRIPTION_HEADER = "Description";
+    public const string ASSETS_CURVEDATA_HEADER = "CurveData";
     public const string ASSETS_UNCERTAINTY_HEADER = "Uncertainty";
     public const string ASSETS_RATIOUNCERTAINTY_HEADER = "RatioUncertainty";
 
     // Metadata parameters
-    public const string METADATA_ID_PARAMETER = "@m_id";
     public const string METADATA_NAME_PARAMETER = "@m_name";
     public const string METADATA_DESCRIPTION_PARAMETER = "@m_desc";
     public const string METADATA_LASTEDIT_PARAMETER = "@m_date";
-    public const string XML_PARAMETER = "@m_xml";
 
     // Occtypes parameters
     public const string OCCTYPES_ID_PARAMETER = "@o_id";
@@ -55,6 +53,7 @@ public static class OccupancyTypesSQLiteConstants
     public const string ASSETS_SELECTEDCURVENAME_PARAMETER = "@a_curvename";
     public const string ASSETS_DISTOPTIONS_PARAMETER = "@a_distoptions";
     public const string ASSETS_DESCRIPTION_PARAMETER = "@a_desc";
+    public const string ASSETS_CURVEDATA_Parameter = "@a_curvedata";
     public const string ASSETS_UNCERTAINTY_PARAMETER = "@a_uncertainty";
     public const string ASSETS_RATIOUNCERTAINTY_PARAMETER = "@a_ratiouncertainty";
 }

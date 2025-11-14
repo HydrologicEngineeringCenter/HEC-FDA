@@ -143,6 +143,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             {
                 string dbPath = sfd.FileName;
                 using OccupancyTypeSaver saver = new(dbPath);
+                saver.SaveMetadata(this);
                 foreach (var occtype in ListOfOccupancyTypes)
                     saver.SaveToSQLite(occtype);
                 System.Windows.MessageBox.Show("Saved.", "SQLite", MessageBoxButton.OK, MessageBoxImage.Information);
