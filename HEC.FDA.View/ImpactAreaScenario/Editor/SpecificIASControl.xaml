@@ -15,7 +15,7 @@
   <UserControl.Resources>
     <Utilities:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     <Utilities:BoolToInverseVisibilityConverter x:Key="BoolToInverseVisibilityConverter" />
-
+    <Utilities:SafeDoubleConverter x:Key="SafeDoubleConverter" />
   </UserControl.Resources>
   <Grid>
     <Grid.RowDefinitions>
@@ -148,8 +148,8 @@
         </StackPanel>
 
         <TextBox Grid.Column="3"
-                 Text="{Binding DefaultStage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                 IsEnabled="{Binding DefaultStageRequired}" />
+                  Text="{Binding DefaultStage,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource SafeDoubleConverter}}"
+                  IsEnabled="{Binding DefaultStageRequired}" />
 
 
         <Label Grid.Column="4"
