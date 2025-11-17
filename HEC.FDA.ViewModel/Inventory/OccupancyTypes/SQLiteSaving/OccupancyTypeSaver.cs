@@ -30,9 +30,9 @@ public class OccupancyTypeSaver : SQLiteSaverBase<OccupancyType>
             CREATE TABLE IF NOT EXISTS {OccupancyTypesSQLiteConstants.ASSETS_TABLE_NAME} (
                 {OccupancyTypesSQLiteConstants.ASSETS_OCCTYPE_HEADER} TEXT NOT NULL,           
                 {OccupancyTypesSQLiteConstants.ASSETS_ASSETCATEGORY_HEADER} TEXT NOT NULL,           
-                {OccupancyTypesSQLiteConstants.ASSETS_ISSELECTED_HEADER} INTEGER,
+                {OccupancyTypesSQLiteConstants.ASSETS_ISSELECTED_HEADER} INTEGER NOT NULL,
                 {OccupancyTypesSQLiteConstants.ASSETS_TYPE_HEADER} TEXT NOT NULL,
-                {OccupancyTypesSQLiteConstants.ASSETS_BYVALUE_HEADER} INTEGER NOT NULL,
+                {OccupancyTypesSQLiteConstants.ASSETS_BYVALUE_HEADER} INTEGER,
                 {OccupancyTypesSQLiteConstants.ASSETS_SELECTEDCURVE_HEADER} TEXT NOT NULL,
                 {OccupancyTypesSQLiteConstants.ASSETS_SELECTEDCURVENAME_HEADER} TEXT NOT NULL,
                 {OccupancyTypesSQLiteConstants.ASSETS_DISTOPTIONS_HEADER} TEXT NOT NULL,
