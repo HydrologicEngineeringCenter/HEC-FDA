@@ -21,6 +21,7 @@ public static class OccupancyTypesSQLiteConstants
 
     // Asset headers
     public const string ASSETS_OCCTYPE_HEADER = "OccType"; // foreign key references occtypes name
+    public const string ASSETS_ASSETCATEGORY_HEADER = "AssetCategory";
     public const string ASSETS_ISSELECTED_HEADER = "IsSelected";
     public const string ASSETS_TYPE_HEADER = "Type";
     public const string ASSETS_BYVALUE_HEADER = "ByValue";
@@ -46,6 +47,7 @@ public static class OccupancyTypesSQLiteConstants
 
     // Asset parameters
     public const string ASSETS_OCCTYPE_PARAMETER = "@a_occtype";
+    public const string ASSETS_ASSETCATEGORY_PARAMETER = "@a_category";
     public const string ASSETS_ISSELECTED_PARAMETER = "@a_selected";
     public const string ASSETS_TYPE_PARAMETER = "@a_type";
     public const string ASSETS_BYVALUE_PARAMETER = "@a_byval";

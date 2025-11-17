@@ -29,7 +29,8 @@ public class OccupancyTypeSaver : SQLiteSaverBase<OccupancyType>
         $@"
             CREATE TABLE IF NOT EXISTS {OccupancyTypesSQLiteConstants.ASSETS_TABLE_NAME} (
                 {OccupancyTypesSQLiteConstants.ASSETS_OCCTYPE_HEADER} TEXT NOT NULL,           
-                {OccupancyTypesSQLiteConstants.ASSETS_ISSELECTED_HEADER} INTEGER NOT NULL,
+                {OccupancyTypesSQLiteConstants.ASSETS_ASSETCATEGORY_HEADER} TEXT NOT NULL,           
+                {OccupancyTypesSQLiteConstants.ASSETS_ISSELECTED_HEADER} INTEGER,
                 {OccupancyTypesSQLiteConstants.ASSETS_TYPE_HEADER} TEXT NOT NULL,
                 {OccupancyTypesSQLiteConstants.ASSETS_BYVALUE_HEADER} INTEGER NOT NULL,
                 {OccupancyTypesSQLiteConstants.ASSETS_SELECTEDCURVE_HEADER} TEXT NOT NULL,
@@ -37,7 +38,7 @@ public class OccupancyTypeSaver : SQLiteSaverBase<OccupancyType>
                 {OccupancyTypesSQLiteConstants.ASSETS_DISTOPTIONS_HEADER} TEXT NOT NULL,
                 {OccupancyTypesSQLiteConstants.ASSETS_CURVEDATA_HEADER} TEXT NOT NULL,
                 {OccupancyTypesSQLiteConstants.ASSETS_DESCRIPTION_HEADER} TEXT NOT NULL,
-                {OccupancyTypesSQLiteConstants.ASSETS_UNCERTAINTY_HEADER} TEXT,
+                {OccupancyTypesSQLiteConstants.ASSETS_UNCERTAINTY_HEADER} TEXT NOT NULL,
                 {OccupancyTypesSQLiteConstants.ASSETS_RATIOUNCERTAINTY_HEADER} TEXT
             )";
 
@@ -71,6 +72,37 @@ public class OccupancyTypeSaver : SQLiteSaverBase<OccupancyType>
                 {OccupancyTypesSQLiteConstants.OCCTYPES_FOUND_UNCERTAINTY_PARAMETER}            
             );";
 
+    private static readonly string _insertAssetsCommandText =
+       $@"
+            INSERT OR IGNORE INTO {OccupancyTypesSQLiteConstants.ASSETS_TABLE_NAME} (
+                {OccupancyTypesSQLiteConstants.ASSETS_OCCTYPE_HEADER},                
+                {OccupancyTypesSQLiteConstants.ASSETS_ASSETCATEGORY_HEADER},
+                {OccupancyTypesSQLiteConstants.ASSETS_ISSELECTED_HEADER},
+                {OccupancyTypesSQLiteConstants.ASSETS_TYPE_HEADER},
+                {OccupancyTypesSQLiteConstants.ASSETS_BYVALUE_HEADER},
+                {OccupancyTypesSQLiteConstants.ASSETS_SELECTEDCURVE_HEADER},
+                {OccupancyTypesSQLiteConstants.ASSETS_SELECTEDCURVENAME_HEADER},
+                {OccupancyTypesSQLiteConstants.ASSETS_DISTOPTIONS_HEADER},
+                {OccupancyTypesSQLiteConstants.ASSETS_DESCRIPTION_HEADER},
+                {OccupancyTypesSQLiteConstants.ASSETS_CURVEDATA_HEADER},
+                {OccupancyTypesSQLiteConstants.ASSETS_UNCERTAINTY_HEADER},
+                {OccupancyTypesSQLiteConstants.ASSETS_RATIOUNCERTAINTY_HEADER}
+            )
+            VALUES (
+                {OccupancyTypesSQLiteConstants.ASSETS_OCCTYPE_PARAMETER},                
+                {OccupancyTypesSQLiteConstants.ASSETS_ASSETCATEGORY_PARAMETER},
+                {OccupancyTypesSQLiteConstants.ASSETS_ISSELECTED_PARAMETER},
+                {OccupancyTypesSQLiteConstants.ASSETS_TYPE_PARAMETER},
+                {OccupancyTypesSQLiteConstants.ASSETS_BYVALUE_PARAMETER},
+                {OccupancyTypesSQLiteConstants.ASSETS_SELECTEDCURVE_PARAMETER},
+                {OccupancyTypesSQLiteConstants.ASSETS_SELECTEDCURVENAME_PARAMETER},
+                {OccupancyTypesSQLiteConstants.ASSETS_DISTOPTIONS_PARAMETER},
+                {OccupancyTypesSQLiteConstants.ASSETS_DESCRIPTION_PARAMETER},
+                {OccupancyTypesSQLiteConstants.ASSETS_CURVEDATA_Parameter},
+                {OccupancyTypesSQLiteConstants.ASSETS_UNCERTAINTY_PARAMETER},
+                {OccupancyTypesSQLiteConstants.ASSETS_RATIOUNCERTAINTY_PARAMETER}
+            );";
+
     public OccupancyTypeSaver(string dbPath) : base(dbPath)
     {
         CreateTables(_connection);
@@ -90,13 +122,39 @@ public class OccupancyTypeSaver : SQLiteSaverBase<OccupancyType>
         if (occtype == null)
             return;
 
-        //using var insertCommand = new SQLiteCommand(_connection);
-        //BuildInsertCommand(insertCommand);
-        //InsertIntoTable(insertCommand, occtype);
+        using var cmd = new SQLiteCommand(_connection);
+        cmd.CommandText = _insertOcctypeCommandText;
+        cmd.Parameters.AddWithValue(OccupancyTypesSQLiteConstants.OCCTYPES_ID_PARAMETER, occtype.ID);
+        cmd.Parameters.AddWithValue(OccupancyTypesSQLiteConstants.OCCTYPES_NAME_PARAMETER, occtype.Name);
+        cmd.Parameters.AddWithValue(OccupancyTypesSQLiteConstants.OCCTYPES_DESCRIPTION_PARAMETER, occtype.Description);
+        cmd.Parameters.AddWithValue(OccupancyTypesSQLiteConstants.OCCTYPES_DAMCAT_PARAMETER, occtype.DamageCategory);
+        cmd.Parameters.AddWithValue(OccupancyTypesSQLiteConstants.OCCTYPES_FOUND_UNCERTAINTY_PARAMETER, occtype.FoundationHeightUncertainty.ToXML());
+        cmd.ExecuteNonQuery();
+
+        cmd.CommandText = _insertAssetsCommandText;
+        cmd.Parameters.AddWithValue(OccupancyTypesSQLiteConstants.ASSETS_OCCTYPE_PARAMETER, occtype.Name);
+        var structAsset = occtype.StructureItem;
+        cmd.Parameters.AddWithValue(OccupancyTypesSQLiteConstants.ASSETS_ASSETCATEGORY_PARAMETER, "StructureAsset");
+        cmd.Parameters.AddWithValue(OccupancyTypesSQLiteConstants.ASSETS_ISSELECTED_PARAMETER, structAsset.IsChecked ? 1 : 0);
+        cmd.Parameters.AddWithValue(OccupancyTypesSQLiteConstants.ASSETS_TYPE_PARAMETER, structAsset.ItemType);
+        cmd.Parameters.AddWithValue(OccupancyTypesSQLiteConstants.ASSETS_BYVALUE_PARAMETER, null);
+        var curveVM = structAsset.Curve;
+        cmd.Parameters.AddWithValue(OccupancyTypesSQLiteConstants.ASSETS_SELECTEDCURVE_PARAMETER, curveVM.SelectedItem);
+        cmd.Parameters.AddWithValue(OccupancyTypesSQLiteConstants.ASSETS_SELECTEDCURVENAME_PARAMETER, curveVM.SelectedItem.Name);
+        cmd.Parameters.AddWithValue(OccupancyTypesSQLiteConstants.ASSETS_DISTOPTIONS_PARAMETER, "DistOptionsPlaceHolder");
+        cmd.Parameters.AddWithValue(OccupancyTypesSQLiteConstants.ASSETS_DESCRIPTION_PARAMETER, curveVM.Description);
+        cmd.Parameters.AddWithValue(OccupancyTypesSQLiteConstants.ASSETS_CURVEDATA_Parameter, "CurveDataPlaceHolder");
+        cmd.Parameters.AddWithValue(OccupancyTypesSQLiteConstants.ASSETS_UNCERTAINTY_PARAMETER, structAsset.ValueUncertainty.CreateOrdinate().ToXML());
+        cmd.Parameters.AddWithValue(OccupancyTypesSQLiteConstants.ASSETS_RATIOUNCERTAINTY_PARAMETER, null);
+        cmd.ExecuteNonQuery();
+
     }
 
     public void SaveMetadata(OccupancyTypesElement occtypeElem)
     {
+        if (occtypeElem == null)
+            return;
+
         using var cmd = new SQLiteCommand(_connection);
         cmd.CommandText = _insertMetadataCommandText;
         cmd.Parameters.AddWithValue(OccupancyTypesSQLiteConstants.METADATA_NAME_PARAMETER, occtypeElem.Name);
@@ -115,18 +173,4 @@ public class OccupancyTypeSaver : SQLiteSaverBase<OccupancyType>
         cmd.CommandText = _createAssetsTableCommandText;
         cmd.ExecuteNonQuery();
     }
-
-
-    //private static void BuildInsertCommand(SQLiteCommand cmd)
-    //{
-    //    cmd.CommandText = _insertMetadataCommandText;
-    //    cmd.Parameters.Add(OccupancyTypesSQLiteConstants.XML_PARAMETER, System.Data.DbType.String);
-    //}
-
-    //private static void InsertIntoTable(SQLiteCommand cmd, OccupancyType occtype)
-    //{
-    //    var xml = occtype.ToXML();
-    //    cmd.Parameters[OccupancyTypesSQLiteConstants.XML_PARAMETER].Value = xml;
-    //    cmd.ExecuteNonQuery();
-    //}
 }
