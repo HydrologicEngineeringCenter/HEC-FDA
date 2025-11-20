@@ -29,9 +29,6 @@
       <Setter
         Property="Background"
         Value="Transparent" />
-      <Setter
-        Property="CornerRadius"
-        Value="4" />
       <Style.Triggers>
         <Trigger
           Property="IsMouseOver"
@@ -58,10 +55,13 @@
       Width="25"
       Visibility="{Binding Path=ImageSource, Converter={StaticResource NullToVisible}}" />
 
-    <Border
+    <Border x:Name="ClickableArea"
       Grid.Column="1"
-      Style="{StaticResource HoverableBorder}"
-      Padding="2,0,2,0">
+      Padding="2,0,2,0"
+      Background="Transparent"
+      MouseLeftButtonDown="ClickableArea_MouseLeftButtonDown"
+      MouseEnter="ClickableArea_MouseEnter"
+      MouseLeave="ClickableArea_MouseLeave">
       <Grid>
         <StackPanel
           Orientation="Horizontal">

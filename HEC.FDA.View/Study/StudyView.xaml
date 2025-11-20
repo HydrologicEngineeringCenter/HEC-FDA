@@ -83,7 +83,10 @@
                                 <Setter Property="FontWeight" Value="{Binding IsBold,Converter={StaticResource BoolToBoldConverter}}" />
                                 <Setter Property="ContextMenu" Value="{Binding Actions, Converter={StaticResource converter }}"/>
                                 <Setter Property="ToolTip" Value="{Binding ToolTip}"/>
-                            </Style>
+          <Setter
+            Property="Focusable"
+            Value="False" />
+        </Style>
                         </TreeView.ItemContainerStyle>
         </TreeView>
 
