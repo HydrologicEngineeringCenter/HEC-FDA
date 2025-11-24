@@ -1,9 +1,9 @@
-﻿using System;
-using Statistics.Histograms;
-using Statistics;
-using System.Xml.Linq;
-using System.Linq;
+﻿using Statistics;
 using Statistics.Distributions;
+using Statistics.Histograms;
+using System;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace HEC.FDA.Model.metrics;
 
@@ -30,11 +30,11 @@ public class AggregatedConsequencesBinned
     /// <summary>
     /// This constructor is only used for handling errors. 
     /// </summary>
-    public AggregatedConsequencesBinned()
+    public AggregatedConsequencesBinned(int impactAreaID)
     {
         DamageCategory = "UNASSIGNED";
         AssetCategory = "UNASSIGNED";
-        RegionID = 0;
+        RegionID = impactAreaID;
         ConvergenceCriteria = new ConvergenceCriteria();
         ConsequenceHistogram = new DynamicHistogram();
         DamagedElementQuantityHistogram = new DynamicHistogram();
@@ -66,6 +66,19 @@ public class AggregatedConsequencesBinned
         _TempResults = new double[ConvergenceCriteria.IterationCount];
         _TempCounts = new double[ConvergenceCriteria.IterationCount];
 
+    }
+
+    public AggregatedConsequencesBinned(string damageCategory, string assetCategory, int impactAreaID)
+    {
+        DamageCategory = damageCategory;
+        AssetCategory = assetCategory;
+        RegionID = impactAreaID;
+        ConvergenceCriteria = new ConvergenceCriteria();
+        ConsequenceHistogram = new DynamicHistogram();
+        DamagedElementQuantityHistogram = new DynamicHistogram();
+        IsNull = true;
+        _TempResults = new double[ConvergenceCriteria.IterationCount];
+        _TempCounts = new double[ConvergenceCriteria.IterationCount];
     }
     #endregion
 
