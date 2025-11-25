@@ -25,7 +25,6 @@
     <Style
       x:Key="HoverableBorder"
       TargetType="Border">
-      <!-- default background so we get hit‐testing -->
       <Setter
         Property="Background"
         Value="Transparent" />
@@ -37,6 +36,32 @@
             Property="Background"
             Value="#FFE0F0FF" />
         </Trigger>
+        <DataTrigger
+          Binding="{Binding RelativeSource={RelativeSource AncestorType=TreeViewItem}, Path=IsSelected}"
+          Value="True">
+          <Setter
+            Property="Background"
+            Value="#FF90C8F5" />
+          <Setter
+            Property="BorderBrush"
+            Value="DodgerBlue" />
+        </DataTrigger>
+        <MultiDataTrigger>
+          <MultiDataTrigger.Conditions>
+            <Condition
+              Binding="{Binding RelativeSource={RelativeSource AncestorType=TreeViewItem}, Path=IsSelected}"
+              Value="True" />
+            <Condition
+              Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsMouseOver}"
+              Value="True" />
+          </MultiDataTrigger.Conditions>
+          <Setter
+            Property="Background"
+            Value="#FF5EAFF0" />
+          <Setter
+            Property="BorderBrush"
+            Value="DodgerBlue" />
+        </MultiDataTrigger>
       </Style.Triggers>
     </Style>
   </UserControl.Resources>
@@ -55,13 +80,11 @@
       Width="25"
       Visibility="{Binding Path=ImageSource, Converter={StaticResource NullToVisible}}" />
 
-    <Border x:Name="ClickableArea"
+    <Border
       Grid.Column="1"
       Padding="2,0,2,0"
-      Background="Transparent"
-      MouseLeftButtonDown="ClickableArea_MouseLeftButtonDown"
-      MouseEnter="ClickableArea_MouseEnter"
-      MouseLeave="ClickableArea_MouseLeave">
+      CornerRadius="2"
+      Style="{StaticResource HoverableBorder}">
       <Grid>
         <StackPanel
           Orientation="Horizontal">
@@ -81,12 +104,12 @@
               Source="{Binding Path=ImageSource, Converter= {StaticResource NullImageConverter}}"
               Visibility="{Binding Path=ImageSource, Converter={StaticResource NullToCollapsed}}"
               Width="20"
-              Margin="0,0,5,0"/>
+              Margin="0,0,5,0" />
             <TextBlock
               Grid.Column="1"
               Name="txt_Name"
               Text="{Binding Path=Name}"
-              ToolTip="{Binding Tooltip}"/>
+              ToolTip="{Binding Tooltip}" />
             <Image
               Grid.Column="2"
               Name="txt_Decoration"
@@ -98,5 +121,5 @@
       </Grid>
     </Border>
   </Grid>
-  
+
 </UserControl>
