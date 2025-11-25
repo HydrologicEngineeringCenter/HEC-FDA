@@ -117,6 +117,11 @@ namespace HEC.FDA.View.Study
                 return;
             }
 
+            if (e.ChangedButton != MouseButton.Left)
+            {
+                return;
+            }
+
             var treeView = sender as TreeView;
             var item = GetTreeViewItemFromPoint(treeView, e.GetPosition(treeView));
 
