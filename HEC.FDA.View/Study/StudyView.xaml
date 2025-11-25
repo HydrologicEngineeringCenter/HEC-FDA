@@ -145,6 +145,7 @@
       Name="StudyTreeView"
       HorizontalAlignment="Stretch"
       VerticalAlignment="Stretch"
+      PreviewMouseDown="StudyTreeView_PreviewMouseDown"
       ItemsSource="{Binding CurrentStudyElement.Elements, Mode=TwoWay}">
       <TreeView.Resources>
         <!-- Override the system colors used for selection -->
