@@ -63,7 +63,6 @@ namespace HEC.FDA.Model.stageDamage
         public Inventory Inventory { get; }
         public int ImpactAreaID { get; }
 
-        public event MVVMFramework.Base.Events.ProgressReportedEventHandler ProgressReport;
         public event MVVMFramework.Base.Events.MessageReportedEventHandler MessageReport;
         #endregion
 
@@ -290,7 +289,7 @@ namespace HEC.FDA.Model.stageDamage
                     {
                         var subPr = reporter.SubTask($"Damage Category {damageCategory} Compute", (float)damcatIdx / damcatCount, 1f / damcatCount);
                         (Inventory, List<float[]>) inventoryAndWaterTupled = Inventory.GetInventoryAndWaterTrimmedToDamageCategory(damageCategory, wsesAtEachStructureByProfile.Item2);
-                        subPr.ReportMessage($"{sw?.Elapsed:hh\\:mm\\:ss\\.fff}         Starting compute for {damageCategory}...");
+                        subPr.ReportTimestampedMessage(sw?.Elapsed, 2, $"Starting compute for {damageCategory}...");
 
                         //There will be one ConsequenceDistributionResults object for each stage in the stage-damage function
                         //Each ConsequenceDistributionResults object holds a ConsequenceDistributionResult for each asset cat
@@ -364,13 +363,11 @@ namespace HEC.FDA.Model.stageDamage
 
             //damage for each stage
             List<StudyAreaConsequencesBinned> consequenceDistributionResults = CreateConsequenceDistributionResults(damageCategory);
-            //Debug.WriteLine("Results Count = " + consequenceDistributionResults.Count);
             int iterationsPerComputeChunk = _ConvergenceCriteria.IterationCount;
             int computeChunkQuantity = Convert.ToInt32(_ConvergenceCriteria.MinIterations / iterationsPerComputeChunk);
             int sampleSize = 0;
             bool stageDamageFunctionsAreNotConverged = true;
 
-            reporter.ReportMessage($"{sw?.Elapsed:hh\\:mm\\:ss\\.fff}                Converging...");
             while (stageDamageFunctionsAreNotConverged)
             {
                 /// Begins the fourth loop of the Scenario Stage Damage Compute. 
@@ -380,16 +377,11 @@ namespace HEC.FDA.Model.stageDamage
                 /// Compute Chunk <--
                 /// Iteration
                 /// Structure
-                /// W.S.Profile
-                //Debug.WriteLine(ImpactAreaID);
-                //Debug.WriteLine(damageCategory);
-                //Debug.WriteLine("iterations per chunk = " + iterationsPerComputeChunk.ToString());
-                //Debug.WriteLine("compute chunks = " + computeChunkQuantity.ToString());
+                /// W.S.Profile;
                 for (int computeChunk = 0; computeChunk < computeChunkQuantity; computeChunk++)
                 {
                     var computeChunkPr = reporter.SubTask($"Compute Chunk {computeChunk}", (float)computeChunk / computeChunkQuantity, 1f / computeChunkQuantity);
 
-                    //Debug.WriteLine($"ChunksIdx =" + computeChunk);
                     /// Begins the fifth loop of the Scenario Stage Damage Compute. 
                     /// Scenario SD 
                     /// Impact Area SD 
@@ -425,7 +417,7 @@ namespace HEC.FDA.Model.stageDamage
                     computeChunkQuantity = 100;
                 }
             }
-            reporter.ReportMessage($"{sw?.Elapsed:hh\\:mm\\:ss\\.fff}                Converged");
+            reporter.ReportTimestampedMessage(sw?.Elapsed, 3, "Converged");
             return consequenceDistributionResults;
         }
 
@@ -655,12 +647,7 @@ namespace HEC.FDA.Model.stageDamage
             }
             return extrapolatedStages;
         }
-        public void ReportProgress(object sender, ProgressReportEventArgs e)
-        {
-            MessageHub.Register(this);
-            ProgressReport?.Invoke(sender, e);
-            MessageHub.Unregister(this);
-        }
+
         internal List<string> ProduceImpactAreaStructureDetails(Dictionary<int, string> impactAreaNames)
         {
             //this list will be the size of the number of structures + 1 where the first string is the header

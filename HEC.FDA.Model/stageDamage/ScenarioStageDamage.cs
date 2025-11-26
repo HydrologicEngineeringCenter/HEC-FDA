@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -48,7 +49,7 @@ namespace HEC.FDA.Model.stageDamage
             {
                 ImpactAreaStageDamage impactAreaStageDamage = _ImpactAreaStageDamage[i];
                 var subPr = computeTask.SubTask($"Impact Area {impactAreaStageDamage.ImpactAreaID} Compute", (float)i / countImpactAreas, 1f / countImpactAreas);
-                subPr.ReportMessage($"{sw?.Elapsed:hh\\:mm\\:ss\\.fff}      Starting Impact Area ID: {impactAreaStageDamage.ImpactAreaID}, Structure Count: {impactAreaStageDamage.Inventory.Structures.Count}");
+                subPr.ReportTimestampedMessage(sw?.Elapsed, 1, $"Starting Impact Area ID: {impactAreaStageDamage.ImpactAreaID}, Structure Count: {impactAreaStageDamage.Inventory.Structures.Count}");
                 (List<UncertainPairedData>, List<UncertainPairedData>) impactAreaStageDamageResults = impactAreaStageDamage.Compute(computeIsDeterministic, subPr, sw);
                 scenarioStageDamageResults.Item1.AddRange(impactAreaStageDamageResults.Item1);
                 scenarioStageDamageResults.Item2.AddRange(impactAreaStageDamageResults.Item2);
