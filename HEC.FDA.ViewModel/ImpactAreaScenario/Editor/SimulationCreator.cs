@@ -104,9 +104,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private void LoadSimulationBuilder()
         {
-            var x = GetStageDamagesAsPairedData(_StageDamageElem);
+            var stageDamagePairedData = GetStageDamagesAsPairedData(_StageDamageElem);
             _SimulationBuilder = ImpactAreaScenarioSimulation.Builder(_ImpactAreaID)
-            .WithStageDamages(x);
+            .WithStageDamages(stageDamagePairedData);
 
             if (_HasNonFailureStageDamage)
             {

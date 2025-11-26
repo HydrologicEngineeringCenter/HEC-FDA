@@ -25,7 +25,7 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
         ConsequenceResultList = [];
         AggregatedConsequencesBinned dummyConsequenceDistributionResult = new(impactAreaID);
         ConsequenceResultList.Add(dummyConsequenceDistributionResult);
-        IsNull = true;
+        IsNull = isEmpty;
 
         //create an array to collect data the side of the convergence criteria iteration count 
     }
@@ -51,7 +51,7 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
     #region Methods 
     //This constructor is used in the simulation parallel compute and creates a threadsafe inline histogram inside consequence distribution result 
     internal void AddNewConsequenceResultObject(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID)
-    { //Why are we trying to get a consequence result already???
+    {
         AggregatedConsequencesBinned existingDamageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
         if (existingDamageResult == null)
         {
@@ -325,7 +325,7 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
         AggregatedConsequencesBinned result = ConsequenceResultList
             .FilterByCategories(damageCategory, assetCategory, impactAreaID)
             .FirstOrDefault();
-        return result; ////TODO CHECK REFERENCES TO THIS METHOD AND MAKE THEM ADHERE TO THE NEW WORLD ORDER. ///////////9*******************************************************
+        return result;
     }
 
     /// <summary>
