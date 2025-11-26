@@ -325,12 +325,10 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
     [RelayCommand]
     public async Task ComputeCurves()
     {
-        if (LifeSimAlternatives.IsEmpty() || HazardTimes.IsEmpty()) return;
+        if (LifeSimAlternatives.IsEmpty() || HazardTimes.IsEmpty())
+            return;
 
-        // CURRENTLY USING THIS FOLDER, WILL CHANGE TO ACTUAL PROJECT FOLDER ONCE I REFACTOR
-        // HOW THE GENERATOR READS IN HYDRAULICS
-        string hydraulicsFolder = @"C:\FDA_Test_Data\WKS20230525\WKS20230525\Hydraulic_Data";
-        //string hydraulicsFolder = Connection.Instance.HydraulicsDirectory;
+        string hydraulicsFolder = Path.Combine(Connection.Instance.HydraulicsDirectory, SelectedHydraulics.Name);
 
         LifeSimSimulation currentSimulation = new(SelectedSimulation.Name, hydraulicsFolder);
         foreach (CheckableItem a in LifeSimAlternatives)

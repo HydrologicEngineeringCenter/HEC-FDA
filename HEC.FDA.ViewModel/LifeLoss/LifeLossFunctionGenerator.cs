@@ -4,6 +4,7 @@ using RasMapperLib;
 using Statistics.Histograms;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace HEC.FDA.ViewModel.LifeLoss;
@@ -82,6 +83,7 @@ public class LifeLossFunctionGenerator
     {
         Dictionary<string, double> stageByAlternative = [];
         List<LifeLossFunction> functions = [];
+
         foreach (string hazardTime in _hazardTimes)
         {
             List<double> stages = [];
@@ -91,9 +93,11 @@ public class LifeLossFunctionGenerator
             {
                 if (!stageByAlternative.TryGetValue(alternative, out double stage))
                 {
-                    string associatedHydraulicsFolder = _hydraulicsFolderByAlternative[alternative];
-                    string hdf = Path.Combine(_topLevelHydraulicsFolder, associatedHydraulicsFolder, $"{associatedHydraulicsFolder}.hdf");
-                    float[] computedStage = GeospatialHelpers.GetStageFromHDF(indexPoint, hdf); // costly compute
+                    string associatedHydraulics = _hydraulicsFolderByAlternative[alternative];
+                    // looking for a file matching the hydraulicsname.p??.hdf
+                    string filePath = Directory.EnumerateFiles(_topLevelHydraulicsFolder, $"{associatedHydraulics}.p??.hdf").FirstOrDefault()
+                        ?? throw new System.Exception($"'{associatedHydraulics}' hydraulics file not found in {_topLevelHydraulicsFolder}.");
+                    float[] computedStage = GeospatialHelpers.GetStageFromHDF(indexPoint, filePath); // costly compute
                     stage = computedStage[0];
                     stageByAlternative[alternative] = stage; // cache the stages. same for any time of day (only associated with alternative, not time)
                 }
