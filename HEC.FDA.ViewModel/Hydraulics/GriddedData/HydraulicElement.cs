@@ -20,7 +20,7 @@ public class HydraulicElement : ChildElement, IHaveStudyFiles
         : base(name, "", description, id)
     {
         DataSet = new HydraulicDataset([.. relativePathAndProbabilities], hydroType);
-        AddDefaultActions(EditElement, StringConstants.EDIT_HYDRAULICS_MENU);
+        AddDefaultActions(EditElement, StringConstants.EDIT_HYDRAULICS_MENU, false);
     }
 
     public HydraulicElement(XElement childElement, int id) : base(childElement, id)
@@ -33,7 +33,7 @@ public class HydraulicElement : ChildElement, IHaveStudyFiles
             DataSet.DataSource = HydraulicDataSource.SteadyHDF;
             MessageBox.Show("Error loading hydraulic element from database.");
         }
-        AddDefaultActions(EditElement, StringConstants.EDIT_HYDRAULICS_MENU);
+        AddDefaultActions(EditElement, StringConstants.EDIT_HYDRAULICS_MENU, false);
     }
     public void EditElement(object sender, EventArgs e)
     {

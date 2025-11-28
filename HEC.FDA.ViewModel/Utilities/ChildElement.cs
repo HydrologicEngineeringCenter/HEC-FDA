@@ -23,10 +23,10 @@ namespace HEC.FDA.ViewModel.Utilities
 
         #endregion
         #region Properties
-        public string LastEditDate 
-        { 
-            get; 
-            set; 
+        public string LastEditDate
+        {
+            get;
+            set;
         } = "";
         public int ID { get; set; }
         public bool IsOpenInTabOrWindow { get; set; }
@@ -69,7 +69,7 @@ namespace HEC.FDA.ViewModel.Utilities
         }
         #endregion
 
-        public void AddDefaultActions(Action<object, EventArgs> editAction = null, string actionHeader = "")
+        public void AddDefaultActions(Action<object, EventArgs> editAction = null, string actionHeader = "", bool canDuplicate = true)
         {
             List<NamedAction> localActions = new();
 
@@ -98,6 +98,16 @@ namespace HEC.FDA.ViewModel.Utilities
             localActions.Add(removeElement);
             localActions.Add(renameElement);
 
+            if (canDuplicate)
+            {
+                NamedAction duplicateElement = new(this)
+                {
+                    Header = "Duplicate...",
+                    Action = DuplicateElement
+                };
+                localActions.Add(duplicateElement);
+            }
+
             Actions = localActions;
         }
 
@@ -107,19 +117,19 @@ namespace HEC.FDA.ViewModel.Utilities
         {
             RenameVM renameViewModel = new(this, CloneElement);
             string header = "Rename";
-            DynamicTabVM tab = new(header, renameViewModel, "Rename",false,false);
+            DynamicTabVM tab = new(header, renameViewModel, "Rename", false, false);
             Navigate(tab);
         }
 
         public virtual void RemoveElement(object sender, EventArgs e)
         {
             MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure you want to delete '" + Name + "'?", "Delete " + Name + "?", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if(messageBoxResult == MessageBoxResult.Yes)
+            if (messageBoxResult == MessageBoxResult.Yes)
             {
-                if(this is IHaveStudyFiles)
+                if (this is IHaveStudyFiles)
                 {
                     bool success = StudyFilesManager.DeleteDirectory(Name, GetType());
-                    if(success)
+                    if (success)
                     {
                         PersistenceFactory.GetElementManager(this).Remove(this);
                     }
@@ -130,6 +140,14 @@ namespace HEC.FDA.ViewModel.Utilities
                 }
             }
         }
+
+        public virtual void DuplicateElement(object sender, EventArgs e)
+        {
+            DuplicateVM dupVM = DuplicateVM.FromOriginal(this);
+            DynamicTabVM tab = new("Duplicate", dupVM, "Duplicate", false, false);
+            Navigate(tab);
+        }
+
 
         /// <summary>
         /// I think this is only being used for renaming elements.
@@ -162,15 +180,15 @@ namespace HEC.FDA.ViewModel.Utilities
         public bool AreHeaderDataEqual(ChildElement elem)
         {
             bool isEqual = true;
-            if(!Name.Equals(elem.Name))
+            if (!Name.Equals(elem.Name))
             {
                 isEqual = false;
             }
-            if(!Description.Equals(elem.Description))
+            if (!Description.Equals(elem.Description))
             {
                 isEqual = false;
             }
-            if(!LastEditDate.Equals(elem.LastEditDate))
+            if (!LastEditDate.Equals(elem.LastEditDate))
             {
                 isEqual = false;
             }

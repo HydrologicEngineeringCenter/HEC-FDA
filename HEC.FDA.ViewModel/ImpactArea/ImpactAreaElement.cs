@@ -8,7 +8,6 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Xml.Linq;
-using Utility.Extensions.Attributes;
 
 namespace HEC.FDA.ViewModel.ImpactArea
 {
@@ -27,12 +26,12 @@ namespace HEC.FDA.ViewModel.ImpactArea
 
         #endregion
         #region Constructors
-        public ImpactAreaElement(string name, string description, List<ImpactAreaRowItem> collectionOfRows, int id, string uniqueNameColumnHeader) 
+        public ImpactAreaElement(string name, string description, List<ImpactAreaRowItem> collectionOfRows, int id, string uniqueNameColumnHeader)
             : base(name, "", description, id)
-        {      
+        {
             UniqueNameColumnHeader = uniqueNameColumnHeader;
             ImpactAreaRows = collectionOfRows;
-            AddDefaultActions(Edit, StringConstants.EDIT_IMPACT_AREA_SET_MENU);
+            AddDefaultActions(Edit, StringConstants.EDIT_IMPACT_AREA_SET_MENU, false);
         }
 
         public ImpactAreaElement(XElement impactAreaElement, int id) : base(impactAreaElement, id)
@@ -45,7 +44,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
                 ImpactAreaRows.Add(new ImpactAreaRowItem(nameElem));
             }
 
-            AddDefaultActions(Edit, StringConstants.EDIT_IMPACT_AREA_SET_MENU);
+            AddDefaultActions(Edit, StringConstants.EDIT_IMPACT_AREA_SET_MENU, false);
         }
 
         public override XElement ToXML()
@@ -63,7 +62,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
             impactAreaElem.Add(impactAreaRows);
 
             return impactAreaElem;
-        }    
+        }
 
         private string GetScenariosToDeleteMessage()
         {
@@ -79,7 +78,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
 
                 string scenarioCSV = string.Join(", ", scenarios);
 
-                scenarioMessage = "Deleting the impact area will also delete all existing scenarios: " + scenarioCSV;            
+                scenarioMessage = "Deleting the impact area will also delete all existing scenarios: " + scenarioCSV;
             }
             return scenarioMessage;
         }
@@ -110,29 +109,29 @@ namespace HEC.FDA.ViewModel.ImpactArea
 
             StringBuilder sb = new StringBuilder();
 
-            if(scenariosToDeleteMessage != null)
+            if (scenariosToDeleteMessage != null)
             {
                 sb.AppendLine(scenariosToDeleteMessage);
             }
 
-            if(stageDamagesToDeleteMessage != null)
+            if (stageDamagesToDeleteMessage != null)
             {
                 sb.AppendLine(stageDamagesToDeleteMessage);
             }
 
-            if(scenariosToDeleteMessage == null && stageDamagesToDeleteMessage == null)
+            if (scenariosToDeleteMessage == null && stageDamagesToDeleteMessage == null)
             {
                 ShowDefaultDeleteMessage();
             }
             else
             {
-                var result = MessageBox.Show(sb.ToString() 
+                var result = MessageBox.Show(sb.ToString()
                      + Environment.NewLine + "Do you want to continue with the delete?", "Do You Want to Continue", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
                     Saving.PersistenceFactory.GetElementManager<ImpactAreaElement>().Remove(this);
                     //remove the directory
-                    if(Directory.Exists(Connection.Instance.ImpactAreaDirectory + "\\" + Name))
+                    if (Directory.Exists(Connection.Instance.ImpactAreaDirectory + "\\" + Name))
                     {
                         Directory.Delete(Connection.Instance.ImpactAreaDirectory + "\\" + Name, true);
                     }
@@ -183,7 +182,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
             ImpactAreaImporterVM vm = new ImpactAreaImporterVM(this, ImpactAreaRows, actionManager);
             string header = StringConstants.EDIT_IMPACT_AREA_SET_HEADER;
             DynamicTabVM tab = new DynamicTabVM(header, vm, header + Name);
-            Navigate(tab, false,false);
+            Navigate(tab, false, false);
         }
 
         #endregion
@@ -193,16 +192,16 @@ namespace HEC.FDA.ViewModel.ImpactArea
             ImpactAreaRowItem returnRow = null;
             foreach (ImpactAreaRowItem row in ImpactAreaRows)
             {
-                if(row.ID == impactAreaID)
+                if (row.ID == impactAreaID)
                 {
                     returnRow = row;
                 }
             }
             return returnRow;
         }
-        public Dictionary<string,int> GetNameToIDPairs()
+        public Dictionary<string, int> GetNameToIDPairs()
         {
-            Dictionary<string,int> nameToIDPairs = new Dictionary<string,int>();
+            Dictionary<string, int> nameToIDPairs = new Dictionary<string, int>();
             foreach (ImpactAreaRowItem row in ImpactAreaRows)
             {
                 nameToIDPairs.Add(row.Name, row.ID);
@@ -225,9 +224,9 @@ namespace HEC.FDA.ViewModel.ImpactArea
             }
             else
             {
-                for(int i = 0;i<ImpactAreaRows.Count;i++)
+                for (int i = 0; i < ImpactAreaRows.Count; i++)
                 {
-                    if(!ImpactAreaRows[i].Equals( elem.ImpactAreaRows[i]))
+                    if (!ImpactAreaRows[i].Equals(elem.ImpactAreaRows[i]))
                     {
                         isEqual = false;
                         break;

@@ -1,40 +1,37 @@
-﻿using HEC.FDA.ViewModel.Saving;
-using HEC.FDA.ViewModel.Saving.PersistenceManagers;
-using HEC.FDA.ViewModel.Utilities;
+﻿using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Windows;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.IndexPoints
 {
-    public class IndexPointsElement:ChildElement, IHaveStudyFiles
+    public class IndexPointsElement : ChildElement, IHaveStudyFiles
     {
         public const String INDEX_POINTS_TAG = "IndexPoints";
         private const String NAME_TAG = "Name";
         private const String INDEX_POINT_NAMES_TAG = "IndexPointNames";
 
         #region Properties
-        public List<string> IndexPoints { get; } = new List<string>();      
+        public List<string> IndexPoints { get; } = new List<string>();
         #endregion
 
         #region Constructors
         public IndexPointsElement(string name, string description, List<string> indexPoints, int id) : base(name, "", description, id)
         {
             IndexPoints = indexPoints;
-            AddDefaultActions(Edit, StringConstants.EDIT_INDEX_POINTS_MENU);
+            AddDefaultActions(Edit, StringConstants.EDIT_INDEX_POINTS_MENU, false);
         }
 
-        public IndexPointsElement(XElement childElem, int id):base(childElem, id)
+        public IndexPointsElement(XElement childElem, int id) : base(childElem, id)
         {
             XElement indexPointsElem = childElem.Element(INDEX_POINT_NAMES_TAG);
             IEnumerable<XElement> nameElems = indexPointsElem.Elements(NAME_TAG);
-            foreach(XElement nameElem in nameElems)
+            foreach (XElement nameElem in nameElems)
             {
                 IndexPoints.Add(nameElem.Value);
             }
 
-            AddDefaultActions(Edit, StringConstants.EDIT_INDEX_POINTS_MENU);
+            AddDefaultActions(Edit, StringConstants.EDIT_INDEX_POINTS_MENU, false);
         }
 
         #endregion
@@ -61,7 +58,7 @@ namespace HEC.FDA.ViewModel.IndexPoints
             indexPointsElem.Add(CreateHeaderElement());
 
             XElement indexPointNames = new XElement(INDEX_POINT_NAMES_TAG);
-            foreach(string name in IndexPoints)
+            foreach (string name in IndexPoints)
             {
                 indexPointNames.Add(new XElement(NAME_TAG, name));
             }
