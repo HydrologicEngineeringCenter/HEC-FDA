@@ -1,12 +1,12 @@
-﻿using Xunit;
-using System.Collections.Generic;
+﻿using HEC.FDA.Model.metrics;
+using HEC.FDA.Model.paireddata;
 using Statistics;
-using System;
 using Statistics.Distributions;
 using Statistics.Histograms;
-using HEC.FDA.Model.paireddata;
-using HEC.FDA.Model.metrics;
+using System;
+using System.Collections.Generic;
 using System.Xml.Linq;
+using Xunit;
 
 namespace HEC.FDA.ModelTest.unittests
 {
@@ -22,7 +22,7 @@ namespace HEC.FDA.ModelTest.unittests
             string structureAssetCategory = "Structure";
             string contentAssetCategory = "Content";
             double mean = 2;
-            int impactAreaID_1 = 1;           
+            int impactAreaID_1 = 1;
             StudyAreaConsequencesBinned consequenceDistributionResults = new(false);
             DynamicHistogram histogram = FillHistogram(mean);
 
@@ -88,7 +88,7 @@ namespace HEC.FDA.ModelTest.unittests
         [InlineData(1111, 100)]
         public void SerializationShouldReadTheSameObjectItWrites(int seed, int iterations)
         {
-            StudyAreaConsequencesBinned expected = new StudyAreaConsequencesBinned();
+            StudyAreaConsequencesBinned expected = new StudyAreaConsequencesBinned(0);
             List<AggregatedConsequencesBinned> resultList = new();
             List<double> data = new() { 0, 1, 2, 3, 4 };
             expected.AddExistingConsequenceResultObject(new AggregatedConsequencesBinned("DamCat", "AssetCat", new DynamicHistogram(data, new ConvergenceCriteria(69, 8008)), 0));

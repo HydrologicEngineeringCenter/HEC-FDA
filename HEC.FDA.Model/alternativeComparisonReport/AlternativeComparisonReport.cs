@@ -191,6 +191,14 @@ public static class AlternativeComparisonReport
                     // Remove the matched result from the list to track unmatched results
                     withoutProjectDamageResultsList.Remove(withoutProjectDamageResult);
 
+                    if (withoutProjectDamageResult == null)
+                    {
+                        withoutProjectDamageResult = new(
+                            withProjectDamageResult.DamageCategory,
+                            withProjectDamageResult.AssetCategory,
+                            withProjectDamageResult.RegionID);
+                    }
+
                     // Compute the reduced damage result by subtracting with- and without-project distributions
                     AggregatedConsequencesByQuantile damageReducedResult = IterateOnConsequenceDistributionResult(
                         AggregatedConsequencesBinned.ConvertToSingleEmpiricalDistributionOfConsequences(withProjectDamageResult),
@@ -208,6 +216,15 @@ public static class AlternativeComparisonReport
                         // Try to find a matching with-project result (may be null)
                         AggregatedConsequencesBinned withProjectDamageResult = withprojectDamageResults.GetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID);
                         // Compute the reduced damage result (with-project may be null)
+
+                        if (withProjectDamageResult == null)
+                        {
+                            withProjectDamageResult = new(
+                                withoutProjectDamageResult.DamageCategory,
+                                withoutProjectDamageResult.AssetCategory,
+                                withoutProjectDamageResult.RegionID);
+                        }
+
                         AggregatedConsequencesByQuantile damageReducedResult = IterateOnConsequenceDistributionResult(
                             AggregatedConsequencesBinned.ConvertToSingleEmpiricalDistributionOfConsequences(withProjectDamageResult),
                             AggregatedConsequencesBinned.ConvertToSingleEmpiricalDistributionOfConsequences(withoutProjectDamageResult),

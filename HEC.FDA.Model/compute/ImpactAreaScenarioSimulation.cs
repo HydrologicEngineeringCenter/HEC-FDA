@@ -7,13 +7,13 @@ using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Model.Messaging;
+using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Statistics;
 
 namespace HEC.FDA.Model.compute
 {
@@ -108,29 +108,19 @@ namespace HEC.FDA.Model.compute
 
             if (_StageDamageFunctions.Count == 0)
             {
+                _ImpactAreaScenarioResults.AddZeroConsequencesResult(_ImpactAreaID);
                 computeWithDamage = false;
-
-                //need to at least specify a levee to evaluate performance 
-                //TODO, we could lessen this restriction to at least need a user entered threshold
-                if (_SystemResponseFunction.IsNull)
+                ThresholdEnum thresholdEnum;
+                if (_SystemResponseFunction.Xvals.Length <= 2)
                 {
-                    _ImpactAreaScenarioResults = new ImpactAreaScenarioResults(_ImpactAreaID, true); //I would like to just return regular Null here but I'm unsure who is relying on this behavior. BBB
-                    return _ImpactAreaScenarioResults;
+                    thresholdEnum = ThresholdEnum.TopOfLevee;
                 }
                 else
                 {
-                    ThresholdEnum thresholdEnum;
-                    if (_SystemResponseFunction.Xvals.Length <= 2)
-                    {
-                        thresholdEnum = ThresholdEnum.TopOfLevee;
-                    }
-                    else
-                    {
-                        thresholdEnum = ThresholdEnum.LeveeSystemResponse;
-                    }
-                    Threshold systemResponseThreshold = new(thresholdID: 0, _SystemResponseFunction, convergenceCriteria, thresholdEnum, _TopOfLeveeElevation);
-                    _ImpactAreaScenarioResults.PerformanceByThresholds.AddThreshold(systemResponseThreshold);
+                    thresholdEnum = ThresholdEnum.LeveeSystemResponse;
                 }
+                Threshold systemResponseThreshold = new(thresholdID: 0, _SystemResponseFunction, convergenceCriteria, thresholdEnum, _TopOfLeveeElevation);
+                _ImpactAreaScenarioResults.PerformanceByThresholds.AddThreshold(systemResponseThreshold);
             }
             else
             {
