@@ -16,6 +16,7 @@ public partial class DuplicateVM : BaseEditorVM
         set { _selectedNumDuplicates = value; NotifyPropertyChanged(); }
     }
 
+    // source to display the selectable numbers in the UI
     public int[] NumberOfDuplicateOptions
     {
         get
@@ -27,9 +28,18 @@ public partial class DuplicateVM : BaseEditorVM
         }
     }
 
-    public DuplicateVM(ChildElement clonedElement) : base(clonedElement, null)
+    private DuplicateVM(ChildElement clonedElement) : base(clonedElement, null)
     {
         _clonedElement = clonedElement;
+    }
+
+    // this static method is effectively the constructor
+    // needed to do this to allow for calling the base constructor with the cloned element and avoiding constructor ambiguity
+    // cannot have a public constructor which accepts just a child element call a private constructor with the same signature
+    public static DuplicateVM FromOriginal(ChildElement originalElement)
+    {
+        ChildElement clone = originalElement.CloneElement();
+        return new DuplicateVM(clone);
     }
 
     public override void Save()
@@ -48,6 +58,7 @@ public partial class DuplicateVM : BaseEditorVM
         _clonedElement.ID = savingManager.GetNextAvailableId();
         savingManager.SaveNew(_clonedElement);
 
+        // this loop only executes if the user chose to duplicate multiple objects at once
         for (int i = lastIndex; i < lastIndex + SelectedNumDuplicates - 1; i++)
         {
             // create a NEW clone of the original element for each duplicate so that it has its own associated ChildElement instance

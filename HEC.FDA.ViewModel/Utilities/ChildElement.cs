@@ -143,8 +143,7 @@ namespace HEC.FDA.ViewModel.Utilities
 
         public virtual void DuplicateElement(object sender, EventArgs e)
         {
-            var clonedElement = CloneElement();
-            DuplicateVM dupVM = new(clonedElement);
+            DuplicateVM dupVM = DuplicateVM.FromOriginal(this);
             DynamicTabVM tab = new("Duplicate", dupVM, "Duplicate", false, false);
             Navigate(tab);
         }
