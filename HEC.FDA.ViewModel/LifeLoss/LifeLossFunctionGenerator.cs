@@ -1,5 +1,6 @@
 ﻿using HEC.FDA.Model.LifeLoss;
 using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.Spatial;
 using RasMapperLib;
 using Statistics.Histograms;
 using System.Collections.Generic;
@@ -46,7 +47,7 @@ public class LifeLossFunctionGenerator
         List<LifeLossFunction> lifeLossFunctions = new();
 
         // create the map of summary zone names to their corresponding index points
-        _indexPointBySummaryZone = GeospatialHelpers.QueryPolygons(summarySetPath, indexPointsPath, summarySetUniqueName);
+        _indexPointBySummaryZone = RASHelper.QueryPolygons(summarySetPath, indexPointsPath, summarySetUniqueName);
 
         lifeLossFunctions = await Task.Run(CreateLifeLossFunctions);
 
@@ -97,7 +98,7 @@ public class LifeLossFunctionGenerator
                     // looking for a file matching the hydraulicsname.p??.hdf
                     string filePath = Directory.EnumerateFiles(_topLevelHydraulicsFolder, $"{associatedHydraulics}.p??.hdf").FirstOrDefault()
                         ?? throw new System.Exception($"'{associatedHydraulics}' hydraulics file not found in {_topLevelHydraulicsFolder}.");
-                    float[] computedStage = GeospatialHelpers.GetStageFromHDF(indexPoint, filePath); // costly compute
+                    float[] computedStage = RASHelper.GetStageFromHDF(indexPoint, filePath); // costly compute
                     stage = computedStage[0];
                     stageByAlternative[alternative] = stage; // cache the stages. same for any time of day (only associated with alternative, not time)
                 }
