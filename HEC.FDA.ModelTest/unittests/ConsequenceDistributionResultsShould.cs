@@ -88,7 +88,7 @@ namespace HEC.FDA.ModelTest.unittests
         [InlineData(1111, 100)]
         public void SerializationShouldReadTheSameObjectItWrites(int seed, int iterations)
         {
-            StudyAreaConsequencesBinned expected = new StudyAreaConsequencesBinned(0, true);
+            StudyAreaConsequencesBinned expected = new StudyAreaConsequencesBinned(0);
             List<AggregatedConsequencesBinned> resultList = new();
             List<double> data = new() { 0, 1, 2, 3, 4 };
             expected.AddExistingConsequenceResultObject(new AggregatedConsequencesBinned("DamCat", "AssetCat", new DynamicHistogram(data, new ConvergenceCriteria(69, 8008)), 0));

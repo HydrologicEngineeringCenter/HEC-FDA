@@ -21,7 +21,7 @@ namespace HEC.FDA.Model.metrics
         public ImpactAreaScenarioResults(int impactAreaID, bool isNull)
         {
             PerformanceByThresholds = new PerformanceByThresholds(true);
-            ConsequenceResults = new StudyAreaConsequencesBinned(impactAreaID, true);
+            ConsequenceResults = new StudyAreaConsequencesBinned(impactAreaID);
             ImpactAreaID = impactAreaID;
             IsNull = isNull;
         }

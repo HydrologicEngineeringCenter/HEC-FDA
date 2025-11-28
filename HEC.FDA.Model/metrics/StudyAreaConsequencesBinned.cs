@@ -20,12 +20,12 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
     internal int AlternativeID { get; }
 
     #region Constructors
-    public StudyAreaConsequencesBinned(int impactAreaID, bool isEmpty)
+    public StudyAreaConsequencesBinned(int impactAreaID)
     {
         ConsequenceResultList = [];
         AggregatedConsequencesBinned dummyConsequenceDistributionResult = new(impactAreaID);
         ConsequenceResultList.Add(dummyConsequenceDistributionResult);
-        IsNull = isEmpty;
+        IsNull = true;
 
         //create an array to collect data the side of the convergence criteria iteration count 
     }
@@ -34,12 +34,7 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
         ConsequenceResultList = [];
         IsNull = isNull;
     }
-    internal StudyAreaConsequencesBinned(int alternativeID)
-    {
-        ConsequenceResultList = [];
-        AlternativeID = alternativeID;
-        IsNull = false;
-    }
+
     //public for testing
     public StudyAreaConsequencesBinned(List<AggregatedConsequencesBinned> damageResults)
     {
