@@ -6,7 +6,6 @@ using HEC.MVVMFramework.Base.Implementations;
 using RasMapperLib;
 using Statistics;
 using Statistics.Distributions;
-//using Geospatial.Vectors.Clipper.Internals;
 using System;
 using System.Collections.Generic;
 using Xunit;

@@ -1,10 +1,10 @@
 ﻿using Statistics;
 using Statistics.Histograms;
-using System.Data.SQLite;
-using System.Text;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Linq;
+using System.Text;
 
 namespace HEC.FDA.Model.LifeLoss
 {
@@ -66,7 +66,7 @@ namespace HEC.FDA.Model.LifeLoss
             }
             catch (Exception ex)
             {
-                // debugging
+                throw new Exception($"Error trying to open LifeSim database: {ex}");
             }
             return simulations;
         }
