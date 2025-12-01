@@ -34,32 +34,32 @@ namespace HEC.FDA.ViewModel.Inventory
         #endregion
         #region Properties
         public bool IsImportedFromOldFDA { get; set; }
-        public StructureSelectionMapping SelectionMappings {get;}
+        public StructureSelectionMapping SelectionMappings { get; }
         public Dictionary<String, OccupancyTypes.OcctypeReference> OcctypeMapping
         {
             get { return _OcctypeMapping; }
         }
         #endregion
         #region Constructors
-        public InventoryElement(string name, string description, StructureSelectionMapping selections, 
-            Dictionary<String, OccupancyTypes.OcctypeReference> occtypeMapping,  bool isImportedFromOldFDA, int id) 
-            : base(name,"", description, id)
+        public InventoryElement(string name, string description, StructureSelectionMapping selections,
+            Dictionary<String, OccupancyTypes.OcctypeReference> occtypeMapping, bool isImportedFromOldFDA, int id)
+            : base(name, "", description, id)
         {
             _OcctypeMapping = occtypeMapping;
             SelectionMappings = selections;
             IsImportedFromOldFDA = isImportedFromOldFDA;
-            AddDefaultActions(EditElement, StringConstants.EDIT_STRUCTURES_MENU);
+            AddDefaultActions(EditElement, StringConstants.EDIT_STRUCTURES_MENU, false);
         }
 
         public InventoryElement(XElement inventoryElem, int id)
            : base(inventoryElem, id)
         {
-            IsImportedFromOldFDA = Convert.ToBoolean( inventoryElem.Attribute(IMPORTED_FROM_OLD_FDA).Value);
+            IsImportedFromOldFDA = Convert.ToBoolean(inventoryElem.Attribute(IMPORTED_FROM_OLD_FDA).Value);
 
             XElement mappingsElem = inventoryElem.Element(INVENTORY_MAPPINGS);
             SelectionMappings = new StructureSelectionMapping(mappingsElem);
             ReadDictionaryFromXML(mappingsElem);
-            AddDefaultActions(EditElement,StringConstants.EDIT_STRUCTURES_MENU);
+            AddDefaultActions(EditElement, StringConstants.EDIT_STRUCTURES_MENU, false);
         }
 
         #endregion
@@ -126,7 +126,7 @@ namespace HEC.FDA.ViewModel.Inventory
             string[] files = Directory.GetFiles(Connection.Instance.InventoryDirectory + "\\" + Name);
             foreach (string file in files)
             {
-                if(Path.GetExtension(file).Equals(extension))
+                if (Path.GetExtension(file).Equals(extension))
                 {
                     path = file;
                     break;
@@ -135,7 +135,7 @@ namespace HEC.FDA.ViewModel.Inventory
             return path;
         }
 
-        
+
 
         private static string GetImpactAreaDirectory(string impactAreaName)
         {
@@ -184,7 +184,7 @@ namespace HEC.FDA.ViewModel.Inventory
             FirstFloorElevationUncertainty elevationUncertainty = null;
             IDistributionEnum ordType = ordinate.Type;
 
-            switch(ordType)
+            switch (ordType)
             {
                 case IDistributionEnum.Deterministic:
                     elevationUncertainty = new FirstFloorElevationUncertainty();
@@ -291,14 +291,14 @@ namespace HEC.FDA.ViewModel.Inventory
             foreach (OccupancyTypes.OcctypeReference otRef in _OcctypeMapping.Values)
             {
                 OccupancyTypes.OccupancyType ot = otRef.GetOccupancyType();
-                if(ot == null)
+                if (ot == null)
                 {
                     //we didn't find the occtype. We could write out to the user the group id and the occtype id that we didn't find but i don't think
                     //that is useful since that occtype doesn't exist in the db anymore. It would just be meaningless numbers for the user.
                     numOcctypesNotFound++;
                 }
             }
-            if(numOcctypesNotFound > 0)
+            if (numOcctypesNotFound > 0)
             {
                 vr.AddErrorMessage("The structure inventory " + Name + " points at occupancy types that no longer exist. " + numOcctypesNotFound + " were not found. " +
                     "Edit the structure inventory and reassign the occupancy types.");
@@ -374,14 +374,14 @@ namespace HEC.FDA.ViewModel.Inventory
         {
 
             Dictionary<string, OccupancyType> occtypesMapping = new();
-            foreach(KeyValuePair< string, OccupancyTypes.OcctypeReference> entry in _OcctypeMapping)
+            foreach (KeyValuePair<string, OccupancyTypes.OcctypeReference> entry in _OcctypeMapping)
 
             {
-                OccupancyType ot = CreateModelOcctype(entry.Value);              
+                OccupancyType ot = CreateModelOcctype(entry.Value);
                 //todo: log ot error messages?
                 occtypesMapping.Add(entry.Key, ot);
             }
-      
+
             return occtypesMapping;
         }
 

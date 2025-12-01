@@ -398,7 +398,20 @@
       </DataTemplate.Resources>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type UtilitiesVM:MessageVM }">
+    <DataTemplate
+      DataType="{x:Type UtilitiesVM:DuplicateVM}">
+      <UtilitiesView:Duplicate />
+      <DataTemplate.Resources>
+        <UtilitiesView:Dimension
+          x:Key="{x:Static UtilitiesView:WindowDimensions.KEY}"
+          MinWidth="170"
+          Width="170"
+          MinHeight="120"
+          Height="120" />
+      </DataTemplate.Resources>
+    </DataTemplate>
+
+      <DataTemplate DataType="{x:Type UtilitiesVM:MessageVM }">
       <UtilitiesView:MessageWindow />
     </DataTemplate>
 

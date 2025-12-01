@@ -3,6 +3,7 @@ using HEC.FDA.ViewModel.Tabs;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Windows;
+using System.Windows.Media;
 
 namespace HEC.FDA.View
 {
@@ -39,7 +40,7 @@ namespace HEC.FDA.View
         {
             //If we are popping an existing editor out of the tab control,
             //we don't want to clear the HasChanges bool.
-            if(newvm.Tab.BaseVM is IDetectChanges && !newvm.Tab.IsPoppingOut)
+            if (newvm.Tab.BaseVM is IDetectChanges && !newvm.Tab.IsPoppingOut)
             {
                 newvm.Tab.BaseVM.HasChanges = false;
             }
@@ -55,8 +56,10 @@ namespace HEC.FDA.View
                 newwindow.MainGrid.RowDefinitions[0].Height = new GridLength(0);
             }
 
+            SetWindowStartPosition(newwindow);
+
             if (asDialogue)
-            {             
+            {
                 newwindow.ShowDialog();
             }
             else
@@ -64,10 +67,21 @@ namespace HEC.FDA.View
                 newwindow.Show();
             }
         }
-       
+
+        private static void SetWindowStartPosition(Window w)
+        {
+            w.WindowStartupLocation = WindowStartupLocation.Manual;
+
+            var p = System.Windows.Forms.Cursor.Position; // screen pixels
+            var dpi = VisualTreeHelper.GetDpi(w); // WPF DIPs conversion
+
+            w.Left = p.X / dpi.DpiScaleX;
+            w.Top = p.Y / dpi.DpiScaleY;
+        }
+
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            
+
             WindowVM vm = DataContext as WindowVM;
             if (vm.Tab != null)
             {
@@ -104,7 +118,7 @@ namespace HEC.FDA.View
         private void btn_PopOut_Click(object sender, RoutedEventArgs e)
         {
             WindowVM winVM = DataContext as WindowVM;
-            if(winVM.Tab != null)
+            if (winVM.Tab != null)
             {
                 winVM.Tab.PopWindowIntoTab();
                 Close();
@@ -119,36 +133,36 @@ namespace HEC.FDA.View
         /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            WindowVM winVM = DataContext as WindowVM;          
-            Type editorType = winVM.CurrentView.GetType();            
+            WindowVM winVM = DataContext as WindowVM;
+            Type editorType = winVM.CurrentView.GetType();
             Dimension dimensions = WindowDimensions.GetWindowDimensions(editorType);
-            if(dimensions != null)
+            if (dimensions != null)
             {
-                if(dimensions.MinWidth != 0)
+                if (dimensions.MinWidth != 0)
                 {
                     MinWidth = dimensions.MinWidth;
                 }
-                if(dimensions.MaxWidth != 0)
+                if (dimensions.MaxWidth != 0)
                 {
                     MaxWidth = dimensions.MaxWidth;
                 }
 
-                if(dimensions.MinHeight != 0)
+                if (dimensions.MinHeight != 0)
                 {
                     MinHeight = dimensions.MinHeight;
                 }
 
-                if(dimensions.Width != 0)
+                if (dimensions.Width != 0)
                 {
                     Width = dimensions.Width;
                 }
 
-                if(dimensions.Height != 0)
+                if (dimensions.Height != 0)
                 {
                     Height = dimensions.Height;
                 }
 
-                if(dimensions.MaxHeight != 0)
+                if (dimensions.MaxHeight != 0)
                 {
                     MaxHeight = dimensions.MaxHeight;
                 }
@@ -159,6 +173,6 @@ namespace HEC.FDA.View
                 winVM.StudyVM.LaunchSplashScreen();
             }
         }
-        
+
     }
 }
