@@ -45,7 +45,6 @@ namespace HEC.FDA.Model.LifeLoss
             {
                 using SQLiteConnection connection = new SQLiteConnection(_connectionString);
                 connection.Open();
-
                 using var command = new SQLiteCommand(query, connection);
                 using var reader = command.ExecuteReader();
                 while (reader.Read())
@@ -58,6 +57,7 @@ namespace HEC.FDA.Model.LifeLoss
                     // Hazard Times are in the 2nd through 12th selections                                                           
                     for (int i = 2; i <= 12; i++)
                     {
+
                         if (reader.GetBoolean(i))
                             simulation.HazardTimes.Add($"{(i - 1) * 2}"); // convert time to integer string, starting from 2 and incrementing by 2 until 22
                     }
@@ -66,7 +66,7 @@ namespace HEC.FDA.Model.LifeLoss
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error trying to open LifeSim database: {ex}");
+                throw new Exception($"Error trying to open LifeSim database", ex);
             }
             return simulations;
         }
