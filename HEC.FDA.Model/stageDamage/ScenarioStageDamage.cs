@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
-using HEC.FDA.Model.paireddata;
-using HEC.FDA.Model.interfaces;
+﻿using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.utilities;
 using System;
-using RasMapperLib;
+using System.Collections.Generic;
+using System.Diagnostics;
+using Utility.Progress;
 
 namespace HEC.FDA.Model.stageDamage
 {
@@ -35,21 +36,33 @@ namespace HEC.FDA.Model.stageDamage
         /// W.S.Profile
         /// </summary>
         /// <returns></returns>
-        public (List<UncertainPairedData>, List<UncertainPairedData>) Compute(bool computeIsDeterministic = false)
+        public (List<UncertainPairedData>, List<UncertainPairedData>) Compute(bool computeIsDeterministic = false, ProgressReporter reporter = null)
         {
-            (List<UncertainPairedData>, List<UncertainPairedData>) scenarioStageDamageResults = new(new List<UncertainPairedData>(), new List<UncertainPairedData>());
-
-            foreach (ImpactAreaStageDamage impactAreaStageDamage in _ImpactAreaStageDamage)
+            reporter ??= ProgressReporter.None();
+            Stopwatch sw = new();
+            sw.Start();
+            var computeTask = reporter.SubTask("Stage Damage Compute", 0, 1);
+            computeTask.ReportMessage("Beginning Scenario Stage Damage Compute");
+            (List<UncertainPairedData>, List<UncertainPairedData>) scenarioStageDamageResults = new([], []);
+            int countImpactAreas = _ImpactAreaStageDamage.Count;
+            for (int i = 0; i < countImpactAreas; i++)
             {
-                (List<UncertainPairedData>, List<UncertainPairedData>) impactAreaStageDamageResults = impactAreaStageDamage.Compute(computeIsDeterministic);
+                ImpactAreaStageDamage impactAreaStageDamage = _ImpactAreaStageDamage[i];
+                var subPr = computeTask.SubTask($"Impact Area {impactAreaStageDamage.ImpactAreaID} Compute", (float)i / countImpactAreas, 1f / countImpactAreas);
+                subPr.ReportTimestampedMessage(sw?.Elapsed, 1, $"Starting Impact Area ID: {impactAreaStageDamage.ImpactAreaID}, Structure Count: {impactAreaStageDamage.Inventory.Structures.Count}");
+                (List<UncertainPairedData>, List<UncertainPairedData>) impactAreaStageDamageResults = impactAreaStageDamage.Compute(computeIsDeterministic, subPr, sw);
                 scenarioStageDamageResults.Item1.AddRange(impactAreaStageDamageResults.Item1);
                 scenarioStageDamageResults.Item2.AddRange(impactAreaStageDamageResults.Item2);
+                subPr.ReportProgress(100);
             }
+            computeTask.ReportProgressFraction(1f);
+            computeTask.ReportTaskCompleted(sw.Elapsed);
+            sw.Stop();
             return scenarioStageDamageResults;
         }
 
 
-        public List<string> ProduceStructureDetails(Dictionary<int,string> impactAreaNames)
+        public List<string> ProduceStructureDetails(Dictionary<int, string> impactAreaNames)
         {
             List<string> structureDetails = new();
             string generalHeader = $"Structure Details for Stage Damage Compute at {DateTime.Now}";
@@ -73,7 +86,7 @@ namespace HEC.FDA.Model.stageDamage
                 if (impactAreaStageDamage.HasErrors)
                 {
                     errorMessages.Add(impactAreaStageDamage.GetErrorsFromProperties());
-                }            
+                }
             }
             return errorMessages;
         }

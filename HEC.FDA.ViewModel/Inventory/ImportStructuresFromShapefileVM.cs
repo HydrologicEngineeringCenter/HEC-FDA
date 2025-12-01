@@ -254,10 +254,10 @@ namespace HEC.FDA.ViewModel.Inventory
             Type expectedType = StructureFactory.ExpectedTypes[fieldName];
             Type actualType = siPointLayerTable.Columns[shapefileColumnName].DataType;
 
-            //this short circuits and lets FID be either int or string. it's handled in the importer. 
+            //this short circuits and lets FID be either int string or double. it's handled in the importer. 
             if (fieldName == StructureSelectionMapping.STRUCTURE_ID)
             {
-                if (actualType == typeof(int) || actualType == typeof(string))
+                if (actualType == typeof(int) || actualType == typeof(string) || actualType == typeof(double))
                 {
                     return;
                 }

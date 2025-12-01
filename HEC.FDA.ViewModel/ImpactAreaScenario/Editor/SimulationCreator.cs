@@ -57,7 +57,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         public FdaValidationResult IsConfigurationValid()
         {
             FdaValidationResult vr = IsStageDamageValid();
-            if(_HasNonFailureStageDamage)
+            if (_HasNonFailureStageDamage)
             {
                 vr.AddErrorMessage(IsNonFailureStageDamageValid().ErrorMessage);
             }
@@ -104,9 +104,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private void LoadSimulationBuilder()
         {
-
+            var stageDamagePairedData = GetStageDamagesAsPairedData(_StageDamageElem);
             _SimulationBuilder = ImpactAreaScenarioSimulation.Builder(_ImpactAreaID)
-            .WithStageDamages(GetStageDamagesAsPairedData(_StageDamageElem));
+            .WithStageDamages(stageDamagePairedData);
 
             if (_HasNonFailureStageDamage)
             {
@@ -120,7 +120,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             }
             else
             {
-                if(_FreqElem.GraphicalUsesFlow == true)
+                if (_FreqElem.GraphicalUsesFlow == true)
                 {
                     _SimulationBuilder.WithFlowFrequency(_FreqElem.GraphicalUncertainPairedData);
                     _SimulationBuilder.WithFlowStage(_RatElem.CurveComponentVM.SelectedItemToPairedData());
@@ -140,7 +140,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             }
             if (_UseLevee)
             {
-                if(_LeveeElem.IsDefaultCurveUsed)
+                if (_LeveeElem.IsDefaultCurveUsed)
                 {
                     _SimulationBuilder.WithLevee(_LeveeElem.CreateDefaultCurve(), _LeveeElem.Elevation);
                 }
@@ -166,6 +166,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             return stageDamageCurves;
         }
 
+        // returns an empty list if no damages
         private List<UncertainPairedData> GetStageDamagesAsPairedData(AggregatedStageDamageElement stageDamageElement)
         {
             List<UncertainPairedData> stageDamages = new List<UncertainPairedData>();
@@ -173,7 +174,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             foreach (StageDamageCurve curve in stageDamageCurves)
             {
                 bool allZeroes = IsCurveYValuesAllZero(curve);
-                if(!allZeroes)
+                if (!allZeroes)
                 {
                     UncertainPairedData upd = curve.ComputeComponent.SelectedItemToPairedData(curve.DamCat, curve.AssetCategory);
                     stageDamages.Add(upd);

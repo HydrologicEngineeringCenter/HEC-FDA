@@ -1,16 +1,14 @@
-using System.Collections.Generic;
-using Statistics;
-using System.Xml.Linq;
+using HEC.FDA.Model.metrics.Extensions;
+using HEC.FDA.Model.paireddata;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
-using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Model.Messaging;
-using Statistics.Histograms;
-using HEC.FDA.Model.paireddata;
-using System;
-using System.Linq;
-using HEC.FDA.Model.metrics.Extensions;
+using Statistics;
 using Statistics.Distributions;
+using Statistics.Histograms;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace HEC.FDA.Model.metrics;
 
@@ -22,10 +20,10 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
     internal int AlternativeID { get; }
 
     #region Constructors
-    public StudyAreaConsequencesBinned()
+    public StudyAreaConsequencesBinned(int impactAreaID)
     {
         ConsequenceResultList = [];
-        AggregatedConsequencesBinned dummyConsequenceDistributionResult = new();
+        AggregatedConsequencesBinned dummyConsequenceDistributionResult = new(impactAreaID);
         ConsequenceResultList.Add(dummyConsequenceDistributionResult);
         IsNull = true;
 
@@ -36,12 +34,7 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
         ConsequenceResultList = [];
         IsNull = isNull;
     }
-    internal StudyAreaConsequencesBinned(int alternativeID)
-    {
-        ConsequenceResultList = [];
-        AlternativeID = alternativeID;
-        IsNull = false;
-    }
+
     //public for testing
     public StudyAreaConsequencesBinned(List<AggregatedConsequencesBinned> damageResults)
     {
@@ -54,8 +47,8 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
     //This constructor is used in the simulation parallel compute and creates a threadsafe inline histogram inside consequence distribution result 
     internal void AddNewConsequenceResultObject(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID)
     {
-        AggregatedConsequencesBinned damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
-        if (damageResult.IsNull)
+        AggregatedConsequencesBinned existingDamageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
+        if (existingDamageResult == null)
         {
             AggregatedConsequencesBinned newDamageResult = new(damageCategory, assetCategory, convergenceCriteria, impactAreaID);
             ConsequenceResultList.Add(newDamageResult);
@@ -65,7 +58,7 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
     public void AddExistingConsequenceResultObject(AggregatedConsequencesBinned consequenceResultToAdd)
     {
         AggregatedConsequencesBinned consequenceResult = GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
-        if (consequenceResult.IsNull)
+        if (consequenceResult == null)
         {
             ConsequenceResultList.Add(consequenceResultToAdd);
         }
@@ -101,6 +94,9 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
         foreach (AggregatedConsequencesBinned damageResult in ConsequenceResultList)
         {
             AggregatedConsequencesBinned inputDamageResult = inputDamageResults.GetConsequenceResult(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.RegionID);
+            if (inputDamageResult == null)
+                return false;
+
             bool resultsMatch = damageResult.Equals(inputDamageResult);
             if (!resultsMatch)
             {
@@ -317,21 +313,14 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
     /// <param name="damageCategory"></param>
     /// <param name="assetCategory"></param>
     /// <param name="impactAreaID"></param>
-    /// <returns></returns>
+    /// <returns>returns the existing result, else null if no result exists for that combination.</returns>
     public AggregatedConsequencesBinned GetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
     {
+        //Try to get specific result from the list. combination of damcat, asscat, imparea
         AggregatedConsequencesBinned result = ConsequenceResultList
             .FilterByCategories(damageCategory, assetCategory, impactAreaID)
             .FirstOrDefault();
-        if (result != null)
-        {
-            return result;
-        }
-        string message = "The requested damage category - asset category - impact area combination could not be found. An arbitrary object is being returned";
-        ErrorMessage errorMessage = new(message, MVVMFramework.Base.Enumerations.ErrorLevel.Fatal);
-        ReportMessage(this, new MessageEventArgs(errorMessage));
-        AggregatedConsequencesBinned dummyResult = new();
-        return dummyResult;
+        return result;
     }
 
     /// <summary>

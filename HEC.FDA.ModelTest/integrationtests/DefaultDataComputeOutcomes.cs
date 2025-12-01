@@ -215,7 +215,7 @@ namespace HEC.FDA.ModelTest.integrationtests
             //Act
             double actualCommercialMeanEAD = scenarioResults.SampleMeanExpectedAnnualConsequences(impactAreaID1, commercialDamageCategory);
             double actualResidentialMeanEAD = scenarioResults.SampleMeanExpectedAnnualConsequences(impactAreaID1, residentialDamageCategory);
-            double actualMeanAAEQ = alternativeResults.SampleMeanAAEQDamage(impactAreaID1, commercialDamageCategory);
+            double actualMeanEqad = alternativeResults.SampleMeanEqad(impactAreaID1, commercialDamageCategory);
             double actualCommercialMeanEADFromAnotherSource = empiricalEADDistribution.Mean;
             double tolerance = 0.11;
             double strictTolerance = 0.01;
@@ -224,9 +224,9 @@ namespace HEC.FDA.ModelTest.integrationtests
             double residentialEADRelativeDifference = Math.Abs(actualResidentialMeanEAD - expectedResidentialMeanEAD) / expectedResidentialMeanEAD;
 
 
-            //TODO: //EAD is constant over POA soq AAEQ = EAD
+            //TODO: //EAD is constant over POA soq Eqad = EAD
             //But currently this is not the case
-            double AAEQRelativeDifference = Math.Abs(actualMeanAAEQ - expectedCommercialMeanEAD) / expectedCommercialMeanEAD; //EAD is constant over POA soq AAEQ = EAD
+            double EqadRelativeDifference = Math.Abs(actualMeanEqad - expectedCommercialMeanEAD) / expectedCommercialMeanEAD; //EAD is constant over POA soq EqAD = EAD
 
 
             //Assert
@@ -237,7 +237,7 @@ namespace HEC.FDA.ModelTest.integrationtests
             //I don't believe that his has to do with our internal logic, I think it has to do with version comparison 
             //futher investigation is required but is being postponed 
             //I already have multiple tests that demonstrate that AAED = EAD if EADs are the same 
-            //Assert.True(AAEQRelativeDifference < tolerance);
+            //Assert.True(EqadRelativeDifference < tolerance);
             Assert.True(residentialEADRelativeDifference < tolerance);
         }
 

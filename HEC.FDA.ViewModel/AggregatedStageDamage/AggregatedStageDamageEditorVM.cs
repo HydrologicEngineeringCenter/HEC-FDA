@@ -42,6 +42,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             RegisterChildViewModel(ManualVM);
             RegisterChildViewModel(CalculatedVM);
             CurrentVM = CalculatedVM;
+            CalculatedVM.RequestNavigation += Navigate;
         }
 
         public AggregatedStageDamageEditorVM(ChildElement elem, EditorActionManager actionManager) : base(elem, actionManager)
@@ -62,6 +63,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 CalculatedVM = new CalculatedStageDamageVM(element.SelectedWSE, element.SelectedStructures, element.AnalysisYear, element.Curves, element.ImpactAreaFrequencyRows,element.WriteDetailsOut, GetName);
                 CurrentVM = CalculatedVM;
             }
+            CalculatedVM.RequestNavigation += Navigate;
             //this registration is so that fda can detect changes made in child view models
             //and prompt the user if they want to save when closing
             RegisterChildViewModel(ManualVM);

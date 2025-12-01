@@ -94,6 +94,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                      .WithSiblingRules(this);
 
                 AggregatedStageDamageEditorVM vm = new( actionManager);
+                vm.RequestNavigation += Navigate;
                 string header = StringConstants.CREATE_NEW_STAGE_DAMAGE_HEADER;
                 string uniqueSuffix = DateTime.Now.ToString();
                 DynamicTabVM tab = new(header, vm, header + uniqueSuffix);

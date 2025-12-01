@@ -155,32 +155,65 @@ public partial class GraphicalVM : ObservableObject
             EndPosition = 0
         };
 
-        LinearAxis yAxis = new()
+        // Create Y axis based on UseFlow setting
+        Axis yAxis;
+        if (UseFlow)
         {
-            Position = AxisPosition.Left,
-        };
+            yAxis = new LogarithmicAxis()
+            {
+                Position = AxisPosition.Left,
+                Base = 10
+            };
+        }
+        else
+        {
+            yAxis = new LinearAxis()
+            {
+                Position = AxisPosition.Left
+            };
+        }
+        
         CalcdPlotModel.Axes.Add(xAxis);
         CalcdPlotModel.Axes.Add(yAxis);
         SetYAxisVariable();
     }
 
-    // I'm using the useFlow parameter here because 
+    // Updates the Y axis type and title based on UseFlow setting
     private void SetYAxisVariable()
     {
         if (CalcdPlotModel == null)
         {
             return;
         }
+        
+        // Remove existing Y axis
+        if (CalcdPlotModel.Axes.Count > 1)
+        {
+            CalcdPlotModel.Axes.RemoveAt(1);
+        }
+        
+        // Create new Y axis based on UseFlow setting
+        Axis yAxis;
         if (UseFlow)
         {
-            CalcdPlotModel.Axes[1].Title = StringConstants.DISCHARGE;
-            CalcdPlotModel.InvalidatePlot(true);
+            yAxis = new LogarithmicAxis()
+            {
+                Position = AxisPosition.Left,
+                Title = StringConstants.DISCHARGE,
+                Base = 10
+            };
         }
         else
         {
-            CalcdPlotModel.Axes[1].Title = StringConstants.STAGE;
-            CalcdPlotModel.InvalidatePlot(true);
+            yAxis = new LinearAxis()
+            {
+                Position = AxisPosition.Left,
+                Title = StringConstants.STAGE
+            };
         }
+        
+        CalcdPlotModel.Axes.Add(yAxis);
+        CalcdPlotModel.InvalidatePlot(true);
     }
 
     private static string ProbabilityFormatter(double d)

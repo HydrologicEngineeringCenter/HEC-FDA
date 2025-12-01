@@ -19,12 +19,13 @@ namespace HEC.FDA.ViewModel.Results
         public string ImpactArea { get; set; }
         [DisplayAsColumn("Mean EAD")]
         public double Mean { get; set; }
-        [DisplayAsColumn("25th Percentile EAD")] //This is intentionally swapped 1-x 
-        public double Point75 { get; set; }
+        [DisplayAsColumn("25th Percentile EAD")]
+        public double Point25 { get; set; }
         [DisplayAsColumn("50th Percentile EAD")]
         public double Point5 { get; set; }
-        [DisplayAsColumn("75th Percentile EAD")]//This is intentionally swapped 1-x 
-        public double Point25 { get; set; }
+        [DisplayAsColumn("75th Percentile EAD")]
+        public double Point75 { get; set; }
+
 
         private ScenarioDamageRowItem(string name, string analysisYear, string impactArea, double mean, double point75, double point5, double point25)
         {

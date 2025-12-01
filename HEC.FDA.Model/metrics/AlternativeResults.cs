@@ -1,6 +1,4 @@
-﻿using HEC.MVVMFramework.Base.Events;
-using HEC.MVVMFramework.Base.Implementations;
-using HEC.MVVMFramework.Base.Interfaces;
+﻿using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Model.Messaging;
 using Statistics.Distributions;
 using System;
@@ -13,7 +11,7 @@ namespace HEC.FDA.Model.metrics
         #region Properties
         internal bool ScenariosAreIdentical { get; set; } = false;
         public int AlternativeID {get;}
-        public StudyAreaConsequencesByQuantile AAEQDamageResults { get; internal set; }
+        public StudyAreaConsequencesByQuantile EqadResults { get; internal set; }
         public List<int> AnalysisYears { get; }
         public int PeriodOfAnalysis { get; }
         public bool IsNull { get; }
@@ -26,7 +24,7 @@ namespace HEC.FDA.Model.metrics
         {
             IsNull = true;
             AlternativeID = 0;
-            AAEQDamageResults = new StudyAreaConsequencesByQuantile(AlternativeID);
+            EqadResults = new StudyAreaConsequencesByQuantile(AlternativeID);
             BaseYearScenarioResults = new ScenarioResults();
             FutureYearScenarioResults = new ScenarioResults();
             AnalysisYears = new List<int>() { 2030, 2049 };
@@ -39,7 +37,7 @@ namespace HEC.FDA.Model.metrics
         {
             AlternativeID = id;
             PeriodOfAnalysis = periodOfAnalysis;
-            AAEQDamageResults = new StudyAreaConsequencesByQuantile(id);
+            EqadResults = new StudyAreaConsequencesByQuantile(id);
             IsNull = false;
             AnalysisYears = analysisYears;
             AddRules();
@@ -47,7 +45,7 @@ namespace HEC.FDA.Model.metrics
         internal AlternativeResults(StudyAreaConsequencesByQuantile studyAreaConsequencesByQuantile, int id, List<int> analysisYears, int periodOfAnalysis, bool isNull)
         {
             AlternativeID = id;
-            AAEQDamageResults = studyAreaConsequencesByQuantile;
+            EqadResults = studyAreaConsequencesByQuantile;
             IsNull = isNull;
             AnalysisYears = analysisYears;
             PeriodOfAnalysis = periodOfAnalysis;
@@ -63,9 +61,9 @@ namespace HEC.FDA.Model.metrics
         public List<int> GetImpactAreaIDs()
         {
             List<int> impactAreaIDs = new();
-            if (AAEQDamageResults.ConsequenceResultList.Count != 0)
+            if (EqadResults.ConsequenceResultList.Count != 0)
             {
-                foreach (AggregatedConsequencesByQuantile consequence in AAEQDamageResults.ConsequenceResultList)
+                foreach (AggregatedConsequencesByQuantile consequence in EqadResults.ConsequenceResultList)
                 {
                     if (!impactAreaIDs.Contains(consequence.RegionID))
                     {
@@ -78,9 +76,9 @@ namespace HEC.FDA.Model.metrics
         public List<string> GetAssetCategories()
         {
             List<string> assetCats = new();
-            if (AAEQDamageResults.ConsequenceResultList.Count != 0)
+            if (EqadResults.ConsequenceResultList.Count != 0)
             {
-                foreach (AggregatedConsequencesByQuantile consequence in AAEQDamageResults.ConsequenceResultList)
+                foreach (AggregatedConsequencesByQuantile consequence in EqadResults.ConsequenceResultList)
                 {
                     if (!assetCats.Contains(consequence.AssetCategory))
                     {
@@ -93,9 +91,9 @@ namespace HEC.FDA.Model.metrics
         public List<string> GetDamageCategories()
         {
             List<string> damageCats = new();
-            if (AAEQDamageResults.ConsequenceResultList.Count != 0)
+            if (EqadResults.ConsequenceResultList.Count != 0)
             {
-                foreach (AggregatedConsequencesByQuantile consequence in AAEQDamageResults.ConsequenceResultList)
+                foreach (AggregatedConsequencesByQuantile consequence in EqadResults.ConsequenceResultList)
                 {
                     if (!damageCats.Contains(consequence.DamageCategory))
                     {
@@ -108,14 +106,14 @@ namespace HEC.FDA.Model.metrics
         /// <summary>
         /// This method returns the mean of the average annual equivalent damage for the given damage category, asset category, impact area combination 
         /// The level of aggregation of the mean is determined by the arguments used in the method
-        /// For example, if you wanted mean AAEQ damage for residential, impact area 2, all asset categories, then the method call would be as follows:
-        /// double meanEAD = MeanAAEQDamage(damageCategory: "residential", impactAreaID: 2);
+        /// For example, if you wanted mean eqad damage for residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// double meanEAD = SampleMeanEqad(damageCategory: "residential", impactAreaID: 2);
         /// </summary>
         /// <param name="damageCategory"></param> either residential, commercial, etc...the default is null
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param> the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
-        /// <returns></returns>The mean of aaeq damage
-        public double SampleMeanAAEQDamage(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+        /// <returns>The mean of EqAD</returns> 
+        public double SampleMeanEqad(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             if (ScenariosAreIdentical)
             {
@@ -123,7 +121,7 @@ namespace HEC.FDA.Model.metrics
             } 
             else
             {
-                return AAEQDamageResults.SampleMeanDamage(damageCategory, assetCategory, impactAreaID);
+                return EqadResults.SampleMeanDamage(damageCategory, assetCategory, impactAreaID);
             }
         }
         /// <summary>
@@ -135,7 +133,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="damageCategory"></param> either residential, commercial, etc...the default is null
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param> the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
-        /// <returns></returns>The mean of ead damage for base year 
+        /// <returns>The mean of ead damage for base year </returns>
         public double SampleMeanBaseYearEAD(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             return BaseYearScenarioResults.SampleMeanExpectedAnnualConsequences(impactAreaID, damageCategory, assetCategory);
@@ -149,24 +147,24 @@ namespace HEC.FDA.Model.metrics
         /// <param name="damageCategory"></param> either residential, commercial, etc...the default is null
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param> the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
-        /// <returns></returns>The mean of ead damage for future year 
+        /// <returns>The mean of ead damage for future year </returns>
         public double SampleMeanFutureYearEAD(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
                 return FutureYearScenarioResults.SampleMeanExpectedAnnualConsequences(impactAreaID, damageCategory, assetCategory);
 
         }
         /// <summary>
-        /// This method calls the inverse CDF of the AAEQ damage histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
+        /// This method calls the inverse CDF of the EqAD damage histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
         /// The level of aggregation of  damage is determined by the arguments used in the method
-        /// For example, if you wanted the AAEQ damage exceeded with probability .98 for residential, impact area 2, all asset categories, then the method call would be as follows:
-        /// double consequenceValue = AAEQDamageExceededWithProbabilityQ(.98, damageCategory: "residential", impactAreaID: 2);
+        /// For example, if you wanted the EqAD damage exceeded with probability .98 for residential, impact area 2, all asset categories, then the method call would be as follows:
+        /// double consequenceValue = EqadExceededWithProbabilityQ(.98, damageCategory: "residential", impactAreaID: 2);
         /// </summary>
         /// <param name="damageCategory"></param> either residential, commercial, etc....the default is null
         /// <param name="exceedanceProbability"></param>
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param>the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
-        /// <returns></returns>the level of AAEQ damage exceeded by the specified probability 
-        public double AAEQDamageExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+        /// <returns>the level of EqAD damage exceeded by the specified probability</returns> 
+        public double EqadExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             if (ScenariosAreIdentical)
             {
@@ -174,7 +172,7 @@ namespace HEC.FDA.Model.metrics
             }
             else
             {
-                return AAEQDamageResults.ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
+                return EqadResults.ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
             }
         }
         /// <summary>
@@ -187,7 +185,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="exceedanceProbability"></param>
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param>the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
-        /// <returns></returns>the level of EAD damage exceeded by the specified probability 
+        /// <returns>the level of EAD damage exceeded by the specified probability </returns>
         public double BaseYearEADDamageExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             return BaseYearScenarioResults.ConsequencesExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damageCategory, assetCategory);
@@ -202,24 +200,24 @@ namespace HEC.FDA.Model.metrics
         /// <param name="exceedanceProbability"></param>
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param>the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
-        /// <returns></returns>the level of EAD damage exceeded by the specified probability 
+        /// <returns>the level of EAD damage exceeded by the specified probability</returns> 
         public double FutureYearEADDamageExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             return FutureYearScenarioResults.ConsequencesExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damageCategory, assetCategory);
         }
         /// <summary>
-        /// This method gets the histogram (distribution) of aaeq damage for the given damage category(ies), asset category(ies), and impact area(s)
+        /// This method gets the histogram (distribution) of eqad damage for the given damage category(ies), asset category(ies), and impact area(s)
         /// The level of aggregation of the distribution of consequences is determined by the arguments used in the method
         /// For example, if you wanted a histogram for residential, impact area 2, all asset categories, then the method call would be as follows:
-        /// ThreadsafeInlineHistogram histogram = GetAAEQDamageHistogram(damageCategory: "residential", impactAreaID: 2);
-        public Empirical GetAAEQDamageDistribution(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+        /// ThreadsafeInlineHistogram histogram = GetEqadDistribution(damageCategory: "residential", impactAreaID: 2);
+        public Empirical GetEqadDistribution(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
         {
             if (ScenariosAreIdentical)
             {
                 return BaseYearScenarioResults.GetConsequencesDistribution(impactAreaID, damageCategory, assetCategory);
             } else
             {
-                return AAEQDamageResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID);
+                return EqadResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID);
             }
         }
         /// <summary>
@@ -244,10 +242,10 @@ namespace HEC.FDA.Model.metrics
         }
         internal void AddConsequenceResults(AggregatedConsequencesByQuantile consequenceResultToAdd)
         {
-            AggregatedConsequencesByQuantile consequenceResults = AAEQDamageResults.GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
+            AggregatedConsequencesByQuantile consequenceResults = EqadResults.GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
             if (consequenceResults.IsNull)
             {
-                AAEQDamageResults.ConsequenceResultList.Add(consequenceResultToAdd);
+                EqadResults.ConsequenceResultList.Add(consequenceResultToAdd);
             }
         }
 

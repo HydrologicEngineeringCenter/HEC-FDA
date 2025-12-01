@@ -61,34 +61,6 @@ namespace HEC.FDA.Model.structures
             IsNull = false;
 
         }
-
-        public DeterministicOccupancyType()
-        {
-            OccupancyTypeName = "This Object Is Null";
-            OccupancyTypeDamageCategory = "This Object Is Null";
-            StructPercentDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 }); 
-            ContentPercentDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 }); 
-            VehiclePercentDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 }); 
-            OtherPercentDamagePairedData = new PairedData(new double[] { 0 }, new double[] { 0 }); 
-            FirstFloorElevationOffset = 0;
-            StructureValueOffset = 0;
-            ContentValueOffset = 0;
-            VehicleValueOffset = 0;
-            OtherValueOffset = 0;
-            ComputeContentDamage = false;
-            ComputeVehicleDamage = false;
-            ComputeOtherDamage = false;
-            UseCSVR = false;
-            UseOSVR = false;
-            ContentToStructureValueRatio = 0;
-            OtherToStructureValueRatio = 0;
-            IsStructureValueLogNormal = false;
-            IsContentValueLogNormal = false;
-            IsOtherValueLogNormal = false;
-            IsVehicleValueLogNormal = false;
-            IsFirstFloorElevationLogNormal = false;
-            IsNull = true;
-        }
         #endregion
     }
 }

@@ -30,6 +30,16 @@ jobs:
     # This step updates the ras-nuget-private source with credentials
       run: dotnet nuget update source ras-nuget-private --username "${{ secrets.HEC_NEXUS_READ_UID }}" --password "${{ secrets.HEC_NEXUS_READ_PASSWORD }}" --store-password-in-clear-text --configfile nuget.config
 
+    - name: Download and unzip file
+      shell: pwsh
+      run: |
+        $PUBLISH_OUT = "${pwd}/TO-PACKAGE/"
+        echo "PUBLISH_OUT=$PUBLISH_OUT" >> $env:GITHUB_ENV
+        echo "RAS_GDAL=$PUBLISH_OUT/GDAL/" >> $env:GITHUB_ENV
+        $zipUrl = "https://s3.hecdev.net/ras-public-data/ras-GDAL-3.9.1.zip"
+        $zipPath = "${pwd}/downloaded.zip"
+        Invoke-WebRequest -Uri $zipUrl -OutFile $zipPath
+        Expand-Archive -Path $zipPath -DestinationPath $PUBLISH_OUT
 
     - name: Create version number
       shell: pwsh
@@ -43,17 +53,7 @@ jobs:
     - name: Publish
       shell: pwsh
       run: |
-        $PUBLISH_OUT = "${pwd}/TO-PACKAGE/"
-        echo "PUBLISH_OUT=$PUBLISH_OUT" >> $env:GITHUB_ENV
-        dotnet publish -c Release -v quiet /p:Version=${{ env.VERSION }} -o $PUBLISH_OUT ${{ env.PROJECT_NAME }} --self-contained true
-      
-    - name: Download and unzip file
-      shell: pwsh
-      run: |
-        $zipUrl = "https://s3.hecdev.net/ras-public-data/ras-GDAL-3.9.1.zip"
-        $zipPath = "${pwd}/downloaded.zip"
-        Invoke-WebRequest -Uri $zipUrl -OutFile $zipPath
-        Expand-Archive -Path $zipPath -DestinationPath ${{ env.PUBLISH_OUT }}
+        dotnet publish -c Release -v quiet /p:Version=${{ env.VERSION }} -o ${{ env.PUBLISH_OUT }} ${{ env.PROJECT_NAME }} --self-contained true
 
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4

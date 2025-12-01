@@ -53,8 +53,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                     Mean = results.SampleMeanFutureYearEAD();
                     QuartileLabel = QUARTILE_EAD;
                     break;
-                case DamageMeasureYear.AAEQ:
-                    Mean = results.SampleMeanAAEQDamage();
+                case DamageMeasureYear.Eqad:
+                    Mean = results.SampleMeanEqad();
                     QuartileLabel = QUARTILE_EQAD;
                     break;
             }
@@ -90,8 +90,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                     Mean = altCompReport.SampleMeanFutureYearEADReduced(altID);
                     QuartileLabel = QUARTILE_REDUCED_EAD;
                     break;
-                case DamageMeasureYear.AAEQ:
-                    Mean = altCompReport.SampleMeanAAEQDamageReduced(altID);
+                case DamageMeasureYear.Eqad:
+                    Mean = altCompReport.SampleMeanEqadReduced(altID);
                     QuartileLabel = QUARTILE_REDUCED_EQAD;
                     break;
             }
@@ -132,8 +132,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                 case DamageMeasureYear.Future:
                     empirical = altResults.GetFutureYearEADDistribution();
                     break;
-                case DamageMeasureYear.AAEQ:
-                    empirical = altResults.GetAAEQDamageDistribution();
+                case DamageMeasureYear.Eqad:
+                    empirical = altResults.GetEqadDistribution();
                     break;
             }
 
@@ -152,8 +152,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                 case DamageMeasureYear.Future:
                     empirical = altResults.GetFutureYearEADReducedResultsHistogram(altID);
                     break;
-                case DamageMeasureYear.AAEQ:
-                    empirical = altResults.GetAAEQReducedResultsHistogram(altID);
+                case DamageMeasureYear.Eqad:
+                    empirical = altResults.GetEqadReducedResultsHistogram(altID);
                     break;
             }
 
@@ -208,7 +208,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             {
                 DataFieldX = nameof(NormalDataPoint.ZScore),
                 DataFieldY = nameof(NormalDataPoint.Value),
-                TrackerFormatString = "X: {Probability:0.####}, Y: {Value:F2}",
+                TrackerFormatString = "X: {Probability:0.####}, Y: {Value:C0}",
                 Title = StringConstants.EAD_DISTRIBUTION,
             };
             var points = new NormalDataPoint[empirical.CumulativeProbabilities.Length];
@@ -249,7 +249,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                 Position = AxisPosition.Left,
                 Title = yaxisLabel,
                 MinorTickSize = 0,
-                Unit = "$",
+                StringFormat = "C0",
             };
             MyPlot.Axes.Add(x);
             MyPlot.Axes.Add(y);
@@ -297,8 +297,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                     case DamageMeasureYear.Future:
                         yValues.Add(results.FutureYearEADDamageExceededWithProbabilityQ(x));
                         break;
-                    case DamageMeasureYear.AAEQ:
-                        yValues.Add(results.AAEQDamageExceededWithProbabilityQ(x));
+                    case DamageMeasureYear.Eqad:
+                        yValues.Add(results.EqadExceededWithProbabilityQ(x));
                         break;
                 }
             }
@@ -318,8 +318,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                     case DamageMeasureYear.Future:
                         yValues.Add(scenarioResults.FutureYearEADReducedExceededWithProbabilityQ(x, altID));
                         break;
-                    case DamageMeasureYear.AAEQ:
-                        yValues.Add(scenarioResults.AAEQDamageReducedExceededWithProbabilityQ(x, altID));
+                    case DamageMeasureYear.Eqad:
+                        yValues.Add(scenarioResults.EqadReducedExceededWithProbabilityQ(x, altID));
                         break;
                 }
             }

@@ -1,9 +1,9 @@
-﻿using HEC.FDA.View.Utilities;
-using HEC.FDA.ViewModel.Study;
+﻿using HEC.FDA.ViewModel.Study;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace HEC.FDA.View.Study
 {
@@ -26,9 +26,9 @@ namespace HEC.FDA.View.Study
 
         private void New_MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if(DataContext is FdaStudyVM study)
+            if (DataContext is FdaStudyVM study)
             {
-                if(study.CurrentStudyElement != null)
+                if (study.CurrentStudyElement != null)
                 {
                     study.CurrentStudyElement.CreateNewStudyMenuItemClicked();
                 }
@@ -105,8 +105,43 @@ namespace HEC.FDA.View.Study
             string discourseLink = "https://www.hec.usace.army.mil/fwlink/?linkid=fda-discourse";
             ProcessStartInfo startInfo = new ProcessStartInfo(discourseLink);
             startInfo.UseShellExecute = true;
-            Process.Start(startInfo); 
+            Process.Start(startInfo);
             e.Handled = true;
+        }
+
+        private void StudyTreeView_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // Ignore double-clicks
+            if (e.ClickCount == 2)
+            {
+                return;
+            }
+
+            if (e.ChangedButton != MouseButton.Left)
+            {
+                return;
+            }
+
+            var treeView = sender as TreeView;
+            var item = GetTreeViewItemFromPoint(treeView, e.GetPosition(treeView));
+
+            if (item != null && item.IsSelected)
+            {
+                item.IsSelected = false;
+                e.Handled = true;
+            }
+        }
+
+        private TreeViewItem GetTreeViewItemFromPoint(TreeView treeView, Point point)
+        {
+            var element = treeView.InputHitTest(point) as DependencyObject;
+
+            while (element != null && !(element is TreeViewItem))
+            {
+                element = VisualTreeHelper.GetParent(element);
+            }
+
+            return element as TreeViewItem;
         }
 
     }

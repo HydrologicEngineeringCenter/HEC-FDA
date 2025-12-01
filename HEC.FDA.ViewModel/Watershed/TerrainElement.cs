@@ -22,7 +22,7 @@ namespace HEC.FDA.ViewModel.Watershed
         }
         #endregion
         #region Constructors
-        public TerrainElement(string name, string fileName, int id, bool isTemporaryNode = false) : base(name,"","", id)
+        public TerrainElement(string name, string fileName, int id, bool isTemporaryNode = false) : base(name, "", "", id)
         {
             _FileName = fileName;
 
@@ -32,14 +32,14 @@ namespace HEC.FDA.ViewModel.Watershed
             }
             else
             {
-                AddDefaultActions();
+                AddDefaultActions(canDuplicate: false);
             }
         }
 
-        public TerrainElement(XElement terrainElement, int id):base(terrainElement, id)
+        public TerrainElement(XElement terrainElement, int id) : base(terrainElement, id)
         {
-            FileName = terrainElement.Attribute(SELECTED_PATH_XML_TAG).Value;           
-            AddDefaultActions();
+            FileName = terrainElement.Attribute(SELECTED_PATH_XML_TAG).Value;
+            AddDefaultActions(canDuplicate: false);
         }
 
         public override XElement ToXML()
@@ -50,15 +50,15 @@ namespace HEC.FDA.ViewModel.Watershed
             return terrainElement;
         }
 
-       public bool Equals(TerrainElement elem)
+        public bool Equals(TerrainElement elem)
         {
             bool isEqual = true;
 
-            if(!AreHeaderDataEqual(elem))
+            if (!AreHeaderDataEqual(elem))
             {
                 isEqual = false;
             }
-            if(FileName != elem.FileName)
+            if (FileName != elem.FileName)
             {
                 isEqual = false;
             }

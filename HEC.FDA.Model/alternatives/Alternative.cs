@@ -14,7 +14,7 @@ namespace HEC.FDA.Model.alternatives
     {
         /// <summary>
         /// Computes annualized consequences for an alternative using distributions of EAD from base and future year scenarios.
-        /// Returns an AlternativeResults object containing AAEQ damage for each damage category, asset category, and impact area combination.
+        /// Returns an AlternativeResults object containing EqAD damage for each damage category, asset category, and impact area combination.
         /// </summary>
         /// <param name="discountRate">Discount rate in decimal form.</param>
         /// <param name="periodOfAnalysis">Number of years in the analysis period.</param>
@@ -24,7 +24,7 @@ namespace HEC.FDA.Model.alternatives
         /// <param name="baseYear">Base year of analysis.</param>
         /// <param name="futureYear">Future year of analysis.</param>
         /// <param name="reporter">Optional progress reporter.</param>
-        /// <returns>AlternativeResults containing AAEQ damages, or null if parameters are invalid.</returns>
+        /// <returns>AlternativeResults containing EqAD damages, or null if parameters are invalid.</returns>
         public static AlternativeResults AnnualizationCompute(
             double discountRate,
             int periodOfAnalysis,
@@ -67,7 +67,7 @@ namespace HEC.FDA.Model.alternatives
             if (computedResultsBaseYear.Equals(computedResultsFutureYear))
             {
                 alternativeResults.ScenariosAreIdentical = true;
-                alternativeResults.AAEQDamageResults = ScenarioResults.ConvertToStudyAreaConsequencesByQuantile(computedResultsBaseYear);
+                alternativeResults.EqadResults = ScenarioResults.ConvertToStudyAreaConsequencesByQuantile(computedResultsBaseYear);
             }
             else
             {
@@ -134,8 +134,8 @@ namespace HEC.FDA.Model.alternatives
                         baseYearConsequence.AssetCategory,
                         baseYearConsequence.RegionID);
 
-                    // Calculate AAEQ (Average Annual Equivalent) result
-                    AggregatedConsequencesByQuantile aaeqResult = IterateOnAAEQ(
+                    // Calculate EqAD (Equivalent Annual Damage) result
+                    AggregatedConsequencesByQuantile eqadResult = IterateOnEqad(
                         baseYearConsequence,
                         futureYearConsequence,
                         analysisYears[0],
@@ -148,8 +148,8 @@ namespace HEC.FDA.Model.alternatives
                     // Mark this future year consequence as processed
                     unprocessedFutureConsequences.Remove(futureYearConsequence);
 
-                    // Add the AAEQ result to our alternative
-                    alternativeResults.AddConsequenceResults(aaeqResult);
+                    // Add the EqAD result to our alternative
+                    alternativeResults.AddConsequenceResults(eqadResult);
                 }
 
                 // Process any future year consequences that didn't have matching base year results
@@ -161,8 +161,8 @@ namespace HEC.FDA.Model.alternatives
                         futureYearConsequence.AssetCategory,
                         futureYearConsequence.RegionID);
 
-                    // Calculate AAEQ with assumed zero damage in base year if no base year result exists
-                    AggregatedConsequencesByQuantile aaeqResult = IterateOnAAEQ(
+                    // Calculate EqAD with assumed zero damage in base year if no base year result exists
+                    AggregatedConsequencesByQuantile eqadResult = IterateOnEqad(
                         baseYearConsequence,
                         futureYearConsequence,
                         analysisYears[0],
@@ -172,7 +172,7 @@ namespace HEC.FDA.Model.alternatives
                         true,
                         reporter);
 
-                    alternativeResults.AddConsequenceResults(aaeqResult);
+                    alternativeResults.AddConsequenceResults(eqadResult);
                 }
             }
         }
@@ -185,7 +185,7 @@ namespace HEC.FDA.Model.alternatives
                 && difference <= periodOfAnalysis;
         }
 
-        private static AggregatedConsequencesByQuantile IterateOnAAEQ(
+        private static AggregatedConsequencesByQuantile IterateOnEqad(
         AggregatedConsequencesBinned baseYearDamageResult,
         AggregatedConsequencesBinned mlfYearDamageResult,
         int baseYear,
@@ -203,20 +203,24 @@ namespace HEC.FDA.Model.alternatives
 
             int probabilitySteps = 25000;
             var resultCollection = new ConcurrentBag<double>();
+            //We compute the nth quantile of EqAD from the nth quantile of the base year EAD distribution and the nth quantile of the most likely future year EAD distribution, where n is determined by walking through 25,000 probability steps."
+            // ex. we take the EAD from base at .01, the EAD from future at .01 and compute the EAD for .01. 
+            //We then take that value and add it to the result collection. Using that collection as the sample, we fit an empirical distribution to it. 
 
+            //The mean is done separately, because the SampleMeans of the Consequence histograms may not be the mean of those histograms. Sample mean is propograted from the original sample data. 
             Parallel.For(0, probabilitySteps, i =>
             {
                 double probabilityStep = (i + 0.5) / probabilitySteps;
                 double eadSampledBaseYear = baseYearDamageResult.ConsequenceHistogram.InverseCDF(probabilityStep);
                 double eadSampledFutureYear = mlfYearDamageResult.ConsequenceHistogram.InverseCDF(probabilityStep);
-                double aaeqDamage = ComputeEEAD(eadSampledBaseYear, baseYear, eadSampledFutureYear, futureYear, periodOfAnalysis, discountRate);
-                resultCollection.Add(aaeqDamage);
+                double eqad = ComputeEqad(eadSampledBaseYear, baseYear, eadSampledFutureYear, futureYear, periodOfAnalysis, discountRate);
+                resultCollection.Add(eqad);
             });
 
             //compute sample mean EqAD 
             double eadSampleMeanBase = baseYearDamageResult.ConsequenceHistogram.SampleMean;
             double eadSampleMeanFuture = mlfYearDamageResult.ConsequenceHistogram.SampleMean;
-            double meanEqad = ComputeEEAD(eadSampleMeanBase, baseYear, eadSampleMeanFuture, futureYear, periodOfAnalysis, discountRate);
+            double meanEqad = ComputeEqad(eadSampleMeanBase, baseYear, eadSampleMeanFuture, futureYear, periodOfAnalysis, discountRate);
             // end
 
             var damageCategory = iterateOnFutureYear ? mlfYearDamageResult.DamageCategory : baseYearDamageResult.DamageCategory;
@@ -232,15 +236,15 @@ namespace HEC.FDA.Model.alternatives
 
         //TODO: these functions should be private, but currently have unit tests 
         //so these will remain public until the unit tests are re-written on the above public method
-        public static double ComputeEEAD(double baseYearEAD, int baseYear, double mostLikelyFutureEAD, int mostLikelyFutureYear, int periodOfAnalysis, double discountRate)
+        public static double ComputeEqad(double baseYearEAD, int baseYear, double mostLikelyFutureEAD, int mostLikelyFutureYear, int periodOfAnalysis, double discountRate)
         {
             //probably instantiate a rng to seed each impact area differently
             double[] interpolatedEADs = Interpolate(baseYearEAD, mostLikelyFutureEAD, baseYear, mostLikelyFutureYear, periodOfAnalysis);
             double sumPresentValueEAD = PresentValueCompute(interpolatedEADs, discountRate);
-            double averageAnnualEquivalentDamage = IntoAverageAnnualEquivalentTerms(sumPresentValueEAD, periodOfAnalysis, discountRate);
-            return averageAnnualEquivalentDamage;
+            double eqad = IntoEquivalentAnnualTerms(sumPresentValueEAD, periodOfAnalysis, discountRate);
+            return eqad;
         }
-        private static double IntoAverageAnnualEquivalentTerms(double sumPresentValueEAD, int periodOfAnalysis, double discountRate)
+        private static double IntoEquivalentAnnualTerms(double sumPresentValueEAD, int periodOfAnalysis, double discountRate)
         {
             double presentValueInterestFactorOfAnnuity = (1 - 1 / Math.Pow(1 + discountRate, periodOfAnalysis)) / discountRate;
             double averageAnnualEquivalentDamage = sumPresentValueEAD / presentValueInterestFactorOfAnnuity;

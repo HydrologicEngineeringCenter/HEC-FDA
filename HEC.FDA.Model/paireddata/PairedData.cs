@@ -266,33 +266,11 @@ namespace HEC.FDA.Model.paireddata
             }
         }
 
-        /// <summary>
-        ///Calcualtes the area under the paired data curve across the range of x values using trapizoidal integration. 
-        ///Assumes X vals are non-exceedance probabilities increasing from 0. Assumes an additional x ord of 1, and y ordinate equal to the last one in the array.
-        /// </summary>
+
         public double integrate()
         {
-
-            double triangle;
-            double square;
-            double x1 = 0.0;
-            double y1 = 0.0;
-            double ead = 0.0;
-            for (int i = 0; i < Xvals.Length; i++)
-            {
-                double xdelta = Xvals[i] - x1;
-                square = xdelta * y1;
-                triangle = xdelta * (Yvals[i] - y1) / 2.0;
-                ead += square + triangle;
-                x1 = Xvals[i];
-                y1 = Yvals[i];
-            }
-            if (x1 != 1)
-            {
-                double xdelta = 1 - x1;
-                ead += xdelta * y1;
-            }
-            return ead;
+            //This functionality was extracted to a static method to be shared with empirical.cs, which uses the same logic. 
+            return Statistics.Mathematics.IntegrateCDF<double>(Xvals, Yvals);
         }
 
         /// <summary>
@@ -402,11 +380,6 @@ namespace HEC.FDA.Model.paireddata
         {
             Array.Sort(Xvals, Yvals);
         }
-        public void SortToIncreasingYals()
-        {
-            Array.Sort(Xvals, Yvals);
-        }
-
         #endregion
     }
 }

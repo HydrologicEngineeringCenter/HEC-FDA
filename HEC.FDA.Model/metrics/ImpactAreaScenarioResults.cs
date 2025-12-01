@@ -1,10 +1,10 @@
+using HEC.FDA.Model.paireddata;
+using Statistics.Distributions;
+using Statistics.Histograms;
 using System;
 using System.Collections.Generic;
-using Statistics.Histograms;
 using System.Linq;
 using System.Xml.Linq;
-using Statistics.Distributions;
-using HEC.FDA.Model.paireddata;
 
 namespace HEC.FDA.Model.metrics
 {
@@ -21,7 +21,7 @@ namespace HEC.FDA.Model.metrics
         public ImpactAreaScenarioResults(int impactAreaID, bool isNull)
         {
             PerformanceByThresholds = new PerformanceByThresholds(true);
-            ConsequenceResults = new StudyAreaConsequencesBinned();
+            ConsequenceResults = new StudyAreaConsequencesBinned(impactAreaID);
             ImpactAreaID = impactAreaID;
             IsNull = isNull;
         }
@@ -49,7 +49,8 @@ namespace HEC.FDA.Model.metrics
         {
             return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.MedianAEP();
         }
-        public double AEPWithGivenAssurance(int thresholdID, double assurance) {
+        public double AEPWithGivenAssurance(int thresholdID, double assurance)
+        {
             return PerformanceByThresholds.GetThreshold(thresholdID).SystemPerformanceResults.AEPWithGivenAssurance(assurance);
         }
         public double AssuranceOfAEP(int thresholdID, double exceedanceProbability)
@@ -223,7 +224,8 @@ namespace HEC.FDA.Model.metrics
                         eadIterationsRemaining.Add(itsRemaining);
                     }
                 }
-            } else
+            }
+            else
             {
                 eadIterationsRemaining.Add(0);
             }
@@ -245,7 +247,7 @@ namespace HEC.FDA.Model.metrics
         }
         public PairedData GetDamageFrequency(string damageCategory, string assetCategory)
         {
-            PairedData returnValue = new(new double[] {0, 1},new double[] {0, 1});
+            PairedData returnValue = new(new double[] { 0, 1 }, new double[] { 0, 1 });
             if (DamageFrequencyFunctions != null)
             {
                 foreach ((CurveMetaData, PairedData) pairedData in DamageFrequencyFunctions)
@@ -290,6 +292,15 @@ namespace HEC.FDA.Model.metrics
             StudyAreaConsequencesBinned expectedAnnualDamageResults = StudyAreaConsequencesBinned.ReadFromXML(xElement.Element("Expected_Annual_Damage_Results"));
             int impactAreaID = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
             return new ImpactAreaScenarioResults(performanceByThresholds, expectedAnnualDamageResults, impactAreaID);
+        }
+
+        // this method is called to add a consequences result with zero damages to an impact area scenario which has no damages but has a levee
+        // still want to compute performance statistics on the levee, but want to show the user that there are also zero damages
+        // previously, the damages zero damages would not be reported to the user
+        public void AddZeroConsequencesResult(int impactAreaId)
+        {
+            var zeroResult = new AggregatedConsequencesBinned(impactAreaId);
+            ConsequenceResults.ConsequenceResultList.Add(zeroResult);
         }
         #endregion
     }

@@ -174,6 +174,7 @@ namespace HEC.FDA.ViewModel.Inventory
         private void UpdateRows()
         {
             string[] allColumnNames = GetColumnNames();
+            string[] optionalColumnNames = GetColumnNamesWithClearOption();
 
             //required rows
             _StructureIDRow.Items.Clear();
@@ -189,23 +190,36 @@ namespace HEC.FDA.ViewModel.Inventory
             _GroundElevRow.Items.Clear();
             _GroundElevRow.Items.AddRange(allColumnNames);
 
-            //optional rows
+            //optional rows - use the list with clear option
             _ContentValueRow.Items.Clear();
-            _ContentValueRow.Items.AddRange(allColumnNames);
+            _ContentValueRow.Items.AddRange(optionalColumnNames);
             _OtherValueRow.Items.Clear();
-            _OtherValueRow.Items.AddRange(allColumnNames);
+            _OtherValueRow.Items.AddRange(optionalColumnNames);
             _VehicleValueRow.Items.Clear();
-            _VehicleValueRow.Items.AddRange(allColumnNames);
+            _VehicleValueRow.Items.AddRange(optionalColumnNames);
             _BegDamDepthRow.Items.Clear();
-            _BegDamDepthRow.Items.AddRange(allColumnNames);
+            _BegDamDepthRow.Items.AddRange(optionalColumnNames);
             _YearInConstructionRow.Items.Clear();
-            _YearInConstructionRow.Items.AddRange(allColumnNames);
+            _YearInConstructionRow.Items.AddRange(optionalColumnNames);
             _NotesRow.Items.Clear();
-            _NotesRow.Items.AddRange(allColumnNames);
+            _NotesRow.Items.AddRange(optionalColumnNames);
             _DescriptionRow.Items.Clear();
-            _DescriptionRow.Items.AddRange(allColumnNames);
+            _DescriptionRow.Items.AddRange(optionalColumnNames);
             _NumberOfStructuresRow.Items.Clear();
-            _NumberOfStructuresRow.Items.AddRange(allColumnNames);
+            _NumberOfStructuresRow.Items.AddRange(optionalColumnNames);
+        }
+
+        private string[] GetColumnNamesWithClearOption()
+        {
+            var columnNames = GetColumnNames();
+            string[] columnNamesWithClear = new string[columnNames.Length + 1]; //note length + 1
+            columnNamesWithClear[0] = ""; //first option is blank
+            for (int i = 0; i < columnNames.Length; i++) 
+            {
+                //starts at 1, because 0 is clear. no index OOR because of length + 1
+                columnNamesWithClear[i + 1] = columnNames[i]; 
+            }
+            return columnNamesWithClear;
         }
 
         private string[] GetColumnNames()

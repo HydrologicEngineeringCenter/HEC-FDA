@@ -1,5 +1,13 @@
-﻿using HEC.FDA.Model.paireddata;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.stageDamage;
+using HEC.FDA.ViewModel.Compute;
 using HEC.FDA.ViewModel.FlowTransforms;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
@@ -10,13 +18,8 @@ using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.TableWithPlot;
 using HEC.FDA.ViewModel.Utilities;
 using SciChart.Core.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+using Utility;
+using Visual.Observables;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
 {
@@ -614,7 +617,14 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 {
                     List<UncertainPairedData> quantityDamagedElementsUPD = new();
                     //these are the rows in the computed table
-                    (stageDamageFunctions, quantityDamagedElementsUPD) = await Task.Run(() => scenarioStageDamage.Compute());
+                    ISynchronizationContext context = new SynchronizationContext(action => Application.Current.Dispatcher.BeginInvoke(action));
+                    BatchJob batchJob = new(uiThreadSyncContext: context);
+                    StageDamageComputeLogVM vm = new(batchJob);
+                    string header = "Compute Log: Aggregated Stage Damage";
+                    DynamicTabVM tab = new(header, vm, Guid.NewGuid().ToString());
+                    Navigate(tab, false, false);
+
+                    (stageDamageFunctions, quantityDamagedElementsUPD) = await Task.Run(() => scenarioStageDamage.Compute(reporter:batchJob.Reporter));
                     List<string> errors = scenarioStageDamage.GetErrorMessages();
                     if (errors.Count > 0)
                     {

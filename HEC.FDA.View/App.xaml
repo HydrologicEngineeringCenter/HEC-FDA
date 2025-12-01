@@ -260,8 +260,8 @@
     <DataTemplate DataType="{x:Type AlternativeCompReportResultsVM:EADSummaryVM }">
       <AlternativeCompReportResultsView:EADSummary />
     </DataTemplate>
-    <DataTemplate DataType="{x:Type AlternativeCompReportResultsVM:AAEQSummaryVM }">
-      <AlternativeCompReportResultsView:AAEQSummary />
+    <DataTemplate DataType="{x:Type AlternativeCompReportResultsVM:EqadSummaryVM }">
+      <AlternativeCompReportResultsView:EqadSummary />
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type AlternativeResultsVM:AlternativeResultsVM }">
@@ -317,6 +317,10 @@
 
     <DataTemplate DataType="{x:Type ComputeVM:ComputeAlternativeVM }">
       <computeView:AlternativeComputeLogControl />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type ComputeVM:StageDamageComputeLogVM }">
+       <computeView:StageDamageComputeLogControl />
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type ScenarioResultsVM:PerformanceAssuranceOfThresholdVM }">
@@ -406,7 +410,20 @@
       </DataTemplate.Resources>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type UtilitiesVM:MessageVM }">
+    <DataTemplate
+      DataType="{x:Type UtilitiesVM:DuplicateVM}">
+      <UtilitiesView:Duplicate />
+      <DataTemplate.Resources>
+        <UtilitiesView:Dimension
+          x:Key="{x:Static UtilitiesView:WindowDimensions.KEY}"
+          MinWidth="170"
+          Width="170"
+          MinHeight="120"
+          Height="120" />
+      </DataTemplate.Resources>
+    </DataTemplate>
+
+      <DataTemplate DataType="{x:Type UtilitiesVM:MessageVM }">
       <UtilitiesView:MessageWindow />
     </DataTemplate>
 

@@ -11,7 +11,7 @@ using Math = System.Math;
 
 namespace HEC.FDA.Model.structures
 {
-    public class Structure: Validation 
+    public class Structure : Validation
     {
 
         #region Properties 
@@ -45,7 +45,7 @@ namespace HEC.FDA.Model.structures
         /// <summary>
         /// Maintained to support point M.
         /// </summary>
-        public Structure(string fid, PointM point, double firstFloorElevation, double val_struct, string st_damcat, string occtype, int impactAreaID, double val_cont =0, double val_vehic = 0, double val_other = 0, 
+        public Structure(string fid, PointM point, double firstFloorElevation, double val_struct, string st_damcat, string occtype, int impactAreaID, double val_cont = 0, double val_vehic = 0, double val_other = 0,
             string cbfips = "unassigned", double beginDamage = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, double groundElevation = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE,
             double foundationHeight = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, int year = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, int numStructures = 1, string notes = "", string description = "")
         {
@@ -144,7 +144,8 @@ namespace HEC.FDA.Model.structures
             if (deterministicOccupancyType.IsFirstFloorElevationLogNormal)
             {
                 sampledFFE = FirstFloorElevation * (deterministicOccupancyType.FirstFloorElevationOffset);
-            } else
+            }
+            else
             {
                 sampledFFE = FirstFloorElevation + deterministicOccupancyType.FirstFloorElevationOffset;
             }
@@ -156,7 +157,7 @@ namespace HEC.FDA.Model.structures
             double otherDamage = 0;
 
             //house should have been constructed before or equal to the analysis year to be damaged 
-            if(YearInService <= analysisYear)
+            if (YearInService <= analysisYear)
             {
                 //Beginning damage depth is relative to the first floor elevation and so a beginning damage depth of -1 means that damage begins 1 foot below the first floor elevation
                 //if not defined by the user, the beginning damage depth is equal to the negative of foundation height
@@ -281,23 +282,20 @@ namespace HEC.FDA.Model.structures
         public DeterministicOccupancyType FindOccType(List<DeterministicOccupancyType> deterministicOccupancyTypeList)
         {
             int index = FindOccTypeIndex(deterministicOccupancyTypeList);
-            if(index >= 0) { 
-                return deterministicOccupancyTypeList[index];
-            }
-            return new DeterministicOccupancyType();
+            return deterministicOccupancyTypeList[index];
         }
-
         public int FindOccTypeIndex(List<DeterministicOccupancyType> deterministicOccupancyTypeList)
         {
             //see if we can match an occupancy type from the provided list to the structure occ type name 
-            for( int i =0; i<deterministicOccupancyTypeList.Count; i++)
+            for (int i = 0; i < deterministicOccupancyTypeList.Count; i++)
             {
                 if (deterministicOccupancyTypeList[i].OccupancyTypeName == OccTypeName)
                 {
                     return i;
                 }
             }
-            return -1;
+            // couldn't find occupancy type
+            throw new Exception($"Failed to find OccupancyType Named: {OccTypeName} referenced by structure ID: {Fid}");
         }
 
         internal static string ProduceDetailsHeader()
@@ -323,15 +321,17 @@ namespace HEC.FDA.Model.structures
             double otherValue;
             if (deterministicOccupancyType.UseCSVR)
             {
-                contentValue = InventoriedStructureValue * deterministicOccupancyType.ContentToStructureValueRatio*(1/100);
-            } else
+                contentValue = InventoriedStructureValue * deterministicOccupancyType.ContentToStructureValueRatio * (1 / 100);
+            }
+            else
             {
                 contentValue = InventoriedContentValue;
             }
             if (deterministicOccupancyType.UseOSVR)
             {
-                otherValue = InventoriedStructureValue * deterministicOccupancyType.OtherToStructureValueRatio*(1/100);
-            } else
+                otherValue = InventoriedStructureValue * deterministicOccupancyType.OtherToStructureValueRatio * (1 / 100);
+            }
+            else
             {
                 otherValue = InventoriedOtherValue;
             }

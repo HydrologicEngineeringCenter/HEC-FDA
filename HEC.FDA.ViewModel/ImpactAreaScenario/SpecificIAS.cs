@@ -120,22 +120,18 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
         /// <summary>
         /// This ctor is used to load elements from the database.
+        /// WARNING: Two properties of SpecificIAS : HasNonFailureStageDamage, and
+        /// NonFailureStageDamageID are not saved as part of this object, but in the parent element. 
+        /// They must be passed down after creation 
         /// </summary>
         /// <param name="iasElem"></param>
         public SpecificIAS(XElement iasElem)
         {
-            ImpactAreaID = int.Parse(iasElem.Attribute(IMPACT_AREA).Value);
-            //this is new, check if it exists first for backwards compatibility. 
-            XAttribute hasNonFailure = iasElem.Attribute(HAS_NON_FAILURE_STAGE_DAMAGE);
-            if(hasNonFailure != null)
-            {
-                HasNonFailureStageDamage = Boolean.Parse(hasNonFailure.Value);
-            }
-            else
-            {
-                HasNonFailureStageDamage = false;
-            }
+            //default values
+            HasNonFailureStageDamage = false;
+            NonFailureStageDamageID = -999; //obviously invalid value to help in debugging. 
 
+            ImpactAreaID = int.Parse(iasElem.Attribute(IMPACT_AREA).Value);
             FlowFreqID = int.Parse(iasElem.Element(FREQUENCY_RELATIONSHIP).Attribute(ID).Value);
             InflowOutflowID = int.Parse(iasElem.Element(INFLOW_OUTFLOW).Attribute(ID).Value);
             RatingID = int.Parse(iasElem.Element(RATING).Attribute(ID).Value);
@@ -184,8 +180,16 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         {
             FdaValidationResult vr = new FdaValidationResult();
             vr.AddErrorMessage(DoesScenarioChildElementsStillExist().ErrorMessage);
+            //add validation of non-failure stage damage.
+            if(HasNonFailureStageDamage)
+            {
+                if(NonFailureStageDamageID < 0 )
+                {
+                   throw new Exception($"The non-failure stage damage ID : {NonFailureStageDamageID} is invalid.");
+                }
+            }
             //insert the name of the impact area if not valid
-            if(!vr.IsValid)
+            if (!vr.IsValid)
             {
                 vr.InsertMessage(0, "Cannot compute scenario configuration for impact area: " + GetSpecificImpactAreaName());
             }
