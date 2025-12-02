@@ -39,7 +39,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 ListOfOccupancyTypes.Add(new OccupancyType(ot));
             }
             AddDefaultActions(EditOccupancyTypes, StringConstants.EDIT_OCCTYPE_MENU);
-            AddExportActions();
+            //AddExportActions();
         }
         public override XElement ToXML()
         {
