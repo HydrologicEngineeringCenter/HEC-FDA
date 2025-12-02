@@ -2,9 +2,10 @@
 using Geospatial.GDALAssist;
 using Geospatial.GDALAssist.Vectors;
 using Geospatial.IO;
-using Geospatial.Terrain;
 using Geospatial.Vectors;
+using HEC.FDA.Model.Spatial.Extensions;
 using RasMapperLib;
+using RasMapperLib.Mapping;
 using RasMapperLib.Utilities;
 using System;
 using System.Collections.Generic;
@@ -52,7 +53,7 @@ public static class RASHelper
     private static PointM[] GeospatialPointsToPointMs(IVectorCollection<Geospatial.Vectors.Point> points)
     {
         PointM[] pointMs = new PointM[points.Count];
-        for(int i = 0; i < points.Count; i++)
+        for (int i = 0; i < points.Count; i++)
         {
             pointMs[i] = Converter.ConvertPtM(points[i]);
         }
@@ -84,7 +85,7 @@ public static class RASHelper
     /// </summary>
     private static void OverwriteNoDataValues(ref float[] elevations)
     {
-        for(int i = 0; i<elevations.Length; i++)
+        for (int i = 0; i < elevations.Length; i++)
         {
             if (elevations[i] == float.MinValue)
             {
@@ -230,6 +231,44 @@ public static class RASHelper
         PointFeatureLayer pointLayer = new("thisNameIsntUsed", path);
         PointMs pointMs = new(pointLayer.Points().Select(p => p.PointM()));
         return pointMs;
+    }
+
+    public static Dictionary<string, PointM> QueryPolygons(string polygonPath, string pointsPath, string polygonColumnName)
+    {
+        OperationResult polygonResult = ShapefileIO.TryRead(polygonPath, out PolygonFeatureCollection polygons);
+        if (!polygonResult.Result) return new Dictionary<string, PointM>();
+
+        OperationResult pointsResult = ShapefileIO.TryRead(pointsPath, out PointFeatureCollection points);
+        if (!pointsResult.Result) return new Dictionary<string, PointM>();
+
+        Dictionary<string, PointM> result = new();
+        for (int i = 0; i < points.Count; i++)
+        {
+            for (int j = 0; j < polygons.Count; j++)
+            {
+                if (polygons[j].Contains(points[i]))
+                {
+                    var row = polygons.AttributeTable.Rows[j];
+                    string summaryZone = row.TryGetValueAs(polygonColumnName, $"Polygon {j}").TrimEnd();
+                    result[summaryZone] = Converter.ConvertPtM(points[i]);
+                }
+            }
+        }
+        return result;
+    }
+
+    public static float[] GetStageFromHDF(PointMs pts, string hydraulicsPath)
+    {
+        var rasResult = new RASResults(hydraulicsPath);
+        var rasGeometry = rasResult.Geometry;
+        var rasWSMap = new RASResultsMap(rasResult, MapTypes.Elevation);
+        RASGeometryMapPoints mapPixels = rasGeometry.MapPixels(pts);
+        float[] WSE = null;
+        int profileIndex = RASResultsMap.MaxProfileIndex;
+
+        float[] mockTerrainElevs = new float[pts.Count];
+        rasResult.ComputeSwitch(rasWSMap, mapPixels, profileIndex, mockTerrainElevs, null, ref WSE);
+        return WSE;
     }
     #region HACKS
 

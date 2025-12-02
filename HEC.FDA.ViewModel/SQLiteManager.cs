@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.SQLite;
-using System.Linq;
-using System.Text;
 
 namespace HEC.FDA.ViewModel;
 
@@ -16,7 +13,7 @@ public class SQLiteManager
 
     public string DataBasePath => _dataBasePath;
 
-    public string[] TableNames => _tableNames; 
+    public string[] TableNames => _tableNames;
     public bool DataBaseOpen => _dataBaseOpen;
 
     public SQLiteConnection DbConnection => _dbConnection;
@@ -35,6 +32,7 @@ public class SQLiteManager
             sQLiteConnectionStringBuilder.JournalMode = SQLiteJournalModeEnum.Memory;
             sQLiteConnectionStringBuilder.FailIfMissing = false;
             sQLiteConnectionStringBuilder.ReadOnly = false;
+            sQLiteConnectionStringBuilder.ForeignKeys = true;
             return sQLiteConnectionStringBuilder;
         }
     }

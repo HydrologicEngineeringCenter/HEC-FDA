@@ -1,15 +1,14 @@
-﻿using Statistics.Distributions;
-using Statistics;
-using RasMapperLib;
-using Xunit;
-using HEC.FDA.Model.structures;
-using HEC.FDA.Model.paireddata;
-using HEC.FDA.Model.compute;
-using HEC.MVVMFramework.Base.Implementations;
-using System.Collections.Generic;
+﻿using HEC.FDA.Model.compute;
 using HEC.FDA.Model.metrics;
-using Geospatial.Vectors.Clipper.Internals;
+using HEC.FDA.Model.paireddata;
+using HEC.FDA.Model.structures;
+using HEC.MVVMFramework.Base.Implementations;
+using RasMapperLib;
+using Statistics;
+using Statistics.Distributions;
 using System;
+using System.Collections.Generic;
+using Xunit;
 
 namespace HEC.FDA.ModelTest.unittests.structures
 {
@@ -57,7 +56,7 @@ namespace HEC.FDA.ModelTest.unittests.structures
         public void ComputeStructureDamage(float wse, double expectedStructureDamage, double expectedContentDamage)
         {
             List<DeterministicOccupancyType> deterministicOccupancyTypes = new List<DeterministicOccupancyType>();
-            deterministicOccupancyTypes.Add(occupancyType.Sample(iteration:1, true));
+            deterministicOccupancyTypes.Add(occupancyType.Sample(iteration: 1, true));
             ConsequenceResult consequenceResult = structure.ComputeDamage(wse, deterministicOccupancyTypes);
             Assert.Equal(expectedStructureDamage, consequenceResult.StructureDamage, 0);
             Assert.Equal(expectedContentDamage, consequenceResult.ContentDamage, 0);
@@ -112,12 +111,12 @@ namespace HEC.FDA.ModelTest.unittests.structures
             float wse233375 = -4.17f;
             float wse232549 = -1.27f;
 
-            (double, double, double, double) consequenceResult233375 = structure233375.ComputeDamage(wse233375, oneStryPier.Sample(iteration:1, true));
-            (double, double, double, double) consequenceResult232549 = structure232549.ComputeDamage(wse232549, oneStryPier.Sample(iteration:1, true));
+            (double, double, double, double) consequenceResult233375 = structure233375.ComputeDamage(wse233375, oneStryPier.Sample(iteration: 1, true));
+            (double, double, double, double) consequenceResult232549 = structure232549.ComputeDamage(wse232549, oneStryPier.Sample(iteration: 1, true));
 
             //percent damage externally interpolated from depth-percent damage function
             double expectedStructureDamage232549 = 0.4213 * structure232549.InventoriedStructureValue;
-            double expectedStructureDamage233375 = 0.04476* structure233375.InventoriedStructureValue;
+            double expectedStructureDamage233375 = 0.04476 * structure233375.InventoriedStructureValue;
 
             Assert.Equal(expectedStructureDamage232549, consequenceResult232549.Item1, .01);
             Assert.Equal(expectedStructureDamage233375, consequenceResult233375.Item1, .01);

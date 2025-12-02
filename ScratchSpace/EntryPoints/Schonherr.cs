@@ -1,51 +1,96 @@
-﻿ using Statistics.Histograms;
+﻿using HEC.FDA.Model.Spatial;
 using System.Data.SQLite;
-using System.Text;
-using Statistics;
 
 namespace ScratchSpace.EntryPoints;
 internal class Schonherr
 {
     public static void EntryPoint()
     {
-        
-        string dbpath = @"Data Source=C:\Users\HEC\Downloads\Kelly_Barnes.fia"; //user
-        using SQLiteConnection connection = new(dbpath);
-        connection.Open();
+        SQLiteConnection conn = new(@"Data Source=C:\FDA_Test_Data\WKS20230525\WKS20230525\save-test.db");
+        conn.Open();
+        using var pragma = new SQLiteCommand("PRAGMA foreign_keys = ON;", conn); // have to do this for every connection if using multiple
+        pragma.ExecuteNonQuery();
 
-        string[] cols = { "LL_In_StructuresU65", "LL_In_StructuresO65", "LL_Caught" }; 
-        string tableName = "EPZ_Sensitivity>Results_By_Iteration>EPZ_Sensitivity_Slow>2>Toccoa_Falls_SensitivityEPZ>Pepsny_House"; //from user.
-        string query = RowSumQuery(cols, tableName);
+        Insert(conn);
+        //DeleteFromMetadata(conn);
 
-        using SQLiteCommand command = new(query, connection);
-        using SQLiteDataReader reader = command.ExecuteReader();
-        List<double> vals = new();
-        while (reader.Read())
-        {
-            double val = (long)reader[0];
-            vals.Add(val);
-        }
-
-        ConvergenceCriteria cc = new();
-        DynamicHistogram histogram = new(vals, cc); // bin size of 1 because we are dealing with ints?
-        //histogram.AddObservationsToHistogram(vals.ToArray());
-        //Console.WriteLine(histogram.Print());
-        connection.Close();
+        conn.Close();
     }
 
-    private static string RowSumQuery(string[] columns, string tableName)
+    private static void Insert(SQLiteConnection conn)
     {
-        if (columns.Length < 1) throw new ArgumentException("Invalid number of columns");
+        using var createcmd = new SQLiteCommand(conn);
+        createcmd.CommandText = @"
+            CREATE TABLE IF NOT EXISTS Metadata (
+                Id   INTEGER PRIMARY KEY AUTOINCREMENT,
+                Xml  TEXT    NOT NULL
+            );";
+        createcmd.ExecuteNonQuery();
 
-        StringBuilder sb = new();
-        sb.Append("SELECT (");
-        for (int i = 0; i < columns.Length; i++)
+        for (int i = 0; i < 8; i++)
         {
-            sb.Append($"\"{columns[i]}\"");
-            if (i < columns.Length - 1) 
-                sb.Append(" + ");
+            InsertIntoMetadata(conn, $"xml string {i}");
         }
-        sb.Append($") FROM \"{tableName}\"");
-        return sb.ToString();
+
+        var rnd = new Random();
+        for (int i = 1; i <= 16; i++)
+        {
+            int id = (i + 1) / 2;
+            SaveCurves(conn, id, rnd.NextDouble(), rnd.NextDouble());
+        }
+    }
+
+    private static void InsertIntoMetadata(SQLiteConnection conn, string xml)
+    {
+        using var insertcmd = new SQLiteCommand(conn);
+        insertcmd.CommandText = @"INSERT INTO Metadata (Xml) VALUES(@xml)";
+        insertcmd.Parameters.AddWithValue("@xml", xml);
+        insertcmd.ExecuteNonQuery();
+    }
+
+    private static void SaveCurves(SQLiteConnection conn, int id, double x, double y)
+    {
+        using var createcmd = new SQLiteCommand(conn);
+        createcmd.CommandText = @"
+            CREATE TABLE IF NOT EXISTS Curves (
+                CurveId     INTEGER PRIMARY KEY AUTOINCREMENT,
+                MetadataId  INTEGER NOT NULL,
+                X           REAL    NOT NULL,
+                Y           REAL    NOT NULL,
+                FOREIGN KEY(MetadataId) REFERENCES Metadata(Id) ON DELETE CASCADE
+            );";
+        createcmd.ExecuteNonQuery();
+
+        using var insertcmd = new SQLiteCommand(conn);
+        insertcmd.CommandText = @"INSERT INTO Curves (MetadataId, X, Y) VALUES (@mid, @x, @y);";
+        insertcmd.Parameters.AddWithValue("@mid", id);
+        insertcmd.Parameters.AddWithValue("@x", x);
+        insertcmd.Parameters.AddWithValue("@y", y);
+        insertcmd.ExecuteNonQuery();
+    }
+
+    private static void DeleteFromMetadata(SQLiteConnection conn)
+    {
+        using var deletecmd = new SQLiteCommand(conn);
+        deletecmd.CommandText = "DELETE FROM Metadata WHERE Id IN (1,2);";
+        deletecmd.ExecuteNonQuery();
+    }
+
+    private void FDABadOutput()
+    {
+        ShapefileHelper bad = new(@"C:\FDA_Test_Data\WKS20230525\WKS20230525\re-exported.shp");
+        var badColumns = bad.GetColumns();
+        foreach (string kvp in badColumns)
+        {
+            Console.WriteLine(kvp);
+        }
+
+        Console.WriteLine("\r\nName:");
+        var nameValues = bad.GetColumnValues("Name");
+        foreach (string name in nameValues) Console.WriteLine(name);
+
+        Console.WriteLine("\r\nfid:");
+        var fidValues = bad.GetColumnValues("fid");
+        foreach (string fid in fidValues) Console.WriteLine(fid);
     }
 }

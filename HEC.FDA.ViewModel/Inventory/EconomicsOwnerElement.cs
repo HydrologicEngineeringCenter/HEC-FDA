@@ -10,7 +10,7 @@ namespace HEC.FDA.ViewModel.Inventory
         #region Constructors
         public InventoryOwnerElement( ) : base()
         {
-            Name = StringConstants.ECONOMICS;            
+            Name = StringConstants.CONSEQUENCES;            
             CustomTreeViewHeader = new CustomHeaderVM(Name);
         }
 
@@ -33,6 +33,10 @@ namespace HEC.FDA.ViewModel.Inventory
             AggregatedStageDamage.AggregatedStageDamageOwnerElement a = new AggregatedStageDamage.AggregatedStageDamageOwnerElement();
             this.AddElement(a);
             cache.StageDamageParent = a;
+
+            LifeLoss.LifeLossOwnerElement ll = new();
+            this.AddElement(ll);
+            cache.LifeLossParent = ll;
         }
        
         #endregion

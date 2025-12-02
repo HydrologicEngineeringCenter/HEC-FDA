@@ -40,6 +40,8 @@
              xmlns:WatershedView="clr-namespace:HEC.FDA.View.Watershed"
              xmlns:AggregatedVM="clr-namespace:HEC.FDA.ViewModel.AggregatedStageDamage;assembly=HEC.FDA.ViewModel"
              xmlns:AggregatedView="clr-namespace:HEC.FDA.View.AggregatedStageDamage"
+             xmlns:LifeLossVM="clr-namespace:HEC.FDA.ViewModel.LifeLoss;assembly=HEC.FDA.ViewModel"
+             xmlns:LifeLossView="clr-namespace:HEC.FDA.View.LifeLoss"
              xmlns:IASVM="clr-namespace:HEC.FDA.ViewModel.ImpactAreaScenario;assembly=HEC.FDA.ViewModel"
              xmlns:IASView="clr-namespace:HEC.FDA.View.ImpactAreaScenario"
              xmlns:OccupancyTypesVM="clr-namespace:HEC.FDA.ViewModel.Inventory.OccupancyTypes;assembly=HEC.FDA.ViewModel"
@@ -174,6 +176,16 @@
 
     <DataTemplate DataType="{x:Type OccupancyTypesVM:ImportOcctypesFromFDA1VM }">
       <UtilitiesView:ImportFromFDA1 />
+    </DataTemplate>
+
+    <DataTemplate
+      DataType="{x:Type OccupancyTypesVM:OccupancyTypesImporterXMLVM}">
+      <OccupancyTypesView:OccupancyTypesImporterXML />
+    </DataTemplate>
+
+    <DataTemplate
+      DataType="{x:Type OccupancyTypesVM:OccupancyTypesImporterSQLiteVM}">
+      <OccupancyTypesView:OccupancyTypesImporterSQLite />
     </DataTemplate>
 
     <!--Occupancy Types Controls Region-->
@@ -452,7 +464,16 @@
 
     <DataTemplate DataType="{x:Type ComputeVM:ComputeAltCompReportVM}">
       <computeView:AlternativeCompComputeLogControl />
-    </DataTemplate> 
+    </DataTemplate>
+
+    <!--Life Loss region-->
+    <DataTemplate DataType="{x:Type LifeLossVM:LifeSimImporterVM}">
+        <LifeLossView:LifeSimImporter />
+    </DataTemplate>
+      
+    <DataTemplate DataType="{x:Type LifeLossVM:IndexPointsLifeLossVM}">
+        <LifeLossView:IndexPointsLifeLoss />
+    </DataTemplate>
 
     </Application.Resources>
 </Application>
