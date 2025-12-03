@@ -23,6 +23,7 @@ namespace HEC.FDA.ViewModel.Utilities
             {
                 if (Elements[i].Name.Equals(element.Name))
                 {
+                    element.RequestNavigation -= Navigate;
                     Elements.RemoveAt(i);
                 }
             }
@@ -47,6 +48,7 @@ namespace HEC.FDA.ViewModel.Utilities
             }
             if (index != -1)
             {
+                Elements[index].RequestNavigation -= Navigate;
                 Elements.RemoveAt(index);
                 InsertElement(index, newElement);
             }
@@ -55,9 +57,6 @@ namespace HEC.FDA.ViewModel.Utilities
 
         public void InsertElement(int index, BaseFdaElement ele)
         {
-            if (ele != null)
-                ele.RequestNavigation -= Navigate;
-
             ele.RequestNavigation += Navigate;
             Elements.Insert(index, ele);
 
