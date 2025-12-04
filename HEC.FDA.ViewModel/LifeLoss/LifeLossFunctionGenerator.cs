@@ -19,17 +19,19 @@ public class LifeLossFunctionGenerator
     private readonly Dictionary<string, string> _hydraulicsFolderByAlternative;
     private readonly string _summarySetName;
     private Dictionary<string, PointM> _indexPointBySummaryZone; // not readonly because we reassign its pointer in CreateLifeLossFunctions, too costly to do in constructor?
+    private Dictionary<string, int> _impactAreaIDByName;
     private readonly string _simulationName;
     private readonly string _topLevelHydraulicsFolder;
     private readonly string[] _alternativeNames;
     private readonly string[] _hazardTimes;
 
-    public LifeLossFunctionGenerator(string selectedPath, LifeSimSimulation simulation)
+    public LifeLossFunctionGenerator(string selectedPath, LifeSimSimulation simulation, Dictionary<string, int> impactAreaIDByName)
     {
         _db = new LifeSimDatabase(selectedPath);
         _hydraulicsFolderByAlternative = _db.CreateAlternativeHydraulicsPairs();
         _summarySetName = _db.SummarySetName(simulation.Name);
         _indexPointBySummaryZone = simulation.SummarySet;
+        _impactAreaIDByName = impactAreaIDByName;
         _simulationName = simulation.Name;
         _topLevelHydraulicsFolder = simulation.HydraulicsFolder;
         _alternativeNames = simulation.Alternatives.ToArray();
@@ -58,19 +60,32 @@ public class LifeLossFunctionGenerator
     {
         int functionID = 1;
         List<LifeLossFunction> lifeLossFunctions = [];
-        foreach (string summaryZone in _indexPointBySummaryZone.Keys)
+        foreach (var (name, id) in _impactAreaIDByName.OrderBy(kvp => kvp.Value))
         {
-            // creating points array of size 1 because that RAS API needs an array
-            PointMs indexPoint = [_indexPointBySummaryZone[summaryZone]];
-
-            List<LifeLossFunction> functions = CreateLifeLossFunctionsForSummaryZone(summaryZone, indexPoint);
+            PointMs indexPoint = [_indexPointBySummaryZone[name]];
+            List<LifeLossFunction> functions = CreateLifeLossFunctionsForSummaryZone(name, indexPoint);
             foreach (LifeLossFunction function in functions)
             {
                 function.FunctionID = functionID;
                 functionID++;
             }
             lifeLossFunctions.AddRange(functions); // AddRange because we are adding a list to another list
+
         }
+
+        //foreach (string summaryZone in _indexPointBySummaryZone.Keys)
+        //{
+        //    // creating points array of size 1 because that RAS API needs an array
+        //    PointMs indexPoint = [_indexPointBySummaryZone[summaryZone]];
+
+        //    List<LifeLossFunction> functions = CreateLifeLossFunctionsForSummaryZone(summaryZone, indexPoint);
+        //    foreach (LifeLossFunction function in functions)
+        //    {
+        //        function.FunctionID = functionID;
+        //        functionID++;
+        //    }
+        //    lifeLossFunctions.AddRange(functions); // AddRange because we are adding a list to another list
+        //}
         return lifeLossFunctions;
     }
 
@@ -125,7 +140,7 @@ public class LifeLossFunctionGenerator
                 stages[i] = entries[i].Stage;
                 histograms[i] = entries[i].Histogram;
             }
-            UncertainPairedData upd = new(stages.ToArray(), histograms.ToArray(), new CurveMetaData());
+            UncertainPairedData upd = new(stages.ToArray(), histograms.ToArray(), new CurveMetaData("Stage", "Life Loss", $"{_simulationName}_{summaryZone}_{hazardTime}", "LifeLoss", _impactAreaIDByName[summaryZone], "LifeLoss"));
             LifeLossFunction llf = new(-1, -1, upd, alternatives, _simulationName, summaryZone, hazardTime);
             functions.Add(llf);
         }

@@ -314,7 +314,9 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
     private void LoadStageLifeLossRelationships(int elementID)
     {
         string projFile = Connection.Instance.ProjectFile;
-        LifeLossFunctionSaver saver = new(projFile);
+        List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
+        Dictionary<string, int> IANameToID = impactAreaElements[0].GetNameToIDPairs();
+        LifeLossFunctionSaver saver = new(projFile, IANameToID);
         LifeLossFunctionFilter filter = new() { Element_ID = [elementID] };
         List<LifeLossFunction> functions = saver.ReadFromSQLite(filter);
         LifeLossFunctions.Clear();
@@ -335,12 +337,13 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
             if (a.IsChecked) currentSimulation.Alternatives.Add(a.Name);
         foreach (CheckableItem h in HazardTimes)
             if (h.IsChecked) currentSimulation.HazardTimes.Add(h.Value);
-        LifeLossFunctionGenerator generator = new(SelectedPath, currentSimulation);
         string indexPointsFile = GetIndexPointsFile();
         string impactAreasFile = GetImpactAreaFile();
         LifeLossFunctions.Clear();
         List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
         string uniqueImpactAreaHeader = impactAreaElements[0].UniqueNameColumnHeader;
+        Dictionary<string, int> IANameToID = impactAreaElements[0].GetNameToIDPairs();
+        LifeLossFunctionGenerator generator = new(SelectedPath, currentSimulation, IANameToID);
         List<LifeLossFunction> newFunctions = await generator.CreateLifeLossFunctionsAsync(impactAreasFile, indexPointsFile, uniqueImpactAreaHeader);
         LifeLossFunctions.Clear();
         LifeLossFunctions.AddRange(newFunctions);

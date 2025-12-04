@@ -14,6 +14,8 @@ namespace HEC.FDA.Model.LifeLoss.Saving;
 /// </summary>
 public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
 {
+    private Dictionary<string, int> _impactAreaIDByName;
+
     private static readonly string _createCommandText =
         $@"
             CREATE TABLE IF NOT EXISTS {LifeLossStringConstants.LL_TABLE_NAME} (
@@ -77,9 +79,10 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
                 {LifeLossStringConstants.BIN_COUNTS_PARAMETER}
             );";
 
-    public LifeLossFunctionSaver(string dbpath) : base(dbpath) // calls the base class constructor to initialize the SQLite connection
+    public LifeLossFunctionSaver(string dbpath, Dictionary<string, int> impactAreaIDByName) : base(dbpath) // calls the base class constructor to initialize the SQLite connection
     {
         CreateTable(_connection); // more efficient for SQL to check if table exists than checking a flag in this class
+        _impactAreaIDByName = impactAreaIDByName;
     }
 
     /// <summary>
@@ -125,7 +128,7 @@ public class LifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
         {
             if (functionID == -1) return; // means we have not read anything yet, do not want to create a life loss function yet
 
-            UncertainPairedData data = new(stages.ToArray(), histograms.ToArray(), new CurveMetaData());
+            UncertainPairedData data = new(stages.ToArray(), histograms.ToArray(), new CurveMetaData("Stage", "Life Loss", $"{currentSim}_{currentSZ}_{currentHT}", "LifeLoss", _impactAreaIDByName[currentSZ], "LifeLoss"));
             LifeLossFunction llf = new(-1, functionID, data, alternatives.ToArray(), currentSim, currentSZ, currentHT);
             result.Add(llf);
 

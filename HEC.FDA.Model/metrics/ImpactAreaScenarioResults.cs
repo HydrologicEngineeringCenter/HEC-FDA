@@ -16,6 +16,8 @@ namespace HEC.FDA.Model.metrics
         public int ImpactAreaID { get; }
         public bool IsNull { get; }
         internal List<(CurveMetaData, PairedData)> DamageFrequencyFunctions { get; set; }
+
+        internal List<(CurveMetaData, PairedData)> LifeLossFrequencyFunctions { get; set; }
         #endregion
         #region Constructors 
         public ImpactAreaScenarioResults(int impactAreaID, bool isNull)

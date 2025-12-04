@@ -1,16 +1,16 @@
 ﻿
 
-using Xunit;
-using Statistics;
-using System.Collections.Generic;
-using System;
-using System.Xml.Linq;
-using Statistics.Distributions;
+using HEC.FDA.Model.compute;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.paireddata;
-using HEC.FDA.Model.compute;
+using Statistics;
+using Statistics.Distributions;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Threading;
+using System.Xml.Linq;
+using Xunit;
 
 namespace HEC.FDA.ModelTest.unittests
 {
@@ -57,6 +57,44 @@ namespace HEC.FDA.ModelTest.unittests
                 .WithFlowFrequency(flow_frequency)
                 .WithFlowStage(flow_stage)
                 .WithStageDamages(upd)
+                .WithAdditionalThreshold(threshold)
+                .Build();
+            ImpactAreaScenarioResults impactAreaScenarioResult = simulation.Compute(convergenceCriteria, computeIsDeterministic: true); //here we test compute, below we test preview compute 
+            double actual = impactAreaScenarioResult.MeanExpectedAnnualConsequences(id, damCat, assetCat);
+            double difference = expected - actual;
+            double relativeDifference = Math.Abs(difference / expected);
+            Assert.True(relativeDifference < .01);
+        }
+
+        [Theory]
+        [InlineData(150000)]
+        public void ComputeEALL(double expected)
+        {
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
+            ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
+            //create a stage distribution
+            IDistribution[] stages = new IDistribution[2];
+            for (int i = 0; i < 2; i++)
+            {
+                stages[i] = IDistributionFactory.FactoryUniform(0, 30 * i, 10);
+            }
+            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, metaData);
+            //create a damage distribution
+            IDistribution[] lifeLoss = new IDistribution[3]
+            {
+                    new Uniform(0, 0, 10),
+                    new Uniform(0, 600000, 10),
+                    new Uniform(0, 600000, 10)
+            };
+            UncertainPairedData stageLifeLoss = new UncertainPairedData(Stages, lifeLoss, metaData);
+            List<UncertainPairedData> upd = new List<UncertainPairedData>();
+            upd.Add(stageLifeLoss);
+
+            Threshold threshold = new Threshold(1, convergenceCriteria, ThresholdEnum.DefaultExteriorStage, 150000);//do we want to access this through _results?
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(id)
+                .WithFlowFrequency(flow_frequency)
+                .WithFlowStage(flow_stage)
+                .WithStageLifeLoss(upd)
                 .WithAdditionalThreshold(threshold)
                 .Build();
             ImpactAreaScenarioResults impactAreaScenarioResult = simulation.Compute(convergenceCriteria, computeIsDeterministic: true); //here we test compute, below we test preview compute 
@@ -183,7 +221,7 @@ namespace HEC.FDA.ModelTest.unittests
                 .WithStageDamages(stageDamageList)
                 .Build();
             ConvergenceCriteria convergencriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
-            ImpactAreaScenarioResults results = simulation.Compute(convergencriteria, computeIsDeterministic:true);
+            ImpactAreaScenarioResults results = simulation.Compute(convergencriteria, computeIsDeterministic: true);
             double actual = results.MeanExpectedAnnualConsequences(id, damCat, assetCat);
             if (actual == 0) //handle assertion differently if EAD is zero
             {
@@ -404,7 +442,7 @@ namespace HEC.FDA.ModelTest.unittests
             IDistribution[] stageDistributions = new IDistribution[stages.Length];
             for (int i = 0; i < stages.Length; i++)
             {
-                stageDistributions[i] = new Deterministic( stages[i]);
+                stageDistributions[i] = new Deterministic(stages[i]);
             }
             UncertainPairedData flowStage = new UncertainPairedData(flows, stageDistributions, curveMetaData);
             double[] failureDamage = new double[] { 0, 0, 14000, 150000, 500000 };
@@ -427,7 +465,7 @@ namespace HEC.FDA.ModelTest.unittests
             IDistribution[] failureProbDistributions = new IDistribution[stages.Length];
             for (int i = 0; i < failureProbs.Length; i++)
             {
-                failureProbDistributions[i] = new Deterministic(failureProbs[i]); 
+                failureProbDistributions[i] = new Deterministic(failureProbs[i]);
             }
             UncertainPairedData systemResponse = new UncertainPairedData(stages, failureProbDistributions, curveMetaData);
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(id)
@@ -439,7 +477,7 @@ namespace HEC.FDA.ModelTest.unittests
                 .Build();
 
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
-            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(convergenceCriteria, new CancellationToken(), computeIsDeterministic: true); 
+            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(convergenceCriteria, new CancellationToken(), computeIsDeterministic: true);
             double actual = impactAreaScenarioResults.MeanExpectedAnnualConsequences(id, damCat, assetCat);
             double relativeTolerance = Math.Abs(expected - actual) / actual;
             Assert.True(relativeTolerance < 0.01);

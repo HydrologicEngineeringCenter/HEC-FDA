@@ -1,6 +1,7 @@
 ﻿using HEC.FDA.Model.LifeLoss;
 using HEC.FDA.Model.LifeLoss.Saving;
 using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
 using System;
@@ -93,8 +94,10 @@ public partial class LifeSimImporterVM : BaseEditorVM
         if (!_indexPointsVM.WasRecomputed)
             return;
 
+        List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
+        Dictionary<string, int> IANameToID = impactAreaElements[0].GetNameToIDPairs();
         string projFile = Connection.Instance.ProjectFile;
-        LifeLossFunctionSaver saver = new(projFile);
+        LifeLossFunctionSaver saver = new(projFile, IANameToID);
         LifeLossFunctionFilter filter = new()
         {
             Element_ID = [id],
