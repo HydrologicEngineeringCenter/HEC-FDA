@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="HEC.RAS.Ras.Mapper" Version="0.1.0.1554-dev" />
+    <PackageReference Include="ScottPlot" Version="5.0.54" />
   </ItemGroup>
 
   <ItemGroup>
