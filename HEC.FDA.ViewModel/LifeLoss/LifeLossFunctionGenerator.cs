@@ -70,22 +70,7 @@ public class LifeLossFunctionGenerator
                 functionID++;
             }
             lifeLossFunctions.AddRange(functions); // AddRange because we are adding a list to another list
-
         }
-
-        //foreach (string summaryZone in _indexPointBySummaryZone.Keys)
-        //{
-        //    // creating points array of size 1 because that RAS API needs an array
-        //    PointMs indexPoint = [_indexPointBySummaryZone[summaryZone]];
-
-        //    List<LifeLossFunction> functions = CreateLifeLossFunctionsForSummaryZone(summaryZone, indexPoint);
-        //    foreach (LifeLossFunction function in functions)
-        //    {
-        //        function.FunctionID = functionID;
-        //        functionID++;
-        //    }
-        //    lifeLossFunctions.AddRange(functions); // AddRange because we are adding a list to another list
-        //}
         return lifeLossFunctions;
     }
 

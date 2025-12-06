@@ -70,6 +70,7 @@ namespace HEC.FDA.ModelTest.unittests
         [InlineData(150000)]
         public void ComputeEALL(double expected)
         {
+            CurveMetaData lifeLossMetaData = new CurveMetaData(xLabel, yLabel, name, "LifeLoss", "LifeLoss");
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
             ContinuousDistribution flow_frequency = new Uniform(0, 100000, 1000);
             //create a stage distribution
@@ -78,7 +79,7 @@ namespace HEC.FDA.ModelTest.unittests
             {
                 stages[i] = IDistributionFactory.FactoryUniform(0, 30 * i, 10);
             }
-            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, metaData);
+            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, lifeLossMetaData);
             //create a damage distribution
             IDistribution[] lifeLoss = new IDistribution[3]
             {
@@ -86,7 +87,7 @@ namespace HEC.FDA.ModelTest.unittests
                     new Uniform(0, 600000, 10),
                     new Uniform(0, 600000, 10)
             };
-            UncertainPairedData stageLifeLoss = new UncertainPairedData(Stages, lifeLoss, metaData);
+            UncertainPairedData stageLifeLoss = new UncertainPairedData(Stages, lifeLoss, lifeLossMetaData);
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stageLifeLoss);
 
@@ -95,10 +96,10 @@ namespace HEC.FDA.ModelTest.unittests
                 .WithFlowFrequency(flow_frequency)
                 .WithFlowStage(flow_stage)
                 .WithStageLifeLoss(upd)
-                .WithAdditionalThreshold(threshold)
+                //.WithAdditionalThreshold(threshold)
                 .Build();
             ImpactAreaScenarioResults impactAreaScenarioResult = simulation.Compute(convergenceCriteria, computeIsDeterministic: true); //here we test compute, below we test preview compute 
-            double actual = impactAreaScenarioResult.MeanExpectedAnnualConsequences(id, damCat, assetCat);
+            double actual = impactAreaScenarioResult.MeanExpectedAnnualConsequences(id, "LifeLoss", "LifeLoss");
             double difference = expected - actual;
             double relativeDifference = Math.Abs(difference / expected);
             Assert.True(relativeDifference < .01);
