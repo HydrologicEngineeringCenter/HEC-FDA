@@ -1,98 +1,306 @@
-﻿<UserControl x:Class="HEC.FDA.View.ImpactAreaScenario.Editor.IASEditor"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:HEC.FDA.View.ImpactAreaScenario.Editor"
-             mc:Ignorable="d" 
-             xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
-             xmlns:Controls="clr-namespace:UserControls.UserControls;assembly=HEC.FDA.UserControls"
-             xmlns:Utilities="clr-namespace:HEC.FDA.View.Utilities"
-              xmlns:vm="clr-namespace:HEC.FDA.ViewModel.ImpactAreaScenario.Editor;assembly=HEC.FDA.ViewModel"
-             d:DesignHeight="450" d:DesignWidth="800" d:Background="AliceBlue" d:DataContext="{d:DesignInstance Type=vm:IASEditorVM}">
+﻿<UserControl
+  x:Class="HEC.FDA.View.ImpactAreaScenario.Editor.IASEditor"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:local="clr-namespace:HEC.FDA.View.ImpactAreaScenario.Editor"
+  mc:Ignorable="d"
+  xmlns:utilVM="clr-namespace:HEC.FDA.ViewModel.Utilities;assembly=HEC.FDA.ViewModel"
+  xmlns:Controls="clr-namespace:UserControls.UserControls;assembly=HEC.FDA.UserControls"
+  xmlns:Utilities="clr-namespace:HEC.FDA.View.Utilities"
+  xmlns:vm="clr-namespace:HEC.FDA.ViewModel.ImpactAreaScenario.Editor;assembly=HEC.FDA.ViewModel"
+  d:DesignHeight="450"
+  d:DesignWidth="800"
+  d:Background="AliceBlue"
+  d:DataContext="{d:DesignInstance Type=vm:IASEditorVM}">
   <UserControl.Resources>
-        <Utilities:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-        <Utilities:BoolToValidationImageConverter x:Key="BoolToValidationImageConverter" />
-    </UserControl.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="60"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+    <Utilities:BoolToVisibilityConverter
+      x:Key="BoolToVisibilityConverter" />
+    <Utilities:BoolToValidationImageConverter
+      x:Key="BoolToValidationImageConverter" />
+  </UserControl.Resources>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition
+        Height="Auto" />
+      <RowDefinition
+        Height="60" />
+      <RowDefinition
+        Height="60" />
+      <RowDefinition
+        Height="*" />
+      <RowDefinition
+        Height="Auto" />
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition
+        Width="*" />
+    </Grid.ColumnDefinitions>
 
-        <Grid x:Name="FirstRowGrid" Grid.Row="0" Margin="0,5,5,0">
+    <Grid
+      x:Name="FirstRowGrid"
+      Grid.Row="0"
+      Margin="0,5,5,0">
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
- 
-            </Grid.ColumnDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition
+          Width="Auto" />
+        <ColumnDefinition
+          Width="*" />
+        <ColumnDefinition
+          Width="Auto" />
+        <ColumnDefinition
+          Width="*" />
+        <ColumnDefinition
+          Width="Auto" />
+        <ColumnDefinition
+          Width="*" />
 
-            <Label Grid.Row="0" Grid.Column="0" Content="Name:" HorizontalAlignment="Right" Margin="0,0,7,0"/>
-            <Label Grid.Row="0" Grid.Column="0" Content="*" Foreground="Red" HorizontalAlignment="Right" />
-            <TextBox Grid.Row="0" Grid.Column="1"  HorizontalAlignment="Stretch" Text="{Binding Name, ValidatesOnDataErrors=True}" />
-            <Label Grid.Row="0" Grid.Column="2" Content="Description:" HorizontalAlignment="Right" />
-            <Controls:TextBoxDescription Grid.Row="0" Grid.Column="3" Text="{Binding Description}" />
-            <Label Grid.Row="0" Grid.Column="4" Content="Year(s):" HorizontalAlignment="Right"  />
-            <Utilities:YearField Grid.Row="0" Grid.Column="5"/>
+      </Grid.ColumnDefinitions>
+
+      <Label
+        Grid.Row="0"
+        Grid.Column="0"
+        Content="Name:"
+        HorizontalAlignment="Right"
+        Margin="0,0,7,0" />
+      <Label
+        Grid.Row="0"
+        Grid.Column="0"
+        Content="*"
+        Foreground="Red"
+        HorizontalAlignment="Right" />
+      <TextBox
+        Grid.Row="0"
+        Grid.Column="1"
+        HorizontalAlignment="Stretch"
+        Text="{Binding Name, ValidatesOnDataErrors=True}" />
+      <Label
+        Grid.Row="0"
+        Grid.Column="2"
+        Content="Description:"
+        HorizontalAlignment="Right" />
+      <Controls:TextBoxDescription
+        Grid.Row="0"
+        Grid.Column="3"
+        Text="{Binding Description}" />
+      <Label
+        Grid.Row="0"
+        Grid.Column="4"
+        Content="Year(s):"
+        HorizontalAlignment="Right" />
+      <Utilities:YearField
+        Grid.Row="0"
+        Grid.Column="5" />
 
 
-        </Grid>
-        
-        <Grid Grid.Row="1" Margin="0,5,5,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-
-
-            <CheckBox Grid.Column="0" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Left" IsChecked="{Binding HasNonFailureStageDamage}">
-                <TextBlock Text="Non-Failure Scenario Modeled" TextWrapping="Wrap"/>
-            </CheckBox>
-
-            <TextBlock  Grid.Column="1" Text="{Binding StageDamageText}" VerticalAlignment="Center" HorizontalAlignment="Right"  Margin="0,0,15,0"/>
-            
-
-            <Label  Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" />
-      <ComboBox  Grid.Column="2" Height="26" HorizontalAlignment="Stretch" ItemsSource="{Binding StageDamageElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedStageDamageElement}" Margin="0,0,10,0" />
-
-      <TextBlock  Grid.Column="3" Visibility="{Binding HasNonFailureStageDamage,Converter={StaticResource BoolToVisibilityConverter}}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,15,0">
-                Non-Failure
-                <LineBreak/>
-                Stage-Damage
-            </TextBlock>
-
-            <Label  Grid.Column="3" Content="*" Visibility="{Binding HasNonFailureStageDamage,Converter={StaticResource BoolToVisibilityConverter}}" Foreground="Red" VerticalAlignment="Center" HorizontalAlignment="Right" />
-            <ComboBox  Grid.Column="4" Visibility="{Binding HasNonFailureStageDamage,Converter={StaticResource BoolToVisibilityConverter}}" Height="26" HorizontalAlignment="Stretch" ItemsSource="{Binding StageDamageElements}" DisplayMemberPath="Name" SelectedItem="{Binding NonFailureSelectedStageDamageElement}" />
-
-        </Grid>
-
-        <TabControl Grid.Row="2" Margin="5" ItemsSource="{Binding ImpactAreaTabs}" SelectedIndex="0">
-            <TabControl.ItemTemplate>
-                <!-- this is the header template-->
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal" ToolTip="{Binding IsSufficientForComputeTooltip}">
-                        <TextBlock Text="{Binding CurrentImpactArea.Name}" />
-                        <Image x:Name="icon" Source="{Binding IsSufficientForCompute,Converter={StaticResource BoolToValidationImageConverter}}"  />
-                    </StackPanel>
-                </DataTemplate>
-            </TabControl.ItemTemplate>
-        </TabControl>
-        
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
-            <Utilities:SaveCloseControl VerticalAlignment="Bottom"/>
-        </StackPanel>
     </Grid>
+
+    <Grid
+      Grid.Row="1"
+      Margin="0,5,5,0">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition
+          Width="260" />
+        <ColumnDefinition
+          Width="Auto" />
+        <ColumnDefinition
+          Width="*" />
+        <ColumnDefinition
+          Width="Auto" />
+        <ColumnDefinition
+          Width="*" />
+      </Grid.ColumnDefinitions>
+
+
+      <StackPanel
+        Grid.Column="0"
+        Margin="5"
+        VerticalAlignment="Center">
+
+        <CheckBox
+          Margin="0,0,0,5"
+          IsChecked="{Binding HasFailureStageDamage}">
+          <TextBlock
+            Text="Failure Stage-Damage Modeled"
+            TextWrapping="Wrap" />
+        </CheckBox>
+
+        <CheckBox
+          IsChecked="{Binding HasNonFailureStageDamage}">
+          <TextBlock
+            Text="Non-Failure Stage-Damage Modeled"
+            TextWrapping="Wrap" />
+        </CheckBox>
+
+      </StackPanel>
+
+      <TextBlock
+        Grid.Column="1"
+        VerticalAlignment="Center"
+        HorizontalAlignment="Right"
+        Margin="0,0,15,0">
+        Failure 
+        <LineBreak />
+        Stage-Damage
+      </TextBlock>
+
+      <Label
+        Grid.Column="1"
+        HorizontalAlignment="Right"
+        VerticalAlignment="Center" />
+      <ComboBox
+        Grid.Column="2"
+        Height="26"
+        HorizontalAlignment="Stretch"
+        IsEnabled="{Binding HasFailureStageDamage}"
+        ItemsSource="{Binding StageDamageElements}"
+        DisplayMemberPath="Name"
+        SelectedItem="{Binding SelectedFailureStageDamageElement}"
+        Margin="0,0,10,0" />
+
+      <TextBlock
+        Grid.Column="3"
+        VerticalAlignment="Center"
+        HorizontalAlignment="Right"
+        Margin="0,0,15,0">
+        Non-Failure
+        <LineBreak />
+        Stage-Damage
+      </TextBlock>
+
+      <Label
+        Grid.Column="3"
+        VerticalAlignment="Center"
+        HorizontalAlignment="Right" />
+      <ComboBox
+        Grid.Column="4"
+        Height="26"
+        HorizontalAlignment="Stretch"
+        IsEnabled="{Binding HasNonFailureStageDamage}"
+        ItemsSource="{Binding StageDamageElements}"
+        DisplayMemberPath="Name"
+        SelectedItem="{Binding SelectedNonFailureStageDamageElement}" />
+
+    </Grid>
+
+    <Grid
+      Grid.Row="2"
+      Margin="0,5,5,0">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition
+          Width="260" />
+        <ColumnDefinition
+          Width="Auto" />
+        <ColumnDefinition
+          Width="*" />
+        <ColumnDefinition
+          Width="Auto" />
+        <ColumnDefinition
+          Width="*" />
+      </Grid.ColumnDefinitions>
+
+
+      <StackPanel
+        Grid.Column="0"
+        Margin="5"
+        VerticalAlignment="Center">
+
+        <CheckBox
+          Margin="0,0,0,5"
+          IsChecked="{Binding HasFailureStageLifeLoss}">
+          <TextBlock
+            Text="Failure Stage-Life Loss Modeled"
+            TextWrapping="Wrap" />
+        </CheckBox>
+
+        <CheckBox
+          IsChecked="{Binding HasNonFailureStageLifeLoss}">
+          <TextBlock
+            Text="Non-Failure Stage-Life Loss Modeled"
+            TextWrapping="Wrap" />
+        </CheckBox>
+
+      </StackPanel>
+
+      <TextBlock
+        Grid.Column="1"
+        VerticalAlignment="Center"
+        HorizontalAlignment="Right"
+        Margin="0,0,15,0">
+        Failure
+        <LineBreak />
+        Stage-Life Loss
+      </TextBlock>
+
+      <Label
+        Grid.Column="1"
+        HorizontalAlignment="Right"
+        VerticalAlignment="Center" />
+      <ComboBox
+        Grid.Column="2"
+        Height="26"
+        HorizontalAlignment="Stretch"
+        IsEnabled="{Binding HasFailureStageLifeLoss}"
+        ItemsSource="{Binding StageLifeLossElements}"
+        DisplayMemberPath="Name"
+        SelectedItem="{Binding SelectedFailureStageLifeLossElement}"
+        Margin="0,0,10,0" />
+
+      <TextBlock
+        Grid.Column="3"
+        VerticalAlignment="Center"
+        HorizontalAlignment="Right"
+        Margin="0,0,15,0">
+            Non-Failure
+            <LineBreak />
+            Stage-Life Loss
+      </TextBlock>
+
+      <Label
+        Grid.Column="3"
+        VerticalAlignment="Center"
+        HorizontalAlignment="Right" />
+      <ComboBox
+        Grid.Column="4"
+        Height="26"
+        HorizontalAlignment="Stretch"
+        IsEnabled="{Binding HasNonFailureStageLifeLoss}"
+        ItemsSource="{Binding StageLifeLossElements}"
+        DisplayMemberPath="Name"
+        SelectedItem="{Binding SelectedNonFailureStageLifeLossElement}" />
+
+    </Grid>
+
+    <TabControl
+      Grid.Row="3"
+      Margin="5"
+      ItemsSource="{Binding ImpactAreaTabs}"
+      SelectedIndex="0">
+      <TabControl.ItemTemplate>
+        <!-- this is the header template-->
+        <DataTemplate>
+          <StackPanel
+            Orientation="Horizontal"
+            ToolTip="{Binding IsSufficientForComputeTooltip}">
+            <TextBlock
+              Text="{Binding CurrentImpactArea.Name}" />
+            <Image
+              x:Name="icon"
+              Source="{Binding IsSufficientForCompute,Converter={StaticResource BoolToValidationImageConverter}}" />
+          </StackPanel>
+        </DataTemplate>
+      </TabControl.ItemTemplate>
+    </TabControl>
+
+    <StackPanel
+      Grid.Row="4"
+      Orientation="Horizontal"
+      HorizontalAlignment="Right"
+      VerticalAlignment="Bottom">
+      <Utilities:SaveCloseControl
+        VerticalAlignment="Bottom" />
+    </StackPanel>
+  </Grid>
 </UserControl>

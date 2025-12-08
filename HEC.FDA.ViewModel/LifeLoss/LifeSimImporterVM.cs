@@ -7,6 +7,7 @@ using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 
 namespace HEC.FDA.ViewModel.LifeLoss;
 public partial class LifeSimImporterVM : BaseEditorVM
@@ -60,6 +61,10 @@ public partial class LifeSimImporterVM : BaseEditorVM
             // in stage-damage, changing just one character in the name would require every single histogram to be re-saved 
             Save(elemToSave); // base editor's save, saves the metadeta as XML
             SaveFunctionsToSQLite(_indexPointsVM.LifeLossFunctions.ToList(), id); // save the curves to SQLite
+        }
+        else
+        {
+            MessageBox.Show("Could not save:\n" + vr.ErrorMessage.ToString(), "Could not save", MessageBoxButton.OK, MessageBoxImage.Exclamation);
         }
     }
 
