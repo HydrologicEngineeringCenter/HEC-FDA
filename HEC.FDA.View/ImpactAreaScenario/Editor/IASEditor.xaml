@@ -149,7 +149,10 @@
       <Label
         Grid.Column="1"
         HorizontalAlignment="Right"
-        VerticalAlignment="Center" />
+        VerticalAlignment="Center"
+        Content="*"
+        Foreground="Red"
+        Visibility="{Binding HasFailureStageDamage, Converter={StaticResource BoolToVisibilityConverter}}"/>
       <ComboBox
         Grid.Column="2"
         Height="26"
@@ -173,7 +176,10 @@
       <Label
         Grid.Column="3"
         VerticalAlignment="Center"
-        HorizontalAlignment="Right" />
+        HorizontalAlignment="Right"
+        Content="*"
+        Foreground="Red"
+        Visibility="{Binding HasNonFailureStageDamage, Converter={StaticResource BoolToVisibilityConverter}}" />
       <ComboBox
         Grid.Column="4"
         Height="26"
@@ -237,7 +243,10 @@
       <Label
         Grid.Column="1"
         HorizontalAlignment="Right"
-        VerticalAlignment="Center" />
+        VerticalAlignment="Center"
+        Content="*"
+        Foreground="Red"
+        Visibility="{Binding HasFailureStageLifeLoss, Converter={StaticResource BoolToVisibilityConverter}}" />
       <ComboBox
         Grid.Column="2"
         Height="26"
@@ -261,7 +270,10 @@
       <Label
         Grid.Column="3"
         VerticalAlignment="Center"
-        HorizontalAlignment="Right" />
+        HorizontalAlignment="Right"
+        Content="*"
+        Foreground="Red"
+        Visibility="{Binding HasNonFailureStageLifeLoss, Converter={StaticResource BoolToVisibilityConverter}}" />
       <ComboBox
         Grid.Column="4"
         Height="26"

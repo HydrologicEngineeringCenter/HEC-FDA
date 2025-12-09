@@ -76,14 +76,20 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// <summary>
         /// The stage damage ID for the selected stage damage. It will be -1 if no selection was made.
         /// </summary>
-        public int StageDamageID { get; set; }
 
         public List<ThresholdRowItem> Thresholds { get; } = new List<ThresholdRowItem>();
 
-        public bool CalculateDefaultThreshold {get;set;}
+        public bool CalculateDefaultThreshold { get; set; }
         public double DefaultStage { get; set; } = -999;
+
+        public bool HasFailureStageDamage { get; set; }
+        public int FailureStageDamageID { get; set; }
         public bool HasNonFailureStageDamage { get; set; }
         public int NonFailureStageDamageID { get; set; }
+        public bool HasFailureStageLifeLoss { get; set; }
+        public int FailureStageLifeLossID { get; set; }
+        public bool HasNonFailureStageLifeLoss { get; set; }
+        public int NonFailureStageLifeLossID { get; set; }
 
 
         #endregion
@@ -100,12 +106,18 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         /// <param name="leveeFailureID"></param>
         /// <param name="stageDamageID"></param>
         /// <param name="thresholds"></param>
-        public SpecificIAS(int impactAreaID, int flowFreqID, int inflowOutflowID, int ratingID, int extIntID, 
-            int leveeFailureID, int stageDamageID, List<ThresholdRowItem> thresholds, bool calculateDefaultThreshold, 
-            double defaultStage, bool hasNonFailureStageDamage, int nonFailureStageDamageID) : base()
+        public SpecificIAS(int impactAreaID, int flowFreqID, int inflowOutflowID, int ratingID, int extIntID,
+            int leveeFailureID, List<ThresholdRowItem> thresholds, bool calculateDefaultThreshold,
+            double defaultStage, ConsequencesConfig config) : base()
         {
-            HasNonFailureStageDamage = hasNonFailureStageDamage;
-            NonFailureStageDamageID = nonFailureStageDamageID;
+            HasFailureStageDamage = config.ConfigHasFailureStageDamage;
+            FailureStageDamageID = config.ConfigFailureStageDamageID;
+            HasNonFailureStageDamage = config.ConfigHasNonFailureStageDamage;
+            NonFailureStageDamageID = config.ConfigNonFailureStageDamageID;
+            HasFailureStageLifeLoss = config.ConfigHasFailureStageLifeLoss;
+            FailureStageLifeLossID = config.ConfigFailureStageLifeLossID;
+            HasNonFailureStageLifeLoss = config.ConfigHasNonFailureStageLifeLoss;
+            NonFailureStageLifeLossID = config.ConfigNonFailureStageLifeLossID;
             DefaultStage = defaultStage;
             CalculateDefaultThreshold = calculateDefaultThreshold;
             ImpactAreaID = impactAreaID;
@@ -114,7 +126,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             RatingID = ratingID;
             ExtIntStageID = extIntID;
             LeveeFailureID = leveeFailureID;
-            StageDamageID = stageDamageID;
             Thresholds.AddRange(thresholds);
         }
 
@@ -137,7 +148,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             RatingID = int.Parse(iasElem.Element(RATING).Attribute(ID).Value);
             LeveeFailureID = int.Parse(iasElem.Element(LATERAL_STRUCTURE).Attribute(ID).Value);
             ExtIntStageID = int.Parse(iasElem.Element(EXTERIOR_INTERIOR).Attribute(ID).Value);
-            StageDamageID = int.Parse(iasElem.Element(STAGE_DAMAGE).Attribute(ID).Value);
+            FailureStageDamageID = int.Parse(iasElem.Element(STAGE_DAMAGE).Attribute(ID).Value);
 
             //check if new elements exist before reading
             if (iasElem.Elements(SCENARIO_REFLECTS_WITHOUT_PROJ).Any())
@@ -181,11 +192,32 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             FdaValidationResult vr = new FdaValidationResult();
             vr.AddErrorMessage(DoesScenarioChildElementsStillExist().ErrorMessage);
             //add validation of non-failure stage damage.
-            if(HasNonFailureStageDamage)
+            if (HasFailureStageDamage)
             {
-                if(NonFailureStageDamageID < 0 )
+                if (FailureStageDamageID < 0)
                 {
-                   throw new Exception($"The non-failure stage damage ID : {NonFailureStageDamageID} is invalid.");
+                    vr.AddErrorMessage($"No failure stage-damage selected.");
+                }
+            }
+            if (HasNonFailureStageDamage)
+            {
+                if (NonFailureStageDamageID < 0)
+                {
+                    vr.AddErrorMessage($"No non-failure stage-damage selected.");
+                }
+            }
+            if (HasFailureStageLifeLoss)
+            {
+                if (FailureStageLifeLossID < 0)
+                {
+                    vr.AddErrorMessage($"No failure stage-life loss selected.");
+                }
+            }
+            if (HasNonFailureStageLifeLoss)
+            {
+                if (NonFailureStageLifeLossID < 0)
+                {
+                    vr.AddErrorMessage($"No non-failure stage-life loss selected.");
                 }
             }
             //insert the name of the impact area if not valid
@@ -201,9 +233,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             FdaValidationResult vr = new FdaValidationResult();
             //required elems
             FrequencyElement freqElem = (FrequencyElement)StudyCache.GetChildElementOfType(typeof(FrequencyElement), FlowFreqID);
-            AggregatedStageDamageElement stageDamageElem = (AggregatedStageDamageElement)StudyCache.GetChildElementOfType(typeof(AggregatedStageDamageElement), StageDamageID);
+            AggregatedStageDamageElement stageDamageElem = (AggregatedStageDamageElement)StudyCache.GetChildElementOfType(typeof(AggregatedStageDamageElement), FailureStageDamageID);
 
-            if(InflowOutflowID != -1)
+            if (InflowOutflowID != -1)
             {
                 InflowOutflowElement inOutElem = (InflowOutflowElement)StudyCache.GetChildElementOfType(typeof(InflowOutflowElement), InflowOutflowID);
                 if (inOutElem == null)
@@ -236,11 +268,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                 }
             }
 
-            if(freqElem == null)
+            if (freqElem == null)
             {
                 vr.AddErrorMessage(CreateElementDoesntExistMessage("frequency element"));
             }
-       
+
             return vr;
         }
 
@@ -251,7 +283,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             StageDischargeElement ratElem = (StageDischargeElement)StudyCache.GetChildElementOfType(typeof(StageDischargeElement), RatingID);
             ExteriorInteriorElement extIntElem = (ExteriorInteriorElement)StudyCache.GetChildElementOfType(typeof(ExteriorInteriorElement), ExtIntStageID);
             LateralStructureElement leveeElem = (LateralStructureElement)StudyCache.GetChildElementOfType(typeof(LateralStructureElement), LeveeFailureID);
-            AggregatedStageDamageElement stageDamageElem = (AggregatedStageDamageElement)StudyCache.GetChildElementOfType(typeof(AggregatedStageDamageElement), StageDamageID);
+            AggregatedStageDamageElement stageDamageElem = (AggregatedStageDamageElement)StudyCache.GetChildElementOfType(typeof(AggregatedStageDamageElement), FailureStageDamageID);
             AggregatedStageDamageElement nonFailureStageDamageElem = (AggregatedStageDamageElement)StudyCache.GetChildElementOfType(typeof(AggregatedStageDamageElement), NonFailureStageDamageID);
 
             SimulationCreator sc = new(freqElem, inOutElem, ratElem, extIntElem, leveeElem, stageDamageElem, ImpactAreaID, HasNonFailureStageDamage, nonFailureStageDamageElem);
@@ -325,7 +357,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             iasElement.Add(extIntElem);
 
             XElement stageDamageElem = new XElement(STAGE_DAMAGE);
-            stageDamageElem.SetAttributeValue(ID, StageDamageID);
+            stageDamageElem.SetAttributeValue(ID, FailureStageDamageID);
             iasElement.Add(stageDamageElem);
 
             XElement scenarioReflectsWithoutProjElem = new XElement(SCENARIO_REFLECTS_WITHOUT_PROJ);

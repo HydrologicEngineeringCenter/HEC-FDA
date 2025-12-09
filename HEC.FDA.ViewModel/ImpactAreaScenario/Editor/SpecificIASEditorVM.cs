@@ -10,9 +10,6 @@ using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
-using HEC.MVVMFramework.Base.Events;
-using Statistics;
-using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -43,14 +40,34 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private bool _calculateDefualtThresholdChecked = true;
         private double _DefaultStage;
         private bool _ScenarioReflectsEnabled;
+        private bool _HasFailureStageDamage;
         private bool _HasNonFailureStageDamage;
+        private bool _HasFailureStageLifeLoss;
+        private bool _HasNonFailureStageLifeLoss;
 
-        public ChildElementComboItem NonFailureSelectedStageDamage { get; set; }
+        public ChildElementComboItem SelectedNonFailureStageDamage { get; set; }
+        public ChildElementComboItem SelectedFailureStageLifeLoss { get; set; }
+        public ChildElementComboItem SelectedNonFailureStageLifeLoss { get; set; }
 
+        public bool HasFailureStageDamage
+        {
+            get { return _HasFailureStageDamage; }
+            set { _HasFailureStageDamage = value; NotifyPropertyChanged(); }
+        }
         public bool HasNonFailureStageDamage
         {
             get { return _HasNonFailureStageDamage; }
             set { _HasNonFailureStageDamage = value; NotifyPropertyChanged(); }
+        }
+        public bool HasFailureStageLifeLoss
+        {
+            get { return _HasFailureStageLifeLoss; }
+            set { _HasFailureStageLifeLoss = value; NotifyPropertyChanged(); }
+        }
+        public bool HasNonFailureStageLifeLoss
+        {
+            get { return _HasNonFailureStageLifeLoss; }
+            set { _HasNonFailureStageLifeLoss = value; NotifyPropertyChanged(); }
         }
         public bool ScenarioReflectsEnabled
         {
@@ -535,7 +552,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             AggregatedStageDamageElement nonFailureStageDamageElem = null;
             if (_HasNonFailureStageDamage)
             {
-                nonFailureStageDamageElem = NonFailureSelectedStageDamage.ChildElement as AggregatedStageDamageElement;
+                nonFailureStageDamageElem = SelectedNonFailureStageDamage.ChildElement as AggregatedStageDamageElement;
             }
             SimulationCreator sc = new(freqElem, inOutElem, ratElem, extIntElem, leveeElem,
                 stageDamageElem, CurrentImpactArea.ID, _HasNonFailureStageDamage, nonFailureStageDamageElem);
@@ -589,7 +606,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 : StringConstants.STAGE;
 
             PairedData nonExceedencePd = elem.GraphicalUncertainPairedData.SamplePairedData(-1, true);
-            PairedData exceedencePd = new([..nonExceedencePd.Xvals.Select(x => 1-x)], nonExceedencePd.Yvals,nonExceedencePd.MetaData);
+            PairedData exceedencePd = new([.. nonExceedencePd.Xvals.Select(x => 1 - x)], nonExceedencePd.Yvals, nonExceedencePd.MetaData);
             exceedencePd.SortToIncreasingXVals();
             return exceedencePd;
         }
@@ -691,14 +708,27 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             int ratingID = GetComboElementID(SelectedRatingCurveElement);
             int extIntID = GetComboElementID(SelectedExteriorInteriorElement);
             int latStructID = GetComboElementID(SelectedLeveeFeatureElement);
-            int stageDamID = GetComboElementID(selectedStageDamage);
-            int nonFailureStageDamID = GetComboElementID(NonFailureSelectedStageDamage);
+            int failureStageDamID = GetComboElementID(selectedStageDamage);
+            int nonFailureStageDamID = GetComboElementID(SelectedNonFailureStageDamage);
+            int failureStageLifeLossID = GetComboElementID(SelectedFailureStageLifeLoss);
+            int nonFailureStageLifeLossID = GetComboElementID(SelectedNonFailureStageLifeLoss);
 
             List<ThresholdRowItem> thresholdRowItems = Thresholds;
 
+            ConsequencesConfig config = new()
+            {
+                ConfigHasFailureStageDamage = HasFailureStageDamage,
+                ConfigFailureStageDamageID = failureStageDamID,
+                ConfigHasNonFailureStageDamage = HasNonFailureStageDamage,
+                ConfigNonFailureStageDamageID = nonFailureStageDamID,
+                ConfigHasFailureStageLifeLoss = HasFailureStageLifeLoss,
+                ConfigFailureStageLifeLossID = failureStageLifeLossID,
+                ConfigHasNonFailureStageLifeLoss = HasNonFailureStageLifeLoss,
+                ConfigNonFailureStageLifeLossID = nonFailureStageLifeLossID
+            };
+
             SpecificIAS elementToSave = new(CurrentImpactArea.ID, flowFreqID, inflowOutID, ratingID, extIntID,
-                latStructID, stageDamID, thresholdRowItems, CalculateDefaultThresholdChecked, DefaultStage,
-                HasNonFailureStageDamage, nonFailureStageDamID);
+                latStructID, thresholdRowItems, CalculateDefaultThresholdChecked, DefaultStage, config);
             return elementToSave;
         }
 
