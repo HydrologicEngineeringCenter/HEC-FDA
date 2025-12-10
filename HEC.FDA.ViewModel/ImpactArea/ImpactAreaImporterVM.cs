@@ -1,16 +1,13 @@
-﻿using Geospatial.IO;
-using HEC.CS.Collections;
+﻿using HEC.CS.Collections;
 using HEC.FDA.Model.Spatial;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
 using HEC.FDA.ViewModel.Utilities;
-using RasMapperLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using Utility.Extensions;
 
 namespace HEC.FDA.ViewModel.ImpactArea
 {
@@ -27,10 +24,10 @@ namespace HEC.FDA.ViewModel.ImpactArea
             get { return _selectedPath; }
             set { _selectedPath = value; UniqueNames = new(); SelectedUniqueNameColumnHeader = null; LoadUniqueNames(); NotifyPropertyChanged(); } // using new because Clear() doesn't hit the setter. 
         }
-    
+
         public CustomObservableCollection<ImpactAreaRowItem> ListOfRows { get; } = new CustomObservableCollection<ImpactAreaRowItem>();
 
-        public List<string> UniqueNames 
+        public List<string> UniqueNames
         {
             get { return _UniqueNames; }
             set { _UniqueNames = value; NotifyPropertyChanged(); }
@@ -51,7 +48,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
         {
             Name = element.Name;
             ListOfRows.AddRange(impactAreaRows);
-            Description = element.Description; 
+            Description = element.Description;
             SelectedPath = Path.Combine(Storage.Connection.Instance.ImpactAreaDirectory, Name);
             AddValidationRules();
         }
@@ -84,19 +81,16 @@ namespace HEC.FDA.ViewModel.ImpactArea
                 }
                 else
                 {
-                    PolygonFeatureLayer pfl = new("unused", _selectedPath);
-                    UniqueNames = pfl.ColumnNames();
+                    ShapefileHelper shp = new(SelectedPath);
+                    UniqueNames = shp.GetColumns();
                 }
             }
         }
 
         public void LoadTheRows()
         {
-            PolygonFeatureLayer pfl = new("ThisNameIsnotUsed", SelectedPath);
-            List<string> columnNames = pfl.ColumnNames();
-            List<object> columnVals = pfl.GetValuesFromColumn(SelectedUniqueNameColumnHeader);
-
-            List<string> names = columnVals.Select(x => x.ToString()).ToList();
+            ShapefileHelper shp = new(SelectedPath);
+            List<string> names = shp.GetColumnValues(SelectedUniqueNameColumnHeader);
             if (names.Count == names.Distinct().Count()) // if the names are unique
             {
                 ListOfRows.Clear();
@@ -118,7 +112,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
             FdaValidationResult result = new();
             //Previous validation dictates that the shapefiles is valid, the unique name column is selected, and the names are unique.
             //if these rows are here. Then all that stuff is true too. 
-            if(ListOfRows.Count < 1)
+            if (ListOfRows.Count < 1)
             {
                 result.AddErrorMessage("There are no rows in the table. Check your shapefile and import again.");
             }

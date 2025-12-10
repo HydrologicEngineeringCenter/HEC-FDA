@@ -126,7 +126,7 @@
         public const string CREATE_LATERAL_STRUCTURES_HEADER = "Create New Lateral Structure";
         public const string IMPORT_LATERAL_STRUCTURES_FROM_OLD_NAME = "Lateral Structures";
 
-        public const string ECONOMICS = "Economics";
+        public const string CONSEQUENCES = "Consequences";
 
         public const string OCCUPANCY_TYPES = "Occupancy Types";
         public const string EDIT_OCCTYPE_MENU = "Edit Occupancy Types...";
@@ -146,6 +146,8 @@
         public const string CREATE_NEW_STAGE_DAMAGE_HEADER = "Create New Stage-Damage Functions";
         public const string EDIT_STAGE_DAMAGE_MENU = "Edit Stage-Damage Functions...";
         public const string EXPORT_STAGE_DAMAGE_MENU = "Export Structure Detail...";
+
+        public const string EDIT_STAGE_LIFE_LOSS_FUNCTION = "Edit Stage-Life Loss Functions...";
 
         public const string IMPORT_STAGE_DAMAGE_FROM_OLD_NAME = "Stage-Damage Functions";
 
@@ -241,7 +243,7 @@
         public static string CreateLastEditTooltip(string lastEditDate)
         {
             string tooltip = null;
-            if(lastEditDate != null)
+            if (lastEditDate != null)
             {
                 tooltip = "Last edited " + lastEditDate;
             }
