@@ -131,6 +131,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 _SimulationBuilder.WithNonFailureStageDamage(GetStageDamagesAsPairedData(_NonFailureStageDamageElem));
             }
 
+            if (_HasFailureStageLifeLoss)
+            {
+                _SimulationBuilder.WithFakeStageLifeLoss();
+            }
+
             if (_FreqElem.IsAnalytical)
             {
                 _SimulationBuilder.WithFlowFrequency(GetFrequencyDistribution());

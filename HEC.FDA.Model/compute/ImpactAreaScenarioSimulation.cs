@@ -8,6 +8,7 @@ using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
 using HEC.MVVMFramework.Model.Messaging;
 using Statistics;
+using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,7 @@ namespace HEC.FDA.Model.compute
         private const int EXTERIOR_INTERIOR_SEED = 4567;
         private const int SYSTEM_RESPONSE_SEED = 5678;
         private const int STAGE_DAMAGE_SEED = 6789;
+        private const int STAGE_LIFELOSS_SEED = 7891;
         public const int IMPACT_AREA_SIM_COMPLETED = -1001;
         private const double THRESHOLD_DAMAGE_PERCENT = 0.05;
         private const double THRESHOLD_DAMAGE_RECURRENCE_INTERVAL = 0.99; //this is a non-exceedance probability 
@@ -205,6 +207,10 @@ namespace HEC.FDA.Model.compute
             foreach (UncertainPairedData stageDamage in _NonFailureStageDamageFunctions)
             {
                 stageDamage.GenerateRandomNumbers(STAGE_DAMAGE_SEED, quantityOfRandomNumbers);
+            }
+            foreach (UncertainPairedData stageLifeLoss in _StageLifeLossFunctions)
+            {
+                stageLifeLoss.GenerateRandomNumbers(STAGE_LIFELOSS_SEED, quantityOfRandomNumbers);
             }
         }
 
@@ -470,7 +476,7 @@ namespace HEC.FDA.Model.compute
                     {
                         ComputeConsequencesFromStageFrequency(frequency_floodplainstage, thisComputeIteration, thisChunkIteration, computeIsDeterministic, _StageDamageFunctions);
                     }
-                    if (computeWithDamage)
+                    if (computeWithLifeLoss)
                     {
                         ComputeConsequencesFromStageFrequency(frequency_floodplainstage, thisComputeIteration, thisChunkIteration, computeIsDeterministic, _StageLifeLossFunctions);
                     }
@@ -1136,6 +1142,22 @@ namespace HEC.FDA.Model.compute
                             () => { upd.Validate(); return !upd.HasErrors; },
                             $"Stage life loss errors for the impact area with ID {_Simulation._ImpactAreaID}: " + upd.GetErrors().ToString()));
                 }
+                return new SimulationBuilder(_Simulation);
+            }
+
+            public SimulationBuilder WithFakeStageLifeLoss()
+            {
+                double[] stages = { 935, 940, 945, 950 };
+                CurveMetaData lifeLossMetaData = new("xLabel", "yLabel", "name", "LifeLoss", "LifeLoss");
+                IDistribution[] lifeLoss =
+                [
+                    new Uniform(10, 10, 10),
+                    new Uniform(12, 18, 10),
+                    new Uniform(13, 19, 10),
+                    new Uniform(14, 20, 10),
+                ];
+                UncertainPairedData stageLifeLoss = new(stages, lifeLoss, lifeLossMetaData);
+                _Simulation._StageLifeLossFunctions.Add(stageLifeLoss);
                 return new SimulationBuilder(_Simulation);
             }
 
