@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Saving;
 using System.Collections.Generic;
 
@@ -39,6 +40,9 @@ public partial class DuplicateVM : BaseEditorVM
     public static DuplicateVM FromOriginal(ChildElement originalElement)
     {
         ChildElement clone = originalElement.CloneElement();
+        // make sure to indicate that the user should recompute after creating a duplicate of a scenario
+        if (clone is IASElement ias)
+            ias.CustomTreeViewHeader.Decoration = ImageSources.CAUTION_IMAGE;
         return new DuplicateVM(clone);
     }
 

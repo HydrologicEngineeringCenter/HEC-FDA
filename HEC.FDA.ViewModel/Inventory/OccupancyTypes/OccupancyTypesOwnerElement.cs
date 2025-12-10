@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.Saving;
+﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         #endregion
         #region Constructors
-        public OccupancyTypesOwnerElement( ):base()
+        public OccupancyTypesOwnerElement() : base()
         {
             Name = StringConstants.OCCUPANCY_TYPES;
             IsBold = false;
@@ -33,9 +34,19 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             createNew.Header = StringConstants.CREATE_NEW_OCCTYPE_MENU;
             createNew.Action = CreateNew;
 
+            NamedAction importFromXML = new NamedAction();
+            importFromXML.Header = "Import Occupancy Types From XML...";
+            importFromXML.Action = ImportFromXml;
+
+            NamedAction importFromSQLite = new NamedAction();
+            importFromSQLite.Header = "Import Occupancy Types From SQLite...";
+            importFromSQLite.Action = ImportFromSQLite;
+
             List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(createNew);
             localActions.Add(importFromFile);
+            //localActions.Add(importFromXML);
+            //localActions.Add(importFromSQLite);
 
             Actions = localActions;
 
@@ -57,7 +68,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         private void OccTypeElementWasAdded(object sender, ElementAddedEventArgs e)
         {
             AddElement(e.Element);
-        }       
+        }
 
         public void ImportFromFile(object arg1, EventArgs arg2)
         {
@@ -76,6 +87,25 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             string header = StringConstants.CREATE_NEW_OCCTYPE_HEADER;
             DynamicTabVM tab = new DynamicTabVM(header, vm, header);
             Navigate(tab, false, true);
+        }
+
+
+        private void ImportFromXml(object arg1, EventArgs args)
+        {
+            EditorActionManager actionManager = new EditorActionManager().WithSiblingRules(this);
+            OccupancyTypesImporterXMLVM vm = new(actionManager);
+            string header = "Import Occupancy Types From XML";
+            DynamicTabVM tab = new(header, vm, header);
+            Navigate(tab, false, false);
+        }
+
+        private void ImportFromSQLite(object arg1, EventArgs args)
+        {
+            EditorActionManager actionManager = new EditorActionManager().WithSiblingRules(this);
+            OccupancyTypesImporterSQLiteVM vm = new(actionManager);
+            string header = "Import Occupancy Types From SQLite";
+            DynamicTabVM tab = new(header, vm, header);
+            Navigate(tab, false, false);
         }
 
         #endregion
