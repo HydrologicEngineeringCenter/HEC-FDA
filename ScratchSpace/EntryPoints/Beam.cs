@@ -6,6 +6,7 @@ using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.Spatial;
 using RasMapperLib;
 using Statistics;
+using Statistics.Distributions;
 using Statistics.Histograms;
 using ScottPlot;
 using HEC.FDA.Model.utilities;
@@ -44,7 +45,7 @@ public static class Beam
     {
         double[] exprobs = [0.5, 0.2, 0.1, 0.05, 0.02, 0.01, 0.005, 0.002];
         double[] stages = [13.388120651245117, 15.484384536743164, 16.70232582092285, 17.97307586669922, 18.84888458251953, 19.523529052734375, 20.172605514526367, 20.97872543334961];
-        double interestThreshold = 18.81;
+        double interestThreshold = 18.7;
         double equivRecordLength = 48;
 
         UncertainPairedData upd = GraphicalFrequencyUncertaintyCalculators.LessSimpleMethod(exprobs, stages, true, 48);
@@ -74,8 +75,20 @@ public static class Beam
 
         // ===== ASCII VISUALIZATION - Quick Debug in Console =====
         Console.WriteLine("\n===== QUICK DEBUG: ASCII Histogram =====");
-        histo.PrintToConsole("Performance Results - Exceedance Probability", maxWidth: 100, maxBins: 30);
-        althisto.PrintToConsole("ALT Performance Results - Exceedance Probability", maxWidth: 100, maxBins: 30);
+        histo.PrintToConsole("Performance Results - Exceedance Probability", maxWidth: 100, maxBins: 1000);
+        althisto.PrintToConsole("ALT Performance Results - Exceedance Probability", maxWidth: 100, maxBins: 1000);
+
+        // ===== REPORT CDF VALUES AT SPECIFIC PROBABILITIES =====
+        Console.WriteLine("\n===== CDF Values at Specific Exceedance Probabilities =====");
+        double[] reportProbs = [0.2, 0.1, 0.05, 0.025, 0.02, 0.01, 0.005, 0.002];
+        Console.WriteLine("Exceedance Prob |  histo CDF  | althisto CDF");
+        Console.WriteLine("----------------|-------------|-------------");
+        foreach (double prob in reportProbs)
+        {
+            double histoCdf = histo.CDF(prob);
+            double althistoCdf = althisto.CDF(prob);
+            Console.WriteLine($"    {prob,10:F7} | {histoCdf,11:F7} | {althistoCdf,11:F7}");
+        }
 
         // ===== SCOTTPLOT VISUALIZATION - High Quality Chart =====
         Console.WriteLine("\n===== Creating ScottPlot Chart =====");
@@ -134,6 +147,9 @@ public static class Beam
         Console.WriteLine("\n===== Creating ScottPlot Paired Data Line Series =====");
         Plot pltCurves = new();
 
+        // Create standard normal distribution for z-score conversion
+        Normal standardNormal = new();
+
         // Plot each sampled paired data as a line series
         Console.WriteLine($"Plotting {sampledCurves.Count} sampled curves...");
 
@@ -141,19 +157,22 @@ public static class Beam
         {
             PairedData pd = sampledCurves[i];
 
-            // Convert arrays to double[] for ScottPlot
-            double[] xVals = [.. pd.Xvals.Select((x) => 1 - x)];
+            // Convert exceedance probabilities to z-scores
+            // z = InverseCDF(1 - exceedanceProb) for standard normal
+            double[] zScores = [.. pd.Xvals.Select((x) => standardNormal.InverseCDF(x))]; // x is non-exceedance prob, so use directly
             double[] yVals = pd.Yvals;
 
             // Add line plot with semi-transparent color
-            var linePlot = pltCurves.Add.Scatter(xVals, yVals);
+            var linePlot = pltCurves.Add.Scatter(zScores, yVals);
             linePlot.LineWidth = 1;
             linePlot.MarkerSize = 0; // No markers, just lines
             linePlot.Color = ScottPlot.Colors.Blue.WithAlpha(0.15); // Very transparent for overlays
         }
 
         // Add the mean/original curve in a different color for reference
-        var meanCurve = pltCurves.Add.Scatter(exprobs, stages);
+        // Convert exceedance probs to z-scores for the mean curve
+        double[] meanZScores = [.. exprobs.Select((ep) => standardNormal.InverseCDF(1 - ep))];
+        var meanCurve = pltCurves.Add.Scatter(meanZScores, stages);
         meanCurve.LineWidth = 3;
         meanCurve.Color = ScottPlot.Colors.Red;
         meanCurve.LegendText = "Mean Curve";
@@ -167,7 +186,7 @@ public static class Beam
 
         // Customize appearance
         pltCurves.Title("Stage-Frequency Curves (Monte Carlo Samples)");
-        pltCurves.XLabel("Exceedance Probability");
+        pltCurves.XLabel("Z-Score (Standard Normal Deviate)");
         pltCurves.YLabel("Stage (ft)");
         pltCurves.ShowLegend(Alignment.UpperRight);
 
