@@ -554,8 +554,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             {
                 nonFailureStageDamageElem = SelectedNonFailureStageDamage.ChildElement as AggregatedStageDamageElement;
             }
-            SimulationCreator sc = new(freqElem, inOutElem, ratElem, extIntElem, leveeElem,
-                stageDamageElem, CurrentImpactArea.ID, _HasNonFailureStageDamage, nonFailureStageDamageElem);
+            SimulationCreator sc = new(freqElem, inOutElem, ratElem, extIntElem, leveeElem, CurrentImpactArea.ID,
+                HasFailureStageDamage, stageDamageElem, _HasNonFailureStageDamage, nonFailureStageDamageElem,
+                HasFailureStageLifeLoss, null, HasNonFailureStageDamage, null);
 
             foreach (ThresholdRowItem thresholdRow in Thresholds)
             {

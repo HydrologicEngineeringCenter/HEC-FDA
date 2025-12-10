@@ -286,7 +286,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             AggregatedStageDamageElement stageDamageElem = (AggregatedStageDamageElement)StudyCache.GetChildElementOfType(typeof(AggregatedStageDamageElement), FailureStageDamageID);
             AggregatedStageDamageElement nonFailureStageDamageElem = (AggregatedStageDamageElement)StudyCache.GetChildElementOfType(typeof(AggregatedStageDamageElement), NonFailureStageDamageID);
 
-            SimulationCreator sc = new(freqElem, inOutElem, ratElem, extIntElem, leveeElem, stageDamageElem, ImpactAreaID, HasNonFailureStageDamage, nonFailureStageDamageElem);
+            SimulationCreator sc = new(freqElem, inOutElem, ratElem, extIntElem, leveeElem, ImpactAreaID,
+                HasFailureStageDamage, stageDamageElem, HasNonFailureStageDamage, nonFailureStageDamageElem,
+                HasFailureStageLifeLoss, null, HasNonFailureStageLifeLoss, null);
 
             //otherwise we'll calculate it ourselves in the model. 
             if (!CalculateDefaultThreshold && leveeElem == null)
