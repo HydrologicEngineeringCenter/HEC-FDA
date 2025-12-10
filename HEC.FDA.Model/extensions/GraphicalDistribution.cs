@@ -212,36 +212,170 @@ namespace HEC.FDA.Model.extensions
             return extrapolatedFunction;
         }
 
-        //TODO: This method can be refactored for clarity.  
+        //TODO: This method can be refactored for clarity.
         /// <summary>
-        /// This method implements Beth Faber's Less Simple Method for quantifying uncertainty about a graphical frequency relationship 
+        /// This method implements Beth Faber's Less Simple Method for quantifying uncertainty about a graphical frequency relationship
         /// </summary>
-        /// <param name="lowerExceedanceProbabilityHoldStandardErrorConstant"></param>
-        /// <param name="higherExceedanceProbabilityHoldStandardErrorConstant"></param>
-        /// <returns></returns>
+        /// <param name="lowerExceedanceProbabilityHoldStandardErrorConstant">The exceedance probability threshold below which standard error should be held constant (typically 0.5 for high probabilities)</param>
+        /// <param name="higherExceedanceProbabilityHoldStandardErrorConstant">The exceedance probability threshold above which standard error should be held constant (typically 0.002 for rare events)</param>
+        /// <returns>Array of standard deviations (standard errors) for each exceedance probability point</returns>
         private double[] ComputeStandardDeviations(double lowerExceedanceProbabilityHoldStandardErrorConstant, double higherExceedanceProbabilityHoldStandardErrorConstant)
+        {
+            return ComputeStandardDeviationsRefactored(lowerExceedanceProbabilityHoldStandardErrorConstant, higherExceedanceProbabilityHoldStandardErrorConstant);
+        }
+
+        /// <summary>
+        /// REFACTORED VERSION: Implements Beth Faber's Less Simple Method for quantifying uncertainty about a graphical frequency relationship.
+        /// This version has improved clarity through better naming, extracted helper methods, and clearer structure.
+        /// Mathematically equivalent to the original ComputeStandardDeviations method.
+        /// </summary>
+        /// <param name="frequentEventThreshold">Exceedance probability for frequent events (e.g., 0.5 = 2-year event)</param>
+        /// <param name="rareEventThreshold">Exceedance probability for rare events (e.g., 0.002 = 500-year event)</param>
+        /// <returns>Array of standard errors for each exceedance probability point</returns>
+        private double[] ComputeStandardDeviationsRefactored(double frequentEventThreshold, double rareEventThreshold)
+        {
+            int numPoints = ExceedanceProbabilities.Length;
+            double[] standardErrors = new double[numPoints];
+
+            // Step 1: Find transition indices where we stop computing and start holding constant
+            int frequentEventIndex = FindClosestProbabilityIndex(frequentEventThreshold);
+            int rareEventIndex = FindClosestProbabilityIndex(rareEventThreshold);
+
+            // Step 2: Compute standard errors for interior points (points that have neighbors on both sides)
+            ComputeInteriorStandardErrors(standardErrors);
+
+            // Step 3: Compute standard errors for boundary points (first and last)
+            ComputeBoundaryStandardErrors(standardErrors);
+
+            // Step 4: Apply constant standard errors at distribution tails
+            ApplyConstantStandardErrorsAtTails(standardErrors, frequentEventIndex, rareEventIndex);
+
+            return standardErrors;
+        }
+
+        /// <summary>
+        /// Finds the index of the exceedance probability closest to the target threshold.
+        /// </summary>
+        private int FindClosestProbabilityIndex(double targetProbability)
+        {
+            int closestIndex = -1;
+            double minDistance = double.MaxValue;
+
+            for (int i = 0; i < ExceedanceProbabilities.Length; i++)
+            {
+                double distance = Math.Abs(ExceedanceProbabilities[i] - targetProbability);
+                if (distance < minDistance)
+                {
+                    closestIndex = i;
+                    minDistance = distance;
+                }
+            }
+
+            return closestIndex;
+        }
+
+        /// <summary>
+        /// Computes standard errors for all interior points (excludes first and last points).
+        /// Interior points have neighbors on both sides, allowing slope calculation.
+        /// </summary>
+        private void ComputeInteriorStandardErrors(double[] standardErrors)
+        {
+            // Process points from index 1 to Length-2 (skipping first and last)
+            for (int i = 1; i < ExceedanceProbabilities.Length - 1; i++)
+            {
+                double nonExceedanceProbability = 1.0 - ExceedanceProbabilities[i];
+                double slope = ComputeSlope(ExceedanceProbabilities, StageOrLoggedFlowValues, i);
+                standardErrors[i] = Equation6StandardError(nonExceedanceProbability, slope, EquivalentRecordLength);
+            }
+        }
+
+        /// <summary>
+        /// Computes standard errors for boundary points (first and last) using adjacent slopes.
+        /// Since we can't compute slope at boundaries, we borrow the slope from the nearest interior point.
+        /// </summary>
+        private void ComputeBoundaryStandardErrors(double[] standardErrors)
+        {
+            int lastIndex = ExceedanceProbabilities.Length - 1;
+
+            // First point: use slope from second point (index 1)
+            if (ExceedanceProbabilities.Length > 1)
+            {
+                double nonExceedanceProbFirst = 1.0 - ExceedanceProbabilities[0];
+                double slopeAtSecondPoint = ComputeSlope(ExceedanceProbabilities, StageOrLoggedFlowValues, 1);
+                standardErrors[0] = Equation6StandardError(nonExceedanceProbFirst, slopeAtSecondPoint, EquivalentRecordLength);
+            }
+
+            // Last point: use slope from second-to-last point (index Length-2)
+            if (ExceedanceProbabilities.Length > 2)
+            {
+                double nonExceedanceProbLast = 1.0 - ExceedanceProbabilities[lastIndex];
+                double slopeAtSecondToLast = ComputeSlope(ExceedanceProbabilities, StageOrLoggedFlowValues, lastIndex - 1);
+                standardErrors[lastIndex] = Equation6StandardError(nonExceedanceProbLast, slopeAtSecondToLast, EquivalentRecordLength);
+            }
+        }
+
+        /// <summary>
+        /// Applies constant standard errors at the tails of the distribution to prevent unrealistic uncertainty.
+        /// - Frequent events (low exceedance prob): hold constant from frequentEventIndex to end
+        /// - Rare events (high exceedance prob): hold constant from start to rareEventIndex
+        /// </summary>
+        private void ApplyConstantStandardErrorsAtTails(double[] standardErrors, int frequentEventIndex, int rareEventIndex)
+        {
+            // Hold constant for frequent events (towards the right of the array - lower exceedance probabilities)
+            double frequentEventStandardError = standardErrors[frequentEventIndex];
+            for (int i = frequentEventIndex; i < standardErrors.Length; i++)
+            {
+                standardErrors[i] = frequentEventStandardError;
+            }
+
+            // Hold constant for rare events (towards the left of the array - higher exceedance probabilities)
+            double rareEventStandardError = standardErrors[rareEventIndex];
+            for (int i = 0; i < rareEventIndex; i++)
+            {
+                standardErrors[i] = rareEventStandardError;
+            }
+        }
+
+        #region Original Method (Preserved for Reference)
+        /// <summary>
+        /// ORIGINAL VERSION: This method implements Beth Faber's Less Simple Method for quantifying uncertainty about a graphical frequency relationship
+        /// Preserved for verification and comparison with refactored version.
+        /// </summary>
+        /// <param name="lowerExceedanceProbabilityHoldStandardErrorConstant">The exceedance probability threshold below which standard error should be held constant (typically 0.5 for high probabilities)</param>
+        /// <param name="higherExceedanceProbabilityHoldStandardErrorConstant">The exceedance probability threshold above which standard error should be held constant (typically 0.002 for rare events)</param>
+        /// <returns>Array of standard deviations (standard errors) for each exceedance probability point</returns>
+        private double[] ComputeStandardDeviationsOriginal(double lowerExceedanceProbabilityHoldStandardErrorConstant, double higherExceedanceProbabilityHoldStandardErrorConstant)
         {
             int ixSlopeHiConst = -1;
             int ixSlopeLoConst = -1;
 
+            // PHASE 1: Find the indices closest to our "hold constant" thresholds
+            // We're looking for the actual data points nearest to our specified probability thresholds
 
-            //  the index at which begin to hold standard error constant 
+            // Initialize with very large values so any real difference will be smaller
             double maxDiffHi = 1.0e30;
             double maxDiffLo = 1.0e30;
             double diffHi = 0;
             double diffLo = 0;
             double p;
+
+            // Search through all exceedance probabilities to find closest matches to our thresholds
             for (int i = 0; i < ExceedanceProbabilities.Length; i++)
             {
                 p = ExceedanceProbabilities[i];
+
+                // Calculate distance from current probability to each threshold
                 diffHi = Math.Abs(p - lowerExceedanceProbabilityHoldStandardErrorConstant);
                 diffLo = Math.Abs(p - higherExceedanceProbabilityHoldStandardErrorConstant);
 
+                // Track the index with minimum distance to lowerExceedanceProbabilityHoldStandardErrorConstant (e.g., 0.5)
                 if (diffHi < maxDiffHi)
                 {
                     ixSlopeHiConst = i;
                     maxDiffHi = diffHi;
                 }
+
+                // Track the index with minimum distance to higherExceedanceProbabilityHoldStandardErrorConstant (e.g., 0.002)
                 if (diffLo < maxDiffLo)
                 {
                     ixSlopeLoConst = i;
@@ -249,42 +383,68 @@ namespace HEC.FDA.Model.extensions
                 }
             }
 
+            // PHASE 2: Compute standard errors for each probability point
+            // _scurve will hold the standard error (standard deviation) for each exceedance probability
             double[] _scurve = new double[ExceedanceProbabilities.Length];
 
+            // Loop through interior points (not first or last) to calculate standard errors
+            // We skip i=0 and i=Last because computing slope requires points on both sides
             for (int i = 1; i < ExceedanceProbabilities.Length - 1; i++)
             {
-                //p is a non-exceedance probability 
+                // Convert exceedance probability to non-exceedance probability
+                // Exceedance P(X > x) = 1 - Non-exceedance P(X <= x)
                 p = 1 - ExceedanceProbabilities[i];
+
+                // Calculate the local slope of the frequency curve at this point
+                // Slope represents how quickly stage/flow changes with probability
                 double slope = ComputeSlope(ExceedanceProbabilities, StageOrLoggedFlowValues, i);
+
+                // Apply Equation 6 from HEC-FDA Technical Reference (CPD-72a)
+                // This calculates standard error based on probability, slope, and equivalent record length
                 _scurve[i] = Equation6StandardError(p, slope, EquivalentRecordLength);
 
-                //hold slope constant and calculate standard error for the first coordinate
+                // Special handling for the FIRST point (i=0)
+                // We can't compute slope at i=0 directly, so we use the slope from i=1
                 if (i == 1)
                 {
-                    p = 1 - ExceedanceProbabilities[i - 1];
+                    p = 1 - ExceedanceProbabilities[i - 1];  // Non-exceedance prob for first point
+                    // Use the same slope as i=1 for consistency
                     _scurve[i - 1] = Equation6StandardError(p, slope, EquivalentRecordLength);
-
                 }
-                //hold slope constant and calculate standard error for the last coordinate
+
+                // Special handling for the LAST point (i=Length-1)
+                // We can't compute slope at the last index directly, so we use the slope from i=Length-2
                 if (i == ExceedanceProbabilities.Length - 2)
                 {
-                    p = 1 - ExceedanceProbabilities[i + 1];
+                    p = 1 - ExceedanceProbabilities[i + 1];  // Non-exceedance prob for last point
+                    // Manually compute standard error using Equation 6 formula
                     double standardErrorSquared = (p * (1 - p)) / (Math.Pow(1 / slope, 2.0D) * EquivalentRecordLength);
                     _scurve[i + 1] = Math.Sqrt(standardErrorSquared);
                 }
-
             }
-            // Hold standard Error Constant
+            // PHASE 3: Hold standard error constant at the tails of the distribution
+            // This prevents unrealistic uncertainty estimates at extreme probabilities
+
+            // For LOWER exceedance probabilities (more frequent events, towards 0.5):
+            // Hold the standard error constant from ixSlopeHiConst onwards
+            // Example: if ixSlopeHiConst is at p=0.5, all probabilities below 0.5 get the same standard error
             for (int i = ixSlopeHiConst; i < ExceedanceProbabilities.Length; i++)
             {
                 _scurve[i] = _scurve[ixSlopeHiConst];
             }
+
+            // For HIGHER exceedance probabilities (rare events, towards 0.002):
+            // Hold the standard error constant from 0 up to ixSlopeLoConst
+            // Example: if ixSlopeLoConst is at p=0.002, all probabilities above 0.002 get the same standard error
             for (int i = 0; i < ixSlopeLoConst; i++)
             {
                 _scurve[i] = _scurve[ixSlopeLoConst];
             }
+
+            // Return the complete array of standard errors (one for each exceedance probability point)
             return _scurve;
         }
+        #endregion
 
         public static double ComputeSlope(double[] exceedanceProbabilities, double[] stageOrLoggedFlowValues, int i)
         {
