@@ -122,8 +122,13 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             {
                 //SpecificIAS needs ot know about the non-failure stage damage so pass that info along.
                 SpecificIAS specificIAS = new(elem);
+                specificIAS.HasFailureStageDamage = FailureStageLifeLossID != -1;
                 specificIAS.HasNonFailureStageDamage = HasNonFailureStageDamage;
                 specificIAS.NonFailureStageDamageID = NonFailureStageDamageID;
+                specificIAS.HasFailureStageLifeLoss = FailureStageLifeLossID != -1;
+                specificIAS.FailureStageLifeLossID = FailureStageLifeLossID;
+                specificIAS.HasNonFailureStageLifeLoss = NonFailureStageLifeLossID != -1;
+                specificIAS.NonFailureStageLifeLossID = NonFailureStageLifeLossID;
                 SpecificIASElements.Add(specificIAS);
             }
 
