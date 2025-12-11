@@ -187,7 +187,6 @@ public class LifeRiskMatrixVM : BaseViewModel
         PlotModel.Series.Add(individualRiskLine);
 
         // Societal Life Risk Line (diagonal)
-        // Line starts at (0.1, 1E-02) and maintains constant societal risk: AEP * LifeLoss = 0.001
         var societalRiskLine = new LineSeries
         {
             Title = "Societal Life Risk Line",
