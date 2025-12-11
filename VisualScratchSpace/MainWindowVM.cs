@@ -7,12 +7,12 @@ namespace VisualScratchSpace;
 
 public class MainWindowVM
 {
-    public LifeRiskMatrixVM LifeRiskMatrixViewModel { get; }
+    public LifeLossFnChartVM LifeLossFnChartViewModel { get; }
 
     public MainWindowVM()
     {
         var fakeData = CreateFakeLifeRiskData();
-        LifeRiskMatrixViewModel = new LifeRiskMatrixVM(fakeData, "Life Risk Matrix - Test Data");
+        LifeLossFnChartViewModel = new LifeLossFnChartVM(fakeData, "Life Loss Function - Test Data");
     }
 
     /// <summary>

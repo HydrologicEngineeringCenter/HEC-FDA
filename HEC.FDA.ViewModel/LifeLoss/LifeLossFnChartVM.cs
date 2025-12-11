@@ -7,12 +7,12 @@ using OxyPlot.Series;
 namespace HEC.FDA.ViewModel.LifeLoss;
 
 /// <summary>
-/// ViewModel for the Life Risk Matrix chart that displays life loss data
+/// ViewModel for the Life Loss Function chart that displays life loss data
 /// with min/median/max series and zone boundary lines.
 /// </summary>
-public class LifeRiskMatrixVM : BaseViewModel
+public class LifeLossFnChartVM : BaseViewModel
 {
-    private string _title = "Life Risk Matrix";
+    private string _title = "Life Loss Function";
 
     public ViewResolvingPlotModel PlotModel { get; } = new();
 
@@ -28,11 +28,11 @@ public class LifeRiskMatrixVM : BaseViewModel
     }
 
     /// <summary>
-    /// Creates a LifeRiskMatrixVM with initial data.
+    /// Creates a LifeLossFnChartVM with initial data.
     /// </summary>
     /// <param name="data">Pre-transformed UncertainPairedData where X = Average Life Loss, Y = AEP distribution</param>
     /// <param name="title">Chart title</param>
-    public LifeRiskMatrixVM(UncertainPairedData data, string title = "Life Risk Matrix")
+    public LifeLossFnChartVM(UncertainPairedData data, string title = "Life Loss Function")
     {
         _title = title;
         InitializePlotModel();
@@ -40,10 +40,10 @@ public class LifeRiskMatrixVM : BaseViewModel
     }
 
     /// <summary>
-    /// Creates a LifeRiskMatrixVM without initial data (zone lines only).
+    /// Creates a LifeLossFnChartVM without initial data (zone lines only).
     /// </summary>
     /// <param name="title">Chart title</param>
-    public LifeRiskMatrixVM(string title = "Life Risk Matrix")
+    public LifeLossFnChartVM(string title = "Life Loss Function")
     {
         _title = title;
         InitializePlotModel();

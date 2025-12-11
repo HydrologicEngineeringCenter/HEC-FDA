@@ -2,9 +2,9 @@ using System.Windows.Controls;
 
 namespace HEC.FDA.View.LifeLoss;
 
-public partial class LifeRiskMatrixControl : UserControl
+public partial class LifeLossFnChartControl : UserControl
 {
-    public LifeRiskMatrixControl()
+    public LifeLossFnChartControl()
     {
         InitializeComponent();
     }

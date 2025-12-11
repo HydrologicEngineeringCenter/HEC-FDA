@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:VisualScratchSpace"
         xmlns:lifeloss="clr-namespace:HEC.FDA.View.LifeLoss;assembly=HEC.FDA.View"
         mc:Ignorable="d"
-        Title="Life Risk Matrix - Visual Test" Height="700" Width="900">
+        Title="Life Loss Function - Visual Test" Height="700" Width="900">
     <Grid Margin="10">
-        <lifeloss:LifeRiskMatrixControl DataContext="{Binding LifeRiskMatrixViewModel}"/>
+        <lifeloss:LifeLossFnChartControl DataContext="{Binding LifeLossFnChartViewModel}"/>
     </Grid>
 </Window>
