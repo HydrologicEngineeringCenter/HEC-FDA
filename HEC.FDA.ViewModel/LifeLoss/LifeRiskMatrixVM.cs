@@ -106,11 +106,11 @@ public class LifeRiskMatrixVM : BaseViewModel
         double yMin = 1E-07;
         double yMax = 1;
 
-        // Define colors (matching reference image)
-        var greenColor = OxyColor.FromRgb(209, 226, 175);   // Sage/olive green from reference
-        var yellowColor = OxyColor.FromRgb(255, 242, 175);  // Pale yellow from reference
-        var orangeColor = OxyColor.FromRgb(244, 204, 158);  // Peach/orange from reference
-        var blueColor = OxyColor.FromRgb(180, 210, 230);  // Light blue/teal from reference
+        // Define colors (matching reference image, semi-transparent)
+        var greenColor = OxyColor.FromAColor(150, OxyColor.FromRgb(209, 226, 175));   // Sage/olive green from reference
+        var yellowColor = OxyColor.FromAColor(150, OxyColor.FromRgb(255, 242, 175));  // Pale yellow from reference
+        var orangeColor = OxyColor.FromAColor(150, OxyColor.FromRgb(244, 204, 158));  // Peach/orange from reference
+        var blueColor = OxyColor.FromAColor(150, OxyColor.FromRgb(180, 210, 230));    // Light blue/teal from reference
 
 
         // The societal line defines the boundary:
@@ -196,7 +196,7 @@ public class LifeRiskMatrixVM : BaseViewModel
             StrokeThickness = 3
         };
         societalRiskLine.Points.Add(new DataPoint(0.1, 1E-02));
-        societalRiskLine.Points.Add(new DataPoint(10000, 1E-07));
+        societalRiskLine.Points.Add(new DataPoint(1000, 1E-06));
         PlotModel.Series.Add(societalRiskLine);
     }
 
@@ -212,9 +212,9 @@ public class LifeRiskMatrixVM : BaseViewModel
         var median = data.SamplePairedData(0.5);
         var upper = data.SamplePairedData(0.975);
 
-        AddLineSeries(lower, "Min (2.5%)", isConfidenceLimit: true);
+        AddLineSeries(lower, "2.5 Percentile", isConfidenceLimit: true);
         AddLineSeries(median, "Median", isConfidenceLimit: false);
-        AddLineSeries(upper, "Max (97.5%)", isConfidenceLimit: true);
+        AddLineSeries(upper, "97.5 Percentile", isConfidenceLimit: true);
 
         PlotModel.InvalidatePlot(true);
     }
@@ -225,7 +225,7 @@ public class LifeRiskMatrixVM : BaseViewModel
         {
             Title = title,
             LineStyle = isConfidenceLimit ? LineStyle.Dash : LineStyle.Solid,
-            Color = isConfidenceLimit ? OxyColors.Blue : OxyColors.Black,
+            Color = isConfidenceLimit ? OxyColors.ForestGreen : OxyColors.Black,
             StrokeThickness = isConfidenceLimit ? 1.5 : 2.0
         };
 
