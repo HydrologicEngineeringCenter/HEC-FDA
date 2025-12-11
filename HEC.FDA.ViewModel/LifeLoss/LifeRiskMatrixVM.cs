@@ -1,5 +1,6 @@
 using HEC.FDA.Model.paireddata;
 using OxyPlot;
+using OxyPlot.Annotations;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 
@@ -57,6 +58,7 @@ public class LifeRiskMatrixVM : BaseViewModel
             LegendPlacement = OxyPlot.Legends.LegendPlacement.Inside
         });
         AddAxes();
+        AddZoneRegions();
         AddZoneSeries();
     }
 
@@ -96,6 +98,80 @@ public class LifeRiskMatrixVM : BaseViewModel
         PlotModel.Axes.Add(yAxis);
     }
 
+    private void AddZoneRegions()
+    {
+        // Define key values
+        double xMin = 0.1;
+        double xMax = 10000;
+        double yMin = 1E-07;
+        double yMax = 1;
+
+        // Define colors (matching reference image)
+        var greenColor = OxyColor.FromRgb(209, 226, 175);   // Sage/olive green from reference
+        var yellowColor = OxyColor.FromRgb(255, 242, 175);  // Pale yellow from reference
+        var orangeColor = OxyColor.FromRgb(244, 204, 158);  // Peach/orange from reference
+        var blueColor = OxyColor.FromRgb(180, 210, 230);  // Light blue/teal from reference
+
+
+        // The societal line defines the boundary:
+        // Points: (0.1, 1E-02) -> (10, 1E-04) -> (1000, 1E-06) -> (10000, 1E-06)
+        // Orange zone: Above the societal line
+        var orangeZone = new PolygonAnnotation
+        {
+            Fill = orangeColor,
+            StrokeThickness = 0,
+            Layer = AnnotationLayer.BelowSeries
+        };
+        // Start at societal line and go up to top of chart
+        orangeZone.Points.Add(new DataPoint(0.1, 1E-02));
+        orangeZone.Points.Add(new DataPoint(10, 1E-04));
+        orangeZone.Points.Add(new DataPoint(1000, 1E-06));
+        orangeZone.Points.Add(new DataPoint(10000, 1E-06));
+        orangeZone.Points.Add(new DataPoint(xMax, yMax));
+        orangeZone.Points.Add(new DataPoint(xMin, yMax));
+        PlotModel.Annotations.Add(orangeZone);
+
+        // Yellow zone: Triangle between (0.1, 1E-02) -> (10, 1E-04) -> (0.1, 1E-04)
+        var yellowZone = new PolygonAnnotation
+        {
+            Fill = yellowColor,
+            StrokeThickness = 0,
+            Layer = AnnotationLayer.BelowSeries
+        };
+        yellowZone.Points.Add(new DataPoint(0.1, 1E-02));
+        yellowZone.Points.Add(new DataPoint(10, 1E-04));
+        yellowZone.Points.Add(new DataPoint(0.1, 1E-04));
+        PlotModel.Annotations.Add(yellowZone);
+
+        // Green zone: Below the societal line
+        var greenZone = new PolygonAnnotation
+        {
+            Fill = greenColor,
+            StrokeThickness = 0,
+            Layer = AnnotationLayer.BelowSeries
+        };
+        greenZone.Points.Add(new DataPoint(0.1, 1E-04));
+        greenZone.Points.Add(new DataPoint(10, 1E-04));
+        greenZone.Points.Add(new DataPoint(1000, 1E-06));
+        greenZone.Points.Add(new DataPoint(10000, 1E-06));
+        greenZone.Points.Add(new DataPoint(xMax, yMin));
+        greenZone.Points.Add(new DataPoint(xMin, yMin));
+        PlotModel.Annotations.Add(greenZone);
+
+        // Blue zone: Rectangle with upper left at (1000, 1E-06) and lower right at (10000, 1E-07)
+        var blueZone = new PolygonAnnotation
+        {
+            Fill = blueColor,
+            StrokeThickness = 0,
+            Layer = AnnotationLayer.BelowSeries
+        };
+        blueZone.Points.Add(new DataPoint(1000, 1E-06));
+        blueZone.Points.Add(new DataPoint(10000, 1E-06));
+        blueZone.Points.Add(new DataPoint(10000, 1E-07));
+        blueZone.Points.Add(new DataPoint(1000, 1E-07));
+        PlotModel.Annotations.Add(blueZone);
+    }
+
     private void AddZoneSeries()
     {
         // Individual Life Risk Line (horizontal at 1E-04)
@@ -103,7 +179,8 @@ public class LifeRiskMatrixVM : BaseViewModel
         {
             Title = "Individual Life Risk Line",
             LineStyle = LineStyle.Dash,
-            Color = OxyColors.Red
+            Color = OxyColors.Red,
+            StrokeThickness = 3
         };
         individualRiskLine.Points.Add(new DataPoint(0.1, 1E-04));
         individualRiskLine.Points.Add(new DataPoint(10000, 1E-04));
@@ -115,7 +192,8 @@ public class LifeRiskMatrixVM : BaseViewModel
         {
             Title = "Societal Life Risk Line",
             LineStyle = LineStyle.Dash,
-            Color = OxyColors.Blue
+            Color = OxyColors.Blue,
+            StrokeThickness = 3
         };
         societalRiskLine.Points.Add(new DataPoint(0.1, 1E-02));
         societalRiskLine.Points.Add(new DataPoint(10000, 1E-07));
