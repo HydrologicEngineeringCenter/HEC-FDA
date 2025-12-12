@@ -187,7 +187,7 @@ public static class AlternativeComparisonReport
                 foreach (AggregatedConsequencesBinned withProjectDamageResult in withprojectDamageResults.ConsequenceResultList)
                 {
                     // Find the matching consequence result in the without-project scenario
-                    AggregatedConsequencesBinned withoutProjectDamageResult = withoutProjectDamageResults.GetConsequenceResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, withProjectDamageResult.RegionID);
+                    AggregatedConsequencesBinned withoutProjectDamageResult = withoutProjectDamageResults.GetConsequenceResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, withProjectDamageResult.RegionID, withProjectDamageResult.ConsequenceType);
                     // Remove the matched result from the list to track unmatched results
                     withoutProjectDamageResultsList.Remove(withoutProjectDamageResult);
 
@@ -196,7 +196,8 @@ public static class AlternativeComparisonReport
                         withoutProjectDamageResult = new(
                             withProjectDamageResult.DamageCategory,
                             withProjectDamageResult.AssetCategory,
-                            withProjectDamageResult.RegionID);
+                            withProjectDamageResult.RegionID,
+                            withProjectDamageResult.ConsequenceType);
                     }
 
                     // Compute the reduced damage result by subtracting with- and without-project distributions
@@ -214,7 +215,7 @@ public static class AlternativeComparisonReport
                     foreach (AggregatedConsequencesBinned withoutProjectDamageResult in withoutProjectDamageResultsList)
                     {
                         // Try to find a matching with-project result (may be null)
-                        AggregatedConsequencesBinned withProjectDamageResult = withprojectDamageResults.GetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID);
+                        AggregatedConsequencesBinned withProjectDamageResult = withprojectDamageResults.GetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID, withoutProjectDamageResult.ConsequenceType);
                         // Compute the reduced damage result (with-project may be null)
 
                         if (withProjectDamageResult == null)
@@ -222,7 +223,8 @@ public static class AlternativeComparisonReport
                             withProjectDamageResult = new(
                                 withoutProjectDamageResult.DamageCategory,
                                 withoutProjectDamageResult.AssetCategory,
-                                withoutProjectDamageResult.RegionID);
+                                withoutProjectDamageResult.RegionID,
+                                withoutProjectDamageResult.ConsequenceType);
                         }
 
                         AggregatedConsequencesByQuantile damageReducedResult = IterateOnConsequenceDistributionResult(

@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Linq;
+﻿using HEC.FDA.Model.metrics.Extensions;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Model.Messaging;
 using Statistics.Distributions;
 using Statistics.Histograms;
-using HEC.FDA.Model.metrics.Extensions;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace HEC.FDA.Model.metrics;
 
@@ -31,7 +31,7 @@ public class ScenarioResults : ValidationErrorLogger
     #endregion
 
     #region Methods
-    public List<int> GetImpactAreaIDs()
+    public List<int> GetImpactAreaIDs(ConsequenceType consequenceType = ConsequenceType.Damage)
     {
         List<int> impactAreaIDs = new();
         if (ResultsList.Count != 0)
@@ -40,7 +40,7 @@ public class ScenarioResults : ValidationErrorLogger
             {
                 foreach (AggregatedConsequencesBinned consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                 {
-                    if (!impactAreaIDs.Contains(consequenceResult.RegionID))
+                    if (!impactAreaIDs.Contains(consequenceResult.RegionID) && consequenceResult.ConsequenceType == consequenceType)
                     {
                         impactAreaIDs.Add(consequenceResult.RegionID);
                     }
@@ -50,7 +50,7 @@ public class ScenarioResults : ValidationErrorLogger
         }
         return impactAreaIDs;
     }
-    public List<string> GetAssetCategories()
+    public List<string> GetAssetCategories(ConsequenceType consequenceType = ConsequenceType.Damage)
     {
         List<string> assetCats = new();
         if (ResultsList.Count != 0)
@@ -59,7 +59,7 @@ public class ScenarioResults : ValidationErrorLogger
             {
                 foreach (AggregatedConsequencesBinned consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                 {
-                    if (!assetCats.Contains(consequenceResult.AssetCategory))
+                    if (!assetCats.Contains(consequenceResult.AssetCategory) && consequenceResult.ConsequenceType == consequenceType)
                     {
                         assetCats.Add(consequenceResult.AssetCategory);
                     }
@@ -70,7 +70,7 @@ public class ScenarioResults : ValidationErrorLogger
 
         return assetCats;
     }
-    public List<string> GetDamageCategories()
+    public List<string> GetDamageCategories(ConsequenceType consequenceType = ConsequenceType.Damage)
     {
         List<string> damCats = new();
         if (ResultsList.Count != 0)
@@ -79,7 +79,7 @@ public class ScenarioResults : ValidationErrorLogger
             {
                 foreach (AggregatedConsequencesBinned consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
                 {
-                    if (!damCats.Contains(consequenceResult.DamageCategory))
+                    if (!damCats.Contains(consequenceResult.DamageCategory) && consequenceResult.ConsequenceType == consequenceType)
                     {
                         damCats.Add(consequenceResult.DamageCategory);
                     }
@@ -149,13 +149,13 @@ public class ScenarioResults : ValidationErrorLogger
     /// <param name="assetCategory"></param> either structure, content, etc...the default is null
     /// <param name="impactAreaID"></param>the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
     /// <returns></returns> the level of consequences exceeded by the specified probability 
-    public double ConsequencesExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+    public double ConsequencesExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
     {
         double consequenceValue = 0;
         foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList)
         {
             consequenceValue += impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList
-               .FilterByCategories(damageCategory, assetCategory, impactAreaID)
+               .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType)
                .Sum((x) => x.ConsequenceHistogram.InverseCDF(exceedanceProbability));
         }
         return consequenceValue;
@@ -170,14 +170,14 @@ public class ScenarioResults : ValidationErrorLogger
     /// <param name="assetCategory"></param> The default is null 
     /// <param name="impactAreaID"></param> The default is a null value (utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
     /// <returns></returns>        
-    public Empirical GetConsequencesDistribution(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+    public Empirical GetConsequencesDistribution(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
     {
         List<Empirical> empiricalDistsToStack = [];
 
         foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList)
         {
             var filtered = impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList
-                .FilterByCategories(damageCategory, assetCategory, impactAreaID)
+                .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType)
                 .Select((h) => DynamicHistogram.ConvertToEmpiricalDistribution(h.ConsequenceHistogram));
 
             foreach (var consequenceResult in filtered)

@@ -1,13 +1,11 @@
-using Statistics;
-using System;
-using System.Collections.Generic;
 using HEC.FDA.Model.metrics;
-using System.Collections.Concurrent;
-using System.Threading.Tasks;
-using System.Linq;
-using Utility.Progress;
-using Statistics.Histograms;
 using Statistics.Distributions;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Utility.Progress;
 namespace HEC.FDA.Model.alternatives
 {
     public static class Alternative
@@ -132,7 +130,8 @@ namespace HEC.FDA.Model.alternatives
                     AggregatedConsequencesBinned futureYearConsequence = futureYearImpactArea.ConsequenceResults.GetConsequenceResult(
                         baseYearConsequence.DamageCategory,
                         baseYearConsequence.AssetCategory,
-                        baseYearConsequence.RegionID);
+                        baseYearConsequence.RegionID,
+                        baseYearConsequence.ConsequenceType);
 
                     // Calculate EqAD (Equivalent Annual Damage) result
                     AggregatedConsequencesByQuantile eqadResult = IterateOnEqad(
@@ -159,7 +158,8 @@ namespace HEC.FDA.Model.alternatives
                     AggregatedConsequencesBinned baseYearConsequence = baseYearImpactArea.ConsequenceResults.GetConsequenceResult(
                         futureYearConsequence.DamageCategory,
                         futureYearConsequence.AssetCategory,
-                        futureYearConsequence.RegionID);
+                        futureYearConsequence.RegionID,
+                        futureYearConsequence.ConsequenceType);
 
                     // Calculate EqAD with assumed zero damage in base year if no base year result exists
                     AggregatedConsequencesByQuantile eqadResult = IterateOnEqad(

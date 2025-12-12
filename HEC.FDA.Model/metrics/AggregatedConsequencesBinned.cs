@@ -21,6 +21,7 @@ public class AggregatedConsequencesBinned
     public IHistogram DamagedElementQuantityHistogram { get; private set; }
     public string DamageCategory { get; }
     public string AssetCategory { get; }
+    public ConsequenceType ConsequenceType { get; }
     public int RegionID { get; } = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE;
     public bool IsNull { get; }
     public ConvergenceCriteria ConvergenceCriteria { get; }
@@ -30,10 +31,11 @@ public class AggregatedConsequencesBinned
     /// <summary>
     /// This constructor is only used for handling errors. 
     /// </summary>
-    public AggregatedConsequencesBinned(int impactAreaID)
+    public AggregatedConsequencesBinned(int impactAreaID, ConsequenceType consequenceType = ConsequenceType.Damage)
     {
         DamageCategory = "UNASSIGNED";
         AssetCategory = "UNASSIGNED";
+        ConsequenceType = consequenceType;
         RegionID = impactAreaID;
         ConvergenceCriteria = new ConvergenceCriteria();
         ConsequenceHistogram = new DynamicHistogram();
@@ -42,10 +44,11 @@ public class AggregatedConsequencesBinned
         _TempResults = new double[ConvergenceCriteria.IterationCount];
         _TempCounts = new double[ConvergenceCriteria.IterationCount];
     }
-    public AggregatedConsequencesBinned(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID)
+    public AggregatedConsequencesBinned(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID, ConsequenceType consequenceType = ConsequenceType.Damage)
     {
         DamageCategory = damageCategory;
         AssetCategory = assetCategory;
+        ConsequenceType = consequenceType;
         ConvergenceCriteria = convergenceCriteria;
         IsNull = false;
         RegionID = impactAreaID;
@@ -55,10 +58,11 @@ public class AggregatedConsequencesBinned
 
     }
 
-    public AggregatedConsequencesBinned(string damageCategory, string assetCategory, IHistogram histogram, int impactAreaID)
+    public AggregatedConsequencesBinned(string damageCategory, string assetCategory, IHistogram histogram, int impactAreaID, ConsequenceType consequenceType = ConsequenceType.Damage)
     {
         DamageCategory = damageCategory;
         AssetCategory = assetCategory;
+        ConsequenceType = consequenceType;
         ConsequenceHistogram = histogram;
         ConvergenceCriteria = ConsequenceHistogram.ConvergenceCriteria;
         RegionID = impactAreaID;
@@ -68,10 +72,11 @@ public class AggregatedConsequencesBinned
 
     }
 
-    public AggregatedConsequencesBinned(string damageCategory, string assetCategory, int impactAreaID)
+    public AggregatedConsequencesBinned(string damageCategory, string assetCategory, int impactAreaID, ConsequenceType consequenceType = ConsequenceType.Damage)
     {
         DamageCategory = damageCategory;
         AssetCategory = assetCategory;
+        ConsequenceType = consequenceType;
         RegionID = impactAreaID;
         ConvergenceCriteria = new ConvergenceCriteria();
         ConsequenceHistogram = new DynamicHistogram();
@@ -157,6 +162,7 @@ public class AggregatedConsequencesBinned
         masterElement.SetAttributeValue("DamageCategory", DamageCategory);
         masterElement.SetAttributeValue("AssetCategory", AssetCategory);
         masterElement.SetAttributeValue("ImpactAreaID", RegionID);
+        masterElement.SetAttributeValue("ConsequenceType", ConsequenceType);
         return masterElement;
     }
 
@@ -166,7 +172,16 @@ public class AggregatedConsequencesBinned
         string damageCategory = xElement.Attribute("DamageCategory").Value;
         string assetCategory = xElement.Attribute("AssetCategory").Value;
         int id = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
-        return new AggregatedConsequencesBinned(damageCategory, assetCategory, damageHistogram, id);
+
+        // This allows for backward compatibility -- if we are loading an object saved before the enum existed, 
+        // it will default to damage because that is all the used to exist
+        // anything saved after the enum was introduced will have the attribute and be parsed accordingly
+        ConsequenceType consequenceType = ConsequenceType.Damage;
+        var typeAttr = xElement.Attribute("ConsequenceType");
+        if (typeAttr != null && Enum.TryParse<ConsequenceType>(typeAttr.Value, out var parsed))
+            consequenceType = parsed;
+
+        return new AggregatedConsequencesBinned(damageCategory, assetCategory, damageHistogram, id, consequenceType);
     }
     #endregion
 }
