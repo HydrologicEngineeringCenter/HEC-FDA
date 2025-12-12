@@ -40,18 +40,18 @@ namespace HEC.FDA.Model.utilities
         /// <param name="curveMetaData">Metadata for the resulting uncertain paired data. If null, creates default metadata.</param>
         /// <param name="frequentEventThreshold">Exceedance probability threshold for frequent events (default 0.99). Above this, standard errors are held constant.</param>
         /// <param name="rareEventThreshold">Exceedance probability threshold for rare events (default 0.01). Below this, standard errors are held constant.</param>
-        /// <returns>UncertainPairedData object with Normal distributions (for stages) or LogNormal distributions (for flows)</returns>
+        /// <returns>Expanded exceedence probabilities with Normal distributions (for stages) or LogNormal distributions (for flows)</returns>
         /// <exception cref="ArgumentNullException">Thrown when exceedanceProbabilities or stagesOrFlows is null</exception>
         /// <exception cref="ArgumentException">Thrown when array lengths don't match or arrays have insufficient data points</exception>
-        public static UncertainPairedData LessSimpleMethod(
+        public static (double[],ContinuousDistribution[]) LessSimpleMethod(
             double[] exceedanceProbabilities,
             double[] stagesOrFlows,
             bool usingStagesNotFlows,
             int equivalentRecordLength = 10,
-            CurveMetaData curveMetaData = null,
-            double frequentEventThreshold = DEFAULT_FREQUENT_EVENT_THRESHOLD,
-            double rareEventThreshold = DEFAULT_RARE_EVENT_THRESHOLD)
+            CurveMetaData curveMetaData = null)
         {
+            double frequentEventThreshold = DEFAULT_FREQUENT_EVENT_THRESHOLD;
+            double rareEventThreshold = DEFAULT_RARE_EVENT_THRESHOLD;
             // Validation
             if (exceedanceProbabilities == null)
             {
@@ -113,30 +113,13 @@ namespace HEC.FDA.Model.utilities
                 rareEventThreshold);
 
             // Step 6: Construct distributions based on whether we're using stages or flows
-            IDistribution[] distributions = ConstructDistributions(
+            ContinuousDistribution[] distributions = ConstructDistributions(
                 interpolatedStageOrLogFlowValues,
                 standardErrors,
                 usingStagesNotFlows);
 
-            // Step 7: Convert exceedance probabilities to non-exceedance probabilities
-            // (matching GraphicalUncertainPairedData behavior which returns non-exceedance in SamplePairedData)
-            double[] nonExceedanceProbabilities = ExceedanceToNonExceedance(filledExceedanceProbabilities);
-
-            // Step 8: Create and return UncertainPairedData
-            return new UncertainPairedData(nonExceedanceProbabilities, distributions, metadata);
-        }
-
-        /// <summary>
-        /// Converts exceedance probabilities to non-exceedance probabilities.
-        /// </summary>
-        private static double[] ExceedanceToNonExceedance(double[] exceedanceProbabilities)
-        {
-            double[] nonExceedanceProbabilities = new double[exceedanceProbabilities.Length];
-            for (int i = 0; i < exceedanceProbabilities.Length; i++)
-            {
-                nonExceedanceProbabilities[i] = 1 - exceedanceProbabilities[i];
-            }
-            return nonExceedanceProbabilities;
+            // Step 7: Create and return UncertainPairedData
+            return (filledExceedanceProbabilities, distributions);
         }
 
         /// <summary>
@@ -315,8 +298,8 @@ namespace HEC.FDA.Model.utilities
             for (int i = 1; i < exceedanceProbabilities.Length - 1; i++)
             {
                 double nonExceedanceProbability = 1.0 - exceedanceProbabilities[i];
-                double slope = GraphicalDistribution.ComputeSlope(exceedanceProbabilities, stagesOrFlows, i);
-                standardErrors[i] = GraphicalDistribution.Equation6StandardError(nonExceedanceProbability, slope, equivalentRecordLength);
+                double slope = ComputeSlope(exceedanceProbabilities, stagesOrFlows, i);
+                standardErrors[i] = Equation6StandardError(nonExceedanceProbability, slope, equivalentRecordLength);
             }
         }
 
@@ -336,16 +319,16 @@ namespace HEC.FDA.Model.utilities
             if (exceedanceProbabilities.Length > 1)
             {
                 double nonExceedanceProbFirst = 1.0 - exceedanceProbabilities[0];
-                double slopeAtSecondPoint = GraphicalDistribution.ComputeSlope(exceedanceProbabilities, stagesOrFlows, 1);
-                standardErrors[0] = GraphicalDistribution.Equation6StandardError(nonExceedanceProbFirst, slopeAtSecondPoint, equivalentRecordLength);
+                double slopeAtSecondPoint = ComputeSlope(exceedanceProbabilities, stagesOrFlows, 1);
+                standardErrors[0] = Equation6StandardError(nonExceedanceProbFirst, slopeAtSecondPoint, equivalentRecordLength);
             }
 
             // Last point: use slope from second-to-last point (index Length-2)
             if (exceedanceProbabilities.Length > 2)
             {
                 double nonExceedanceProbLast = 1.0 - exceedanceProbabilities[lastIndex];
-                double slopeAtSecondToLast = GraphicalDistribution.ComputeSlope(exceedanceProbabilities, stagesOrFlows, lastIndex - 1);
-                standardErrors[lastIndex] = GraphicalDistribution.Equation6StandardError(nonExceedanceProbLast, slopeAtSecondToLast, equivalentRecordLength);
+                double slopeAtSecondToLast = ComputeSlope(exceedanceProbabilities, stagesOrFlows, lastIndex - 1);
+                standardErrors[lastIndex] = Equation6StandardError(nonExceedanceProbLast, slopeAtSecondToLast, equivalentRecordLength);
             }
         }
 
@@ -378,31 +361,31 @@ namespace HEC.FDA.Model.utilities
         /// Computes the slope of the frequency curve at a given point using normal probability interpolation.
         /// </summary>
         /// <param name="exceedanceProbabilities">Array of exceedance probabilities</param>
-        /// <param name="stagesOrFlows">Array of stage or flow values</param>
+        /// <param name="stageOrLoggedFlowValues">Array of stage or logged flow values</param>
         /// <param name="i">Index at which to compute the slope (must be between 1 and Length-2)</param>
         /// <returns>The slope at the specified point</returns>
-        private static double ComputeSlope(double[] exceedanceProbabilities, double[] stagesOrFlows, int i)
+        private static double ComputeSlope(double[] exceedanceProbabilities, double[] stageOrLoggedFlowValues, int i)
         {
-            // Step 1: Identify the non-exceedance probability and coinciding quantiles
+            //step 1: identify the non-exceedance probability and coinciding quantiles for which we're calculating the slope 
             double p = 1 - exceedanceProbabilities[i];
-            double q = stagesOrFlows[i];
+            double q = stageOrLoggedFlowValues[i];
 
             double p_minus = 1 - exceedanceProbabilities[i - 1];
-            double q_minus = stagesOrFlows[i - 1];
+            double q_minus = stageOrLoggedFlowValues[i - 1];
 
             double p_plus = 1 - exceedanceProbabilities[i + 1];
-            double q_plus = stagesOrFlows[i + 1];
+            double q_plus = stageOrLoggedFlowValues[i + 1];
 
-            // Step 2: Identify probability margins that feed into the slope calculator
+            //step 2: identify probability margins that feed into the slope calculator 
             double epsilon = 0.00001;
             double p_minusEpsilon = p - epsilon;
             double p_plusEpsilon = p + epsilon;
 
-            // Step 3: Interpolate the quantiles at the probability margins
+            //step 3: interpolate the quantiles at the probability margins 
             double q_minusEpsilon = InterpolateNormally(p, p_minus, q, q_minus, p_minusEpsilon);
             double q_plusEpsilon = InterpolateNormally(p_plus, p, q_plus, q, p_plusEpsilon);
 
-            // Step 4: Calculate slope between the probability margins
+            //step 4: calculate slope between the probability margins 
             double slope = (q_plusEpsilon - q_minusEpsilon) / (p_plusEpsilon - p_minusEpsilon);
             return slope;
         }
@@ -428,12 +411,12 @@ namespace HEC.FDA.Model.utilities
         /// SE² = [p(1-p)] / [(1/slope)² × ERL]
         /// </summary>
         /// <param name="nonExceedanceProbability">Non-exceedance probability (1 - exceedance probability)</param>
-        /// <param name="slope">Local slope of the frequency curve</param>
+        /// <param name="slope">Local slope of the frequency curve in z space</param>
         /// <param name="equivalentRecordLength">Equivalent record length in years</param>
         /// <returns>Standard error (standard deviation) for the stage/flow at this probability</returns>
-        private static double Equation6StandardError(double nonExceedanceProbability, double slope, int equivalentRecordLength)
+        private static double Equation6StandardError(double nonExceedanceProbability, double slope, int erl)
         {
-            double standardErrorSquared = (nonExceedanceProbability * (1 - nonExceedanceProbability)) / (Math.Pow(1 / slope, 2.0) * equivalentRecordLength);
+            double standardErrorSquared = (nonExceedanceProbability * (1 - nonExceedanceProbability)) / (Math.Pow(1 / slope, 2.0D) * erl);
             double standardError = Math.Sqrt(standardErrorSquared);
             return standardError;
         }
@@ -445,12 +428,12 @@ namespace HEC.FDA.Model.utilities
         /// <param name="standardErrors">Array of standard errors</param>
         /// <param name="usingStagesNotFlows">True for Normal distributions (stages), False for LogNormal (flows)</param>
         /// <returns>Array of continuous distributions</returns>
-        private static IDistribution[] ConstructDistributions(
+        private static ContinuousDistribution[] ConstructDistributions(
             double[] means,
             double[] standardErrors,
             bool usingStagesNotFlows)
         {
-            IDistribution[] distributions = new IDistribution[means.Length];
+            ContinuousDistribution[] distributions = new ContinuousDistribution[means.Length];
 
             if (usingStagesNotFlows)
             {
