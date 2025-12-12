@@ -129,12 +129,12 @@ public class ScenarioResults : ValidationErrorLogger
     /// <param name="assetCategory"></param> either structure, content, etc...the default is null
     /// <param name="impactAreaID"></param> the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
     /// <returns></returns>The mean of consequences
-    public double SampleMeanExpectedAnnualConsequences(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+    public double SampleMeanExpectedAnnualConsequences(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
     {//TODO: This could probably be more efficient and could use some null checking
         double consequenceValue = 0;
         foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList)
         {
-            consequenceValue += impactAreaScenarioResults.ConsequenceResults.SampleMeanDamage(damageCategory, assetCategory, impactAreaID);
+            consequenceValue += impactAreaScenarioResults.ConsequenceResults.SampleMeanDamage(damageCategory, assetCategory, impactAreaID, consequenceType);
         }
         return consequenceValue;
     }
