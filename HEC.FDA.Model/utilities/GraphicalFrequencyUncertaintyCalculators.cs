@@ -17,16 +17,18 @@ namespace HEC.FDA.Model.utilities
         /// <summary>
         /// Default lower exceedance probability threshold (e.g., 0.01 = 100-year event).
         /// Below this threshold, standard errors are held constant.
-        /// Note: This is passed as the first parameter to match GraphicalDistribution behavior.
         /// </summary>
-        public const double DEFAULT_FREQUENT_EVENT_THRESHOLD = 0.01;
+        private const double LESS_SIMPLE_FREQUENT_EVENT_THRESHOLD = 0.01;
 
         /// <summary>
         /// Default higher exceedance probability threshold (e.g., 0.99 = annual event).
         /// Above this threshold, standard errors are held constant.
-        /// Note: This is passed as the second parameter to match GraphicalDistribution behavior.
         /// </summary>
-        public const double DEFAULT_RARE_EVENT_THRESHOLD = 0.99;
+        private const double LESS_SIMPLE_RARE_EVENT_THRESHOLD = 0.99;
+
+        private const double LESS_SIMPLE_MAX_EXCEED_PROB = 0.9999;
+        private const double LESS_SIMPLE_MIN_EXCEED_PROB = 0.0001;
+        private const double MAX_INTERVAL_FOR_EXTRAPOLATION = 0.0001;
 
         /// <summary>
         /// Implements Beth Faber's "Less Simple Method" for quantifying uncertainty about a graphical frequency relationship.
@@ -38,8 +40,6 @@ namespace HEC.FDA.Model.utilities
         /// <param name="usingStagesNotFlows">True if using stages, False if using flows. Determines whether to use Normal or LogNormal distributions.</param>
         /// <param name="equivalentRecordLength">The equivalent record length (in years) for the frequency relationship. Default is 10.</param>
         /// <param name="curveMetaData">Metadata for the resulting uncertain paired data. If null, creates default metadata.</param>
-        /// <param name="frequentEventThreshold">Exceedance probability threshold for frequent events (default 0.99). Above this, standard errors are held constant.</param>
-        /// <param name="rareEventThreshold">Exceedance probability threshold for rare events (default 0.01). Below this, standard errors are held constant.</param>
         /// <returns>Expanded exceedence probabilities with Normal distributions (for stages) or LogNormal distributions (for flows)</returns>
         /// <exception cref="ArgumentNullException">Thrown when exceedanceProbabilities or stagesOrFlows is null</exception>
         /// <exception cref="ArgumentException">Thrown when array lengths don't match or arrays have insufficient data points</exception>
@@ -50,8 +50,8 @@ namespace HEC.FDA.Model.utilities
             int equivalentRecordLength = 10,
             CurveMetaData curveMetaData = null)
         {
-            double frequentEventThreshold = DEFAULT_FREQUENT_EVENT_THRESHOLD;
-            double rareEventThreshold = DEFAULT_RARE_EVENT_THRESHOLD;
+            double frequentEventThreshold = LESS_SIMPLE_FREQUENT_EVENT_THRESHOLD;
+            double rareEventThreshold = LESS_SIMPLE_RARE_EVENT_THRESHOLD;
             // Validation
             if (exceedanceProbabilities == null)
             {
@@ -145,13 +145,12 @@ namespace HEC.FDA.Model.utilities
 
         /// <summary>
         /// Extrapolates the frequency function to cover the range 0.9999 to 0.0001.
-        /// Matches GraphicalDistribution.ExtrapolateFrequencyFunction behavior.
         /// </summary>
         private static PairedData ExtrapolateFrequencyFunction(double[] exceedanceProbabilities, double[] stageOrLoggedFlowValues)
         {
-            double toleratedDifference = 0.0001;
-            double maximumExceedanceProbability = 0.9999;
-            double minimumExceedanceProbability = 0.0001;
+            double toleratedDifference = MAX_INTERVAL_FOR_EXTRAPOLATION;
+            double maximumExceedanceProbability = LESS_SIMPLE_MAX_EXCEED_PROB;
+            double minimumExceedanceProbability = LESS_SIMPLE_MIN_EXCEED_PROB;
 
             List<double> extrapolatedFlowOrStageValues = new();
             List<double> extrapolatedExceedanceProbabilities = new();
@@ -210,7 +209,6 @@ namespace HEC.FDA.Model.utilities
 
         /// <summary>
         /// Fills the input exceedance probabilities with required points from DoubleGlobalStatics.
-        /// Matches GraphicalDistribution.FillInputExceedanceProbabilitiesWithRequiredPoints behavior.
         /// </summary>
         private static double[] FillInputExceedanceProbabilitiesWithRequiredPoints(double[] inputExceedanceProbabilities)
         {
