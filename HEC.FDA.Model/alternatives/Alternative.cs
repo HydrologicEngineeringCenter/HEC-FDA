@@ -226,11 +226,12 @@ namespace HEC.FDA.Model.alternatives
             var damageCategory = iterateOnFutureYear ? mlfYearDamageResult.DamageCategory : baseYearDamageResult.DamageCategory;
             var assetCategory = iterateOnFutureYear ? mlfYearDamageResult.AssetCategory : baseYearDamageResult.AssetCategory;
             var regionID = iterateOnFutureYear ? mlfYearDamageResult.RegionID : baseYearDamageResult.RegionID;
+            var consequenceType = iterateOnFutureYear ? mlfYearDamageResult.ConsequenceType : baseYearDamageResult.ConsequenceType;
             var resultList = resultCollection.ToList();
 
             Empirical empResult = Empirical.FitToSample(resultList);
             empResult.SampleMean = meanEqad;
-            AggregatedConsequencesByQuantile result = new(damageCategory, assetCategory, empResult, regionID);
+            AggregatedConsequencesByQuantile result = new(damageCategory, assetCategory, empResult, regionID, consequenceType);
             return result;
         }
 

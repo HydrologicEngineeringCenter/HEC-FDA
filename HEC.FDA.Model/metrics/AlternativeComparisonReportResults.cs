@@ -1,8 +1,8 @@
-using System.Collections.Generic;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
-using Statistics.Distributions;
 using HEC.MVVMFramework.Model.Messaging;
+using Statistics.Distributions;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace HEC.FDA.Model.metrics;
@@ -36,26 +36,32 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     //These methods now assume that the same impact areas are in all three results lists - a reasonable assumption 
     //How could they not? What could happen that could cause different impact areas or damage categories to be in different results?  
     //We could cycle through each of the three lists, but that seems unnecessary 
-    public List<int> GetImpactAreaIDs() 
+    public List<int> GetImpactAreaIDs(ConsequenceType consequenceType = ConsequenceType.Damage)
     {
         return _EqadReducedResultsList
-        .SelectMany(x => x.ConsequenceResultList.Select(r => r.RegionID))
-        .Distinct()
-        .ToList();
+            .SelectMany(x => x.ConsequenceResultList
+                .Where(r => r.ConsequenceType == consequenceType)
+                .Select(r => r.RegionID))
+            .Distinct()
+            .ToList();
     }
-    public List<string> GetAssetCategories()
+    public List<string> GetAssetCategories(ConsequenceType consequenceType = ConsequenceType.Damage)
     {
         return _EqadReducedResultsList
-        .SelectMany(x => x.ConsequenceResultList.Select(r => r.AssetCategory))
-        .Distinct()
-        .ToList();
+            .SelectMany(x => x.ConsequenceResultList
+                .Where(r => r.ConsequenceType == consequenceType)
+                .Select(r => r.AssetCategory))
+            .Distinct()
+            .ToList();
     }
-    public List<string> GetDamageCategories()
+    public List<string> GetDamageCategories(ConsequenceType consequenceType = ConsequenceType.Damage)
     {
         return _EqadReducedResultsList
-        .SelectMany(x => x.ConsequenceResultList.Select(r => r.DamageCategory))
-        .Distinct()
-        .ToList();
+            .SelectMany(x => x.ConsequenceResultList
+                .Where(r => r.ConsequenceType == consequenceType)
+                .Select(r => r.DamageCategory))
+            .Distinct()
+            .ToList();
     }
     /// <summary>
     /// This method gets the mean EqAD damage reduced between the with- and without-project conditions for a given with-project condition, 
@@ -207,18 +213,18 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     {
         //Three logical cases here: We want EqAD results, we want base year EAD results, or we want future year EAD results.
         List<StudyAreaConsequencesByQuantile> listToSearch;
-        if (!getEADResults) 
-        { 
+        if (!getEADResults)
+        {
             listToSearch = _EqadReducedResultsList;
         }
         else if (getEADResults && getBaseYearResults)
         {
             listToSearch = _BaseYearEADReducedResultsList;
-        } 
-        else if (getEADResults && !getBaseYearResults) 
-        { 
+        }
+        else if (getEADResults && !getBaseYearResults)
+        {
             listToSearch = _FutureYearEADReducedResultsList;
-        } 
+        }
         else
         {
             throw new System.ArgumentException("An illogical combination of arguments was provided");

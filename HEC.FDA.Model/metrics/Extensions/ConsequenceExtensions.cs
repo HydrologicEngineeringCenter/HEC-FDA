@@ -13,12 +13,14 @@ public static class ConsequenceExtensions
         this IEnumerable<AggregatedConsequencesByQuantile> consequences,
         string damageCategory = null,
         string assetCategory = null,
-        int impactAreaID = -999)
+        int impactAreaID = -999,
+        ConsequenceType type = ConsequenceType.Damage)
     {
         return consequences.Where(result =>
             (damageCategory == null || damageCategory.Equals(result.DamageCategory)) &&
             (assetCategory == null || assetCategory.Equals(result.AssetCategory)) &&
-            (impactAreaID == -999 || impactAreaID == result.RegionID));
+            (impactAreaID == -999 || impactAreaID == result.RegionID) &&
+            (type == result.ConsequenceType));
     }
 
     /// <summary>
