@@ -96,7 +96,7 @@ namespace HEC.FDA.Model.utilities
             PairedData extrapolatedFrequencyFunction = ExtrapolateFrequencyFunction(exceedanceProbabilities, stageOrLoggedFlowValues);
 
             // Step 3: Fill with required exceedance probabilities
-            double[] filledExceedanceProbabilities = FillInputExceedanceProbabilitiesWithRequiredPoints(extrapolatedFrequencyFunction.Xvals);
+            double[] filledExceedanceProbabilities = FillInputExceedanceProbabilitiesWithRequiredPoints(extrapolatedFrequencyFunction.Xvals.ToArray());
 
             // Step 4: Interpolate quantiles for the filled probabilities
             double[] interpolatedStageOrLogFlowValues = InterpolateQuantiles.InterpolateOnX(

@@ -589,7 +589,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 : StringConstants.STAGE;
 
             PairedData nonExceedencePd = elem.GraphicalUncertainPairedData.SamplePairedData(-1, true);
-            PairedData exceedencePd = new([..nonExceedencePd.Xvals.Select(x => 1-x)], nonExceedencePd.Yvals,nonExceedencePd.MetaData);
+            PairedData exceedencePd = new([..nonExceedencePd.Xvals.Select(x => 1-x)], [..nonExceedencePd.Yvals],nonExceedencePd.MetaData);
             exceedencePd.SortToIncreasingXVals();
             return exceedencePd;
         }
@@ -630,7 +630,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
             // Convert the damage frequency curve from non-exceedance to exceedance probabilities.
             double[] xs = _DamageFrequencyCurve.Xvals.Select(x => 1 - x).ToArray();
-            double[] ys = _DamageFrequencyCurve.Yvals;
+            double[] ys = _DamageFrequencyCurve.Yvals.ToArray();
 
             // Create metadata for the damage frequency curve.
             CurveMetaData curveMetaData = new CurveMetaData("Stage", "Damage", "Stage-Damage", "");

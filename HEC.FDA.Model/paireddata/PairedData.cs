@@ -10,12 +10,14 @@ namespace HEC.FDA.Model.paireddata
     {
         #region Fields 
         private const double EPSILON = double.Epsilon;
+        private readonly double[] _xVals;
+        private readonly double[] _yVals;
         #endregion
 
         #region Properties 
         public CurveMetaData MetaData { get; }
-        public double[] Xvals { get; }
-        public double[] Yvals { get; private set; }
+        public IReadOnlyList<double> Xvals => _xVals;
+        public IReadOnlyList<double> Yvals => _yVals;
         public bool IsValidPerMetadata
         {
             get
@@ -48,10 +50,11 @@ namespace HEC.FDA.Model.paireddata
         /// </summary>
         /// <param name="xs"></param>
         /// <param name="ys"></param>
-        public PairedData(double[] xs, double[] ys)
+        public PairedData(IReadOnlyList<double> xs, IReadOnlyList<double> ys, CurveMetaData metadata = null)
         {
-            Xvals = xs;
-            Yvals = ys;
+            _xVals = xs == null ? null : xs.ToArray();
+            _yVals = ys == null ? null : ys.ToArray();
+            MetaData = metadata;
         }
         /// <summary>
         /// X values must always be in increasing order.
@@ -66,20 +69,17 @@ namespace HEC.FDA.Model.paireddata
         /// </summary>
         /// <param name="xs"></param>
         /// <param name="ys"></param>
-        public PairedData(double[] xs, double[] ys, CurveMetaData metadata)
-        {
-            Xvals = xs;
-            Yvals = ys;
-            MetaData = metadata;
-        }
+        public PairedData(double[] xs, double[] ys, CurveMetaData metadata = null)
+            : this((IReadOnlyList<double>)xs, (IReadOnlyList<double>)ys, metadata)
+        { }
         #endregion
 
         #region Methods
 
-        private static bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
+        private static bool IsArrayValid(IReadOnlyList<double> arrayOfData, Func<double, double, bool> comparison)
         {
             if (arrayOfData == null) return false;
-            for (int i = 0; i < arrayOfData.Length - 1; i++)
+            for (int i = 0; i < arrayOfData.Count - 1; i++)
             {
                 if (comparison(arrayOfData[i], arrayOfData[i + 1]))
                 {
@@ -95,7 +95,7 @@ namespace HEC.FDA.Model.paireddata
         /// </summary>
         public double f(double x)
         {
-            int index = Array.BinarySearch(Xvals, x);
+            int index = Array.BinarySearch(_xVals, x);
             if (index >= 0)
             {
                 //Matches a value exactly
@@ -105,7 +105,7 @@ namespace HEC.FDA.Model.paireddata
             {
                 //This is the next LARGER value.
                 index = ~index;
-                int len = Xvals.Length;
+                int len = Xvals.Count;
                 if (index == len) return Yvals[len - 1];
 
                 if (index == 0) return Yvals[0];
@@ -170,7 +170,7 @@ namespace HEC.FDA.Model.paireddata
         public double f_inverse(double y)
         {
             //binary search.
-            double[] yvalsArray = Yvals;
+            double[] yvalsArray = _yVals;
             int index = Array.BinarySearch(yvalsArray, y);
             if (index >= 0)
             {
@@ -182,7 +182,7 @@ namespace HEC.FDA.Model.paireddata
                 //This is the next LARGER value.
                 index = ~index;
 
-                if (index == Yvals.Length) { return Xvals[^1]; }
+                if (index == Yvals.Count) { return Xvals[^1]; }
 
                 if (index == 0) { return Xvals[0]; }
 
@@ -203,7 +203,7 @@ namespace HEC.FDA.Model.paireddata
         /// </summary>
         public PairedData compose(IPairedData inputPairedData)
         {
-            int count = inputPairedData.Xvals.Length;
+            int count = inputPairedData.Xvals.Count;
             double[] x = new double[count];
             double[] y = new double[count];
 
@@ -221,12 +221,12 @@ namespace HEC.FDA.Model.paireddata
             if (Xvals != null && Yvals != null)
             {
 
-                double[] x = new double[inputPairedData.Xvals.Length];
-                double[] ySum = new double[inputPairedData.Yvals.Length];
-                for (int i = 0; i < inputPairedData.Xvals.Length; i++)
+                double[] x = new double[inputPairedData.Xvals.Count];
+                double[] ySum = new double[inputPairedData.Yvals.Count];
+                for (int i = 0; i < inputPairedData.Xvals.Count; i++)
                 {
-                    int index = Array.BinarySearch(Xvals, inputPairedData.Xvals[i]);
-                    double yValueFromSubject = 0;
+                    int index = Array.BinarySearch(_xVals, inputPairedData.Xvals[i]);
+                    double yValueFromSubject;
                     if (index >= 0)
                     {
                         //value matched exactly
@@ -238,13 +238,13 @@ namespace HEC.FDA.Model.paireddata
                         index = ~index;
 
                         //if the x value from input is greater than all x values in subject
-                        if (index == Xvals.Length)
+                        if (index == Xvals.Count)
                         {
                             yValueFromSubject = Yvals[^1];
                         }
 
                         //if the x value from the input is less than all x values in subject
-                        if (index == 0)
+                        else if (index == 0)
                         {
                             yValueFromSubject = Yvals[0];
                         }
@@ -262,7 +262,7 @@ namespace HEC.FDA.Model.paireddata
             }
             else
             {
-                return new PairedData(inputPairedData.Xvals, inputPairedData.Yvals);
+                return new PairedData(inputPairedData.Xvals.ToArray(), inputPairedData.Yvals.ToArray());
             }
         }
 
@@ -270,7 +270,7 @@ namespace HEC.FDA.Model.paireddata
         public double integrate()
         {
             //This functionality was extracted to a static method to be shared with empirical.cs, which uses the same logic. 
-            return Statistics.Mathematics.IntegrateCDF<double>(Xvals, Yvals);
+            return Mathematics.IntegrateCDF<double>(_xVals, _yVals);
         }
 
         /// <summary>
@@ -286,7 +286,7 @@ namespace HEC.FDA.Model.paireddata
             List<double> newYvals = new(); //yvals are damage*prob(failure)
 
             // calculate damages for the range of the stage-damage function 
-            for (int i = 0; i < Xvals.Length; i++)
+            for (int i = 0; i < Xvals.Count; i++)
             {
                 double stageFromStageDamage = Xvals[i];
                 double probabilityOfFailure = systemResponseFunction.f(stageFromStageDamage);
@@ -295,7 +295,7 @@ namespace HEC.FDA.Model.paireddata
                 newXvals.Add(stageFromStageDamage);
                 newYvals.Add(probabilityWeightedDamage);
             }
-            for (int i = 0; i < systemResponseFunction.Xvals.Length; i++)
+            for (int i = 0; i < systemResponseFunction.Xvals.Count; i++)
             {
                 double fragilityStage = systemResponseFunction.Xvals[i];
                 bool fragilityStageIsInStages = newXvals.Contains(fragilityStage);
@@ -321,12 +321,12 @@ namespace HEC.FDA.Model.paireddata
         public void ForceWeakMonotonicityBottomUp()
         {
             double previousYval = Yvals[0];
-            for (int i = 1; i < Yvals.Length; i++)
+            for (int i = 1; i < Yvals.Count; i++)
             {
                 double currentY = Yvals[i];
                 if (previousYval >= currentY)
                 {
-                    Yvals[i] = previousYval;
+                    _yVals[i] = previousYval;
                 }
                 else
                 {
@@ -342,12 +342,12 @@ namespace HEC.FDA.Model.paireddata
         {
             double upperValue = Yvals[^1];
 
-            for (int i = Yvals.Length - 2; i >= 0; i--)
+            for (int i = Yvals.Count - 2; i >= 0; i--)
             {
                 if (Yvals[i] >= upperValue)
                 {
                     upperValue -= double.Epsilon;
-                    Yvals[i] = upperValue;
+                    _yVals[i] = upperValue;
                 }
                 else
                 {
@@ -362,13 +362,13 @@ namespace HEC.FDA.Model.paireddata
         public void ForceStrictMonotonicityBottomUp()
         {
             double previousYval = Yvals[0];
-            for (int index = 1; index < Yvals.Length; index++)
+            for (int index = 1; index < Yvals.Count; index++)
             {
                 double currentY = Yvals[index];
                 if (previousYval >= currentY)
                 {
                     previousYval += double.Epsilon;
-                    Yvals[index] = previousYval;
+                    _yVals[index] = previousYval;
                 }
                 else
                 {
@@ -378,7 +378,7 @@ namespace HEC.FDA.Model.paireddata
         }
         public void SortToIncreasingXVals()
         {
-            Array.Sort(Xvals, Yvals);
+            Array.Sort(_xVals, _yVals);
         }
         #endregion
     }
