@@ -1,11 +1,7 @@
 ﻿using HEC.FDA.Model.metrics;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
-using Statistics.Distributions;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using Utility.Memory;
 
 namespace HEC.FDA.ViewModel.Results
 {
@@ -47,14 +43,14 @@ namespace HEC.FDA.ViewModel.Results
             ScenarioResults results = scenario.Results;
             List<int> impactAreaIds = results.GetImpactAreaIDs();
             Dictionary<int, string> impactAreaIdToName = IASElement.GetImpactAreaNamesFromIDs();
-           
+
             foreach (int impactAreaID in impactAreaIds)
             {
-                    double Mean = results.SampleMeanExpectedAnnualConsequences(impactAreaID);
-                    double point75 = results.ConsequencesExceededWithProbabilityQ(.75, impactAreaID);
-                    double point5 = results.ConsequencesExceededWithProbabilityQ(.50, impactAreaID);
-                    double point25 = results.ConsequencesExceededWithProbabilityQ(.25, impactAreaID);
-                    rowItems.Add(new(name, analysisYear, impactAreaIdToName[impactAreaID], Mean, point75, point5, point25));
+                double Mean = results.SampleMeanExpectedAnnualConsequences(impactAreaID);
+                double point75 = results.ConsequencesExceededWithProbabilityQ(.75, impactAreaID);
+                double point5 = results.ConsequencesExceededWithProbabilityQ(.50, impactAreaID);
+                double point25 = results.ConsequencesExceededWithProbabilityQ(.25, impactAreaID);
+                rowItems.Add(new(name, analysisYear, impactAreaIdToName[impactAreaID], Mean, point75, point5, point25));
             }
             return rowItems;
         }

@@ -13,6 +13,7 @@ namespace HEC.FDA.ViewModel.Results
 
         public CustomObservableCollection<SelectableChildElement> SelectableElements { get; } = [];
         public CustomObservableCollection<ScenarioDamageRowItem> Rows { get; } = [];
+        public CustomObservableCollection<ScenarioLifeLossRowItem> LifeLossRows { get; } = [];
         public CustomObservableCollection<ScenarioPerformanceRowItem> PerformanceRows { get; } = [];
         public CustomObservableCollection<AssuranceOfAEPRowItem> AssuranceOfAEPRows { get; } = [];
         public CustomObservableCollection<ScenarioDamCatRowItem> DamCatRows { get; } = [];
@@ -27,7 +28,7 @@ namespace HEC.FDA.ViewModel.Results
                 SelectableElements.Add(selectElem);
                 //the selectable elements are selected by default. We want to toggle all the elements that 
                 //aren't in the passed in list off.
-                if(!selectedScenarioElems.Contains(element))
+                if (!selectedScenarioElems.Contains(element))
                 {
                     selectElem.IsSelected = false;
                 }
@@ -89,16 +90,18 @@ namespace HEC.FDA.ViewModel.Results
             List<IASElement> elems = GetSelectedElements();
             List<ScenarioDamCatRowItem> damCatRows = new List<ScenarioDamCatRowItem>();
             Rows.Clear();
+            LifeLossRows.Clear();
             PerformanceRows.Clear();
             AssuranceOfAEPRows.Clear();
             DamCatRows.Clear();
             foreach (IASElement element in elems)
             {
                 Rows.AddRange(ScenarioDamageRowItem.CreateScenarioDamageRowItems(element));
+                LifeLossRows.AddRange(ScenarioLifeLossRowItem.CreateScenarioDamageRowItems(element));
                 DamCatRows.AddRange(ScenarioDamCatRowItem.CreateScenarioDamCatRowItems(element));
                 List<ImpactAreaScenarioResults> resultsList = element.Results.ResultsList;
                 foreach (ImpactAreaScenarioResults impactAreaScenarioResults in resultsList)
-                { 
+                {
                     int iasID = impactAreaScenarioResults.ImpactAreaID;
                     SpecificIAS ias = element.SpecificIASElements.Where(ias => ias.ImpactAreaID == iasID).First();
 
@@ -119,9 +122,9 @@ namespace HEC.FDA.ViewModel.Results
         private List<IASElement> GetSelectedElements()
         {
             List<IASElement> selectedElements = new List<IASElement>();
-            foreach(SelectableChildElement selectElem in SelectableElements)
+            foreach (SelectableChildElement selectElem in SelectableElements)
             {
-                if(selectElem.IsSelected)
+                if (selectElem.IsSelected)
                 {
                     selectedElements.Add(selectElem.Element as IASElement);
                 }
