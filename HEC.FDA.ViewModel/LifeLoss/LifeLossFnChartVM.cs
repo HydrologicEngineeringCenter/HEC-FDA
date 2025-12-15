@@ -121,7 +121,7 @@ public class LifeLossFnChartVM : BaseViewModel
         var xAxis = new LogarithmicAxis
         {
             Position = AxisPosition.Bottom,
-            Title = "Average Life Loss",
+            Title = "Average Annual Life Loss",
             Minimum = 0.1,
             Maximum = 10000,
             AbsoluteMinimum = 0.1,
