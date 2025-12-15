@@ -137,11 +137,11 @@ public abstract class ChartControlBase : BaseViewModel
     {
         if (_flipXY)
         {
-            _data.SetValues(Function.Yvals, Function.Xvals);
+            _data.SetValues(Function.Yvals.ToArray(), Function.Xvals.ToArray());
         }
         else
         {
-            _data.SetValues(Function.Xvals, Function.Yvals);
+            _data.SetValues(Function.Xvals.ToArray(), Function.Yvals.ToArray());
         }
     }
 

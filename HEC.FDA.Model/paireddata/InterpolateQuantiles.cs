@@ -27,9 +27,9 @@ namespace HEC.FDA.Model.paireddata
             {
                 neededZs[i] = standardNormalDistribution.InverseCDF(1-exceedanceProbabilitiesForWhichQuantilesAreRequired[i]);
             }
-            IPairedData nonexceedance_zScore = new PairedData(exceedanceProbabilitiesForWhichQuantilesAreRequired, neededZs);
-            IPairedData zScore_stage_flow = new PairedData(inputZs, inputDataForInterpolation);
-            IPairedData interpolatedFrequencyCurve = zScore_stage_flow.compose(nonexceedance_zScore);
+            PairedData nonexceedance_zScore = new PairedData(exceedanceProbabilitiesForWhichQuantilesAreRequired, neededZs);
+            PairedData zScore_stage_flow = new PairedData(inputZs, inputDataForInterpolation);
+            PairedData interpolatedFrequencyCurve = zScore_stage_flow.compose(nonexceedance_zScore);
 
             return interpolatedFrequencyCurve.Yvals.ToArray();
         }
