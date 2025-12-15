@@ -15,7 +15,7 @@ namespace HEC.FDA.Model.paireddata
         #endregion
 
         #region Properties
-        internal GraphicalDistribution GraphicalDistributionWithLessSimple { get; }
+        public GraphicalDistribution GraphicalDistributionWithLessSimple { get; }
         public CurveMetaData CurveMetaData { get; private set; }
         /// <summary>
         /// Exceedance probabilities are the required and the input, combined.

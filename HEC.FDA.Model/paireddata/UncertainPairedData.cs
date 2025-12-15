@@ -114,14 +114,29 @@ namespace HEC.FDA.Model.paireddata
         public PairedData SamplePairedData(double probability)
         {
             double[] y = new double[Yvals.Length];
-                for (int i = 0; i < Xvals.Length; i++)
-                {
-                    y[i] = Yvals[i].InverseCDF(probability);
-                }
+            for (int i = 0; i < Xvals.Length; i++)
+            {
+                y[i] = Yvals[i].InverseCDF(probability);
+            }
             PairedData pairedData = new(Xvals, y, CurveMetaData);//mutability leakage on xvals
             pairedData.ForceWeakMonotonicityBottomUp();
             return pairedData;
         }
+        /// <summary>
+        /// returns a paired data sampled at the given probability without enforcing any monotonicity
+        /// </summary>
+        public PairedData SamplePairedDataRaw(double probability)
+        {
+            double[] y = new double[Yvals.Length];
+            for (int i = 0; i < Xvals.Length; i++)
+            {
+                y[i] = Yvals[i].InverseCDF(probability);
+            }
+            PairedData pairedData = new(Xvals, y, CurveMetaData);//mutability leakage on xvals
+
+            return pairedData;
+        }
+
         /// <summary>
         /// All sampling methods include a computeIsDeterministic argument that bypasses the iteration number for the retrieval of the deterministic representation of the variable 
         /// </summary>

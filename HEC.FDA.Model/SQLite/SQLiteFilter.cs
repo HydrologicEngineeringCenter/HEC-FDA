@@ -45,7 +45,7 @@ public abstract class SQLiteFilter
         foreach (PropertyInfo prop in GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
         {
             if (!prop.PropertyType.IsArray) continue; // we only want array properties
-            var array = (Array?)prop.GetValue(this);
+            var array = (Array)prop.GetValue(this);
             if (array is null || array.Length == 0) continue;
 
             // get the column name from the attribute, and if it does not exist, default to property name
@@ -65,7 +65,7 @@ public abstract class SQLiteFilter
 
             // build "col IN (@p0,@p1,…)"
             var placeholders = new List<string>();
-            foreach (object? value in array)
+            foreach (object value in array)
             {
                 string p = $"@p{paramIndex++}";
                 placeholders.Add(p);

@@ -39,7 +39,7 @@ namespace HEC.FDA.ModelTest.unittests
             bool pass = true;
             foreach (IPairedData pairedData in pairedDataList)
             {
-                for (int j = 1; j < pairedData.Xvals.Length; j++)
+                for (int j = 1; j < pairedData.Xvals.Count; j++)
                 {
                     if (pairedData.Yvals[j] < pairedData.Yvals[j - 1])
                     {
