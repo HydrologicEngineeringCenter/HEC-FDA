@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using HEC.FDA.Model.paireddata;
 using OxyPlot;
 using OxyPlot.Annotations;
@@ -12,7 +14,11 @@ namespace HEC.FDA.ViewModel.LifeLoss;
 /// </summary>
 public class LifeLossFnChartVM : BaseViewModel
 {
+    private const string DataSeriesTag = "DataSeries";
+    private const string ZoneSeriesTag = "ZoneSeries";
+
     private string _title = "Life Loss Function";
+    private bool _showZones;
 
     public ViewResolvingPlotModel PlotModel { get; } = new();
 
@@ -28,24 +34,45 @@ public class LifeLossFnChartVM : BaseViewModel
     }
 
     /// <summary>
+    /// Gets or sets whether to display zone regions and zone boundary lines.
+    /// </summary>
+    public bool ShowZones
+    {
+        get => _showZones;
+        set
+        {
+            if (_showZones != value)
+            {
+                _showZones = value;
+                UpdateZoneVisibility();
+                NotifyPropertyChanged();
+            }
+        }
+    }
+
+    /// <summary>
     /// Creates a LifeLossFnChartVM with initial data.
     /// </summary>
     /// <param name="data">Pre-transformed UncertainPairedData where X = Average Life Loss, Y = AEP distribution</param>
     /// <param name="title">Chart title</param>
-    public LifeLossFnChartVM(UncertainPairedData data, string title = "Life Loss Function")
+    /// <param name="showZones">Whether to display zone regions and boundary lines</param>
+    public LifeLossFnChartVM(UncertainPairedData data, string title = "Life Loss Function", bool showZones = true)
     {
         _title = title;
+        _showZones = showZones;
         InitializePlotModel();
         AddDataSeries(data);
     }
 
     /// <summary>
-    /// Creates a LifeLossFnChartVM without initial data (zone lines only).
+    /// Creates a LifeLossFnChartVM without initial data.
     /// </summary>
     /// <param name="title">Chart title</param>
-    public LifeLossFnChartVM(string title = "Life Loss Function")
+    /// <param name="showZones">Whether to display zone regions and boundary lines</param>
+    public LifeLossFnChartVM(string title = "Life Loss Function", bool showZones = true)
     {
         _title = title;
+        _showZones = showZones;
         InitializePlotModel();
     }
 
@@ -58,8 +85,35 @@ public class LifeLossFnChartVM : BaseViewModel
             LegendPlacement = OxyPlot.Legends.LegendPlacement.Inside
         });
         AddAxes();
-        AddZoneRegions();
-        AddZoneSeries();
+        if (_showZones)
+        {
+            AddZoneRegions();
+            AddZoneSeries();
+        }
+    }
+
+    private void UpdateZoneVisibility()
+    {
+        if (_showZones)
+        {
+            AddZoneRegions();
+            AddZoneSeries();
+        }
+        else
+        {
+            PlotModel.Annotations.Clear();
+            RemoveZoneSeries();
+        }
+        PlotModel.InvalidatePlot(true);
+    }
+
+    private void RemoveZoneSeries()
+    {
+        List<Series> zoneSeries = [.. PlotModel.Series.Where(s => ZoneSeriesTag.Equals(s.Tag))];
+        foreach (var series in zoneSeries)
+        {
+            PlotModel.Series.Remove(series);
+        }
     }
 
     private void AddAxes()
@@ -184,7 +238,8 @@ public class LifeLossFnChartVM : BaseViewModel
             Title = "Individual Life Risk Line",
             LineStyle = LineStyle.Dash,
             Color = OxyColors.Red,
-            StrokeThickness = 3
+            StrokeThickness = 3,
+            Tag = ZoneSeriesTag
         };
         individualRiskLine.Points.Add(new DataPoint(0.1, 1E-04));
         individualRiskLine.Points.Add(new DataPoint(10000, 1E-04));
@@ -196,7 +251,8 @@ public class LifeLossFnChartVM : BaseViewModel
             Title = "Societal Life Risk Line",
             LineStyle = LineStyle.Dash,
             Color = OxyColors.Blue,
-            StrokeThickness = 3
+            StrokeThickness = 3,
+            Tag = ZoneSeriesTag
         };
         societalRiskLine.Points.Add(new DataPoint(0.1, 1E-02));
         societalRiskLine.Points.Add(new DataPoint(1000, 1E-06));
@@ -229,7 +285,8 @@ public class LifeLossFnChartVM : BaseViewModel
             Title = title,
             LineStyle = isConfidenceLimit ? LineStyle.Dash : LineStyle.Solid,
             Color = isConfidenceLimit ? OxyColors.ForestGreen : OxyColors.Black,
-            StrokeThickness = isConfidenceLimit ? 1.5 : 2.0
+            StrokeThickness = isConfidenceLimit ? 1.5 : 2.0,
+            Tag = DataSeriesTag
         };
 
         for (int i = 0; i < function.Xvals.Length; i++)
@@ -253,12 +310,7 @@ public class LifeLossFnChartVM : BaseViewModel
     /// <param name="data">Pre-transformed UncertainPairedData where X = Average Life Loss, Y = AEP distribution</param>
     public void UpdateData(UncertainPairedData data)
     {
-        // Remove data series but keep zone boundary lines (first 2 series)
-        while (PlotModel.Series.Count > 2)
-        {
-            PlotModel.Series.RemoveAt(PlotModel.Series.Count - 1);
-        }
-
+        RemoveDataSeries();
         AddDataSeries(data);
     }
 
@@ -267,10 +319,16 @@ public class LifeLossFnChartVM : BaseViewModel
     /// </summary>
     public void ClearDataSeries()
     {
-        while (PlotModel.Series.Count > 2)
-        {
-            PlotModel.Series.RemoveAt(PlotModel.Series.Count - 1);
-        }
+        RemoveDataSeries();
         PlotModel.InvalidatePlot(true);
+    }
+
+    private void RemoveDataSeries()
+    {
+        var dataSeries = PlotModel.Series.Where(s => DataSeriesTag.Equals(s.Tag)).ToList();
+        foreach (var series in dataSeries)
+        {
+            PlotModel.Series.Remove(series);
+        }
     }
 }

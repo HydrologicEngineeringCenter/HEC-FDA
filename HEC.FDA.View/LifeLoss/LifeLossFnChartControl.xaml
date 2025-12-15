@@ -10,5 +10,12 @@
              d:DataContext="{d:DesignInstance Type=lifeloss:LifeLossFnChartVM}">
     <Grid>
         <oxy:PlotView Model="{Binding PlotModel, Mode=OneTime}" />
+        <CheckBox Content="Show Zones"
+                  IsChecked="{Binding ShowZones}"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Top"
+                  Margin="60,10,0,0"
+                  Background="White"
+                  Padding="4,2" />
     </Grid>
 </UserControl>
