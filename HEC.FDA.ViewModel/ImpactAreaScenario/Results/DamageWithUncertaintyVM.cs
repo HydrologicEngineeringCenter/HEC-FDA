@@ -17,11 +17,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         public ViewResolvingPlotModel MyPlot { get; } = new();
         public List<IQuartileRowItem> Rows { get; } = new();
         public double Mean { get; set; }
-
-        public string PlotTitle => _uncertaintyControlConfig.PlotTitle;
-        public string YAxisTitle => _uncertaintyControlConfig.YAxisTitle;
-        public string YAxisFormat => _uncertaintyControlConfig.YAxisFormat;
-        public string TrackerFormat => _uncertaintyControlConfig.TrackerFormat;
         public string FormattedMean => Mean.ToString(_uncertaintyControlConfig.MeanFormat);
 
         public DamageWithUncertaintyVM(
@@ -35,40 +30,38 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             _uncertaintyControlConfig = uncertaintyConfig;
 
             ImpactAreaScenarioResults iasResult = scenarioResults.GetResults(impactAreaID);
-            Mean = iasResult.MeanExpectedAnnualConsequences(impactAreaID: impactAreaID);
-            Empirical empirical = iasResult.ConsequenceResults.GetAggregateEmpiricalDistribution(impactAreaID: iasResult.ImpactAreaID);
+            Mean = iasResult.MeanExpectedAnnualConsequences(impactAreaID: impactAreaID, consequenceType: _uncertaintyControlConfig.ConsequenceType);
+            Empirical empirical = iasResult.ConsequenceResults.GetAggregateEmpiricalDistribution(impactAreaID: iasResult.ImpactAreaID, consequenceType: _uncertaintyControlConfig.ConsequenceType);
 
-            // CHANGE: Load rows first so we have access to formatting info
             List<double> qValues = new()
-        {
-            scenarioResults.ConsequencesExceededWithProbabilityQ(.75, impactAreaID),
-            scenarioResults.ConsequencesExceededWithProbabilityQ(.5, impactAreaID),
-            scenarioResults.ConsequencesExceededWithProbabilityQ(.25, impactAreaID)
-        };
+            {
+                scenarioResults.ConsequencesExceededWithProbabilityQ(.75, impactAreaID, consequenceType: _uncertaintyControlConfig.ConsequenceType),
+                scenarioResults.ConsequencesExceededWithProbabilityQ(.5, impactAreaID, consequenceType: _uncertaintyControlConfig.ConsequenceType),
+                scenarioResults.ConsequencesExceededWithProbabilityQ(.25, impactAreaID, consequenceType: _uncertaintyControlConfig.ConsequenceType)
+            };
             LoadTableValues(qValues, rowItemFactory);
 
-            // CHANGE: Initialize plot after rows are loaded
             InitializePlotModel(empirical);
         }
 
         #region OxyPlot
         private void InitializePlotModel(Empirical empirical)
         {
-            MyPlot.Title = PlotTitle;
+            MyPlot.Title = _uncertaintyControlConfig.PlotTitle;
             AddAxes();
             AddSeries(empirical);
         }
 
         private void AddSeries(Empirical empirical)
         {
-            string trackerFormat = TrackerFormat;
+            string trackerFormat = _uncertaintyControlConfig.TrackerFormat;
 
             var lineSeries = new LineSeries()
             {
                 DataFieldX = nameof(NormalDataPoint.ZScore),
                 DataFieldY = nameof(NormalDataPoint.Value),
                 TrackerFormatString = trackerFormat,
-                Title = PlotTitle,
+                Title = _uncertaintyControlConfig.PlotTitle,
             };
             var points = new NormalDataPoint[empirical.CumulativeProbabilities.Length];
             for (int i = 0; i < points.Length; i++)
@@ -95,8 +88,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                 EndPosition = 0
             };
 
-            string yAxisTitle = YAxisTitle;
-            string yAxisFormat = YAxisFormat;
+            string yAxisTitle = _uncertaintyControlConfig.YAxisTitle;
+            string yAxisFormat = _uncertaintyControlConfig.YAxisFormat;
 
             LinearAxis y = new()
             {

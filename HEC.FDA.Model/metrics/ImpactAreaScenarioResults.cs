@@ -84,9 +84,9 @@ namespace HEC.FDA.Model.metrics
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param> the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
         /// <returns></returns>The mean of consequences
-        public double MeanExpectedAnnualConsequences(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+        public double MeanExpectedAnnualConsequences(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
         {
-            return ConsequenceResults.SampleMeanDamage(damageCategory, assetCategory, impactAreaID);
+            return ConsequenceResults.SampleMeanDamage(damageCategory, assetCategory, impactAreaID, consequenceType);
         }
         /// <summary>
         /// This method calls the inverse CDF of the damage histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
