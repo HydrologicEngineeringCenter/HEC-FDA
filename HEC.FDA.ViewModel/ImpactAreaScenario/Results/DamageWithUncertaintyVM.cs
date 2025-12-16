@@ -1,52 +1,75 @@
-﻿using System.Collections.Generic;
-using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
-using HEC.FDA.Model.metrics;
-using Statistics.Distributions;
-using OxyPlot;
-using OxyPlot.Series;
-using OxyPlot.Axes;
+﻿using HEC.FDA.Model.metrics;
 using HEC.FDA.ViewModel.FrequencyRelationships;
+using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
 using HEC.FDA.ViewModel.Utilities;
+using OxyPlot.Axes;
+using OxyPlot.Series;
+using Statistics.Distributions;
+using System;
+using System.Collections.Generic;
+using static HEC.FDA.ViewModel.ImpactAreaScenario.Results.UncertaintyControlConfigs;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
     public class DamageWithUncertaintyVM : BaseViewModel
     {
+        private readonly IUncertaintyControlConfig _uncertaintyControlConfig;
         public ViewResolvingPlotModel MyPlot { get; } = new();
-        public List<EadRowItem> Rows { get; } = new();
+        public List<IQuartileRowItem> Rows { get; } = new();
         public double Mean { get; set; }
-        public DamageWithUncertaintyVM(ScenarioResults scenarioResults, int impactAreaID)
+
+        public string PlotTitle => _uncertaintyControlConfig.PlotTitle;
+        public string YAxisTitle => _uncertaintyControlConfig.YAxisTitle;
+        public string YAxisFormat => _uncertaintyControlConfig.YAxisFormat;
+        public string TrackerFormat => _uncertaintyControlConfig.TrackerFormat;
+        public string MeanFormat => _uncertaintyControlConfig.MeanFormat;
+        public string FormattedMean => Mean.ToString(_uncertaintyControlConfig.MeanFormat);
+
+        public DamageWithUncertaintyVM(
+            ScenarioResults scenarioResults,
+            int impactAreaID,
+            Func<string, double, IQuartileRowItem> rowItemFactory = null,
+            IUncertaintyControlConfig uncertaintyConfig = null)
         {
+            rowItemFactory ??= (frequency, value) => new EadRowItem(frequency, value); // default to damage row item
+            uncertaintyConfig ??= new DamageWithUncertaintyControlConfig(); // default to damage config
+            _uncertaintyControlConfig = uncertaintyConfig;
+
             ImpactAreaScenarioResults iasResult = scenarioResults.GetResults(impactAreaID);
             Mean = iasResult.MeanExpectedAnnualConsequences(impactAreaID: impactAreaID);
             Empirical empirical = iasResult.ConsequenceResults.GetAggregateEmpiricalDistribution(impactAreaID: iasResult.ImpactAreaID);
-            InitializePlotModel(empirical);
 
+            // CHANGE: Load rows first so we have access to formatting info
             List<double> qValues = new()
-            {
-                scenarioResults.ConsequencesExceededWithProbabilityQ(.75, impactAreaID),
-                scenarioResults.ConsequencesExceededWithProbabilityQ(.5, impactAreaID),
-                scenarioResults.ConsequencesExceededWithProbabilityQ(.25, impactAreaID)
-            };
+        {
+            scenarioResults.ConsequencesExceededWithProbabilityQ(.75, impactAreaID),
+            scenarioResults.ConsequencesExceededWithProbabilityQ(.5, impactAreaID),
+            scenarioResults.ConsequencesExceededWithProbabilityQ(.25, impactAreaID)
+        };
+            LoadTableValues(qValues, rowItemFactory);
 
-            LoadTableValues(qValues);
+            // CHANGE: Initialize plot after rows are loaded
+            InitializePlotModel(empirical);
         }
 
         #region OxyPlot
         private void InitializePlotModel(Empirical empirical)
         {
-            MyPlot.Title = StringConstants.EAD_DISTRIBUTION;
+            MyPlot.Title = PlotTitle;
             AddAxes();
             AddSeries(empirical);
         }
+
         private void AddSeries(Empirical empirical)
         {
+            string trackerFormat = TrackerFormat;
+
             var lineSeries = new LineSeries()
             {
                 DataFieldX = nameof(NormalDataPoint.ZScore),
                 DataFieldY = nameof(NormalDataPoint.Value),
-                TrackerFormatString = "X: {Probability:0.####}, Y: {Value:C0}",
-                Title = StringConstants.EAD_DISTRIBUTION,
+                TrackerFormatString = trackerFormat,
+                Title = PlotTitle,
             };
             var points = new NormalDataPoint[empirical.CumulativeProbabilities.Length];
             for (int i = 0; i < points.Length; i++)
@@ -59,6 +82,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             MyPlot.Series.Add(lineSeries);
             MyPlot.InvalidatePlot(true);
         }
+
         private void AddAxes()
         {
             LinearAxis x = new()
@@ -71,17 +95,21 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                 StartPosition = 1,
                 EndPosition = 0
             };
+
+            string yAxisTitle = YAxisTitle;
+            string yAxisFormat = YAxisFormat;
+
             LinearAxis y = new()
             {
                 Position = AxisPosition.Left,
-                Title = StringConstants.EXPECTED_ANNUAL_DAMAGE,
+                Title = yAxisTitle,
                 MinorTickSize = 0,
-                StringFormat = "C0",
-
+                StringFormat = yAxisFormat,
             };
             MyPlot.Axes.Add(x);
             MyPlot.Axes.Add(y);
         }
+
         private static string ProbabilityFormatter(double d)
         {
             Normal standardNormal = new(0, 1);
@@ -91,21 +119,19 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         }
         #endregion
 
-
-        private void LoadTableValues(List<double> qValues)
+        private void LoadTableValues(List<double> qValues, Func<string, double, IQuartileRowItem> rowItemFactory)
         {
-            List<EadRowItem> rows = new();
+            List<IQuartileRowItem> rows = new();
             if (qValues.Count == 3)
             {
                 List<string> xValNames = new() { "First", "Second", "Third" };
 
                 for (int i = 0; i < xValNames.Count; i++)
                 {
-                    rows.Add(new EadRowItem(xValNames[i], qValues[i]));
+                    rows.Add(rowItemFactory(xValNames[i], qValues[i]));
                 }
             }
             Rows.AddRange(rows);
         }
-
     }
 }

@@ -33,7 +33,7 @@ public class ScenarioLifeLossRowItem
         Point25 = point25;
     }
 
-    public static List<ScenarioLifeLossRowItem> CreateScenarioDamageRowItems(IASElement scenario)
+    public static List<ScenarioLifeLossRowItem> CreateScenarioLifeLossRowItems(IASElement scenario)
     {
         List<ScenarioLifeLossRowItem> rowItems = [];
         if (scenario.FailureStageLifeLossID < 0)

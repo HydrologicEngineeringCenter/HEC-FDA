@@ -97,7 +97,7 @@ namespace HEC.FDA.ViewModel.Results
             foreach (IASElement element in elems)
             {
                 Rows.AddRange(ScenarioDamageRowItem.CreateScenarioDamageRowItems(element));
-                LifeLossRows.AddRange(ScenarioLifeLossRowItem.CreateScenarioDamageRowItems(element));
+                LifeLossRows.AddRange(ScenarioLifeLossRowItem.CreateScenarioLifeLossRowItems(element));
                 DamCatRows.AddRange(ScenarioDamCatRowItem.CreateScenarioDamCatRowItems(element));
                 List<ImpactAreaScenarioResults> resultsList = element.Results.ResultsList;
                 foreach (ImpactAreaScenarioResults impactAreaScenarioResults in resultsList)
