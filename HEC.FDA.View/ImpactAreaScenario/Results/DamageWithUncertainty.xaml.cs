@@ -12,5 +12,14 @@ namespace HEC.FDA.View.ImpactAreaScenario.Results
         {
             InitializeComponent();
         }
+
+        private void FdaDataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+
+            if (e.Column is DataGridTextColumn textColumn)
+            {
+                textColumn.MinWidth = 96;
+            }
+        }
     }
 }

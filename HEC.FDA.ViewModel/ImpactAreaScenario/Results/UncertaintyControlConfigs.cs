@@ -13,7 +13,6 @@ public class UncertaintyControlConfigs
         string MeanFormat { get; }
         string YAxisFormat { get; }
         string TrackerFormat { get; }
-        string QuartileHeaderText { get; }
     }
 
     public class DamageWithUncertaintyControlConfig : IUncertaintyControlConfig
@@ -23,6 +22,14 @@ public class UncertaintyControlConfigs
         public string MeanFormat => "C2";
         public string YAxisFormat => "C0";
         public string TrackerFormat => "X: {Probability:0.####}, Y: {Value:C0}";
-        public string QuartileHeaderText => "Quartile of EAD Distribution";
+    }
+
+    public class LifeLossWithUncertaintyControlConfig : IUncertaintyControlConfig
+    {
+        public string PlotTitle => "EALL Distribution";
+        public string YAxisTitle => "Expected Annual Life Loss";
+        public string MeanFormat => "N2";
+        public string YAxisFormat => "N0";
+        public string TrackerFormat => "X: {Probability:0.####}, Y: {Value:N2}";
     }
 }

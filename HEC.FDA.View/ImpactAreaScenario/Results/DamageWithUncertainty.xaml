@@ -50,6 +50,7 @@
       Grid.Column="0"
       ItemsSource="{Binding Rows}"
       AutoGenerateColumns="True"
+      AutoGeneratingColumn="FdaDataGrid_AutoGeneratingColumn"
       HorizontalAlignment="Left"
       VerticalAlignment="Top"
       Width="200"

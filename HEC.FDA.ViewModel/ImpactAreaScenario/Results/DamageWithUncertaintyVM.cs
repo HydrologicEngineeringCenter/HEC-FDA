@@ -22,7 +22,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         public string YAxisTitle => _uncertaintyControlConfig.YAxisTitle;
         public string YAxisFormat => _uncertaintyControlConfig.YAxisFormat;
         public string TrackerFormat => _uncertaintyControlConfig.TrackerFormat;
-        public string MeanFormat => _uncertaintyControlConfig.MeanFormat;
         public string FormattedMean => Mean.ToString(_uncertaintyControlConfig.MeanFormat);
 
         public DamageWithUncertaintyVM(
