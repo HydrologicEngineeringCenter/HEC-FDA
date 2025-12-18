@@ -134,9 +134,9 @@ namespace HEC.FDA.Model.metrics
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param> the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
         /// <returns>The mean of ead damage for base year </returns>
-        public double SampleMeanBaseYearEAD(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+        public double SampleMeanBaseYearEAD(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
         {
-            return BaseYearScenarioResults.SampleMeanExpectedAnnualConsequences(impactAreaID, damageCategory, assetCategory);
+            return BaseYearScenarioResults.SampleMeanExpectedAnnualConsequences(impactAreaID, damageCategory, assetCategory, consequenceType);
         }
         /// <summary>
         /// This method returns the mean of future year expected annual damage for the given damage category, asset category, impact area combination 
@@ -148,9 +148,9 @@ namespace HEC.FDA.Model.metrics
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param> the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
         /// <returns>The mean of ead damage for future year </returns>
-        public double SampleMeanFutureYearEAD(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+        public double SampleMeanFutureYearEAD(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
         {
-            return FutureYearScenarioResults.SampleMeanExpectedAnnualConsequences(impactAreaID, damageCategory, assetCategory);
+            return FutureYearScenarioResults.SampleMeanExpectedAnnualConsequences(impactAreaID, damageCategory, assetCategory, consequenceType);
 
         }
         /// <summary>

@@ -89,10 +89,10 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     /// <param name="damageCategory"></param> either residential, commercial, etc...
     /// <param name="assetCategory"></param> either structure, content, etc...
     /// <returns></returns>
-    public double SampleMeanBaseYearEADReduced(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+    public double SampleMeanBaseYearEADReduced(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
     {
         StudyAreaConsequencesByQuantile results = GetConsequencesReducedResultsForGivenAlternative(alternativeID, true, true);
-        return results.SampleMeanDamage(damageCategory, assetCategory, impactAreaID);
+        return results.SampleMeanDamage(damageCategory, assetCategory, impactAreaID, consequenceType);
     }
     /// <summary>
     /// This method gets the mean future year ead reduced between the with- and without-project conditions for a given with-project condition, 
@@ -105,27 +105,27 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     /// <param name="damageCategory"></param> either residential, commercial, etc...
     /// <param name="assetCategory"></param> either structure, content, etc...
     /// <returns></returns>
-    public double SampleMeanFutureYearEADReduced(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+    public double SampleMeanFutureYearEADReduced(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
     {
-        return GetConsequencesReducedResultsForGivenAlternative(alternativeID, true).SampleMeanDamage(damageCategory, assetCategory, impactAreaID);
+        return GetConsequencesReducedResultsForGivenAlternative(alternativeID, true).SampleMeanDamage(damageCategory, assetCategory, impactAreaID, consequenceType);
     }
-    public double SampleMeanWithoutProjectBaseYearEAD(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+    public double SampleMeanWithoutProjectBaseYearEAD(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
     {
-        return _WithoutProjectAlternativeResults.SampleMeanBaseYearEAD(impactAreaID, damageCategory, assetCategory);
+        return _WithoutProjectAlternativeResults.SampleMeanBaseYearEAD(impactAreaID, damageCategory, assetCategory, consequenceType);
     }
-    public double SampleMeanWithoutProjectFutureYearEAD(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+    public double SampleMeanWithoutProjectFutureYearEAD(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
     {
-        return _WithoutProjectAlternativeResults.SampleMeanFutureYearEAD(impactAreaID, damageCategory, assetCategory);
+        return _WithoutProjectAlternativeResults.SampleMeanFutureYearEAD(impactAreaID, damageCategory, assetCategory, consequenceType);
     }
-    public double SampleMeanWithProjectBaseYearEAD(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+    public double SampleMeanWithProjectBaseYearEAD(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
     {
         AlternativeResults alternativeResults = GetAlternativeResults(alternativeID);
-        return alternativeResults.SampleMeanBaseYearEAD(impactAreaID, damageCategory, assetCategory);
+        return alternativeResults.SampleMeanBaseYearEAD(impactAreaID, damageCategory, assetCategory, consequenceType);
     }
-    public double SampleMeanWithProjectFutureYearEAD(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+    public double SampleMeanWithProjectFutureYearEAD(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
     {
         AlternativeResults alternativeResults = GetAlternativeResults(alternativeID);
-        return alternativeResults.SampleMeanFutureYearEAD(impactAreaID, damageCategory, assetCategory);
+        return alternativeResults.SampleMeanFutureYearEAD(impactAreaID, damageCategory, assetCategory, consequenceType);
     }
     public double SampleMeanWithProjectEqad(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
     {
@@ -154,9 +154,9 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     /// double consequenceValue = BaseYearEADReducedExceededWithProbabilityQ(.98, 1, damageCategory: "residential", impactAreaID: 2);
     /// </summary>
     /// <returns></returns>
-    public double BaseYearEADReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+    public double BaseYearEADReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
     {
-        return GetConsequencesReducedResultsForGivenAlternative(alternativeID, true, true).ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
+        return GetConsequencesReducedResultsForGivenAlternative(alternativeID, true, true).ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID, consequenceType);
     }
     /// <summary>
     /// This method calls the inverse CDF of future year ead reduced histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
@@ -164,9 +164,9 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     /// For example, if you wanted the EqAD damage exceeded with probability .98 for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
     /// double consequenceValue = FutureYearEADReducedExceededWithProbabilityQ(.98, 1, damageCategory: "residential", impactAreaID: 2);
     /// </summary>
-    public double FutureYearEADReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+    public double FutureYearEADReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
     {
-        return GetConsequencesReducedResultsForGivenAlternative(alternativeID, true).ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
+        return GetConsequencesReducedResultsForGivenAlternative(alternativeID, true).ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID, consequenceType);
     }
     /// <summary>
     /// This method gets the histogram (distribution) of consequences for the given damage category(ies), asset category(ies), and impact area(s)
