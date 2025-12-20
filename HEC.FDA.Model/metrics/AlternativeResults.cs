@@ -113,15 +113,15 @@ namespace HEC.FDA.Model.metrics
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param> the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
         /// <returns>The mean of EqAD</returns> 
-        public double SampleMeanEqad(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+        public double SampleMeanEqad(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
         {
             if (ScenariosAreIdentical)
             {
-                return BaseYearScenarioResults.SampleMeanExpectedAnnualConsequences(impactAreaID, damageCategory, assetCategory);
+                return BaseYearScenarioResults.SampleMeanExpectedAnnualConsequences(impactAreaID, damageCategory, assetCategory, consequenceType);
             }
             else
             {
-                return EqadResults.SampleMeanDamage(damageCategory, assetCategory, impactAreaID);
+                return EqadResults.SampleMeanDamage(damageCategory, assetCategory, impactAreaID, consequenceType);
             }
         }
         /// <summary>
@@ -164,15 +164,15 @@ namespace HEC.FDA.Model.metrics
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param>the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
         /// <returns>the level of EqAD damage exceeded by the specified probability</returns> 
-        public double EqadExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+        public double EqadExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
         {
             if (ScenariosAreIdentical)
             {
-                return BaseYearScenarioResults.ConsequencesExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damageCategory, assetCategory);
+                return BaseYearScenarioResults.ConsequencesExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damageCategory, assetCategory, consequenceType);
             }
             else
             {
-                return EqadResults.ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
+                return EqadResults.ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID, consequenceType);
             }
         }
         /// <summary>
@@ -186,9 +186,9 @@ namespace HEC.FDA.Model.metrics
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param>the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
         /// <returns>the level of EAD damage exceeded by the specified probability </returns>
-        public double BaseYearEADDamageExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+        public double BaseYearEADDamageExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
         {
-            return BaseYearScenarioResults.ConsequencesExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damageCategory, assetCategory);
+            return BaseYearScenarioResults.ConsequencesExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damageCategory, assetCategory, consequenceType);
         }
         /// <summary>
         /// This method calls the inverse CDF of the future year EAD damage histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
@@ -201,24 +201,24 @@ namespace HEC.FDA.Model.metrics
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param>the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
         /// <returns>the level of EAD damage exceeded by the specified probability</returns> 
-        public double FutureYearEADDamageExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+        public double FutureYearEADDamageExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
         {
-            return FutureYearScenarioResults.ConsequencesExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damageCategory, assetCategory);
+            return FutureYearScenarioResults.ConsequencesExceededWithProbabilityQ(exceedanceProbability, impactAreaID, damageCategory, assetCategory, consequenceType);
         }
         /// <summary>
         /// This method gets the histogram (distribution) of eqad damage for the given damage category(ies), asset category(ies), and impact area(s)
         /// The level of aggregation of the distribution of consequences is determined by the arguments used in the method
         /// For example, if you wanted a histogram for residential, impact area 2, all asset categories, then the method call would be as follows:
         /// ThreadsafeInlineHistogram histogram = GetEqadDistribution(damageCategory: "residential", impactAreaID: 2);
-        public Empirical GetEqadDistribution(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+        public Empirical GetEqadDistribution(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
         {
             if (ScenariosAreIdentical)
             {
-                return BaseYearScenarioResults.GetConsequencesDistribution(impactAreaID, damageCategory, assetCategory);
+                return BaseYearScenarioResults.GetConsequencesDistribution(impactAreaID, damageCategory, assetCategory, consequenceType);
             }
             else
             {
-                return EqadResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID);
+                return EqadResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID, consequenceType);
             }
         }
         /// <summary>
@@ -227,9 +227,9 @@ namespace HEC.FDA.Model.metrics
         /// For example, if you wanted a histogram for residential, impact area 2, all asset categories, then the method call would be as follows:
         /// ThreadsafeInlineHistogram histogram = GetBaseYearEADHistogram(damageCategory: "residential", impactAreaID: 2);
         /// </summary>
-        public Empirical GetBaseYearEADDistribution(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+        public Empirical GetBaseYearEADDistribution(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
         {
-            return BaseYearScenarioResults.GetConsequencesDistribution(impactAreaID, damageCategory, assetCategory);
+            return BaseYearScenarioResults.GetConsequencesDistribution(impactAreaID, damageCategory, assetCategory, consequenceType);
         }
         /// <summary>
         /// This method gets the histogram (distribution) of future year ead for the given damage category(ies), asset category(ies), and impact area(s)
@@ -237,9 +237,9 @@ namespace HEC.FDA.Model.metrics
         /// For example, if you wanted a histogram for residential, impact area 2, all asset categories, then the method call would be as follows:
         /// ThreadsafeInlineHistogram histogram = GetFutureYearEADHistogram(damageCategory: "residential", impactAreaID: 2);
         /// </summary>
-        public Empirical GetFutureYearEADDistribution(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+        public Empirical GetFutureYearEADDistribution(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
         {
-            return FutureYearScenarioResults.GetConsequencesDistribution(impactAreaID, damageCategory, assetCategory);
+            return FutureYearScenarioResults.GetConsequencesDistribution(impactAreaID, damageCategory, assetCategory, consequenceType);
         }
         internal void AddConsequenceResults(AggregatedConsequencesByQuantile consequenceResultToAdd)
         {

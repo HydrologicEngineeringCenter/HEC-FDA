@@ -17,6 +17,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
         public bool HistogramVisible { get; set; } = true;
         public List<IQuartileRowItem> Rows { get; } = [];
         public double Mean { get; set; }
+        public string FormattedMean => Mean.ToString(_uncertaintyControlConfig.MeanFormat);
         public double DiscountRate { get; set; }
         public int PeriodOfAnalysis { get; set; }
         public bool RateAndPeriodVisible { get; }
@@ -47,13 +48,13 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             switch (damageMeasureYear)
             {
                 case DamageMeasureYear.Base:
-                    Mean = results.SampleMeanBaseYearEAD();
+                    Mean = results.SampleMeanBaseYearEAD(consequenceType: _uncertaintyControlConfig.ConsequenceType);
                     break;
                 case DamageMeasureYear.Future:
-                    Mean = results.SampleMeanFutureYearEAD();
+                    Mean = results.SampleMeanFutureYearEAD(consequenceType: _uncertaintyControlConfig.ConsequenceType);
                     break;
                 case DamageMeasureYear.Eqad:
-                    Mean = results.SampleMeanEqad();
+                    Mean = results.SampleMeanEqad(consequenceType: _uncertaintyControlConfig.ConsequenceType);
                     break;
             }
         }
@@ -82,13 +83,13 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             switch (damageMeasureYear)
             {
                 case DamageMeasureYear.Base:
-                    Mean = altCompReport.SampleMeanBaseYearEADReduced(altID);
+                    Mean = altCompReport.SampleMeanBaseYearEADReduced(altID, consequenceType: _uncertaintyControlConfig.ConsequenceType);
                     break;
                 case DamageMeasureYear.Future:
-                    Mean = altCompReport.SampleMeanFutureYearEADReduced(altID);
+                    Mean = altCompReport.SampleMeanFutureYearEADReduced(altID, consequenceType: _uncertaintyControlConfig.ConsequenceType);
                     break;
                 case DamageMeasureYear.Eqad:
-                    Mean = altCompReport.SampleMeanEqadReduced(altID);
+                    Mean = altCompReport.SampleMeanEqadReduced(altID, consequenceType: _uncertaintyControlConfig.ConsequenceType);
                     break;
             }
 
@@ -100,19 +101,9 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             List<string> xValNames = ["First", "Second", "Third"];
             List<double> yVals = LoadYData(xVals, altResults, altID, damageMeasureYear);
 
-            if (DamageMeasureYear.Future.Equals(_damageMeasureYear) || DamageMeasureYear.Base.Equals(_damageMeasureYear))
+            for (int i = 0; i < xValNames.Count; i++)
             {
-                for (int i = 0; i < xValNames.Count; i++)
-                {
-                    Rows.Add(new EadRowItem(xValNames[i], yVals[i]));
-                }
-            }
-            else
-            {
-                for (int i = 0; i < xValNames.Count; i++)
-                {
-                    Rows.Add(new EqadRowItem(xValNames[i], yVals[i]));
-                }
+                Rows.Add(_uncertaintyControlConfig.CreateRowItem(xValNames[i], yVals[i]));
             }
         }
 
@@ -123,13 +114,13 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             switch (damageMeasureYear)
             {
                 case DamageMeasureYear.Base:
-                    empirical = altResults.GetBaseYearEADDistribution();
+                    empirical = altResults.GetBaseYearEADDistribution(consequenceType: _uncertaintyControlConfig.ConsequenceType);
                     break;
                 case DamageMeasureYear.Future:
-                    empirical = altResults.GetFutureYearEADDistribution();
+                    empirical = altResults.GetFutureYearEADDistribution(consequenceType: _uncertaintyControlConfig.ConsequenceType);
                     break;
                 case DamageMeasureYear.Eqad:
-                    empirical = altResults.GetEqadDistribution();
+                    empirical = altResults.GetEqadDistribution(consequenceType: _uncertaintyControlConfig.ConsequenceType);
                     break;
             }
 
@@ -143,13 +134,13 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             switch (damageMeasureYear)
             {
                 case DamageMeasureYear.Base:
-                    empirical = altResults.GetBaseYearEADReducedResultsHistogram(altID);
+                    empirical = altResults.GetBaseYearEADReducedResultsHistogram(altID, consequenceType: _uncertaintyControlConfig.ConsequenceType);
                     break;
                 case DamageMeasureYear.Future:
-                    empirical = altResults.GetFutureYearEADReducedResultsHistogram(altID);
+                    empirical = altResults.GetFutureYearEADReducedResultsHistogram(altID, consequenceType: _uncertaintyControlConfig.ConsequenceType);
                     break;
                 case DamageMeasureYear.Eqad:
-                    empirical = altResults.GetEqadReducedResultsHistogram(altID);
+                    empirical = altResults.GetEqadReducedResultsHistogram(altID, consequenceType: _uncertaintyControlConfig.ConsequenceType);
                     break;
             }
 
@@ -243,23 +234,13 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             List<string> xValNames = new() { "First", "Second", "Third" };
             List<double> yVals = LoadYData(xVals, scenarioResults, damageMeasureYear);
 
-            if (DamageMeasureYear.Future.Equals(_damageMeasureYear) || DamageMeasureYear.Base.Equals(_damageMeasureYear))
+            for (int i = 0; i < xValNames.Count; i++)
             {
-                for (int i = 0; i < xValNames.Count; i++)
-                {
-                    Rows.Add(new EadRowItem(xValNames[i], yVals[i]));
-                }
-            }
-            else
-            {
-                for (int i = 0; i < xValNames.Count; i++)
-                {
-                    Rows.Add(new EqadRowItem(xValNames[i], yVals[i]));
-                }
+                Rows.Add(_uncertaintyControlConfig.CreateRowItem(xValNames[i], yVals[i]));
             }
         }
 
-        private static List<double> LoadYData(List<double> xVals, AlternativeResults results, DamageMeasureYear damageMeasureYear)
+        private List<double> LoadYData(List<double> xVals, AlternativeResults results, DamageMeasureYear damageMeasureYear)
         {
             List<double> yValues = new();
             foreach (double x in xVals)
@@ -267,20 +248,20 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                 switch (damageMeasureYear)
                 {
                     case DamageMeasureYear.Base:
-                        yValues.Add(results.BaseYearEADDamageExceededWithProbabilityQ(x));
+                        yValues.Add(results.BaseYearEADDamageExceededWithProbabilityQ(x, consequenceType: _uncertaintyControlConfig.ConsequenceType));
                         break;
                     case DamageMeasureYear.Future:
-                        yValues.Add(results.FutureYearEADDamageExceededWithProbabilityQ(x));
+                        yValues.Add(results.FutureYearEADDamageExceededWithProbabilityQ(x, consequenceType: _uncertaintyControlConfig.ConsequenceType));
                         break;
                     case DamageMeasureYear.Eqad:
-                        yValues.Add(results.EqadExceededWithProbabilityQ(x));
+                        yValues.Add(results.EqadExceededWithProbabilityQ(x, consequenceType: _uncertaintyControlConfig.ConsequenceType));
                         break;
                 }
             }
             return yValues;
         }
 
-        private static List<double> LoadYData(List<double> xVals, AlternativeComparisonReportResults scenarioResults, int altID, DamageMeasureYear damageMeasureYear)
+        private List<double> LoadYData(List<double> xVals, AlternativeComparisonReportResults scenarioResults, int altID, DamageMeasureYear damageMeasureYear)
         {
             List<double> yValues = new();
             foreach (double x in xVals)
@@ -288,13 +269,13 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                 switch (damageMeasureYear)
                 {
                     case DamageMeasureYear.Base:
-                        yValues.Add(scenarioResults.BaseYearEADReducedExceededWithProbabilityQ(x, altID));
+                        yValues.Add(scenarioResults.BaseYearEADReducedExceededWithProbabilityQ(x, altID, consequenceType: _uncertaintyControlConfig.ConsequenceType));
                         break;
                     case DamageMeasureYear.Future:
-                        yValues.Add(scenarioResults.FutureYearEADReducedExceededWithProbabilityQ(x, altID));
+                        yValues.Add(scenarioResults.FutureYearEADReducedExceededWithProbabilityQ(x, altID, consequenceType: _uncertaintyControlConfig.ConsequenceType));
                         break;
                     case DamageMeasureYear.Eqad:
-                        yValues.Add(scenarioResults.EqadReducedExceededWithProbabilityQ(x, altID));
+                        yValues.Add(scenarioResults.EqadReducedExceededWithProbabilityQ(x, altID, consequenceType: _uncertaintyControlConfig.ConsequenceType));
                         break;
                 }
             }

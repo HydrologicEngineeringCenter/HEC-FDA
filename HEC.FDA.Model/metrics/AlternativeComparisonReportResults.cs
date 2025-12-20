@@ -74,9 +74,9 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     /// <param name="damageCategory"></param> either residential, commercial, etc...
     /// <param name="assetCategory"></param> either structure, content, etc...
     /// <returns></returns>
-    public double SampleMeanEqadReduced(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+    public double SampleMeanEqadReduced(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
     {
-        return GetConsequencesReducedResultsForGivenAlternative(alternativeID).SampleMeanDamage(damageCategory, assetCategory, impactAreaID);
+        return GetConsequencesReducedResultsForGivenAlternative(alternativeID).SampleMeanDamage(damageCategory, assetCategory, impactAreaID, consequenceType);
     }
     /// <summary>
     /// This method gets the mean base year ead reduced between the with- and without-project conditions for a given with-project condition, 
@@ -143,9 +143,9 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     /// For example, if you wanted the EqAD damage exceeded with probability .98 for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
     /// double consequenceValue = EqadReducedExceededWithProbabilityQ(.98, 1, damageCategory: "residential", impactAreaID: 2);
     /// </summary>
-    public double EqadReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+    public double EqadReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
     {
-        return GetConsequencesReducedResultsForGivenAlternative(alternativeID).ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
+        return GetConsequencesReducedResultsForGivenAlternative(alternativeID).ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID, consequenceType);
     }
     /// <summary>
     /// This method calls the inverse CDF of base year ead reduced histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
@@ -174,10 +174,10 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     /// For example, if you wanted a histogram for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
     /// IHistogram histogram = GetAlternativeResultsHistogram(1, damageCategory: "residential", impactAreaID: 2);
     /// </summary>
-    public Empirical GetEqadReducedResultsHistogram(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+    public Empirical GetEqadReducedResultsHistogram(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
     {
         StudyAreaConsequencesByQuantile eqadResults = GetConsequencesReducedResultsForGivenAlternative(alternativeID);
-        return eqadResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID);
+        return eqadResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID, consequenceType);
     }
     /// <summary>
     /// This method gets the histogram (distribution) of base year ead reduced for the given damage category(ies), asset category(ies), and impact area(s)
@@ -185,10 +185,10 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     /// For example, if you wanted a histogram for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
     /// IHistogram histogram = GetBaseYearEADReducedResultsHistogram(1, damageCategory: "residential", impactAreaID: 2);
     /// </summary>
-    public Empirical GetBaseYearEADReducedResultsHistogram(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+    public Empirical GetBaseYearEADReducedResultsHistogram(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
     {
         StudyAreaConsequencesByQuantile eadResults = GetConsequencesReducedResultsForGivenAlternative(alternativeID, true, true);
-        return eadResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID);
+        return eadResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID, consequenceType);
     }
     /// <summary>
     /// This method gets the histogram (distribution) of future year ead reduced for the given damage category(ies), asset category(ies), and impact area(s)
@@ -196,10 +196,10 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     /// For example, if you wanted a histogram for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
     /// IHistogram histogram = GetFutureYearEADReducedResultsHistogram(1, damageCategory: "residential", impactAreaID: 2);
     /// </summary>
-    public Empirical GetFutureYearEADReducedResultsHistogram(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+    public Empirical GetFutureYearEADReducedResultsHistogram(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
     {
         StudyAreaConsequencesByQuantile eadResults = GetConsequencesReducedResultsForGivenAlternative(alternativeID, true);
-        return eadResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID);
+        return eadResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID, consequenceType);
     }
     internal void AddAlternativeResults(StudyAreaConsequencesByQuantile consequenceDistributionResults, bool isEADResults = false, bool isBaseYearResults = false)
     {

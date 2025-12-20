@@ -131,6 +131,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
                 YearsVisible = true;
                 Reports = _lifeLossReports;
                 SelectedReport = LIFE_LOSS_WITH_UNCERTAINTY;
+                CurrentResultVM = SelectedYear.LifeLossWithUncertaintyVM;
             }
         }
         private void SelectedReportChanged()
