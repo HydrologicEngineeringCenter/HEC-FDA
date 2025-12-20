@@ -15,6 +15,7 @@ using System.Windows;
 using System.Xml.Linq;
 using Utility;
 using Visual.Observables;
+using static HEC.FDA.ViewModel.ImpactAreaScenario.Results.UncertaintyControlConfigs;
 
 namespace HEC.FDA.ViewModel.AlternativeComparisonReport;
 
@@ -502,10 +503,24 @@ public class AlternativeComparisonReportElement : ChildElement
         int baseYear = _Results.Years[0];
         int futureYear = _Results.Years[1];
 
-        YearResult yr1 = new YearResult(baseYear, new DamageWithUncertaintyVM(_Results, withProjID, DamageMeasureYear.Base), new DamageByImpactAreaVM(_Results, withProjID, DamageMeasureYear.Base), new DamageByDamCatVM(_Results, DamageMeasureYear.Base, withProjID));
-        YearResult yr2 = new YearResult(futureYear, new DamageWithUncertaintyVM(_Results, withProjID, DamageMeasureYear.Future), new DamageByImpactAreaVM(_Results, withProjID, DamageMeasureYear.Future), new DamageByDamCatVM(_Results, DamageMeasureYear.Future, withProjID));
+        YearResult yr1 = new YearResult(
+            baseYear,
+            new DamageWithUncertaintyVM(_Results, withProjID, DamageMeasureYear.Base, new DamageReducedWithUncertaintyControlConfig()),
+            new DamageByImpactAreaVM(_Results, withProjID, DamageMeasureYear.Base),
+            new DamageByDamCatVM(_Results, DamageMeasureYear.Base, withProjID),
+            null,
+            null);
+        YearResult yr2 = new YearResult(futureYear,
+            new DamageWithUncertaintyVM(_Results, withProjID, DamageMeasureYear.Future, new DamageReducedWithUncertaintyControlConfig()),
+            new DamageByImpactAreaVM(_Results, withProjID, DamageMeasureYear.Future),
+            new DamageByDamCatVM(_Results, DamageMeasureYear.Future, withProjID),
+            null,
+            null);
 
-        EqadResult eqadResult = new EqadResult(new DamageWithUncertaintyVM(_Results, withProjID, DamageMeasureYear.Eqad, discountRate, period), new DamageByImpactAreaVM(_Results, withProjID, DamageMeasureYear.Eqad, discountRate, period), new DamageByDamCatVM(_Results, DamageMeasureYear.Eqad, withProjID, discountRate, period));
+        EqadResult eqadResult = new EqadResult(
+            new DamageWithUncertaintyVM(_Results, withProjID, DamageMeasureYear.Eqad, new EqADReducedWithUncertaintyControlConfig(), discountRate, period),
+            new DamageByImpactAreaVM(_Results, withProjID, DamageMeasureYear.Eqad, discountRate, period),
+            new DamageByDamCatVM(_Results, DamageMeasureYear.Eqad, withProjID, discountRate, period));
 
         EADResult eadResult = new EADResult(new List<YearResult>() { yr1, yr2 });
         AlternativeResult altResult = new AlternativeResult(withProjName, eadResult, eqadResult);

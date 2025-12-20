@@ -5,7 +5,6 @@ using HEC.FDA.ViewModel.Utilities;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using Statistics.Distributions;
-using System;
 using System.Collections.Generic;
 using static HEC.FDA.ViewModel.ImpactAreaScenario.Results.UncertaintyControlConfigs;
 
@@ -22,10 +21,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         public DamageWithUncertaintyVM(
             ScenarioResults scenarioResults,
             int impactAreaID,
-            Func<string, double, IQuartileRowItem> rowItemFactory = null,
             IUncertaintyControlConfig uncertaintyConfig = null)
         {
-            rowItemFactory ??= (frequency, value) => new EadRowItem(frequency, value); // default to damage row item
             uncertaintyConfig ??= new DamageWithUncertaintyControlConfig(); // default to damage config
             _uncertaintyControlConfig = uncertaintyConfig;
 
@@ -39,7 +36,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                 scenarioResults.ConsequencesExceededWithProbabilityQ(.5, impactAreaID, consequenceType: _uncertaintyControlConfig.ConsequenceType),
                 scenarioResults.ConsequencesExceededWithProbabilityQ(.25, impactAreaID, consequenceType: _uncertaintyControlConfig.ConsequenceType)
             };
-            LoadTableValues(qValues, rowItemFactory);
+            LoadTableValues(qValues);
 
             InitializePlotModel(empirical);
         }
@@ -111,7 +108,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         }
         #endregion
 
-        private void LoadTableValues(List<double> qValues, Func<string, double, IQuartileRowItem> rowItemFactory)
+        private void LoadTableValues(List<double> qValues)
         {
             List<IQuartileRowItem> rows = new();
             if (qValues.Count == 3)
@@ -120,7 +117,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
                 for (int i = 0; i < xValNames.Count; i++)
                 {
-                    rows.Add(rowItemFactory(xValNames[i], qValues[i]));
+                    rows.Add(_uncertaintyControlConfig.CreateRowItem(xValNames[i], qValues[i]));
                 }
             }
             Rows.AddRange(rows);

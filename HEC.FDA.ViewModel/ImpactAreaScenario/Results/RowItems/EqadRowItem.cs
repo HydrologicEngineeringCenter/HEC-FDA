@@ -6,8 +6,8 @@ internal class EqadRowItem : IQuartileRowItem
 {
     [DisplayAsColumn(StringConstants.ALTERNATIVE_EqAD_LABEL)]
     public string Frequency { get; }
-    [DisplayAsColumn(StringConstants.QUARTILE_VALUE)]
     public double Value { get; }
+    [DisplayAsColumn(StringConstants.QUARTILE_VALUE)]
     public string FormattedValue => Value.ToString("C2");
 
     public EqadRowItem(string frequency, double value)

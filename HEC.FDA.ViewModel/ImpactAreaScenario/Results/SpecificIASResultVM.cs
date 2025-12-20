@@ -2,7 +2,6 @@
 using HEC.FDA.ViewModel.Alternatives.Results;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
-using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
 using HEC.FDA.ViewModel.Study;
 using System.Collections.Generic;
 using System.Linq;
@@ -131,7 +130,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             int period = studyPropElem.PeriodOfAnalysis;
 
             _damageWithUncertaintyVM = new DamageWithUncertaintyVM(scenarioResults, impactAreaID);
-            _lifeLossWithUncertaintyVM = new DamageWithUncertaintyVM(scenarioResults, impactAreaID, (frequency, value) => new LifeLossRowItem(frequency, value), new LifeLossWithUncertaintyControlConfig());
+            _lifeLossWithUncertaintyVM = new DamageWithUncertaintyVM(scenarioResults, impactAreaID, new LifeLossWithUncertaintyControlConfig());
             _damageByDamageCategoryVM = new DamageByDamCatVM(_IASResult, damCats, discountRate, period);
             _performanceAEPVM = new PerformanceAEPVM(scenarioResults, impactAreaID, Thresholds);
             _performanceAEPVM.UpdateSelectedMetric(SelectedThreshold);

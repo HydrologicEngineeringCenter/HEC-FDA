@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.Model.metrics;
+using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
 using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results;
@@ -15,25 +16,156 @@ public class UncertaintyControlConfigs
         string YAxisFormat { get; }
         string TrackerFormat { get; }
         ConsequenceType ConsequenceType { get; }
+        IQuartileRowItem CreateRowItem(string frequency, double value);
     }
 
     public class DamageWithUncertaintyControlConfig : IUncertaintyControlConfig
     {
-        public string PlotTitle => StringConstants.EAD_DISTRIBUTION;
-        public string YAxisTitle => StringConstants.EXPECTED_ANNUAL_DAMAGE;
-        public string MeanFormat => "C2";
-        public string YAxisFormat => "C0";
-        public string TrackerFormat => "X: {Probability:0.####}, Y: {Value:C0}";
-        public ConsequenceType ConsequenceType => ConsequenceType.Damage;
+        public string PlotTitle { get; }
+        public string YAxisTitle { get; }
+        public string MeanFormat { get; }
+        public string YAxisFormat { get; }
+        public string TrackerFormat { get; }
+        public ConsequenceType ConsequenceType { get; }
+
+        public DamageWithUncertaintyControlConfig()
+        {
+            PlotTitle = StringConstants.EAD_DISTRIBUTION;
+            YAxisTitle = StringConstants.EXPECTED_ANNUAL_DAMAGE;
+            MeanFormat = "C2";
+            YAxisFormat = "C0";
+            TrackerFormat = "X: {Probability:0.####}, Y: {Value:C0}";
+            ConsequenceType = ConsequenceType.Damage;
+        }
+
+        public IQuartileRowItem CreateRowItem(string frequency, double value)
+        {
+            return new EadRowItem(frequency, value);
+        }
+    }
+
+    public class EqADWithUncertaintyControlConfig : IUncertaintyControlConfig
+    {
+        public string PlotTitle { get; }
+        public string YAxisTitle { get; }
+        public string MeanFormat { get; }
+        public string YAxisFormat { get; }
+        public string TrackerFormat { get; }
+        public ConsequenceType ConsequenceType { get; }
+
+        public EqADWithUncertaintyControlConfig()
+        {
+            PlotTitle = StringConstants.EqAD_DISTRIBUTION;
+            YAxisTitle = StringConstants.EQUIVALENT_ANNUAL_DAMAGE;
+            MeanFormat = "C2";
+            YAxisFormat = "C0";
+            TrackerFormat = "X: {Probability:0.####}, Y: {Value:C0}";
+            ConsequenceType = ConsequenceType.Damage;
+        }
+
+        public IQuartileRowItem CreateRowItem(string frequency, double value)
+        {
+            return new EqadRowItem(frequency, value);
+        }
     }
 
     public class LifeLossWithUncertaintyControlConfig : IUncertaintyControlConfig
     {
-        public string PlotTitle => "EALL Distribution";
-        public string YAxisTitle => "Expected Annual Life Loss";
-        public string MeanFormat => "N2";
-        public string YAxisFormat => "N0";
-        public string TrackerFormat => "X: {Probability:0.####}, Y: {Value:N2}";
-        public ConsequenceType ConsequenceType => ConsequenceType.LifeLoss;
+        public string PlotTitle { get; }
+        public string YAxisTitle { get; }
+        public string MeanFormat { get; }
+        public string YAxisFormat { get; }
+        public string TrackerFormat { get; }
+        public ConsequenceType ConsequenceType { get; }
+
+        public LifeLossWithUncertaintyControlConfig()
+        {
+            PlotTitle = "EALL Distribution";
+            YAxisTitle = "Expected Annual Life Loss";
+            MeanFormat = "N2";
+            YAxisFormat = "N0";
+            TrackerFormat = "X: {Probability:0.####}, Y: {Value:N2}";
+            ConsequenceType = ConsequenceType.LifeLoss;
+        }
+
+        public IQuartileRowItem CreateRowItem(string frequency, double value)
+        {
+            return new LifeLossRowItem(frequency, value);
+        }
+    }
+
+    public class DamageReducedWithUncertaintyControlConfig : IUncertaintyControlConfig
+    {
+        public string PlotTitle { get; }
+        public string YAxisTitle { get; }
+        public string MeanFormat { get; }
+        public string YAxisFormat { get; }
+        public string TrackerFormat { get; }
+        public ConsequenceType ConsequenceType { get; }
+
+        public DamageReducedWithUncertaintyControlConfig()
+        {
+            PlotTitle = StringConstants.DAMAGE_REDUCED;
+            YAxisTitle = StringConstants.EXPECTED_ANNUAL_DAMAGE;
+            MeanFormat = "C2";
+            YAxisFormat = "C0";
+            TrackerFormat = "X: {Probability:0.####}, Y: {Value:C0}";
+            ConsequenceType = ConsequenceType.Damage;
+        }
+
+        public IQuartileRowItem CreateRowItem(string frequency, double value)
+        {
+            return new EadRowItem(frequency, value);
+        }
+    }
+
+    public class EqADReducedWithUncertaintyControlConfig : IUncertaintyControlConfig
+    {
+        public string PlotTitle { get; }
+        public string YAxisTitle { get; }
+        public string MeanFormat { get; }
+        public string YAxisFormat { get; }
+        public string TrackerFormat { get; }
+        public ConsequenceType ConsequenceType { get; }
+
+        public EqADReducedWithUncertaintyControlConfig()
+        {
+            PlotTitle = StringConstants.DAMAGE_REDUCED;
+            YAxisTitle = StringConstants.EQUIVALENT_ANNUAL_DAMAGE;
+            MeanFormat = "C2";
+            YAxisFormat = "C0";
+            TrackerFormat = "X: {Probability:0.####}, Y: {Value:C0}";
+            ConsequenceType = ConsequenceType.Damage;
+        }
+
+        public IQuartileRowItem CreateRowItem(string frequency, double value)
+        {
+            return new EqadRowItem(frequency, value);
+        }
+    }
+
+    public class LifeLossReducedWithUncertaintyControlConfig : IUncertaintyControlConfig
+    {
+        public string PlotTitle { get; }
+        public string YAxisTitle { get; }
+        public string MeanFormat { get; }
+        public string YAxisFormat { get; }
+        public string TrackerFormat { get; }
+        public ConsequenceType ConsequenceType { get; }
+
+        public LifeLossReducedWithUncertaintyControlConfig()
+        {
+            PlotTitle = "EALL Reduced Distribution";
+            YAxisTitle = "Expected Annual Life Loss";
+            MeanFormat = "N2";
+            YAxisFormat = "N0";
+            TrackerFormat = "X: {Probability:0.####}, Y: {Value:N2}";
+            ConsequenceType = ConsequenceType.LifeLoss;
+        }
+
+        public IQuartileRowItem CreateRowItem(string frequency, double value)
+        {
+            return new LifeLossRowItem(frequency, value);
+        }
     }
 }
