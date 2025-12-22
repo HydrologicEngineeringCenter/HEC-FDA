@@ -95,8 +95,16 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
             //we want to select the same vm when switching years
             if (CurrentResultVM == null || CurrentResultVM is DamageWithUncertaintyVM)
             {
-                CurrentResultVM = SelectedYear.DamageWithUncertaintyVM;
-                SelectedReport = DAMAGE_WITH_UNCERTAINTY;
+                if (EAD.Equals(_SelectedDamageMeasure))
+                {
+                    CurrentResultVM = SelectedYear.DamageWithUncertaintyVM;
+                    SelectedReport = DAMAGE_WITH_UNCERTAINTY;
+                }
+                else if (EALL.Equals(_SelectedDamageMeasure))
+                {
+                    CurrentResultVM = SelectedYear.LifeLossWithUncertaintyVM;
+                    SelectedReport = LIFE_LOSS_WITH_UNCERTAINTY;
+                }
             }
             else if (CurrentResultVM is DamageByDamCatVM)
             {
