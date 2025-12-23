@@ -509,13 +509,13 @@ public class AlternativeComparisonReportElement : ChildElement
             new DamageByImpactAreaVM(_Results, withProjID, DamageMeasureYear.Base),
             new DamageByDamCatVM(_Results, DamageMeasureYear.Base, withProjID),
             new DamageWithUncertaintyVM(_Results, withProjID, DamageMeasureYear.Base, new LifeLossReducedWithUncertaintyControlConfig()),
-            null);
+            new DamageByImpactAreaVM(_Results, withProjID, DamageMeasureYear.Base, consequenceType: ConsequenceType.LifeLoss));
         YearResult yr2 = new YearResult(futureYear,
             new DamageWithUncertaintyVM(_Results, withProjID, DamageMeasureYear.Future, new DamageReducedWithUncertaintyControlConfig()),
             new DamageByImpactAreaVM(_Results, withProjID, DamageMeasureYear.Future),
             new DamageByDamCatVM(_Results, DamageMeasureYear.Future, withProjID),
             new DamageWithUncertaintyVM(_Results, withProjID, DamageMeasureYear.Future, new LifeLossReducedWithUncertaintyControlConfig()),
-            null);
+            new DamageByImpactAreaVM(_Results, withProjID, DamageMeasureYear.Future, consequenceType: ConsequenceType.LifeLoss));
 
         EqadResult eqadResult = new EqadResult(
             new DamageWithUncertaintyVM(_Results, withProjID, DamageMeasureYear.Eqad, new EqADReducedWithUncertaintyControlConfig(), discountRate, period),

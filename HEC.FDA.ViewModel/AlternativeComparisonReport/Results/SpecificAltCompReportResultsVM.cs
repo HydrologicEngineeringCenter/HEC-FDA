@@ -91,8 +91,6 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
 
         private void SelectedYearChanged()
         {
-            //i can assume we are on EAD if a year is changing.
-            //we want to select the same vm when switching years
             if (CurrentResultVM == null || CurrentResultVM is DamageWithUncertaintyVM)
             {
                 if (EAD.Equals(_SelectedDamageMeasure))
@@ -113,8 +111,16 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
             }
             else if (CurrentResultVM is DamageByImpactAreaVM)
             {
-                CurrentResultVM = SelectedYear.DamageByImpactAreaVM;
-                SelectedReport = DAMAGE_BY_IMPACT_AREA;
+                if (EAD.Equals(_SelectedDamageMeasure))
+                {
+                    CurrentResultVM = SelectedYear.DamageByImpactAreaVM;
+                    SelectedReport = DAMAGE_BY_IMPACT_AREA;
+                }
+                else if (EALL.Equals(_SelectedDamageMeasure))
+                {
+                    CurrentResultVM = SelectedYear.LifeLossByImpactAreaVM;
+                    SelectedReport = LIFE_LOSS_BY_IMPACT_AREA;
+                }
             }
         }
 
@@ -175,6 +181,12 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
                     {
                         CurrentResultVM = AlternativeResult.EqadResult.DamageByDamCatVM;
                     }
+                    break;
+                case LIFE_LOSS_WITH_UNCERTAINTY:
+                    CurrentResultVM = SelectedYear.LifeLossWithUncertaintyVM;
+                    break;
+                case LIFE_LOSS_BY_IMPACT_AREA:
+                    CurrentResultVM = SelectedYear.LifeLossByImpactAreaVM;
                     break;
             }
 

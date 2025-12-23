@@ -13,13 +13,23 @@ namespace HEC.FDA.View.Alternatives.Results
             InitializeComponent();
         }
 
-        private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        private void FdaDataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
-            if (DataContext is DamageByImpactAreaVM vm)
+            if (e.PropertyName == nameof(IConsequenceByImpactAreaRowItem.Value))
+                return;
+
+            if (e.Column is DataGridTextColumn textColumn)
             {
-                //This feels a bit hacky but there is no good way to bind the column header. The UI doesn't consider the 
-                //header to be part of the visual tree and therefore can't bind to the property in the VM.
-                ead_textblock.Text = vm.EADLabel;
+                switch (e.PropertyName)
+                {
+                    case nameof(IConsequenceByImpactAreaRowItem.ImpactArea):
+                        textColumn.Width = 110;
+                        break;
+                    default:
+                        textColumn.Width = new DataGridLength(1, DataGridLengthUnitType.Star);
+                        break;
+                }
+                textColumn.MinWidth = 110;
             }
         }
     }
