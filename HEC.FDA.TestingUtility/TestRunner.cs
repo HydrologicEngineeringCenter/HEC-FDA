@@ -23,9 +23,6 @@ public class TestRunner
 
     private readonly XmlResultComparer _comparer = new();
     private readonly StudyBaselineWriter _baselineWriter = new();
-    private readonly ScenarioRunner _scenarioRunner = new();
-    private readonly AlternativeRunner _alternativeRunner = new();
-    private readonly StageDamageRunner _stageDamageRunner = new();
     private readonly CsvReportFactory _csvReportFactory = new();
 
     public TestRunner(TestConfiguration config, string outputDir, bool verbose, string[]? studyFilter)
@@ -111,21 +108,21 @@ public class TestRunner
                         switch (compute.Type.ToLowerInvariant())
                         {
                             case "scenario":
-                                var scenarioResults = _scenarioRunner.RunScenario(compute.ElementName, _cts.Token);
+                                var scenarioResults = ScenarioRunner.RunScenario(compute.ElementName, _cts.Token);
                                 _baselineWriter.AddScenarioResults(computedBaseline, compute.ElementName, scenarioResults);
                                 _csvReportFactory.AddScenarioResults(study.StudyId, compute.ElementName, scenarioResults);
                                 result = _comparer.CompareScenarioResults(compute.ElementName, scenarioResults);
                                 break;
 
                             case "alternative":
-                                var altResults = _alternativeRunner.RunAlternative(compute.ElementName, _cts.Token);
+                                var altResults = AlternativeRunner.RunAlternative(compute.ElementName, _cts.Token);
                                 _baselineWriter.AddAlternativeResults(computedBaseline, compute.ElementName, altResults);
                                 _csvReportFactory.AddAlternativeResults(study.StudyId, compute.ElementName, altResults);
                                 result = _comparer.CompareAlternativeResults(compute.ElementName, altResults);
                                 break;
 
                             case "stagedamage":
-                                List<UncertainPairedData> sdCurves = _stageDamageRunner.RunStageDamage(compute.ElementName);
+                                List<UncertainPairedData> sdCurves = StageDamageRunner.RunStageDamage(compute.ElementName);
                                 _baselineWriter.AddStageDamage(computedBaseline, compute.ElementName, sdCurves);
                                 _csvReportFactory.AddStageDamageSummary(study.StudyId, compute.ElementName, sdCurves);
                                 result = _comparer.CompareStageDamage(compute.ElementName, sdCurves);

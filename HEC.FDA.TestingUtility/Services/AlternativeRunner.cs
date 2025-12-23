@@ -8,75 +8,75 @@ using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.TestingUtility.Services;
 
-public class AlternativeRunner
+public static class AlternativeRunner
 {
-    public AlternativeResults RunAlternative(string elementName, CancellationToken cancellationToken)
+    public static AlternativeResults RunAlternative(string elementName, CancellationToken cancellationToken)
     {
-        // Find element by name
-        AlternativeElement element = FindElement<AlternativeElement>(elementName);
+        if (string.IsNullOrWhiteSpace(elementName))
+        {
+            throw new ArgumentException("Alternative element name cannot be empty.", nameof(elementName));
+        }
+
+        AlternativeElement element = ScenarioRunner.FindElement<AlternativeElement>(elementName);
 
         Console.WriteLine($"    Running alternative '{elementName}'...");
 
-        // Validate scenarios have results
         FdaValidationResult validation = element.RunPreComputeValidation();
         if (!validation.IsValid)
         {
             throw new InvalidOperationException($"Alternative cannot compute: {validation.ErrorMessage}");
         }
 
-        // Get study properties
-        StudyPropertiesElement props = BaseViewModel.StudyCache.GetStudyPropertiesElement();
+        StudyPropertiesElement? props = BaseViewModel.StudyCache.GetStudyPropertiesElement();
+        if (props == null)
+        {
+            throw new InvalidOperationException("Study properties not found.");
+        }
 
-        // Get scenario results from the referenced scenarios
-        IASElement baseScenarioElement = element.BaseScenario.GetElement();
-        IASElement futureScenarioElement = element.FutureScenario.GetElement();
+        IASElement? baseScenarioElement = element.BaseScenario?.GetElement();
+        IASElement? futureScenarioElement = element.FutureScenario?.GetElement();
+
+        if (baseScenarioElement == null)
+        {
+            throw new InvalidOperationException("Base scenario element not found.");
+        }
+
+        if (futureScenarioElement == null)
+        {
+            throw new InvalidOperationException("Future scenario element not found.");
+        }
 
         if (baseScenarioElement.Results == null)
         {
-            throw new InvalidOperationException($"Base scenario '{baseScenarioElement.Name}' has no computed results.");
+            throw new InvalidOperationException($"Base scenario '{baseScenarioElement.Name}' has no computed results. Run the scenario first.");
         }
 
         if (futureScenarioElement.Results == null)
         {
-            throw new InvalidOperationException($"Future scenario '{futureScenarioElement.Name}' has no computed results.");
+            throw new InvalidOperationException($"Future scenario '{futureScenarioElement.Name}' has no computed results. Run the scenario first.");
         }
 
         ScenarioResults baseResults = baseScenarioElement.Results;
         ScenarioResults futureResults = futureScenarioElement.Results;
 
-        Console.WriteLine($"    Using base scenario: {baseScenarioElement.Name} (Year: {element.BaseScenario.Year})");
-        Console.WriteLine($"    Using future scenario: {futureScenarioElement.Name} (Year: {element.FutureScenario.Year})");
+        int baseYear = element.BaseScenario?.Year ?? 0;
+        int futureYear = element.FutureScenario?.Year ?? 0;
+
+        Console.WriteLine($"    Using base scenario: {baseScenarioElement.Name} (Year: {baseYear})");
+        Console.WriteLine($"    Using future scenario: {futureScenarioElement.Name} (Year: {futureYear})");
         Console.WriteLine($"    Discount rate: {props.DiscountRate}, Period of analysis: {props.PeriodOfAnalysis}");
 
-        // Compute
         AlternativeResults results = Alternative.AnnualizationCompute(
             props.DiscountRate,
             props.PeriodOfAnalysis,
             element.ID,
             baseResults,
             futureResults,
-            element.BaseScenario.Year,
-            element.FutureScenario.Year);
+            baseYear,
+            futureYear);
 
         Console.WriteLine($"    Alternative computation complete.");
 
         return results;
-    }
-
-    private static T FindElement<T>(string elementName) where T : ChildElement
-    {
-        var elements = BaseViewModel.StudyCache.GetChildElementsOfType<T>();
-
-        var match = elements.FirstOrDefault(e =>
-            e.Name.Equals(elementName, StringComparison.OrdinalIgnoreCase));
-
-        if (match == null)
-        {
-            string availableNames = string.Join(", ", elements.Select(e => e.Name));
-            throw new InvalidOperationException(
-                $"Element '{elementName}' of type {typeof(T).Name} not found. Available: {availableNames}");
-        }
-
-        return match;
     }
 }

@@ -6,6 +6,9 @@ namespace HEC.FDA.TestingUtility.Comparison;
 
 public class XmlResultComparer
 {
+    private const double RelativeTolerance = 0.01; // 1% relative tolerance
+    private const double MinimumAbsoluteDifference = 1.0; // $1 minimum to consider a difference
+
     private XElement? _baselineDoc;
 
     public void LoadBaseline(string baselinePath)
@@ -212,11 +215,7 @@ public class XmlResultComparer
                 double baselineMean = baselineCurve.Yvals[j].InverseCDF(0.5);
                 double actualMean = actualCurve.Yvals[j].InverseCDF(0.5);
 
-                double tolerance = 0.01;
-                double absoluteDiff = Math.Abs(baselineMean - actualMean);
-                double relativeDiff = baselineMean != 0 ? absoluteDiff / Math.Abs(baselineMean) : absoluteDiff;
-
-                if (relativeDiff > tolerance && absoluteDiff > 1.0)
+                if (!ValuesAreEqual(baselineMean, actualMean))
                 {
                     result.Passed = false;
                     result.Differences.Add(new Difference
@@ -232,16 +231,17 @@ public class XmlResultComparer
         return result;
     }
 
-    private static bool XmlCompare(XElement expected, XElement actual)
+    private static bool ValuesAreEqual(double expected, double actual)
     {
-        // Simple XML comparison - compare serialized strings
-        // This is a basic comparison; a more sophisticated comparison could be added
-        return XNode.DeepEquals(expected, actual);
+        double absoluteDiff = Math.Abs(expected - actual);
+        if (absoluteDiff <= MinimumAbsoluteDifference) return true;
+
+        double relativeDiff = expected != 0 ? absoluteDiff / Math.Abs(expected) : absoluteDiff;
+        return relativeDiff <= RelativeTolerance;
     }
 
     private static void GenerateScenarioDiff(ScenarioResults baseline, ScenarioResults actual, ComparisonResult result)
     {
-        // Compare mean EAD for each impact area / damage category
         foreach (int iaId in baseline.GetImpactAreaIDs())
         {
             foreach (string damCat in baseline.GetDamageCategories())
@@ -251,11 +251,7 @@ public class XmlResultComparer
                     double baselineMean = baseline.SampleMeanExpectedAnnualConsequences(iaId, damCat, assetCat);
                     double actualMean = actual.SampleMeanExpectedAnnualConsequences(iaId, damCat, assetCat);
 
-                    double tolerance = 0.01; // 1% relative tolerance for small values
-                    double absoluteDiff = Math.Abs(baselineMean - actualMean);
-                    double relativeDiff = baselineMean != 0 ? absoluteDiff / Math.Abs(baselineMean) : absoluteDiff;
-
-                    if (relativeDiff > tolerance && absoluteDiff > 1.0) // At least $1 difference
+                    if (!ValuesAreEqual(baselineMean, actualMean))
                     {
                         result.Differences.Add(new Difference
                         {
