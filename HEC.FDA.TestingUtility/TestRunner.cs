@@ -9,6 +9,7 @@ using HEC.FDA.TestingUtility.Services;
 using HEC.FDA.ViewModel;
 using HEC.FDA.ViewModel.AggregatedStageDamage;
 using HEC.FDA.ViewModel.Alternatives;
+using HEC.FDA.ViewModel.AlternativeComparisonReport;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
 
 namespace HEC.FDA.TestingUtility;
@@ -22,7 +23,6 @@ public class TestRunner
     private readonly CancellationTokenSource _cts;
 
     private readonly XmlResultComparer _comparer = new();
-    private readonly StudyBaselineWriter _baselineWriter = new();
     private readonly CsvReportFactory _csvReportFactory = new();
 
     public TestRunner(TestConfiguration config, string outputDir, bool verbose, string[]? studyFilter)
@@ -90,7 +90,7 @@ public class TestRunner
                 }
 
                 // Create computed results document for debugging
-                var computedBaseline = _baselineWriter.CreateStudyBaseline(study.StudyId, study.StudyName);
+                var computedBaseline = StudyBaselineWriter.CreateStudyBaseline(study.StudyId, study.StudyName);
 
                 // Build computation list (from config or auto-discover)
                 var computations = BuildComputationList(study);
@@ -109,23 +109,30 @@ public class TestRunner
                         {
                             case "scenario":
                                 var scenarioResults = ScenarioRunner.RunScenario(compute.ElementName, _cts.Token);
-                                _baselineWriter.AddScenarioResults(computedBaseline, compute.ElementName, scenarioResults);
+                                StudyBaselineWriter.AddScenarioResults(computedBaseline, compute.ElementName, scenarioResults);
                                 _csvReportFactory.AddScenarioResults(study.StudyId, compute.ElementName, scenarioResults);
                                 result = _comparer.CompareScenarioResults(compute.ElementName, scenarioResults);
                                 break;
 
                             case "alternative":
                                 var altResults = AlternativeRunner.RunAlternative(compute.ElementName, _cts.Token);
-                                _baselineWriter.AddAlternativeResults(computedBaseline, compute.ElementName, altResults);
+                                StudyBaselineWriter.AddAlternativeResults(computedBaseline, compute.ElementName, altResults);
                                 _csvReportFactory.AddAlternativeResults(study.StudyId, compute.ElementName, altResults);
                                 result = _comparer.CompareAlternativeResults(compute.ElementName, altResults);
                                 break;
 
                             case "stagedamage":
                                 List<UncertainPairedData> sdCurves = StageDamageRunner.RunStageDamage(compute.ElementName);
-                                _baselineWriter.AddStageDamage(computedBaseline, compute.ElementName, sdCurves);
+                                StudyBaselineWriter.AddStageDamage(computedBaseline, compute.ElementName, sdCurves);
                                 _csvReportFactory.AddStageDamageSummary(study.StudyId, compute.ElementName, sdCurves);
                                 result = _comparer.CompareStageDamage(compute.ElementName, sdCurves);
+                                break;
+
+                            case "alternativecomparison":
+                                var (compResults, withProjAlts) = RunAlternativeComparisonWithMetadata(compute.ElementName, _cts.Token);
+                                StudyBaselineWriter.AddAlternativeComparisonResults(computedBaseline, compute.ElementName, compResults, withProjAlts);
+                                _csvReportFactory.AddAlternativeComparisonResults(study.StudyId, compute.ElementName, compResults, withProjAlts);
+                                result = _comparer.CompareAlternativeComparisonResults(compute.ElementName, compResults, withProjAlts);
                                 break;
 
                             default:
@@ -237,7 +244,7 @@ public class TestRunner
         }
     }
 
-    private List<ComputeConfiguration> BuildComputationList(StudyConfiguration study)
+    private static List<ComputeConfiguration> BuildComputationList(StudyConfiguration study)
     {
         var computations = new List<ComputeConfiguration>(study.Computations);
 
@@ -298,10 +305,51 @@ public class TestRunner
             }
         }
 
+        // Auto-discover alternative comparison reports (depend on alternatives, so run last)
+        if (study.RunAllAlternativeComparisons)
+        {
+            var altCompReports = BaseViewModel.StudyCache.GetChildElementsOfType<AlternativeComparisonReportElement>();
+            foreach (var report in altCompReports)
+            {
+                if (!computations.Any(c => c.Type.Equals("alternativecomparison", StringComparison.OrdinalIgnoreCase)
+                    && c.ElementName.Equals(report.Name, StringComparison.OrdinalIgnoreCase)))
+                {
+                    computations.Add(new ComputeConfiguration
+                    {
+                        Type = "alternativecomparison",
+                        ElementName = report.Name
+                    });
+                    Console.WriteLine($"    Auto-discovered alternative comparison: {report.Name}");
+                }
+            }
+        }
+
         return computations;
     }
 
-    private string GetBaselinePath(StudyConfiguration study)
+    private static (AlternativeComparisonReportResults results, List<(int altId, string altName)> withProjectAlternatives) RunAlternativeComparisonWithMetadata(string elementName, CancellationToken cancellationToken)
+    {
+        // Get the element to extract the with-project alternative IDs
+        var element = ScenarioRunner.FindElement<AlternativeComparisonReportElement>(elementName);
+
+        // Build the list of with-project alternatives with names
+        var withProjectAlternatives = new List<(int altId, string altName)>();
+        var allAlternatives = BaseViewModel.StudyCache.GetChildElementsOfType<AlternativeElement>();
+
+        foreach (int altId in element.WithProjAltIDs)
+        {
+            var alt = allAlternatives.FirstOrDefault(a => a.ID == altId);
+            string altName = alt?.Name ?? $"Alternative_{altId}";
+            withProjectAlternatives.Add((altId, altName));
+        }
+
+        // Run the computation
+        var results = AlternativeComparisonRunner.RunAlternativeComparison(elementName, cancellationToken);
+
+        return (results, withProjectAlternatives);
+    }
+
+    private static string GetBaselinePath(StudyConfiguration study)
     {
         // Single baseline file per study
         return Path.Combine(study.BaselineDirectory, $"{study.StudyId}_baseline.xml");
@@ -311,7 +359,7 @@ public class TestRunner
     {
         // Save computed results in same format as baseline for easy comparison
         string outputPath = Path.Combine(_outputDir, $"{study.StudyId}_computed.xml");
-        _baselineWriter.Save(computedBaseline, outputPath);
+        StudyBaselineWriter.Save(computedBaseline, outputPath);
         Console.WriteLine($"  Computed results saved to: {outputPath}");
     }
 

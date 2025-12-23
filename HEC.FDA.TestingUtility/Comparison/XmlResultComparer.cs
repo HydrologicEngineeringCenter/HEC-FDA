@@ -264,4 +264,98 @@ public class XmlResultComparer
             }
         }
     }
+
+    public ComparisonResult CompareAlternativeComparisonResults(string elementName, AlternativeComparisonReportResults actual, List<(int altId, string altName)> withProjectAlternatives)
+    {
+        var result = new ComparisonResult { ElementName = elementName, ElementType = "AlternativeComparisonReport" };
+
+        if (_baselineDoc == null)
+        {
+            result.Passed = false;
+            result.ErrorMessage = "Baseline not loaded";
+            return result;
+        }
+
+        var baselineElement = _baselineDoc.Elements("AlternativeComparisonReport")
+            .FirstOrDefault(e => e.Attribute("name")?.Value == elementName);
+
+        if (baselineElement == null)
+        {
+            result.Passed = false;
+            result.ErrorMessage = $"Baseline not found for AlternativeComparisonReport '{elementName}'";
+            return result;
+        }
+
+        result.Passed = true;
+
+        foreach (var (altId, altName) in withProjectAlternatives)
+        {
+            var baselineAltElement = baselineElement.Elements("WithProjectAlternative")
+                .FirstOrDefault(e => e.Attribute("id")?.Value == altId.ToString());
+
+            if (baselineAltElement == null)
+            {
+                result.Passed = false;
+                result.Differences.Add(new Difference
+                {
+                    Metric = $"WithProjectAlternative[{altName}]",
+                    ExpectedDescription = "present in baseline",
+                    ActualDescription = "missing"
+                });
+                continue;
+            }
+
+            foreach (var baselineIaElement in baselineAltElement.Elements("ImpactArea"))
+            {
+                int impactAreaId = int.Parse(baselineIaElement.Attribute("id")?.Value ?? "0");
+
+                // Compare EqAD Reduced
+                double baselineEqadReduced = double.Parse(baselineIaElement.Attribute("eqadReduced")?.Value ?? "0");
+                double actualEqadReduced = actual.SampleMeanEqadReduced(altId, impactAreaId);
+
+                if (!ValuesAreEqual(baselineEqadReduced, actualEqadReduced))
+                {
+                    result.Passed = false;
+                    result.Differences.Add(new Difference
+                    {
+                        Metric = $"EqadReduced[Alt={altName},IA={impactAreaId}]",
+                        Expected = baselineEqadReduced,
+                        Actual = actualEqadReduced
+                    });
+                }
+
+                // Compare Base EAD Reduced
+                double baselineBaseEadReduced = double.Parse(baselineIaElement.Attribute("baseEadReduced")?.Value ?? "0");
+                double actualBaseEadReduced = actual.SampleMeanBaseYearEADReduced(altId, impactAreaId);
+
+                if (!ValuesAreEqual(baselineBaseEadReduced, actualBaseEadReduced))
+                {
+                    result.Passed = false;
+                    result.Differences.Add(new Difference
+                    {
+                        Metric = $"BaseEadReduced[Alt={altName},IA={impactAreaId}]",
+                        Expected = baselineBaseEadReduced,
+                        Actual = actualBaseEadReduced
+                    });
+                }
+
+                // Compare Future EAD Reduced
+                double baselineFutureEadReduced = double.Parse(baselineIaElement.Attribute("futureEadReduced")?.Value ?? "0");
+                double actualFutureEadReduced = actual.SampleMeanFutureYearEADReduced(altId, impactAreaId);
+
+                if (!ValuesAreEqual(baselineFutureEadReduced, actualFutureEadReduced))
+                {
+                    result.Passed = false;
+                    result.Differences.Add(new Difference
+                    {
+                        Metric = $"FutureEadReduced[Alt={altName},IA={impactAreaId}]",
+                        Expected = baselineFutureEadReduced,
+                        Actual = actualFutureEadReduced
+                    });
+                }
+            }
+        }
+
+        return result;
+    }
 }

@@ -16,6 +16,8 @@ public class CsvReportFactory
     private readonly StringBuilder _alternativeResults = new();
     private readonly StringBuilder _alternativeDamageByCategory = new();
     private readonly StringBuilder _stageDamageSummary = new();
+    private readonly StringBuilder _altComparisonSummary = new();
+    private readonly StringBuilder _altComparisonByCategory = new();
 
     public CsvReportFactory()
     {
@@ -41,6 +43,12 @@ public class CsvReportFactory
 
         // Stage Damage Summary header
         _stageDamageSummary.AppendLine("Study ID,Element Name,Impact Area ID,Impact Area Name,Damage Category,Asset Category,Point Count,Min Stage,Max Stage");
+
+        // Alternative Comparison Summary header
+        _altComparisonSummary.AppendLine("Study ID,Report Name,With Project Alt,Impact Area ID,Without Proj EqAD,With Proj EqAD,EqAD Reduced,EqAD Reduced 25th Pct,EqAD Reduced 50th Pct,EqAD Reduced 75th Pct,Without Proj Base EAD,With Proj Base EAD,Base EAD Reduced,Without Proj Future EAD,With Proj Future EAD,Future EAD Reduced");
+
+        // Alternative Comparison by Category header
+        _altComparisonByCategory.AppendLine("Study ID,Report Name,With Project Alt,Impact Area ID,Damage Category,Asset Category,EqAD Reduced,Base Year EAD Reduced,Future Year EAD Reduced");
     }
 
     /// <summary>
@@ -200,6 +208,72 @@ public class CsvReportFactory
     }
 
     /// <summary>
+    /// Adds alternative comparison report results to the report.
+    /// </summary>
+    public void AddAlternativeComparisonResults(string studyId, string reportName, AlternativeComparisonReportResults results, List<(int altId, string altName)> withProjectAlternatives)
+    {
+        if (results == null) return;
+
+        try
+        {
+            var impactAreaIds = results.GetImpactAreaIDs();
+            var damageCategories = results.GetDamageCategories();
+            var assetCategories = results.GetAssetCategories();
+
+            foreach (var (altId, altName) in withProjectAlternatives)
+            {
+                // Write aggregated summary per impact area
+                foreach (int impactAreaId in impactAreaIds)
+                {
+                    // EqAD values
+                    double withoutProjEqad = results.SampleMeanWithoutProjectEqad(impactAreaId);
+                    double withProjEqad = results.SampleMeanWithProjectEqad(altId, impactAreaId);
+                    double eqadReduced = results.SampleMeanEqadReduced(altId, impactAreaId);
+                    double eqadReduced25 = results.EqadReducedExceededWithProbabilityQ(0.75, altId, impactAreaId);
+                    double eqadReduced50 = results.EqadReducedExceededWithProbabilityQ(0.50, altId, impactAreaId);
+                    double eqadReduced75 = results.EqadReducedExceededWithProbabilityQ(0.25, altId, impactAreaId);
+
+                    // Base year EAD values
+                    double withoutProjBaseEad = results.SampleMeanWithoutProjectBaseYearEAD(impactAreaId);
+                    double withProjBaseEad = results.SampleMeanWithProjectBaseYearEAD(altId, impactAreaId);
+                    double baseEadReduced = results.SampleMeanBaseYearEADReduced(altId, impactAreaId);
+
+                    // Future year EAD values
+                    double withoutProjFutureEad = results.SampleMeanWithoutProjectFutureYearEAD(impactAreaId);
+                    double withProjFutureEad = results.SampleMeanWithProjectFutureYearEAD(altId, impactAreaId);
+                    double futureEadReduced = results.SampleMeanFutureYearEADReduced(altId, impactAreaId);
+
+                    _altComparisonSummary.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(reportName)},{EscapeCsv(altName)},{impactAreaId},{withoutProjEqad:F2},{withProjEqad:F2},{eqadReduced:F2},{eqadReduced25:F2},{eqadReduced50:F2},{eqadReduced75:F2},{withoutProjBaseEad:F2},{withProjBaseEad:F2},{baseEadReduced:F2},{withoutProjFutureEad:F2},{withProjFutureEad:F2},{futureEadReduced:F2}");
+                }
+
+                // Write by category breakdown
+                foreach (int impactAreaId in impactAreaIds)
+                {
+                    foreach (string damCat in damageCategories)
+                    {
+                        foreach (string assetCat in assetCategories)
+                        {
+                            double eqadReduced = results.SampleMeanEqadReduced(altId, impactAreaId, damCat, assetCat);
+                            double baseEadReduced = results.SampleMeanBaseYearEADReduced(altId, impactAreaId, damCat, assetCat);
+                            double futureEadReduced = results.SampleMeanFutureYearEADReduced(altId, impactAreaId, damCat, assetCat);
+
+                            // Only write non-zero values
+                            if (eqadReduced != 0 || baseEadReduced != 0 || futureEadReduced != 0)
+                            {
+                                _altComparisonByCategory.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(reportName)},{EscapeCsv(altName)},{impactAreaId},{EscapeCsv(damCat)},{EscapeCsv(assetCat)},{eqadReduced:F2},{baseEadReduced:F2},{futureEadReduced:F2}");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"    Warning: Error extracting alternative comparison results for CSV: {ex.Message}");
+        }
+    }
+
+    /// <summary>
     /// Saves the comprehensive report to a CSV file.
     /// </summary>
     public void SaveReport(string outputPath)
@@ -232,6 +306,14 @@ public class CsvReportFactory
 
         report.AppendLine("=== STAGE DAMAGE SUMMARY ===");
         report.Append(_stageDamageSummary);
+        report.AppendLine();
+
+        report.AppendLine("=== ALTERNATIVE COMPARISON SUMMARY ===");
+        report.Append(_altComparisonSummary);
+        report.AppendLine();
+
+        report.AppendLine("=== ALTERNATIVE COMPARISON BY CATEGORY ===");
+        report.Append(_altComparisonByCategory);
 
         File.WriteAllText(outputPath, report.ToString());
         Console.WriteLine($"CSV report saved to: {outputPath}");
