@@ -2,6 +2,10 @@
 
 	<ItemGroup>
 		<InternalsVisibleTo Include="HEC.FDA.ModelTest" />
+		<InternalsVisibleTo Include="HEC.FDA.TestingUtility" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="HEC.RAS.Ras.Mapper" Version="0.1.0.1822-dev" />
 	</ItemGroup>
 
