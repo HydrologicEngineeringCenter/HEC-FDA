@@ -278,7 +278,7 @@ public class CsvReportFactory
     /// </summary>
     public void SaveReport(string outputPath)
     {
-        var report = new StringBuilder();
+        StringBuilder report = new();
 
         report.AppendLine("=== FDA COMPUTATION RESULTS REPORT ===");
         report.AppendLine($"Generated: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");

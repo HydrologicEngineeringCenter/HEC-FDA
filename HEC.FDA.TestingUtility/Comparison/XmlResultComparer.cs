@@ -22,7 +22,7 @@ public class XmlResultComparer
 
     public ComparisonResult CompareScenarioResults(string elementName, ScenarioResults actual)
     {
-        var result = new ComparisonResult { ElementName = elementName, ElementType = "Scenario" };
+        ComparisonResult result = new() { ElementName = elementName, ElementType = "Scenario" };
 
         if (_baselineDoc == null)
         {
@@ -66,7 +66,7 @@ public class XmlResultComparer
 
     public ComparisonResult CompareAlternativeResults(string elementName, AlternativeResults actual)
     {
-        var result = new ComparisonResult { ElementName = elementName, ElementType = "Alternative" };
+        ComparisonResult result = new() { ElementName = elementName, ElementType = "Alternative" };
 
         if (_baselineDoc == null)
         {
@@ -130,7 +130,7 @@ public class XmlResultComparer
 
     public ComparisonResult CompareStageDamage(string elementName, List<UncertainPairedData> actualCurves)
     {
-        var result = new ComparisonResult { ElementName = elementName, ElementType = "StageDamage" };
+        ComparisonResult result = new() { ElementName = elementName, ElementType = "StageDamage" };
 
         if (_baselineDoc == null)
         {
@@ -267,7 +267,7 @@ public class XmlResultComparer
 
     public ComparisonResult CompareAlternativeComparisonResults(string elementName, AlternativeComparisonReportResults actual, List<(int altId, string altName)> withProjectAlternatives)
     {
-        var result = new ComparisonResult { ElementName = elementName, ElementType = "AlternativeComparisonReport" };
+        ComparisonResult result = new() { ElementName = elementName, ElementType = "AlternativeComparisonReport" };
 
         if (_baselineDoc == null)
         {

@@ -16,7 +16,7 @@ public static class StudyBaselineWriter
 
     public static void AddScenarioResults(XElement baseline, string name, ScenarioResults results)
     {
-        var wrapper = new XElement("ScenarioResults",
+        XElement wrapper = new("ScenarioResults",
             new XAttribute("name", name),
             results.WriteToXML());
         baseline.Add(wrapper);
@@ -24,7 +24,7 @@ public static class StudyBaselineWriter
 
     public static void AddAlternativeResults(XElement baseline, string name, AlternativeResults results)
     {
-        var wrapper = new XElement("AlternativeResults",
+        XElement wrapper = new("AlternativeResults",
             new XAttribute("name", name),
             new XElement("BaseYearResults", results.BaseYearScenarioResults.WriteToXML()),
             new XElement("FutureYearResults", results.FutureYearScenarioResults.WriteToXML()));
@@ -33,13 +33,13 @@ public static class StudyBaselineWriter
 
     public static void AddStageDamage(XElement baseline, string name, List<UncertainPairedData> curves)
     {
-        var curvesElement = new XElement("Curves");
-        foreach (var curve in curves)
+        XElement curvesElement = new("Curves");
+        foreach (UncertainPairedData curve in curves)
         {
             curvesElement.Add(curve.WriteToXML());
         }
 
-        var wrapper = new XElement("StageDamage",
+        XElement wrapper = new("StageDamage",
             new XAttribute("name", name),
             new XAttribute("curveCount", curves.Count),
             curvesElement);
@@ -50,22 +50,22 @@ public static class StudyBaselineWriter
     {
         if (results == null) return;
 
-        var wrapper = new XElement("AlternativeComparisonReport",
+        XElement wrapper = new("AlternativeComparisonReport",
             new XAttribute("name", name));
 
-        var impactAreaIds = results.GetImpactAreaIDs();
-        var damageCategories = results.GetDamageCategories();
-        var assetCategories = results.GetAssetCategories();
+        List<int> impactAreaIds = results.GetImpactAreaIDs();
+        List<string> damageCategories = results.GetDamageCategories();
+        List<string> assetCategories = results.GetAssetCategories();
 
-        foreach (var (altId, altName) in withProjectAlternatives)
+        foreach ((int altId, string altName) in withProjectAlternatives)
         {
-            var altElement = new XElement("WithProjectAlternative",
+            XElement altElement = new("WithProjectAlternative",
                 new XAttribute("id", altId),
                 new XAttribute("name", altName));
 
             foreach (int impactAreaId in impactAreaIds)
             {
-                var iaElement = new XElement("ImpactArea",
+                XElement iaElement = new("ImpactArea",
                     new XAttribute("id", impactAreaId),
                     new XAttribute("eqadReduced", results.SampleMeanEqadReduced(altId, impactAreaId)),
                     new XAttribute("baseEadReduced", results.SampleMeanBaseYearEADReduced(altId, impactAreaId)),

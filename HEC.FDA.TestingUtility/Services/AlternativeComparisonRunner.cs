@@ -40,7 +40,7 @@ public static class AlternativeComparisonRunner
         List<AlternativeElement> withProjAlts = new();
         foreach (int altId in element.WithProjAltIDs)
         {
-            var alt = GetAlternativeById(altId);
+            AlternativeElement? alt = GetAlternativeById(altId);
             if (alt == null)
             {
                 throw new InvalidOperationException($"With-project alternative (ID={altId}) not found.");
@@ -62,16 +62,16 @@ public static class AlternativeComparisonRunner
 
         // Compute each with-project alternative results
         List<AlternativeResults> withProjResults = new();
-        foreach (var withProjAlt in withProjAlts)
+        foreach (AlternativeElement withProjAlt in withProjAlts)
         {
             Console.WriteLine($"    Computing with-project alternative '{withProjAlt.Name}'...");
-            var results = ComputeAlternativeResults(withProjAlt, props, cancellationToken);
+            AlternativeResults results = ComputeAlternativeResults(withProjAlt, props, cancellationToken);
             withProjResults.Add(results);
         }
 
         // Compute the comparison report
         Console.WriteLine($"    Computing alternative comparison report...");
-        var comparisonResults = AlternativeComparisonReport.ComputeAlternativeComparisonReport(
+        AlternativeComparisonReportResults? comparisonResults = AlternativeComparisonReport.ComputeAlternativeComparisonReport(
             withoutProjResults,
             withProjResults);
 
