@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Xml.Linq;
 using HEC.FDA.Model.metrics;
+using HEC.FDA.Model.paireddata;
 using HEC.FDA.TestingUtility.Comparison;
 using HEC.FDA.TestingUtility.Configuration;
 using HEC.FDA.TestingUtility.Reporting;
@@ -124,10 +125,10 @@ public class TestRunner
                                 break;
 
                             case "stagedamage":
-                                var sdElement = _stageDamageRunner.GetStageDamageElement(compute.ElementName);
-                                _baselineWriter.AddStageDamage(computedBaseline, compute.ElementName, sdElement);
-                                _csvReportFactory.AddStageDamageSummary(study.StudyId, sdElement);
-                                result = _comparer.CompareStageDamage(compute.ElementName, sdElement);
+                                List<UncertainPairedData> sdCurves = _stageDamageRunner.RunStageDamage(compute.ElementName);
+                                _baselineWriter.AddStageDamage(computedBaseline, compute.ElementName, sdCurves);
+                                _csvReportFactory.AddStageDamageSummary(study.StudyId, compute.ElementName, sdCurves);
+                                result = _comparer.CompareStageDamage(compute.ElementName, sdCurves);
                                 break;
 
                             default:

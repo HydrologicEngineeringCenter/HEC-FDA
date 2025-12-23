@@ -18,6 +18,8 @@ public class Difference
     public string Metric { get; set; } = string.Empty;
     public double? Expected { get; set; }
     public double? Actual { get; set; }
+    public string? ExpectedDescription { get; set; }
+    public string? ActualDescription { get; set; }
     public double? AbsoluteDifference => Expected.HasValue && Actual.HasValue
         ? Math.Abs(Expected.Value - Actual.Value)
         : null;
@@ -30,6 +32,10 @@ public class Difference
         if (Expected.HasValue && Actual.HasValue)
         {
             return $"{Metric}: Expected={Expected:F4}, Actual={Actual:F4}, Diff={AbsoluteDifference:F4} ({PercentDifference:F2}%)";
+        }
+        if (ExpectedDescription != null || ActualDescription != null)
+        {
+            return $"{Metric}: Expected={ExpectedDescription ?? "null"}, Actual={ActualDescription ?? "null"}";
         }
         return $"{Metric}: Expected={Expected}, Actual={Actual}";
     }
