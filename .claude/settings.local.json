@@ -2,7 +2,13 @@
   "permissions": {
     "allow": [
       "Bash(dotnet test:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(dotnet sln:*)",
+      "Bash(dotnet build:*)",
+      "Bash(dir \"C:\\\\Users\\\\HEC\\\\Data\\\\FDA\\\\Canon\" /b)",
+      "Bash(nuget sources:*)",
+      "Bash(dotnet restore:*)",
+      "Bash(./HEC.FDA.TestingUtility.exe:*)"
     ],
     "deny": []
   }
