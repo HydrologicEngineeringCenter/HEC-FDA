@@ -3,6 +3,7 @@ using System.Xml.Linq;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.TestingUtility.Comparison;
 using HEC.FDA.TestingUtility.Configuration;
+using HEC.FDA.TestingUtility.Reporting;
 using HEC.FDA.TestingUtility.Services;
 using HEC.FDA.ViewModel;
 using HEC.FDA.ViewModel.AggregatedStageDamage;
@@ -24,6 +25,7 @@ public class TestRunner
     private readonly ScenarioRunner _scenarioRunner = new();
     private readonly AlternativeRunner _alternativeRunner = new();
     private readonly StageDamageRunner _stageDamageRunner = new();
+    private readonly CsvReportFactory _csvReportFactory = new();
 
     public TestRunner(TestConfiguration config, string outputDir, bool verbose, string[]? studyFilter)
     {
@@ -110,18 +112,21 @@ public class TestRunner
                             case "scenario":
                                 var scenarioResults = _scenarioRunner.RunScenario(compute.ElementName, _cts.Token);
                                 _baselineWriter.AddScenarioResults(computedBaseline, compute.ElementName, scenarioResults);
+                                _csvReportFactory.AddScenarioResults(study.StudyId, compute.ElementName, scenarioResults);
                                 result = _comparer.CompareScenarioResults(compute.ElementName, scenarioResults);
                                 break;
 
                             case "alternative":
                                 var altResults = _alternativeRunner.RunAlternative(compute.ElementName, _cts.Token);
                                 _baselineWriter.AddAlternativeResults(computedBaseline, compute.ElementName, altResults);
+                                _csvReportFactory.AddAlternativeResults(study.StudyId, compute.ElementName, altResults);
                                 result = _comparer.CompareAlternativeResults(compute.ElementName, altResults);
                                 break;
 
                             case "stagedamage":
                                 var sdElement = _stageDamageRunner.GetStageDamageElement(compute.ElementName);
                                 _baselineWriter.AddStageDamage(computedBaseline, compute.ElementName, sdElement);
+                                _csvReportFactory.AddStageDamageSummary(study.StudyId, sdElement);
                                 result = _comparer.CompareStageDamage(compute.ElementName, sdElement);
                                 break;
 
@@ -209,6 +214,11 @@ public class TestRunner
                 Console.WriteLine($"    - {type} '{name}': {FormatDuration(compDuration)}");
             }
         }
+
+        // Save CSV report
+        Console.WriteLine();
+        string csvPath = Path.Combine(_outputDir, "results_report.csv");
+        _csvReportFactory.SaveReport(csvPath);
 
         return failures > 0 ? 1 : 0;
     }

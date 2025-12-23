@@ -8,7 +8,8 @@
       "Bash(dir \"C:\\\\Users\\\\HEC\\\\Data\\\\FDA\\\\Canon\" /b)",
       "Bash(nuget sources:*)",
       "Bash(dotnet restore:*)",
-      "Bash(./HEC.FDA.TestingUtility.exe:*)"
+      "Bash(./HEC.FDA.TestingUtility.exe:*)",
+      "Bash(./HEC.FDA.TestingUtility/bin/Debug/net9.0-windows/HEC.FDA.TestingUtility.exe:*)"
     ],
     "deny": []
   }
