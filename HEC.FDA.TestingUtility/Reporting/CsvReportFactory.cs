@@ -45,6 +45,7 @@ public class CsvReportFactory
 
     /// <summary>
     /// Adds scenario results from a computation to the report.
+    /// Iterates over ResultsList for direct access to each ImpactAreaScenarioResults.
     /// </summary>
     public void AddScenarioResults(string studyId, string scenarioName, ScenarioResults results)
     {
@@ -52,41 +53,31 @@ public class CsvReportFactory
 
         try
         {
-            var impactAreaIds = results.GetImpactAreaIDs();
-            var damageCategories = results.GetDamageCategories();
-            var assetCategories = results.GetAssetCategories();
-
-            // Write aggregate results per impact area
-            foreach (int impactAreaId in impactAreaIds)
+            // Iterate over the ResultsList directly for better access to impact area data
+            foreach (var iaResult in results.ResultsList)
             {
-                double meanEAD = results.SampleMeanExpectedAnnualConsequences(impactAreaId);
-                double ead25 = results.ConsequencesExceededWithProbabilityQ(0.75, impactAreaId); // 25th percentile = exceeded by 75%
-                double ead50 = results.ConsequencesExceededWithProbabilityQ(0.50, impactAreaId);
-                double ead75 = results.ConsequencesExceededWithProbabilityQ(0.25, impactAreaId); // 75th percentile = exceeded by 25%
+                int impactAreaId = iaResult.ImpactAreaID;
+
+                // Write aggregate EAD results for this impact area
+                double meanEAD = iaResult.MeanExpectedAnnualConsequences();
+                double ead25 = iaResult.ConsequencesExceededWithProbabilityQ(0.75); // 25th percentile = exceeded by 75%
+                double ead50 = iaResult.ConsequencesExceededWithProbabilityQ(0.50);
+                double ead75 = iaResult.ConsequencesExceededWithProbabilityQ(0.25); // 75th percentile = exceeded by 25%
 
                 _scenarioResults.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(scenarioName)},{impactAreaId},{meanEAD:F2},{ead25:F2},{ead50:F2},{ead75:F2}");
-            }
 
-            // Write damage by category
-            foreach (int impactAreaId in impactAreaIds)
-            {
-                foreach (string damCat in damageCategories)
+                // Write damage by category from ConsequenceResults
+                foreach (var consequence in iaResult.ConsequenceResults.ConsequenceResultList)
                 {
-                    foreach (string assetCat in assetCategories)
-                    {
-                        double meanEAD = results.SampleMeanExpectedAnnualConsequences(impactAreaId, damCat, assetCat);
-                        if (meanEAD != 0) // Only write non-zero values
-                        {
-                            _scenarioDamageByCategory.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(scenarioName)},{impactAreaId},{EscapeCsv(damCat)},{EscapeCsv(assetCat)},{meanEAD:F2}");
-                        }
-                    }
-                }
-            }
+                    string damCat = consequence.DamageCategory;
+                    string assetCat = consequence.AssetCategory;
+                    double categoryMeanEAD = iaResult.MeanExpectedAnnualConsequences(impactAreaId, damCat, assetCat);
 
-            // Write performance metrics (if thresholds exist)
-            foreach (int impactAreaId in impactAreaIds)
-            {
-                WritePerformanceMetrics(studyId, scenarioName, impactAreaId, results);
+                    _scenarioDamageByCategory.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(scenarioName)},{impactAreaId},{EscapeCsv(damCat)},{EscapeCsv(assetCat)},{categoryMeanEAD:F2}");
+                }
+
+                // Write performance metrics for each threshold in this impact area
+                WritePerformanceMetrics(studyId, scenarioName, iaResult);
             }
         }
         catch (Exception ex)
@@ -95,33 +86,37 @@ public class CsvReportFactory
         }
     }
 
-    private void WritePerformanceMetrics(string studyId, string scenarioName, int impactAreaId, ScenarioResults results)
+    private void WritePerformanceMetrics(string studyId, string scenarioName, ImpactAreaScenarioResults iaResult)
     {
-        results.ResultsList
-        try
+        int impactAreaId = iaResult.ImpactAreaID;
+
+        // Iterate over all available thresholds for this impact area
+        foreach (var threshold in iaResult.PerformanceByThresholds.ListOfThresholds)
         {
-            // Try threshold ID 0 (default) - this is typically the only threshold in most scenarios
-            int thresholdId = 0;
+            try
+            {
+                int thresholdId = threshold.ThresholdID;
 
-            double meanAEP = results.MeanAEP(impactAreaId, thresholdId);
-            double medianAEP = results.MedianAEP(impactAreaId, thresholdId);
+                double meanAEP = iaResult.MeanAEP(thresholdId);
+                double medianAEP = iaResult.MedianAEP(thresholdId);
 
-            // Assurance values (probability of not exceeding standard event)
-            double assurance10 = results.AssuranceOfEvent(impactAreaId, 0.10, thresholdId);
-            double assurance04 = results.AssuranceOfEvent(impactAreaId, 0.04, thresholdId);
-            double assurance02 = results.AssuranceOfEvent(impactAreaId, 0.02, thresholdId);
-            double assurance01 = results.AssuranceOfEvent(impactAreaId, 0.01, thresholdId);
+                // Assurance values (probability of not exceeding standard event)
+                double assurance10 = iaResult.AssuranceOfEvent(thresholdId, 0.10);
+                double assurance04 = iaResult.AssuranceOfEvent(thresholdId, 0.04);
+                double assurance02 = iaResult.AssuranceOfEvent(thresholdId, 0.02);
+                double assurance01 = iaResult.AssuranceOfEvent(thresholdId, 0.01);
 
-            // Long-term risk
-            double ltRisk10 = results.LongTermExceedanceProbability(impactAreaId, 10, thresholdId);
-            double ltRisk30 = results.LongTermExceedanceProbability(impactAreaId, 30, thresholdId);
-            double ltRisk50 = results.LongTermExceedanceProbability(impactAreaId, 50, thresholdId);
+                // Long-term risk
+                double ltRisk10 = iaResult.LongTermExceedanceProbability(thresholdId, 10);
+                double ltRisk30 = iaResult.LongTermExceedanceProbability(thresholdId, 30);
+                double ltRisk50 = iaResult.LongTermExceedanceProbability(thresholdId, 50);
 
-            _scenarioPerformance.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(scenarioName)},{impactAreaId},{thresholdId},{meanAEP:F6},{medianAEP:F6},{assurance10:F4},{assurance04:F4},{assurance02:F4},{assurance01:F4},{ltRisk10:F4},{ltRisk30:F4},{ltRisk50:F4}");
-        }
-        catch
-        {
-            // Performance metrics may not be available for all scenarios
+                _scenarioPerformance.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(scenarioName)},{impactAreaId},{thresholdId},{meanAEP:F6},{medianAEP:F6},{assurance10:F4},{assurance04:F4},{assurance02:F4},{assurance01:F4},{ltRisk10:F4},{ltRisk30:F4},{ltRisk50:F4}");
+            }
+            catch
+            {
+                // Performance metrics may not be available for this threshold
+            }
         }
     }
 
