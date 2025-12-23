@@ -54,6 +54,9 @@ public class StudyConfiguration
     [JsonPropertyName("runAllStageDamage")]
     public bool RunAllStageDamage { get; set; } = false;
 
+    [JsonPropertyName("runAllAlternativeComparisons")]
+    public bool RunAllAlternativeComparisons { get; set; } = false;
+
     [JsonPropertyName("computations")]
     public List<ComputeConfiguration> Computations { get; set; } = new();
 }
