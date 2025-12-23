@@ -1,6 +1,6 @@
 using System.Text;
 using HEC.FDA.Model.metrics;
-using HEC.FDA.ViewModel.AggregatedStageDamage;
+using HEC.FDA.Model.paireddata;
 
 namespace HEC.FDA.TestingUtility.Reporting;
 
@@ -173,42 +173,26 @@ public class CsvReportFactory
     }
 
     /// <summary>
-    /// Adds stage damage summary from an element to the report.
+    /// Adds stage damage summary from computed curves to the report.
     /// </summary>
-    public void AddStageDamageSummary(string studyId, AggregatedStageDamageElement element)
+    public void AddStageDamageSummary(string studyId, string elementName, List<UncertainPairedData> curves)
     {
-        if (element == null) return;
+        if (curves == null) return;
 
         try
         {
-            foreach (var curve in element.Curves)
+            foreach (var curve in curves)
             {
-                int impactAreaId = curve.ImpArea?.ID ?? -1;
-                string impactAreaName = curve.ImpArea?.Name ?? "";
-                string damCat = curve.DamCat ?? "";
+                int impactAreaId = curve.ImpactAreaID;
+                string damCat = curve.DamageCategory ?? "";
                 string assetCat = curve.AssetCategory ?? "";
 
                 // Get curve data points
-                int pointCount = 0;
-                double minStage = 0;
-                double maxStage = 0;
+                int pointCount = curve.Xvals?.Length ?? 0;
+                double minStage = pointCount > 0 ? curve.Xvals!.Min() : 0;
+                double maxStage = pointCount > 0 ? curve.Xvals!.Max() : 0;
 
-                try
-                {
-                    var pairedData = curve.ComputeComponent?.SelectedItemToPairedData();
-                    if (pairedData != null && pairedData.Xvals != null && pairedData.Xvals.Length > 0)
-                    {
-                        pointCount = pairedData.Xvals.Length;
-                        minStage = pairedData.Xvals.Min();
-                        maxStage = pairedData.Xvals.Max();
-                    }
-                }
-                catch
-                {
-                    // Curve data may not be available
-                }
-
-                _stageDamageSummary.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(element.Name)},{impactAreaId},{EscapeCsv(impactAreaName)},{EscapeCsv(damCat)},{EscapeCsv(assetCat)},{pointCount},{minStage:F2},{maxStage:F2}");
+                _stageDamageSummary.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(elementName)},{impactAreaId},,{EscapeCsv(damCat)},{EscapeCsv(assetCat)},{pointCount},{minStage:F2},{maxStage:F2}");
             }
         }
         catch (Exception ex)

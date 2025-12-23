@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 using HEC.FDA.Model.metrics;
-using HEC.FDA.ViewModel.AggregatedStageDamage;
+using HEC.FDA.Model.paireddata;
 
 namespace HEC.FDA.TestingUtility.Comparison;
 
@@ -125,7 +125,7 @@ public class XmlResultComparer
         return result;
     }
 
-    public ComparisonResult CompareStageDamage(string elementName, AggregatedStageDamageElement actual)
+    public ComparisonResult CompareStageDamage(string elementName, List<UncertainPairedData> actualCurves)
     {
         var result = new ComparisonResult { ElementName = elementName, ElementType = "StageDamage" };
 
@@ -146,24 +146,87 @@ public class XmlResultComparer
             return result;
         }
 
-        // Use element's Equals method for comparison
-        var innerXml = baselineElement.Elements().FirstOrDefault();
-        if (innerXml == null)
+        // Get baseline curves
+        var curvesElement = baselineElement.Element("Curves");
+        if (curvesElement == null)
         {
             result.Passed = false;
-            result.ErrorMessage = $"Invalid baseline format for StageDamage '{elementName}'";
+            result.ErrorMessage = $"Invalid baseline format for StageDamage '{elementName}' - no Curves element";
             return result;
         }
 
-        // Note: AggregatedStageDamageElement.Equals needs to be called on the actual element
-        // The baseline needs to be reconstructed from XML - this may require additional work
-        // For now, we'll compare the XML directly
-        var actualXml = actual.ToXML();
-        result.Passed = XmlCompare(innerXml, actualXml);
+        var baselineCurveElements = curvesElement.Elements("UncertainPairedData").ToList();
 
-        if (!result.Passed)
+        // Compare curve counts
+        if (baselineCurveElements.Count != actualCurves.Count)
         {
-            result.ErrorMessage = "Stage damage elements do not match";
+            result.Passed = false;
+            result.Differences.Add(new Difference
+            {
+                Metric = "CurveCount",
+                Expected = baselineCurveElements.Count,
+                Actual = actualCurves.Count
+            });
+            return result;
+        }
+
+        result.Passed = true;
+
+        // Compare each curve
+        for (int i = 0; i < actualCurves.Count; i++)
+        {
+            var baselineCurve = UncertainPairedData.ReadFromXML(baselineCurveElements[i]);
+            var actualCurve = actualCurves[i];
+
+            // Compare metadata
+            if (baselineCurve.ImpactAreaID != actualCurve.ImpactAreaID ||
+                baselineCurve.DamageCategory != actualCurve.DamageCategory ||
+                baselineCurve.AssetCategory != actualCurve.AssetCategory)
+            {
+                result.Passed = false;
+                result.Differences.Add(new Difference
+                {
+                    Metric = $"Curve[{i}].Metadata",
+                    ExpectedDescription = $"IA={baselineCurve.ImpactAreaID}, DamCat={baselineCurve.DamageCategory}, Asset={baselineCurve.AssetCategory}",
+                    ActualDescription = $"IA={actualCurve.ImpactAreaID}, DamCat={actualCurve.DamageCategory}, Asset={actualCurve.AssetCategory}"
+                });
+                continue;
+            }
+
+            // Compare X values (stages)
+            if (baselineCurve.Xvals.Length != actualCurve.Xvals.Length)
+            {
+                result.Passed = false;
+                result.Differences.Add(new Difference
+                {
+                    Metric = $"Curve[{i}].XValueCount",
+                    Expected = baselineCurve.Xvals.Length,
+                    Actual = actualCurve.Xvals.Length
+                });
+                continue;
+            }
+
+            // Compare mean damage values at each stage
+            for (int j = 0; j < baselineCurve.Xvals.Length; j++)
+            {
+                double baselineMean = baselineCurve.Yvals[j].InverseCDF(0.5);
+                double actualMean = actualCurve.Yvals[j].InverseCDF(0.5);
+
+                double tolerance = 0.01;
+                double absoluteDiff = Math.Abs(baselineMean - actualMean);
+                double relativeDiff = baselineMean != 0 ? absoluteDiff / Math.Abs(baselineMean) : absoluteDiff;
+
+                if (relativeDiff > tolerance && absoluteDiff > 1.0)
+                {
+                    result.Passed = false;
+                    result.Differences.Add(new Difference
+                    {
+                        Metric = $"Curve[{i}].Stage[{baselineCurve.Xvals[j]:F2}].MedianDamage",
+                        Expected = baselineMean,
+                        Actual = actualMean
+                    });
+                }
+            }
         }
 
         return result;

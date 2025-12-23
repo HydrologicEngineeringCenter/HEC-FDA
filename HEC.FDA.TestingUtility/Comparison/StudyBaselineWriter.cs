@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 using HEC.FDA.Model.metrics;
-using HEC.FDA.ViewModel.AggregatedStageDamage;
+using HEC.FDA.Model.paireddata;
 
 namespace HEC.FDA.TestingUtility.Comparison;
 
@@ -31,11 +31,18 @@ public class StudyBaselineWriter
         baseline.Add(wrapper);
     }
 
-    public void AddStageDamage(XElement baseline, string name, AggregatedStageDamageElement element)
+    public void AddStageDamage(XElement baseline, string name, List<UncertainPairedData> curves)
     {
+        var curvesElement = new XElement("Curves");
+        foreach (var curve in curves)
+        {
+            curvesElement.Add(curve.WriteToXML());
+        }
+
         var wrapper = new XElement("StageDamage",
             new XAttribute("name", name),
-            element.ToXML());
+            new XAttribute("curveCount", curves.Count),
+            curvesElement);
         baseline.Add(wrapper);
     }
 
