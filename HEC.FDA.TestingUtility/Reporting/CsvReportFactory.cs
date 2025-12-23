@@ -100,22 +100,20 @@ public class CsvReportFactory
                 double meanAEP = iaResult.MeanAEP(thresholdId);
                 double medianAEP = iaResult.MedianAEP(thresholdId);
 
-                // Assurance values (probability of not exceeding standard event)
                 double assurance10 = iaResult.AssuranceOfEvent(thresholdId, 0.10);
                 double assurance04 = iaResult.AssuranceOfEvent(thresholdId, 0.04);
                 double assurance02 = iaResult.AssuranceOfEvent(thresholdId, 0.02);
                 double assurance01 = iaResult.AssuranceOfEvent(thresholdId, 0.01);
 
-                // Long-term risk
                 double ltRisk10 = iaResult.LongTermExceedanceProbability(thresholdId, 10);
                 double ltRisk30 = iaResult.LongTermExceedanceProbability(thresholdId, 30);
                 double ltRisk50 = iaResult.LongTermExceedanceProbability(thresholdId, 50);
 
                 _scenarioPerformance.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(scenarioName)},{impactAreaId},{thresholdId},{meanAEP:F6},{medianAEP:F6},{assurance10:F4},{assurance04:F4},{assurance02:F4},{assurance01:F4},{ltRisk10:F4},{ltRisk30:F4},{ltRisk50:F4}");
             }
-            catch
+            catch (Exception ex)
             {
-                // Performance metrics may not be available for this threshold
+                Console.WriteLine($"    Warning: Could not extract performance metrics for threshold {threshold.ThresholdID}: {ex.Message}");
             }
         }
     }

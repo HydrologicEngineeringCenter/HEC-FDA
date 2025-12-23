@@ -1,4 +1,5 @@
 using System.CommandLine;
+using Geospatial.GDALAssist;
 using HEC.FDA.TestingUtility;
 using HEC.FDA.TestingUtility.Configuration;
 
@@ -42,6 +43,9 @@ rootCommand.SetHandler(async (configFile, outputDir, verbose, studyFilter) =>
         Console.WriteLine("FDA Testing Utility v1.0");
         Console.WriteLine("========================");
         Console.WriteLine();
+
+        // Initialize GDAL for spatial operations
+        GDALSetup.InitializeMultiplatform();
 
         // Load configuration
         if (!configFile.Exists)
