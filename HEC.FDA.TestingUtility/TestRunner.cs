@@ -45,7 +45,7 @@ public class TestRunner
         int failures = 0;
         int passed = 0;
         var totalStopwatch = Stopwatch.StartNew();
-        var studyTimings = new List<(string StudyId, TimeSpan Duration, List<(string Type, string Name, TimeSpan Duration)> Computations)>();
+        List<(string StudyId, TimeSpan Duration, List<(string Type, string Name, TimeSpan Duration)> Computations)> studyTimings = new();
 
         Console.WriteLine($"Starting test suite: {_config.TestSuiteId}");
         Console.WriteLine($"Output directory: {_outputDir}");
@@ -69,11 +69,11 @@ public class TestRunner
         {
             Console.WriteLine($"=== Testing study: {study.StudyName} ({study.StudyId}) ===");
             var studyStopwatch = Stopwatch.StartNew();
-            var computationTimings = new List<(string Type, string Name, TimeSpan Duration)>();
+            List<(string Type, string Name, TimeSpan Duration)> computationTimings = new();
 
             try
             {
-                using var loader = new StudyLoader();
+                using StudyLoader loader = new();
                 loader.LoadStudy(study.NetworkSourcePath, _config.GlobalSettings.LocalTempDirectory);
 
                 // Load the single baseline file for this study
@@ -246,7 +246,7 @@ public class TestRunner
 
     private static List<ComputeConfiguration> BuildComputationList(StudyConfiguration study)
     {
-        var computations = new List<ComputeConfiguration>(study.Computations);
+        List<ComputeConfiguration> computations = new(study.Computations);
 
         // Auto-discover scenarios
         if (study.RunAllScenarios)
@@ -333,7 +333,7 @@ public class TestRunner
         var element = ScenarioRunner.FindElement<AlternativeComparisonReportElement>(elementName);
 
         // Build the list of with-project alternatives with names
-        var withProjectAlternatives = new List<(int altId, string altName)>();
+        List<(int altId, string altName)> withProjectAlternatives = new();
         var allAlternatives = BaseViewModel.StudyCache.GetChildElementsOfType<AlternativeElement>();
 
         foreach (int altId in element.WithProjAltIDs)

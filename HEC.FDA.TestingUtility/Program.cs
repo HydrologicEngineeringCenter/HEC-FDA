@@ -4,32 +4,32 @@ using HEC.FDA.TestingUtility;
 using HEC.FDA.TestingUtility.Configuration;
 
 // Define command line options
-var configOption = new Option<FileInfo>(
+Option<FileInfo> configOption = new(
     name: "--config",
     description: "Path to JSON configuration file")
 { IsRequired = true };
 configOption.AddAlias("-c");
 
-var outputOption = new Option<DirectoryInfo>(
+Option<DirectoryInfo> outputOption = new(
     name: "--output",
     description: "Output directory for results",
     getDefaultValue: () => new DirectoryInfo(Environment.CurrentDirectory));
 outputOption.AddAlias("-o");
 
-var verboseOption = new Option<bool>(
+Option<bool> verboseOption = new(
     name: "--verbose",
     description: "Enable verbose output",
     getDefaultValue: () => false);
 verboseOption.AddAlias("-v");
 
-var studyOption = new Option<string[]>(
+Option<string[]> studyOption = new(
     name: "--study",
     description: "Filter to specific study IDs (can specify multiple)")
 { AllowMultipleArgumentsPerToken = true };
 studyOption.AddAlias("-s");
 
 // Create root command
-var rootCommand = new RootCommand("FDA Testing Utility - Regression Testing Tool for FDA Studies");
+RootCommand rootCommand = new("FDA Testing Utility - Regression Testing Tool for FDA Studies");
 rootCommand.AddOption(configOption);
 rootCommand.AddOption(outputOption);
 rootCommand.AddOption(verboseOption);
@@ -64,7 +64,7 @@ rootCommand.SetHandler(async (configFile, outputDir, verbose, studyFilter) =>
         }
 
         // Create and run test runner
-        var runner = new TestRunner(
+        TestRunner runner = new(
             config,
             outputDir.FullName,
             verbose,
