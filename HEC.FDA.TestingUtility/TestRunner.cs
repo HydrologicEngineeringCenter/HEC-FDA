@@ -11,6 +11,10 @@ using HEC.FDA.ViewModel.AggregatedStageDamage;
 using HEC.FDA.ViewModel.Alternatives;
 using HEC.FDA.ViewModel.AlternativeComparisonReport;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
+using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.TableWithPlot;
+using HEC.FDA.ViewModel.Utilities;
 
 namespace HEC.FDA.TestingUtility;
 
@@ -107,29 +111,32 @@ public class TestRunner
 
                         switch (compute.Type.ToLowerInvariant())
                         {
+                            case "stagedamage":
+                                List<UncertainPairedData> sdCurves = StageDamageRunner.RunStageDamage(compute.ElementName);
+                                SaveStageDamageResults(compute.ElementName, sdCurves);
+                                StudyBaselineWriter.AddStageDamage(computedBaseline, compute.ElementName, sdCurves);
+                                _csvReportFactory.AddStageDamageSummary(study.StudyId, compute.ElementName, sdCurves);
+                                result = _comparer.CompareStageDamage(compute.ElementName, sdCurves);
+                                break;
+
                             case "scenario":
-                                var scenarioResults = ScenarioRunner.RunScenario(compute.ElementName, _cts.Token);
+                                ScenarioResults scenarioResults = ScenarioRunner.RunScenario(compute.ElementName, _cts.Token);
+                                SaveScenarioResults(compute.ElementName, scenarioResults);
                                 StudyBaselineWriter.AddScenarioResults(computedBaseline, compute.ElementName, scenarioResults);
                                 _csvReportFactory.AddScenarioResults(study.StudyId, compute.ElementName, scenarioResults);
                                 result = _comparer.CompareScenarioResults(compute.ElementName, scenarioResults);
                                 break;
 
                             case "alternative":
-                                var altResults = AlternativeRunner.RunAlternative(compute.ElementName, _cts.Token);
+                                AlternativeResults altResults = AlternativeRunner.RunAlternative(compute.ElementName, _cts.Token);
+                                SaveAlternativeResults(compute.ElementName, altResults);
                                 StudyBaselineWriter.AddAlternativeResults(computedBaseline, compute.ElementName, altResults);
                                 _csvReportFactory.AddAlternativeResults(study.StudyId, compute.ElementName, altResults);
                                 result = _comparer.CompareAlternativeResults(compute.ElementName, altResults);
                                 break;
 
-                            case "stagedamage":
-                                List<UncertainPairedData> sdCurves = StageDamageRunner.RunStageDamage(compute.ElementName);
-                                StudyBaselineWriter.AddStageDamage(computedBaseline, compute.ElementName, sdCurves);
-                                _csvReportFactory.AddStageDamageSummary(study.StudyId, compute.ElementName, sdCurves);
-                                result = _comparer.CompareStageDamage(compute.ElementName, sdCurves);
-                                break;
-
                             case "alternativecomparison":
-                                var (compResults, withProjAlts) = RunAlternativeComparisonWithMetadata(compute.ElementName, _cts.Token);
+                                (AlternativeComparisonReportResults compResults, List<(int altId, string altName)> withProjAlts) = RunAlternativeComparisonWithMetadata(compute.ElementName, _cts.Token);
                                 StudyBaselineWriter.AddAlternativeComparisonResults(computedBaseline, compute.ElementName, compResults, withProjAlts);
                                 _csvReportFactory.AddAlternativeComparisonResults(study.StudyId, compute.ElementName, compResults, withProjAlts);
                                 result = _comparer.CompareAlternativeComparisonResults(compute.ElementName, compResults, withProjAlts);
@@ -308,8 +315,8 @@ public class TestRunner
         // Auto-discover alternative comparison reports (depend on alternatives, so run last)
         if (study.RunAllAlternativeComparisons)
         {
-            var altCompReports = BaseViewModel.StudyCache.GetChildElementsOfType<AlternativeComparisonReportElement>();
-            foreach (var report in altCompReports)
+            List<AlternativeComparisonReportElement> altCompReports = BaseViewModel.StudyCache.GetChildElementsOfType<AlternativeComparisonReportElement>();
+            foreach (AlternativeComparisonReportElement report in altCompReports)
             {
                 if (!computations.Any(c => c.Type.Equals("alternativecomparison", StringComparison.OrdinalIgnoreCase)
                     && c.ElementName.Equals(report.Name, StringComparison.OrdinalIgnoreCase)))
@@ -324,7 +331,22 @@ public class TestRunner
             }
         }
 
-        return computations;
+        // Sort by dependency order: stagedamage → scenario → alternative → alternativecomparison
+        return SortByDependencyOrder(computations);
+    }
+
+    private static List<ComputeConfiguration> SortByDependencyOrder(List<ComputeConfiguration> computations)
+    {
+        int GetOrder(string type) => type.ToLowerInvariant() switch
+        {
+            "stagedamage" => 0,
+            "scenario" => 1,
+            "alternative" => 2,
+            "alternativecomparison" => 3,
+            _ => 99
+        };
+
+        return computations.OrderBy(c => GetOrder(c.Type)).ToList();
     }
 
     private static (AlternativeComparisonReportResults results, List<(int altId, string altName)> withProjectAlternatives) RunAlternativeComparisonWithMetadata(string elementName, CancellationToken cancellationToken)
@@ -371,7 +393,7 @@ public class TestRunner
         }
 
         Console.WriteLine("          Differences:");
-        foreach (var diff in result.Differences.Take(10)) // Limit to first 10
+        foreach (Difference diff in result.Differences.Take(10))
         {
             Console.WriteLine($"            - {diff}");
         }
@@ -380,5 +402,62 @@ public class TestRunner
         {
             Console.WriteLine($"            ... and {result.Differences.Count - 10} more");
         }
+    }
+
+    /// <summary>
+    /// Saves scenario results to the temp database so downstream computations can use them.
+    /// </summary>
+    private static void SaveScenarioResults(string elementName, ScenarioResults results)
+    {
+        IASElement element = ScenarioRunner.FindElement<IASElement>(elementName);
+        element.Results = results;
+        PersistenceFactory.GetIASManager().SaveExisting(element);
+        Console.WriteLine($"      Saved scenario results to temp database.");
+    }
+
+    /// <summary>
+    /// Saves alternative results to the temp database so downstream computations can use them.
+    /// </summary>
+    private static void SaveAlternativeResults(string elementName, AlternativeResults results)
+    {
+        AlternativeElement element = ScenarioRunner.FindElement<AlternativeElement>(elementName);
+        element.Results = results;
+        PersistenceFactory.GetElementManager<AlternativeElement>().SaveExisting(element);
+        Console.WriteLine($"      Saved alternative results to temp database.");
+    }
+
+    /// <summary>
+    /// Saves stage damage curves to the temp database so downstream computations can use them.
+    /// </summary>
+    private static void SaveStageDamageResults(string elementName, List<UncertainPairedData> curves)
+    {
+        AggregatedStageDamageElement element = ScenarioRunner.FindElement<AggregatedStageDamageElement>(elementName);
+
+        // Get impact area element to look up names
+        List<ImpactAreaElement> impactAreaElements = BaseViewModel.StudyCache.GetChildElementsOfType<ImpactAreaElement>();
+        ImpactAreaElement? impactAreaElement = impactAreaElements.Count > 0 ? impactAreaElements[0] : null;
+
+        // Convert UncertainPairedData curves to StageDamageCurves and update the element
+        List<StageDamageCurve> stageDamageCurves = new();
+        foreach (UncertainPairedData upd in curves)
+        {
+            // Create CurveComponentVM and set the paired data
+            CurveComponentVM curveComponent = new(StringConstants.STAGE_DAMAGE, StringConstants.STAGE, StringConstants.DAMAGE, DistributionOptions.HISTOGRAM_ONLY);
+            curveComponent.SetPairedData(upd);
+
+            // Get the impact area row item
+            ImpactAreaRowItem impactAreaRowItem = impactAreaElement?.GetImpactAreaRow(upd.ImpactAreaID)
+                ?? new ImpactAreaRowItem(upd.ImpactAreaID, "");
+
+            StageDamageCurve sdCurve = new(impactAreaRowItem, upd.DamageCategory, curveComponent, upd.AssetCategory, StageDamageConstructionType.COMPUTED);
+            stageDamageCurves.Add(sdCurve);
+        }
+
+        // Update the element's curves - this modifies the in-memory element
+        element.Curves.Clear();
+        element.Curves.AddRange(stageDamageCurves);
+
+        PersistenceFactory.GetElementManager<AggregatedStageDamageElement>().SaveExisting(element);
+        Console.WriteLine($"      Saved {curves.Count} stage damage curves to temp database.");
     }
 }
