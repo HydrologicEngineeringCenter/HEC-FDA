@@ -1,10 +1,13 @@
 using System.Text;
 using System.Xml.Linq;
+using HEC.FDA.Model.metrics;
+using HEC.FDA.Model.paireddata;
 
 namespace HEC.FDA.TestingUtility;
 
 /// <summary>
-/// Compares two sets of FDA computation results and generates a comparison report.
+/// Compares two sets of FDA computation results by deserializing XML into model objects
+/// and comparing the same statistics that CsvReportFactory outputs.
 /// </summary>
 public class CompareRunner
 {
@@ -12,6 +15,7 @@ public class CompareRunner
     private readonly string _newDir;
     private readonly string _outputPath;
     private readonly double _tolerance;
+    private const double MinimumAbsoluteDifference = 1.0; // $1 minimum to report a difference
 
     public CompareRunner(string baselineDir, string newDir, string outputPath, double tolerance)
     {
@@ -45,8 +49,8 @@ public class CompareRunner
         }
 
         StringBuilder report = new();
-        report.AppendLine("FDA Results Comparison Report");
-        report.AppendLine("=============================");
+        report.AppendLine("FDA Results Comparison Report (Model-Based)");
+        report.AppendLine("============================================");
         report.AppendLine($"Generated: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
         report.AppendLine($"Baseline: {_baselineDir}");
         report.AppendLine($"New: {_newDir}");
@@ -123,27 +127,27 @@ public class CompareRunner
 
         try
         {
-            XElement baseline = XElement.Load(baselinePath);
-            XElement newResults = XElement.Load(newPath);
+            XElement baselineDoc = XElement.Load(baselinePath);
+            XElement newDoc = XElement.Load(newPath);
 
-            string studyId = baseline.Attribute("studyId")?.Value ?? Path.GetFileNameWithoutExtension(baselinePath);
+            string studyId = baselineDoc.Attribute("studyId")?.Value ?? Path.GetFileNameWithoutExtension(baselinePath);
             report.AppendLine($"=== {studyId} ===");
 
             // Compare scenarios
-            differences += CompareElements(baseline, newResults, "ScenarioResults", "name", report);
+            differences += CompareScenarioResults(baselineDoc, newDoc, report);
 
             // Compare alternatives
-            differences += CompareElements(baseline, newResults, "AlternativeResults", "name", report);
+            differences += CompareAlternativeResults(baselineDoc, newDoc, report);
 
             // Compare stage damage
-            differences += CompareElements(baseline, newResults, "StageDamage", "name", report);
+            differences += CompareStageDamageResults(baselineDoc, newDoc, report);
 
             // Compare alternative comparison reports
-            differences += CompareElements(baseline, newResults, "AlternativeComparisonReport", "name", report);
+            differences += CompareAlternativeComparisonResults(baselineDoc, newDoc, report);
 
             if (differences == 0)
             {
-                report.AppendLine("  All values match within tolerance.");
+                report.AppendLine("  All statistics match within tolerance.");
             }
             report.AppendLine();
         }
@@ -156,120 +160,583 @@ public class CompareRunner
         return differences;
     }
 
-    private int CompareElements(XElement baseline, XElement newResults, string elementType, string nameAttribute, StringBuilder report)
+    #region Scenario Comparison
+
+    private int CompareScenarioResults(XElement baselineDoc, XElement newDoc, StringBuilder report)
     {
         int differences = 0;
+        var baselineElements = baselineDoc.Elements("ScenarioResults").ToList();
+        var newElements = newDoc.Elements("ScenarioResults").ToList();
 
-        IEnumerable<XElement> baselineElements = baseline.Elements(elementType);
-        IEnumerable<XElement> newElements = newResults.Elements(elementType);
-
-        foreach (XElement baselineElem in baselineElements)
+        foreach (var baselineWrapper in baselineElements)
         {
-            string name = baselineElem.Attribute(nameAttribute)?.Value ?? "unknown";
-            XElement? newElem = newElements.FirstOrDefault(e => e.Attribute(nameAttribute)?.Value == name);
+            string name = baselineWrapper.Attribute("name")?.Value ?? "unknown";
+            var newWrapper = newElements.FirstOrDefault(e => e.Attribute("name")?.Value == name);
 
-            if (newElem == null)
+            if (newWrapper == null)
             {
-                report.AppendLine($"  MISSING: {elementType} '{name}' not in new results");
+                report.AppendLine($"  MISSING: Scenario '{name}' not in new results");
                 differences++;
                 continue;
             }
 
-            // Compare numeric attributes
-            List<(string path, double baseline, double newVal)> numericDiffs = new();
-            CompareNumericValues(baselineElem, newElem, "", numericDiffs);
+            // Extract inner ScenarioResults element and deserialize
+            var baselineInner = baselineWrapper.Element("ScenarioResults");
+            var newInner = newWrapper.Element("ScenarioResults");
 
-            foreach ((string path, double baselineVal, double newVal) in numericDiffs)
+            if (baselineInner == null || newInner == null)
             {
-                double absDiff = Math.Abs(baselineVal - newVal);
-                double relDiff = baselineVal != 0 ? absDiff / Math.Abs(baselineVal) : absDiff;
+                report.AppendLine($"  ERROR: Invalid XML structure for Scenario '{name}'");
+                differences++;
+                continue;
+            }
 
-                if (relDiff > _tolerance && absDiff > 1.0) // At least $1 difference
-                {
-                    differences++;
-                    report.AppendLine($"  DIFF: {elementType} '{name}' {path}");
-                    report.AppendLine($"        Baseline: {baselineVal:F4}");
-                    report.AppendLine($"        New:      {newVal:F4}");
-                    report.AppendLine($"        Diff:     {absDiff:F4} ({relDiff:P2})");
-                }
+            try
+            {
+                var baselineResults = ScenarioResults.ReadFromXML(baselineInner);
+                var newResults = ScenarioResults.ReadFromXML(newInner);
+                differences += CompareScenarioStatistics(name, baselineResults, newResults, report);
+            }
+            catch (Exception ex)
+            {
+                report.AppendLine($"  ERROR: Failed to deserialize Scenario '{name}': {ex.Message}");
+                differences++;
             }
         }
 
-        // Check for elements in new that aren't in baseline
-        foreach (XElement newElem in newElements)
+        // Check for scenarios in new that aren't in baseline
+        foreach (var newWrapper in newElements)
         {
-            string name = newElem.Attribute(nameAttribute)?.Value ?? "unknown";
-            XElement? baselineElem = baselineElements.FirstOrDefault(e => e.Attribute(nameAttribute)?.Value == name);
-
-            if (baselineElem == null)
+            string name = newWrapper.Attribute("name")?.Value ?? "unknown";
+            if (!baselineElements.Any(e => e.Attribute("name")?.Value == name))
             {
-                report.AppendLine($"  NEW: {elementType} '{name}' only in new results");
+                report.AppendLine($"  NEW: Scenario '{name}' only in new results");
             }
         }
 
         return differences;
     }
 
-    private void CompareNumericValues(XElement baseline, XElement newElem, string path, List<(string, double, double)> diffs)
+    private int CompareScenarioStatistics(string scenarioName, ScenarioResults baseline, ScenarioResults actual, StringBuilder report)
     {
-        // Compare attributes
-        foreach (XAttribute attr in baseline.Attributes())
+        int differences = 0;
+        report.AppendLine($"  Scenario: {scenarioName}");
+
+        foreach (var iaResult in baseline.ResultsList)
         {
-            if (double.TryParse(attr.Value, out double baselineVal))
+            int iaId = iaResult.ImpactAreaID;
+
+            // Find corresponding impact area in actual
+            var actualIaResult = actual.ResultsList.FirstOrDefault(r => r.ImpactAreaID == iaId);
+            if (actualIaResult == null)
             {
-                XAttribute? newAttr = newElem.Attribute(attr.Name);
-                if (newAttr != null && double.TryParse(newAttr.Value, out double newVal))
+                report.AppendLine($"    MISSING: ImpactArea[{iaId}] not in new results");
+                differences++;
+                continue;
+            }
+
+            // Compare aggregate EAD metrics
+            differences += CompareValue($"ImpactArea[{iaId}].MeanEAD",
+                iaResult.MeanExpectedAnnualConsequences(),
+                actualIaResult.MeanExpectedAnnualConsequences(),
+                report);
+
+            differences += CompareValue($"ImpactArea[{iaId}].EAD_25thPct",
+                iaResult.ConsequencesExceededWithProbabilityQ(0.75),
+                actualIaResult.ConsequencesExceededWithProbabilityQ(0.75),
+                report);
+
+            differences += CompareValue($"ImpactArea[{iaId}].EAD_50thPct",
+                iaResult.ConsequencesExceededWithProbabilityQ(0.50),
+                actualIaResult.ConsequencesExceededWithProbabilityQ(0.50),
+                report);
+
+            differences += CompareValue($"ImpactArea[{iaId}].EAD_75thPct",
+                iaResult.ConsequencesExceededWithProbabilityQ(0.25),
+                actualIaResult.ConsequencesExceededWithProbabilityQ(0.25),
+                report);
+
+            // Compare damage by category
+            foreach (var consequence in iaResult.ConsequenceResults.ConsequenceResultList)
+            {
+                string damCat = consequence.DamageCategory;
+                string assetCat = consequence.AssetCategory;
+
+                double baselineCatEAD = iaResult.MeanExpectedAnnualConsequences(iaId, damCat, assetCat);
+                double actualCatEAD = actualIaResult.MeanExpectedAnnualConsequences(iaId, damCat, assetCat);
+
+                differences += CompareValue($"ImpactArea[{iaId}].{damCat}.{assetCat}.MeanEAD",
+                    baselineCatEAD, actualCatEAD, report);
+            }
+
+            // Compare performance metrics for each threshold
+            foreach (var threshold in iaResult.PerformanceByThresholds.ListOfThresholds)
+            {
+                int thresholdId = threshold.ThresholdID;
+
+                try
                 {
-                    string attrPath = string.IsNullOrEmpty(path) ? $"@{attr.Name}" : $"{path}/@{attr.Name}";
-                    diffs.Add((attrPath, baselineVal, newVal));
+                    differences += CompareValue($"ImpactArea[{iaId}].Threshold[{thresholdId}].MeanAEP",
+                        iaResult.MeanAEP(thresholdId),
+                        actualIaResult.MeanAEP(thresholdId),
+                        report);
+
+                    differences += CompareValue($"ImpactArea[{iaId}].Threshold[{thresholdId}].MedianAEP",
+                        iaResult.MedianAEP(thresholdId),
+                        actualIaResult.MedianAEP(thresholdId),
+                        report);
+
+                    // Assurance metrics
+                    differences += CompareValue($"ImpactArea[{iaId}].Threshold[{thresholdId}].Assurance_0.10",
+                        iaResult.AssuranceOfEvent(thresholdId, 0.10),
+                        actualIaResult.AssuranceOfEvent(thresholdId, 0.10),
+                        report);
+
+                    differences += CompareValue($"ImpactArea[{iaId}].Threshold[{thresholdId}].Assurance_0.04",
+                        iaResult.AssuranceOfEvent(thresholdId, 0.04),
+                        actualIaResult.AssuranceOfEvent(thresholdId, 0.04),
+                        report);
+
+                    differences += CompareValue($"ImpactArea[{iaId}].Threshold[{thresholdId}].Assurance_0.02",
+                        iaResult.AssuranceOfEvent(thresholdId, 0.02),
+                        actualIaResult.AssuranceOfEvent(thresholdId, 0.02),
+                        report);
+
+                    differences += CompareValue($"ImpactArea[{iaId}].Threshold[{thresholdId}].Assurance_0.01",
+                        iaResult.AssuranceOfEvent(thresholdId, 0.01),
+                        actualIaResult.AssuranceOfEvent(thresholdId, 0.01),
+                        report);
+
+                    // Long-term risk
+                    differences += CompareValue($"ImpactArea[{iaId}].Threshold[{thresholdId}].LTRisk_10yr",
+                        iaResult.LongTermExceedanceProbability(thresholdId, 10),
+                        actualIaResult.LongTermExceedanceProbability(thresholdId, 10),
+                        report);
+
+                    differences += CompareValue($"ImpactArea[{iaId}].Threshold[{thresholdId}].LTRisk_30yr",
+                        iaResult.LongTermExceedanceProbability(thresholdId, 30),
+                        actualIaResult.LongTermExceedanceProbability(thresholdId, 30),
+                        report);
+
+                    differences += CompareValue($"ImpactArea[{iaId}].Threshold[{thresholdId}].LTRisk_50yr",
+                        iaResult.LongTermExceedanceProbability(thresholdId, 50),
+                        actualIaResult.LongTermExceedanceProbability(thresholdId, 50),
+                        report);
+                }
+                catch (Exception)
+                {
+                    // Threshold may not exist in actual - skip silently
                 }
             }
         }
 
-        // Compare child elements recursively
-        foreach (XElement baselineChild in baseline.Elements())
+        return differences;
+    }
+
+    #endregion
+
+    #region Alternative Comparison
+
+    private int CompareAlternativeResults(XElement baselineDoc, XElement newDoc, StringBuilder report)
+    {
+        int differences = 0;
+        var baselineElements = baselineDoc.Elements("AlternativeResults").ToList();
+        var newElements = newDoc.Elements("AlternativeResults").ToList();
+
+        foreach (var baselineWrapper in baselineElements)
         {
-            string childName = baselineChild.Name.LocalName;
+            string name = baselineWrapper.Attribute("name")?.Value ?? "unknown";
+            var newWrapper = newElements.FirstOrDefault(e => e.Attribute("name")?.Value == name);
 
-            // Try to find matching child by element name and any identifying attributes
-            XElement? matchingChild = FindMatchingChild(newElem, baselineChild);
-
-            if (matchingChild != null)
+            if (newWrapper == null)
             {
-                string childPath = string.IsNullOrEmpty(path) ? childName : $"{path}/{childName}";
+                report.AppendLine($"  MISSING: Alternative '{name}' not in new results");
+                differences++;
+                continue;
+            }
 
-                // Add identifying attributes to path if present
-                string? id = baselineChild.Attribute("id")?.Value ?? baselineChild.Attribute("name")?.Value;
-                if (id != null)
-                {
-                    childPath += $"[{id}]";
-                }
-
-                CompareNumericValues(baselineChild, matchingChild, childPath, diffs);
+            try
+            {
+                // AlternativeResults stores BaseYearResults and FutureYearResults as ScenarioResults
+                // We compare the underlying scenarios since EqAD is derived from them
+                differences += CompareAlternativeStatistics(name, baselineWrapper, newWrapper, report);
+            }
+            catch (Exception ex)
+            {
+                report.AppendLine($"  ERROR: Failed to compare Alternative '{name}': {ex.Message}");
+                differences++;
             }
         }
+
+        return differences;
     }
 
-    private static XElement? FindMatchingChild(XElement parent, XElement target)
+    private int CompareAlternativeStatistics(string altName, XElement baselineWrapper, XElement newWrapper, StringBuilder report)
     {
-        string targetName = target.Name.LocalName;
-        IEnumerable<XElement> candidates = parent.Elements(targetName);
+        int differences = 0;
+        report.AppendLine($"  Alternative: {altName}");
 
-        // Try to match by id or name attribute
-        string? targetId = target.Attribute("id")?.Value;
-        string? targetNameAttr = target.Attribute("name")?.Value;
+        // Deserialize the base year and future year scenario results
+        var baselineBaseYearXml = baselineWrapper.Element("BaseYearResults")?.Element("ScenarioResults");
+        var newBaseYearXml = newWrapper.Element("BaseYearResults")?.Element("ScenarioResults");
+        var baselineFutureYearXml = baselineWrapper.Element("FutureYearResults")?.Element("ScenarioResults");
+        var newFutureYearXml = newWrapper.Element("FutureYearResults")?.Element("ScenarioResults");
 
-        if (targetId != null)
+        if (baselineBaseYearXml == null || newBaseYearXml == null)
         {
-            return candidates.FirstOrDefault(c => c.Attribute("id")?.Value == targetId);
+            report.AppendLine($"    ERROR: Missing BaseYearResults");
+            return 1;
         }
 
-        if (targetNameAttr != null)
+        if (baselineFutureYearXml == null || newFutureYearXml == null)
         {
-            return candidates.FirstOrDefault(c => c.Attribute("name")?.Value == targetNameAttr);
+            report.AppendLine($"    ERROR: Missing FutureYearResults");
+            return 1;
         }
 
-        // If no identifying attributes, just take the first one with the same name
-        return candidates.FirstOrDefault();
+        var baselineBaseYear = ScenarioResults.ReadFromXML(baselineBaseYearXml);
+        var newBaseYear = ScenarioResults.ReadFromXML(newBaseYearXml);
+        var baselineFutureYear = ScenarioResults.ReadFromXML(baselineFutureYearXml);
+        var newFutureYear = ScenarioResults.ReadFromXML(newFutureYearXml);
+
+        // Compare base year results
+        report.AppendLine($"    BaseYear:");
+        foreach (var iaResult in baselineBaseYear.ResultsList)
+        {
+            int iaId = iaResult.ImpactAreaID;
+            var actualIaResult = newBaseYear.ResultsList.FirstOrDefault(r => r.ImpactAreaID == iaId);
+
+            if (actualIaResult == null)
+            {
+                report.AppendLine($"      MISSING: ImpactArea[{iaId}] not in new results");
+                differences++;
+                continue;
+            }
+
+            differences += CompareValue($"ImpactArea[{iaId}].MeanEAD",
+                iaResult.MeanExpectedAnnualConsequences(),
+                actualIaResult.MeanExpectedAnnualConsequences(),
+                report);
+
+            // Compare by category
+            foreach (var consequence in iaResult.ConsequenceResults.ConsequenceResultList)
+            {
+                string damCat = consequence.DamageCategory;
+                string assetCat = consequence.AssetCategory;
+
+                differences += CompareValue($"ImpactArea[{iaId}].{damCat}.{assetCat}.MeanEAD",
+                    iaResult.MeanExpectedAnnualConsequences(iaId, damCat, assetCat),
+                    actualIaResult.MeanExpectedAnnualConsequences(iaId, damCat, assetCat),
+                    report);
+            }
+        }
+
+        // Compare future year results
+        report.AppendLine($"    FutureYear:");
+        foreach (var iaResult in baselineFutureYear.ResultsList)
+        {
+            int iaId = iaResult.ImpactAreaID;
+            var actualIaResult = newFutureYear.ResultsList.FirstOrDefault(r => r.ImpactAreaID == iaId);
+
+            if (actualIaResult == null)
+            {
+                report.AppendLine($"      MISSING: ImpactArea[{iaId}] not in new results");
+                differences++;
+                continue;
+            }
+
+            differences += CompareValue($"ImpactArea[{iaId}].MeanEAD",
+                iaResult.MeanExpectedAnnualConsequences(),
+                actualIaResult.MeanExpectedAnnualConsequences(),
+                report);
+
+            // Compare by category
+            foreach (var consequence in iaResult.ConsequenceResults.ConsequenceResultList)
+            {
+                string damCat = consequence.DamageCategory;
+                string assetCat = consequence.AssetCategory;
+
+                differences += CompareValue($"ImpactArea[{iaId}].{damCat}.{assetCat}.MeanEAD",
+                    iaResult.MeanExpectedAnnualConsequences(iaId, damCat, assetCat),
+                    actualIaResult.MeanExpectedAnnualConsequences(iaId, damCat, assetCat),
+                    report);
+            }
+        }
+
+        return differences;
     }
+
+    #endregion
+
+    #region Stage Damage Comparison
+
+    private int CompareStageDamageResults(XElement baselineDoc, XElement newDoc, StringBuilder report)
+    {
+        int differences = 0;
+        var baselineElements = baselineDoc.Elements("StageDamage").ToList();
+        var newElements = newDoc.Elements("StageDamage").ToList();
+
+        foreach (var baselineWrapper in baselineElements)
+        {
+            string name = baselineWrapper.Attribute("name")?.Value ?? "unknown";
+            var newWrapper = newElements.FirstOrDefault(e => e.Attribute("name")?.Value == name);
+
+            if (newWrapper == null)
+            {
+                report.AppendLine($"  MISSING: StageDamage '{name}' not in new results");
+                differences++;
+                continue;
+            }
+
+            try
+            {
+                var baselineCurves = DeserializeStageDamageCurves(baselineWrapper);
+                var newCurves = DeserializeStageDamageCurves(newWrapper);
+
+                differences += CompareStageDamageStatistics(name, baselineCurves, newCurves, report);
+            }
+            catch (Exception ex)
+            {
+                report.AppendLine($"  ERROR: Failed to deserialize StageDamage '{name}': {ex.Message}");
+                differences++;
+            }
+        }
+
+        return differences;
+    }
+
+    private List<UncertainPairedData> DeserializeStageDamageCurves(XElement wrapper)
+    {
+        var curves = new List<UncertainPairedData>();
+        var curvesElement = wrapper.Element("Curves");
+
+        if (curvesElement == null)
+            return curves;
+
+        foreach (var curveElement in curvesElement.Elements("UncertainPairedData"))
+        {
+            curves.Add(UncertainPairedData.ReadFromXML(curveElement));
+        }
+
+        return curves;
+    }
+
+    private int CompareStageDamageStatistics(string name, List<UncertainPairedData> baseline, List<UncertainPairedData> actual, StringBuilder report)
+    {
+        int differences = 0;
+        report.AppendLine($"  StageDamage: {name}");
+
+        if (baseline.Count != actual.Count)
+        {
+            report.AppendLine($"    DIFF: CurveCount - Baseline: {baseline.Count}, New: {actual.Count}");
+            differences++;
+            return differences;
+        }
+
+        for (int i = 0; i < baseline.Count; i++)
+        {
+            var baselineCurve = baseline[i];
+            var actualCurve = actual[i];
+
+            string curveId = $"Curve[IA={baselineCurve.ImpactAreaID},Dam={baselineCurve.DamageCategory},Asset={baselineCurve.AssetCategory}]";
+
+            // Compare point count
+            if (baselineCurve.Xvals.Length != actualCurve.Xvals.Length)
+            {
+                report.AppendLine($"    DIFF: {curveId}.PointCount - Baseline: {baselineCurve.Xvals.Length}, New: {actualCurve.Xvals.Length}");
+                differences++;
+                continue;
+            }
+
+            // Compare min/max stages
+            if (baselineCurve.Xvals.Length > 0)
+            {
+                differences += CompareValue($"{curveId}.MinStage",
+                    baselineCurve.Xvals.Min(),
+                    actualCurve.Xvals.Min(),
+                    report);
+
+                differences += CompareValue($"{curveId}.MaxStage",
+                    baselineCurve.Xvals.Max(),
+                    actualCurve.Xvals.Max(),
+                    report);
+
+                // Compare median damage at each stage
+                for (int j = 0; j < baselineCurve.Xvals.Length; j++)
+                {
+                    double stage = baselineCurve.Xvals[j];
+                    double baselineMedian = baselineCurve.Yvals[j].InverseCDF(0.5);
+                    double actualMedian = actualCurve.Yvals[j].InverseCDF(0.5);
+
+                    differences += CompareValue($"{curveId}.Stage[{stage:F2}].MedianDamage",
+                        baselineMedian, actualMedian, report);
+                }
+            }
+        }
+
+        return differences;
+    }
+
+    #endregion
+
+    #region Alternative Comparison Report
+
+    private int CompareAlternativeComparisonResults(XElement baselineDoc, XElement newDoc, StringBuilder report)
+    {
+        int differences = 0;
+        var baselineElements = baselineDoc.Elements("AlternativeComparisonReport").ToList();
+        var newElements = newDoc.Elements("AlternativeComparisonReport").ToList();
+
+        foreach (var baselineWrapper in baselineElements)
+        {
+            string name = baselineWrapper.Attribute("name")?.Value ?? "unknown";
+            var newWrapper = newElements.FirstOrDefault(e => e.Attribute("name")?.Value == name);
+
+            if (newWrapper == null)
+            {
+                report.AppendLine($"  MISSING: AlternativeComparisonReport '{name}' not in new results");
+                differences++;
+                continue;
+            }
+
+            try
+            {
+                // Compare statistics directly from XML attributes (stored pre-computed)
+                differences += CompareAlternativeComparisonStatistics(name, baselineWrapper, newWrapper, report);
+            }
+            catch (Exception ex)
+            {
+                report.AppendLine($"  ERROR: Failed to compare AlternativeComparisonReport '{name}': {ex.Message}");
+                differences++;
+            }
+        }
+
+        return differences;
+    }
+
+    private int CompareAlternativeComparisonStatistics(string reportName, XElement baselineWrapper, XElement newWrapper, StringBuilder report)
+    {
+        int differences = 0;
+        report.AppendLine($"  AlternativeComparisonReport: {reportName}");
+
+        // Iterate over with-project alternatives in baseline
+        foreach (var baselineAltElement in baselineWrapper.Elements("WithProjectAlternative"))
+        {
+            string altId = baselineAltElement.Attribute("id")?.Value ?? "0";
+            string altName = baselineAltElement.Attribute("name")?.Value ?? $"Alt{altId}";
+
+            var newAltElement = newWrapper.Elements("WithProjectAlternative")
+                .FirstOrDefault(e => e.Attribute("id")?.Value == altId);
+
+            if (newAltElement == null)
+            {
+                report.AppendLine($"    MISSING: Alternative '{altName}' not in new results");
+                differences++;
+                continue;
+            }
+
+            // Compare each impact area
+            foreach (var baselineIaElement in baselineAltElement.Elements("ImpactArea"))
+            {
+                string iaId = baselineIaElement.Attribute("id")?.Value ?? "0";
+
+                var newIaElement = newAltElement.Elements("ImpactArea")
+                    .FirstOrDefault(e => e.Attribute("id")?.Value == iaId);
+
+                if (newIaElement == null)
+                {
+                    report.AppendLine($"    MISSING: Alt[{altName}].ImpactArea[{iaId}] not in new results");
+                    differences++;
+                    continue;
+                }
+
+                string prefix = $"Alt[{altName}].IA[{iaId}]";
+
+                // Compare aggregate metrics stored as attributes
+                differences += CompareXmlAttribute($"{prefix}.EqADReduced",
+                    baselineIaElement, newIaElement, "eqadReduced", report);
+
+                differences += CompareXmlAttribute($"{prefix}.BaseEADReduced",
+                    baselineIaElement, newIaElement, "baseEadReduced", report);
+
+                differences += CompareXmlAttribute($"{prefix}.FutureEADReduced",
+                    baselineIaElement, newIaElement, "futureEadReduced", report);
+
+                // Compare category breakdowns
+                foreach (var baselineCatElement in baselineIaElement.Elements("Category"))
+                {
+                    string damCat = baselineCatElement.Attribute("damageCategory")?.Value ?? "";
+                    string assetCat = baselineCatElement.Attribute("assetCategory")?.Value ?? "";
+
+                    var newCatElement = newIaElement.Elements("Category")
+                        .FirstOrDefault(e =>
+                            e.Attribute("damageCategory")?.Value == damCat &&
+                            e.Attribute("assetCategory")?.Value == assetCat);
+
+                    if (newCatElement == null)
+                    {
+                        report.AppendLine($"    MISSING: {prefix}.{damCat}.{assetCat} not in new results");
+                        differences++;
+                        continue;
+                    }
+
+                    differences += CompareXmlAttribute($"{prefix}.{damCat}.{assetCat}.EqADReduced",
+                        baselineCatElement, newCatElement, "eqadReduced", report);
+
+                    differences += CompareXmlAttribute($"{prefix}.{damCat}.{assetCat}.BaseEADReduced",
+                        baselineCatElement, newCatElement, "baseEadReduced", report);
+
+                    differences += CompareXmlAttribute($"{prefix}.{damCat}.{assetCat}.FutureEADReduced",
+                        baselineCatElement, newCatElement, "futureEadReduced", report);
+                }
+            }
+        }
+
+        return differences;
+    }
+
+    private int CompareXmlAttribute(string metricName, XElement baseline, XElement actual, string attrName, StringBuilder report)
+    {
+        if (!double.TryParse(baseline.Attribute(attrName)?.Value, out double baselineVal))
+            return 0;
+        if (!double.TryParse(actual.Attribute(attrName)?.Value, out double actualVal))
+            return 0;
+
+        return CompareValue(metricName, baselineVal, actualVal, report);
+    }
+
+    #endregion
+
+    #region Value Comparison Helpers
+
+    private int CompareValue(string metricName, double baseline, double actual, StringBuilder report)
+    {
+        if (ValuesAreEqual(baseline, actual))
+            return 0;
+
+        double absDiff = Math.Abs(baseline - actual);
+        double relDiff = baseline != 0 ? absDiff / Math.Abs(baseline) : (actual != 0 ? 1.0 : 0);
+
+        report.AppendLine($"    DIFF: {metricName}");
+        report.AppendLine($"          Baseline: {baseline:F4}");
+        report.AppendLine($"          New:      {actual:F4}");
+        report.AppendLine($"          Diff:     {absDiff:F4} ({relDiff:P2})");
+
+        return 1;
+    }
+
+    private bool ValuesAreEqual(double baseline, double actual)
+    {
+        double absoluteDiff = Math.Abs(baseline - actual);
+
+        // If the absolute difference is less than minimum threshold, consider equal
+        if (absoluteDiff <= MinimumAbsoluteDifference)
+            return true;
+
+        // Check relative tolerance
+        double relativeDiff = baseline != 0 ? absoluteDiff / Math.Abs(baseline) : absoluteDiff;
+        return relativeDiff <= _tolerance;
+    }
+
+    #endregion
 }
