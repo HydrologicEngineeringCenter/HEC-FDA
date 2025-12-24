@@ -1,15 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Xml.Linq;
-using Statistics;
+using HEC.FDA.Model.compute;
+using HEC.FDA.Model.metrics;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Base.Interfaces;
-using HEC.FDA.Model.metrics;
-using HEC.FDA.Model.interfaces;
-using HEC.FDA.Model.compute;
-using System.Threading;
+using Statistics;
+using System;
+using System.Collections.Generic;
 using System.Reflection;
+using System.Threading;
 
 namespace HEC.FDA.Model.scenarios
 {
@@ -22,7 +20,7 @@ namespace HEC.FDA.Model.scenarios
         {
             _impactAreaSimulations = [];
         }
-        public Scenario( IList<ImpactAreaScenarioSimulation> impactAreaSimulations)
+        public Scenario(IList<ImpactAreaScenarioSimulation> impactAreaSimulations)
         {
             _impactAreaSimulations = impactAreaSimulations;
         }
@@ -38,7 +36,7 @@ namespace HEC.FDA.Model.scenarios
             ScenarioResults scenarioResults = new();
             foreach (ImpactAreaScenarioSimulation impactArea in _impactAreaSimulations)
             {
-               ImpactAreaScenarioResults res = impactArea.Compute(convergenceCriteria, cancellationToken, computeIsDeterministic);
+                ImpactAreaScenarioResults res = impactArea.Compute(convergenceCriteria, cancellationToken, computeIsDeterministic);
                 scenarioResults.AddResults(res);
             }
             scenarioResults.ComputeDate = DateTime.Now.ToString("G");
@@ -74,28 +72,6 @@ namespace HEC.FDA.Model.scenarios
                 }
             }
             return true;
-        }
-        public XElement WriteToXML()
-        {
-            XElement mainElement = new("Scenario");
-            foreach (ImpactAreaScenarioSimulation impactAreaScenarioSimulation in _impactAreaSimulations)
-            {
-                XElement iasElement = impactAreaScenarioSimulation.WriteToXML();
-                mainElement.Add(iasElement);
-            }
-            return mainElement;
-        }
-
-        public static Scenario ReadFromXML(XElement xElement)
-        {
-            IList<ImpactAreaScenarioSimulation> impactAreaScenarioSimulations = new List<ImpactAreaScenarioSimulation>();
-            foreach (XElement element in xElement.Elements())
-            {
-                ImpactAreaScenarioSimulation iasFromXML = ImpactAreaScenarioSimulation.ReadFromXML(element);
-                impactAreaScenarioSimulations.Add(iasFromXML);
-            }
-            Scenario scenario = new( impactAreaScenarioSimulations);
-            return scenario;
         }
         #endregion
     }

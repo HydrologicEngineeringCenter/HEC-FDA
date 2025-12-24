@@ -238,43 +238,6 @@ namespace HEC.FDA.ModelTest.unittests
 
         }
 
-        [Fact]
-        public void SimulationReadsTheSameThingItWrites()
-        {
-            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
-            ContinuousDistribution flow_frequency = new LogPearson3(1, 1, 1, 200);
-            //create a stage distribution
-            IDistribution[] stages = new IDistribution[2];
-            for (int i = 0; i < 2; i++)
-            {
-                stages[i] = IDistributionFactory.FactoryUniform(0, 30 * i, 10);
-            }
-            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, metaData);
-            //create a damage distribution
-            IDistribution[] damages = new IDistribution[3]
-            {
-                    new Uniform(0, 0, 10),
-                    new Uniform(0, 600000, 10),
-                    new Uniform(0, 600000, 10)
-            };
-            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, metaData);
-            List<UncertainPairedData> upd = new List<UncertainPairedData>();
-            upd.Add(stage_damage);
-
-            Threshold threshold = new Threshold(1, convergenceCriteria, ThresholdEnum.DefaultExteriorStage, 150000);//do we want to access this through _results?
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(id)
-                .WithFlowFrequency(flow_frequency)
-                .WithFlowStage(flow_stage)
-                .WithStageDamages(upd)
-                .WithAdditionalThreshold(threshold)
-                .Build();
-            ImpactAreaScenarioResults impactAreaScenarioResult = simulation.Compute(convergenceCriteria, computeIsDeterministic: true); //here we test compute, below we test preview compute 
-            XElement simulationElement = simulation.WriteToXML();
-            ImpactAreaScenarioSimulation simulationFromXML = ImpactAreaScenarioSimulation.ReadFromXML(simulationElement);
-            bool simulationMatches = simulation.Equals(simulationFromXML);
-            Assert.True(simulationMatches);
-        }
-
         [Theory]
         [InlineData(0, true)]
         public void ComputeShouldReturnBlankResultsIfNoDamages(double expectedEAD, bool expectedZeroValued)
