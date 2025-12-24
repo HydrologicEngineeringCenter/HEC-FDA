@@ -1,8 +1,6 @@
 using System.Diagnostics;
-using System.Xml.Linq;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.paireddata;
-using HEC.FDA.TestingUtility.Comparison;
 using HEC.FDA.TestingUtility.Configuration;
 using HEC.FDA.TestingUtility.Reporting;
 using HEC.FDA.TestingUtility.Services;
@@ -19,8 +17,7 @@ using HEC.FDA.ViewModel.Utilities;
 namespace HEC.FDA.TestingUtility;
 
 /// <summary>
-/// Runs FDA computations and generates result files (XML and CSV).
-/// Does not perform comparisons - use CompareRunner for that.
+/// Runs FDA computations and generates CSV result reports.
 /// </summary>
 public class ComputeRunner
 {
@@ -80,8 +77,6 @@ public class ComputeRunner
                 using StudyLoader loader = new();
                 loader.LoadStudy(study.NetworkSourcePath, _config.GlobalSettings.LocalTempDirectory);
 
-                XElement computedResults = StudyBaselineWriter.CreateStudyBaseline(study.StudyId, study.StudyName);
-
                 List<ComputeConfiguration> computations = BuildComputationList(study);
                 Console.WriteLine($"  Found {computations.Count} computations to run.");
 
@@ -97,27 +92,23 @@ public class ComputeRunner
                             case "stagedamage":
                                 List<UncertainPairedData> sdCurves = StageDamageRunner.RunStageDamage(compute.ElementName);
                                 SaveStageDamageResults(compute.ElementName, sdCurves);
-                                StudyBaselineWriter.AddStageDamage(computedResults, compute.ElementName, sdCurves);
                                 _csvReportFactory.AddStageDamageSummary(study.StudyId, compute.ElementName, sdCurves);
                                 break;
 
                             case "scenario":
                                 ScenarioResults scenarioResults = ScenarioRunner.RunScenario(compute.ElementName, _cts.Token);
-                                SaveScenarioResults(compute.ElementName, scenarioResults);
-                                StudyBaselineWriter.AddScenarioResults(computedResults, compute.ElementName, scenarioResults);
-                                _csvReportFactory.AddScenarioResults(study.StudyId, compute.ElementName, scenarioResults);
+                                IASElement scenarioElement = SaveScenarioResults(compute.ElementName, scenarioResults);
+                                _csvReportFactory.AddScenarioResults(study.StudyId, scenarioElement);
                                 break;
 
                             case "alternative":
                                 AlternativeResults altResults = AlternativeRunner.RunAlternative(compute.ElementName, _cts.Token);
-                                SaveAlternativeResults(compute.ElementName, altResults);
-                                StudyBaselineWriter.AddAlternativeResults(computedResults, compute.ElementName, altResults);
-                                _csvReportFactory.AddAlternativeResults(study.StudyId, compute.ElementName, altResults);
+                                AlternativeElement altElement = SaveAlternativeResults(compute.ElementName, altResults);
+                                _csvReportFactory.AddAlternativeResults(study.StudyId, altElement);
                                 break;
 
                             case "alternativecomparison":
                                 (AlternativeComparisonReportResults compResults, List<(int altId, string altName)> withProjAlts) = RunAlternativeComparisonWithMetadata(compute.ElementName, _cts.Token);
-                                StudyBaselineWriter.AddAlternativeComparisonResults(computedResults, compute.ElementName, compResults, withProjAlts);
                                 _csvReportFactory.AddAlternativeComparisonResults(study.StudyId, compute.ElementName, compResults, withProjAlts);
                                 break;
 
@@ -139,9 +130,6 @@ public class ComputeRunner
                         Console.WriteLine($"           {ex.StackTrace}");
                     }
                 }
-
-                // Save results
-                SaveResults(computedResults, study);
             }
             catch (OperationCanceledException)
             {
@@ -176,14 +164,6 @@ public class ComputeRunner
         // Save CSV report
         string csvPath = Path.Combine(_outputDir, "results_report.csv");
         _csvReportFactory.SaveReport(csvPath);
-
-        Console.WriteLine();
-        Console.WriteLine("Generated files:");
-        foreach ((string studyId, _, _, _) in studyTimings)
-        {
-            Console.WriteLine($"  {studyId}_results.xml");
-        }
-        Console.WriteLine($"  results_report.csv");
 
         return errors > 0 ? 1 : 0;
     }
@@ -299,27 +279,22 @@ public class ComputeRunner
         return (results, withProjectAlternatives);
     }
 
-    private void SaveResults(XElement computedResults, StudyConfiguration study)
-    {
-        string outputPath = Path.Combine(_outputDir, $"{study.StudyId}_results.xml");
-        StudyBaselineWriter.Save(computedResults, outputPath);
-        Console.WriteLine($"  Results saved to: {outputPath}");
-    }
-
-    private static void SaveScenarioResults(string elementName, ScenarioResults results)
+    private static IASElement SaveScenarioResults(string elementName, ScenarioResults results)
     {
         IASElement element = ScenarioRunner.FindElement<IASElement>(elementName);
         element.Results = results;
         PersistenceFactory.GetIASManager().SaveExisting(element);
         Console.WriteLine($"      Saved to temp database.");
+        return element;
     }
 
-    private static void SaveAlternativeResults(string elementName, AlternativeResults results)
+    private static AlternativeElement SaveAlternativeResults(string elementName, AlternativeResults results)
     {
         AlternativeElement element = ScenarioRunner.FindElement<AlternativeElement>(elementName);
         element.Results = results;
         PersistenceFactory.GetElementManager<AlternativeElement>().SaveExisting(element);
         Console.WriteLine($"      Saved to temp database.");
+        return element;
     }
 
     private static void SaveStageDamageResults(string elementName, List<UncertainPairedData> curves)

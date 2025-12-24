@@ -1,3 +1,4 @@
+using System.Data.SQLite;
 using HEC.FDA.TestingUtility.Configuration;
 using HEC.FDA.ViewModel;
 using HEC.FDA.ViewModel.AggregatedStageDamage;
@@ -137,6 +138,13 @@ public class StudyLoader : IDisposable
                 {
                     Connection.Instance.Close();
                 }
+
+                // Clear SQLite connection pool to release file handles
+                SQLiteConnection.ClearAllPools();
+
+                // Force garbage collection to release any remaining handles
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
 
                 Directory.Delete(_localStudyPath, recursive: true);
                 Console.WriteLine($"  Cleaned up temp study folder: {_localStudyPath}");
