@@ -1002,6 +1002,7 @@ namespace HEC.FDA.Model.compute
                 return new SimulationBuilder(_Simulation);
             }
 
+            // this needs to get hooked up to the life loss elements in the study when we have real test data
             public SimulationBuilder WithStageLifeLoss(List<UncertainPairedData> uncertainPairedDataList)
             {
                 _Simulation._FailureStageLifeLossFunctions = uncertainPairedDataList;
@@ -1057,6 +1058,8 @@ namespace HEC.FDA.Model.compute
                 _Simulation.NonFailRiskIncluded = true;
                 return new SimulationBuilder(_Simulation);
             }
+
+            // TODO: add nonfail stage-lifeloss
         }
 
     }
