@@ -61,6 +61,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScratchSpace", "ScratchSpac
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualScratchSpace", "VisualScratchSpace\VisualScratchSpace.csproj", "{90861E11-37B0-49F1-AB98-67D42F39ED1B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HEC.FDA.TestingUtility", "HEC.FDA.TestingUtility\HEC.FDA.TestingUtility.csproj", "{38BE2FDF-9E55-4C96-8759-1A98A67B1789}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -299,6 +301,18 @@ Global
 		{90861E11-37B0-49F1-AB98-67D42F39ED1B}.Release|x64.Build.0 = Release|Any CPU
 		{90861E11-37B0-49F1-AB98-67D42F39ED1B}.Release|x86.ActiveCfg = Release|Any CPU
 		{90861E11-37B0-49F1-AB98-67D42F39ED1B}.Release|x86.Build.0 = Release|Any CPU
+		{38BE2FDF-9E55-4C96-8759-1A98A67B1789}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38BE2FDF-9E55-4C96-8759-1A98A67B1789}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38BE2FDF-9E55-4C96-8759-1A98A67B1789}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{38BE2FDF-9E55-4C96-8759-1A98A67B1789}.Debug|x64.Build.0 = Debug|Any CPU
+		{38BE2FDF-9E55-4C96-8759-1A98A67B1789}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{38BE2FDF-9E55-4C96-8759-1A98A67B1789}.Debug|x86.Build.0 = Debug|Any CPU
+		{38BE2FDF-9E55-4C96-8759-1A98A67B1789}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38BE2FDF-9E55-4C96-8759-1A98A67B1789}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38BE2FDF-9E55-4C96-8759-1A98A67B1789}.Release|x64.ActiveCfg = Release|Any CPU
+		{38BE2FDF-9E55-4C96-8759-1A98A67B1789}.Release|x64.Build.0 = Release|Any CPU
+		{38BE2FDF-9E55-4C96-8759-1A98A67B1789}.Release|x86.ActiveCfg = Release|Any CPU
+		{38BE2FDF-9E55-4C96-8759-1A98A67B1789}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
