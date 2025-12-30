@@ -3,7 +3,6 @@ using HEC.FDA.Model.hydraulics;
 using HEC.FDA.Model.hydraulics.enums;
 using HEC.FDA.Model.hydraulics.Interfaces;
 using HEC.FDA.ViewModel.Editors;
-using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
@@ -17,7 +16,7 @@ using System.Windows;
 
 namespace HEC.FDA.ViewModel.Hydraulics.SteadyHDF
 {
-    public partial class SteadyHDFImporterVM : BaseEditorVM
+    public partial class SteadyHDFImporterVM : BaseEditorVM, IHaveListOfWSERows
     {
         private string _SelectedPath;
         public string SelectedPath

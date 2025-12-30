@@ -1,5 +1,6 @@
 ﻿using HEC.FDA.Model.hydraulics;
 using HEC.FDA.Model.hydraulics.enums;
+using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.Hydraulics.SteadyHDF;
 using HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF;
 using HEC.FDA.ViewModel.Utilities;
@@ -9,7 +10,7 @@ using System.IO;
 using System.Windows;
 using System.Xml.Linq;
 
-namespace HEC.FDA.ViewModel.Hydraulics.GriddedData;
+namespace HEC.FDA.ViewModel.Hydraulics;
 
 public class HydraulicElement : ChildElement, IHaveStudyFiles
 {

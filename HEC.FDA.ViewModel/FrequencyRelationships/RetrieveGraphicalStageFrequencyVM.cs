@@ -2,7 +2,6 @@
 using HEC.FDA.Model.Spatial;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.ViewModel.FrequencyRelationships.FrequencyEditor;
-using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.IndexPoints;
 using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Watershed;
@@ -12,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using NamedAction = HEC.MVVMFramework.ViewModel.Implementations.NamedAction;
+using HEC.FDA.ViewModel.Hydraulics;
 
 namespace HEC.FDA.ViewModel.FrequencyRelationships;
 

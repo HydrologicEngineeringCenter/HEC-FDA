@@ -476,7 +476,7 @@ namespace HEC.FDA.View.TableWithPlot
                                 value;
                         cancel = false;
                     }
-                    else
+                    else if (dataGrid.Items.Count > 0)
                     {
                         PropertyInfo[] pilist = dataGrid.Items[0].GetType().GetProperties();
                         foreach (PropertyInfo pi in pilist)

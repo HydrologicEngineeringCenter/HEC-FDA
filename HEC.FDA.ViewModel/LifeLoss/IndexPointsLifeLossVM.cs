@@ -2,7 +2,7 @@
 using HEC.FDA.Model.LifeLoss;
 using HEC.FDA.Model.LifeLoss.Saving;
 using HEC.FDA.Model.paireddata;
-using HEC.FDA.ViewModel.Hydraulics.GriddedData;
+using HEC.FDA.ViewModel.Hydraulics;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.IndexPoints;
 using HEC.FDA.ViewModel.Saving;
