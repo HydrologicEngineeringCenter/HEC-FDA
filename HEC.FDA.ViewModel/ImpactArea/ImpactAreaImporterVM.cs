@@ -1,13 +1,17 @@
-﻿using HEC.CS.Collections;
+﻿using Geospatial.GDALAssist;
+using Geospatial.IO;
+using HEC.CS.Collections;
 using HEC.FDA.Model.Spatial;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Saving.PersistenceManagers;
+using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using Utility.Logging;
 
 namespace HEC.FDA.ViewModel.ImpactArea
 {
@@ -15,17 +19,17 @@ namespace HEC.FDA.ViewModel.ImpactArea
     {
         #region Fields
         private string _selectedPath;
-        private List<string> _UniqueNames = new();
+        private List<string> _UniqueNames = [];
         private string _SelectedUniqueNameColumnHeader;
         #endregion
         #region Properties
         public string SelectedPath
         {
             get { return _selectedPath; }
-            set { _selectedPath = value; UniqueNames = new(); SelectedUniqueNameColumnHeader = null; LoadUniqueNames(); NotifyPropertyChanged(); } // using new because Clear() doesn't hit the setter. 
+            set { _selectedPath = value; UniqueNames = []; SelectedUniqueNameColumnHeader = null; LoadUniqueNames(); NotifyPropertyChanged(); } // using new because Clear() doesn't hit the setter. 
         }
 
-        public CustomObservableCollection<ImpactAreaRowItem> ListOfRows { get; } = new CustomObservableCollection<ImpactAreaRowItem>();
+        public CustomObservableCollection<ImpactAreaRowItem> ListOfRows { get; } = [];
 
         public List<string> UniqueNames
         {
@@ -76,7 +80,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
                 bool isPolygon = RASHelper.IsPolygonShapefile(SelectedPath, ref error);
                 if (!validShapefile || !isPolygon)
                 {
-                    System.Windows.MessageBox.Show(error, "Invalid Shapefile", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    MessageBox.Show(error, "Invalid Shapefile", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                     return;
                 }
                 else
@@ -101,7 +105,7 @@ namespace HEC.FDA.ViewModel.ImpactArea
             }
             else
             {
-                System.Windows.MessageBox.Show("The names in the column identified were not unique", "Names not unique", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                MessageBox.Show("The names in the column identified were not unique", "Names not unique", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
         }
 
@@ -134,7 +138,12 @@ namespace HEC.FDA.ViewModel.ImpactArea
 
             if (IsCreatingNewElement)
             {
-                StudyFilesManager.CopyFilesWithSameName(SelectedPath, Name, elementToSave.GetType());
+                FdaValidationResult reprojectResult = SaveWithReprojection(Name);
+                if (!reprojectResult.IsValid)
+                {
+                    MessageBox.Show(reprojectResult.ErrorMessage, "Save Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
             }
             else
             {
@@ -142,6 +151,57 @@ namespace HEC.FDA.ViewModel.ImpactArea
             }
             //this call handles the sqlite data
             Save(elementToSave);
+        }
+
+        private FdaValidationResult SaveWithReprojection(string directoryName)
+        {
+            FdaValidationResult result = new();
+
+            // Check if study projection is set
+            string projectionFile = Connection.Instance.ProjectionFile;
+            if (string.IsNullOrEmpty(projectionFile) || !File.Exists(projectionFile))
+            {
+                result.AddErrorMessage("Study projection is not set. Please set the study projection in Study Properties before importing impact areas.");
+                return result;
+            }
+
+            // Load the study projection
+            Projection studyProjection = Projection.FromFile(projectionFile);
+            if (studyProjection == null)
+            {
+                result.AddErrorMessage("Failed to load study projection. Please verify the projection file is valid.");
+                return result;
+            }
+
+            // Read the shapefile with reprojection to study projection
+            OperationResult readResult = ShapefileIO.TryRead(SelectedPath, out Geospatial.Features.PolygonFeatureCollection collection, studyProjection);
+            if (!readResult.Result)
+            {
+                result.AddErrorMessage($"Failed to read shapefile: {readResult.GetConcatenatedMessages()}");
+                return result;
+            }
+
+            // Create destination directory
+            string destinationDirectory = Path.Combine(Connection.Instance.ImpactAreaDirectory, directoryName);
+            Directory.CreateDirectory(destinationDirectory);
+
+            // Write the reprojected shapefile
+            string destinationShpPath = Path.Combine(destinationDirectory, Path.GetFileName(SelectedPath));
+            try
+            {
+                ShapefileIO.Write(destinationShpPath, collection.Features.ToList(), collection.AttributeTable);
+
+                // Write the projection file
+                string destinationPrjPath = Path.ChangeExtension(destinationShpPath, ".prj");
+                studyProjection.ExportEsri(destinationPrjPath);
+            }
+            catch (Exception ex)
+            {
+                result.AddErrorMessage($"Failed to write reprojected shapefile: {ex.Message}");
+                return result;
+            }
+
+            return result;
         }
     }
 }
