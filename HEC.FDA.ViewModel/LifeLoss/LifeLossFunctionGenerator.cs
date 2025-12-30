@@ -95,8 +95,10 @@ public class LifeLossFunctionGenerator
                 if (!stageByAlternative.TryGetValue(alternative, out double stage))
                 {
                     string associatedHydraulics = _hydraulicsFolderByAlternative[alternative];
-                    // looking for a file matching the hydraulicsname.p??.hdf
-                    string filePath = Directory.EnumerateFiles(_topLevelHydraulicsFolder, $"{associatedHydraulics}.p??.hdf").FirstOrDefault()
+                    // looking for a file matching the hydraulicsname.hdf
+                    // This is hardcoding LifeSim convention of .hdf extension for hydraulics files. Could be made more flexible in the future if needed.
+                    // Instead, load the whole hydraulics folder as RASResults and scrub the names from them, then use those to compare with the LifeSim database.
+                    string filePath = Directory.EnumerateFiles(_topLevelHydraulicsFolder, $"{associatedHydraulics}.hdf").FirstOrDefault()
                         ?? throw new System.Exception($"'{associatedHydraulics}' hydraulics file not found in {_topLevelHydraulicsFolder}.");
                     float[] computedStage = RASHelper.GetStageFromHDF(indexPoint, filePath); // costly compute
                     stage = computedStage[0];
