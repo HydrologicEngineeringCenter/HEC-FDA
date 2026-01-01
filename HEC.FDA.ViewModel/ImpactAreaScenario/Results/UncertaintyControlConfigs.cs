@@ -82,9 +82,9 @@ public class UncertaintyControlConfigs
         {
             PlotTitle = "EALL Distribution";
             YAxisTitle = "Expected Annual Life Loss";
-            MeanFormat = "N2";
+            MeanFormat = "N4";
             YAxisFormat = "N0";
-            TrackerFormat = "X: {Probability:0.####}, Y: {Value:N2}";
+            TrackerFormat = "X: {Probability:0.####}, Y: {Value:N4}";
             ConsequenceType = ConsequenceType.LifeLoss;
         }
 

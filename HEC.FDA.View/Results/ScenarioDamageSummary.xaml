@@ -112,7 +112,7 @@
           HorizontalAlignment="Left">
           <StackPanel>
             <TextBlock
-              Text="Expected Annual Life Loss Distribution Summary"
+              Text="Average Annual Life Loss Distribution Summary"
               HorizontalAlignment="Center"
               Margin="5" />
             <twp:FdaDataGrid

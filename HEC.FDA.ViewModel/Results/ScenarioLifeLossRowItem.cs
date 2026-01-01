@@ -12,13 +12,13 @@ public class ScenarioLifeLossRowItem
     public string AnalysisYear { get; set; }
     [DisplayAsColumn("Impact Area")]
     public string ImpactArea { get; set; }
-    [DisplayAsColumn("Mean EALL")]
+    [DisplayAsColumn("Mean AALL")]
     public double Mean { get; set; }
-    [DisplayAsColumn("25th Percentile EALL")]
+    [DisplayAsColumn("25th Percentile AALL")]
     public double Point25 { get; set; }
-    [DisplayAsColumn("50th Percentile EALL")]
+    [DisplayAsColumn("50th Percentile AALL")]
     public double Point5 { get; set; }
-    [DisplayAsColumn("75th Percentile EALL")]
+    [DisplayAsColumn("75th Percentile AALL")]
     public double Point75 { get; set; }
 
 

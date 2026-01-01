@@ -8,7 +8,7 @@ public class LifeLossRowItem : IQuartileRowItem
     public string Frequency { get; }
     public double Value { get; }
     [DisplayAsColumn(StringConstants.QUARTILE_VALUE)]
-    public string FormattedValue => Value.ToString("N2");
+    public string FormattedValue => Value.ToString("N4");
 
     public LifeLossRowItem(string frequency, double value)
     {

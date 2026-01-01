@@ -25,7 +25,7 @@ namespace HEC.FDA.View.Results
         {
             if (e.PropertyType == typeof(double) || e.PropertyType == typeof(double?))
             {
-                (e.Column as DataGridTextColumn).Binding.StringFormat = "N2";
+                (e.Column as DataGridTextColumn).Binding.StringFormat = "N4";
             }
 
         }

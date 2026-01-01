@@ -98,7 +98,9 @@ public class AggregatedConsequencesBinned
             double binWidth;
             if (range < INITIAL_BIN_QUANTITY)
             {
-                binWidth = 1;
+                //this is cranked down from 1 to .001 because that's a more reasonable number for AALL. Potentially should be
+                //even lower. Needs investigation. 
+                binWidth = .001;
             }
             else
             {
