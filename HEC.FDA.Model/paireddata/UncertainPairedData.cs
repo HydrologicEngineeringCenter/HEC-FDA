@@ -1,5 +1,6 @@
 using Statistics;
 using System;
+using System.Linq;
 using System.Xml.Linq;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
@@ -302,6 +303,159 @@ namespace HEC.FDA.Model.paireddata
             }
             return returnStrings;
         }
+
+        /// <summary>
+        /// Combines two UncertainPairedData objects using weighted addition.
+        /// At each X value, the Y distributions are combined by sampling at multiple
+        /// probability levels and computing weighted averages.
+        /// </summary>
+        /// <param name="upd1">First UncertainPairedData</param>
+        /// <param name="upd2">Second UncertainPairedData</param>
+        /// <param name="weight1">Weight for upd1 (must be between 0 and 1)</param>
+        /// <param name="weight2">Weight for upd2 (must be between 0 and 1, and weight1 + weight2 must equal 1)</param>
+        /// <returns>A new UncertainPairedData representing the weighted combination</returns>
+        /// <exception cref="ArgumentException">Thrown when weights don't sum to 1</exception>
+        public static UncertainPairedData WeightedAddition(UncertainPairedData upd1, UncertainPairedData upd2, double weight1, double weight2)
+        {
+            // Validate weights sum to 1
+            const double tolerance = 1e-10;
+            if (Math.Abs(weight1 + weight2 - 1.0) > tolerance)
+            {
+                throw new ArgumentException($"Weights must sum to 1. Got {weight1} + {weight2} = {weight1 + weight2}");
+            }
+
+            // Handle null cases
+            if (upd1.IsNull) return upd2;
+            if (upd2.IsNull) return upd1;
+
+            // Merge X values from both UPDs (union of all unique X values, sorted)
+            double[] mergedXvals = upd1.Xvals
+                .Union(upd2.Xvals)
+                .OrderBy(x => x)
+                .ToArray();
+
+            // For each merged X value, create a weighted distribution
+            IDistribution[] mergedYvals = new IDistribution[mergedXvals.Length];
+
+            // Probability levels to sample for creating the weighted distribution
+            double[] probLevels = { 0.01, 0.05, 0.10, 0.25, 0.50, 0.75, 0.90, 0.95, 0.99 };
+
+            for (int i = 0; i < mergedXvals.Length; i++)
+            {
+                double x = mergedXvals[i];
+
+                // Get distributions at this X value (interpolate if needed)
+                IDistribution dist1 = GetDistributionAtX(upd1, x);
+                IDistribution dist2 = GetDistributionAtX(upd2, x);
+
+                // Create weighted combination by sampling at probability levels
+                double[] weightedValues = new double[probLevels.Length];
+                for (int j = 0; j < probLevels.Length; j++)
+                {
+                    double val1 = dist1.InverseCDF(probLevels[j]);
+                    double val2 = dist2.InverseCDF(probLevels[j]);
+                    weightedValues[j] = weight1 * val1 + weight2 * val2;
+                }
+
+                // Create a new distribution from the weighted samples
+                mergedYvals[i] = CreateDistributionFromQuantiles(probLevels, weightedValues);
+            }
+
+            // Use metadata from upd1
+            return new UncertainPairedData(mergedXvals, mergedYvals, upd1.CurveMetaData);
+        }
+
+        /// <summary>
+        /// Gets the distribution at a specific X value, interpolating if necessary.
+        /// </summary>
+        private static IDistribution GetDistributionAtX(UncertainPairedData upd, double x)
+        {
+            // Check for exact match
+            int index = Array.BinarySearch(upd.Xvals, x);
+            if (index >= 0)
+            {
+                return upd.Yvals[index];
+            }
+
+            // Need to interpolate between adjacent distributions
+            index = ~index;
+
+            // Handle edge cases
+            if (index == 0)
+            {
+                return upd.Yvals[0];
+            }
+            if (index >= upd.Xvals.Length)
+            {
+                return upd.Yvals[^1];
+            }
+
+            // Linear interpolation factor
+            double x0 = upd.Xvals[index - 1];
+            double x1 = upd.Xvals[index];
+            double t = (x - x0) / (x1 - x0);
+
+            // Interpolate by sampling at multiple probability levels
+            IDistribution dist0 = upd.Yvals[index - 1];
+            IDistribution dist1 = upd.Yvals[index];
+
+            double[] probLevels = { 0.01, 0.05, 0.10, 0.25, 0.50, 0.75, 0.90, 0.95, 0.99 };
+            double[] interpolatedValues = new double[probLevels.Length];
+
+            for (int i = 0; i < probLevels.Length; i++)
+            {
+                double v0 = dist0.InverseCDF(probLevels[i]);
+                double v1 = dist1.InverseCDF(probLevels[i]);
+                interpolatedValues[i] = v0 + t * (v1 - v0);
+            }
+
+            return CreateDistributionFromQuantiles(probLevels, interpolatedValues);
+        }
+
+        /// <summary>
+        /// Creates a distribution from quantile samples.
+        /// </summary>
+        private static IDistribution CreateDistributionFromQuantiles(double[] probabilities, double[] values)
+        {
+            // If all values are essentially the same, return a deterministic distribution
+            double range = values.Max() - values.Min();
+            if (range < 1e-10)
+            {
+                return new Deterministic(values[probabilities.Length / 2]); // Use median
+            }
+
+            // Create a histogram and populate it with samples derived from the quantiles
+            double min = values[0];
+            double max = values[^1];
+            double binWidth = (max - min) / 100.0;
+            if (binWidth < 1e-10) binWidth = 1e-10;
+
+            DynamicHistogram histogram = new(binWidth, new ConvergenceCriteria());
+
+            // Generate samples that approximate the distribution defined by the quantiles
+            // We'll add samples proportional to the probability density between quantile points
+            int totalSamples = 1000;
+            long sampleIndex = 0;
+
+            for (int i = 0; i < probabilities.Length - 1; i++)
+            {
+                double probRange = probabilities[i + 1] - probabilities[i];
+                int samplesInRange = Math.Max(1, (int)(probRange * totalSamples));
+
+                for (int j = 0; j < samplesInRange; j++)
+                {
+                    double t = (double)j / samplesInRange;
+                    double value = values[i] + t * (values[i + 1] - values[i]);
+                    histogram.AddObservationToHistogram(value, sampleIndex++);
+                }
+            }
+
+            // Add the final value
+            histogram.AddObservationToHistogram(values[^1], sampleIndex);
+
+            return histogram;
+        }
+
         #endregion
     }
 }
