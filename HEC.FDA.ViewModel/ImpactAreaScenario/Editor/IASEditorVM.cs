@@ -18,7 +18,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
     public class IASEditorVM : BaseEditorVM
     {
         #region Fields
-        private List<ImpactAreaRowItem> _ImpactAreaNames = new List<ImpactAreaRowItem>();
+        private List<ImpactAreaRowItem> _ImpactAreaNames = [];
         private bool _HasImpactArea = true;
         private ChildElementComboItem _SelectedFailureStageDamageElement;
         private ChildElementComboItem _SelectedNonFailureStageDamageElement;
