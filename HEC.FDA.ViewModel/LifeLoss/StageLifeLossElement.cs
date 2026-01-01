@@ -114,5 +114,19 @@ public class StageLifeLossElement : ChildElement
         List<LifeLossFunction> lifeLossFunctions = LoadStageLifeLossRelationships();
         return lifeLossFunctions.Select((f) => f.Data).ToList();
     }
+
+    /// <summary>
+    /// Retrieves stage-life loss relationships filtered by impact area ID.
+    /// </summary>
+    /// <param name="impactAreaID">The impact area ID to filter by.</param>
+    /// <returns>A list of <see cref="UncertainPairedData"/> objects for the specified impact area.</returns>
+    public List<UncertainPairedData> StageLifeLossRelationshipsAsUPD(int impactAreaID)
+    {
+        List<LifeLossFunction> lifeLossFunctions = LoadStageLifeLossRelationships();
+        return lifeLossFunctions
+            .Where(f => f.Data.CurveMetaData.ImpactAreaID == impactAreaID)
+            .Select(f => f.Data)
+            .ToList();
+    }
 }
 
