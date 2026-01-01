@@ -15,6 +15,7 @@ using HEC.FDA.Model.hydraulics.Interfaces;
 using HEC.FDA.Model.hydraulics.Mock;
 using System.Linq;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace HEC.FDA.ModelTest.integrationtests;
 
@@ -228,26 +229,26 @@ new double[] { 0, 1, 2, 3, 4, 5, 6, 7 }, 50, new CurveMetaData("Probability", "S
     private static string filePath = @"C:\Temp\HEC-FDA\times.csv";
 
     #endregion
+    //This functionality is now contained in the testing utility, not unit tests. cannot have unit tests that run this long. 
+    //[Fact]
+    //public void ComputeTime()
+    //{
+    //    //Arrange
+    //    Inventory inventory = CreateInventory();
+    //    ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, inventory, hydraulicDataset, String.Empty, graphicalFrequency: stageFrequency, usingMockData: true);
+    //    List<ImpactAreaStageDamage> impactAreaStageDamageList = new List<ImpactAreaStageDamage>() { impactAreaStageDamage };
+    //    ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(impactAreaStageDamageList);
 
-    [Fact]
-    public void ComputeTime()
-    {
-        //Arrange
-        Inventory inventory = CreateInventory();
-        ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, inventory, hydraulicDataset, String.Empty, graphicalFrequency: stageFrequency, usingMockData: true);
-        List<ImpactAreaStageDamage> impactAreaStageDamageList = new List<ImpactAreaStageDamage>() { impactAreaStageDamage };
-        ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(impactAreaStageDamageList);
+    //    string time = "the big inventory stage damage compute was started at: " + DateTime.Now.ToString();
+    //    //Act
 
-        string time = "the big inventory stage damage compute was started at: " + DateTime.Now.ToString();
-        //Act
 
-        
-        List<UncertainPairedData> stageDamageFunctions = scenarioStageDamage.Compute().Item1;
-        time += " and the compute was completed at: " + DateTime.Now.ToString();
+    //    List<UncertainPairedData> stageDamageFunctions = scenarioStageDamage.Compute().Item1;
+    //    time += " and the compute was completed at: " + DateTime.Now.ToString();
 
-        File.AppendAllText(filePath, time);
+    //    File.AppendAllText(filePath, time);
 
-        //Assert
-        //I choose to assert nothing. 
-    }
+    //    //Assert
+    //    //I choose to assert nothing. 
+    //}
 }
