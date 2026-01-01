@@ -80,10 +80,10 @@ public class UncertaintyControlConfigs
 
         public LifeLossWithUncertaintyControlConfig()
         {
-            PlotTitle = "EALL Distribution";
-            YAxisTitle = "Expected Annual Life Loss";
+            PlotTitle = "AALL Distribution";
+            YAxisTitle = "Average Annual Life Loss";
             MeanFormat = "N4";
-            YAxisFormat = "N0";
+            YAxisFormat = "N4";
             TrackerFormat = "X: {Probability:0.####}, Y: {Value:N4}";
             ConsequenceType = ConsequenceType.LifeLoss;
         }
