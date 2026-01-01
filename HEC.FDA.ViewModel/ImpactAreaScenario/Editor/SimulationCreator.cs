@@ -9,6 +9,7 @@ using HEC.FDA.ViewModel.LifeLoss;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
 using Statistics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using static HEC.FDA.Model.compute.ImpactAreaScenarioSimulation;
@@ -133,7 +134,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
             if (_HasFailureStageLifeLoss)
             {
-                _SimulationBuilder.WithFakeStageLifeLoss();
+                _SimulationBuilder.WithStageLifeLoss(_FailureStageLifeLossElement.StageLifeLossRelationshipsAsUPD());
             }
 
             if (_FreqElem.IsAnalytical)

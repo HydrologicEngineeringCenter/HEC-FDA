@@ -6,6 +6,7 @@ using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.GeoTech;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
+using HEC.FDA.ViewModel.LifeLoss;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
 using Statistics;
@@ -285,10 +286,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             LateralStructureElement leveeElem = (LateralStructureElement)StudyCache.GetChildElementOfType(typeof(LateralStructureElement), LeveeFailureID);
             AggregatedStageDamageElement stageDamageElem = (AggregatedStageDamageElement)StudyCache.GetChildElementOfType(typeof(AggregatedStageDamageElement), FailureStageDamageID);
             AggregatedStageDamageElement nonFailureStageDamageElem = (AggregatedStageDamageElement)StudyCache.GetChildElementOfType(typeof(AggregatedStageDamageElement), NonFailureStageDamageID);
+            StageLifeLossElement stageLifeLossElement = (StageLifeLossElement)StudyCache.GetChildElementOfType(typeof(StageLifeLossElement), FailureStageLifeLossID);
+            StageLifeLossElement nonFailureLifeLossElement = (StageLifeLossElement)StudyCache.GetChildElementOfType(typeof(StageLifeLossElement), NonFailureStageLifeLossID);
 
             SimulationCreator sc = new(freqElem, inOutElem, ratElem, extIntElem, leveeElem, ImpactAreaID,
                 HasFailureStageDamage, stageDamageElem, HasNonFailureStageDamage, nonFailureStageDamageElem,
-                HasFailureStageLifeLoss, null, HasNonFailureStageLifeLoss, null);
+                HasFailureStageLifeLoss, stageLifeLossElement, HasNonFailureStageLifeLoss, nonFailureLifeLossElement);
 
             //otherwise we'll calculate it ourselves in the model. 
             if (!CalculateDefaultThreshold && leveeElem == null)

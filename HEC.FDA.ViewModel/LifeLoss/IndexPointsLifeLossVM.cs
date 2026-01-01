@@ -314,14 +314,24 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
     private void LoadStageLifeLossRelationships(int elementID)
     {
         string projFile = Connection.Instance.ProjectFile;
-        List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
-        Dictionary<string, int> IANameToID = impactAreaElements[0].GetNameToIDPairs();
-        LifeLossFunctionSaver saver = new(projFile, IANameToID);
-        LifeLossFunctionFilter filter = new() { Element_ID = [elementID] };
-        List<LifeLossFunction> functions = saver.ReadFromSQLite(filter);
+        List<StageLifeLossElement> lifeLossElements = StudyCache.GetChildElementsOfType<StageLifeLossElement>();
+
+        StageLifeLossElement matchingElement = lifeLossElements
+            .FirstOrDefault(e => e.ID == elementID);
+
+        if (matchingElement == null)
+        {
+            throw new System.Exception($"No StageLifeLossElement with ID matching {elementID}");
+        }
+
+        List<LifeLossFunction> functions = matchingElement.LoadStageLifeLossRelationships();
         LifeLossFunctions.Clear();
         LifeLossFunctions.AddRange(functions);
-        ChangePlot(0);
+
+        if (LifeLossFunctions.Count > 0)
+        {
+            ChangePlot(0);
+        }
     }
 
     [RelayCommand]

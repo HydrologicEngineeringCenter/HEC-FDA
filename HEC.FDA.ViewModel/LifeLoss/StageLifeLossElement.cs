@@ -1,4 +1,9 @@
-﻿using HEC.FDA.ViewModel.Editors;
+﻿using HEC.FDA.Model.LifeLoss;
+using HEC.FDA.Model.LifeLoss.Saving;
+using HEC.FDA.Model.paireddata;
+using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.ImpactArea;
+using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
@@ -39,7 +44,7 @@ public class StageLifeLossElement : ChildElement
         AddDefaultActions(EditStageLifeLossCurves, StringConstants.EDIT_STAGE_LIFE_LOSS_FUNCTION);
     }
 
-    // gets called when loading the element from sqlite
+    // gets called when loading the element from sqlite. Has no references because we're getting here through reflection. 
     public StageLifeLossElement(XElement elementXML, int id) : base(elementXML, id)
     {
         XElement config = elementXML.Element(CONFIG);
@@ -87,6 +92,27 @@ public class StageLifeLossElement : ChildElement
         string title = "Edit " + vm.Name;
         DynamicTabVM tab = new(title, vm, "EditStageLifeLossElement" + Name);
         Navigate(tab, false, true);
+    }
+
+    public List<LifeLossFunction> LoadStageLifeLossRelationships()
+    {
+        string projFile = Connection.Instance.ProjectFile;
+        List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
+        Dictionary<string, int> IANameToID = impactAreaElements[0].GetNameToIDPairs();
+        LifeLossFunctionSaver saver = new(projFile, IANameToID);
+        LifeLossFunctionFilter filter = new() { Element_ID = [ID] };
+        return saver.ReadFromSQLite(filter);
+    }
+
+    /// <summary>
+    /// Retrieves a collection of stage-life loss relationships represented as uncertain paired data.
+    /// </summary>
+    /// <returns>A list of <see cref="UncertainPairedData"/> objects, each representing a stage-life loss relationship. The list
+    /// will be empty if no relationships are available.</returns>
+    public List<UncertainPairedData> StageLifeLossRelationshipsAsUPD()
+    {
+        List<LifeLossFunction> lifeLossFunctions = LoadStageLifeLossRelationships();
+        return lifeLossFunctions.Select((f) => f.Data).ToList();
     }
 }
 

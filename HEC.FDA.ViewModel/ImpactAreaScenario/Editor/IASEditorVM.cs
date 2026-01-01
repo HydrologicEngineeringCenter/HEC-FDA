@@ -121,7 +121,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             }
         }
 
-        public CustomObservableCollection<ChildElementComboItem> StageDamageElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
+        public CustomObservableCollection<ChildElementComboItem> StageDamageElements { get; } = [];
         public CustomObservableCollection<ChildElementComboItem> StageLifeLossElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
 
         public bool HasImpactArea
@@ -178,6 +178,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             StudyCache.StageDamageAdded += AddStageDamageElement;
             StudyCache.StageDamageRemoved += RemoveStageDamageElement;
             StudyCache.StageDamageUpdated += UpdateStageDamageElement;
+
+            StudyCache.StageLifeLossAdded += AddStageLifeLossElement;
+            StudyCache.StageLifeLossRemoved += RemoveStageLifeLossElement;
+            StudyCache.StageLifeLossUpdated += UpdateStageLifeLossElement;
         }
         private ObservableCollection<ChildElementComboItem> CreateComboItems(List<ChildElement> elems)
         {
@@ -409,6 +413,23 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private void AddStageDamageElement(object sender, ElementAddedEventArgs e)
         {
             StageDamageElements.Add(new ChildElementComboItem((ChildElement)e.Element));
+        }
+
+        private void RemoveStageLifeLossElement(object sender, ElementAddedEventArgs e)
+        {
+            SpecificIASEditorVM.RemoveElement(e.Element.ID, StageLifeLossElements);
+            SelectedFailureStageLifeLossElement = StageLifeLossElements[0];
+            SelectedNonFailureStageLifeLossElement = StageLifeLossElements[0];
+        }
+
+        private void UpdateStageLifeLossElement(object sender, ElementUpdatedEventArgs e)
+        {
+            SpecificIASEditorVM.UpdateElement(StageLifeLossElements, SelectedFailureStageLifeLossElement, e.NewElement);
+        }
+
+        private void AddStageLifeLossElement(object sender, ElementAddedEventArgs e)
+        {
+            StageLifeLossElements.Add(new ChildElementComboItem((ChildElement)e.Element));
         }
 
         private void OnFailureStageDamageSelectionChanged()

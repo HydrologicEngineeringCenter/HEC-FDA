@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(dotnet test:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(dotnet build:*)"
     ],
     "deny": []
   }
