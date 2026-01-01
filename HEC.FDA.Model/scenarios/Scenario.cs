@@ -43,35 +43,9 @@ namespace HEC.FDA.Model.scenarios
             scenarioResults.SoftwareVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             return scenarioResults;
         }
-        public ImpactAreaScenarioSimulation GetImpactAreaScenarioSimulation(int impactAreaID)
-        {
-            foreach (ImpactAreaScenarioSimulation impactAreaScenarioSimulation in _impactAreaSimulations)
-            {
-                if (impactAreaScenarioSimulation.ImpactAreaID.Equals(impactAreaID))
-                {
-                    return impactAreaScenarioSimulation;
-                }
-            }
-            ImpactAreaScenarioSimulation dummyScenario = new(impactAreaID);
-            ReportMessage(this, new MessageEventArgs(new Message("The requested scenario could not be found. An arbitrary object is being returned.")));
-            return dummyScenario;
-        }
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender, e);
-        }
-        public bool Equals(Scenario scenarioToCompare)
-        {
-            foreach (ImpactAreaScenarioSimulation impactAreaScenarioSimulation in _impactAreaSimulations)
-            {
-                ImpactAreaScenarioSimulation impactAreaScenarioSimulationToCompare = scenarioToCompare.GetImpactAreaScenarioSimulation(impactAreaScenarioSimulation.ImpactAreaID);
-                bool impactAreaScenariosAreTHeSame = impactAreaScenarioSimulation.Equals(impactAreaScenarioSimulationToCompare);
-                if (!impactAreaScenariosAreTHeSame)
-                {
-                    return false;
-                }
-            }
-            return true;
         }
         #endregion
     }
