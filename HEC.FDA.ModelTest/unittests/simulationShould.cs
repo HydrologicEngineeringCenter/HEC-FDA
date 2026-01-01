@@ -99,7 +99,7 @@ namespace HEC.FDA.ModelTest.unittests
                 //.WithAdditionalThreshold(threshold)
                 .Build();
             ImpactAreaScenarioResults impactAreaScenarioResult = simulation.Compute(convergenceCriteria, computeIsDeterministic: true); //here we test compute, below we test preview compute 
-            double actual = impactAreaScenarioResult.MeanExpectedAnnualConsequences(id, "LifeLoss", "LifeLoss");
+            double actual = impactAreaScenarioResult.MeanExpectedAnnualConsequences(id, "LifeLoss", "LifeLoss",ConsequenceType.LifeLoss);
             double difference = expected - actual;
             double relativeDifference = Math.Abs(difference / expected);
             Assert.True(relativeDifference < .01);
