@@ -459,7 +459,7 @@ namespace HEC.FDA.Model.compute
                     }
 
                     //If the system response function is the default function 
-                    if (systemResponse_sample.Xvals.Length <= 2)
+                    if (systemResponse_sample.Xvals.Count <= 2)
                     {
                         ComputePerformance(frequency_stage, Convert.ToInt32(thisChunkIteration));
                     }
@@ -498,7 +498,7 @@ namespace HEC.FDA.Model.compute
                         ComputeDamagesFromStageFrequency_WithLeveeAndInteriorExterior(_channelstage_floodplainstage_sample, frequency_stage, systemResponse_sample, thisComputeIteration, thisChunkIteration, computeIsDeterministic);
                     }
                     //If the system response function is the default function
-                    if (systemResponse_sample.Xvals.Length <= 2)
+                    if (systemResponse_sample.Xvals.Count <= 2)
                     {
                         ComputePerformance(frequency_stage, Convert.ToInt32(thisChunkIteration));
                     }
@@ -585,12 +585,12 @@ namespace HEC.FDA.Model.compute
 
         private static PairedData CalculateFailureProbComplement(PairedData validatedSystemResponse)
         {
-            double[] probabilityOfNonFailure = new double[validatedSystemResponse.Yvals.Length];
+            double[] probabilityOfNonFailure = new double[validatedSystemResponse.Yvals.Count];
             for (int i = 0; i < probabilityOfNonFailure.Length; i++)
             {
                 probabilityOfNonFailure[i] = 1 - (validatedSystemResponse.Yvals[i]);
             }
-            PairedData complementOfSystemResponse = new(validatedSystemResponse.Xvals, probabilityOfNonFailure);
+            PairedData complementOfSystemResponse = new(validatedSystemResponse.Xvals.ToArray(), probabilityOfNonFailure);
             return complementOfSystemResponse;
         }
         //TODO: Opportunity for refactor: move performance functions to system performance statistics
@@ -618,7 +618,7 @@ namespace HEC.FDA.Model.compute
                 aep += initialProbOfStageInRange * initialProbFailure;
             }
             //within function range
-            for (int i = 1; i < levee_frequency_stage.Xvals.Length; i++)
+            for (int i = 1; i < levee_frequency_stage.Xvals.Count; i++)
             {
                 double probabilityOfStageInRange = levee_frequency_stage.Xvals[i] - levee_frequency_stage.Xvals[i - 1];
                 double averageProbFailure = (levee_frequency_stage.Yvals[i] + levee_frequency_stage.Yvals[i - 1]) / 2;
@@ -855,7 +855,7 @@ namespace HEC.FDA.Model.compute
                 tempXvals.Add(stageToAddBelowFragility);
                 tempYvals.Add(belowFragilityCurveValue);
 
-                for (int i = 0; i < systemResponseFunction.Xvals.Length; i++)
+                for (int i = 0; i < systemResponseFunction.Xvals.Count; i++)
                 {
                     tempXvals.Add(systemResponseFunction.Xvals[i]);
                     tempYvals.Add(systemResponseFunction.Yvals[i]);

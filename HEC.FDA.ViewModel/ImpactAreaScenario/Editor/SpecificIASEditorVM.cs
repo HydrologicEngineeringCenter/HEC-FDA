@@ -648,7 +648,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
             // Convert the damage frequency curve from non-exceedance to exceedance probabilities.
             double[] xs = _DamageFrequencyCurve.Xvals.Select(x => 1 - x).ToArray();
-            double[] ys = _DamageFrequencyCurve.Yvals;
+            double[] ys = _DamageFrequencyCurve.Yvals.ToArray();
 
             // Create metadata for the damage frequency curve.
             CurveMetaData curveMetaData = new CurveMetaData("Stage", "Damage", "Stage-Damage", "");

@@ -313,7 +313,7 @@ namespace HEC.FDA.Model.stageDamage
         private (List<UncertainPairedData>, List<UncertainPairedData>) ProduceZeroDamageFunctions()
         {
             (List<UncertainPairedData>, List<UncertainPairedData>) zeroResults = new();
-            IHistogram[] deterministics = new IHistogram[_StageFrequency.Yvals.Length];
+            IHistogram[] deterministics = new IHistogram[_StageFrequency.Yvals.Count];
             for (int i = 0; i < deterministics.Length; i++)
             {
                 //this histogram is zero-valued
@@ -325,10 +325,10 @@ namespace HEC.FDA.Model.stageDamage
             CurveMetaData otherMetaData = new CurveMetaData(name: "stage-damage function", xlabel: "stages", ylabel: "no structures", impactAreaID: ImpactAreaID, damageCategory: damcat, assetCategory: StringGlobalConstants.OTHER_ASSET_CATEGORY);
             CurveMetaData vehicleMetaData = new CurveMetaData(name: "stage-damage function", xlabel: "stages", ylabel: "no structures", impactAreaID: ImpactAreaID, damageCategory: damcat, assetCategory: StringGlobalConstants.VEHICLE_ASSET_CATEGORY);
 
-            UncertainPairedData structure = new UncertainPairedData(_StageFrequency.Yvals, deterministics, structureMetaData);
-            UncertainPairedData content = new UncertainPairedData(_StageFrequency.Yvals, deterministics, contentMetaData);
-            UncertainPairedData other = new UncertainPairedData(_StageFrequency.Yvals, deterministics, otherMetaData);
-            UncertainPairedData vehicle = new UncertainPairedData(_StageFrequency.Yvals, deterministics, vehicleMetaData);
+            UncertainPairedData structure = new UncertainPairedData(_StageFrequency.Yvals.ToArray(), deterministics, structureMetaData);
+            UncertainPairedData content = new UncertainPairedData(_StageFrequency.Yvals.ToArray(), deterministics, contentMetaData);
+            UncertainPairedData other = new UncertainPairedData(_StageFrequency.Yvals.ToArray(), deterministics, otherMetaData);
+            UncertainPairedData vehicle = new UncertainPairedData(_StageFrequency.Yvals.ToArray(), deterministics, vehicleMetaData);
             List<UncertainPairedData> zeros = new List<UncertainPairedData> { structure, content, other, vehicle };
             zeroResults.Item1 = (zeros);
             zeroResults.Item2 = (zeros);

@@ -121,7 +121,7 @@ public partial class GraphicalVM : ObservableObject
         lowerNonExceedence = graphical.SamplePairedData(.025);
         centralTendency = graphical.SamplePairedData(int.MinValue, true);
 
-        for (int i = 0; i < upperNonExceedence.Xvals.Length; i++)
+        for (int i = 0; i < upperNonExceedence.Xvals.Count; i++)
         {
             GraphicalRow row = new(1 - upperNonExceedence.Xvals[i], centralTendency.Yvals[i], lowerNonExceedence.Yvals[i], upperNonExceedence.Yvals[i], false);
             OutputDataProvider.Data.Add(row);
@@ -232,8 +232,8 @@ public partial class GraphicalVM : ObservableObject
             CanTrackerInterpolatePoints = false
         };
 
-        NormalDataPoint[] points = new NormalDataPoint[function.Xvals.Length];
-        for (int i = 0; i < function.Xvals.Length; i++)
+        NormalDataPoint[] points = new NormalDataPoint[function.Xvals.Count];
+        for (int i = 0; i < function.Xvals.Count; i++)
         {
             double nonExceedenceProb = 1 - function.Xvals[i];
             double zScore = Normal.StandardNormalInverseCDF(nonExceedenceProb);
