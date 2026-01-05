@@ -14,7 +14,7 @@ namespace HEC.FDA.ViewModel.LifeLoss;
 public class StageLifeLossElement : ChildElement
 {
     private const string CONFIG = "Config";
-    private const string LIFESIM_DATABASE_PATH = "LifeSimDatabasePath";
+    private const string LIFESIM_DATABASE_PATH = "LifeSimDatabaseFileName";
     private const string SELECTED_HYDRAULICS = "SelectedHydraulics";
     private const string SELECTED_INDEX_POINTS = "SelectedIndexPoints";
     private const string SELECTED_SIMULATION = "SelectedSimulation";
@@ -23,7 +23,7 @@ public class StageLifeLossElement : ChildElement
     private const string ALTERNATIVE = "Alternative";
     private const string HAZARD_TIME = "HazardTime";
 
-    public string LifeSimDatabasePath { get; }
+    public string LifeSimDatabaseFileName { get; }
     public int SelectedHydraulics { get; }
     public int SelectedIndexPoints { get; }
     public string SelectedSimulation { get; }
@@ -34,7 +34,7 @@ public class StageLifeLossElement : ChildElement
     public StageLifeLossElement(string name, string lastEditDate, string description, int id, LifeSimImporterConfig config)
         : base(name, lastEditDate, description, id)
     {
-        LifeSimDatabasePath = config.LifeSimDatabasePath;
+        LifeSimDatabaseFileName = config.LifeSimDatabaseFileName;
         SelectedHydraulics = config.SelectedHydraulics;
         SelectedIndexPoints = config.SelectedIndexPoints;
         SelectedSimulation = config.SelectedSimulation;
@@ -48,7 +48,7 @@ public class StageLifeLossElement : ChildElement
     public StageLifeLossElement(XElement elementXML, int id) : base(elementXML, id)
     {
         XElement config = elementXML.Element(CONFIG);
-        LifeSimDatabasePath = config.Element(LIFESIM_DATABASE_PATH).Value;
+        LifeSimDatabaseFileName = config.Element(LIFESIM_DATABASE_PATH).Value;
         SelectedHydraulics = Convert.ToInt32(config.Element(SELECTED_HYDRAULICS).Value);
         SelectedIndexPoints = Convert.ToInt32(config.Element(SELECTED_INDEX_POINTS).Value);
         SelectedSimulation = config.Element(SELECTED_SIMULATION).Value;
@@ -70,7 +70,7 @@ public class StageLifeLossElement : ChildElement
         XElement stageLifeLossElem = new(StringConstants.ELEMENT_XML_TAG);
         stageLifeLossElem.Add(CreateHeaderElement());
         XElement config = new(CONFIG);
-        config.Add(new XElement(LIFESIM_DATABASE_PATH, LifeSimDatabasePath ?? ""));
+        config.Add(new XElement(LIFESIM_DATABASE_PATH, LifeSimDatabaseFileName ?? ""));
         config.Add(new XElement(SELECTED_HYDRAULICS, SelectedHydraulics));
         config.Add(new XElement(SELECTED_INDEX_POINTS, SelectedIndexPoints));
         config.Add(new XElement(SELECTED_SIMULATION, SelectedSimulation ?? ""));

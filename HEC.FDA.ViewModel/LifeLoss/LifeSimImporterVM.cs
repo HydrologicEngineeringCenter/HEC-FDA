@@ -4,8 +4,10 @@ using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
+using SciChart.Core.Extensions;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows;
 
@@ -37,7 +39,7 @@ public partial class LifeSimImporterVM : BaseEditorVM
         Description = element.Description;
         _indexPointsVM = new(
             element.ID,
-            element.LifeSimDatabasePath,
+            element.LifeSimDatabaseFileName,
             element.SelectedHydraulics,
             element.SelectedIndexPoints,
             element.SelectedSimulation,
@@ -54,7 +56,9 @@ public partial class LifeSimImporterVM : BaseEditorVM
         {
             string lastEditDate = DateTime.Now.ToString("G");
             int id = GetID();
+            string projectPath = SaveLifeSimDBToProject(_indexPointsVM.SelectedPath);
             LifeSimImporterConfig config = BuildIndexPointsImporterConfig(_indexPointsVM);
+            config.LifeSimDatabaseFileName = projectPath;
             StageLifeLossElement elemToSave = new(Name, lastEditDate, Description, id, config);
 
             // this exists to separate the editing of the metadata and relationships
@@ -70,7 +74,6 @@ public partial class LifeSimImporterVM : BaseEditorVM
 
     private LifeSimImporterConfig BuildIndexPointsImporterConfig(IndexPointsLifeLossVM indexPointsLifeLossVM)
     {
-        string selectedPath = indexPointsLifeLossVM.SelectedPath;
         int hydraulicsID = indexPointsLifeLossVM.SelectedHydraulics.ID;
         int indexPointsID = indexPointsLifeLossVM.SelectedIndexPoints.ID;
         string selectedSimulation = indexPointsLifeLossVM.SelectedSimulation?.Name ?? "";
@@ -83,7 +86,6 @@ public partial class LifeSimImporterVM : BaseEditorVM
 
         LifeSimImporterConfig config = new()
         {
-            LifeSimDatabasePath = selectedPath,
             SelectedHydraulics = hydraulicsID,
             SelectedIndexPoints = indexPointsID,
             SelectedSimulation = selectedSimulation,
@@ -125,5 +127,30 @@ public partial class LifeSimImporterVM : BaseEditorVM
         {
             return OriginalElement.ID;
         }
+    }
+
+    private string SaveLifeSimDBToProject(string dbPath)
+    {
+        if (dbPath.IsNullOrEmpty())
+            return null;
+
+        string destinationDirectory = Connection.Instance.LifeSimDirectory;
+        if (!Directory.Exists(destinationDirectory))
+            Directory.CreateDirectory(destinationDirectory);
+
+        string filename = Path.GetFileName(dbPath);
+        string destinationPath = Path.Combine(destinationDirectory, filename);
+
+        // check if destination doesn't exist AND paths are different
+        if (!File.Exists(destinationPath) &&
+            !string.Equals(Path.GetFullPath(dbPath),
+                           Path.GetFullPath(destinationPath),
+                           StringComparison.OrdinalIgnoreCase))
+        {
+            File.Copy(dbPath, destinationPath);
+        }
+
+        return filename;
+
     }
 }

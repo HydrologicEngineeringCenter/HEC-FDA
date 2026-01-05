@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using HEC.FDA.Model.LifeLoss;
-using HEC.FDA.Model.LifeLoss.Saving;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.ViewModel.Hydraulics;
 using HEC.FDA.ViewModel.ImpactArea;
@@ -157,14 +156,14 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
     // called when opening existing element editor
     public IndexPointsLifeLossVM(
         int elementID,
-        string LifeSimDataBasePath,
+        string LifeSimDataBaseFileName,
         int hydraulicsID,
         int indexPointsID,
         string selectedSimulation,
         List<string> selectedAlternatives,
         List<string> selectedHazardTimes)
     {
-        SelectedPath = LifeSimDataBasePath;
+        SelectedPath = LifeSimDataBaseFileName.IsNullOrEmpty() ? null : Path.Combine(Connection.Instance.LifeSimDirectory, LifeSimDataBaseFileName);
         LoadHydraulics();
         SelectHydraulics(hydraulicsID);
         LoadIndexPoints();
