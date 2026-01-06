@@ -27,7 +27,7 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
     private LifeSimSimulation _selectedSimuation;
     private ObservableCollection<LifeSimSimulation> _simulations = [];
     private ObservableCollection<CheckableItem> _lifesimAlternatives = [];
-    private ObservableCollection<CheckableItem> _hazardTimes = [];
+    private ObservableCollection<WeightedCheckableItem> _hazardTimes = [];
     private LifeLossFunction _selectedFunction;
 
     public string SelectedPath
@@ -93,12 +93,17 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         foreach (string alternative in simulation.Alternatives)
             LifeSimAlternatives.Add(new CheckableItem { Name = alternative });
 
-        foreach (string hazardTime in simulation.HazardTimes)
+        foreach (string hazardTime in simulation.HazardTimes.Keys)
         {
             if (int.TryParse(hazardTime, out int time))
             {
                 string formattedTime = time < 10 ? $"0{time}00" : $"{time}00";
-                HazardTimes.Add(new CheckableItem { Name = formattedTime, Value = time.ToString() });
+                WeightedCheckableItem item = new WeightedCheckableItem { Name = formattedTime, Value = time.ToString() };
+                if (time == 2)
+                    item.Weight = 0.35;
+                else if (time == 14)
+                    item.Weight = 0.65;
+                HazardTimes.Add(item);
             }
         }
     }
@@ -112,7 +117,7 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
             NotifyPropertyChanged();
         }
     }
-    public ObservableCollection<CheckableItem> HazardTimes
+    public ObservableCollection<WeightedCheckableItem> HazardTimes
     {
         get { return _hazardTimes; }
         set
@@ -344,8 +349,8 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         LifeSimSimulation currentSimulation = new(SelectedSimulation.Name, hydraulicsFolder);
         foreach (CheckableItem a in LifeSimAlternatives)
             if (a.IsChecked) currentSimulation.Alternatives.Add(a.Name);
-        foreach (CheckableItem h in HazardTimes)
-            if (h.IsChecked) currentSimulation.HazardTimes.Add(h.Value);
+        foreach (WeightedCheckableItem h in HazardTimes)
+            if (h.IsChecked) currentSimulation.HazardTimes[h.Value] = h.Weight;
         string indexPointsFile = GetIndexPointsFile();
         string impactAreasFile = GetImpactAreaFile();
         LifeLossFunctions.Clear();
