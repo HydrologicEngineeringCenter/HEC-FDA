@@ -12,6 +12,7 @@ using OxyPlot.Series;
 using SciChart.Core.Extensions;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -87,23 +88,54 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
     {
         // reset the other options
         LifeSimAlternatives.Clear();
+        foreach (var ht in HazardTimes)
+            ht.PropertyChanged -= On_Hazard_Time_Checkbox_Changed;
         HazardTimes.Clear();
 
         // update options to match the currently selected simulation
         foreach (string alternative in simulation.Alternatives)
             LifeSimAlternatives.Add(new CheckableItem { Name = alternative });
 
+        int i = 0;
         foreach (string hazardTime in simulation.HazardTimes.Keys)
         {
             if (int.TryParse(hazardTime, out int time))
             {
                 string formattedTime = time < 10 ? $"0{time}00" : $"{time}00";
-                WeightedCheckableItem item = new WeightedCheckableItem { Name = formattedTime, Value = time.ToString() };
-                if (time == 2)
+                WeightedCheckableItem item = new() { Name = formattedTime, Value = time.ToString() };
+                if (i == 0)
                     item.Weight = 0.35;
-                else if (time == 14)
+                else if (i == 1)
                     item.Weight = 0.65;
+                if (i < 2)
+                {
+                    item.IsChecked = true;
+                    item.IsEnabled = true;
+                }
+                item.PropertyChanged += On_Hazard_Time_Checkbox_Changed;
                 HazardTimes.Add(item);
+            }
+            i++;
+        }
+        WeightedCheckableItem new1 = new() { Name = "1800", Value = "18", IsChecked = false, IsEnabled = false };
+        new1.PropertyChanged += On_Hazard_Time_Checkbox_Changed;
+        HazardTimes.Add(new1);
+        WeightedCheckableItem new2 = new() { Name = "2200", Value = "22", IsChecked = false, IsEnabled = false };
+        new2.PropertyChanged += On_Hazard_Time_Checkbox_Changed;
+        HazardTimes.Add(new2);
+    }
+
+    private void On_Hazard_Time_Checkbox_Changed(object sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(WeightedCheckableItem.IsChecked))
+        {
+            int checkedCount = HazardTimes.Count(x => x.IsChecked);
+            bool maxReached = checkedCount >= 2;
+
+            foreach (var item in HazardTimes)
+            {
+                // Disable unchecked items when 2 are already checked
+                item.IsEnabled = item.IsChecked || !maxReached;
             }
         }
     }

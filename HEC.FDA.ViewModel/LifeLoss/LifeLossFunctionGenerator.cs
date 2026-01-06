@@ -78,8 +78,6 @@ public class LifeLossFunctionGenerator
     private List<LifeLossFunction> CreateLifeLossFunctionsForSummaryZone(string summaryZone, PointMs indexPoint)
     {
         List<LifeLossFunction> functions = [];
-        UncertainPairedData[] upds = new UncertainPairedData[2];
-        double[] weights = new double[2];
 
         string[] alternatives = [.. _alternativeNames]; // create a copy of the alternative names because we are sorting, don't want to sort in place as we iterate through (although I think it would still work)
         double[] stages = new double[alternatives.Length];
@@ -97,6 +95,8 @@ public class LifeLossFunctionGenerator
         }
         Array.Sort(stages, alternatives); // both arrays are now sorted in ascending stage order which is what we need for UPD
 
+        UncertainPairedData[] upds = new UncertainPairedData[2];
+        double[] weights = new double[2];
         int idx = 0;
         foreach (var kvp in _hazardTimes)
         {
@@ -119,12 +119,5 @@ public class LifeLossFunctionGenerator
         UncertainPairedData combined = UncertainPairedData.WeightedAddition(upds[0], upds[1], weights[0], weights[1]);
         LifeLossFunction combinedFunc = new(-1, -1, combined, alternatives, _simulationName, summaryZone, "8");
         return functions;
-    }
-
-    private class Entry
-    {
-        public string Alternative;
-        public double Stage;
-        public DynamicHistogram Histogram;
     }
 }

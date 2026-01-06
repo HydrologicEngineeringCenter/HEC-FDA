@@ -205,6 +205,7 @@
                       Grid.Column="0"
                       Content="{Binding Name}"
                       IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                      IsEnabled="{Binding IsEnabled}"
                       VerticalAlignment="Center"
                       Margin="0,0,8,0" />
 

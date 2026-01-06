@@ -1,16 +1,14 @@
+using HEC.FDA.Model.interfaces;
+using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Base.Implementations;
+using HEC.MVVMFramework.Model.Messaging;
 using Statistics;
+using Statistics.Distributions;
+using Statistics.Histograms;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using HEC.MVVMFramework.Base.Events;
-using HEC.MVVMFramework.Base.Implementations;
-using HEC.MVVMFramework.Base.Interfaces;
-using HEC.MVVMFramework.Base.Enumerations;
-using Statistics.Distributions;
-using HEC.FDA.Model.interfaces;
-using Statistics.Histograms;
-using HEC.MVVMFramework.Model.Messaging;
-using System.Collections.Generic;
 
 namespace HEC.FDA.Model.paireddata
 {
@@ -80,9 +78,9 @@ namespace HEC.FDA.Model.paireddata
 
         private void AddRules()
         {
-                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => (IsArrayValid(Xvals, (a, b) => a == b) || IsArrayValid(Xvals, (a, b) => a < b)), $"X must be deterministic or strictly monotonically increasing but is not for the function named {CurveMetaData.Name}.", ErrorLevel.Minor));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .9999, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .9999, (a, b) => a <= b), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {CurveMetaData.Name} at the upper bound.", ErrorLevel.Minor));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .0001, (a, b) => a <= b), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {CurveMetaData.Name} at the lower found.", ErrorLevel.Minor));
+            AddSinglePropertyRule(nameof(Xvals), new Rule(() => (IsArrayValid(Xvals, (a, b) => a == b) || IsArrayValid(Xvals, (a, b) => a < b)), $"X must be deterministic or strictly monotonically increasing but is not for the function named {CurveMetaData.Name}.", ErrorLevel.Minor));
+            AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .9999, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .9999, (a, b) => a <= b), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {CurveMetaData.Name} at the upper bound.", ErrorLevel.Minor));
+            AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .0001, (a, b) => a <= b), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {CurveMetaData.Name} at the lower found.", ErrorLevel.Minor));
         }
         private static bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
         {
@@ -159,15 +157,15 @@ namespace HEC.FDA.Model.paireddata
             else
             {
 
-            if (_RandomNumbers.Length ==0)
-            {
-                throw new Exception("Random numbers have not been created for UPD sampling");
-            }
-            if (iterationNumber < 0 || iterationNumber >= _RandomNumbers.Length)
-            {
-                throw new Exception("Iteration number cannot be less than 0 or greater than the size of the random number array");
+                if (_RandomNumbers.Length == 0)
+                {
+                    throw new Exception("Random numbers have not been created for UPD sampling");
+                }
+                if (iterationNumber < 0 || iterationNumber >= _RandomNumbers.Length)
+                {
+                    throw new Exception("Iteration number cannot be less than 0 or greater than the size of the random number array");
 
-            }
+                }
                 for (int i = 0; i < Xvals.Length; i++)
                 {
                     y[i] = Yvals[i].InverseCDF(_RandomNumbers[iterationNumber]);
@@ -273,7 +271,7 @@ namespace HEC.FDA.Model.paireddata
 
         }
 
-        public static List<string> ConvertDamagedElementCountToText(List<UncertainPairedData> quantityDamagedElementsUPD, Dictionary<int,string> iaNames)
+        public static List<string> ConvertDamagedElementCountToText(List<UncertainPairedData> quantityDamagedElementsUPD, Dictionary<int, string> iaNames)
         {
             List<string> list = new();
             string header = "Impact Area Name," +
@@ -289,7 +287,7 @@ namespace HEC.FDA.Model.paireddata
                 "Damaged Element Count 0.002 AEP";
             list.Add(header);
 
-            foreach(UncertainPairedData upd in quantityDamagedElementsUPD)
+            foreach (UncertainPairedData upd in quantityDamagedElementsUPD)
             {
                 List<string> quantilesToText = QuantilesToText(upd, iaNames);
                 list.AddRange(quantilesToText);
@@ -307,7 +305,7 @@ namespace HEC.FDA.Model.paireddata
                 $"{upd.DamageCategory}," +
                 $"{upd.AssetCategory}," +
                 $"{upd.Xvals[i]}," +
-                $"{Math.Ceiling(upd.Yvals[i].InverseCDF(1-0.95))}," +
+                $"{Math.Ceiling(upd.Yvals[i].InverseCDF(1 - 0.95))}," +
                 $"{Math.Ceiling(upd.Yvals[i].InverseCDF(1 - 0.5))}," +
                 $"{Math.Ceiling(upd.Yvals[i].InverseCDF(1 - 0.5))}," +
                 $"{Math.Ceiling(upd.Yvals[i].InverseCDF(1 - 0.25))}," +
@@ -360,8 +358,8 @@ namespace HEC.FDA.Model.paireddata
                 double x = mergedXvals[i];
 
                 // Get distributions at this X value (interpolate if needed)
-                IDistribution dist1 = GetDistributionAtX(upd1, x);
-                IDistribution dist2 = GetDistributionAtX(upd2, x);
+                IDistribution dist1 = upd1.Yvals[i];
+                IDistribution dist2 = upd2.Yvals[i];
 
                 // Create weighted combination by sampling at probability levels
                 double[] weightedValues = new double[probLevels.Length];
@@ -378,53 +376,6 @@ namespace HEC.FDA.Model.paireddata
 
             // Use metadata from upd1
             return new UncertainPairedData(mergedXvals, mergedYvals, upd1.CurveMetaData);
-        }
-
-        /// <summary>
-        /// Gets the distribution at a specific X value, interpolating if necessary.
-        /// </summary>
-        private static IDistribution GetDistributionAtX(UncertainPairedData upd, double x)
-        {
-            // Check for exact match
-            int index = Array.BinarySearch(upd.Xvals, x);
-            if (index >= 0)
-            {
-                return upd.Yvals[index];
-            }
-
-            // Need to interpolate between adjacent distributions
-            index = ~index;
-
-            // Handle edge cases
-            if (index == 0)
-            {
-                return upd.Yvals[0];
-            }
-            if (index >= upd.Xvals.Length)
-            {
-                return upd.Yvals[^1];
-            }
-
-            // Linear interpolation factor
-            double x0 = upd.Xvals[index - 1];
-            double x1 = upd.Xvals[index];
-            double t = (x - x0) / (x1 - x0);
-
-            // Interpolate by sampling at multiple probability levels
-            IDistribution dist0 = upd.Yvals[index - 1];
-            IDistribution dist1 = upd.Yvals[index];
-
-            double[] probLevels = { 0.01, 0.05, 0.10, 0.25, 0.50, 0.75, 0.90, 0.95, 0.99 };
-            double[] interpolatedValues = new double[probLevels.Length];
-
-            for (int i = 0; i < probLevels.Length; i++)
-            {
-                double v0 = dist0.InverseCDF(probLevels[i]);
-                double v1 = dist1.InverseCDF(probLevels[i]);
-                interpolatedValues[i] = v0 + t * (v1 - v0);
-            }
-
-            return CreateDistributionFromQuantiles(probLevels, interpolatedValues);
         }
 
         /// <summary>
