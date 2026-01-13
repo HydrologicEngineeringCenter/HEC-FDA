@@ -1,3 +1,4 @@
+using Amazon.Runtime;
 using HEC.FDA.Model.interfaces;
 using HEC.MVVMFramework.Base.Enumerations;
 using HEC.MVVMFramework.Base.Implementations;
@@ -315,6 +316,56 @@ namespace HEC.FDA.Model.paireddata
                 returnStrings.Add(thisXValData);
             }
             return returnStrings;
+        }
+
+        public static UncertainPairedData CombineWithWeights(IReadOnlyDictionary<UncertainPairedData, double> updWeights)
+        {
+            bool weightsValid = ValidateWeightedUPDs(updWeights);
+
+            int lenUPDs = updWeights.Count;
+            double[] referenceXvals = updWeights.Keys.ToList()[0].Xvals;
+            Empirical[] weightedEmpiricals = new Empirical[referenceXvals.Length];
+            for (int i = 0; i < referenceXvals.Length; i++)
+            {
+                Empirical[] empiricals = new Empirical[lenUPDs];
+                double[] weights = new double[lenUPDs];
+                int j = 0;
+                foreach (var kvp in updWeights)
+                {
+                    DynamicHistogram histogram = (DynamicHistogram)kvp.Key.Yvals[i];
+                    Empirical emp = DynamicHistogram.ConvertToEmpiricalDistribution(histogram);
+                    empiricals[j] = emp;
+                    weights[j] = kvp.Value;
+                    j++;
+                }
+                Empirical combinedWithWeights = Empirical.StackEmpiricalDistributionsWeighted(empiricals, weights);
+                weightedEmpiricals[i] = combinedWithWeights;
+            }
+            return new UncertainPairedData(referenceXvals, weightedEmpiricals, new CurveMetaData());
+        }
+
+        private static bool ValidateWeightedUPDs(IReadOnlyDictionary<UncertainPairedData, double> updWeights)
+        {
+            double weightSum = 0;
+            foreach (double weight in updWeights.Values)
+                weightSum += weight;
+            const double tolerance = 1e-10;
+            if ((Math.Abs(weightSum - 1.0) > tolerance))
+                throw new Exception("Weights must sum to 1.");
+
+            var upds = updWeights.Keys.ToList();
+
+            if (upds == null || upds.Count <= 1) return true;
+
+            double[] referenceXvals = upds[0].Xvals;
+
+            for (int i = 1; i < upds.Count; i++)
+            {
+                if (!upds[i].Xvals.SequenceEqual(referenceXvals))
+                    throw new Exception("UncertainPairedData Xvals do not match.");
+            }
+
+            return true;
         }
 
         /// <summary>

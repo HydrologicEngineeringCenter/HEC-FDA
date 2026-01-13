@@ -414,6 +414,41 @@ namespace Statistics.Distributions
             return empirical;
         }
 
+        public static Empirical StackEmpiricalDistributionsWeighted(Empirical[] distributions, double[] weights)
+        {
+            if (distributions.Length != weights.Length)
+                throw new ArgumentException("Number of distributions must match number of weights");
+
+            int probabilitySteps = 2500;
+            double[] cumulativeProbabilities = new double[probabilitySteps];
+            double[] weightedInvCDFs = new double[probabilitySteps];
+
+            Parallel.For(0, probabilitySteps, i =>
+            {
+                double probabilityStep = (0.5 + i) / probabilitySteps;
+                double weightedValue = 0.0;
+
+                for (int j = 0; j < distributions.Length; j++)
+                {
+                    weightedValue += weights[j] * distributions[j].InverseCDF(probabilityStep);
+                }
+
+                cumulativeProbabilities[i] = probabilityStep;
+                weightedInvCDFs[i] = weightedValue;
+            });
+
+            // Handle the sample mean separately
+            double weightedMean = 0.0;
+            for (int j = 0; j < distributions.Length; j++)
+            {
+                weightedMean += weights[j] * distributions[j].SampleMean;
+            }
+
+            Empirical empirical = FitToSample([.. weightedInvCDFs]);
+            empirical.SampleMean = weightedMean;
+            return empirical;
+        }
+
         public static double Sum(double x1, double x2)
         {
             return x1 + x2;

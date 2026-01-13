@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using HEC.FDA.Model.LifeLoss;
+using HEC.FDA.Model.LifeLoss.Saving;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.ViewModel.Hydraulics;
 using HEC.FDA.ViewModel.ImpactArea;
@@ -437,8 +438,8 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
     {
         if (LifeLossFunctions.IsNullOrEmpty()) return;
 
-        LifeLossFunction relationship = LifeLossFunctions[next];
-        UncertainPairedData uncertainData = relationship.Data;
+        LifeLossFunction llf = LifeLossFunctions[next];
+        UncertainPairedData uncertainData = llf.Data;
         var upper = uncertainData.SamplePairedData(0.975);
         var lower = uncertainData.SamplePairedData(0.025);
         var mid = uncertainData.SamplePairedData(0.5);
@@ -449,9 +450,17 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         AddLineSeriesToPlot(mid);
 
         MyModel.ResetAllAxes(); // recenter on the newly plotted lines
-        int time = int.Parse(relationship.HazardTime);
-        string formattedTime = time < 10 ? $"0{time}00" : $"{time}00";
-        MyModel.Title = $"{relationship.SimulationName}: {relationship.SummaryZone} {formattedTime}";
+        if (!int.TryParse(llf.HazardTime, out int time))
+        {
+            if (llf.HazardTime != LifeLossStringConstants.COMBINED_MAGIC_STRING)
+                throw new System.Exception($"Could not parse hazard time {llf.HazardTime}.");
+            MyModel.Title = $"{llf.SimulationName}: {llf.SummaryZone}";
+        }
+        else
+        {
+            string formattedTime = time < 10 ? $"0{time}00" : $"{time}00";
+            MyModel.Title = $"{llf.SimulationName}: {llf.SummaryZone} {formattedTime}";
+        }
         MyModel.InvalidatePlot(true);
     }
 

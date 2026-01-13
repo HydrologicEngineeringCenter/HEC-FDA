@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.Model.LifeLoss;
+using HEC.FDA.Model.LifeLoss.Saving;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.Spatial;
 using RasMapperLib;
@@ -95,8 +96,7 @@ public class LifeLossFunctionGenerator
         }
         Array.Sort(stages, alternatives); // both arrays are now sorted in ascending stage order which is what we need for UPD
 
-        UncertainPairedData[] upds = new UncertainPairedData[2];
-        double[] weights = new double[2];
+        Dictionary<UncertainPairedData, double> updweights = new();
         int idx = 0;
         foreach (var kvp in _hazardTimes)
         {
@@ -110,14 +110,14 @@ public class LifeLossFunctionGenerator
                 histograms[i] = histogram;
             }
             UncertainPairedData upd = new(stages, histograms, new CurveMetaData("Stage", "Life Loss", $"{_simulationName}_{summaryZone}_{hazardTime}", "LifeLoss", _impactAreaIDByName[summaryZone], "LifeLoss"));
-            upds[idx] = upd;
-            weights[idx] = weight;
+            updweights[upd] = weight;
             LifeLossFunction llf = new(-1, -1, upd, alternatives, _simulationName, summaryZone, hazardTime);
             functions.Add(llf);
             idx++;
         }
-        UncertainPairedData combined = UncertainPairedData.WeightedAddition(upds[0], upds[1], weights[0], weights[1]);
-        LifeLossFunction combinedFunc = new(-1, -1, combined, alternatives, _simulationName, summaryZone, "8");
+        UncertainPairedData combined = UncertainPairedData.CombineWithWeights(updweights);
+        LifeLossFunction combinedFunc = new(-1, -1, combined, alternatives, _simulationName, summaryZone, LifeLossStringConstants.COMBINED_MAGIC_STRING);
+        //functions.Add(combinedFunc);
         return functions;
     }
 }
