@@ -105,15 +105,21 @@ public partial class LifeSimImporterVM : BaseEditorVM
         Dictionary<string, int> IANameToID = impactAreaElements[0].GetNameToIDPairs();
         string projFile = Connection.Instance.ProjectFile;
         LifeLossFunctionSaver saver = new(projFile, IANameToID);
+        CombinedLifeLossFunctionSaver combinedSaver = new(projFile, IANameToID);
         LifeLossFunctionFilter filter = new()
         {
             Element_ID = [id],
         };
         saver.DeleteFromSQLite(filter);
+        combinedSaver.DeleteFromSQLite(filter);
         foreach (LifeLossFunction function in functions)
         {
             function.ElementID = id;
-            saver.SaveToSQLite(function);
+            if (function.HazardTime == LifeLossStringConstants.COMBINED_MAGIC_STRING)
+                // we need to save the combined functions to a table with a different schema to accomodate empirical distributions
+                combinedSaver.SaveToSQLite(function);
+            else
+                saver.SaveToSQLite(function);
         }
     }
 

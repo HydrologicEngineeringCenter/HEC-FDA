@@ -100,8 +100,11 @@ public class StageLifeLossElement : ChildElement
         List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
         Dictionary<string, int> IANameToID = impactAreaElements[0].GetNameToIDPairs();
         LifeLossFunctionSaver saver = new(projFile, IANameToID);
+        CombinedLifeLossFunctionSaver combinedSaver = new(projFile, IANameToID);
         LifeLossFunctionFilter filter = new() { Element_ID = [ID] };
-        return saver.ReadFromSQLite(filter);
+        List<LifeLossFunction> functions = saver.ReadFromSQLite(filter);
+        functions.AddRange(combinedSaver.ReadFromSQLite(filter));
+        return functions.OrderBy(f => f.FunctionID).ToList();
     }
 
     /// <summary>
@@ -125,6 +128,7 @@ public class StageLifeLossElement : ChildElement
         List<LifeLossFunction> lifeLossFunctions = LoadStageLifeLossRelationships();
         return lifeLossFunctions
             .Where(f => f.Data.CurveMetaData.ImpactAreaID == impactAreaID)
+            .Where(f => f.HazardTime == LifeLossStringConstants.COMBINED_MAGIC_STRING)
             .Select(f => f.Data)
             .ToList();
     }

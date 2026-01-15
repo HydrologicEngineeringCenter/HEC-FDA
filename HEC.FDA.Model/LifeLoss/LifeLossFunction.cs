@@ -9,6 +9,7 @@ namespace HEC.FDA.Model.LifeLoss
     {
         /// <summary>
         /// The ID of the Stage Life Loss element which this function belongs to
+        /// It is always set to -1 in the constructor (in the model layer) and whomever calls the save function (in the VM) is responsible for setting it before saving.
         /// </summary>
         public int ElementID { get; set; }
         /// <summary>
