@@ -229,25 +229,28 @@ new double[] { 0, 1, 2, 3, 4, 5, 6, 7 }, 50, new CurveMetaData("Probability", "S
 
     #endregion
 
-    [Fact]
-    public void ComputeTime()
-    {
-        //Arrange
-        Inventory inventory = CreateInventory();
-        ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, inventory, hydraulicDataset, String.Empty, graphicalFrequency: stageFrequency, usingMockData: true);
-        List<ImpactAreaStageDamage> impactAreaStageDamageList = new List<ImpactAreaStageDamage>() { impactAreaStageDamage };
-        ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(impactAreaStageDamageList);
 
-        string time = "the big inventory stage damage compute was started at: " + DateTime.Now.ToString();
-        //Act
+    // Commmented out because I don't thing this belongs here,and has way too long of a run time. Unit tests need to be fast. This belongs in benchmarking and performance testing. 
+    //[Fact]
+    //public void ComputeTime()
+    //{
 
-        
-        List<UncertainPairedData> stageDamageFunctions = scenarioStageDamage.Compute().Item1;
-        time += " and the compute was completed at: " + DateTime.Now.ToString();
+    //    //Arrange
+    //    Inventory inventory = CreateInventory();
+    //    ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, inventory, hydraulicDataset, String.Empty, graphicalFrequency: stageFrequency, usingMockData: true);
+    //    List<ImpactAreaStageDamage> impactAreaStageDamageList = new List<ImpactAreaStageDamage>() { impactAreaStageDamage };
+    //    ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(impactAreaStageDamageList);
 
-        File.AppendAllText(filePath, time);
+    //    string time = "the big inventory stage damage compute was started at: " + DateTime.Now.ToString();
+    //    //Act
 
-        //Assert
-        //I choose to assert nothing. 
-    }
+
+    //    List<UncertainPairedData> stageDamageFunctions = scenarioStageDamage.Compute().Item1;
+    //    time += " and the compute was completed at: " + DateTime.Now.ToString();
+
+    //    File.AppendAllText(filePath, time);
+
+    //    //Assert
+    //    //I choose to assert nothing. 
+    //}
 }

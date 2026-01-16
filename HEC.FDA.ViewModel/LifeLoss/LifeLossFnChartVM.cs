@@ -289,7 +289,7 @@ public class LifeLossFnChartVM : BaseViewModel
             Tag = DataSeriesTag
         };
 
-        for (int i = 0; i < function.Xvals.Length; i++)
+        for (int i = 0; i < function.Xvals.Count; i++)
         {
             double lifeLoss = function.Xvals[i];
             double aep = function.Yvals[i];
