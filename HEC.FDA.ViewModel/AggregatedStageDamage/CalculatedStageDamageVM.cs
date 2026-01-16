@@ -10,7 +10,7 @@ using HEC.FDA.Model.stageDamage;
 using HEC.FDA.ViewModel.Compute;
 using HEC.FDA.ViewModel.FlowTransforms;
 using HEC.FDA.ViewModel.FrequencyRelationships;
-using HEC.FDA.ViewModel.Hydraulics.GriddedData;
+using HEC.FDA.ViewModel.Hydraulics;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Inventory;
 using HEC.FDA.ViewModel.Saving;

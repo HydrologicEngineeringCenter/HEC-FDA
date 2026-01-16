@@ -2,7 +2,7 @@
 using HEC.FDA.Model.LifeLoss;
 using HEC.FDA.Model.LifeLoss.Saving;
 using HEC.FDA.Model.paireddata;
-using HEC.FDA.ViewModel.Hydraulics.GriddedData;
+using HEC.FDA.ViewModel.Hydraulics;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.IndexPoints;
 using HEC.FDA.ViewModel.Saving;
@@ -13,6 +13,7 @@ using OxyPlot.Series;
 using SciChart.Core.Extensions;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,7 +29,7 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
     private LifeSimSimulation _selectedSimuation;
     private ObservableCollection<LifeSimSimulation> _simulations = [];
     private ObservableCollection<CheckableItem> _lifesimAlternatives = [];
-    private ObservableCollection<CheckableItem> _hazardTimes = [];
+    private ObservableCollection<WeightedCheckableItem> _hazardTimes = [];
     private LifeLossFunction _selectedFunction;
 
     public string SelectedPath
@@ -88,18 +89,54 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
     {
         // reset the other options
         LifeSimAlternatives.Clear();
+        foreach (var ht in HazardTimes)
+            ht.PropertyChanged -= On_Hazard_Time_Checkbox_Changed;
         HazardTimes.Clear();
 
         // update options to match the currently selected simulation
         foreach (string alternative in simulation.Alternatives)
             LifeSimAlternatives.Add(new CheckableItem { Name = alternative });
 
-        foreach (string hazardTime in simulation.HazardTimes)
+        int i = 0;
+        foreach (string hazardTime in simulation.HazardTimes.Keys)
         {
             if (int.TryParse(hazardTime, out int time))
             {
                 string formattedTime = time < 10 ? $"0{time}00" : $"{time}00";
-                HazardTimes.Add(new CheckableItem { Name = formattedTime, Value = time.ToString() });
+                WeightedCheckableItem item = new() { Name = formattedTime, Value = time.ToString() };
+                if (i == 0)
+                    item.Weight = 0.35;
+                else if (i == 1)
+                    item.Weight = 0.65;
+                if (i < 2)
+                {
+                    item.IsChecked = true;
+                    item.IsEnabled = true;
+                }
+                item.PropertyChanged += On_Hazard_Time_Checkbox_Changed;
+                HazardTimes.Add(item);
+            }
+            i++;
+        }
+        WeightedCheckableItem new1 = new() { Name = "1800", Value = "18", IsChecked = false, IsEnabled = false };
+        new1.PropertyChanged += On_Hazard_Time_Checkbox_Changed;
+        HazardTimes.Add(new1);
+        WeightedCheckableItem new2 = new() { Name = "2200", Value = "22", IsChecked = false, IsEnabled = false };
+        new2.PropertyChanged += On_Hazard_Time_Checkbox_Changed;
+        HazardTimes.Add(new2);
+    }
+
+    private void On_Hazard_Time_Checkbox_Changed(object sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(WeightedCheckableItem.IsChecked))
+        {
+            int checkedCount = HazardTimes.Count(x => x.IsChecked);
+            bool maxReached = checkedCount >= 2;
+
+            foreach (var item in HazardTimes)
+            {
+                // Disable unchecked items when 2 are already checked
+                item.IsEnabled = item.IsChecked || !maxReached;
             }
         }
     }
@@ -113,7 +150,7 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
             NotifyPropertyChanged();
         }
     }
-    public ObservableCollection<CheckableItem> HazardTimes
+    public ObservableCollection<WeightedCheckableItem> HazardTimes
     {
         get { return _hazardTimes; }
         set
@@ -157,14 +194,14 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
     // called when opening existing element editor
     public IndexPointsLifeLossVM(
         int elementID,
-        string LifeSimDataBasePath,
+        string LifeSimDataBaseFileName,
         int hydraulicsID,
         int indexPointsID,
         string selectedSimulation,
         List<string> selectedAlternatives,
         List<string> selectedHazardTimes)
     {
-        SelectedPath = LifeSimDataBasePath;
+        SelectedPath = LifeSimDataBaseFileName.IsNullOrEmpty() ? null : Path.Combine(Connection.Instance.LifeSimDirectory, LifeSimDataBaseFileName);
         LoadHydraulics();
         SelectHydraulics(hydraulicsID);
         LoadIndexPoints();
@@ -314,12 +351,24 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
     private void LoadStageLifeLossRelationships(int elementID)
     {
         string projFile = Connection.Instance.ProjectFile;
-        LifeLossFunctionSaver saver = new(projFile);
-        LifeLossFunctionFilter filter = new() { Element_ID = [elementID] };
-        List<LifeLossFunction> functions = saver.ReadFromSQLite(filter);
+        List<StageLifeLossElement> lifeLossElements = StudyCache.GetChildElementsOfType<StageLifeLossElement>();
+
+        StageLifeLossElement matchingElement = lifeLossElements
+            .FirstOrDefault(e => e.ID == elementID);
+
+        if (matchingElement == null)
+        {
+            throw new System.Exception($"No StageLifeLossElement with ID matching {elementID}");
+        }
+
+        List<LifeLossFunction> functions = matchingElement.LoadStageLifeLossRelationships();
         LifeLossFunctions.Clear();
         LifeLossFunctions.AddRange(functions);
-        ChangePlot(0);
+
+        if (LifeLossFunctions.Count > 0)
+        {
+            ChangePlot(0);
+        }
     }
 
     [RelayCommand]
@@ -333,14 +382,15 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         LifeSimSimulation currentSimulation = new(SelectedSimulation.Name, hydraulicsFolder);
         foreach (CheckableItem a in LifeSimAlternatives)
             if (a.IsChecked) currentSimulation.Alternatives.Add(a.Name);
-        foreach (CheckableItem h in HazardTimes)
-            if (h.IsChecked) currentSimulation.HazardTimes.Add(h.Value);
-        LifeLossFunctionGenerator generator = new(SelectedPath, currentSimulation);
+        foreach (WeightedCheckableItem h in HazardTimes)
+            if (h.IsChecked) currentSimulation.HazardTimes[h.Value] = h.Weight;
         string indexPointsFile = GetIndexPointsFile();
         string impactAreasFile = GetImpactAreaFile();
         LifeLossFunctions.Clear();
         List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
         string uniqueImpactAreaHeader = impactAreaElements[0].UniqueNameColumnHeader;
+        Dictionary<string, int> IANameToID = impactAreaElements[0].GetNameToIDPairs();
+        LifeLossFunctionGenerator generator = new(SelectedPath, currentSimulation, IANameToID);
         List<LifeLossFunction> newFunctions = await generator.CreateLifeLossFunctionsAsync(impactAreasFile, indexPointsFile, uniqueImpactAreaHeader);
         LifeLossFunctions.Clear();
         LifeLossFunctions.AddRange(newFunctions);
@@ -388,8 +438,8 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
     {
         if (LifeLossFunctions.IsNullOrEmpty()) return;
 
-        LifeLossFunction relationship = LifeLossFunctions[next];
-        UncertainPairedData uncertainData = relationship.Data;
+        LifeLossFunction llf = LifeLossFunctions[next];
+        UncertainPairedData uncertainData = llf.Data;
         var upper = uncertainData.SamplePairedData(0.975);
         var lower = uncertainData.SamplePairedData(0.025);
         var mid = uncertainData.SamplePairedData(0.5);
@@ -400,9 +450,17 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         AddLineSeriesToPlot(mid);
 
         MyModel.ResetAllAxes(); // recenter on the newly plotted lines
-        int time = int.Parse(relationship.HazardTime);
-        string formattedTime = time < 10 ? $"0{time}00" : $"{time}00";
-        MyModel.Title = $"{relationship.SimulationName}: {relationship.SummaryZone} {formattedTime}";
+        if (!int.TryParse(llf.HazardTime, out int time))
+        {
+            if (llf.HazardTime != LifeLossStringConstants.COMBINED_MAGIC_STRING)
+                throw new System.Exception($"Could not parse hazard time {llf.HazardTime}.");
+            MyModel.Title = $"{llf.SimulationName}: {llf.SummaryZone}";
+        }
+        else
+        {
+            string formattedTime = time < 10 ? $"0{time}00" : $"{time}00";
+            MyModel.Title = $"{llf.SimulationName}: {llf.SummaryZone} {formattedTime}";
+        }
         MyModel.InvalidatePlot(true);
     }
 

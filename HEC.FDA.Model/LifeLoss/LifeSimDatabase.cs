@@ -59,7 +59,7 @@ namespace HEC.FDA.Model.LifeLoss
                     {
 
                         if (reader.GetBoolean(i))
-                            simulation.HazardTimes.Add($"{(i - 1) * 2}"); // convert time to integer string, starting from 2 and incrementing by 2 until 22
+                            simulation.HazardTimes[$"{(i - 1) * 2}"] = 0; // convert time to integer string, starting from 2 and incrementing by 2 until 22
                     }
                     simulations.Add(simulation);
                 }

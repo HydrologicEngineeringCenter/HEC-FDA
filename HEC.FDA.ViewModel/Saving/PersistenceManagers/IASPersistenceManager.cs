@@ -81,7 +81,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         private string WasStageDamageModified(IASElement iasElems, ChildElement elem, int elemID)
         {
-            List<SpecificIAS> iasList = iasElems.SpecificIASElements.Where(ias => ias.StageDamageID == elemID).ToList();
+            List<SpecificIAS> iasList = iasElems.SpecificIASElements.Where(ias => ias.FailureStageDamageID == elemID).ToList();
             return iasList.Count > 0 ? CreateTooltipMessage("Aggregates Stage-Damage", elem.Name) : null;
         }
 

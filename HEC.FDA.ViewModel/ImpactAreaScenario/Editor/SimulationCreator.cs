@@ -5,9 +5,11 @@ using HEC.FDA.ViewModel.AggregatedStageDamage;
 using HEC.FDA.ViewModel.FlowTransforms;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.GeoTech;
+using HEC.FDA.ViewModel.LifeLoss;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
 using Statistics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using static HEC.FDA.Model.compute.ImpactAreaScenarioSimulation;
@@ -21,35 +23,49 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private readonly StageDischargeElement _RatElem;
         private readonly ExteriorInteriorElement _ExtIntElem;
         private readonly LateralStructureElement _LeveeElem;
-        private readonly AggregatedStageDamageElement _StageDamageElem;
         private readonly bool _UseInOut;
         private readonly bool _UseExtInt;
         private readonly bool _UseLevee;
         private readonly int _ImpactAreaID;
+        private readonly bool _HasFailureStageDamage;
+        private readonly AggregatedStageDamageElement _StageDamageElem;
         private readonly bool _HasNonFailureStageDamage;
         private readonly AggregatedStageDamageElement _NonFailureStageDamageElem;
+        private readonly bool _HasFailureStageLifeLoss;
+        private readonly StageLifeLossElement _FailureStageLifeLossElement;
+        private readonly bool _HasNonFailureStageLifeLoss;
+        private readonly StageLifeLossElement _NonFailureStageLifeLossElement;
 
 
         private SimulationBuilder _SimulationBuilder;
 
         public SimulationCreator(FrequencyElement freqElem, InflowOutflowElement inOutElem, StageDischargeElement ratElem,
-            ExteriorInteriorElement extIntElem, LateralStructureElement levElem, AggregatedStageDamageElement stageDamElem,
-            int currentImpactAreaID, bool hasNonFailureStageDamage = false, AggregatedStageDamageElement nonFailureStageDamElem = null)
+            ExteriorInteriorElement extIntElem, LateralStructureElement levElem, int currentImpactAreaID,
+            bool hasFailureStageDamage, AggregatedStageDamageElement stageDamElem,
+            bool hasNonFailureStageDamage, AggregatedStageDamageElement nonFailureStageDamElem,
+            bool hasFailureStageLifeLoss, StageLifeLossElement failureStageLifeLossElem,
+            bool hasNonFailureStageLifeLoss, StageLifeLossElement nonFailureStageLifeLossELem)
         {
             _FreqElem = freqElem;
             _InOutElem = inOutElem;
             _RatElem = ratElem;
             _ExtIntElem = extIntElem;
             _LeveeElem = levElem;
-            _StageDamageElem = stageDamElem;
 
             _UseInOut = inOutElem != null;
             _UseExtInt = extIntElem != null;
             _UseLevee = levElem != null;
 
             _ImpactAreaID = currentImpactAreaID;
+
+            _HasFailureStageDamage = hasFailureStageDamage;
+            _StageDamageElem = stageDamElem;
             _HasNonFailureStageDamage = hasNonFailureStageDamage;
             _NonFailureStageDamageElem = nonFailureStageDamElem;
+            _HasFailureStageLifeLoss = hasFailureStageLifeLoss;
+            _FailureStageLifeLossElement = failureStageLifeLossElem;
+            _HasNonFailureStageLifeLoss = hasNonFailureStageLifeLoss;
+            _NonFailureStageLifeLossElement = nonFailureStageLifeLossELem;
 
             LoadSimulationBuilder();
         }
@@ -104,13 +120,25 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private void LoadSimulationBuilder()
         {
-            var stageDamagePairedData = GetStageDamagesAsPairedData(_StageDamageElem);
-            _SimulationBuilder = ImpactAreaScenarioSimulation.Builder(_ImpactAreaID)
-            .WithStageDamages(stageDamagePairedData);
+            _SimulationBuilder = ImpactAreaScenarioSimulation.Builder(_ImpactAreaID);
+
+            if (_HasFailureStageDamage)
+            {
+                _SimulationBuilder.WithStageDamages(GetStageDamagesAsPairedData(_StageDamageElem));
+            }
 
             if (_HasNonFailureStageDamage)
             {
                 _SimulationBuilder.WithNonFailureStageDamage(GetStageDamagesAsPairedData(_NonFailureStageDamageElem));
+            }
+
+            if (_HasFailureStageLifeLoss)
+            {
+                _SimulationBuilder.WithStageLifeLoss(_FailureStageLifeLossElement.StageLifeLossRelationshipsAsUPD(_ImpactAreaID));
+            }
+            if (_HasNonFailureStageLifeLoss)
+            {
+                _SimulationBuilder.WithNonFailureStageLifeLoss(_FailureStageLifeLossElement.StageLifeLossRelationshipsAsUPD(_ImpactAreaID));
             }
 
             if (_FreqElem.IsAnalytical)

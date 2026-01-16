@@ -1,6 +1,8 @@
-﻿using System;
+﻿using HEC.FDA.View.TableWithPlot.CustomEventArgs;
+using HEC.FDA.ViewModel.TableWithPlot.Rows;
+using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -9,9 +11,6 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using HEC.FDA.View.TableWithPlot.CustomEventArgs;
-using HEC.FDA.ViewModel.TableWithPlot.Rows;
-using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
 
 namespace HEC.FDA.View.TableWithPlot
 {
@@ -30,7 +29,8 @@ namespace HEC.FDA.View.TableWithPlot
 
         public bool AllowAddDeleteRows { get; set; } = true;
         public bool PasteAddsRows { get; set; } = true;
-        public bool UseStarSizing { get;set;}
+        public bool UseStarSizing { get; set; }
+        public bool WrapHeaders { get; set; }
         public string CustomNumberFormat { get; set; }
         /// <summary>
         /// key = propertyName value = display name
@@ -55,7 +55,7 @@ namespace HEC.FDA.View.TableWithPlot
                 e.Handled = true; // Prevent the default copy behavior
                 return;
             }
-            
+
             if (IsLastRowSelected())
             {
                 if (e.Key == Key.Enter)
@@ -464,10 +464,19 @@ namespace HEC.FDA.View.TableWithPlot
                 {
                     if (ColumnNameMappings != null && ColumnNameMappings.TryGetValue(e.PropertyName, out string value))
                     {
-                        dataGridtextColumn.Header = value;
+                        dataGridtextColumn.Header =
+                            WrapHeaders
+                            ?
+                                new TextBlock
+                                {
+                                    Text = value,
+                                    TextWrapping = TextWrapping.Wrap,
+                                }
+                            :
+                                value;
                         cancel = false;
                     }
-                    else
+                    else if (dataGrid.Items.Count > 0)
                     {
                         PropertyInfo[] pilist = dataGrid.Items[0].GetType().GetProperties();
                         foreach (PropertyInfo pi in pilist)
@@ -477,13 +486,22 @@ namespace HEC.FDA.View.TableWithPlot
                                 DisplayAsColumnAttribute DisplayAsColAttribute = pi.GetCustomAttribute<DisplayAsColumnAttribute>();
                                 if (DisplayAsColAttribute != null)
                                 {
-                                    dataGridtextColumn.Header = DisplayAsColAttribute.DisplayName;
+                                    dataGridtextColumn.Header =
+                                        WrapHeaders
+                                        ?
+                                            new TextBlock
+                                            {
+                                                Text = DisplayAsColAttribute.DisplayName,
+                                                TextWrapping = TextWrapping.Wrap,
+                                            }
+                                        :
+                                            DisplayAsColAttribute.DisplayName;
                                     cancel = false;
                                 }
                             }
 
                         }
-                    }     
+                    }
                 }
                 e.Cancel = cancel;
                 if (cancel) { return; }

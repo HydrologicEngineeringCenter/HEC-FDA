@@ -3,9 +3,7 @@
     "allow": [
       "Bash(dotnet test:*)",
       "Bash(cat:*)",
-      "Bash(xargs cat:*)",
-      "Bash(dotnet build:*)",
-      "Bash(dotnet restore:*)"
+      "Bash(dotnet build:*)"
     ],
     "deny": []
   }

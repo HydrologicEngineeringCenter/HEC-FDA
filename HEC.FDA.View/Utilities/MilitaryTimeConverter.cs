@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HEC.FDA.Model.LifeLoss.Saving;
+using System;
 using System.Globalization;
 using System.Windows.Data;
 
@@ -14,6 +15,8 @@ namespace HEC.FDA.View.Utilities
                 if (int.TryParse(s, out int time))
                     return (time * 100).ToString("D4");
             }
+            if (s == LifeLossStringConstants.COMBINED_MAGIC_STRING) // only other allowed string
+                return s;
             return string.Empty;
         }
 

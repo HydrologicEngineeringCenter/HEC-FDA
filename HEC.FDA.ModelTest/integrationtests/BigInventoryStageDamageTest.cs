@@ -15,6 +15,7 @@ using HEC.FDA.Model.hydraulics.Interfaces;
 using HEC.FDA.Model.hydraulics.Mock;
 using System.Linq;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace HEC.FDA.ModelTest.integrationtests;
 
@@ -228,13 +229,10 @@ new double[] { 0, 1, 2, 3, 4, 5, 6, 7 }, 50, new CurveMetaData("Probability", "S
     private static string filePath = @"C:\Temp\HEC-FDA\times.csv";
 
     #endregion
-
-
-    // Commmented out because I don't thing this belongs here,and has way too long of a run time. Unit tests need to be fast. This belongs in benchmarking and performance testing. 
+    //This functionality is now contained in the testing utility, not unit tests. cannot have unit tests that run this long. 
     //[Fact]
     //public void ComputeTime()
     //{
-
     //    //Arrange
     //    Inventory inventory = CreateInventory();
     //    ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, inventory, hydraulicDataset, String.Empty, graphicalFrequency: stageFrequency, usingMockData: true);

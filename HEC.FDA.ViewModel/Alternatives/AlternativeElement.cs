@@ -1,6 +1,4 @@
-﻿using HEC.FDA.Model.alternatives;
-using HEC.FDA.Model.compute;
-using HEC.FDA.Model.metrics;
+﻿using HEC.FDA.Model.metrics;
 using HEC.FDA.ViewModel.Alternatives.Results;
 using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
 using HEC.FDA.ViewModel.Compute;
@@ -11,14 +9,11 @@ using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Threading;
 using System.Xml.Linq;
 using Utility;
-using Utility.Progress;
 using Visual.Observables;
+using static HEC.FDA.ViewModel.ImpactAreaScenario.Results.UncertaintyControlConfigs;
 using SynchronizationContext = Utility.SynchronizationContext;
 
 namespace HEC.FDA.ViewModel.Alternatives
@@ -29,7 +24,7 @@ namespace HEC.FDA.ViewModel.Alternatives
         public const string LAST_EDIT_DATE = "LastEditDate";
         private const string IAS_SET = "IASSet";
         private const string ID_STRING = "ID";
-        
+
         private const string BASE_SCENARIO = "BaseScenario";
         private const string FUTURE_SCENARIO = "FutureScenario";
 
@@ -70,12 +65,12 @@ namespace HEC.FDA.ViewModel.Alternatives
         public AlternativeElement(XElement altElement, int id) : base(altElement, id)
         {
             bool isOldXMLStyle = altElement.Elements(IAS_SET).Any();
-            if(isOldXMLStyle)
+            if (isOldXMLStyle)
             {
                 IEnumerable<XElement> iasElements = altElement.Elements(IAS_SET);
 
                 int i = 0;
-                foreach(XElement elem in iasElements)
+                foreach (XElement elem in iasElements)
                 {
                     int iasID = int.Parse(elem.Attribute(ID_STRING).Value);
                     //get the element from the id and grab the year from it. If no year that make it the current year.
@@ -85,7 +80,7 @@ namespace HEC.FDA.ViewModel.Alternatives
                     {
                         year = DateTime.Now.Year;
                     }
-                    if(i== 0)
+                    if (i == 0)
                     {
                         BaseScenario = new AlternativeScenario(iasID, year);
                     }
@@ -103,7 +98,7 @@ namespace HEC.FDA.ViewModel.Alternatives
                 XElement futureElem = altElement.Element(FUTURE_SCENARIO);
                 FutureScenario = new AlternativeScenario(futureElem.Element(AlternativeScenario.ALTERNATIVE_SCENARIO));
             }
-           
+
             AddDefaultActions(EditAlternative, StringConstants.EDIT_ALTERNATIVE_MENU);
             NamedAction viewResults = new()
             {
@@ -129,7 +124,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             altElement.Add(futureElem);
 
             return altElement;
-        }     
+        }
 
         public static IASElement GetElementFromID(int id)
         {
@@ -149,7 +144,7 @@ namespace HEC.FDA.ViewModel.Alternatives
         public FdaValidationResult RunPreComputeValidation()
         {
             FdaValidationResult vr = new();
-          
+
             IASElement baseElem = BaseScenario.GetElement();
             IASElement futureElem = FutureScenario.GetElement();
 
@@ -186,7 +181,7 @@ namespace HEC.FDA.ViewModel.Alternatives
                 vr.AddErrorMessage("Scenario '" + secondElem.Name + "' has no compute results.");
             }
             return vr;
-        }       
+        }
 
         private static FdaValidationResult DoBothScenariosExist(IASElement firstElem, IASElement secondElem)
         {
@@ -207,11 +202,26 @@ namespace HEC.FDA.ViewModel.Alternatives
 
             List<int> analysisYears = results.AnalysisYears;
 
-            YearResult yr1 = new(analysisYears.Min(), new DamageWithUncertaintyVM(results, DamageMeasureYear.Base), new DamageByImpactAreaVM(results, DamageMeasureYear.Base), new DamageByDamCatVM(results, DamageMeasureYear.Base));
-            YearResult yr2 = new(analysisYears.Max(), new DamageWithUncertaintyVM(results, DamageMeasureYear.Future), new DamageByImpactAreaVM(results, DamageMeasureYear.Future), new DamageByDamCatVM(results, DamageMeasureYear.Future));
+            YearResult yr1 = new(
+                analysisYears.Min(),
+                new DamageWithUncertaintyVM(results, DamageMeasureYear.Base, new DamageWithUncertaintyControlConfig()),
+                new DamageByImpactAreaVM(results, DamageMeasureYear.Base),
+                new DamageByDamCatVM(results, DamageMeasureYear.Base),
+                null,
+                null);
+            YearResult yr2 = new(
+                analysisYears.Max(),
+                new DamageWithUncertaintyVM(results, DamageMeasureYear.Future, new DamageWithUncertaintyControlConfig()),
+                new DamageByImpactAreaVM(results, DamageMeasureYear.Future),
+                new DamageByDamCatVM(results, DamageMeasureYear.Future),
+                null,
+                null);
 
             EADResult eadResult = new(new List<YearResult>() { yr1, yr2 });
-            EqadResult eqadResult = new(new DamageWithUncertaintyVM( results, DamageMeasureYear.Eqad, discountRate, period), new DamageByImpactAreaVM( results, DamageMeasureYear.Eqad, discountRate, period), new DamageByDamCatVM(results, discountRate, period));
+            EqadResult eqadResult = new(
+                new DamageWithUncertaintyVM(results, DamageMeasureYear.Eqad, new EqADWithUncertaintyControlConfig(), discountRate, period),
+                new DamageByImpactAreaVM(results, DamageMeasureYear.Eqad, discountRate, period),
+                new DamageByDamCatVM(results, discountRate, period));
             AlternativeResult altResult = new(Name, eadResult, eqadResult);
 
             return altResult;

@@ -1,9 +1,12 @@
-﻿using HEC.FDA.Model.metrics;
+using HEC.FDA.Model.metrics;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
 using HEC.FDA.ViewModel.Utilities;
-using HEC.Plotting.SciChart2D.DataModel;
-using HEC.Plotting.SciChart2D.ViewModel;
+using OxyPlot;
+using OxyPlot.Axes;
+using OxyPlot.Series;
+using Statistics.Distributions;
 using Statistics.Histograms;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,14 +14,16 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 {
     public class PerformanceAEPVM : PerformanceVMBase
     {
+        private static readonly Normal _standardNormal = new(0, 1);
 
-        public SciChart2DChartViewModel ChartViewModel { get; set; } = new SciChart2DChartViewModel("Performance");
-        public Dictionary<Threshold, HistogramData2D> HistogramData { get; } = new Dictionary<Threshold, HistogramData2D>();
-        public bool HistogramVisible { get; set; } = true;
+        public ViewResolvingPlotModel MyPlot { get; } = new();
+        public Dictionary<Threshold, Empirical> EmpiricalData { get; } = new();
+        public bool ChartVisible { get; set; } = true;
 
         public PerformanceAEPVM(ScenarioResults iasResult, int impactAreaID, List<ThresholdComboItem> thresholdComboItems)
         {
             LoadData(iasResult, impactAreaID, thresholdComboItems);
+            InitializePlotModel();
         }
 
         private void LoadData(ScenarioResults iasResult, int impactAreaID, List<ThresholdComboItem> thresholdComboItems)
@@ -30,22 +35,22 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                 int thresholdID = threshold.ThresholdID;
                 double mean = iasResult.MeanAEP(impactAreaID, thresholdID);
                 double median = iasResult.MedianAEP(impactAreaID, thresholdID);
-                double ninetyPercentAssurance = iasResult.AEPWithGivenAssurance(impactAreaID, assurance:0.9, thresholdID);
+                double ninetyPercentAssurance = iasResult.AEPWithGivenAssurance(impactAreaID, assurance: 0.9, thresholdID);
                 List<IPerformanceRowItem> rows = new List<IPerformanceRowItem>();
                 //get the table values
                 List<double> xVals = new List<double>() { .1, .04, .02, .01, .004, .002 };
                 foreach (double xVal in xVals)
                 {
-                    double yVal = iasResult.AssuranceOfAEP(impactAreaID, xVal,thresholdID);
+                    double yVal = iasResult.AssuranceOfAEP(impactAreaID, xVal, thresholdID);
                     rows.Add(new PerformanceFrequencyRowItem(xVal, yVal));
                 }
 
                 MetricsToRows.Add(threshold, rows);
                 ThresholdToMetrics.Add(threshold, (mean, median, ninetyPercentAssurance));
-                LoadHistogramData(iasResult, impactAreaID, threshold);
+                LoadEmpiricalData(iasResult, impactAreaID, threshold);
             }
 
-            if(MetricsToRows.Count>0)
+            if (MetricsToRows.Count > 0)
             {
                 Rows = MetricsToRows.First().Value;
                 Mean = ThresholdToMetrics.First().Value.Item1;
@@ -54,31 +59,145 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             }
         }
 
-        private void LoadHistogramData(ScenarioResults scenarioResults, int impactAreaID, Threshold threshold)
-        {            
+        private void LoadEmpiricalData(ScenarioResults scenarioResults, int impactAreaID, Threshold threshold)
+        {
             IHistogram histogramOfAEPs = scenarioResults.GetAEPHistogramForPlotting(impactAreaID, threshold.ThresholdID);
-            long[] binCounts = histogramOfAEPs.BinCounts;
-            double[] binsAsDoubles = binCounts.Select(x => (double)x / histogramOfAEPs.SampleSize).ToArray();
 
-            if (binsAsDoubles.Length == 0 || binsAsDoubles.Length == 1)
+            if (histogramOfAEPs.BinCounts.Length <= 1)
             {
-                HistogramVisible = false;
+                ChartVisible = false;
             }
             else
             {
-                HistogramData2D data = new HistogramData2D(histogramOfAEPs.BinWidth, histogramOfAEPs.Min, binsAsDoubles, "Chart", "Series", StringConstants.HISTOGRAM_EXCEEDANCE_PROBABILITY, StringConstants.HISTOGRAM_FREQUENCY);
-                HistogramColor.SetHistogramColor(data);
-                HistogramData.Add(threshold, data);
+                Empirical empirical = DynamicHistogram.ConvertToEmpiricalDistribution(histogramOfAEPs);
+                EmpiricalData.Add(threshold, empirical);
             }
         }
 
+        #region OxyPlot
+        private void InitializePlotModel()
+        {
+            MyPlot.Title = "AEP Assurance";
+            AddAxes();
+
+            // Add series for first threshold if available
+            if (EmpiricalData.Count > 0 && MetricsToRows.Count > 0)
+            {
+                var firstThreshold = EmpiricalData.Keys.First();
+                AddSeries(EmpiricalData[firstThreshold], MetricsToRows[firstThreshold]);
+            }
+        }
+
+        private void AddSeries(Empirical empirical, List<IPerformanceRowItem> tableRows)
+        {
+            MyPlot.Series.Clear();
+
+            // Add the CDF line from the empirical distribution
+            var lineSeries = new LineSeries()
+            {
+                Title = "AEP CDF",
+                // {0} = series title
+                // {1} = X axis title
+                // {2} = X value (z-score, displayed as AEP via axis formatter)
+                // {3} = Y axis title
+                // {4} = Y value (assurance)
+                TrackerFormatString = "Series: {0}\nAEP: {2:0.0000}\nAssurance: {4:P2}",
+                Color = OxyColors.Blue,
+                StrokeThickness = 2,
+            };
+
+            // Plot AEP (quantiles) on X-axis as z-scores, Assurance (cumulative probabilities) on Y-axis
+            for (int i = 0; i < empirical.CumulativeProbabilities.Length; i++)
+            {
+                double aep = empirical.Quantiles[i];
+                double assurance = empirical.CumulativeProbabilities[i];
+                double zScore = AepToZScore(aep);
+                if (!double.IsInfinity(zScore) && !double.IsNaN(zScore))
+                {
+                    lineSeries.Points.Add(new DataPoint(zScore, assurance));
+                }
+            }
+
+            MyPlot.Series.Add(lineSeries);
+
+            // Add table data points as scatter markers
+            var scatterSeries = new ScatterSeries()
+            {
+                Title = "Table Values",
+                MarkerType = MarkerType.Circle,
+                MarkerSize = 6,
+                MarkerFill = OxyColors.Red,
+                // {2} = X value (z-score, displayed as AEP via axis formatter)
+                // {4} = Y value (assurance)
+                TrackerFormatString = "AEP: {Probability:N4}\nAssurance: {4:P2}",
+            };
+
+            foreach (var row in tableRows)
+            {
+                if (row is PerformanceFrequencyRowItem freqRow)
+                {
+                    // X = AEP (Frequency) as z-score, Y = Assurance
+                    double zScore = AepToZScore(freqRow.Frequency);
+                    if (!double.IsInfinity(zScore) && !double.IsNaN(zScore))
+                    {
+                        scatterSeries.Points.Add(new ScatterPoint(zScore, freqRow.AEP));
+                    }
+                }
+            }
+
+            MyPlot.Series.Add(scatterSeries);
+            MyPlot.InvalidatePlot(true);
+        }
+
+        private static double AepToZScore(double aep)
+        {
+            // Clamp AEP to avoid infinity at extremes
+            double clampedAep = Math.Max(0.0001, Math.Min(0.9999, aep));
+            // Convert exceedance probability to non-exceedance, then to z-score
+            return Normal.StandardNormalInverseCDF(1 - clampedAep);
+        }
+
+        private static string ProbabilityFormatter(double zScore)
+        {
+            // Convert z-score back to exceedance probability (AEP) for display
+            double nonExceedance = _standardNormal.CDF(zScore);
+            double aep = 1 - nonExceedance;
+            return aep.ToString("N4");
+        }
+
+        private void AddAxes()
+        {
+            // X-axis: AEP (Annual Exceedance Probability) using normal transform
+            // Z-scores are used internally, with labels showing probabilities
+            // Large AEPs (50%) on right, small AEPs (0.1%) on left
+            LinearAxis x = new()
+            {
+                Position = AxisPosition.Bottom,
+                Title = StringConstants.EXCEEDANCE_PROBABILITY,
+                LabelFormatter = ProbabilityFormatter,
+            };
+
+            // Y-axis: Assurance
+            LinearAxis y = new()
+            {
+                Position = AxisPosition.Left,
+                Title = "Assurance",
+                MinorTickSize = 0,
+                StringFormat = "P0",
+                Minimum = 0,
+                Maximum = 1,
+            };
+
+            MyPlot.Axes.Add(x);
+            MyPlot.Axes.Add(y);
+        }
+        #endregion
+
         public override void UpdateHistogram(ThresholdComboItem metric)
         {
-            if (HistogramData.ContainsKey(metric.Metric))
+            if (EmpiricalData.ContainsKey(metric.Metric) && MetricsToRows.ContainsKey(metric.Metric))
             {
-                HistogramData2D histData = HistogramData[metric.Metric];
-                HistogramColor.SetHistogramColor(histData);
-                ChartViewModel.LineData.Set(new List<SciLineData>() { histData });
+                AddSeries(EmpiricalData[metric.Metric], MetricsToRows[metric.Metric]);
             }
         }
     }

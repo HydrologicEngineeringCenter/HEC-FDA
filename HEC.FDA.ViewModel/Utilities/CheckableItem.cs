@@ -10,7 +10,7 @@ public partial class CheckableItem : ObservableObject
     private string _name;
 
     [ObservableProperty]
-    private bool _isChecked = true;
+    private bool _isChecked;
 
     /// <summary>
     /// The actual value of the checkable item which is included in a table name

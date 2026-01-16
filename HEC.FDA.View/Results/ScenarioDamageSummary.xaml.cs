@@ -20,5 +20,14 @@ namespace HEC.FDA.View.Results
             }
 
         }
+
+        private void FdaDataGrid_AutoGeneratingColumn_NoUnit(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            if (e.PropertyType == typeof(double) || e.PropertyType == typeof(double?))
+            {
+                (e.Column as DataGridTextColumn).Binding.StringFormat = "N4";
+            }
+
+        }
     }
 }

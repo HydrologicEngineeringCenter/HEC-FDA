@@ -1,8 +1,10 @@
 ﻿using HEC.FDA.Model.LifeLoss;
+using HEC.FDA.Model.LifeLoss.Saving;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.Spatial;
 using RasMapperLib;
 using Statistics.Histograms;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,21 +21,23 @@ public class LifeLossFunctionGenerator
     private readonly Dictionary<string, string> _hydraulicsFolderByAlternative;
     private readonly string _summarySetName;
     private Dictionary<string, PointM> _indexPointBySummaryZone; // not readonly because we reassign its pointer in CreateLifeLossFunctions, too costly to do in constructor?
+    private Dictionary<string, int> _impactAreaIDByName;
     private readonly string _simulationName;
     private readonly string _topLevelHydraulicsFolder;
     private readonly string[] _alternativeNames;
-    private readonly string[] _hazardTimes;
+    private readonly Dictionary<string, double> _hazardTimes;
 
-    public LifeLossFunctionGenerator(string selectedPath, LifeSimSimulation simulation)
+    public LifeLossFunctionGenerator(string selectedPath, LifeSimSimulation simulation, Dictionary<string, int> impactAreaIDByName)
     {
         _db = new LifeSimDatabase(selectedPath);
         _hydraulicsFolderByAlternative = _db.CreateAlternativeHydraulicsPairs();
         _summarySetName = _db.SummarySetName(simulation.Name);
         _indexPointBySummaryZone = simulation.SummarySet;
+        _impactAreaIDByName = impactAreaIDByName;
         _simulationName = simulation.Name;
         _topLevelHydraulicsFolder = simulation.HydraulicsFolder;
         _alternativeNames = simulation.Alternatives.ToArray();
-        _hazardTimes = simulation.HazardTimes.ToArray();
+        _hazardTimes = simulation.HazardTimes;
     }
 
     /// <summary>
@@ -58,12 +62,10 @@ public class LifeLossFunctionGenerator
     {
         int functionID = 1;
         List<LifeLossFunction> lifeLossFunctions = [];
-        foreach (string summaryZone in _indexPointBySummaryZone.Keys)
+        foreach (var (name, id) in _impactAreaIDByName.OrderBy(kvp => kvp.Value))
         {
-            // creating points array of size 1 because that RAS API needs an array
-            PointMs indexPoint = [_indexPointBySummaryZone[summaryZone]];
-
-            List<LifeLossFunction> functions = CreateLifeLossFunctionsForSummaryZone(summaryZone, indexPoint);
+            PointMs indexPoint = [_indexPointBySummaryZone[name]];
+            List<LifeLossFunction> functions = CreateLifeLossFunctionsForSummaryZone(name, indexPoint);
             foreach (LifeLossFunction function in functions)
             {
                 function.FunctionID = functionID;
@@ -74,68 +76,48 @@ public class LifeLossFunctionGenerator
         return lifeLossFunctions;
     }
 
-    /// <summary>
-    /// Return a list of life loss functions for a given summary zone
-    /// </summary>
-    /// <param name="summaryZone"></param>
-    /// <param name="indexPoint"></param>
-    /// <returns></returns>
     private List<LifeLossFunction> CreateLifeLossFunctionsForSummaryZone(string summaryZone, PointMs indexPoint)
     {
-        Dictionary<string, double> stageByAlternative = [];
         List<LifeLossFunction> functions = [];
 
-        foreach (string hazardTime in _hazardTimes)
+        string[] alternatives = [.. _alternativeNames]; // create a copy of the alternative names because we are sorting, don't want to sort in place as we iterate through (although I think it would still work)
+        double[] stages = new double[alternatives.Length];
+        for (int i = 0; i < alternatives.Length; i++)
         {
-            List<double> stages = [];
-            List<DynamicHistogram> histograms = [];
-            string[] alternatives = [.. _alternativeNames]; // create a copy of the alternative names because we are sorting, don't want to sort in place as we iterate through (although I think it would still work)
-            foreach (string alternative in alternatives)
-            {
-                if (!stageByAlternative.TryGetValue(alternative, out double stage))
-                {
-                    string associatedHydraulics = _hydraulicsFolderByAlternative[alternative];
-                    // looking for a file matching the hydraulicsname.p??.hdf
-                    string filePath = Directory.EnumerateFiles(_topLevelHydraulicsFolder, $"{associatedHydraulics}.p??.hdf").FirstOrDefault()
-                        ?? throw new System.Exception($"'{associatedHydraulics}' hydraulics file not found in {_topLevelHydraulicsFolder}.");
-                    float[] computedStage = RASHelper.GetStageFromHDF(indexPoint, filePath); // costly compute
-                    stage = computedStage[0];
-                    stageByAlternative[alternative] = stage; // cache the stages. same for any time of day (only associated with alternative, not time)
-                }
-                stages.Add(stage);
-                string tableName = $"{_simulationName}>Results_By_Iteration>{alternative}>{hazardTime}>{_summarySetName}>{summaryZone}";
-                DynamicHistogram histogram = _db.QueryLifeLossTable(tableName);
-                histograms.Add(histogram);
+            string associatedHydraulics = _hydraulicsFolderByAlternative[alternatives[i]];
+            // looking for a file matching the hydraulicsname.hdf
+            // This is hardcoding LifeSim convention of .hdf extension for hydraulics files. Could be made more flexible in the future if needed.
+            // Instead, load the whole hydraulics folder as RASResults and scrub the names from them, then use those to compare with the LifeSim database.
+            string filePath = Directory.EnumerateFiles(_topLevelHydraulicsFolder, $"{associatedHydraulics}.hdf").FirstOrDefault()
+                ?? throw new System.Exception($"'{associatedHydraulics}' hydraulics file not found in {_topLevelHydraulicsFolder}.");
+            float[] computedStage = RASHelper.GetStageFromHDF(indexPoint, filePath); // costly compute
+            double stage = computedStage[0];
+            stages[i] = stage;
+        }
+        Array.Sort(stages, alternatives); // both arrays are now sorted in ascending stage order which is what we need for UPD
 
-            }
-            List<Entry> entries = [];
-            for (int i = 0; i < stages.Count; i++)
+        Dictionary<UncertainPairedData, double> updweights = new();
+        int idx = 0;
+        foreach (var kvp in _hazardTimes)
+        {
+            string hazardTime = kvp.Key;
+            double weight = kvp.Value;
+            DynamicHistogram[] histograms = new DynamicHistogram[alternatives.Length];
+            for (int i = 0; i < alternatives.Length; i++)
             {
-                entries.Add(new Entry
-                {
-                    Alternative = alternatives[i],
-                    Stage = stages[i],
-                    Histogram = histograms[i]
-                });
+                string tableName = $"{_simulationName}>Results_By_Iteration>{alternatives[i]}>{hazardTime}>{_summarySetName}>{summaryZone}";
+                DynamicHistogram histogram = _db.QueryLifeLossTable(tableName);
+                histograms[i] = histogram;
             }
-            entries.Sort((e1, e2) => e1.Stage.CompareTo(e2.Stage)); // the stages will not necessarily be in order, but we need them to be for UPD
-            for (int i = 0; i < entries.Count; i++)
-            {
-                alternatives[i] = entries[i].Alternative;
-                stages[i] = entries[i].Stage;
-                histograms[i] = entries[i].Histogram;
-            }
-            UncertainPairedData upd = new(stages.ToArray(), histograms.ToArray(), new CurveMetaData());
+            UncertainPairedData upd = new(stages, histograms, new CurveMetaData("Stage", "Life Loss", $"{_simulationName}_{summaryZone}_{hazardTime}", "LifeLoss", _impactAreaIDByName[summaryZone], "LifeLoss"));
+            updweights[upd] = weight;
             LifeLossFunction llf = new(-1, -1, upd, alternatives, _simulationName, summaryZone, hazardTime);
             functions.Add(llf);
+            idx++;
         }
+        UncertainPairedData combined = UncertainPairedData.CombineWithWeights(updweights);
+        LifeLossFunction combinedFunc = new(-1, -1, combined, alternatives, _simulationName, summaryZone, LifeLossStringConstants.COMBINED_MAGIC_STRING);
+        functions.Add(combinedFunc);
         return functions;
-    }
-
-    private class Entry
-    {
-        public string Alternative;
-        public double Stage;
-        public DynamicHistogram Histogram;
     }
 }

@@ -112,6 +112,7 @@ namespace Statistics.Histograms
             double range = Max - Min;
             if (range == 0)
             {
+                //shoudl consider cranking this down for AALL .0001
                 BinWidth = 1;
 
             }

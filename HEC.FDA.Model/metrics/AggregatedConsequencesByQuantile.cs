@@ -1,13 +1,7 @@
-﻿using System;
-using Statistics.Histograms;
-using Statistics;
-using System.Xml.Linq;
-using HEC.MVVMFramework.Base.Interfaces;
-using HEC.MVVMFramework.Base.Events;
-using HEC.MVVMFramework.Base.Implementations;
+﻿using Statistics.Distributions;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using Statistics.Distributions;
+using System.Xml.Linq;
 
 namespace HEC.FDA.Model.metrics
 {
@@ -19,6 +13,7 @@ namespace HEC.FDA.Model.metrics
         public string DamageCategory { get; }
         public string AssetCategory { get; }
         public int RegionID { get; } = -999;
+        public ConsequenceType ConsequenceType { get; }
         public bool IsNull { get; }
         #endregion 
 
@@ -27,6 +22,7 @@ namespace HEC.FDA.Model.metrics
         {
             DamageCategory = "unassigned";
             AssetCategory = "unassigned";
+            ConsequenceType = ConsequenceType.Damage;
             RegionID = 0;
             ConsequenceDistribution = new Empirical();
             IsNull = true;
@@ -55,10 +51,11 @@ namespace HEC.FDA.Model.metrics
         /// <param name="damageCategory"></param>
         /// <param name="assetCategory"></param>
         /// <param name="impactAreaID"></param>
-        public AggregatedConsequencesByQuantile(string damageCategory, string assetCategory, Empirical empirical, int impactAreaID)
+        public AggregatedConsequencesByQuantile(string damageCategory, string assetCategory, Empirical empirical, int impactAreaID, ConsequenceType consequenceType = ConsequenceType.Damage)
         {
             DamageCategory = damageCategory;
             AssetCategory = assetCategory;
+            ConsequenceType = consequenceType;
             ConsequenceDistribution = empirical;
             RegionID = impactAreaID;
             IsNull = false;
@@ -66,7 +63,7 @@ namespace HEC.FDA.Model.metrics
         #endregion
 
         #region Methods
-        
+
         internal double ConsequenceSampleMean()
         {
             return ConsequenceDistribution.SampleMean;
@@ -88,6 +85,7 @@ namespace HEC.FDA.Model.metrics
             masterElement.SetAttributeValue("DamageCategory", DamageCategory);
             masterElement.SetAttributeValue("AssetCategory", AssetCategory);
             masterElement.SetAttributeValue("ImpactAreaID", RegionID);
+            masterElement.SetAttributeValue("ConsequenceType", ConsequenceType);
             return masterElement;
         }
 
@@ -97,7 +95,16 @@ namespace HEC.FDA.Model.metrics
             string damageCategory = xElement.Attribute("DamageCategory").Value;
             string assetCategory = xElement.Attribute("AssetCategory").Value;
             int id = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
-            return new AggregatedConsequencesByQuantile(damageCategory, assetCategory, empirical, id);
+
+            // This allows for backward compatibility -- if we are loading an object saved before the enum existed, 
+            // it will default to damage because that is all the used to exist
+            // anything saved after the enum was introduced will have the attribute and be parsed accordingly
+            ConsequenceType consequenceType = ConsequenceType.Damage;
+            var typeAttr = xElement.Attribute("ConsequenceType");
+            if (typeAttr != null && Enum.TryParse<ConsequenceType>(typeAttr.Value, out var parsed))
+                consequenceType = parsed;
+
+            return new AggregatedConsequencesByQuantile(damageCategory, assetCategory, empirical, id, consequenceType);
         }
         #endregion
     }

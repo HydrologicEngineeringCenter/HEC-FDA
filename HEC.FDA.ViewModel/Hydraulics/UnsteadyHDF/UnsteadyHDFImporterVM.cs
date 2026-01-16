@@ -2,7 +2,6 @@
 using HEC.FDA.Model.hydraulics;
 using HEC.FDA.Model.hydraulics.enums;
 using HEC.FDA.ViewModel.Editors;
-using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
@@ -10,27 +9,19 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows;
 
 namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
 {
-    public partial class UnsteadyHDFImporterVM : BaseEditorVM
+    public partial class UnsteadyHDFImporterVM : BaseEditorVM, IHaveListOfWSERows
     {
-        #region Fields
         private string _SelectedPath;
-        #endregion
-        #region Properties
         public string SelectedPath
         {
             get { return _SelectedPath; }
             set { _SelectedPath = value; FileSelected(value); NotifyPropertyChanged(); }
         }
-
-
-
-        public ObservableCollection<WaterSurfaceElevationRowItemVM> ListOfRows { get; } = new ObservableCollection<WaterSurfaceElevationRowItemVM>();
-        #endregion
+        public ObservableCollection<WaterSurfaceElevationRowItemVM> ListOfRows { get; } = [];
         #region Constructors
         public UnsteadyHDFImporterVM(EditorActionManager actionManager) : base(actionManager)
         {
@@ -70,30 +61,14 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
             WaterSurfaceElevationRowItemVM newRow = new(name, path, probability, isEnabled);
             ListOfRows.Add(newRow);
         }
-
-        #region copy files
-
-        private void CopyAll(DirectoryInfo source, DirectoryInfo target)
+        public void RemoveRows(List<int> rowIndices)
         {
-            Directory.CreateDirectory(target.FullName);
-
-            // Copy each file into the new directory.
-            foreach (FileInfo fi in source.GetFiles())
+            for (int i = rowIndices.Count() - 1; i >= 0; i--)
             {
-                string newPath = Path.Combine(target.FullName, fi.Name);
-                fi.CopyTo(newPath, true);
-            }
-
-            // Copy each subdirectory using recursion.
-            foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
-            {
-                DirectoryInfo nextTargetSubDir =
-                    target.CreateSubdirectory(diSourceSubDir.Name);
-                CopyAll(diSourceSubDir, nextTargetSubDir);
+                ListOfRows.RemoveAt(rowIndices[i]);
             }
         }
 
-        #endregion
 
         #region validation
         private FdaValidationResult ValidateImporter()
@@ -118,21 +93,26 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
         private static FdaValidationResult IsFileValid(string file)
         {
             FdaValidationResult vr = new();
-            int firstPeriodIndex = file.IndexOf(".");
-            if (firstPeriodIndex != -1)
+
+            // Check for .hdf extension
+            if (!Path.GetExtension(file).Equals(".hdf", System.StringComparison.OrdinalIgnoreCase))
             {
-                string substring = file.Substring(firstPeriodIndex + 1);
-                Regex r = new("p??.hdf");
-                if (!r.Match(substring).Success)
+                vr.AddErrorMessage("Ignoring file without .hdf extension: " + file);
+                return vr;
+            }
+
+            // Check that it's a valid RAS result
+            try
+            {
+                RasMapperLib.RASResults result = new(file);
+                if (result == null || string.IsNullOrEmpty(result.PlanAttributes?.PlanTitle))
                 {
-                    //failed
-                    vr.AddErrorMessage("Ignoring file that did not match the pattern of '*.p##.hdf'. " + file);
+                    vr.AddErrorMessage("File is not a valid RAS result: " + file);
                 }
             }
-            else
+            catch
             {
-                //wrong format no period found in file path
-                vr.AddErrorMessage("Ignoring file that did not match the pattern of '*.p##.hdf'. " + file);
+                vr.AddErrorMessage("File is not a valid RAS result: " + file);
             }
 
             return vr;
@@ -140,55 +120,35 @@ namespace HEC.FDA.ViewModel.Hydraulics.UnsteadyHDF
 
         public void FileSelected(string fullpath)
         {
-            FdaValidationResult vrErrors = new();
-            FdaValidationResult vrWarnings = new();
-
-            if (fullpath != null && IsCreatingNewElement)
+            if (fullpath == null || !IsCreatingNewElement)
             {
-                ListOfRows.Clear();
+                return;
+            }
+            ListOfRows.Clear();
 
-                string[] files = Directory.GetFiles(fullpath);
-                List<string> validFiles = new();
-                foreach (string file in files)
+            string[] files = Directory.GetFiles(fullpath, "*", SearchOption.AllDirectories);
+            List<string> validFiles = new();
+            foreach (string file in files)
+            {
+                FdaValidationResult fileValidResult = IsFileValid(file);
+                if (fileValidResult.IsValid)
                 {
-                    FdaValidationResult fileValidResult = IsFileValid(file);
-                    if (fileValidResult.IsValid)
-                    {
-                        validFiles.Add(file);
-                    }
-                    else
-                    {
-                        vrWarnings.AddErrorMessage(fileValidResult.ErrorMessage);
-                    }
-                }
-
-                //warn users that these directories were ignored.
-                string[] directories = Directory.GetDirectories(fullpath);
-                if (directories.Length > 0)
-                {
-                    vrWarnings.AddErrorMessage("Ignoring subdirectories.");
-                }
-
-                if (validFiles.Count == 0)
-                {
-                    vrErrors.AddErrorMessage("No valid hdf files were detected. You must select a directory that contains files that match pattern '*.p##.hdf'.");
-                }
-                else
-                {
-                    foreach (string file in validFiles)
-                    {
-                        AddRow(GetUnsteadyRASResultName(file), Path.GetFullPath(file), 0);
-                    }
-                }
-                if (!vrWarnings.IsValid)
-                {
-                    MessageBox.Show(vrWarnings.ErrorMessage, "Warnings", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                if (!vrErrors.IsValid)
-                {
-                    MessageBox.Show(vrErrors.ErrorMessage, "Errors", MessageBoxButton.OK, MessageBoxImage.Error);
+                    validFiles.Add(file);
                 }
             }
+
+            if (validFiles.Count == 0)
+            {
+                MessageBox.Show("No valid RAS result files were detected. You must select a directory that contains valid .hdf RAS result files.", "Errors", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            else
+            {
+                foreach (string file in validFiles)
+                {
+                    AddRow(GetUnsteadyRASResultName(file), Path.GetFullPath(file), 0);
+                }
+            }
+
         }
 
         private static string GetUnsteadyRASResultName(string file)
