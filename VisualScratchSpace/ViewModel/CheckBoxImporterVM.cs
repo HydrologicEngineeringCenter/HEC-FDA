@@ -158,8 +158,8 @@ public partial class CheckBoxImporterVM : ObservableObject
     {
         LineSeries lineSeries = new();
 
-        DataPoint[] points = new DataPoint[function.Xvals.Length];
-        for (int i = 0; i < function.Xvals.Length; i++)
+        DataPoint[] points = new DataPoint[function.Xvals.Count];
+        for (int i = 0; i < function.Xvals.Count; i++)
         {
             double stage = function.Xvals[i];
             double lifeLoss = function.Yvals[i];
