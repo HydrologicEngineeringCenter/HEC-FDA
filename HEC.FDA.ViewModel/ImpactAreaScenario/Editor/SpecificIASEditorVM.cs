@@ -542,7 +542,15 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private void PreviewCompute()
         {
-            ChildElementComboItem selectedStageDamage = _SelectedStageDamage();
+            if (_HasFailureStageDamage == false)
+            {
+                MessageBox.Show("Preview compute is only implemented for visualizing failure and total economic damages", "Not Yet Implemented", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            else if(_SelectedStageDamage() == null && _HasFailureStageDamage == true){
+            }
+
+                ChildElementComboItem selectedStageDamage = _SelectedStageDamage();
             FrequencyElement freqElem = SelectedFrequencyElement.ChildElement as FrequencyElement;
             InflowOutflowElement inOutElem = SelectedInflowOutflowElement.ChildElement as InflowOutflowElement;
             StageDischargeElement ratElem = SelectedRatingCurveElement.ChildElement as StageDischargeElement;
@@ -554,9 +562,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             {
                 nonFailureStageDamageElem = SelectedNonFailureStageDamage.ChildElement as AggregatedStageDamageElement;
             }
+            //hard coded to not use lifeloss. Not Yet Implemented. 
             SimulationCreator sc = new(freqElem, inOutElem, ratElem, extIntElem, leveeElem, CurrentImpactArea.ID,
                 HasFailureStageDamage, stageDamageElem, _HasNonFailureStageDamage, nonFailureStageDamageElem,
-                HasFailureStageLifeLoss, null, HasNonFailureStageDamage, null);
+                false, null, false, null);
 
             foreach (ThresholdRowItem thresholdRow in Thresholds)
             {
