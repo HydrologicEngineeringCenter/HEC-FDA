@@ -138,7 +138,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             }
             if (_HasNonFailureStageLifeLoss)
             {
-                _SimulationBuilder.WithNonFailureStageLifeLoss(_FailureStageLifeLossElement.StageLifeLossRelationshipsAsUPD(_ImpactAreaID));
+                _SimulationBuilder.WithNonFailureStageLifeLoss(_NonFailureStageLifeLossElement.StageLifeLossRelationshipsAsUPD(_ImpactAreaID));
             }
 
             if (_FreqElem.IsAnalytical)
