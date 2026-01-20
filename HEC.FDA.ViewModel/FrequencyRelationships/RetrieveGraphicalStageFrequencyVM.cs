@@ -17,11 +17,8 @@ namespace HEC.FDA.ViewModel.FrequencyRelationships;
 
 public class RetrieveGraphicalStageFrequencyVM : BaseViewModel
 {
-    #region Fields
     private IndexPointsElement _selectedIndexPointSet;
     private HydraulicElement _selectedHydraulics;
-    #endregion
-    #region Properties
     public ObservableCollection<HydraulicElement> AvailableHydraulics { get; set; }
     public ObservableCollection<IndexPointsElement> AvailableIndexPointSets { get; set; }
     public HydraulicElement SelectedHydraulics
@@ -48,17 +45,23 @@ public class RetrieveGraphicalStageFrequencyVM : BaseViewModel
             NotifyPropertyChanged();
         }
     }
-    #endregion
-    #region Named Actions
     private NamedAction _generateFrequencyCurves;
     public NamedAction GenerateFrequencyCurves { get { return _generateFrequencyCurves; } set { _generateFrequencyCurves = value; NotifyPropertyChanged(); } }
-    #endregion
+
+    private int _equivalentRecordLength;
+
+    public int EquivalentRecordLength
+    {
+        get { return _equivalentRecordLength; }
+        set { _equivalentRecordLength = value; NotifyPropertyChanged(); }
+    }
+
     #region Constructors
     public RetrieveGraphicalStageFrequencyVM()
     {
         Initialize();
         GenerateFrequencyCurves = new NamedAction();
-        GenerateFrequencyCurves.Name = "GenerateFrequencyCurves";
+        GenerateFrequencyCurves.Name = "Generate Curves";
         GenerateFrequencyCurves.Action = GenerateFrequencyCurvesAction;
     }
     #endregion
@@ -93,19 +96,26 @@ public class RetrieveGraphicalStageFrequencyVM : BaseViewModel
         Projection studyProjection = GetStudyProjection();
         if(studyProjection == null)
         {
-            MessageBox.Show("Failed to get projection from both study properties and terrain file");
+            MessageBox.Show("Failed to get projection from both study properties and terrain file", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+        if (EquivalentRecordLength < 1)
+        {
+            MessageBox.Show("Please enter an equivalent record length greater than 0.", "Warning" , MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
 
         List<UncertainPairedData> freqCurves = SelectedHydraulics.DataSet.GetGraphicalStageFrequency(pointShapefile, hydraulicParentDirectory, studyProjection);
         if (freqCurves == null)
         {
-            MessageBox.Show("Failed to create frequency curves");
+            MessageBox.Show("Failed to create frequency curves", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
         }
         for (int i = 0; i < freqCurves.Count; i++)
         {
-            AddFrequencyRelationship(freqCurves[i], SelectedIndexPointSet.IndexPoints[i] + "|" + SelectedHydraulics.Name);
+            AddFrequencyRelationship(freqCurves[i], SelectedIndexPointSet.IndexPoints[i] + "|" + SelectedHydraulics.Name, EquivalentRecordLength);
         }
+        MessageBox.Show($"{freqCurves.Count} curves were added to the study tree.","Success", MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
     private static Projection GetStudyProjection()
@@ -136,7 +146,7 @@ public class RetrieveGraphicalStageFrequencyVM : BaseViewModel
         return filePath;
     }
 
-    private static void AddFrequencyRelationship(UncertainPairedData upd, string name)
+    private static void AddFrequencyRelationship(UncertainPairedData upd, string name, int equivalentRecordLength)
     {
         string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
         int id = PersistenceFactory.GetElementManager<FrequencyElement>().GetNextAvailableId();
@@ -145,6 +155,7 @@ public class RetrieveGraphicalStageFrequencyVM : BaseViewModel
         vm.IsGraphical = true;
         vm.MyGraphicalVM.UseFlow = false;
         vm.MyGraphicalVM.InputDataProvider.UpdateFromUncertainPairedData(upd);
+        vm.MyGraphicalVM.EquivalentRecordLength = equivalentRecordLength;
 
         FrequencyElement element = new FrequencyElement(name, editDate, "Retrieved from Hydraulics", id,vm);
         IElementManager elementManager = PersistenceFactory.GetElementManager(element);
