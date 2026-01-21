@@ -103,16 +103,16 @@
                    DisplayMemberPath="Name"
                    SelectedItem="{Binding SelectedLeveeFeatureElement}" />
 
-        <Label  Grid.Column="2"
+        <!--<Label  Grid.Column="2"
                 Content="{x:Static utilVM:StringConstants.EXT_INT_SHORT_LABEL}"
                 Visibility="{Binding HasNonFailureStageDamage,Converter={StaticResource BoolToInverseVisibilityConverter}}"
-                HorizontalAlignment="Right" />
-        <ComboBox  Grid.Column="3"
+                HorizontalAlignment="Right" />-->
+        <!--<ComboBox  Grid.Column="3"
                    HorizontalAlignment="Stretch"
                    ItemsSource="{Binding ExteriorInteriorElements}"
                    DisplayMemberPath="Name"
                    SelectedItem="{Binding SelectedExteriorInteriorElement}"
-                   Visibility="{Binding HasNonFailureStageDamage,Converter={StaticResource BoolToInverseVisibilityConverter}}" />
+                   Visibility="{Binding HasNonFailureStageDamage,Converter={StaticResource BoolToInverseVisibilityConverter}}" />-->
 
 
       </Grid>

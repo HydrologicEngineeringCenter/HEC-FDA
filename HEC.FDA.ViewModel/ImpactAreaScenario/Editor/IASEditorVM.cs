@@ -471,7 +471,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private void OnHasFailureStageDamageChanged(bool newVal)
         {
             if (!newVal)
+            {
                 SelectedFailureStageDamageElement = StageDamageElements[0];
+                if (HasNonFailureStageDamage)
+                    HasNonFailureStageDamage = false;
+            }
 
             foreach (SpecificIASEditorVM specificIAS in ImpactAreaTabs)
             {
@@ -482,6 +486,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private void OnHasNonFailureStageDamageChanged(bool newValue)
         {
+            if (newValue && !HasFailureStageDamage)
+                HasFailureStageDamage = true;
+
             if (!newValue)
                 SelectedNonFailureStageDamageElement = StageDamageElements[0];
 
@@ -489,7 +496,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             {
                 //pass the boolean value to the tab vm's so that they can flip
                 //their boolean and notify property changed so that the exterior interior
-                //option updates. 
+                //option updates.
                 specificIAS.HasNonFailureStageDamage = HasNonFailureStageDamage;
                 specificIAS.UpdateSufficientToCompute();
             }
@@ -498,7 +505,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private void OnHasFailureStageLifeLossChanged(bool newVal)
         {
             if (!newVal)
+            {
                 SelectedFailureStageLifeLossElement = StageLifeLossElements[0];
+                if (HasNonFailureStageLifeLoss)
+                    HasNonFailureStageLifeLoss = false;
+            }
 
             foreach (SpecificIASEditorVM specificIAS in ImpactAreaTabs)
             {
@@ -509,6 +520,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private void OnHasNonFailureStageLifeLossChanged(bool newVal)
         {
+            if (newVal && !HasFailureStageLifeLoss)
+                HasFailureStageLifeLoss = true;
+
             if (!newVal)
                 SelectedNonFailureStageLifeLossElement = StageLifeLossElements[0];
 
