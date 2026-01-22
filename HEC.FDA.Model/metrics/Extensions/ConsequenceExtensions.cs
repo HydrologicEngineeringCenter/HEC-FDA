@@ -6,39 +6,43 @@ namespace HEC.FDA.Model.metrics.Extensions;
 public static class ConsequenceExtensions
 {
     /// <summary>
-    /// Filters a collection of AggregatedConsequencesByQuantile based on damage category, asset category, and impact area.
-    /// Failure to match returns an empty IEnumerable. 
+    /// Filters a collection of AggregatedConsequencesByQuantile based on damage category, asset category, impact area, and risk type.
+    /// Failure to match returns an empty IEnumerable.
     /// </summary>
     public static IEnumerable<AggregatedConsequencesByQuantile> FilterByCategories(
         this IEnumerable<AggregatedConsequencesByQuantile> consequences,
         string damageCategory = null,
         string assetCategory = null,
         int impactAreaID = -999,
-        ConsequenceType type = ConsequenceType.Damage)
+        ConsequenceType type = ConsequenceType.Damage,
+        RiskType riskType = RiskType.Total)
     {
         return consequences.Where(result =>
             (damageCategory == null || damageCategory.Equals(result.DamageCategory)) &&
             (assetCategory == null || assetCategory.Equals(result.AssetCategory)) &&
             (impactAreaID == -999 || impactAreaID == result.RegionID) &&
-            (type == result.ConsequenceType));
+            (type == result.ConsequenceType) &&
+            (riskType == RiskType.Total || riskType == result.RiskType));
     }
 
     /// <summary>
-    /// Filters a collection of AggregatedConsequencesBinned based on damage category, asset category, and impact area
-    /// Failure to match returns an empty IEnumerable. 
+    /// Filters a collection of AggregatedConsequencesBinned based on damage category, asset category, impact area, and risk type.
+    /// Failure to match returns an empty IEnumerable.
     /// </summary>
     public static IEnumerable<AggregatedConsequencesBinned> FilterByCategories(
         this IEnumerable<AggregatedConsequencesBinned> consequences,
         string damageCategory = null,
         string assetCategory = null,
         int impactAreaID = -999,
-        ConsequenceType type = ConsequenceType.Damage)
+        ConsequenceType type = ConsequenceType.Damage,
+        RiskType riskType = RiskType.Total)
     {
         return consequences.Where(result =>
             (damageCategory == null || damageCategory.Equals(result.DamageCategory)) &&
             (assetCategory == null || assetCategory.Equals(result.AssetCategory)) &&
             (impactAreaID == -999 || impactAreaID == result.RegionID) &&
-            (type == result.ConsequenceType));
+            (type == result.ConsequenceType) &&
+            (riskType == RiskType.Total || riskType == result.RiskType));
     }
 
 }

@@ -139,28 +139,6 @@ public class StudyAreaConsequencesByQuantile : Validation
         }
         return Empirical.StackEmpiricalDistributions(empiricalDistsToStack, Empirical.Sum);
     }
-
-    public XElement WriteToXML()
-    {
-        XElement masterElem = new("EAD_Results");
-        foreach (AggregatedConsequencesByQuantile damageResult in ConsequenceResultList)
-        {
-            XElement damageResultElement = damageResult.WriteToXML();
-            damageResultElement.Name = $"{damageResult.DamageCategory}-{damageResult.AssetCategory}";
-            masterElem.Add(damageResultElement);
-        }
-        return masterElem;
-    }
-
-    public static StudyAreaConsequencesByQuantile ReadFromXML(XElement xElement)
-    {
-        List<AggregatedConsequencesByQuantile> damageResults = [];
-        foreach (XElement histogramElement in xElement.Elements())
-        {
-            damageResults.Add(AggregatedConsequencesByQuantile.ReadFromXML(histogramElement));
-        }
-        return new StudyAreaConsequencesByQuantile(damageResults);
-    }
     #endregion
 
 }

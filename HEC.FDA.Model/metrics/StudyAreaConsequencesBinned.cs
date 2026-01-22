@@ -64,9 +64,9 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
         }
     }
     //This approach is used in binning EAD results
-    internal void AddConsequenceRealization(double damageEstimate, string damageCategory, string assetCategory, int impactAreaID, long iteration, ConsequenceType consequenceType)
+    internal void AddConsequenceRealization(double damageEstimate, string damageCategory, string assetCategory, int impactAreaID, long iteration, ConsequenceType consequenceType, RiskType riskType = RiskType.Fail)
     {
-        AggregatedConsequencesBinned damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID, consequenceType);
+        AggregatedConsequencesBinned damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID, consequenceType, riskType);
         damageResult.AddConsequenceRealization(damageEstimate, iteration);
 
     }
@@ -282,7 +282,7 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
     /// <param name="assetCategory"></param> either structure, content, etc...the default is null
     /// <param name="impactAreaID"></param> the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
     /// <returns></returns>The mean of consequences
-    public double SampleMeanDamage(string damageCategory = null, string assetCategory = null, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, ConsequenceType consequenceType = ConsequenceType.Damage)
+    public double SampleMeanDamage(string damageCategory = null, string assetCategory = null, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Fail)
     {
         return ConsequenceResultList
     .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType)
@@ -299,7 +299,7 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
     /// <param name="assetCategory"></param> either structure, content, etc...the default is null
     /// <param name="impactAreaID"></param>the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
     /// <returns></returns>the level of consequences exceeded by the specified probability 
-    public double ConsequenceExceededWithProbabilityQ(double exceedanceProbability, string damageCategory = null, string assetCategory = null, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, ConsequenceType consequenceType = ConsequenceType.Damage)
+    public double ConsequenceExceededWithProbabilityQ(double exceedanceProbability, string damageCategory = null, string assetCategory = null, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Fail)
     {
         return ConsequenceResultList
             .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType)
@@ -314,11 +314,11 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
     /// <param name="assetCategory"></param>
     /// <param name="impactAreaID"></param>
     /// <returns>returns the existing result, else null if no result exists for that combination.</returns>
-    public AggregatedConsequencesBinned GetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, ConsequenceType consequenceType = ConsequenceType.Damage)
+    public AggregatedConsequencesBinned GetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Fail)
     {
         //Try to get specific result from the list. combination of damcat, asscat, imparea
         AggregatedConsequencesBinned result = ConsequenceResultList
-            .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType)
+            .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType, riskType)
             .FirstOrDefault();
         return result;
     }
@@ -333,7 +333,7 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
     /// <param name="assetCategory"></param> The default is null 
     /// <param name="impactAreaID"></param> The default is a null value (utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
     /// <returns></returns> Aggregated consequences histogram 
-    public Empirical GetAggregateEmpiricalDistribution(string damageCategory = null, string assetCategory = null, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, ConsequenceType consequenceType = ConsequenceType.Damage)
+    public Empirical GetAggregateEmpiricalDistribution(string damageCategory = null, string assetCategory = null, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Fail)
     {
         var empiricalDistsToStack = ConsequenceResultList
             .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType)

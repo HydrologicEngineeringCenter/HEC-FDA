@@ -22,6 +22,7 @@ public class AggregatedConsequencesBinned
     public string DamageCategory { get; }
     public string AssetCategory { get; }
     public ConsequenceType ConsequenceType { get; }
+    public RiskType RiskType { get; }
     public int RegionID { get; } = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE;
     public bool IsNull { get; }
     public ConvergenceCriteria ConvergenceCriteria { get; }
@@ -31,11 +32,12 @@ public class AggregatedConsequencesBinned
     /// <summary>
     /// This constructor is only used for handling errors. 
     /// </summary>
-    public AggregatedConsequencesBinned(int impactAreaID, ConsequenceType consequenceType = ConsequenceType.Damage)
+    public AggregatedConsequencesBinned(int impactAreaID, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Fail)
     {
         DamageCategory = "UNASSIGNED";
         AssetCategory = "UNASSIGNED";
         ConsequenceType = consequenceType;
+        RiskType = riskType;
         RegionID = impactAreaID;
         ConvergenceCriteria = new ConvergenceCriteria();
         ConsequenceHistogram = new DynamicHistogram();
@@ -44,11 +46,12 @@ public class AggregatedConsequencesBinned
         _TempResults = new double[ConvergenceCriteria.IterationCount];
         _TempCounts = new double[ConvergenceCriteria.IterationCount];
     }
-    public AggregatedConsequencesBinned(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID, ConsequenceType consequenceType = ConsequenceType.Damage)
+    public AggregatedConsequencesBinned(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Fail)
     {
         DamageCategory = damageCategory;
         AssetCategory = assetCategory;
         ConsequenceType = consequenceType;
+        RiskType = riskType;
         ConvergenceCriteria = convergenceCriteria;
         IsNull = false;
         RegionID = impactAreaID;
@@ -58,11 +61,12 @@ public class AggregatedConsequencesBinned
 
     }
 
-    public AggregatedConsequencesBinned(string damageCategory, string assetCategory, IHistogram histogram, int impactAreaID, ConsequenceType consequenceType = ConsequenceType.Damage)
+    public AggregatedConsequencesBinned(string damageCategory, string assetCategory, IHistogram histogram, int impactAreaID, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Fail)
     {
         DamageCategory = damageCategory;
         AssetCategory = assetCategory;
         ConsequenceType = consequenceType;
+        RiskType = riskType;
         ConsequenceHistogram = histogram;
         ConvergenceCriteria = ConsequenceHistogram.ConvergenceCriteria;
         RegionID = impactAreaID;
@@ -72,11 +76,12 @@ public class AggregatedConsequencesBinned
 
     }
 
-    public AggregatedConsequencesBinned(string damageCategory, string assetCategory, int impactAreaID, ConsequenceType consequenceType = ConsequenceType.Damage)
+    public AggregatedConsequencesBinned(string damageCategory, string assetCategory, int impactAreaID, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Fail)
     {
         DamageCategory = damageCategory;
         AssetCategory = assetCategory;
         ConsequenceType = consequenceType;
+        RiskType = riskType;
         RegionID = impactAreaID;
         ConvergenceCriteria = new ConvergenceCriteria();
         ConsequenceHistogram = new DynamicHistogram();
