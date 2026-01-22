@@ -49,6 +49,13 @@ namespace HEC.FDA.ViewModel.Results
             ScenarioResults results = scenario.Results;
             List<int> impactAreaIds = results.GetImpactAreaIDs(ConsequenceType.Damage);
             List<RiskType> riskTypes = results.GetRiskTypes();
+
+            //if we have both fail and non_fail, display total risk as well. 
+            if (riskTypes.Contains(Model.metrics.RiskType.Non_Fail))
+            {
+                riskTypes.Add(Model.metrics.RiskType.Total);
+            }
+
             Dictionary<int, string> impactAreaIdToName = IASElement.GetImpactAreaNamesFromIDs();
 
             foreach( RiskType riskType in riskTypes)
@@ -62,7 +69,6 @@ namespace HEC.FDA.ViewModel.Results
                     rowItems.Add(new(name, analysisYear, impactAreaIdToName[impactAreaID], Mean, point75, point5, point25, riskType));
                 }
             }
-
             return rowItems;
         }
 

@@ -285,7 +285,7 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
     public double SampleMeanDamage(string damageCategory = null, string assetCategory = null, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Fail)
     {
         return ConsequenceResultList
-    .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType)
+    .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType, riskType)
     .Sum(result => result.SampleMeanExpectedAnnualConsequences());
     }
     /// <summary>
@@ -302,7 +302,7 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
     public double ConsequenceExceededWithProbabilityQ(double exceedanceProbability, string damageCategory = null, string assetCategory = null, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Fail)
     {
         return ConsequenceResultList
-            .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType)
+            .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType, riskType)
             .Sum(result => result.ConsequenceExceededWithProbabilityQ(exceedanceProbability));
     }
     /// <summary>
@@ -336,7 +336,7 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
     public Empirical GetAggregateEmpiricalDistribution(string damageCategory = null, string assetCategory = null, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Fail)
     {
         var empiricalDistsToStack = ConsequenceResultList
-            .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType)
+            .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType, riskType)
             .Select(result => DynamicHistogram.ConvertToEmpiricalDistribution(result.ConsequenceHistogram))
             .ToList();
         if (empiricalDistsToStack.Count == 0)
