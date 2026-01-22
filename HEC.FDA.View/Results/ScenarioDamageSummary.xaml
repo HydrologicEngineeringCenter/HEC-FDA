@@ -13,6 +13,9 @@
   mc:Ignorable="d"
   d:DesignHeight="450"
   d:DesignWidth="800">
+  <UserControl.Resources>
+    <util:CollectionToVisibilityConverter x:Key="CollectionToVisibilityConverter" />
+  </UserControl.Resources>
   <Grid>
 
     <Grid.RowDefinitions>
@@ -87,7 +90,8 @@
           BorderThickness="1"
           Margin="5"
           Grid.Row="1"
-          HorizontalAlignment="Left">
+          HorizontalAlignment="Left"
+          Visibility="{Binding Rows, Converter={StaticResource CollectionToVisibilityConverter}}">
           <StackPanel>
             <TextBlock
               Text="Expected Annual Damage Distribution Summary"
@@ -109,7 +113,8 @@
           BorderThickness="1"
           Margin="5"
           Grid.Row="2"
-          HorizontalAlignment="Left">
+          HorizontalAlignment="Left"
+          Visibility="{Binding LifeLossRows, Converter={StaticResource CollectionToVisibilityConverter}}">
           <StackPanel>
             <TextBlock
               Text="Average Annual Life Loss Distribution Summary"
@@ -132,7 +137,8 @@
           BorderThickness="1"
           Margin="5"
           Grid.Row="3"
-          HorizontalAlignment="Left">
+          HorizontalAlignment="Left"
+          Visibility="{Binding DamCatRows, Converter={StaticResource CollectionToVisibilityConverter}}">
           <StackPanel
             HorizontalAlignment="Left">
             <TextBlock
@@ -155,7 +161,8 @@
           VerticalScrollBarVisibility="Auto"
           HorizontalScrollBarVisibility="Auto"
           HorizontalAlignment="Left"
-          Margin="5">
+          Margin="5"
+          Visibility="{Binding PerformanceRows, Converter={StaticResource CollectionToVisibilityConverter}}">
           <Grid>
             <Grid.RowDefinitions>
               <RowDefinition
@@ -361,7 +368,8 @@
           VerticalScrollBarVisibility="Auto"
           HorizontalScrollBarVisibility="Auto"
           HorizontalAlignment="Left"
-          Margin="5">
+          Margin="5"
+          Visibility="{Binding AssuranceOfAEPRows, Converter={StaticResource CollectionToVisibilityConverter}}">
           <Grid>
             <Grid.RowDefinitions>
               <RowDefinition
