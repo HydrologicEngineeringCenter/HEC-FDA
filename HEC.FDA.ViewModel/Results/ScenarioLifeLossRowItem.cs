@@ -44,7 +44,7 @@ public class ScenarioLifeLossRowItem
         string name = scenario.Name;
         string analysisYear = scenario.AnalysisYear;
         ScenarioResults results = scenario.Results;
-        List<int> impactAreaIds = results.GetImpactAreaIDs();
+        List<int> impactAreaIds = results.GetImpactAreaIDs(ConsequenceType.LifeLoss);
         Dictionary<int, string> impactAreaIdToName = IASElement.GetImpactAreaNamesFromIDs();
 
         foreach (int impactAreaID in impactAreaIds)

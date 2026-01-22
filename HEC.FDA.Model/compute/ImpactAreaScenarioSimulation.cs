@@ -115,10 +115,10 @@ namespace HEC.FDA.Model.compute
             bool computeWithDamage = _FailureStageDamageFunctions.Count > 0;
 
             //for now, show no damages results always. 
-            if (!computeWithDamage)
-            {
-                _ImpactAreaScenarioResults.AddZeroConsequencesResult(_ImpactAreaID);
-            }
+            //if (!computeWithDamage)
+            //{
+            //    _ImpactAreaScenarioResults.AddZeroConsequencesResult(_ImpactAreaID);
+            //}
 
             //set up results histograms.
             InitializeConsequenceHistograms(convergenceCriteria, out List<(CurveMetaData, PairedData)> damageFrequencyFunctions);
@@ -343,7 +343,7 @@ namespace HEC.FDA.Model.compute
 
         private void ValidateNonFail()
         {
-            if (NonFailRiskIncluded)
+            if (_HasNonFailureStageDamage || _HasNonFailureStageLifeLoss)
             {
                 if (HasLevee.Equals(false))
                 {
@@ -367,8 +367,8 @@ namespace HEC.FDA.Model.compute
         {
             long completedIterations = 0;
             long expectedIterations = convergenceCriteria.MinIterations; //only used in % complete
-            Int64 iterationsPerComputeChunk = convergenceCriteria.IterationCount;
-            Int64 computeChunkQuantity = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(convergenceCriteria.MinIterations) / iterationsPerComputeChunk));
+            int iterationsPerComputeChunk = convergenceCriteria.IterationCount;
+            int computeChunkQuantity = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(convergenceCriteria.MinIterations) / iterationsPerComputeChunk));
             if (computeChunkQuantity < 1)
             {
                 computeChunkQuantity = 1;
@@ -417,7 +417,7 @@ namespace HEC.FDA.Model.compute
                 {
                     //recalculate compute chunks 
                     expectedIterations = _ImpactAreaScenarioResults.RemainingIterations(.95, .05, _HasFailureStageDamage);
-                    computeChunkQuantity = Convert.ToInt64(expectedIterations / convergenceCriteria.IterationCount);
+                    computeChunkQuantity = Convert.ToInt32(expectedIterations / convergenceCriteria.IterationCount);
                     if (computeChunkQuantity == 0)
                     {
                         computeChunkQuantity = 1;
@@ -483,8 +483,6 @@ namespace HEC.FDA.Model.compute
         /// <param name="frequency_stage"></param>
         /// <param name="thisComputeIteration"> used for pulling the correct random number in sampling</param>
         /// <param name="thisChunkIteration"> used for saving a result in the correct place of a temp results array </param>
-        /// <param name="computeWithDamage"></param>
-        /// <param name="computeWithLifeLoss"></param>
         /// <param name="computeIsDeterministic"></param>
         private void ComputeFromStageFrequency(PairedData frequency_stage, long thisComputeIteration, long thisChunkIteration, bool computeIsDeterministic)
         {
@@ -564,8 +562,6 @@ namespace HEC.FDA.Model.compute
                 double failEad = stageFreqFail.integrate();
                 _ImpactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(failEad, stageUncertainDamage.CurveMetaData.DamageCategory, stageUncertainDamage.CurveMetaData.AssetCategory, _ImpactAreaID, thisChunkIteration, type);
 
-
-
                 if (failureStageDamageFunctions.Count > 0 && nonfailureStageDamageFunctions.Count > 0)
                 {
                     foreach (UncertainPairedData stageUncertainNonFailureDamage in nonfailureStageDamageFunctions)
@@ -576,16 +572,13 @@ namespace HEC.FDA.Model.compute
                             PairedData inverseOfSystemResponse = CalculateFailureProbComplement(validatedSystemResponse);
                             PairedData stageDamNonFail = stageUncertainNonFailureDamage.SamplePairedData(thisComputeIteration, computeIsDeterministic);
                             PairedData stageDamNonFailAdjusted = stageDamNonFail.multiply(inverseOfSystemResponse);
-                            //stageDam Fail + StageDam Non-Fail
-                            stageDamageFailAdjusted = stageDamageFailAdjusted.SumYsForGivenX(stageDamNonFailAdjusted);
+                            PairedData stageFreqNonFail = stageDamageFailAdjusted.compose(frequency_stage); //Save me for FN Plot
+                            double nonFailEad = stageFreqNonFail.integrate();
+                            _ImpactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(nonFailEad, stageUncertainDamage.CurveMetaData.DamageCategory, stageUncertainDamage.CurveMetaData.AssetCategory, _ImpactAreaID, thisChunkIteration, type);
                         }
                     }
                 }
-                PairedData frequency_damage = stageDamageFailAdjusted.compose(frequency_stage);
-                double eadEstimate = frequency_damage.integrate();
-                _ImpactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadEstimate, stageUncertainDamage.CurveMetaData.DamageCategory, stageUncertainDamage.CurveMetaData.AssetCategory, _ImpactAreaID, thisChunkIteration, type);
             }
-
         }
 
         private static PairedData CalculateFailureProbComplement(PairedData validatedSystemResponse)
@@ -601,7 +594,6 @@ namespace HEC.FDA.Model.compute
         //TODO: Opportunity for refactor: move performance functions to system performance statistics
         public void ComputePerformance(PairedData frequency_stage, int thisChunkIteration)
         {
-
             foreach (var thresholdEntry in _ImpactAreaScenarioResults.PerformanceByThresholds.ListOfThresholds)
             {
                 double thresholdValue = thresholdEntry.ThresholdValue;
@@ -640,7 +632,6 @@ namespace HEC.FDA.Model.compute
             }
 
         }
-
         public static void GetStageForNonExceedanceProbability(PairedData frequency_stage, Threshold threshold, int thisChunkIteration)
         {//TODO: Get rid of these hard coded doubles 
             double[] er101RequiredNonExceedanceProbabilities = new double[] { .9, .96, .98, .99, .996, .998 };
@@ -698,8 +689,6 @@ namespace HEC.FDA.Model.compute
             double thresholdDamage = THRESHOLD_DAMAGE_PERCENT * totalFrequencyDamage.f(THRESHOLD_DAMAGE_RECURRENCE_INTERVAL);
             double thresholdStage = totalStageDamage.f_inverse(thresholdDamage);
             return new Threshold(DEFAULT_THRESHOLD_ID, convergenceCriteria, ThresholdEnum.DefaultExteriorStage, thresholdStage);
-
-
         }
 
 
@@ -1041,7 +1030,6 @@ namespace HEC.FDA.Model.compute
                             $"Stage life loss errors for the impact area with ID {_Simulation._ImpactAreaID}: " + upd.GetErrorMessages()));
                 }
                 _Simulation._HasNonFailureStageLifeLoss = true;
-                _Simulation.NonFailRiskIncluded = true;
                 return new SimulationBuilder(_Simulation);
             }
 

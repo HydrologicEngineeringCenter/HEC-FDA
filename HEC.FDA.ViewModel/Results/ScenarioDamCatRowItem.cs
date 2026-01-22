@@ -41,7 +41,7 @@ namespace HEC.FDA.ViewModel.Results
             string analysisYear = scenario.AnalysisYear;
 
             ScenarioResults results = scenario.Results;
-            List<int> impactAreaIds = results.GetImpactAreaIDs();
+            List<int> impactAreaIds = results.GetImpactAreaIDs(ConsequenceType.Damage);
             Dictionary<int, string> impactAreaIdToName = IASElement.GetImpactAreaNamesFromIDs();
             List<string> damCats = results.GetDamageCategories();
             List<string> assetCats = results.GetAssetCategories();

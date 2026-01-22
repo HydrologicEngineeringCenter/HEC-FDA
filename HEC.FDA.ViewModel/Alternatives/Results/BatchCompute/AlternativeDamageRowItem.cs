@@ -56,7 +56,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
             double DiscountRate = studyPropElem.DiscountRate;
             int PeriodOfAnalysis = altElem.Results.PeriodOfAnalysis;
             IASElement BaseYearScenario = altElem.BaseScenario.GetElement();
-            List<int> impactAreaIds = BaseYearScenario.Results.GetImpactAreaIDs();
+            List<int> impactAreaIds = BaseYearScenario.Results.GetImpactAreaIDs(Model.metrics.ConsequenceType.Damage);
             Dictionary<int, string> impactAreaIdToName = IASElement.GetImpactAreaNamesFromIDs();
 
             int rowsPerScenario = impactAreaIds.Count;

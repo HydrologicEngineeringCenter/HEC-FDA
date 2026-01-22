@@ -31,64 +31,40 @@ public class ScenarioResults : ValidationErrorLogger
     #endregion
 
     #region Methods
-    public List<int> GetImpactAreaIDs(ConsequenceType consequenceType = ConsequenceType.Damage)
+    public List<int> GetImpactAreaIDs(ConsequenceType consequenceType)
     {
-        List<int> impactAreaIDs = new();
-        if (ResultsList.Count != 0)
-        {
-            foreach (ImpactAreaScenarioResults containImpactAreaScenarioResults in ResultsList)
-            {
-                foreach (AggregatedConsequencesBinned consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
-                {
-                    if (!impactAreaIDs.Contains(consequenceResult.RegionID) && consequenceResult.ConsequenceType == consequenceType)
-                    {
-                        impactAreaIDs.Add(consequenceResult.RegionID);
-                    }
-                }
-
-            }
-        }
-        return impactAreaIDs;
+        return ResultsList
+            .SelectMany(r => r.ConsequenceResults.ConsequenceResultList)
+            .Where(c => c.ConsequenceType == consequenceType)
+            .Select(c => c.RegionID)
+            .Distinct()
+            .ToList();
     }
     public List<string> GetAssetCategories(ConsequenceType consequenceType = ConsequenceType.Damage)
     {
-        List<string> assetCats = new();
-        if (ResultsList.Count != 0)
-        {
-            foreach (ImpactAreaScenarioResults containImpactAreaScenarioResults in ResultsList)
-            {
-                foreach (AggregatedConsequencesBinned consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
-                {
-                    if (!assetCats.Contains(consequenceResult.AssetCategory) && consequenceResult.ConsequenceType == consequenceType)
-                    {
-                        assetCats.Add(consequenceResult.AssetCategory);
-                    }
-                }
-
-            }
-        }
-
-        return assetCats;
+        return ResultsList
+            .SelectMany(r => r.ConsequenceResults.ConsequenceResultList)
+            .Where(c => c.ConsequenceType == consequenceType)
+            .Select(c => c.AssetCategory)
+            .Distinct()
+            .ToList();
     }
     public List<string> GetDamageCategories(ConsequenceType consequenceType = ConsequenceType.Damage)
     {
-        List<string> damCats = new();
-        if (ResultsList.Count != 0)
-        {
-            foreach (ImpactAreaScenarioResults containImpactAreaScenarioResults in ResultsList)
-            {
-                foreach (AggregatedConsequencesBinned consequenceResult in containImpactAreaScenarioResults.ConsequenceResults.ConsequenceResultList)
-                {
-                    if (!damCats.Contains(consequenceResult.DamageCategory) && consequenceResult.ConsequenceType == consequenceType)
-                    {
-                        damCats.Add(consequenceResult.DamageCategory);
-                    }
-                }
-
-            }
-        }
-
-        return damCats;
+        return ResultsList
+            .SelectMany(r => r.ConsequenceResults.ConsequenceResultList)
+            .Where(c => c.ConsequenceType == consequenceType)
+            .Select(c => c.DamageCategory)
+            .Distinct()
+            .ToList();
+    }
+    public List<RiskType> GetRiskTypes()
+    {
+        return ResultsList
+            .SelectMany(r => r.ConsequenceResults.ConsequenceResultList)
+            .Select(r => r.RiskType)
+            .Distinct()
+            .ToList();
     }
     public IHistogram GetAEPHistogramForPlotting(int impactAreaID, int thresholdID = 0)
     {
@@ -129,12 +105,12 @@ public class ScenarioResults : ValidationErrorLogger
     /// <param name="assetCategory"></param> either structure, content, etc...the default is null
     /// <param name="impactAreaID"></param> the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
     /// <returns></returns>The mean of consequences
-    public double SampleMeanExpectedAnnualConsequences(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
+    public double SampleMeanExpectedAnnualConsequences(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Fail)
     {//TODO: This could probably be more efficient and could use some null checking
         double consequenceValue = 0;
         foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList)
         {
-            consequenceValue += impactAreaScenarioResults.ConsequenceResults.SampleMeanDamage(damageCategory, assetCategory, impactAreaID, consequenceType);
+            consequenceValue += impactAreaScenarioResults.ConsequenceResults.SampleMeanDamage(damageCategory, assetCategory, impactAreaID, consequenceType, riskType);
         }
         return consequenceValue;
     }
@@ -149,13 +125,18 @@ public class ScenarioResults : ValidationErrorLogger
     /// <param name="assetCategory"></param> either structure, content, etc...the default is null
     /// <param name="impactAreaID"></param>the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
     /// <returns></returns> the level of consequences exceeded by the specified probability 
-    public double ConsequencesExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
+    public double ConsequencesExceededWithProbabilityQ(double exceedanceProbability,
+        int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE,
+        string damageCategory = null,
+        string assetCategory = null,
+        ConsequenceType consequenceType = ConsequenceType.Damage,
+        RiskType riskType = RiskType.Total)
     {
         double consequenceValue = 0;
         foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList)
         {
             consequenceValue += impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList
-               .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType)
+               .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType, riskType)
                .Sum((x) => x.ConsequenceHistogram.InverseCDF(exceedanceProbability));
         }
         return consequenceValue;
@@ -170,14 +151,14 @@ public class ScenarioResults : ValidationErrorLogger
     /// <param name="assetCategory"></param> The default is null 
     /// <param name="impactAreaID"></param> The default is a null value (utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
     /// <returns></returns>        
-    public Empirical GetConsequencesDistribution(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
+    public Empirical GetConsequencesDistribution(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Total)
     {
         List<Empirical> empiricalDistsToStack = [];
 
         foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList)
         {
             var filtered = impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList
-                .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType)
+                .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType, riskType)
                 .Select((h) => DynamicHistogram.ConvertToEmpiricalDistribution(h.ConsequenceHistogram));
 
             foreach (var consequenceResult in filtered)

@@ -61,11 +61,11 @@ public class StudyAreaConsequencesByQuantile : Validation
     /// <param name="assetCategory"></param> either structure, content, etc...the default is null
     /// <param name="impactAreaID"></param> the default is the null value -999
     /// <returns></returns>The mean of consequences
-    public double SampleMeanDamage(string damageCategory = null, string assetCategory = null, int impactAreaID = -999, ConsequenceType consequenceType = ConsequenceType.Damage)
+    public double SampleMeanDamage(string damageCategory = null, string assetCategory = null, int impactAreaID = -999, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Total)
     {
         return ConsequenceResultList
-    .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType)
-    .Sum(result => result.ConsequenceSampleMean());
+            .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType, riskType)
+            .Sum(result => result.ConsequenceSampleMean());
     }
     /// <summary>
     /// This method calls the inverse CDF of the damage histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
@@ -78,10 +78,10 @@ public class StudyAreaConsequencesByQuantile : Validation
     /// <param name="assetCategory"></param> either structure, content, etc...the default is null
     /// <param name="impactAreaID"></param>the default is the null value -999
     /// <returns></returns>the level of consequences exceeded by the specified probability 
-    public double ConsequenceExceededWithProbabilityQ(double exceedanceProbability, string damageCategory = null, string assetCategory = null, int impactAreaID = -999, ConsequenceType consequenceType = ConsequenceType.Damage)
+    public double ConsequenceExceededWithProbabilityQ(double exceedanceProbability, string damageCategory = null, string assetCategory = null, int impactAreaID = -999, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Total)
     {
         return ConsequenceResultList
-            .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType)
+            .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType, riskType)
             .Sum(result => result.ConsequenceExceededWithProbabilityQ(exceedanceProbability));
     }
     /// <summary>
@@ -93,10 +93,10 @@ public class StudyAreaConsequencesByQuantile : Validation
     /// <param name="assetCategory"></param>
     /// <param name="impactAreaID"></param>
     /// <returns></returns>
-    public AggregatedConsequencesByQuantile GetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID = -999, ConsequenceType consequenceType = ConsequenceType.Damage)
+    public AggregatedConsequencesByQuantile GetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID = -999, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Total)
     {
         AggregatedConsequencesByQuantile result = ConsequenceResultList
-            .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType)
+            .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType, riskType)
             .FirstOrDefault();
         if (result != null)
         {
@@ -123,10 +123,10 @@ public class StudyAreaConsequencesByQuantile : Validation
     /// <param name="assetCategory"></param> The default is null 
     /// <param name="impactAreaID"></param> The default is a null value (-999)
     /// <returns></returns> Aggregated consequences histogram 
-    public Empirical GetAggregateEmpiricalDistribution(string damageCategory = null, string assetCategory = null, int impactAreaID = -999, ConsequenceType consequenceType = ConsequenceType.Damage)
+    public Empirical GetAggregateEmpiricalDistribution(string damageCategory = null, string assetCategory = null, int impactAreaID = -999, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Total)
     {
         var empiricalDistsToStack = ConsequenceResultList
-            .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType)
+            .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType, riskType)
             .Select(result => result.ConsequenceDistribution)
             .ToList();
 

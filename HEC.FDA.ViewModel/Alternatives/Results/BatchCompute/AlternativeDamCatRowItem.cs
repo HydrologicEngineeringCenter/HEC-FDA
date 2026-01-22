@@ -41,7 +41,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
 
             string Name = altElem.Name;
             IASElement BaseYearScenario = altElem.BaseScenario.GetElement();
-            List<int> impactAreaIds = BaseYearScenario.Results.GetImpactAreaIDs();
+            List<int> impactAreaIds = BaseYearScenario.Results.GetImpactAreaIDs(Model.metrics.ConsequenceType.Damage);
             Dictionary<int, string> impactAreaIdToName = IASElement.GetImpactAreaNamesFromIDs();
 
 

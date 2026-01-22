@@ -345,74 +345,235 @@ This computes the probability-weighted failure AEP considering the entire fragil
 
 ## Flow Diagram
 
+### Master Flow (Sequential Steps)
+
+These steps execute **in order**, one after another:
+
 ```
-                        ┌─────────────────┐
-                        │    Compute()    │
-                        └────────┬────────┘
-                                 │
-                    ┌────────────▼────────────┐
-                    │    CanCompute()?        │
-                    └────────────┬────────────┘
-                                 │
-               ┌─────────────────▼─────────────────┐
-               │     PopulateRandomNumbers()       │
-               │  (Prepare Monte Carlo sampling)   │
-               └─────────────────┬─────────────────┘
-                                 │
-         ┌───────────────────────▼───────────────────────┐
-         │            Setup Phase                         │
-         │  ┌─────────────────────────────────────────┐  │
-         │  │ ComputeConsequenceFrequency()           │  │
-         │  │ CreateEAConsequenceHistograms()         │  │
-         │  │ ComputeDefaultThreshold()               │  │
-         │  │ CreateHistogramsForAssuranceOfThresholds│  │
-         │  └─────────────────────────────────────────┘  │
-         └───────────────────────┬───────────────────────┘
-                                 │
-                    ┌────────────▼────────────┐
-                    │  ComputeIterations()    │
-                    │   (Monte Carlo Loop)    │
-                    └────────────┬────────────┘
-                                 │
-              ┌──────────────────▼──────────────────┐
-              │         Parallel.For                │
-              │    (Each Monte Carlo Iteration)     │
-              └──────────────────┬──────────────────┘
-                                 │
-            ┌────────────────────▼────────────────────┐
-            │     Build frequency_stage curve         │
-            │  (From discharge or stage frequency)    │
-            └────────────────────┬────────────────────┘
-                                 │
-               ┌─────────────────▼─────────────────┐
-               │    ComputeFromStageFrequency()    │
-               └─────────────────┬─────────────────┘
-                                 │
-                ┌────────────────┴────────────────┐
-                │                                 │
-    ┌───────────▼───────────┐       ┌────────────▼────────────┐
-    │    No Levee Path      │       │    With Levee Path      │
-    └───────────┬───────────┘       └────────────┬────────────┘
-                │                                 │
-    ┌───────────▼───────────┐       ┌────────────▼────────────┐
-    │ComputeConsequences    │       │ComputeDamages_WithLevee │
-    │FromStageFrequency()   │       │ (Fail + NonFail paths)  │
-    └───────────┬───────────┘       └────────────┬────────────┘
-                │                                 │
-    ┌───────────▼───────────┐       ┌────────────▼────────────┐
-    │ ComputePerformance()  │       │ComputeLeveePerformance()│
-    └───────────┬───────────┘       └────────────┬────────────┘
-                │                                 │
-                └────────────────┬────────────────┘
-                                 │
-               ┌─────────────────▼─────────────────┐
-               │   PutDataIntoHistograms()        │
-               │   Check Convergence              │
-               └─────────────────┬─────────────────┘
-                                 │
-                        ┌────────▼────────┐
-                        │  Return Results │
-                        └─────────────────┘
+═══════════════════════════════════════════════════════════════════════════════
+ STEP 1: VALIDATION                                              [CanCompute()]
+═══════════════════════════════════════════════════════════════════════════════
+                                     │
+                                     ▼
+═══════════════════════════════════════════════════════════════════════════════
+ STEP 2: RANDOM NUMBER GENERATION                     [PopulateRandomNumbers()]
+═══════════════════════════════════════════════════════════════════════════════
+                                     │
+                                     ▼
+═══════════════════════════════════════════════════════════════════════════════
+ STEP 3: SETUP PHASE                                           [Multiple calls]
+═══════════════════════════════════════════════════════════════════════════════
+                                     │
+                                     ▼
+═══════════════════════════════════════════════════════════════════════════════
+ STEP 4: MONTE CARLO LOOP                                 [ComputeIterations()]
+═══════════════════════════════════════════════════════════════════════════════
+                                     │
+                                     ▼
+═══════════════════════════════════════════════════════════════════════════════
+ STEP 5: RETURN RESULTS
+═══════════════════════════════════════════════════════════════════════════════
+```
+
+---
+
+### STEP 3 Detail: Setup Phase (Sequential Sub-steps)
+
+These sub-steps run **in order** within the Setup Phase:
+
+```
+STEP 3: SETUP PHASE
+│
+├─► 3.1  IF no stage-damage functions:
+│        └─► Add zero-consequence placeholder
+│        └─► Add system response threshold
+│
+├─► 3.2  ELSE (has stage-damage functions):
+│        ├─► 3.2a  ComputeConsequenceFrequency() for damage
+│        │           └─► Produces deterministic damage-frequency curves
+│        ├─► 3.2b  CreateEAConsequenceHistograms() for damage
+│        │           └─► Sets up histogram bins for convergence tracking
+│        └─► 3.2c  ComputeDefaultThreshold()
+│                    └─► Calculates 5% damage threshold stage
+│
+├─► 3.3  IF has life loss functions:
+│        ├─► 3.3a  ComputeConsequenceFrequency() for life loss
+│        └─► 3.3b  CreateEAConsequenceHistograms() for life loss
+│
+└─► 3.4  CreateHistogramsForAssuranceOfThresholds()
+           └─► Sets up stage histograms at standard non-exceedance probs
+```
+
+---
+
+### STEP 4 Detail: Monte Carlo Loop Structure
+
+```
+STEP 4: MONTE CARLO LOOP (ComputeIterations)
+│
+│   ┌─────────────────────────────────────────────────────────────────────┐
+│   │  OUTER LOOP: while (not converged)                                  │
+│   │  ════════════════════════════════════════════════════════════════   │
+│   │      │                                                              │
+│   │      ▼                                                              │
+│   │  ┌─────────────────────────────────────────────────────────────┐   │
+│   │  │  MIDDLE LOOP: for each compute chunk                        │   │
+│   │  │  ───────────────────────────────────────────────────────    │   │
+│   │  │      │                                                      │   │
+│   │  │      ▼                                                      │   │
+│   │  │  ┌───────────────────────────────────────────────────────┐ │   │
+│   │  │  │ INNER LOOP: Parallel.For (iterations in chunk)        │ │   │
+│   │  │  │ ─────────────────────────────────────────────────     │ │   │
+│   │  │  │    ┌────────────────────────────────────────────┐    │ │   │
+│   │  │  │    │  PER-ITERATION WORK (see detail below)     │    │ │   │
+│   │  │  │    │  • Build frequency_stage                   │    │ │   │
+│   │  │  │    │  • ComputeFromStageFrequency()             │    │ │   │
+│   │  │  │    └────────────────────────────────────────────┘    │ │   │
+│   │  │  └───────────────────────────────────────────────────────┘ │   │
+│   │  │      │                                                      │   │
+│   │  │      ▼                                                      │   │
+│   │  │  AFTER PARALLEL BLOCK (sequential):                         │   │
+│   │  │      ├─► PutDataIntoHistograms() for consequences           │   │
+│   │  │      ├─► PutDataIntoHistograms() for each threshold         │   │
+│   │  │      └─► Report progress                                    │   │
+│   │  └─────────────────────────────────────────────────────────────┘   │
+│   │      │                                                              │
+│   │      ▼                                                              │
+│   │  CHECK CONVERGENCE: ResultsAreConverged(0.95, 0.05)?               │
+│   │      ├─► YES → Exit loop                                           │
+│   │      └─► NO  → Recalculate chunks, continue                        │
+│   └─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### Per-Iteration Work (Inside Parallel.For)
+
+Each iteration runs these steps **sequentially**, but iterations run in **parallel** with each other:
+
+```
+ONE ITERATION (runs in parallel with other iterations)
+══════════════════════════════════════════════════════
+
+SEQUENTIAL STEP A: Build frequency_stage curve
+──────────────────────────────────────────────
+    ┌─────────────────────────────────────────────────────────────┐
+    │  CHOICE (pick one path):                                    │
+    │                                                             │
+    │  Path A: _FrequencyStage exists                             │
+    │     └─► frequency_stage = _FrequencyStage.Sample()          │
+    │                                                             │
+    │  Path B: No regulation transform                            │
+    │     ├─► frequency_discharge = Sample discharge-frequency    │
+    │     ├─► discharge_stage = _DischargeStage.Sample()          │
+    │     └─► frequency_stage = discharge_stage.compose(freq_Q)   │
+    │                                                             │
+    │  Path C: Has regulation transform                           │
+    │     ├─► frequency_discharge = Sample discharge-frequency    │
+    │     ├─► inflow_outflow = _UnregulatedRegulated.Sample()     │
+    │     ├─► transformed = inflow_outflow.compose(freq_discharge)│
+    │     ├─► discharge_stage = _DischargeStage.Sample()          │
+    │     └─► frequency_stage = discharge_stage.compose(transform)│
+    └─────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+SEQUENTIAL STEP B: ComputeFromStageFrequency()
+──────────────────────────────────────────────
+    (See next diagram for internal structure)
+```
+
+---
+
+### ComputeFromStageFrequency() Internal Structure
+
+This shows what happens **inside** ComputeFromStageFrequency for ONE iteration:
+
+```
+ComputeFromStageFrequency(frequency_stage, ...)
+═══════════════════════════════════════════════
+
+BRANCH: Does levee exist?
+─────────────────────────
+
+        ┌──────────────── NO LEVEE ────────────────┐      ┌────────────── WITH LEVEE ──────────────┐
+        │                                          │      │                                        │
+        │  SEQUENTIAL STEPS:                       │      │  SEQUENTIAL STEPS:                     │
+        │                                          │      │                                        │
+        │  B.1  IF computeWithDamage:              │      │  B.1  Sample system response:          │
+        │       └─► ComputeConsequences...()       │      │       └─► systemResponse.Sample()      │
+        │           for _FailureStageDamage        │      │                                        │
+        │                 │                        │      │  B.2  IF computeWithDamage:            │
+        │                 ▼                        │      │       └─► ComputeDamages_WithLevee()   │
+        │  B.2  IF computeWithLifeLoss:            │      │           (ConsequenceType.Damage)     │
+        │       └─► ComputeConsequences...()       │      │                 │                      │
+        │           for _FailureStageLifeLoss      │      │                 ▼                      │
+        │                 │                        │      │  B.3  IF computeWithLifeLoss:          │
+        │                 ▼                        │      │       └─► ComputeDamages_WithLevee()   │
+        │  B.3  ComputePerformance()               │      │           (ConsequenceType.LifeLoss)   │
+        │       └─► Calculate AEP for thresholds   │      │                 │                      │
+        │                                          │      │                 ▼                      │
+        │                                          │      │  B.4  Performance calculation:         │
+        │                                          │      │       ├─► IF ≤2 pts: ComputePerf()    │
+        │                                          │      │       └─► IF >2 pts: ComputeLeveePerf()│
+        │                                          │      │                                        │
+        └──────────────────────────────────────────┘      └────────────────────────────────────────┘
+```
+
+---
+
+### ComputeDamagesFromStageFrequency_WithLevee() Detail
+
+When a levee exists, this is the detailed flow for consequence computation:
+
+```
+ComputeDamagesFromStageFrequency_WithLevee()
+════════════════════════════════════════════
+
+FOR EACH failure stage-consequence function:      ◄─── LOOP
+│
+├─► W.1  Sample stage-damage: stageDamageFailSample = stageUncertainDamage.Sample()
+│
+├─► W.2  Validate system response: EnsureBottomAndTopHaveCorrectProbabilities()
+│
+├─► W.3  FAILURE PATH (always runs):
+│        ├─► stageDamageFailAdjusted = stageDamageFailSample × systemResponse
+│        ├─► stageFreqFail = stageDamageFailAdjusted.compose(frequency_stage)
+│        ├─► failEad = stageFreqFail.integrate()
+│        └─► Store failEad in results                    ◄─── STORES FAIL-ONLY EAD
+│
+└─► W.4  NON-FAILURE PATH (only if non-fail functions exist):
+         │
+         ├─► W.4a  Find matching non-failure function (same category)
+         ├─► W.4b  inverseOfSystemResponse = 1 - systemResponse
+         ├─► W.4c  stageDamNonFail = stageUncertainNonFailure.Sample()
+         ├─► W.4d  stageDamNonFailAdjusted = stageDamNonFail × inverseOfSystemResponse
+         ├─► W.4e  TOTAL = stageDamageFailAdjusted + stageDamNonFailAdjusted
+         ├─► W.4f  frequency_damage = TOTAL.compose(frequency_stage)
+         ├─► W.4g  eadEstimate = frequency_damage.integrate()
+         └─► W.4h  Store eadEstimate in results          ◄─── STORES TOTAL EAD
+```
+
+---
+
+### Visual Legend
+
+```
+═══════════════     Major sequential step (happens after previous ═══ block)
+───────────────     Sub-step within a phase
+        │
+        ▼           Sequential flow (this happens AFTER what's above)
+
+        ┌───┐
+        │   │       Parallel or choice block
+        └───┘
+
+    ├─►             Sub-step (sequential within its parent)
+
+    BRANCH:         Decision point - pick ONE path
+
+    FOR EACH:       Loop - repeats for each item
+
+    ◄───            Annotation / note
 ```
 
 ---
