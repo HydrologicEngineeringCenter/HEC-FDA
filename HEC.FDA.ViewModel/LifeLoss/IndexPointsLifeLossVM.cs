@@ -118,12 +118,6 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
             }
             i++;
         }
-        WeightedCheckableItem new1 = new() { Name = "1800", Value = "18", IsChecked = false, IsEnabled = false };
-        new1.PropertyChanged += On_Hazard_Time_Checkbox_Changed;
-        HazardTimes.Add(new1);
-        WeightedCheckableItem new2 = new() { Name = "2200", Value = "22", IsChecked = false, IsEnabled = false };
-        new2.PropertyChanged += On_Hazard_Time_Checkbox_Changed;
-        HazardTimes.Add(new2);
     }
 
     private void On_Hazard_Time_Checkbox_Changed(object sender, PropertyChangedEventArgs e)
