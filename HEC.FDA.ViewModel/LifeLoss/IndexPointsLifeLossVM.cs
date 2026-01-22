@@ -95,7 +95,7 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
 
         // update options to match the currently selected simulation
         foreach (string alternative in simulation.Alternatives)
-            LifeSimAlternatives.Add(new CheckableItem { Name = alternative });
+            LifeSimAlternatives.Add(new CheckableItem { Name = alternative, IsChecked = true });
 
         int i = 0;
         foreach (string hazardTime in simulation.HazardTimes.Keys)
