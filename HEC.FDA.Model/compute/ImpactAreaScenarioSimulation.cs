@@ -111,15 +111,6 @@ namespace HEC.FDA.Model.compute
                 return _ImpactAreaScenarioResults;
             }
 
-            //pulling these out to make clearer branching logic. 
-            bool computeWithDamage = _FailureStageDamageFunctions.Count > 0;
-
-            //for now, show no damages results always. 
-            //if (!computeWithDamage)
-            //{
-            //    _ImpactAreaScenarioResults.AddZeroConsequencesResult(_ImpactAreaID);
-            //}
-
             //set up results histograms.
             InitializeConsequenceHistograms(convergenceCriteria, out List<(CurveMetaData, PairedData)> damageFrequencyFunctions);
             SetupPerformanceThresholds(convergenceCriteria, damageFrequencyFunctions);
@@ -173,13 +164,13 @@ namespace HEC.FDA.Model.compute
             }
             else damageFrequencyFunctions = null;
 
-            if(_HasNonFailureStageDamage)
+            if (_HasNonFailureStageDamage)
             {
                 var nonFailureDamageFrequencyFunctions = ComputeConsequenceFrequency(_NonFailureStageDamageFunctions);
                 CreateEAConsequenceHistograms(convergenceCriteria, nonFailureDamageFrequencyFunctions, _NonFailureStageDamageFunctions, ConsequenceType.Damage, RiskType.Non_Fail);
             }
 
-            if (_HasNonFailureStageLifeLoss) 
+            if (_HasNonFailureStageLifeLoss)
             {
                 var nonFailureLifeLossFrequencyFunctions = ComputeConsequenceFrequency(_NonFailureStageLifeLossFunctions);
                 CreateEAConsequenceHistograms(convergenceCriteria, nonFailureLifeLossFrequencyFunctions, _NonFailureStageLifeLossFunctions, ConsequenceType.LifeLoss, RiskType.Non_Fail);
@@ -523,12 +514,16 @@ namespace HEC.FDA.Model.compute
             }
         }
 
-        private void ComputeConsequencesFromStageFrequency(PairedData frequency_stage, long thisComputeIteration, long thisChunkIteration, bool computeIsDeterministic, List<UncertainPairedData> consequenceFunctions, ConsequenceType consequenceType = ConsequenceType.Damage)
+        private void ComputeConsequencesFromStageFrequency(PairedData frequency_stage, long thisComputeIteration, long thisChunkIteration, bool computeIsDeterministic, List<UncertainPairedData> consequenceFunctions, ConsequenceType consequenceType)
         {
             foreach (UncertainPairedData stageUncertainConsequences in consequenceFunctions)
             {
-                //TODO: here we need to check if stage damage is zero 
-                //if so, then skip this stuff and just add 0 to consequenceResults
+                //short circuit if the damage function is all zeros
+                if (stageUncertainConsequences.Yvals[^1].InverseCDF(1) == 0)
+                {
+                    _ImpactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(0, stageUncertainConsequences.CurveMetaData.DamageCategory, stageUncertainConsequences.CurveMetaData.AssetCategory, _ImpactAreaID, thisChunkIteration, consequenceType);
+                    continue;
+                }
                 PairedData _stage_consequences_sample = stageUncertainConsequences.SamplePairedData(thisComputeIteration, computeIsDeterministic);
                 PairedData frequency_consequences = _stage_consequences_sample.compose(frequency_stage);
                 double eaConsequencesEstimate = frequency_consequences.integrate();
@@ -553,32 +548,31 @@ namespace HEC.FDA.Model.compute
                 nonfailureStageDamageFunctions = _NonFailureStageDamageFunctions;
             }
 
+            PairedData validatedSystemResponse = EnsureBottomAndTopHaveCorrectProbabilities(systemResponse);
             foreach (UncertainPairedData stageUncertainDamage in failureStageDamageFunctions)
             {
                 PairedData stageDamageFailSample = stageUncertainDamage.SamplePairedData(thisComputeIteration, computeIsDeterministic);
-                PairedData validatedSystemResponse = EnsureBottomAndTopHaveCorrectProbabilities(systemResponse);
                 PairedData stageDamageFailAdjusted = stageDamageFailSample.multiply(validatedSystemResponse);
                 PairedData stageFreqFail = stageDamageFailAdjusted.compose(frequency_stage); //Save me for FN Plot
                 double failEad = stageFreqFail.integrate();
-                _ImpactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(failEad, stageUncertainDamage.CurveMetaData.DamageCategory, stageUncertainDamage.CurveMetaData.AssetCategory, _ImpactAreaID, thisChunkIteration, type);
+                _ImpactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(failEad, stageUncertainDamage.CurveMetaData.DamageCategory, stageUncertainDamage.CurveMetaData.AssetCategory, _ImpactAreaID, thisChunkIteration, type, RiskType.Fail);
+            }
 
-                if (failureStageDamageFunctions.Count > 0 && nonfailureStageDamageFunctions.Count > 0)
+            //if we have nonfail damage functions, compute those too.
+            if (nonfailureStageDamageFunctions.Count > 0)
+            {
+                PairedData complementSystemResponse = CalculateFailureProbComplement(validatedSystemResponse);
+                foreach (UncertainPairedData stageUncertainNonFailureDamage in nonfailureStageDamageFunctions)
                 {
-                    foreach (UncertainPairedData stageUncertainNonFailureDamage in nonfailureStageDamageFunctions)
-                    {
-                        if (stageUncertainNonFailureDamage.DamageCategory == stageUncertainDamage.DamageCategory
-                            && stageUncertainNonFailureDamage.AssetCategory == stageUncertainDamage.AssetCategory)
-                        {
-                            PairedData inverseOfSystemResponse = CalculateFailureProbComplement(validatedSystemResponse);
-                            PairedData stageDamNonFail = stageUncertainNonFailureDamage.SamplePairedData(thisComputeIteration, computeIsDeterministic);
-                            PairedData stageDamNonFailAdjusted = stageDamNonFail.multiply(inverseOfSystemResponse);
-                            PairedData stageFreqNonFail = stageDamageFailAdjusted.compose(frequency_stage); //Save me for FN Plot
-                            double nonFailEad = stageFreqNonFail.integrate();
-                            _ImpactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(nonFailEad, stageUncertainDamage.CurveMetaData.DamageCategory, stageUncertainDamage.CurveMetaData.AssetCategory, _ImpactAreaID, thisChunkIteration, type);
-                        }
-                    }
+                    PairedData stageDamNonFail = stageUncertainNonFailureDamage.SamplePairedData(thisComputeIteration, computeIsDeterministic);
+                    PairedData stageDamNonFailAdjusted = stageDamNonFail.multiply(complementSystemResponse);
+                    PairedData stageFreqNonFail = stageDamNonFailAdjusted.compose(frequency_stage); //Save me for FN Plot
+                    double nonFailEad = stageFreqNonFail.integrate();
+                    _ImpactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(nonFailEad, stageUncertainNonFailureDamage.CurveMetaData.DamageCategory, stageUncertainNonFailureDamage.CurveMetaData.AssetCategory, _ImpactAreaID, thisChunkIteration, type, RiskType.Non_Fail);
+
                 }
             }
+
         }
 
         private static PairedData CalculateFailureProbComplement(PairedData validatedSystemResponse)
