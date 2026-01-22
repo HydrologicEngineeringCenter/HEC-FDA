@@ -391,6 +391,17 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         string uniqueImpactAreaHeader = impactAreaElements[0].UniqueNameColumnHeader;
         Dictionary<string, int> IANameToID = impactAreaElements[0].GetNameToIDPairs();
         LifeLossFunctionGenerator generator = new(SelectedPath, currentSimulation, IANameToID);
+        var missings = generator.GetMissingHydraulics();
+        if (missings.Count != 0)
+        {
+            string msg = "The following hydraulics files are missing and are required to compute life loss functions:\n";
+            foreach (string missing in missings)
+            {
+                msg += $"- {missing}\n";
+            }
+            System.Windows.MessageBox.Show(msg, "Missing Hydraulics Files", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+            return;
+        }   
         List<LifeLossFunction> newFunctions = await generator.CreateLifeLossFunctionsAsync(impactAreasFile, indexPointsFile, uniqueImpactAreaHeader);
         LifeLossFunctions.Clear();
         LifeLossFunctions.AddRange(newFunctions);

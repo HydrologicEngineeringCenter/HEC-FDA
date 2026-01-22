@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace HEC.FDA.ViewModel.LifeLoss;
 
@@ -48,6 +49,7 @@ public class LifeLossFunctionGenerator
     /// <returns></returns>
     public async Task<List<LifeLossFunction>> CreateLifeLossFunctionsAsync(string summarySetPath, string indexPointsPath, string summarySetUniqueName)
     {
+
         List<LifeLossFunction> lifeLossFunctions = new();
 
         // create the map of summary zone names to their corresponding index points
@@ -75,6 +77,27 @@ public class LifeLossFunctionGenerator
         }
         return lifeLossFunctions;
     }
+
+    /// <summary>
+    /// Validates that all the associated hydraulics needed exist in the selected hydraulics element. Returns list of missing hydraulics if any are missing.
+    /// </summary>
+    public List<string> GetMissingHydraulics()
+    {
+        List<string> missingHydraulics = [];
+        foreach (string alternativeName in _alternativeNames)
+        {
+            if (_hydraulicsFolderByAlternative.TryGetValue(alternativeName, out string hydraulicsName))
+            {
+                string filePath = Directory.EnumerateFiles(_topLevelHydraulicsFolder, $"{hydraulicsName}.hdf").FirstOrDefault();
+                if (filePath == null)
+                {
+                    missingHydraulics.Add($"{hydraulicsName}.hdf");
+                }
+            }
+        }
+        return missingHydraulics;
+    }
+
 
     private List<LifeLossFunction> CreateLifeLossFunctionsForSummaryZone(string summaryZone, PointMs indexPoint)
     {
