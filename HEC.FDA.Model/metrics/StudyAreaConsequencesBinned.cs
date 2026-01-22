@@ -45,12 +45,12 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
 
     #region Methods 
     //This constructor is used in the simulation parallel compute and creates a threadsafe inline histogram inside consequence distribution result 
-    internal void AddNewConsequenceResultObject(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID, ConsequenceType consequenceType = ConsequenceType.Damage)
+    internal void AddNewConsequenceResultObject(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID, ConsequenceType consequenceType, RiskType riskType)
     {
-        AggregatedConsequencesBinned existingResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID, consequenceType);
+        AggregatedConsequencesBinned existingResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID, consequenceType, riskType);
         if (existingResult == null)
         {
-            AggregatedConsequencesBinned newResult = new(damageCategory, assetCategory, convergenceCriteria, impactAreaID, consequenceType);
+            AggregatedConsequencesBinned newResult = new(damageCategory, assetCategory, convergenceCriteria, impactAreaID, consequenceType, riskType);
             ConsequenceResultList.Add(newResult);
         }
     }
