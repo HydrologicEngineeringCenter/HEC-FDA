@@ -2,14 +2,12 @@ using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using HEC.FDA.Model.interfaces;
 
 namespace HEC.FDA.Model.paireddata
 {
     public class PairedData : IPairedData
     {
         #region Fields 
-        private const double EPSILON = double.Epsilon;
         private readonly double[] _xVals;
         private readonly double[] _yVals;
         #endregion
@@ -18,22 +16,6 @@ namespace HEC.FDA.Model.paireddata
         public CurveMetaData MetaData { get; }
         public IReadOnlyList<double> Xvals => _xVals;
         public IReadOnlyList<double> Yvals => _yVals;
-        public bool IsValidPerMetadata
-        {
-            get
-            {
-
-                if (IsArrayValid(Xvals, (a, b) => a >= b) && IsArrayValid(Yvals, (a, b) => a >= b))
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-
-                }
-            }
-        }
         #endregion
 
         #region Constructors 
@@ -56,38 +38,9 @@ namespace HEC.FDA.Model.paireddata
             _yVals = ys == null ? null : ys.ToArray();
             MetaData = metadata;
         }
-        /// <summary>
-        /// X values must always be in increasing order.
-        /// X values are the independent variable, and Y values are the dependent variable.
-        /// Common paired data relationships in FDA follow these conventions:
-        /// System Response :  stages, probability of fail
-        /// Stage Freuqency : exceedance probabilities increasing, stages 
-        /// Flow Frequency : exceedance probabilities increasing, flows
-        /// Stage Damage : stages, damages
-        /// Damage Frequency : damage, probabilities
-        /// Unreg Regulated: flow, flow
-        /// </summary>
-        /// <param name="xs"></param>
-        /// <param name="ys"></param>
-        public PairedData(double[] xs, double[] ys, CurveMetaData metadata = null)
-            : this((IReadOnlyList<double>)xs, (IReadOnlyList<double>)ys, metadata)
-        { }
         #endregion
 
         #region Methods
-
-        private static bool IsArrayValid(IReadOnlyList<double> arrayOfData, Func<double, double, bool> comparison)
-        {
-            if (arrayOfData == null) return false;
-            for (int i = 0; i < arrayOfData.Count - 1; i++)
-            {
-                if (comparison(arrayOfData[i], arrayOfData[i + 1]))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
         /// <summary>
         /// f implements ISample on PairedData, for a given input double x f produces an output double that represents the linearly interoplated value for y given x.
         /// Uses binary search to find the closest x value in the array, then interpolates between the two closest x values to find the y value.

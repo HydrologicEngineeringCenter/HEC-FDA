@@ -57,7 +57,7 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
     //public for testing purposes
     public void AddExistingConsequenceResultObject(AggregatedConsequencesBinned consequenceResultToAdd)
     {
-        AggregatedConsequencesBinned consequenceResult = GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
+        AggregatedConsequencesBinned consequenceResult = GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID, consequenceResultToAdd.ConsequenceType, consequenceResultToAdd.RiskType);
         if (consequenceResult == null)
         {
             ConsequenceResultList.Add(consequenceResultToAdd);

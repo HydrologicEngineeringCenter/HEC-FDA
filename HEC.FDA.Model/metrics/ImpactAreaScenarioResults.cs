@@ -15,9 +15,7 @@ namespace HEC.FDA.Model.metrics
         public StudyAreaConsequencesBinned ConsequenceResults { get; }
         public int ImpactAreaID { get; }
         public bool IsNull { get; }
-        internal List<(CurveMetaData, PairedData)> DamageFrequencyFunctions { get; set; }
-
-        internal List<(CurveMetaData, PairedData)> LifeLossFrequencyFunctions { get; set; }
+        public List<ConsequenceFrequencyCurve> ConsequenceFrequencyFunctions { get; set; }
         #endregion
         #region Constructors 
         public ImpactAreaScenarioResults(int impactAreaID, bool isNull)
@@ -218,24 +216,6 @@ namespace HEC.FDA.Model.metrics
             {
                 threshold.SystemPerformanceResults.ParallelResultsAreConverged(upperConfidenceLimitProb, lowerConfidenceLimitProb);
             }
-        }
-        public PairedData GetDamageFrequency(string damageCategory, string assetCategory)
-        {
-            PairedData returnValue = new(new double[] { 0, 1 }, new double[] { 0, 1 });
-            if (DamageFrequencyFunctions != null)
-            {
-                foreach ((CurveMetaData, PairedData) pairedData in DamageFrequencyFunctions)
-                {
-                    if (pairedData.Item1.DamageCategory == damageCategory)
-                    {
-                        if (pairedData.Item1.AssetCategory == assetCategory)
-                        {
-                            returnValue = pairedData.Item2 as PairedData;
-                        }
-                    }
-                }
-            }
-            return returnValue;
         }
         public bool Equals(ImpactAreaScenarioResults incomingIContainResults)
         {
