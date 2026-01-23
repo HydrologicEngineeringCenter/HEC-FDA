@@ -51,7 +51,6 @@ namespace HEC.FDA.Model.compute
         private int _ImpactAreaID;
         private ImpactAreaScenarioResults _ImpactAreaScenarioResults;
         private bool _HasNonFailureStageDamage;
-        private readonly List<ConsequenceFrequencyCurve> _ConsequenceFrequencyCurves = [];
         #endregion
 
         #region Properties 
@@ -307,10 +306,10 @@ namespace HEC.FDA.Model.compute
         }
 
         /// <summary>
-        /// 
+        /// This is the meaty part of the compute. It loops through iterations, pulling samples and computing consequences and performance until convergence is reached.
         /// </summary>
         /// <param name="convergenceCriteria"></param>
-        /// <param name="computeIsDeterministic"> Do not do monte-carlo sampling</param>
+        /// <param name="computeIsDeterministic">Means no monte-carlo smapling, and instead always pulling central tendency.</param>
         /// <param name="cancellationToken"></param>
         /// <exception cref="TaskCanceledException"></exception>
         private void ComputeIterations(ConvergenceCriteria convergenceCriteria, bool computeIsDeterministic, CancellationToken cancellationToken)
@@ -336,7 +335,7 @@ namespace HEC.FDA.Model.compute
                             long computeIteration = iterationsStart + chunkIteration;
 
                             PairedData frequency_stage_sample = GetFrequencyStageSample(computeIsDeterministic, computeIteration);
-                            PairedData systemResponse_sample = ComputeFromStageFrequency(frequency_stage_sample, computeIteration, chunkIteration, computeIsDeterministic);//null return if no levee. 
+                            PairedData systemResponse_sample = ComputeConsequencesFromStageFrequency(frequency_stage_sample, computeIteration, chunkIteration, computeIsDeterministic);//null return if no levee. 
                             ComputePerformanceFromStageFrequency(frequency_stage_sample, systemResponse_sample, chunkIteration);// null checks the system response. 
                         });
                         _ImpactAreaScenarioResults.ConsequenceResults.PutDataIntoHistograms();
@@ -430,14 +429,13 @@ namespace HEC.FDA.Model.compute
 
         /// <summary>
         /// Computes consequences (damage and/or life loss) from stage-frequency data.
-        /// Returns the sampled system response function if a levee is present, null otherwise.
         /// </summary>
         /// <param name="frequency_stage"></param>
         /// <param name="thisComputeIteration"> used for pulling the correct random number in sampling</param>
         /// <param name="thisChunkIteration"> used for saving a result in the correct place of a temp results array </param>
-        /// <param name="computeIsDeterministic"></param>
+        /// <param name="computeIsDeterministic"> Monte-Carlo smapling based on iteration if false. Central tendency if true.</param>
         /// <returns>The sampled system response function if a levee exists, null otherwise</returns>
-        private PairedData ComputeFromStageFrequency(PairedData frequency_stage, long thisComputeIteration, long thisChunkIteration, bool computeIsDeterministic)
+        private PairedData ComputeConsequencesFromStageFrequency(PairedData frequency_stage, long thisComputeIteration, long thisChunkIteration, bool computeIsDeterministic)
         {
             if (_SystemResponseFunction.CurveMetaData.IsNull)
             {
@@ -504,7 +502,7 @@ namespace HEC.FDA.Model.compute
                 PairedData frequency_consequences = _stage_consequences_sample.compose(frequency_stage);// save me for FN Plot.
                 if (saveFreqCurves)
                 {
-                    _ImpactAreaScenarioResults.ConsequenceFrequencyFunctions.Add(new(frequency_consequences,consequenceType,RiskType.Fail, stageUncertainConsequences.CurveMetaData.DamageCategory, stageUncertainConsequences.CurveMetaData.AssetCategory));
+                    _ImpactAreaScenarioResults.ConsequenceFrequencyFunctions.Add(new(frequency_consequences, stageUncertainConsequences.CurveMetaData.DamageCategory, stageUncertainConsequences.CurveMetaData.AssetCategory, consequenceType, RiskType.Fail));
                 }
                 if (!saveAnnualizedResult)
                 {
@@ -550,8 +548,7 @@ namespace HEC.FDA.Model.compute
             {
                 PairedData stageDamageSample = stageUncertainDamage.SamplePairedData(thisComputeIteration, computeIsDeterministic);
                 stageDamageSample = stageDamageSample.multiply(validatedSystemResponse);
-                PairedData damFreq = stageDamageSample.compose(frequency_stage); //Save me for FN Plot
-                _ConsequenceFrequencyCurves.Add(new(damFreq, type, riskType, stageUncertainDamage.CurveMetaData.DamageCategory, stageUncertainDamage.CurveMetaData.AssetCategory));
+                PairedData damFreq = stageDamageSample.compose(frequency_stage);//save me for FN Plot
                 double eadOraal = damFreq.integrate();
                 _ImpactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadOraal, stageUncertainDamage.CurveMetaData.DamageCategory, stageUncertainDamage.CurveMetaData.AssetCategory, _ImpactAreaID, thisChunkIteration, type, riskType);
             }

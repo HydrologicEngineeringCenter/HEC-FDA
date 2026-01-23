@@ -10,7 +10,7 @@ public class ConsequenceFrequencyCurve
     public string DamageCategory { get; }
     public string AssetCategory { get; }
 
-    public ConsequenceFrequencyCurve(PairedData frequencyCurve, ConsequenceType consequenceType, RiskType riskType, string damageCategory, string assetCategory)
+    public ConsequenceFrequencyCurve(PairedData frequencyCurve, string damageCategory, string assetCategory, ConsequenceType consequenceType, RiskType riskType)
     {
         FrequencyCurve = frequencyCurve;
         ConsequenceType = consequenceType;
