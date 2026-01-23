@@ -51,19 +51,11 @@ namespace HEC.FDA.Model.compute
         private int _ImpactAreaID;
         private ImpactAreaScenarioResults _ImpactAreaScenarioResults;
         private bool _HasNonFailureStageDamage;
-        private List<ConsequenceFrequencyCurve> _ConsequenceFrequencyCurves = [];
+        private readonly List<ConsequenceFrequencyCurve> _ConsequenceFrequencyCurves = [];
         #endregion
 
         #region Properties 
         public event ProgressReportedEventHandler ProgressReport;
-        public bool NonFailRiskIncluded { get; private set; } = false;
-        public bool HasLevee
-        {
-            get
-            {
-                return !_SystemResponseFunction.CurveMetaData.IsNull;
-            }
-        }
         public int ImpactAreaID
         {
             get
@@ -371,7 +363,7 @@ namespace HEC.FDA.Model.compute
                         }
                     }
                 }
-                if (!_ImpactAreaScenarioResults.ResultsAreConverged(.95, .05, _HasFailureStageDamage))
+                if (!_ImpactAreaScenarioResults.ResultsAreConverged(.95, .05, checkConsequenceResults:(_HasFailureStageDamage || _HasFailureStageLifeLoss)))
                 {
                     //recalculate compute chunks 
                     expectedIterations = _ImpactAreaScenarioResults.RemainingIterations(.95, .05, _HasFailureStageDamage);
@@ -669,9 +661,9 @@ namespace HEC.FDA.Model.compute
 
         public ImpactAreaScenarioResults PreviewCompute()
         {
-            ConvergenceCriteria convergenceCriteria = new(minIterations: 1, maxIterations: 1);
-            ImpactAreaScenarioResults results = Compute(convergenceCriteria, new CancellationTokenSource().Token, computeIsDeterministic: true);
-            return results;
+            PairedData frequency_stage_sample = GetFrequencyStageSample(computeIsDeterministic: true, 1);
+            ComputeConsequencesFromStageFrequency(frequency_stage_sample, 1, 1, computeIsDeterministic: true, _FailureStageDamageFunctions, ConsequenceType.Damage, true, true);
+            return _ImpactAreaScenarioResults;
         }
         public static SimulationBuilder Builder(int impactAreaID)
         {
