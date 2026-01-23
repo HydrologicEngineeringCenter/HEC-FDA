@@ -91,12 +91,12 @@ namespace HEC.FDA.ModelTest.unittests
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stageLifeLoss);
 
-            Threshold threshold = new Threshold(1, convergenceCriteria, ThresholdEnum.DefaultExteriorStage, 150000);//do we want to access this through _results?
+            Threshold threshold = new Threshold(0, convergenceCriteria, ThresholdEnum.DefaultExteriorStage, 150000);//do we want to access this through _results?
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(id)
                 .WithFlowFrequency(flow_frequency)
                 .WithFlowStage(flow_stage)
                 .WithStageLifeLoss(upd)
-                //.WithAdditionalThreshold(threshold)
+                .WithAdditionalThreshold(threshold)
                 .Build();
             ImpactAreaScenarioResults impactAreaScenarioResult = simulation.Compute(convergenceCriteria, computeIsDeterministic: true); //here we test compute, below we test preview compute 
             double actual = impactAreaScenarioResult.MeanExpectedAnnualConsequences(id, "LifeLoss", "LifeLoss",ConsequenceType.LifeLoss);

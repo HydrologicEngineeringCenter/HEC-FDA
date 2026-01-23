@@ -661,8 +661,10 @@ namespace HEC.FDA.Model.compute
 
         public ImpactAreaScenarioResults PreviewCompute()
         {
+            CreateEAConsequenceHistograms(new(1, 1), _FailureStageDamageFunctions, ConsequenceType.Damage, RiskType.Fail);
             PairedData frequency_stage_sample = GetFrequencyStageSample(computeIsDeterministic: true, 1);
-            ComputeConsequencesFromStageFrequency(frequency_stage_sample, 1, 1, computeIsDeterministic: true, _FailureStageDamageFunctions, ConsequenceType.Damage, true, true);
+            ComputeConsequencesFromStageFrequency(frequency_stage_sample, 0, 0, computeIsDeterministic: true, _FailureStageDamageFunctions, ConsequenceType.Damage, true, true);
+            _ImpactAreaScenarioResults.ConsequenceResults.PutDataIntoHistograms();
             return _ImpactAreaScenarioResults;
         }
         public static SimulationBuilder Builder(int impactAreaID)
