@@ -342,8 +342,6 @@ namespace HEC.FDA.Model.compute
         /// 
         /// </summary>
         /// <param name="convergenceCriteria"></param>
-        /// <param name="computeWithDamage"></param>
-        /// <param name="computeWithLifeLoss"></param>
         /// <param name="computeIsDeterministic"> Do not do monte-carlo sampling</param>
         /// <param name="cancellationToken"></param>
         /// <exception cref="TaskCanceledException"></exception>
