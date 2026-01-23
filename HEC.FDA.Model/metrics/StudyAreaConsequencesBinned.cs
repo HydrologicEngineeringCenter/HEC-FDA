@@ -64,7 +64,7 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
         }
     }
     //This approach is used in binning EAD results
-    internal void AddConsequenceRealization(double damageEstimate, string damageCategory, string assetCategory, int impactAreaID, long iteration, ConsequenceType consequenceType, RiskType riskType = RiskType.Fail)
+    internal void AddConsequenceRealization(double damageEstimate, string damageCategory, string assetCategory, int impactAreaID, long iteration, ConsequenceType consequenceType, RiskType riskType)
     {
         AggregatedConsequencesBinned damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID, consequenceType, riskType);
         damageResult.AddConsequenceRealization(damageEstimate, iteration);

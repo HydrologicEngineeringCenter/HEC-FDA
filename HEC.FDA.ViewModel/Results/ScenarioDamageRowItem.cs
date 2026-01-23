@@ -49,12 +49,7 @@ namespace HEC.FDA.ViewModel.Results
             ScenarioResults results = scenario.Results;
             List<int> impactAreaIds = results.GetImpactAreaIDs(ConsequenceType.Damage);
             List<RiskType> riskTypes = results.GetRiskTypes();
-
-            //if we have both fail and non_fail, display total risk as well. 
-            if (riskTypes.Contains(Model.metrics.RiskType.Non_Fail))
-            {
-                riskTypes.Add(Model.metrics.RiskType.Total);
-            }
+            riskTypes.Add(Model.metrics.RiskType.Total);
 
             Dictionary<int, string> impactAreaIdToName = IASElement.GetImpactAreaNamesFromIDs();
 
