@@ -321,13 +321,6 @@ namespace HEC.FDA.Model.compute
                 ErrorMessage errorMessage = new(message, ErrorLevel.Fatal);
                 ReportMessage(this, new MessageEventArgs(errorMessage));
             }
-            if (_FailureStageDamageFunctions.Count == 0 && _FailureStageLifeLossFunctions.Count == 0)
-            {
-                if (!HasLevee)
-                {
-                    canCompute = false;
-                }
-            }
             return canCompute;
 
         }
