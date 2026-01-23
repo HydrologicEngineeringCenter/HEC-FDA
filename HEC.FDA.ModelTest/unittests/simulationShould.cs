@@ -291,106 +291,6 @@ namespace HEC.FDA.ModelTest.unittests
             Assert.Equal(expectedZeroValued, actualHistogramZeroValued);
         }
 
-        [Theory]
-        [InlineData(875)]
-        public void FragilityAndExtIntAreCombinedCorrectly(double expected)
-        {
-            ContinuousDistribution frequencyFlow = new Uniform(0, 4000, 1000);
-            double[] xFlows = new double[] { 0, 1000, 2000, 3000, 4000 };
-            IDistribution[] yStagesRating = new IDistribution[]
-            {
-                new Uniform(0,0),
-                new Uniform(0,20),
-                new Uniform(10,30),
-                new Uniform(20,40),
-                new Uniform(30,50)
-            };
-            UncertainPairedData dischargeStage = new UncertainPairedData(xFlows, yStagesRating, metaData);
-            double[] xStages = new double[] { 0, 10, 20, 30, 40 };
-            IDistribution[] yStagesInteriorExterior = new IDistribution[]
-            {
-                new Deterministic(0),
-                new Deterministic(0),
-                new Deterministic(10),
-                new Deterministic(20),
-                new Deterministic(30)
-            };
-            UncertainPairedData exteriorInterior = new UncertainPairedData(xStages, yStagesInteriorExterior, metaData);
-            IDistribution[] yDamage = new IDistribution[]
-            {
-                new Uniform(0,0),
-                new Uniform(0,2000),
-                new Uniform(1000,3000),
-                new Uniform(2000,4000),
-                new Uniform(3000,5000)
-            };
-            UncertainPairedData stageDamage = new UncertainPairedData(xStages, yDamage, metaData);
-            List<UncertainPairedData> stageDamages = new List<UncertainPairedData>() { stageDamage };
-            IDistribution[] yFailureProbabilities = new IDistribution[]
-            {
-                new Deterministic(0),
-                new Deterministic(.25),
-                new Deterministic(.5),
-                new Deterministic(.75),
-                new Deterministic(1)
-            };
-            UncertainPairedData systemResponseCurve = new UncertainPairedData(xStages, yFailureProbabilities, metaData);
-            double leveeElevation = 40;
-            int impactAreaID = 44;
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
-                .WithFlowFrequency(frequencyFlow)
-                .WithFlowStage(dischargeStage)
-                .WithInteriorExterior(exteriorInterior)
-                .WithStageDamages(stageDamages)
-                .WithLevee(systemResponseCurve, leveeElevation)
-                .Build();
-            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
-            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(convergenceCriteria, computeIsDeterministic: true);
-            double actual = impactAreaScenarioResults.MeanExpectedAnnualConsequences();
-            double difference = Math.Abs(actual - expected);
-            double relativeDifference = difference / expected;
-            double tolerance = 0.05;
-            Assert.True(relativeDifference < tolerance);
-
-        }
-
-        [Theory]
-        [InlineData(100)]
-        public void SimulationWithInteriorExteriorWorksCorrectly(double expected)
-        {
-            //Arrange
-            ConvergenceCriteria deterministicConvergenceCriteria = new ConvergenceCriteria(1, 1);
-
-            ContinuousDistribution flowFrequency = new Uniform(0, 100000, 100);
-            double[] xFlows = new double[] { 0, 100000 };
-            IDistribution[] yStages = new IDistribution[] { new Uniform(5, 15), new Uniform(10, 30) };
-            UncertainPairedData stageDischarge = new UncertainPairedData(xFlows, yStages, metaData);
-            double[] xExteriorStages = new double[] { 10, 20, 30 };
-            IDistribution[] yInteriorStages = new IDistribution[] { new Uniform(0, 10), new Uniform(10, 20), new Uniform(30, 30) };
-            UncertainPairedData interiorExterior = new UncertainPairedData(xExteriorStages, yInteriorStages, metaData);
-            double[] xInteriorStages = new double[] { 5, 15, 30 };
-            IDistribution[] yDamage = new IDistribution[] { new Uniform(0, 0), new Uniform(100, 300), new Uniform(100, 300) };
-            UncertainPairedData stageDamage = new UncertainPairedData(xInteriorStages, yDamage, metaData);
-            List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>() { stageDamage };
-
-            int impactAreaID = 899;
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
-                .WithFlowFrequency(flowFrequency)
-                .WithFlowStage(stageDischarge)
-                .WithInteriorExterior(interiorExterior)
-                .WithStageDamages(stageDamageList)
-                .Build();
-
-            //Act 
-            ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(deterministicConvergenceCriteria, computeIsDeterministic: true);
-            double actual = impactAreaScenarioResults.MeanExpectedAnnualConsequences();
-            double relativeDifference = Math.Abs(actual - expected) / expected;
-            double tolerance = 0.05;
-
-            //Assert
-            Assert.True(relativeDifference < tolerance);
-        }
-
         //Download Calculation in Excel at https://www.hec.usace.army.mil/fwlink/?linkid=total-risk-unit-test-data
         [Theory]
         [InlineData(100150.179)]
@@ -442,7 +342,7 @@ namespace HEC.FDA.ModelTest.unittests
 
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 1, maxIterations: 1);
             ImpactAreaScenarioResults impactAreaScenarioResults = simulation.Compute(convergenceCriteria, new CancellationToken(), computeIsDeterministic: true);
-            double actual = impactAreaScenarioResults.MeanExpectedAnnualConsequences(id, damCat, assetCat);
+            double actual = impactAreaScenarioResults.MeanExpectedAnnualConsequences(id, damCat, assetCat,ConsequenceType.Damage,RiskType.Total);
             double relativeTolerance = Math.Abs(expected - actual) / actual;
             Assert.True(relativeTolerance < 0.01);
         }

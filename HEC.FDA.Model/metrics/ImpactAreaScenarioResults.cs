@@ -84,39 +84,11 @@ namespace HEC.FDA.Model.metrics
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param> the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
         /// <returns></returns>The mean of consequences
-        public double MeanExpectedAnnualConsequences(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
+        public double MeanExpectedAnnualConsequences(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null,  ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Total)
         {
-            return ConsequenceResults.SampleMeanDamage(damageCategory, assetCategory, impactAreaID, consequenceType);
+            return ConsequenceResults.SampleMeanDamage(damageCategory, assetCategory, impactAreaID, consequenceType, riskType);
         }
-        /// <summary>
-        /// This method calls the inverse CDF of the damage histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
-        /// The level of aggregation of  consequences is determined by the arguments used in the method
-        /// For example, if you wanted the EAD exceeded with probability .98 for residential, impact area 2, all asset categories, then the method call would be as follows:
-        /// double consequenceValue = ConsequenceExceededWithProbabilityQ(.98, damageCategory: "residential", impactAreaID: 2);
-        /// </summary>
-        /// <param name="damageCategory"></param> either residential, commercial, etc....the default is null
-        /// <param name="exceedanceProbability"></param>
-        /// <param name="assetCategory"></param> either structure, content, etc...the default is null
-        /// <param name="impactAreaID"></param>the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
-        /// <returns></returns> the level of consequences exceeded by the specified probability 
-        public double ConsequencesExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
-        {
-            return ConsequenceResults.ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
-        }
-        /// <summary>
-        /// This method gets the histogram (distribution) of consequences for the given damage category(ies), asset category(ies), and impact area(s)
-        /// The level of aggregation of the distribution of consequences is determined by the arguments used in the method
-        /// For example, if you wanted a histogram for residential, impact area 2, all asset categories, then the method call would be as follows:
-        /// ThreadsafeInlineHistogram histogram = GetConsequencesHistogram(damageCategory: "residential", impactAreaID: 2);
-        /// </summary> aggregated consequences histogram 
-        /// <param name="damageCategory"></param> The default is null 
-        /// <param name="assetCategory"></param> The default is null 
-        /// <param name="impactAreaID"></param> The default is a null value (utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
-        /// <returns></returns>
-        public Empirical GetAggregateEmpiricalDistribution(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
-        {
-            return ConsequenceResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID);
-        }
+       
         public IHistogram GetSpecificHistogram(int impactAreaID, string damageCategory, string assetCategory)
         {
             return ConsequenceResults.GetSpecificHistogram(damageCategory, assetCategory, impactAreaID);

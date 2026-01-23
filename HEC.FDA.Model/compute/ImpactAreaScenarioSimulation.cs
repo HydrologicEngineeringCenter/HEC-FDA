@@ -141,7 +141,7 @@ namespace HEC.FDA.Model.compute
             }
 
             //if the user set the default threshold themself, just use that. Otherwise calculate it... 
-            else if (!defaultThresholdExists && damageFrequencyFunctions.Count > 0)
+            else if (!defaultThresholdExists && damageFrequencyFunctions != null)
             {
                 Threshold defaultThreshold = ComputeDefaultThreshold(convergenceCriteria, damageFrequencyFunctions);
                 _ImpactAreaScenarioResults.PerformanceByThresholds.AddThreshold(defaultThreshold);
