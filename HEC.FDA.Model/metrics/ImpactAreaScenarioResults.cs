@@ -80,103 +80,60 @@ namespace HEC.FDA.Model.metrics
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param> the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
         /// <returns></returns>The mean of consequences
-        public double MeanExpectedAnnualConsequences(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null,  ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Total)
+        public double MeanExpectedAnnualConsequences(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Total)
         {
             return ConsequenceResults.SampleMeanDamage(damageCategory, assetCategory, impactAreaID, consequenceType, riskType);
         }
-       
+
         public IHistogram GetSpecificHistogram(int impactAreaID, string damageCategory, string assetCategory)
         {
             return ConsequenceResults.GetSpecificHistogram(damageCategory, assetCategory, impactAreaID);
         }
-        private bool IsEADConverged(bool computeWithDamage)
+        public bool ResultsAreConverged(double upperConfidenceLimitProb, double lowerConfidenceLimitProb, bool checkConsequenceResults)
         {
-            if (computeWithDamage == true)
-            {
-                foreach (AggregatedConsequencesBinned consequenceDistributionResult in ConsequenceResults.ConsequenceResultList)
-                {
-                    if (!consequenceDistributionResult.ConsequenceHistogram.HistogramIsZeroValued)
-                    {
-                        if (consequenceDistributionResult.ConsequenceHistogram.IsConverged == false)
-                        {
-                            return false;
-                        }
-                    }
-                }
-            }
-            return true;
+            bool consequenceConverged = true;
+            if (checkConsequenceResults == true)
+                consequenceConverged = ConsequenceResultsAreConverged(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+            bool performanceConverged = PerformanceResultsAreConverged(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+            return consequenceConverged && performanceConverged;
         }
-        public bool IsPerformanceConverged() //exposed publicly for testing cnep convergence logic
-        {
 
-            List<bool> convergedList = new();
-            //dont like this
+        /// <summary>
+        /// Determines whether all system performance results across thresholds have converged based on the specified
+        /// upper and lower confidence limit probabilities.
+        /// </summary>
+        private bool PerformanceResultsAreConverged(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
+        {
             foreach (var threshold in PerformanceByThresholds.ListOfThresholds)
             {
-                convergedList.Add(threshold.SystemPerformanceResults.AssuranceIsConverged());
-            }
-            foreach (var convergenceResult in convergedList)
-            {
-                if (convergenceResult)
-                {
-                    //do nothing
-                }
-                else
+                bool thresholdAssuranceIsConverged = threshold.SystemPerformanceResults.AssuranceTestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+                if (!thresholdAssuranceIsConverged)
                 {
                     return false;
                 }
             }
             return true;
         }
-        public bool IsConverged(bool computeWithDamage)
-        {
-            return IsEADConverged(computeWithDamage) && IsPerformanceConverged();
-        }
-        public bool ResultsAreConverged(double upperConfidenceLimitProb, double lowerConfidenceLimitProb, bool computeWithDamage)
-        {
-            bool eadIsConverged = true;
-            if (computeWithDamage == true)
-            {
-                foreach (AggregatedConsequencesBinned consequenceDistributionResult in ConsequenceResults.ConsequenceResultList)
-                {
-                    if (consequenceDistributionResult.ConsequenceHistogram.HistogramIsZeroValued)
-                    {
-                        eadIsConverged = true;
-                    }
-                    else
-                    {
-                        if (consequenceDistributionResult.ConsequenceHistogram.IsHistogramConverged(upperConfidenceLimitProb, lowerConfidenceLimitProb) == false)
-                        {
-                            eadIsConverged = false;
-                            break;
-                        }
-                    }
-                }
-            }
-            bool cnepIsConverged = true;
-            List<bool> convergedList = new();
 
-            //dont like this.
-            foreach (var threshold in PerformanceByThresholds.ListOfThresholds)
+        /// <summary>
+        /// Checks to see if all consequence results are converged based on the provided confidence limit probabilities. Zero valued histograms are skipped.
+        /// </summary>
+        private bool ConsequenceResultsAreConverged(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
+        {
+            foreach (AggregatedConsequencesBinned consequenceDistributionResult in ConsequenceResults.ConsequenceResultList)
             {
-                bool thresholdAssuranceIsConverged = threshold.SystemPerformanceResults.AssuranceTestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
-                convergedList.Add(thresholdAssuranceIsConverged);
-
-            }
-            foreach (var convergenceResult in convergedList)
-            {
-                if (convergenceResult)
+                if (consequenceDistributionResult.ConsequenceHistogram.HistogramIsZeroValued)
                 {
-                    //do nothing
+                    continue;
                 }
-                else
+                if (consequenceDistributionResult.ConsequenceHistogram.IsHistogramConverged(upperConfidenceLimitProb, lowerConfidenceLimitProb) == false)
                 {
-                    cnepIsConverged = false;
-                    break;
+                    return false;
                 }
             }
-            return eadIsConverged && cnepIsConverged;
+            return true;
         }
+
         public long RemainingIterations(double upperConfidenceLimitProb, double lowerConfidenceLimitProb, bool computeWithDamage)
         {
             List<long> eadIterationsRemaining = new();
