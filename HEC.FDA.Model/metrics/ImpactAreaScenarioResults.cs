@@ -1,5 +1,3 @@
-using HEC.FDA.Model.paireddata;
-using Statistics.Distributions;
 using Statistics.Histograms;
 using System;
 using System.Collections.Generic;
@@ -15,7 +13,7 @@ namespace HEC.FDA.Model.metrics
         public StudyAreaConsequencesBinned ConsequenceResults { get; }
         public int ImpactAreaID { get; }
         public bool IsNull { get; }
-        public List<ConsequenceFrequencyCurve> ConsequenceFrequencyFunctions { get; set; }
+        public List<ConsequenceFrequencyCurve> ConsequenceFrequencyFunctions { get; set; } = [];
         #endregion
         #region Constructors 
         public ImpactAreaScenarioResults(int impactAreaID, bool isNull)
