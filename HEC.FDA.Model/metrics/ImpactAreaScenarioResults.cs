@@ -1,3 +1,4 @@
+using Statistics;
 using Statistics.Histograms;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace HEC.FDA.Model.metrics
         public int ImpactAreaID { get; }
         public bool IsNull { get; }
         public List<ConsequenceFrequencyCurve> ConsequenceFrequencyFunctions { get; set; } = [];
+        public List<UncertainConsequenceFrequencyCurve> UncertainConsequenceFrequencyCurves { get; set; } = [];
         #endregion
         #region Constructors 
         public ImpactAreaScenarioResults(int impactAreaID, bool isNull)
@@ -210,6 +212,66 @@ namespace HEC.FDA.Model.metrics
         {
             var zeroResult = new AggregatedConsequencesBinned(impactAreaId);
             ConsequenceResults.ConsequenceResultList.Add(zeroResult);
+        }
+
+        private readonly object _uncertainCurveLock = new();
+
+        /// <summary>
+        /// Finds an existing UncertainConsequenceFrequencyCurve matching the specified criteria, or creates a new one if none exists.
+        /// This method is thread-safe for use in parallel compute loops.
+        /// </summary>
+        /// <param name="xvals">The x-values for the curve (used when creating a new curve).</param>
+        /// <param name="damageCategory">The damage category to match.</param>
+        /// <param name="assetCategory">The asset category to match.</param>
+        /// <param name="consequenceType">The consequence type to match.</param>
+        /// <param name="riskType">The risk type to match.</param>
+        /// <param name="convergenceCriteria">The convergence criteria (used when creating a new curve).</param>
+        /// <returns>The matching or newly created UncertainConsequenceFrequencyCurve.</returns>
+        public UncertainConsequenceFrequencyCurve GetOrCreateUncertainConsequenceFrequencyCurve(
+            double[] xvals,
+            string damageCategory,
+            string assetCategory,
+            ConsequenceType consequenceType,
+            RiskType riskType,
+            ConvergenceCriteria convergenceCriteria)
+        {
+            lock (_uncertainCurveLock)
+            {
+                UncertainConsequenceFrequencyCurve existingCurve = UncertainConsequenceFrequencyCurves
+                    .FirstOrDefault(c =>
+                        c.DamageCategory == damageCategory &&
+                        c.AssetCategory == assetCategory &&
+                        c.ConsequenceType == consequenceType &&
+                        c.RiskType == riskType);
+
+                if (existingCurve != null)
+                {
+                    return existingCurve;
+                }
+
+                var newCurve = new UncertainConsequenceFrequencyCurve(
+                    xvals,
+                    damageCategory,
+                    assetCategory,
+                    consequenceType,
+                    riskType,
+                    convergenceCriteria);
+
+                UncertainConsequenceFrequencyCurves.Add(newCurve);
+                return newCurve;
+            }
+        }
+
+        /// <summary>
+        /// Flushes all pending curve data into histograms for all UncertainConsequenceFrequencyCurves.
+        /// Should be called after each batch of iterations completes.
+        /// </summary>
+        public void PutUncertainFrequencyCurvesIntoHistograms()
+        {
+            foreach (var curve in UncertainConsequenceFrequencyCurves)
+            {
+                curve.PutDataIntoHistograms();
+            }
         }
         #endregion
     }

@@ -51,6 +51,7 @@ namespace HEC.FDA.Model.compute
         private int _ImpactAreaID;
         private ImpactAreaScenarioResults _ImpactAreaScenarioResults;
         private bool _HasNonFailureStageDamage;
+        private ConvergenceCriteria _ConvergenceCriteria;
         #endregion
 
         #region Properties 
@@ -102,6 +103,8 @@ namespace HEC.FDA.Model.compute
                 _ImpactAreaScenarioResults = new ImpactAreaScenarioResults(_ImpactAreaID, true); //I would like to just return regular Null here but I'm unsure who is relying on this behavior. BBB
                 return _ImpactAreaScenarioResults;
             }
+
+            _ConvergenceCriteria = convergenceCriteria;
 
             //set up results histograms.
             InitializeConsequenceHistograms(convergenceCriteria);
@@ -339,6 +342,7 @@ namespace HEC.FDA.Model.compute
                             ComputePerformanceFromStageFrequency(frequency_stage_sample, systemResponse_sample, chunkIteration);// null checks the system response. 
                         });
                         _ImpactAreaScenarioResults.ConsequenceResults.PutDataIntoHistograms();
+                        _ImpactAreaScenarioResults.PutUncertainFrequencyCurvesIntoHistograms();
                         foreach (var thresholdEntry in _ImpactAreaScenarioResults.PerformanceByThresholds.ListOfThresholds)
                         {
                             thresholdEntry.SystemPerformanceResults.PutDataIntoHistograms();
@@ -508,6 +512,16 @@ namespace HEC.FDA.Model.compute
                 {
                     continue;
                 }
+                // Add curve to uncertain consequence frequency curve for histogram aggregation
+                UncertainConsequenceFrequencyCurve uncertainCurve = _ImpactAreaScenarioResults.GetOrCreateUncertainConsequenceFrequencyCurve(
+                    frequency_consequences.Xvals.ToArray(),
+                    stageUncertainConsequences.CurveMetaData.DamageCategory,
+                    stageUncertainConsequences.CurveMetaData.AssetCategory,
+                    consequenceType,
+                    RiskType.Fail,
+                    _ConvergenceCriteria);
+                uncertainCurve.AddCurveRealization(frequency_consequences, thisChunkIteration);
+
                 double eaConsequencesEstimate = frequency_consequences.integrate();
                 _ImpactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eaConsequencesEstimate, stageUncertainConsequences.CurveMetaData.DamageCategory, stageUncertainConsequences.CurveMetaData.AssetCategory, _ImpactAreaID, thisChunkIteration, consequenceType, RiskType.Fail);
             }
@@ -549,6 +563,17 @@ namespace HEC.FDA.Model.compute
                 PairedData stageDamageSample = stageUncertainDamage.SamplePairedData(thisComputeIteration, computeIsDeterministic);
                 stageDamageSample = stageDamageSample.multiply(validatedSystemResponse);
                 PairedData damFreq = stageDamageSample.compose(frequency_stage);//save me for FN Plot
+
+                // Add curve to uncertain consequence frequency curve for histogram aggregation
+                UncertainConsequenceFrequencyCurve uncertainCurve = _ImpactAreaScenarioResults.GetOrCreateUncertainConsequenceFrequencyCurve(
+                    damFreq.Xvals.ToArray(),
+                    stageUncertainDamage.CurveMetaData.DamageCategory,
+                    stageUncertainDamage.CurveMetaData.AssetCategory,
+                    type,
+                    riskType,
+                    _ConvergenceCriteria);
+                uncertainCurve.AddCurveRealization(damFreq, thisChunkIteration);
+
                 double eadOraal = damFreq.integrate();
                 _ImpactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadOraal, stageUncertainDamage.CurveMetaData.DamageCategory, stageUncertainDamage.CurveMetaData.AssetCategory, _ImpactAreaID, thisChunkIteration, type, riskType);
             }
