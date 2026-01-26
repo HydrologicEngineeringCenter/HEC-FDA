@@ -16,7 +16,7 @@ public class UncertaintyControlConfigs
         string YAxisFormat { get; }
         string TrackerFormat { get; }
         ConsequenceType ConsequenceType { get; }
-        IQuartileRowItem CreateRowItem(string frequency, double value);
+        IQuartileRowItem CreateRowItem(string frequency, double value, string riskType = null);
     }
 
     public class DamageWithUncertaintyControlConfig : IUncertaintyControlConfig
@@ -38,9 +38,9 @@ public class UncertaintyControlConfigs
             ConsequenceType = ConsequenceType.Damage;
         }
 
-        public IQuartileRowItem CreateRowItem(string frequency, double value)
+        public IQuartileRowItem CreateRowItem(string frequency, double value, string riskType = null)
         {
-            return new EadRowItem(frequency, value);
+            return new EadRowItem(frequency, value, riskType);
         }
     }
 
@@ -63,9 +63,9 @@ public class UncertaintyControlConfigs
             ConsequenceType = ConsequenceType.Damage;
         }
 
-        public IQuartileRowItem CreateRowItem(string frequency, double value)
+        public IQuartileRowItem CreateRowItem(string frequency, double value, string riskType = null)
         {
-            return new EqadRowItem(frequency, value);
+            return new EqadRowItem(frequency, value, riskType);
         }
     }
 
@@ -88,9 +88,9 @@ public class UncertaintyControlConfigs
             ConsequenceType = ConsequenceType.LifeLoss;
         }
 
-        public IQuartileRowItem CreateRowItem(string frequency, double value)
+        public IQuartileRowItem CreateRowItem(string frequency, double value, string riskType = null)
         {
-            return new LifeLossRowItem(frequency, value);
+            return new LifeLossRowItem(frequency, value, riskType);
         }
     }
 
@@ -113,9 +113,9 @@ public class UncertaintyControlConfigs
             ConsequenceType = ConsequenceType.Damage;
         }
 
-        public IQuartileRowItem CreateRowItem(string frequency, double value)
+        public IQuartileRowItem CreateRowItem(string frequency, double value, string riskType = null)
         {
-            return new EadRowItem(frequency, value);
+            return new EadRowItem(frequency, value, riskType);
         }
     }
 
@@ -138,9 +138,9 @@ public class UncertaintyControlConfigs
             ConsequenceType = ConsequenceType.Damage;
         }
 
-        public IQuartileRowItem CreateRowItem(string frequency, double value)
+        public IQuartileRowItem CreateRowItem(string frequency, double value, string riskType = null)
         {
-            return new EqadRowItem(frequency, value);
+            return new EqadRowItem(frequency, value, riskType);
         }
     }
 
@@ -163,9 +163,9 @@ public class UncertaintyControlConfigs
             ConsequenceType = ConsequenceType.LifeLoss;
         }
 
-        public IQuartileRowItem CreateRowItem(string frequency, double value)
+        public IQuartileRowItem CreateRowItem(string frequency, double value, string riskType = null)
         {
-            return new LifeLossRowItem(frequency, value);
+            return new LifeLossRowItem(frequency, value, riskType);
         }
     }
 }

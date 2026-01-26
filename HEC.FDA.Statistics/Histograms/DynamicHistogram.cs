@@ -10,6 +10,8 @@ namespace Statistics.Histograms
     public class DynamicHistogram : IHistogram
     {
         #region Fields
+        private const int MAX_BIN_COUNT = 500;
+        private const int OVERFLOW_PREVENTION_THRESHOLD = 2000; // Prevent Int32 overflow and excessive memory
         private double _SampleVariance;
         private bool _minHasNotBeenSet = false;
         private bool _HistogramShutDown = false;
@@ -244,6 +246,7 @@ namespace Statistics.Histograms
                     _SampleVariance = ((((double)(SampleSize - 2) / (double)(SampleSize - 1)) * _SampleVariance) + (Math.Pow(observation - SampleMean, 2)) / (double)SampleSize);
                     SampleMean = tmpMean;
                 }
+                EnsureCapacityForObservation(observation);
                 int quantityAdditionalBins;
                 if (observation < Min)
                 {
@@ -322,9 +325,9 @@ namespace Statistics.Histograms
                 {
                     AddObservationToHistogram(x);
                 }
-                if (BinCounts.Length > 2000)
+                if (BinCounts.Length > MAX_BIN_COUNT * 4)
                 {
-                    double divisor = BinCounts.Length / 500;
+                    double divisor = (double)BinCounts.Length / MAX_BIN_COUNT;
                     ResizeHistogram(divisor);
                 }
             }
@@ -342,6 +345,24 @@ namespace Statistics.Histograms
             }
             Max = Min + newBinCount * BinWidth;
             BinCounts = newBins;
+        }
+
+        private void EnsureCapacityForObservation(double observation)
+        {
+            if (BinCounts.Length == 0) return;
+
+            double projectedMin = Math.Min(Min, observation);
+            double projectedMax = Math.Max(Max, observation);
+            double projectedRange = projectedMax - projectedMin;
+
+            double projectedBinCount = projectedRange / BinWidth;
+
+            if (projectedBinCount > OVERFLOW_PREVENTION_THRESHOLD)
+            {
+                double newBinWidth = projectedRange / MAX_BIN_COUNT;
+                double divisor = newBinWidth / BinWidth;
+                ResizeHistogram(divisor);
+            }
         }
 
         private void ResetToZeroMin(int quantityAdditionalBins)

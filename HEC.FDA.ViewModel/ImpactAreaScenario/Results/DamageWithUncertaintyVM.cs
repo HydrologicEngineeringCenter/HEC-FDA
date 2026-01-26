@@ -2,10 +2,13 @@
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
 using HEC.FDA.ViewModel.Utilities;
+using OxyPlot;
 using OxyPlot.Axes;
+using OxyPlot.Legends;
 using OxyPlot.Series;
 using Statistics.Distributions;
 using System.Collections.Generic;
+using System.Linq;
 using static HEC.FDA.ViewModel.ImpactAreaScenario.Results.UncertaintyControlConfigs;
 
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
@@ -28,17 +31,53 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
             ImpactAreaScenarioResults iasResult = scenarioResults.GetResults(impactAreaID);
             Mean = iasResult.MeanExpectedAnnualConsequences(impactAreaID: impactAreaID, consequenceType: _uncertaintyControlConfig.ConsequenceType);
-            Empirical empirical = iasResult.ConsequenceResults.GetAggregateEmpiricalDistribution(impactAreaID: iasResult.ImpactAreaID, consequenceType: _uncertaintyControlConfig.ConsequenceType);
 
-            List<double> qValues = new()
+            // Detect if NonFail results exist
+            bool hasNonFailResults = iasResult.ConsequenceResults.ConsequenceResultList
+                .Any(r => r.RiskType == RiskType.Non_Fail && r.ConsequenceType == _uncertaintyControlConfig.ConsequenceType);
+
+            if (hasNonFailResults)
             {
-                scenarioResults.ConsequencesExceededWithProbabilityQ(.75, impactAreaID, consequenceType: _uncertaintyControlConfig.ConsequenceType),
-                scenarioResults.ConsequencesExceededWithProbabilityQ(.5, impactAreaID, consequenceType: _uncertaintyControlConfig.ConsequenceType),
-                scenarioResults.ConsequencesExceededWithProbabilityQ(.25, impactAreaID, consequenceType: _uncertaintyControlConfig.ConsequenceType)
-            };
-            LoadTableValues(qValues);
+                // Get empirical distributions for each risk type
+                Empirical failEmpirical = iasResult.ConsequenceResults.GetAggregateEmpiricalDistribution(
+                    impactAreaID: iasResult.ImpactAreaID,
+                    consequenceType: _uncertaintyControlConfig.ConsequenceType,
+                    riskType: RiskType.Fail);
+                Empirical nonFailEmpirical = iasResult.ConsequenceResults.GetAggregateEmpiricalDistribution(
+                    impactAreaID: iasResult.ImpactAreaID,
+                    consequenceType: _uncertaintyControlConfig.ConsequenceType,
+                    riskType: RiskType.Non_Fail);
+                Empirical totalEmpirical = iasResult.ConsequenceResults.GetAggregateEmpiricalDistribution(
+                    impactAreaID: iasResult.ImpactAreaID,
+                    consequenceType: _uncertaintyControlConfig.ConsequenceType,
+                    riskType: RiskType.Total);
 
-            InitializePlotModel(empirical);
+                // Initialize plot with 3 series
+                InitializePlotModelMultiple(
+                    (failEmpirical, "Fail", OxyColors.Red),
+                    (nonFailEmpirical, "Non-Fail", OxyColors.Blue),
+                    (totalEmpirical, "Total", OxyColors.Black));
+
+                // Load 9 table rows (3 risk types x 3 quartiles)
+                LoadTableValuesGrouped(scenarioResults, impactAreaID);
+            }
+            else
+            {
+                // Current behavior - single series labeled as distribution title
+                Empirical empirical = iasResult.ConsequenceResults.GetAggregateEmpiricalDistribution(
+                    impactAreaID: iasResult.ImpactAreaID,
+                    consequenceType: _uncertaintyControlConfig.ConsequenceType);
+
+                List<double> qValues = new()
+                {
+                    scenarioResults.ConsequencesExceededWithProbabilityQ(.75, impactAreaID, consequenceType: _uncertaintyControlConfig.ConsequenceType),
+                    scenarioResults.ConsequencesExceededWithProbabilityQ(.5, impactAreaID, consequenceType: _uncertaintyControlConfig.ConsequenceType),
+                    scenarioResults.ConsequencesExceededWithProbabilityQ(.25, impactAreaID, consequenceType: _uncertaintyControlConfig.ConsequenceType)
+                };
+                LoadTableValues(qValues);
+
+                InitializePlotModel(empirical);
+            }
         }
 
         #region OxyPlot
@@ -49,7 +88,22 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             AddSeries(empirical);
         }
 
-        private void AddSeries(Empirical empirical)
+        private void InitializePlotModelMultiple(params (Empirical empirical, string title, OxyColor color)[] seriesData)
+        {
+            MyPlot.Title = _uncertaintyControlConfig.PlotTitle;
+            MyPlot.Legends.Add(new Legend
+            {
+                LegendPosition = LegendPosition.TopRight
+            });
+            AddAxes();
+
+            foreach (var (empirical, title, color) in seriesData)
+            {
+                AddSeries(empirical, title, color);
+            }
+        }
+
+        private void AddSeries(Empirical empirical, string title = null, OxyColor? color = null)
         {
             string trackerFormat = _uncertaintyControlConfig.TrackerFormat;
 
@@ -58,8 +112,14 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                 DataFieldX = nameof(NormalDataPoint.ZScore),
                 DataFieldY = nameof(NormalDataPoint.Value),
                 TrackerFormatString = trackerFormat,
-                Title = _uncertaintyControlConfig.PlotTitle,
+                Title = title ?? _uncertaintyControlConfig.PlotTitle,
             };
+
+            if (color.HasValue)
+            {
+                lineSeries.Color = color.Value;
+            }
+
             var points = new NormalDataPoint[empirical.CumulativeProbabilities.Length];
             for (int i = 0; i < points.Length; i++)
             {
@@ -121,6 +181,25 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                 }
             }
             Rows.AddRange(rows);
+        }
+
+        private void LoadTableValuesGrouped(ScenarioResults scenarioResults, int impactAreaID)
+        {
+            var riskTypes = new[] { ("Fail", RiskType.Fail), ("Non-Fail", RiskType.Non_Fail), ("Total", RiskType.Total) };
+            var quartileNames = new[] { "First", "Second", "Third" };
+            var probabilities = new[] { 0.75, 0.5, 0.25 };
+
+            foreach (var (riskTypeName, riskType) in riskTypes)
+            {
+                for (int i = 0; i < quartileNames.Length; i++)
+                {
+                    double value = scenarioResults.ConsequencesExceededWithProbabilityQ(
+                        probabilities[i], impactAreaID,
+                        consequenceType: _uncertaintyControlConfig.ConsequenceType,
+                        riskType: riskType);
+                    Rows.Add(_uncertaintyControlConfig.CreateRowItem(quartileNames[i], value, riskTypeName));
+                }
+            }
         }
     }
 }

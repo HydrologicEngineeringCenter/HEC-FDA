@@ -53,7 +53,6 @@
       AutoGeneratingColumn="FdaDataGrid_AutoGeneratingColumn"
       HorizontalAlignment="Left"
       VerticalAlignment="Top"
-      Width="200"
       IsReadOnly="True"
       SelectionUnit="Cell"
       CanUserReorderColumns="False"
