@@ -170,6 +170,7 @@ public class AggregatedConsequencesBinned
         masterElement.SetAttributeValue("AssetCategory", AssetCategory);
         masterElement.SetAttributeValue("ImpactAreaID", RegionID);
         masterElement.SetAttributeValue("ConsequenceType", ConsequenceType);
+        masterElement.SetAttributeValue("RiskType", RiskType);
         return masterElement;
     }
 
@@ -180,7 +181,7 @@ public class AggregatedConsequencesBinned
         string assetCategory = xElement.Attribute("AssetCategory").Value;
         int id = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
 
-        // This allows for backward compatibility -- if we are loading an object saved before the enum existed, 
+        // This allows for backward compatibility -- if we are loading an object saved before the enum existed,
         // it will default to damage because that is all the used to exist
         // anything saved after the enum was introduced will have the attribute and be parsed accordingly
         ConsequenceType consequenceType = ConsequenceType.Damage;
@@ -188,7 +189,13 @@ public class AggregatedConsequencesBinned
         if (typeAttr != null && Enum.TryParse<ConsequenceType>(typeAttr.Value, out var parsed))
             consequenceType = parsed;
 
-        return new AggregatedConsequencesBinned(damageCategory, assetCategory, damageHistogram, id, consequenceType);
+        // Backward compatibility for RiskType - defaults to Unassigned for old saved results
+        RiskType riskType = RiskType.Unassigned;
+        var riskTypeAttr = xElement.Attribute("RiskType");
+        if (riskTypeAttr != null && Enum.TryParse<RiskType>(riskTypeAttr.Value, out var parsedRiskType))
+            riskType = parsedRiskType;
+
+        return new AggregatedConsequencesBinned(damageCategory, assetCategory, damageHistogram, id, consequenceType, riskType);
     }
     #endregion
 }
