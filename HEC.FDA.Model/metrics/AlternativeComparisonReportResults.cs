@@ -63,6 +63,15 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
             .Distinct()
             .ToList();
     }
+    public List<RiskType> GetRiskTypes(ConsequenceType consequenceType = ConsequenceType.Damage)
+    {
+        return _EqadReducedResultsList
+            .SelectMany(x => x.ConsequenceResultList
+                .Where(r => r.ConsequenceType == consequenceType)
+                .Select(r => r.RiskType))
+            .Distinct()
+            .ToList();
+    }
     /// <summary>
     /// This method gets the mean EqAD damage reduced between the with- and without-project conditions for a given with-project condition, 
     /// impact area, damage category, and asset category combination. 
@@ -74,9 +83,9 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     /// <param name="damageCategory"></param> either residential, commercial, etc...
     /// <param name="assetCategory"></param> either structure, content, etc...
     /// <returns></returns>
-    public double SampleMeanEqadReduced(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
+    public double SampleMeanEqadReduced(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Total)
     {
-        return GetConsequencesReducedResultsForGivenAlternative(alternativeID).SampleMeanDamage(damageCategory, assetCategory, impactAreaID, consequenceType);
+        return GetConsequencesReducedResultsForGivenAlternative(alternativeID).SampleMeanDamage(damageCategory, assetCategory, impactAreaID, consequenceType, riskType);
     }
     /// <summary>
     /// This method gets the mean base year ead reduced between the with- and without-project conditions for a given with-project condition, 
@@ -89,10 +98,10 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     /// <param name="damageCategory"></param> either residential, commercial, etc...
     /// <param name="assetCategory"></param> either structure, content, etc...
     /// <returns></returns>
-    public double SampleMeanBaseYearEADReduced(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
+    public double SampleMeanBaseYearEADReduced(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Total)
     {
         StudyAreaConsequencesByQuantile results = GetConsequencesReducedResultsForGivenAlternative(alternativeID, true, true);
-        return results.SampleMeanDamage(damageCategory, assetCategory, impactAreaID, consequenceType);
+        return results.SampleMeanDamage(damageCategory, assetCategory, impactAreaID, consequenceType, riskType);
     }
     /// <summary>
     /// This method gets the mean future year ead reduced between the with- and without-project conditions for a given with-project condition, 
@@ -105,9 +114,9 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     /// <param name="damageCategory"></param> either residential, commercial, etc...
     /// <param name="assetCategory"></param> either structure, content, etc...
     /// <returns></returns>
-    public double SampleMeanFutureYearEADReduced(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
+    public double SampleMeanFutureYearEADReduced(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Total)
     {
-        return GetConsequencesReducedResultsForGivenAlternative(alternativeID, true).SampleMeanDamage(damageCategory, assetCategory, impactAreaID, consequenceType);
+        return GetConsequencesReducedResultsForGivenAlternative(alternativeID, true).SampleMeanDamage(damageCategory, assetCategory, impactAreaID, consequenceType, riskType);
     }
     public double SampleMeanWithoutProjectBaseYearEAD(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
     {
