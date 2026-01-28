@@ -103,7 +103,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
             for (int i = 0; i < xValNames.Count; i++)
             {
-                Rows.Add(_uncertaintyControlConfig.CreateRowItem(xValNames[i], yVals[i]));
+                Rows.Add(_uncertaintyControlConfig.CreateRowItem(xValNames[i], yVals[i], RiskType.Total.ToString()));
             }
         }
 
@@ -236,7 +236,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
             for (int i = 0; i < xValNames.Count; i++)
             {
-                Rows.Add(_uncertaintyControlConfig.CreateRowItem(xValNames[i], yVals[i]));
+                Rows.Add(_uncertaintyControlConfig.CreateRowItem(xValNames[i], yVals[i], RiskType.Total.ToString()));
             }
         }
 

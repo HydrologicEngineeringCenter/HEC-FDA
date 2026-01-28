@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
@@ -13,48 +12,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
         public int PeriodOfAnalysis { get; set; }
         public bool RateAndPeriodVisible { get; }
         public string EADLabel { get; }
-        public bool RiskTypeVisible { get; }
 
-        public List<DamageCategoryRowItem> Rows { get; } = new List<DamageCategoryRowItem>();
-
-        private static string FormatRiskType(RiskType riskType)
-        {
-            return riskType switch
-            {
-                RiskType.Fail => "Fail",
-                RiskType.Non_Fail => "Non-Fail",
-                RiskType.Total => "Total",
-                _ => riskType.ToString()
-            };
-        }
-
-        /// <summary>
-        /// Gets the list of risk types to display based on what's in the results.
-        /// If both Fail and Non_Fail exist, includes Total as well.
-        /// </summary>
-        private static List<RiskType> GetDisplayRiskTypes(List<RiskType> availableRiskTypes)
-        {
-            bool hasFail = availableRiskTypes.Contains(RiskType.Fail);
-            bool hasNonFail = availableRiskTypes.Contains(RiskType.Non_Fail);
-
-            if (hasFail && hasNonFail)
-            {
-                // Both exist, show all three: Fail, Non-Fail, Total
-                return new List<RiskType> { RiskType.Fail, RiskType.Non_Fail, RiskType.Total };
-            }
-            else if (hasFail)
-            {
-                return new List<RiskType> { RiskType.Fail };
-            }
-            else if (hasNonFail)
-            {
-                return new List<RiskType> { RiskType.Non_Fail };
-            }
-            else
-            {
-                throw new Exception("Tried to display result without Risk Type");
-            }
-        }
+        public List<DamageCategoryRowItem> Rows { get; } = [];
 
         public DamageByDamCatVM(ImpactAreaScenarioResults iasResult, List<string> damCats, double discountRate, int period)
         {
@@ -64,20 +23,30 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             RateAndPeriodVisible = false;
 
             // Get available risk types from the results
-            List<RiskType> availableRiskTypes = iasResult.ConsequenceResults.ConsequenceResultList
+            List<RiskType> riskTypes = iasResult.ConsequenceResults.ConsequenceResultList
                 .Select(r => r.RiskType)
                 .Distinct()
                 .ToList();
-            List<RiskType> displayRiskTypes = GetDisplayRiskTypes(availableRiskTypes);
-            RiskTypeVisible = displayRiskTypes.Count > 1;
 
-            foreach (RiskType riskType in displayRiskTypes)
+            // When only Fail exists (no Non_Fail), Fail = Total, so just show Total
+            bool hasNonFail = riskTypes.Contains(RiskType.Non_Fail);
+            if (!hasNonFail)
             {
-                string riskTypeDisplay = RiskTypeVisible ? FormatRiskType(riskType) : null;
                 foreach (string damCat in damCats)
                 {
-                    double meanValue = iasResult.MeanExpectedAnnualConsequences(damageCategory: damCat, riskType: riskType);
-                    Rows.Add(new DamageCategoryRowItem(damCat, meanValue, riskTypeDisplay));
+                    double meanValue = iasResult.MeanExpectedAnnualConsequences(damageCategory: damCat);
+                    Rows.Add(new DamageCategoryRowItem(damCat, meanValue, RiskType.Total.ToString()));
+                }
+            }
+            else
+            {
+                foreach (RiskType riskType in riskTypes)
+                {
+                    foreach (string damCat in damCats)
+                    {
+                        double meanValue = iasResult.MeanExpectedAnnualConsequences(damageCategory: damCat, riskType: riskType);
+                        Rows.Add(new DamageCategoryRowItem(damCat, meanValue, riskType.ToString()));
+                    }
                 }
             }
         }
@@ -87,25 +56,13 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             EADLabel = "Mean EAD";
             RateAndPeriodVisible = false;
 
-            List<RiskType> availableRiskTypes = alternativeResults.GetRiskTypes();
-            List<RiskType> displayRiskTypes = GetDisplayRiskTypes(availableRiskTypes);
-            RiskTypeVisible = displayRiskTypes.Count > 1;
-
             List<string> damCats = alternativeResults.GetDamageCategories();
-            foreach (RiskType riskType in displayRiskTypes)
+            foreach (string damCat in damCats)
             {
-                string riskTypeDisplay = RiskTypeVisible ? FormatRiskType(riskType) : null;
-                foreach (string damCat in damCats)
-                {
-                    if (damageMeasureYear == DamageMeasureYear.Base)
-                    {
-                        Rows.Add(new DamageCategoryRowItem(damCat, alternativeResults.SampleMeanBaseYearEAD(damageCategory: damCat, riskType: riskType), riskTypeDisplay));
-                    }
-                    else
-                    {
-                        Rows.Add(new DamageCategoryRowItem(damCat, alternativeResults.SampleMeanFutureYearEAD(damageCategory: damCat, riskType: riskType), riskTypeDisplay));
-                    }
-                }
+                double meanValue = damageMeasureYear == DamageMeasureYear.Base
+                    ? alternativeResults.SampleMeanBaseYearEAD(damageCategory: damCat)
+                    : alternativeResults.SampleMeanFutureYearEAD(damageCategory: damCat);
+                Rows.Add(new DamageCategoryRowItem(damCat, meanValue, RiskType.Total.ToString()));
             }
         }
 
@@ -117,18 +74,10 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
             PeriodOfAnalysis = period;
             RateAndPeriodVisible = true;
 
-            List<RiskType> availableRiskTypes = alternativeResults.GetRiskTypes();
-            List<RiskType> displayRiskTypes = GetDisplayRiskTypes(availableRiskTypes);
-            RiskTypeVisible = displayRiskTypes.Count > 1;
-
             List<string> damCats = alternativeResults.GetDamageCategories();
-            foreach (RiskType riskType in displayRiskTypes)
+            foreach (string damCat in damCats)
             {
-                string riskTypeDisplay = RiskTypeVisible ? FormatRiskType(riskType) : null;
-                foreach (string damCat in damCats)
-                {
-                    Rows.Add(new DamageCategoryRowItem(damCat, alternativeResults.SampleMeanEqad(damageCategory: damCat, riskType: riskType), riskTypeDisplay));
-                }
+                Rows.Add(new DamageCategoryRowItem(damCat, alternativeResults.SampleMeanEqad(damageCategory: damCat), RiskType.Total.ToString()));
             }
         }
 
@@ -147,29 +96,17 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                 RateAndPeriodVisible = true;
             }
 
-            List<RiskType> availableRiskTypes = alternativeCompReportResults.GetRiskTypes();
-            List<RiskType> displayRiskTypes = GetDisplayRiskTypes(availableRiskTypes);
-            RiskTypeVisible = displayRiskTypes.Count > 1;
-
             List<string> damCats = alternativeCompReportResults.GetDamageCategories();
-            foreach (RiskType riskType in displayRiskTypes)
+            foreach (string damCat in damCats)
             {
-                string riskTypeDisplay = RiskTypeVisible ? FormatRiskType(riskType) : null;
-                foreach (string damCat in damCats)
+                double meanValue = dmy switch
                 {
-                    switch (dmy)
-                    {
-                        case DamageMeasureYear.Base:
-                            Rows.Add(new DamageCategoryRowItem(damCat, alternativeCompReportResults.SampleMeanBaseYearEADReduced(altID, damageCategory: damCat, riskType: riskType), riskTypeDisplay));
-                            break;
-                        case DamageMeasureYear.Future:
-                            Rows.Add(new DamageCategoryRowItem(damCat, alternativeCompReportResults.SampleMeanFutureYearEADReduced(altID, damageCategory: damCat, riskType: riskType), riskTypeDisplay));
-                            break;
-                        case DamageMeasureYear.Eqad:
-                            Rows.Add(new DamageCategoryRowItem(damCat, alternativeCompReportResults.SampleMeanEqadReduced(altID, damageCategory: damCat, riskType: riskType), riskTypeDisplay));
-                            break;
-                    }
-                }
+                    DamageMeasureYear.Base => alternativeCompReportResults.SampleMeanBaseYearEADReduced(altID, damageCategory: damCat),
+                    DamageMeasureYear.Future => alternativeCompReportResults.SampleMeanFutureYearEADReduced(altID, damageCategory: damCat),
+                    DamageMeasureYear.Eqad => alternativeCompReportResults.SampleMeanEqadReduced(altID, damageCategory: damCat),
+                    _ => 0
+                };
+                Rows.Add(new DamageCategoryRowItem(damCat, meanValue, RiskType.Total.ToString()));
             }
         }
     }

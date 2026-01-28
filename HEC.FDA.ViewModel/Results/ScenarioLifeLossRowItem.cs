@@ -49,8 +49,19 @@ public class ScenarioLifeLossRowItem
         ScenarioResults results = scenario.Results;
         List<int> impactAreaIds = results.GetImpactAreaIDs(ConsequenceType.LifeLoss);
         List<RiskType> riskTypes = results.GetRiskTypes();
-        //if we have both fail and non_fail, display total risk as well. 
-        riskTypes.Add(Model.metrics.RiskType.Total);
+
+        // When only Fail exists (no Non_Fail), Fail = Total, so just show Total
+        bool hasNonFail = riskTypes.Contains(Model.metrics.RiskType.Non_Fail);
+        if (!hasNonFail)
+        {
+            riskTypes.Clear();
+            riskTypes.Add(Model.metrics.RiskType.Total);
+        }
+        else
+        {
+            // If we have both Fail and Non_Fail, display Total as well
+            riskTypes.Add(Model.metrics.RiskType.Total);
+        }
 
         Dictionary<int, string> impactAreaIdToName = IASElement.GetImpactAreaNamesFromIDs();
 

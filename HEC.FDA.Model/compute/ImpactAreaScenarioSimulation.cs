@@ -320,15 +320,15 @@ namespace HEC.FDA.Model.compute
             long completedIterations = 0;
             long expectedIterations = convergenceCriteria.MinIterations; //only used in % complete
             int iterationsPerComputeChunk = convergenceCriteria.IterationCount;
-            int computeChunkQuantity = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(convergenceCriteria.MinIterations) / iterationsPerComputeChunk));
-            if (computeChunkQuantity < 1)
+            int additionalChunksNeeded = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(convergenceCriteria.MinIterations) / iterationsPerComputeChunk));
+            if (additionalChunksNeeded < 1)
             {
-                computeChunkQuantity = 1;
+                additionalChunksNeeded = 1;
             }
             bool computeIsNotConverged = true;
             while (computeIsNotConverged)
             {
-                for (int i = 0; i < computeChunkQuantity; i++)
+                for (int i = 0; i < additionalChunksNeeded; i++)
                 {
                     try
                     {
@@ -369,11 +369,12 @@ namespace HEC.FDA.Model.compute
                 if (!_ImpactAreaScenarioResults.ResultsAreConverged(.95, .05, checkConsequenceResults:(_HasFailureStageDamage || _HasFailureStageLifeLoss)))
                 {
                     //recalculate compute chunks 
-                    expectedIterations = _ImpactAreaScenarioResults.RemainingIterations(.95, .05, _HasFailureStageDamage);
-                    computeChunkQuantity = Convert.ToInt32(expectedIterations / convergenceCriteria.IterationCount);
-                    if (computeChunkQuantity == 0)
+                    long additionalIterations = _ImpactAreaScenarioResults.RemainingIterations(.95, .05, (_HasFailureStageDamage || _HasFailureStageLifeLoss));
+                    expectedIterations = completedIterations +  additionalIterations; // for progress reporter
+                    additionalChunksNeeded = Convert.ToInt32(additionalIterations / convergenceCriteria.IterationCount);
+                    if (additionalChunksNeeded == 0)
                     {
-                        computeChunkQuantity = 1;
+                        additionalChunksNeeded = 1;
                     }
                 }
                 else

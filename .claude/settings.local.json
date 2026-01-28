@@ -4,7 +4,8 @@
       "Bash(dotnet test:*)",
       "Bash(cat:*)",
       "Bash(dotnet build:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(git show:*)"
     ],
     "deny": []
   }

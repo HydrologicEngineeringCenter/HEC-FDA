@@ -177,7 +177,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
                 for (int i = 0; i < xValNames.Count; i++)
                 {
-                    rows.Add(_uncertaintyControlConfig.CreateRowItem(xValNames[i], qValues[i]));
+                    rows.Add(_uncertaintyControlConfig.CreateRowItem(xValNames[i], qValues[i], RiskType.Total.ToString()));
                 }
             }
             Rows.AddRange(rows);

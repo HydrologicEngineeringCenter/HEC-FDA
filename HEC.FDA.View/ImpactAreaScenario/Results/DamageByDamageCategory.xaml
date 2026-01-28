@@ -29,12 +29,6 @@
                   VerticalAlignment="Top" Width="350" IsReadOnly="True" CanUserReorderColumns="False"
                   CanUserSortColumns="false" Margin="5">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding RiskType}" Width="80"
-                                    Visibility="{Binding DataContext.RiskTypeVisible, RelativeSource={RelativeSource AncestorType=DataGrid}, Converter={StaticResource BoolToVisibilityConverter}}">
-                    <DataGridTextColumn.Header>
-                        <TextBlock Text="Risk Type" TextWrapping="Wrap" />
-                    </DataGridTextColumn.Header>
-                </DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding DamageCategory}" Width="110">
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Damage Category" TextWrapping="Wrap" />
@@ -43,6 +37,12 @@
                 <DataGridTextColumn Binding="{Binding EAD, StringFormat=C2}" Width="*">
                     <DataGridTextColumn.Header>
                         <TextBlock Name="ead_textblock" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding RiskType}" Width="80"
+                                    Visibility="{Binding DataContext.RiskTypeVisible, RelativeSource={RelativeSource AncestorType=DataGrid}, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Risk Type" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
             </DataGrid.Columns>

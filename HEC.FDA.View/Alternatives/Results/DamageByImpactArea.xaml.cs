@@ -15,9 +15,6 @@ namespace HEC.FDA.View.Alternatives.Results
 
         private void FdaDataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
-            if (e.PropertyName == nameof(IConsequenceByImpactAreaRowItem.Value))
-                return;
-
             if (e.Column is DataGridTextColumn textColumn)
             {
                 switch (e.PropertyName)

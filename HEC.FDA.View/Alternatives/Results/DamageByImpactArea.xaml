@@ -39,7 +39,7 @@
       HorizontalAlignment="Left"
       SelectionUnit="Cell"
       VerticalAlignment="Top"
-      Width="250"
+      Width="350"
       IsReadOnly="True"
       CanUserReorderColumns="False"
       CanUserSortColumns="false"
