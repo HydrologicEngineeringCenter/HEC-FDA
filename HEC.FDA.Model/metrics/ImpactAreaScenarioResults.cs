@@ -14,8 +14,8 @@ namespace HEC.FDA.Model.metrics
         public StudyAreaConsequencesBinned ConsequenceResults { get; }
         public int ImpactAreaID { get; }
         public bool IsNull { get; }
-        public List<ConsequenceFrequencyCurve> ConsequenceFrequencyFunctions { get; set; } = [];
-        public List<UncertainConsequenceFrequencyCurve> UncertainConsequenceFrequencyCurves { get; set; } = [];
+        public List<CategoriedPairedData> ConsequenceFrequencyFunctions { get; set; } = [];
+        public List<CategoriedUncertainPairedData> UncertainConsequenceFrequencyCurves { get; set; } = [];
         #endregion
         #region Constructors 
         public ImpactAreaScenarioResults(int impactAreaID, bool isNull)
@@ -194,6 +194,12 @@ namespace HEC.FDA.Model.metrics
             expectedAnnualDamageResultsElement.Name = "Expected_Annual_Damage_Results";
             masterElement.Add(expectedAnnualDamageResultsElement);
             masterElement.SetAttributeValue("ImpactAreaID", ImpactAreaID);
+            XElement consequenceFrequencyFunctionsElement = new("Uncertain_Consequence_Frequency_Functions");
+            foreach (CategoriedUncertainPairedData curve in UncertainConsequenceFrequencyCurves)
+            {
+                consequenceFrequencyFunctionsElement.Add(curve.WriteToXML());
+            }
+            masterElement.Add(consequenceFrequencyFunctionsElement);
             return masterElement;
         }
 
@@ -202,7 +208,16 @@ namespace HEC.FDA.Model.metrics
             PerformanceByThresholds performanceByThresholds = PerformanceByThresholds.ReadFromXML(xElement.Element("Performance_By_Thresholds"));
             StudyAreaConsequencesBinned expectedAnnualDamageResults = StudyAreaConsequencesBinned.ReadFromXML(xElement.Element("Expected_Annual_Damage_Results"));
             int impactAreaID = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
-            return new ImpactAreaScenarioResults(performanceByThresholds, expectedAnnualDamageResults, impactAreaID);
+            ImpactAreaScenarioResults result = new(performanceByThresholds, expectedAnnualDamageResults, impactAreaID);
+            if(xElement.Element("Uncertain_Consequence_Frequency_Functions") != null)
+            {
+                foreach (XElement curveElement in xElement.Element("Uncertain_Consequence_Frequency_Functions").Elements())
+                {
+                    CategoriedUncertainPairedData curve = CategoriedUncertainPairedData.ReadFromXML(curveElement);
+                    result.UncertainConsequenceFrequencyCurves.Add(curve);
+                }
+            }
+            return result;
         }
 
         // this method is called to add a consequences result with zero damages to an impact area scenario which has no damages but has a levee
@@ -227,7 +242,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="riskType">The risk type to match.</param>
         /// <param name="convergenceCriteria">The convergence criteria (used when creating a new curve).</param>
         /// <returns>The matching or newly created UncertainConsequenceFrequencyCurve.</returns>
-        public UncertainConsequenceFrequencyCurve GetOrCreateUncertainConsequenceFrequencyCurve(
+        public CategoriedUncertainPairedData GetOrCreateUncertainConsequenceFrequencyCurve(
             double[] xvals,
             string damageCategory,
             string assetCategory,
@@ -237,7 +252,7 @@ namespace HEC.FDA.Model.metrics
         {
             lock (_uncertainCurveLock)
             {
-                UncertainConsequenceFrequencyCurve existingCurve = UncertainConsequenceFrequencyCurves
+                CategoriedUncertainPairedData existingCurve = UncertainConsequenceFrequencyCurves
                     .FirstOrDefault(c =>
                         c.DamageCategory == damageCategory &&
                         c.AssetCategory == assetCategory &&
@@ -249,7 +264,7 @@ namespace HEC.FDA.Model.metrics
                     return existingCurve;
                 }
 
-                var newCurve = new UncertainConsequenceFrequencyCurve(
+                var newCurve = new CategoriedUncertainPairedData(
                     xvals,
                     damageCategory,
                     assetCategory,

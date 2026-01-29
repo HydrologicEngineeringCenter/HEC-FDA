@@ -514,7 +514,7 @@ namespace HEC.FDA.Model.compute
                     continue;
                 }
                 // Add curve to uncertain consequence frequency curve for histogram aggregation
-                UncertainConsequenceFrequencyCurve uncertainCurve = _ImpactAreaScenarioResults.GetOrCreateUncertainConsequenceFrequencyCurve(
+                CategoriedUncertainPairedData uncertainCurve = _ImpactAreaScenarioResults.GetOrCreateUncertainConsequenceFrequencyCurve(
                     frequency_consequences.Xvals.ToArray(),
                     stageUncertainConsequences.CurveMetaData.DamageCategory,
                     stageUncertainConsequences.CurveMetaData.AssetCategory,
@@ -566,7 +566,7 @@ namespace HEC.FDA.Model.compute
                 PairedData damFreq = stageDamageSample.compose(frequency_stage);//save me for FN Plot
 
                 // Add curve to uncertain consequence frequency curve for histogram aggregation
-                UncertainConsequenceFrequencyCurve uncertainCurve = _ImpactAreaScenarioResults.GetOrCreateUncertainConsequenceFrequencyCurve(
+                CategoriedUncertainPairedData uncertainCurve = _ImpactAreaScenarioResults.GetOrCreateUncertainConsequenceFrequencyCurve(
                     damFreq.Xvals.ToArray(),
                     stageUncertainDamage.CurveMetaData.DamageCategory,
                     stageUncertainDamage.CurveMetaData.AssetCategory,

@@ -20,7 +20,7 @@ namespace HEC.FDA.ModelTest.unittests
             // Arrange
             int batchSize = 100;
             ConvergenceCriteria convergenceCriteria = new(minIterations: batchSize, maxIterations: batchSize * 10);
-            UncertainConsequenceFrequencyCurve uncertainCurve = new(
+            CategoriedUncertainPairedData uncertainCurve = new(
                 TestXvals,
                 TestDamageCategory,
                 TestAssetCategory,
@@ -51,7 +51,7 @@ namespace HEC.FDA.ModelTest.unittests
             // Arrange
             int batchSize = 100;
             ConvergenceCriteria convergenceCriteria = new(minIterations: batchSize, maxIterations: batchSize * 10);
-            UncertainConsequenceFrequencyCurve uncertainCurve = new(
+            CategoriedUncertainPairedData uncertainCurve = new(
                 TestXvals,
                 TestDamageCategory,
                 TestAssetCategory,
@@ -86,7 +86,7 @@ namespace HEC.FDA.ModelTest.unittests
             // Arrange
             int batchSize = 100;
             ConvergenceCriteria convergenceCriteria = new(minIterations: batchSize, maxIterations: batchSize * 10);
-            UncertainConsequenceFrequencyCurve uncertainCurve = new(
+            CategoriedUncertainPairedData uncertainCurve = new(
                 TestXvals,
                 TestDamageCategory,
                 TestAssetCategory,
@@ -121,7 +121,7 @@ namespace HEC.FDA.ModelTest.unittests
             int batchSize = 100;
             int numBatches = 3;
             ConvergenceCriteria convergenceCriteria = new(minIterations: batchSize, maxIterations: batchSize * 10);
-            UncertainConsequenceFrequencyCurve uncertainCurve = new(
+            CategoriedUncertainPairedData uncertainCurve = new(
                 TestXvals,
                 TestDamageCategory,
                 TestAssetCategory,
@@ -156,7 +156,7 @@ namespace HEC.FDA.ModelTest.unittests
             ConvergenceCriteria convergenceCriteria = new(minIterations: 100, maxIterations: 1000);
 
             // Act
-            UncertainConsequenceFrequencyCurve uncertainCurve = new(
+            CategoriedUncertainPairedData uncertainCurve = new(
                 TestXvals,
                 TestDamageCategory,
                 TestAssetCategory,
@@ -178,7 +178,7 @@ namespace HEC.FDA.ModelTest.unittests
             // Arrange
             double[] yvals = { 100.0, 200.0, 300.0, 400.0, 500.0 };
             PairedData pairedData = new(TestXvals, yvals);
-            ConsequenceFrequencyCurve initialCurve = new(
+            CategoriedPairedData initialCurve = new(
                 pairedData,
                 TestDamageCategory,
                 TestAssetCategory,
@@ -187,7 +187,7 @@ namespace HEC.FDA.ModelTest.unittests
             ConvergenceCriteria convergenceCriteria = new(minIterations: 100, maxIterations: 1000);
 
             // Act
-            UncertainConsequenceFrequencyCurve uncertainCurve = new(initialCurve, convergenceCriteria);
+            CategoriedUncertainPairedData uncertainCurve = new(initialCurve, convergenceCriteria);
 
             // Assert
             Assert.Equal(TestDamageCategory, uncertainCurve.DamageCategory);
@@ -205,7 +205,7 @@ namespace HEC.FDA.ModelTest.unittests
             ImpactAreaScenarioResults results = new(impactAreaID: 1);
 
             // Act - create first curve
-            UncertainConsequenceFrequencyCurve curve1 = results.GetOrCreateUncertainConsequenceFrequencyCurve(
+            CategoriedUncertainPairedData curve1 = results.GetOrCreateUncertainConsequenceFrequencyCurve(
                 TestXvals,
                 TestDamageCategory,
                 TestAssetCategory,
@@ -214,7 +214,7 @@ namespace HEC.FDA.ModelTest.unittests
                 convergenceCriteria);
 
             // Act - get same curve again
-            UncertainConsequenceFrequencyCurve curve2 = results.GetOrCreateUncertainConsequenceFrequencyCurve(
+            CategoriedUncertainPairedData curve2 = results.GetOrCreateUncertainConsequenceFrequencyCurve(
                 TestXvals,
                 TestDamageCategory,
                 TestAssetCategory,
@@ -235,7 +235,7 @@ namespace HEC.FDA.ModelTest.unittests
             ImpactAreaScenarioResults results = new(impactAreaID: 1);
 
             // Act - create curves with different metadata
-            UncertainConsequenceFrequencyCurve residentialCurve = results.GetOrCreateUncertainConsequenceFrequencyCurve(
+            CategoriedUncertainPairedData residentialCurve = results.GetOrCreateUncertainConsequenceFrequencyCurve(
                 TestXvals,
                 "Residential",
                 TestAssetCategory,
@@ -243,7 +243,7 @@ namespace HEC.FDA.ModelTest.unittests
                 RiskType.Fail,
                 convergenceCriteria);
 
-            UncertainConsequenceFrequencyCurve commercialCurve = results.GetOrCreateUncertainConsequenceFrequencyCurve(
+            CategoriedUncertainPairedData commercialCurve = results.GetOrCreateUncertainConsequenceFrequencyCurve(
                 TestXvals,
                 "Commercial",
                 TestAssetCategory,
@@ -251,7 +251,7 @@ namespace HEC.FDA.ModelTest.unittests
                 RiskType.Fail,
                 convergenceCriteria);
 
-            UncertainConsequenceFrequencyCurve lifeLossCurve = results.GetOrCreateUncertainConsequenceFrequencyCurve(
+            CategoriedUncertainPairedData lifeLossCurve = results.GetOrCreateUncertainConsequenceFrequencyCurve(
                 TestXvals,
                 "Residential",
                 TestAssetCategory,
@@ -274,9 +274,9 @@ namespace HEC.FDA.ModelTest.unittests
             ImpactAreaScenarioResults results = new(impactAreaID: 1);
 
             // Create two curves
-            UncertainConsequenceFrequencyCurve curve1 = results.GetOrCreateUncertainConsequenceFrequencyCurve(
+            CategoriedUncertainPairedData curve1 = results.GetOrCreateUncertainConsequenceFrequencyCurve(
                 TestXvals, "Residential", "Structure", ConsequenceType.Damage, RiskType.Fail, convergenceCriteria);
-            UncertainConsequenceFrequencyCurve curve2 = results.GetOrCreateUncertainConsequenceFrequencyCurve(
+            CategoriedUncertainPairedData curve2 = results.GetOrCreateUncertainConsequenceFrequencyCurve(
                 TestXvals, "Commercial", "Structure", ConsequenceType.Damage, RiskType.Fail, convergenceCriteria);
 
             // Add data to both curves
@@ -314,7 +314,7 @@ namespace HEC.FDA.ModelTest.unittests
             Random random = new(42); // Fixed seed for reproducibility
 
             // First run
-            UncertainConsequenceFrequencyCurve curve1 = new(
+            CategoriedUncertainPairedData curve1 = new(
                 TestXvals, TestDamageCategory, TestAssetCategory,
                 ConsequenceType.Damage, RiskType.Fail, convergenceCriteria);
 
@@ -339,7 +339,7 @@ namespace HEC.FDA.ModelTest.unittests
             curve1.PutDataIntoHistograms();
 
             // Second run with same data added in same order
-            UncertainConsequenceFrequencyCurve curve2 = new(
+            CategoriedUncertainPairedData curve2 = new(
                 TestXvals, TestDamageCategory, TestAssetCategory,
                 ConsequenceType.Damage, RiskType.Fail, convergenceCriteria);
 

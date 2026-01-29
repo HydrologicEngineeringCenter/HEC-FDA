@@ -2,6 +2,7 @@
 using HEC.FDA.ViewModel.Alternatives.Results;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
+using HEC.FDA.ViewModel.LifeLoss;
 using HEC.FDA.ViewModel.Study;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         private const string PERFORMANCE = "Performance";
         private const string DAMAGE_WITH_UNCERTAINTY = "Damage with Uncertainty";
         private const string LIFE_LOSS_WITH_UNCERTAINTY = "Life Loss with Uncertainty";
+        private const string FN_CURVE = "F-N Curve";
         private const string DAMAGE_BY_DAMCAT = "Damage by Damage Category";
         private const string ANNUAL_EXC_PROB = "Annual Exceedance Probability";
         private const string LONG_TERM_EXCEEDANCE_PROBABILITY = "Long-Term Exceedance Probability";
@@ -25,7 +27,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
         #region Property Backing Fields
         private readonly List<string> _damageReports = new List<string>() { DAMAGE_WITH_UNCERTAINTY, DAMAGE_BY_DAMCAT };
-        private readonly List<string> _lifeLossReports = new List<string>() { LIFE_LOSS_WITH_UNCERTAINTY };
+        private readonly List<string> _lifeLossReports = new List<string>() { LIFE_LOSS_WITH_UNCERTAINTY, FN_CURVE };
         private readonly List<string> _performanceReports = new List<string>() { ANNUAL_EXC_PROB, LONG_TERM_EXCEEDANCE_PROBABILITY, ASSURANCE_OF_THRESHOLD };
         private readonly ImpactAreaScenarioResults _IASResult;
         private string _selectedOutcome;
@@ -36,6 +38,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         private bool _thresholdComboVisible;
         private DamageWithUncertaintyVM _damageWithUncertaintyVM;
         private DamageWithUncertaintyVM _lifeLossWithUncertaintyVM;
+        private LifeLossFnChartVM _lifeLossFnChartVM;
         private DamageByDamCatVM _damageByDamageCategoryVM;
         private PerformanceVMBase _performanceAEPVM;
         private PerformanceVMBase _performanceAssuranceOfThresholdVM;
@@ -138,6 +141,20 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             _performanceAssuranceOfThresholdVM.UpdateSelectedMetric(SelectedThreshold);
             _performanceLongTermRiskVM = new PerformanceLongTermRiskVM(_IASResult, Thresholds);
             _performanceLongTermRiskVM.UpdateSelectedMetric(SelectedThreshold);
+
+            // Load F-N Curve if life loss frequency data exists (curves are stored with RiskType.Fail)
+            var lifeLossCurve = _IASResult.UncertainConsequenceFrequencyCurves
+                .FirstOrDefault(c => c.ConsequenceType == ConsequenceType.LifeLoss);
+            if (lifeLossCurve != null && lifeLossCurve.YHistograms != null && lifeLossCurve.YHistograms.Count > 0)
+            {
+                var data = lifeLossCurve.GetUncertainPairedData();
+                _lifeLossFnChartVM = new LifeLossFnChartVM(data, FN_CURVE);
+            }
+            else
+            {
+                // Create empty chart if no data available
+                _lifeLossFnChartVM = new LifeLossFnChartVM(FN_CURVE);
+            }
         }
 
         private void ThresholdChanged()
@@ -168,6 +185,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                 case LIFE_LOSS_WITH_UNCERTAINTY:
                     {
                         CurrentResultVM = _lifeLossWithUncertaintyVM;
+                        break;
+                    }
+                case FN_CURVE:
+                    {
+                        CurrentResultVM = _lifeLossFnChartVM;
                         break;
                     }
                 case ANNUAL_EXC_PROB:

@@ -4,6 +4,7 @@ using Statistics.Histograms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace HEC.FDA.Model.metrics;
 
@@ -12,7 +13,7 @@ namespace HEC.FDA.Model.metrics;
 /// ConsequenceFrequencyCurve samples into histograms for each ordinate position.
 /// Curves must be added in batches to ensure deterministic results when using parallel computation.
 /// </summary>
-public class UncertainConsequenceFrequencyCurve
+public class CategoriedUncertainPairedData
 {
     #region Fields
     private const int INITIAL_BIN_QUANTITY = 500;
@@ -69,7 +70,7 @@ public class UncertainConsequenceFrequencyCurve
     /// <param name="consequenceType">The type of consequence.</param>
     /// <param name="riskType">The type of risk.</param>
     /// <param name="convergenceCriteria">The convergence criteria for the histograms.</param>
-    public UncertainConsequenceFrequencyCurve(
+    public CategoriedUncertainPairedData(
         double[] xvals,
         string damageCategory,
         string assetCategory,
@@ -99,8 +100,8 @@ public class UncertainConsequenceFrequencyCurve
     /// </summary>
     /// <param name="initialCurve">The first curve to use for initialization.</param>
     /// <param name="convergenceCriteria">The convergence criteria for the histograms.</param>
-    public UncertainConsequenceFrequencyCurve(
-        ConsequenceFrequencyCurve initialCurve,
+    public CategoriedUncertainPairedData(
+        CategoriedPairedData initialCurve,
         ConvergenceCriteria convergenceCriteria)
         : this(
             initialCurve.FrequencyCurve.Xvals.ToArray(),
@@ -114,23 +115,6 @@ public class UncertainConsequenceFrequencyCurve
     #endregion
 
     #region Methods
-    /// <summary>
-    /// Adds a ConsequenceFrequencyCurve to the batch at the specified iteration index.
-    /// The curve's y-values are stored in temp arrays until PutDataIntoHistograms is called.
-    /// </summary>
-    /// <param name="curve">The curve to add.</param>
-    /// <param name="iterationIndex">The index within the current batch (0 to BatchSize-1).</param>
-    /// <exception cref="ArgumentException">Thrown if the curve's x-values don't match.</exception>
-    public void AddCurveRealization(ConsequenceFrequencyCurve curve, long iterationIndex)
-    {
-        ValidateCurve(curve);
-
-        IReadOnlyList<double> yvals = curve.FrequencyCurve.Yvals;
-        for (int i = 0; i < yvals.Count; i++)
-        {
-            _TempYValues[i][iterationIndex] = yvals[i];
-        }
-    }
 
     /// <summary>
     /// Adds a PairedData curve to the batch at the specified iteration index.
@@ -165,34 +149,11 @@ public class UncertainConsequenceFrequencyCurve
         }
     }
 
-    /// <summary>
-    /// Gets the mean y-value at each x-value position.
-    /// </summary>
-    /// <returns>A PairedData representing the mean consequence-frequency curve.</returns>
-    public PairedData GetMeanCurve()
+    public UncertainPairedData GetUncertainPairedData()
     {
-        double[] meanYvals = new double[YHistograms.Count];
-        for (int i = 0; i < YHistograms.Count; i++)
-        {
-            meanYvals[i] = YHistograms[i].SampleMean;
-        }
-        return new PairedData(_Xvals, meanYvals);
+        return new(_Xvals, YHistograms.ToArray(), new());
     }
 
-    /// <summary>
-    /// Gets the y-value at a specified quantile for each x-value position.
-    /// </summary>
-    /// <param name="probability">The non-exceedance probability (0 to 1).</param>
-    /// <returns>A PairedData representing the quantile consequence-frequency curve.</returns>
-    public PairedData GetQuantileCurve(double probability)
-    {
-        double[] quantileYvals = new double[YHistograms.Count];
-        for (int i = 0; i < YHistograms.Count; i++)
-        {
-            quantileYvals[i] = YHistograms[i].InverseCDF(probability);
-        }
-        return new PairedData(_Xvals, quantileYvals);
-    }
 
     private void InitializeHistograms()
     {
@@ -215,28 +176,81 @@ public class UncertainConsequenceFrequencyCurve
         }
     }
 
-    private void ValidateCurve(ConsequenceFrequencyCurve curve)
+    /// <summary>
+    /// Serializes the uncertain consequence-frequency curve to XML.
+    /// </summary>
+    /// <returns>An XElement containing the serialized curve data.</returns>
+    public XElement WriteToXML()
     {
-        if (curve.DamageCategory != DamageCategory)
+        XElement masterElement = new("CategoriedUncertainPairedData");
+        masterElement.SetAttributeValue("DamageCategory", DamageCategory);
+        masterElement.SetAttributeValue("AssetCategory", AssetCategory);
+        masterElement.SetAttributeValue("ConsequenceType", ConsequenceType);
+        masterElement.SetAttributeValue("RiskType", RiskType);
+
+        string xvalsString = string.Join(",", _Xvals.Select(x => x.ToString()));
+        masterElement.SetAttributeValue("Xvals", xvalsString);
+
+        XElement convergenceElement = ConvergenceCriteria.WriteToXML();
+        convergenceElement.Name = "Convergence_Criteria";
+        masterElement.Add(convergenceElement);
+
+        XElement histogramsElement = new("YHistograms");
+        histogramsElement.SetAttributeValue("Count", YHistograms.Count);
+        foreach (DynamicHistogram histogram in YHistograms)
         {
-            throw new ArgumentException($"Damage category mismatch: expected '{DamageCategory}', got '{curve.DamageCategory}'");
+            histogramsElement.Add(histogram.ToXML());
         }
-        if (curve.AssetCategory != AssetCategory)
+        masterElement.Add(histogramsElement);
+
+        return masterElement;
+    }
+
+    /// <summary>
+    /// Deserializes an uncertain consequence-frequency curve from XML.
+    /// </summary>
+    /// <param name="xElement">The XML element containing the serialized curve data.</param>
+    /// <returns>A new CategoriedUncertainPairedData instance.</returns>
+    public static CategoriedUncertainPairedData ReadFromXML(XElement xElement)
+    {
+        string damageCategory = xElement.Attribute("DamageCategory").Value;
+        string assetCategory = xElement.Attribute("AssetCategory").Value;
+
+        ConsequenceType consequenceType = ConsequenceType.Damage;
+        var typeAttr = xElement.Attribute("ConsequenceType");
+        if (typeAttr != null && Enum.TryParse<ConsequenceType>(typeAttr.Value, out var parsedType))
+            consequenceType = parsedType;
+
+        RiskType riskType = RiskType.Unassigned;
+        var riskTypeAttr = xElement.Attribute("RiskType");
+        if (riskTypeAttr != null && Enum.TryParse<RiskType>(riskTypeAttr.Value, out var parsedRiskType))
+            riskType = parsedRiskType;
+
+        string xvalsString = xElement.Attribute("Xvals").Value;
+        double[] xvals = xvalsString.Split(',').Select(double.Parse).ToArray();
+
+        ConvergenceCriteria convergenceCriteria = ConvergenceCriteria.ReadFromXML(xElement.Element("Convergence_Criteria"));
+
+        CategoriedUncertainPairedData result = new(
+            xvals,
+            damageCategory,
+            assetCategory,
+            consequenceType,
+            riskType,
+            convergenceCriteria);
+
+        XElement histogramsElement = xElement.Element("YHistograms");
+        if (histogramsElement != null)
         {
-            throw new ArgumentException($"Asset category mismatch: expected '{AssetCategory}', got '{curve.AssetCategory}'");
+            result.YHistograms = [];
+            foreach (XElement histogramElement in histogramsElement.Elements("Histogram"))
+            {
+                result.YHistograms.Add(DynamicHistogram.ReadFromXML(histogramElement));
+            }
+            result._HistogramsNotConstructed = false;
         }
-        if (curve.ConsequenceType != ConsequenceType)
-        {
-            throw new ArgumentException($"Consequence type mismatch: expected '{ConsequenceType}', got '{curve.ConsequenceType}'");
-        }
-        if (curve.RiskType != RiskType)
-        {
-            throw new ArgumentException($"Risk type mismatch: expected '{RiskType}', got '{curve.RiskType}'");
-        }
-        if (curve.FrequencyCurve.Xvals.Count != _Xvals.Length)
-        {
-            throw new ArgumentException($"X-values count mismatch: expected {_Xvals.Length}, got {curve.FrequencyCurve.Xvals.Count}");
-        }
+
+        return result;
     }
     #endregion
 }
