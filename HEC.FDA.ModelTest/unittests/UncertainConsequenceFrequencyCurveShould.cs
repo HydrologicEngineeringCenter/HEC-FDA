@@ -1,6 +1,7 @@
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.paireddata;
 using Statistics;
+using Statistics.Histograms;
 using System;
 using System.Collections.Generic;
 using Xunit;
@@ -69,15 +70,20 @@ namespace HEC.FDA.ModelTest.unittests
             uncertainCurve.PutDataIntoHistograms();
 
             // Act
-            PairedData meanCurve = uncertainCurve.GetMeanCurve();
+            UncertainPairedData upd = uncertainCurve.GetUncertainPairedData();
+            double[] meanYvals = new double[upd.Yvals.Length];
+            for (int i = 0; i < upd.Yvals.Length; i++)
+            {
+                meanYvals[i] = ((IHistogram)upd.Yvals[i]).SampleMean;
+            }
 
             // Assert - mean should be very close to the constant values
             double tolerance = 0.01;
-            Assert.Equal(100.0, meanCurve.Yvals[0], tolerance);
-            Assert.Equal(200.0, meanCurve.Yvals[1], tolerance);
-            Assert.Equal(300.0, meanCurve.Yvals[2], tolerance);
-            Assert.Equal(400.0, meanCurve.Yvals[3], tolerance);
-            Assert.Equal(500.0, meanCurve.Yvals[4], tolerance);
+            Assert.Equal(100.0, meanYvals[0], tolerance);
+            Assert.Equal(200.0, meanYvals[1], tolerance);
+            Assert.Equal(300.0, meanYvals[2], tolerance);
+            Assert.Equal(400.0, meanYvals[3], tolerance);
+            Assert.Equal(500.0, meanYvals[4], tolerance);
         }
 
         [Fact]
@@ -104,7 +110,8 @@ namespace HEC.FDA.ModelTest.unittests
             uncertainCurve.PutDataIntoHistograms();
 
             // Act - get 50th percentile (median)
-            PairedData medianCurve = uncertainCurve.GetQuantileCurve(0.5);
+            UncertainPairedData upd = uncertainCurve.GetUncertainPairedData();
+            PairedData medianCurve = upd.SamplePairedDataRaw(0.5);
 
             // Assert - median should be approximately at 50% of the range
             // For values 0-99, median is around 49.5
@@ -351,12 +358,14 @@ namespace HEC.FDA.ModelTest.unittests
             curve2.PutDataIntoHistograms();
 
             // Assert - both curves should have identical means
-            PairedData mean1 = curve1.GetMeanCurve();
-            PairedData mean2 = curve2.GetMeanCurve();
+            UncertainPairedData upd1 = curve1.GetUncertainPairedData();
+            UncertainPairedData upd2 = curve2.GetUncertainPairedData();
 
             for (int i = 0; i < TestXvals.Length; i++)
             {
-                Assert.Equal(mean1.Yvals[i], mean2.Yvals[i], precision: 10);
+                double mean1 = ((IHistogram)upd1.Yvals[i]).SampleMean;
+                double mean2 = ((IHistogram)upd2.Yvals[i]).SampleMean;
+                Assert.Equal(mean1, mean2, precision: 10);
             }
         }
     }

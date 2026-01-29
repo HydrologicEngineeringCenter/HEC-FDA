@@ -4,6 +4,7 @@ using HEC.FDA.Model.paireddata;
 using HEC.MVVMFramework.Base.Implementations;
 using Statistics;
 using Statistics.Distributions;
+using Statistics.Histograms;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Xunit;
@@ -232,13 +233,14 @@ namespace HEC.FDA.ModelTest.unittests.MessagingTests
 
             // Assert - the mean curve should have some non-zero values
             var uncertainCurve = results.UncertainConsequenceFrequencyCurves[0];
-            var meanCurve = uncertainCurve.GetMeanCurve();
+            UncertainPairedData upd = uncertainCurve.GetUncertainPairedData();
 
             // At least some y-values should be non-zero (we have damages at higher stages)
             bool hasNonZeroValues = false;
-            foreach (var y in meanCurve.Yvals)
+            foreach (var yDist in upd.Yvals)
             {
-                if (y > 0)
+                double mean = ((IHistogram)yDist).SampleMean;
+                if (mean > 0)
                 {
                     hasNonZeroValues = true;
                     break;
