@@ -121,7 +121,7 @@ namespace HEC.FDA.ViewModel.Study
         #endregion
 
         #endregion
-        internal FDACache()
+        public FDACache()
         {
         }
 

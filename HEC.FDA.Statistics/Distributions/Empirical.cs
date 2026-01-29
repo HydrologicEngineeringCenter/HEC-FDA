@@ -281,20 +281,26 @@ namespace Statistics.Distributions
 
         public override double InverseCDF(double p)
         {
+            double cumulativeProbsMin = CumulativeProbabilities[0];
+            double cumulativeProbsMax = CumulativeProbabilities[^1];
+            if (cumulativeProbsMax < cumulativeProbsMin)
+            {
+                throw new Exception("Cumulative Probabilities should always be ascending for an Empirical Distribution and were not.");
+            }
             if (Truncated && _Constructed)
             {
-                p = CumulativeProbabilities.Min() + (p) * (CumulativeProbabilities.Max() - CumulativeProbabilities.Min());
+                p = cumulativeProbsMin + (p) * (cumulativeProbsMax - cumulativeProbsMin);
             }
             if (!p.IsFinite())
             {
                 throw new ArgumentException($"The value of specified probability parameter: {p} is invalid because it is not on the valid probability range: [0, 1].");
             }
-            else if (p <= CumulativeProbabilities.Min())
+            else if (p <= cumulativeProbsMin)
             {
                 return Min;
 
             }
-            else if (p >= CumulativeProbabilities.Max())
+            else if (p >= cumulativeProbsMax)
             {
                 return Max;
             }
