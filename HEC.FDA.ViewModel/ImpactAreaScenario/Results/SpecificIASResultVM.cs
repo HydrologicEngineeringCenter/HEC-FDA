@@ -27,7 +27,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
         #region Property Backing Fields
         private readonly List<string> _damageReports = new List<string>() { DAMAGE_WITH_UNCERTAINTY, DAMAGE_BY_DAMCAT };
-        private readonly List<string> _lifeLossReports = new List<string>() { LIFE_LOSS_WITH_UNCERTAINTY, FN_CURVE };
+        private List<string> _lifeLossReports = new List<string>() { LIFE_LOSS_WITH_UNCERTAINTY, FN_CURVE };
         private readonly List<string> _performanceReports = new List<string>() { ANNUAL_EXC_PROB, LONG_TERM_EXCEEDANCE_PROBABILITY, ASSURANCE_OF_THRESHOLD };
         private readonly ImpactAreaScenarioResults _IASResult;
         private string _selectedOutcome;
@@ -48,7 +48,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
         #region Properties
         public string IASName { get; set; }
-        public List<string> Outcomes { get; set; } = new List<string>() { DAMAGE, LIFE_LOSS, PERFORMANCE };
+        public List<string> Outcomes { get; } = new List<string>();
         public int SelectedReportIndex
         {
             get { return _selectedReportIndex; }
@@ -101,13 +101,36 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             LoadThresholdData(results);
 
             LoadVMs(damCats, scenarioResults, impactAreaID);
-            CurrentResultVM = _damageWithUncertaintyVM;
 
             IASName = iasName;
-            SelectedOutcome = DAMAGE;
 
-            Reports = _damageReports;
-            SelectedReport = DAMAGE_WITH_UNCERTAINTY;
+            // Dynamically populate _lifeLossReports based on available data
+            // Only include F-N Curve if there's actual F-N curve data
+            _lifeLossReports = new List<string>() { LIFE_LOSS_WITH_UNCERTAINTY };
+            if (HasLifeLossFnCurveData(results))
+            {
+                _lifeLossReports.Add(FN_CURVE);
+            }
+
+            // Dynamically populate Outcomes based on available data
+            if (HasDamageResults(scenarioResults))
+            {
+                Outcomes.Add(DAMAGE);
+            }
+            if (HasLifeLossResults(scenarioResults))
+            {
+                Outcomes.Add(LIFE_LOSS);
+            }
+            if (HasPerformanceResults(results))
+            {
+                Outcomes.Add(PERFORMANCE);
+            }
+
+            // Set default selection to first available outcome
+            if (Outcomes.Count > 0)
+            {
+                SelectedOutcome = Outcomes.First();
+            }
         }
         #endregion
 
@@ -238,6 +261,36 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                     }
             }
 
+        }
+
+        private static bool HasDamageResults(ScenarioResults scenarioResults)
+        {
+            return scenarioResults.ResultsList
+                .SelectMany(r => r.ConsequenceResults.ConsequenceResultList)
+                .Any(c => c.ConsequenceType == ConsequenceType.Damage &&
+                          !c.ConsequenceHistogram.HistogramIsZeroValued);
+        }
+
+        private static bool HasLifeLossResults(ScenarioResults scenarioResults)
+        {
+            return scenarioResults.ResultsList
+                .SelectMany(r => r.ConsequenceResults.ConsequenceResultList)
+                .Any(c => c.ConsequenceType == ConsequenceType.LifeLoss &&
+                          !c.ConsequenceHistogram.HistogramIsZeroValued);
+        }
+
+        private static bool HasLifeLossFnCurveData(ImpactAreaScenarioResults iasResult)
+        {
+            var lifeLossCurve = iasResult.UncertainConsequenceFrequencyCurves
+                .FirstOrDefault(c => c.ConsequenceType == ConsequenceType.LifeLoss);
+            return lifeLossCurve != null &&
+                   lifeLossCurve.YHistograms != null &&
+                   lifeLossCurve.YHistograms.Count > 0;
+        }
+
+        private static bool HasPerformanceResults(ImpactAreaScenarioResults iasResult)
+        {
+            return iasResult.PerformanceByThresholds.ListOfThresholds.Count > 0;
         }
         #endregion
     }

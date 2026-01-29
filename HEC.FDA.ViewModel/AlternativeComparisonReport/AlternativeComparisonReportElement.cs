@@ -175,19 +175,34 @@ public class AlternativeComparisonReportElement : ChildElement
         List<AggregatedEALLSummaryRowItem> eALLAggregatedSummaryRowItems = CreateAggregatedEALLFutureYearSummaryTable(_Results);
         List<AggregatedEADSummaryRowItem> eADAggregatedBaseSummaryRowItems = CreateAggregatedEADBaseYearSummaryTable(_Results);
         List<AggregatedEALLSummaryRowItem> eALLAggregatedBaseSummaryRowItems = CreateAggregatedEALLBaseYearSummaryTable(_Results);
+
+        // Check for available result types
+        bool hasDamageResults = HasDamageResults();
+        bool hasLifeLossResults = HasLifeLossResults();
+
         foreach (int altID in WithProjAltIDs)
         {
-            SpecificAltCompReportResultsVM specificAltCompReportResultsVM = CreateAlternativeComparisonResult(altID, GetAlternativeElementFromID(altID).Name);
+            SpecificAltCompReportResultsVM specificAltCompReportResultsVM = CreateAlternativeComparisonResult(altID, GetAlternativeElementFromID(altID).Name, hasDamageResults, hasLifeLossResults);
             results.Add(specificAltCompReportResultsVM);
         }
 
         SpecificAltCompReportResultsVM summaryOption = new SummaryVM(
             eADBaseSummaryRowItems, eADFutureSummaryRowItems, eqadSummaryRowItems,
             eADAggregatedBaseSummaryRowItems, eALLAggregatedBaseSummaryRowItems, eADAggregatedSummaryRowItems, eALLAggregatedSummaryRowItems,
-            eqadAggregatedSummaryRowItems, _Results.Years);
+            eqadAggregatedSummaryRowItems, _Results.Years, hasDamageResults, hasLifeLossResults);
         results.Add(summaryOption);
         return results;
 
+    }
+
+    private bool HasDamageResults()
+    {
+        return _Results.GetImpactAreaIDs(ConsequenceType.Damage).Count > 0;
+    }
+
+    private bool HasLifeLossResults()
+    {
+        return _Results.GetImpactAreaIDs(ConsequenceType.LifeLoss).Count > 0;
     }
 
     private List<EADSummaryRowItem> CreateEADFutureYearSummaryTable(AlternativeComparisonReportResults results)
@@ -491,7 +506,7 @@ public class AlternativeComparisonReportElement : ChildElement
         return vr;
     }
 
-    private SpecificAltCompReportResultsVM CreateAlternativeComparisonResult(int withProjID, string withProjName)
+    private SpecificAltCompReportResultsVM CreateAlternativeComparisonResult(int withProjID, string withProjName, bool hasDamageResults, bool hasLifeLossResults)
     {
         StudyPropertiesElement studyPropElem = StudyCache.GetStudyPropertiesElement();
 
@@ -525,6 +540,6 @@ public class AlternativeComparisonReportElement : ChildElement
         EADResult eadResult = new EADResult(new List<YearResult>() { yr1, yr2 });
         AlternativeResult altResult = new AlternativeResult(withProjName, eadResult, eqadResult);
 
-        return new SpecificAltCompReportResultsVM(altResult);
+        return new SpecificAltCompReportResultsVM(altResult, hasDamageResults, hasLifeLossResults);
     }
 }

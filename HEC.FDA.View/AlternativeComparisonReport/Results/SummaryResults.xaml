@@ -13,6 +13,9 @@
   d:DataContext="{d:DesignInstance Type=results:SummaryVM}"
   d:DesignHeight="450"
   d:DesignWidth="800">
+  <UserControl.Resources>
+    <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
+  </UserControl.Resources>
   <Grid>
     <ScrollViewer>
       <Grid>
@@ -46,7 +49,8 @@
           Margin="5"
           Grid.Row="0"
           Width="auto"
-          HorizontalAlignment="Left">
+          HorizontalAlignment="Left"
+          Visibility="{Binding HasDamageResults, Converter={StaticResource BoolToVisConverter}}">
           <StackPanel>
             <TextBlock
               Text="{Binding AggBaseYearLabel}"
@@ -75,7 +79,8 @@
           BorderThickness="1"
           Margin="5"
           Grid.Row="1"
-          HorizontalAlignment="Left">
+          HorizontalAlignment="Left"
+          Visibility="{Binding HasLifeLossResults, Converter={StaticResource BoolToVisConverter}}">
           <StackPanel>
             <TextBlock
               Text="{Binding AggBaseYearEALLLabel}"
@@ -104,7 +109,8 @@
           BorderThickness="1"
           Margin="5"
           Grid.Row="2"
-          HorizontalAlignment="Left">
+          HorizontalAlignment="Left"
+          Visibility="{Binding HasDamageResults, Converter={StaticResource BoolToVisConverter}}">
           <StackPanel>
             <TextBlock
               Text="{Binding AggFutureYearLabel}"
@@ -133,7 +139,8 @@
           BorderThickness="1"
           Margin="5"
           Grid.Row="3"
-          HorizontalAlignment="Left">
+          HorizontalAlignment="Left"
+          Visibility="{Binding HasLifeLossResults, Converter={StaticResource BoolToVisConverter}}">
           <StackPanel>
             <TextBlock
               Text="{Binding AggFutureYearEALLLabel}"
@@ -162,7 +169,8 @@
           BorderThickness="1"
           Margin="5"
           Grid.Row="4"
-          HorizontalAlignment="Left">
+          HorizontalAlignment="Left"
+          Visibility="{Binding HasDamageResults, Converter={StaticResource BoolToVisConverter}}">
           <StackPanel>
             <TextBlock
               Text="{Binding AggEqadLabel}"
@@ -192,7 +200,8 @@
           Margin="5"
           Grid.Row="5"
           Width="auto"
-          HorizontalAlignment="Left">
+          HorizontalAlignment="Left"
+          Visibility="{Binding HasDamageResults, Converter={StaticResource BoolToVisConverter}}">
           <StackPanel>
             <TextBlock
               Text="{Binding BaseYearLabel}"
@@ -221,7 +230,8 @@
           BorderThickness="1"
           Margin="5"
           Grid.Row="6"
-          HorizontalAlignment="Left">
+          HorizontalAlignment="Left"
+          Visibility="{Binding HasDamageResults, Converter={StaticResource BoolToVisConverter}}">
           <StackPanel>
             <TextBlock
               Text="{Binding FutureYearLabel}"
@@ -250,7 +260,8 @@
           BorderThickness="1"
           Margin="5"
           Grid.Row="7"
-          HorizontalAlignment="Left">
+          HorizontalAlignment="Left"
+          Visibility="{Binding HasDamageResults, Converter={StaticResource BoolToVisConverter}}">
           <StackPanel>
             <TextBlock
               Text="{Binding EqadLabel}"

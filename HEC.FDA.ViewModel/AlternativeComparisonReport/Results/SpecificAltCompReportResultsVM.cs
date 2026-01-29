@@ -44,7 +44,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
             get { return _selectedResult; }
             set { _selectedResult = value; NotifyPropertyChanged(); }
         }
-        public List<string> DamageMeasure { get; } = new List<string>() { EAD, EqAD, EALL };
+        public List<string> DamageMeasure { get; } = new List<string>();
 
         public string SelectedDamageMeasure
         {
@@ -66,7 +66,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
 
         public AlternativeResult AlternativeResult { get; }
 
-        public SpecificAltCompReportResultsVM(AlternativeResult altResult)
+        public SpecificAltCompReportResultsVM(AlternativeResult altResult, bool hasDamageResults, bool hasLifeLossResults)
         {
             Name = altResult.Name;
             AlternativeResult = altResult;
@@ -77,11 +77,32 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
                 Years.Add(yr.Year);
             }
 
-            //set the starting state of the combos.
-            _SelectedDamageMeasure = EAD;
-            SelectedYear = altResult.EADResult.YearResults[0];
-            Reports = _damageReports;
-            _SelectedReport = DAMAGE_WITH_UNCERTAINTY;
+            // Dynamically populate DamageMeasure based on available data
+            if (hasDamageResults)
+            {
+                DamageMeasure.Add(EAD);
+                DamageMeasure.Add(EqAD);
+            }
+            if (hasLifeLossResults)
+            {
+                DamageMeasure.Add(EALL);
+            }
+
+            // Set the starting state of the combos based on available data
+            if (hasDamageResults)
+            {
+                _SelectedDamageMeasure = EAD;
+                SelectedYear = altResult.EADResult.YearResults[0];
+                Reports = _damageReports;
+                _SelectedReport = DAMAGE_WITH_UNCERTAINTY;
+            }
+            else if (hasLifeLossResults)
+            {
+                _SelectedDamageMeasure = EALL;
+                SelectedYear = altResult.EADResult.YearResults[0];
+                Reports = _lifeLossReports;
+                _SelectedReport = LIFE_LOSS_WITH_UNCERTAINTY;
+            }
         }
 
         public SpecificAltCompReportResultsVM()

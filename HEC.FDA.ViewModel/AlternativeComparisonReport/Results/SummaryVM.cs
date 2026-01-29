@@ -25,11 +25,16 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
         public string AggFutureYearEALLLabel { get; }
         public string AggEqadLabel { get; }
 
+        public bool HasDamageResults { get; }
+        public bool HasLifeLossResults { get; }
+
         public SummaryVM(List<EADSummaryRowItem> baseYearSummary, List<EADSummaryRowItem> futureYearSummary, List<EqadSummaryRowItem> eqadSummary,
             List<AggregatedEADSummaryRowItem> aggBaseYearSummary, List<AggregatedEALLSummaryRowItem> aggBaseYearEALLSummary,
             List<AggregatedEADSummaryRowItem> aggFutureYearSummary, List<AggregatedEALLSummaryRowItem> aggFutureYearEALLSummary,
-            List<AggregatedEqadSummaryRowItem> aggEqadSummary, List<int> years) : base()
+            List<AggregatedEqadSummaryRowItem> aggEqadSummary, List<int> years, bool hasDamageResults, bool hasLifeLossResults) : base()
         {
+            HasDamageResults = hasDamageResults;
+            HasLifeLossResults = hasLifeLossResults;
             EqadSummaryRows = eqadSummary;
             AggEqadSummaryRows = aggEqadSummary;
             BaseEADSummaryRows = baseYearSummary;

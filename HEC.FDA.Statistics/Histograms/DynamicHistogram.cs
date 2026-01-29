@@ -243,7 +243,8 @@ namespace Statistics.Histograms
                     if (observation < SampleMin) SampleMin = observation;
                     SampleSize += 1;
                     double tmpMean = SampleMean + ((observation - SampleMean) / (double)SampleSize);
-                    _SampleVariance = ((((double)(SampleSize - 2) / (double)(SampleSize - 1)) * _SampleVariance) + (Math.Pow(observation - SampleMean, 2)) / (double)SampleSize);
+                    double delta = observation - SampleMean;
+                    _SampleVariance = ((((double)(SampleSize - 2) / (double)(SampleSize - 1)) * _SampleVariance) + (delta * delta) / (double)SampleSize);
                     SampleMean = tmpMean;
                 }
                 EnsureCapacityForObservation(observation);
@@ -786,7 +787,8 @@ namespace Statistics.Histograms
             Int64 upperestimate = ConvergenceCriteria.MaxIterations;
             if (ufxp > 0.0 & uxp != 0)
             {
-                double estimate = Math.Ceiling(val * (Math.Pow((uz2 / (uxp * ConvergenceCriteria.Tolerance * ufxp)), 2.0)));
+                double ratio = uz2 / (uxp * ConvergenceCriteria.Tolerance * ufxp);
+                double estimate = Math.Ceiling(val * (ratio * ratio));
                 if (estimate > int.MaxValue - 1)
                 {
                     upperestimate = int.MaxValue - 1;
@@ -804,7 +806,8 @@ namespace Statistics.Histograms
             Int64 lowerestimate = ConvergenceCriteria.MaxIterations;
             if (lfxp > 0.0 & uxp != 0)
             {
-                double estimate = Math.Ceiling(lval * (Math.Pow((lz2 / (lxp * ConvergenceCriteria.Tolerance * lfxp)), 2.0)));
+                double lowerRatio = lz2 / (lxp * ConvergenceCriteria.Tolerance * lfxp);
+                double estimate = Math.Ceiling(lval * (lowerRatio * lowerRatio));
                 if (estimate > int.MaxValue - 1)
                 {
                     lowerestimate = int.MaxValue - 1;

@@ -4,6 +4,7 @@ using Statistics;
 using Statistics.Histograms;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace HEC.FDA.ModelTest.unittests
@@ -367,6 +368,142 @@ namespace HEC.FDA.ModelTest.unittests
                 double mean2 = ((IHistogram)upd2.Yvals[i]).SampleMean;
                 Assert.Equal(mean1, mean2, precision: 10);
             }
+        }
+
+        [Fact]
+        public void SerializeAndDeserializeCorrectly()
+        {
+            // This test verifies that XML serialization/deserialization round-trip works correctly
+            // This is the suspected cause of F-N Curve not loading when opening saved results
+
+            // Arrange
+            int batchSize = 100;
+            ConvergenceCriteria convergenceCriteria = new(minIterations: batchSize, maxIterations: batchSize * 10);
+            CategoriedUncertainPairedData originalCurve = new(
+                TestXvals,
+                TestDamageCategory,
+                TestAssetCategory,
+                ConsequenceType.LifeLoss,
+                RiskType.Fail,
+                convergenceCriteria);
+
+            // Add data and create histograms
+            for (int i = 0; i < batchSize; i++)
+            {
+                double[] yvals = { 10.0 + i, 20.0 + i, 30.0 + i, 40.0 + i, 50.0 + i };
+                PairedData curve = new(TestXvals, yvals);
+                originalCurve.AddCurveRealization(curve, i);
+            }
+            originalCurve.PutDataIntoHistograms();
+
+            // Verify original data is correct before serialization
+            Assert.Equal(TestXvals.Length, originalCurve.YHistograms.Count);
+            Assert.Equal(batchSize, originalCurve.YHistograms[0].SampleSize);
+
+            // Act - serialize and deserialize
+            var xml = originalCurve.WriteToXML();
+            CategoriedUncertainPairedData loadedCurve = CategoriedUncertainPairedData.ReadFromXML(xml);
+
+            // Assert - verify loaded data matches original
+            Assert.Equal(originalCurve.DamageCategory, loadedCurve.DamageCategory);
+            Assert.Equal(originalCurve.AssetCategory, loadedCurve.AssetCategory);
+            Assert.Equal(originalCurve.ConsequenceType, loadedCurve.ConsequenceType);
+            Assert.Equal(originalCurve.RiskType, loadedCurve.RiskType);
+            Assert.Equal(originalCurve.Xvals.Count, loadedCurve.Xvals.Count);
+
+            // Critical assertions for F-N Curve functionality
+            Assert.NotNull(loadedCurve.YHistograms);
+            Assert.Equal(originalCurve.YHistograms.Count, loadedCurve.YHistograms.Count);
+
+            // Verify histogram data was preserved
+            for (int i = 0; i < originalCurve.YHistograms.Count; i++)
+            {
+                Assert.Equal(originalCurve.YHistograms[i].SampleSize, loadedCurve.YHistograms[i].SampleSize);
+                Assert.Equal(originalCurve.YHistograms[i].SampleMean, loadedCurve.YHistograms[i].SampleMean, precision: 2);
+            }
+
+            // Verify GetUncertainPairedData works correctly after loading
+            UncertainPairedData loadedUpd = loadedCurve.GetUncertainPairedData();
+            Assert.NotNull(loadedUpd);
+            Assert.Equal(TestXvals.Length, loadedUpd.Xvals.Length);
+            Assert.Equal(TestXvals.Length, loadedUpd.Yvals.Length);
+
+            // Verify quantile sampling works (this is what LifeLossFnChartVM uses)
+            PairedData medianCurve = loadedUpd.SamplePairedData(0.5);
+            Assert.NotNull(medianCurve);
+            Assert.Equal(TestXvals.Length, medianCurve.Yvals.Count);
+        }
+
+        [Fact]
+        public void ImpactAreaScenarioResultsSerializesAndDeserializesCurvesCorrectly()
+        {
+            // This test verifies the full ImpactAreaScenarioResults round-trip
+            // including UncertainConsequenceFrequencyCurves (used for F-N Curve)
+
+            // Arrange
+            int impactAreaID = 1;
+            int batchSize = 100;
+            ConvergenceCriteria convergenceCriteria = new(minIterations: batchSize, maxIterations: batchSize * 10);
+
+            ImpactAreaScenarioResults originalResults = new(impactAreaID);
+
+            // Create and populate a life loss curve
+            CategoriedUncertainPairedData lifeLossCurve = originalResults.GetOrCreateUncertainConsequenceFrequencyCurve(
+                TestXvals,
+                "LifeLoss",
+                "LifeLoss",
+                ConsequenceType.LifeLoss,
+                RiskType.Fail,
+                convergenceCriteria);
+
+            for (int i = 0; i < batchSize; i++)
+            {
+                double[] yvals = { 1.0 + i * 0.1, 2.0 + i * 0.1, 3.0 + i * 0.1, 4.0 + i * 0.1, 5.0 + i * 0.1 };
+                PairedData curve = new(TestXvals, yvals);
+                lifeLossCurve.AddCurveRealization(curve, i);
+            }
+            originalResults.PutUncertainFrequencyCurvesIntoHistograms();
+
+            // Verify original has data
+            Assert.Single(originalResults.UncertainConsequenceFrequencyCurves);
+            var originalCurve = originalResults.UncertainConsequenceFrequencyCurves[0];
+            Assert.Equal(ConsequenceType.LifeLoss, originalCurve.ConsequenceType);
+            Assert.Equal(TestXvals.Length, originalCurve.YHistograms.Count);
+            Assert.Equal(batchSize, originalCurve.YHistograms[0].SampleSize);
+
+            // Act - serialize and deserialize
+            var xml = originalResults.WriteToXml();
+            ImpactAreaScenarioResults loadedResults = ImpactAreaScenarioResults.ReadFromXML(xml);
+
+            // Assert - verify loaded results have the curve
+            Assert.Single(loadedResults.UncertainConsequenceFrequencyCurves);
+
+            var loadedCurve = loadedResults.UncertainConsequenceFrequencyCurves
+                .FirstOrDefault(c => c.ConsequenceType == ConsequenceType.LifeLoss);
+            Assert.NotNull(loadedCurve);
+            Assert.NotNull(loadedCurve.YHistograms);
+            Assert.Equal(TestXvals.Length, loadedCurve.YHistograms.Count);
+            Assert.Equal(batchSize, loadedCurve.YHistograms[0].SampleSize);
+
+            // Verify GetUncertainPairedData works (this is called by LifeLossFnChartVM)
+            UncertainPairedData loadedUpd = loadedCurve.GetUncertainPairedData();
+            Assert.NotNull(loadedUpd);
+            Assert.Equal(TestXvals.Length, loadedUpd.Xvals.Length);
+
+            // Verify quantile sampling works (this is exactly what LifeLossFnChartVM.AddDataSeries does)
+            PairedData lower = loadedUpd.SamplePairedData(0.025);
+            PairedData median = loadedUpd.SamplePairedData(0.5);
+            PairedData upper = loadedUpd.SamplePairedData(0.975);
+
+            Assert.NotNull(lower);
+            Assert.NotNull(median);
+            Assert.NotNull(upper);
+            Assert.Equal(TestXvals.Length, lower.Yvals.Count);
+            Assert.Equal(TestXvals.Length, median.Yvals.Count);
+            Assert.Equal(TestXvals.Length, upper.Yvals.Count);
+
+            // Verify median values are reasonable (should be around 1.0 + (batchSize-1)/2 * 0.1 = ~5.95 for first position)
+            Assert.True(median.Yvals[0] > 0, "Median should have positive values");
         }
     }
 }

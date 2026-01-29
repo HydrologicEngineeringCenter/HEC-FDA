@@ -451,7 +451,8 @@ namespace Statistics.Histograms
                     if (observation < _SampleMin) _SampleMin = observation;
                     _SampleSize += 1;
                     double tmpMean = _SampleMean + ((observation - _SampleMean) / (double)_SampleSize);
-                    _SampleVariance = ((((double)(_SampleSize - 2) / (double)(_SampleSize - 1)) * _SampleVariance) + (Math.Pow(observation - _SampleMean, 2)) / (double)_SampleSize);
+                    double delta = observation - _SampleMean;
+                    _SampleVariance = ((((double)(_SampleSize - 2) / (double)(_SampleSize - 1)) * _SampleVariance) + (delta * delta) / (double)_SampleSize);
                     _SampleMean = tmpMean;
                 }
                 int quantityAdditionalBins = 0;
@@ -812,7 +813,7 @@ namespace Statistics.Histograms
             {
                 double bottomTerm = upperValueAtUpperProb * _ConvergenceCriteria.Tolerance * probOfUpperValue;
                 double anotherTerm = (zAlphaDoubled / (bottomTerm));
-                double anotherTermSquared = Math.Pow(anotherTerm, 2.0);
+                double anotherTermSquared = anotherTerm * anotherTerm;
                 double productTerm = valueOfSomethingNotClear * anotherTermSquared;
                 if (productTerm > int.MaxValue - 1)
                 {
@@ -834,7 +835,7 @@ namespace Statistics.Histograms
             {
                 double bottomTerm = lowerValueAtLowerProb * _ConvergenceCriteria.Tolerance * probOfLowerValue;
                 double anotherTerm = (lowerZAlphaDoubled / (bottomTerm));
-                double anotherTermSquared = Math.Pow(anotherTerm, 2.0);
+                double anotherTermSquared = anotherTerm * anotherTerm;
                 double productTerm = lowerValueOfSomethingNotClear * anotherTermSquared;
                 if (productTerm > int.MaxValue - 1)
                 {
