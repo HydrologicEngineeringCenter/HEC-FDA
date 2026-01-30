@@ -42,7 +42,7 @@ namespace HEC.FDA.View.ImpactAreaScenario.Results
             {
                 // Use SizeToCells so columns resize to fit content
                 textColumn.Width = DataGridLength.SizeToCells;
-                textColumn.MinWidth = 60;
+                textColumn.MinWidth = 100;
             }
         }
     }

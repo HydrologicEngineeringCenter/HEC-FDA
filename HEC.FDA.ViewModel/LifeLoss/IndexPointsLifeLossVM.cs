@@ -171,7 +171,7 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         ChangePlot(index);
     }
 
-    public PlotModel MyModel { get; set; } = new();
+    public ViewResolvingPlotModel MyModel { get; set; } = new();
     public ObservableCollection<LifeLossFunction> LifeLossFunctions { get; private set; } = [];
     public bool WasRecomputed { get; private set; } = false;
 
