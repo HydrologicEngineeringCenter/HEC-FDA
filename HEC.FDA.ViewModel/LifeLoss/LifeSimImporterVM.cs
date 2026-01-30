@@ -62,9 +62,12 @@ public partial class LifeSimImporterVM : BaseEditorVM
             StageLifeLossElement elemToSave = new(Name, lastEditDate, Description, id, config);
 
             // this exists to separate the editing of the metadata and relationships
-            // in stage-damage, changing just one character in the name would require every single histogram to be re-saved 
+            // in stage-damage, changing just one character in the name would require every single histogram to be re-saved
             Save(elemToSave); // base editor's save, saves the metadeta as XML
             SaveFunctionsToSQLite(_indexPointsVM.LifeLossFunctions.ToList(), id); // save the curves to SQLite
+
+            // Update the saved configuration so swapping simulations restores the newly saved weights
+            _indexPointsVM.UpdateSavedConfiguration();
         }
         else
         {

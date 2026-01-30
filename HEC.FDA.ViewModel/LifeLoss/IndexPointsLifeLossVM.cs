@@ -32,6 +32,10 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
     private ObservableCollection<WeightedCheckableItem> _hazardTimes = [];
     private LifeLossFunction _selectedFunction;
 
+    // Store saved configuration for restoring when swapping simulations
+    private string _savedSimulationName;
+    private Dictionary<string, double> _savedHazardTimeWeights;
+
     public string SelectedPath
     {
         get { return _selectedPath; }
@@ -118,6 +122,23 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
             }
             i++;
         }
+
+        // Restore saved weights if switching back to the originally saved simulation
+        if (simulation.Name == _savedSimulationName && _savedHazardTimeWeights != null)
+        {
+            foreach (WeightedCheckableItem ht in HazardTimes)
+            {
+                if (_savedHazardTimeWeights.TryGetValue(ht.Name, out double weight))
+                {
+                    ht.IsChecked = true;
+                    ht.Weight = weight;
+                }
+                else
+                {
+                    ht.IsChecked = false;
+                }
+            }
+        }
     }
 
     private void On_Hazard_Time_Checkbox_Changed(object sender, PropertyChangedEventArgs e)
@@ -177,9 +198,26 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
 
     #endregion
 
+    /// <summary>
+    /// Updates the saved configuration after a successful save, so that swapping
+    /// simulations and switching back will restore the newly saved weights.
+    /// </summary>
+    public void UpdateSavedConfiguration()
+    {
+        _savedSimulationName = SelectedSimulation?.Name;
+        _savedHazardTimeWeights = [];
+        foreach (WeightedCheckableItem ht in HazardTimes)
+        {
+            if (ht.IsChecked)
+                _savedHazardTimeWeights[ht.Name] = ht.Weight;
+        }
+    }
+
     // called when creating new element
     public IndexPointsLifeLossVM()
     {
+        _savedSimulationName = null;
+        _savedHazardTimeWeights = null;
         LoadHydraulics();
         LoadIndexPoints();
         SubscribeToLiveUpdateEvents();
@@ -195,6 +233,10 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         List<string> selectedAlternatives,
         Dictionary<string, double> selectedHazardTimes)
     {
+        // Store saved configuration for restoring when swapping simulations
+        _savedSimulationName = selectedSimulation;
+        _savedHazardTimeWeights = selectedHazardTimes ?? [];
+
         SelectedPath = LifeSimDataBaseFileName.IsNullOrEmpty() ? null : Path.Combine(Connection.Instance.LifeSimDirectory, LifeSimDataBaseFileName);
         LoadHydraulics();
         SelectHydraulics(hydraulicsID);
