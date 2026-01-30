@@ -22,6 +22,7 @@ public class StageLifeLossElement : ChildElement
     private const string SELECTED_HAZARD_TIMES = "SelectedHazardTimes";
     private const string ALTERNATIVE = "Alternative";
     private const string HAZARD_TIME = "HazardTime";
+    private const string COMPUTED_HAZARD_TIMES = "ComputedHazardTimes";
 
     public string LifeSimDatabaseFileName { get; }
     public int SelectedHydraulics { get; }
@@ -29,6 +30,7 @@ public class StageLifeLossElement : ChildElement
     public string SelectedSimulation { get; }
     public List<string> SelectedAlternatives { get; } = [];
     public Dictionary<string, double> SelectedHazardTimes { get; } = [];
+    public Dictionary<string, double> ComputedHazardTimeWeights { get; } = [];
 
     // gets called when saving the element to sqlite (either new or existing)
     public StageLifeLossElement(string name, string lastEditDate, string description, int id, LifeSimImporterConfig config)
@@ -40,6 +42,7 @@ public class StageLifeLossElement : ChildElement
         SelectedSimulation = config.SelectedSimulation;
         SelectedAlternatives = config.SelectedAlternatives;
         SelectedHazardTimes = config.SelectedHazardTimes;
+        ComputedHazardTimeWeights = config.ComputedHazardTimeWeights ?? [];
 
         AddDefaultActions(EditStageLifeLossCurves, StringConstants.EDIT_STAGE_LIFE_LOSS_FUNCTION);
     }
@@ -65,6 +68,19 @@ public class StageLifeLossElement : ChildElement
             SelectedHazardTimes[name] = weight;
         }
 
+        // Load computed hazard time weights (may not exist in older saved elements)
+        XElement computedHazardTimesParent = config.Element(COMPUTED_HAZARD_TIMES);
+        if (computedHazardTimesParent != null)
+        {
+            IEnumerable<XElement> computedHazardTimes = computedHazardTimesParent.Elements(HAZARD_TIME);
+            foreach (XElement hazardTime in computedHazardTimes)
+            {
+                string name = hazardTime.Value;
+                double weight = Convert.ToDouble(hazardTime.Attribute("Weight")?.Value ?? "0");
+                ComputedHazardTimeWeights[name] = weight;
+            }
+        }
+
         AddDefaultActions(EditStageLifeLossCurves, StringConstants.EDIT_STAGE_LIFE_LOSS_FUNCTION);
     }
 
@@ -83,6 +99,11 @@ public class StageLifeLossElement : ChildElement
         XElement hazardTimes = new(SELECTED_HAZARD_TIMES,
             SelectedHazardTimes?.Select(kvp => new XElement(HAZARD_TIME, new XAttribute("Weight", kvp.Value), kvp.Key)));
         config.Add(hazardTimes);
+
+        XElement computedHazardTimes = new(COMPUTED_HAZARD_TIMES,
+            ComputedHazardTimeWeights?.Select(kvp => new XElement(HAZARD_TIME, new XAttribute("Weight", kvp.Value), kvp.Key)));
+        config.Add(computedHazardTimes);
+
         stageLifeLossElem.Add(config);
 
         return stageLifeLossElem;
@@ -133,7 +154,7 @@ public class StageLifeLossElement : ChildElement
         List<LifeLossFunction> lifeLossFunctions = LoadStageLifeLossRelationships();
         return lifeLossFunctions
             .Where(f => f.Data.CurveMetaData.ImpactAreaID == impactAreaID)
-            .Where(f => f.HazardTime == LifeLossStringConstants.COMBINED_MAGIC_STRING)
+            .Where(f => f.HazardTime.StartsWith(LifeLossStringConstants.COMBINED_MAGIC_STRING))
             .Select(f => f.Data)
             .ToList();
     }

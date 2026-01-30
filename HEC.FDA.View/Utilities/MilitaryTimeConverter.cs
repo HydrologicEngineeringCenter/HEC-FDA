@@ -15,7 +15,7 @@ namespace HEC.FDA.View.Utilities
                 if (int.TryParse(s, out int time))
                     return (time * 100).ToString("D4");
             }
-            if (s == LifeLossStringConstants.COMBINED_MAGIC_STRING) // only other allowed string
+            if (s != null && s.StartsWith(LifeLossStringConstants.COMBINED_MAGIC_STRING)) // combined curves with weights
                 return s;
             return string.Empty;
         }

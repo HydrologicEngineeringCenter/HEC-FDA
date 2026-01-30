@@ -9,4 +9,5 @@ public class LifeSimImporterConfig
     public string SelectedSimulation { get; set; }
     public List<string> SelectedAlternatives { get; set; }
     public Dictionary<string, double> SelectedHazardTimes { get; set; }
+    public Dictionary<string, double> ComputedHazardTimeWeights { get; set; }
 }

@@ -142,7 +142,9 @@ public class LifeLossFunctionGenerator
             idx++;
         }
         UncertainPairedData combined = UncertainPairedData.CombineWithWeights(updweights);
-        LifeLossFunction combinedFunc = new(-1, -1, combined, alternatives, _simulationName, summaryZone, LifeLossStringConstants.COMBINED_MAGIC_STRING);
+        string weightsDisplay = string.Join("/", _hazardTimes.Values.Select(w => w.ToString("F2")));
+        string combinedHazardTime = $"{LifeLossStringConstants.COMBINED_MAGIC_STRING} ({weightsDisplay})";
+        LifeLossFunction combinedFunc = new(-1, -1, combined, alternatives, _simulationName, summaryZone, combinedHazardTime);
         functions.Add(combinedFunc);
         return functions;
     }

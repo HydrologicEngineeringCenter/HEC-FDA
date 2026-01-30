@@ -44,7 +44,8 @@ public partial class LifeSimImporterVM : BaseEditorVM
             element.SelectedIndexPoints,
             element.SelectedSimulation,
             element.SelectedAlternatives,
-            element.SelectedHazardTimes);
+            element.SelectedHazardTimes,
+            element.ComputedHazardTimeWeights);
         RegisterChildViewModel(_indexPointsVM);
         CurrentVM = _indexPointsVM;
     }
@@ -94,6 +95,7 @@ public partial class LifeSimImporterVM : BaseEditorVM
             SelectedSimulation = selectedSimulation,
             SelectedAlternatives = selectedAlternatives,
             SelectedHazardTimes = selectedHazardTimes,
+            ComputedHazardTimeWeights = indexPointsLifeLossVM.ComputedHazardTimeWeights,
         };
         return config;
     }
@@ -118,7 +120,7 @@ public partial class LifeSimImporterVM : BaseEditorVM
         foreach (LifeLossFunction function in functions)
         {
             function.ElementID = id;
-            if (function.HazardTime == LifeLossStringConstants.COMBINED_MAGIC_STRING)
+            if (function.HazardTime.StartsWith(LifeLossStringConstants.COMBINED_MAGIC_STRING))
                 // we need to save the combined functions to a table with a different schema to accomodate empirical distributions
                 combinedSaver.SaveToSQLite(function);
             else

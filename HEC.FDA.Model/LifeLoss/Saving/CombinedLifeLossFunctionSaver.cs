@@ -106,7 +106,7 @@ public class CombinedLifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
         List<string> alternatives = [];
         List<double> stages = [];
         List<Empirical> empiricals = [];
-        string currentSim = null, currentSZ = null;
+        string currentSim = null, currentSZ = null, currentHazardTime = null;
 
         // local function to push life loss functions to the result list once they have been fully read
         void AddCurrent()
@@ -114,7 +114,7 @@ public class CombinedLifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
             if (functionID == -1) return; // means we have not read anything yet, do not want to create a life loss function yet
 
             UncertainPairedData data = new(stages.ToArray(), empiricals.ToArray(), new CurveMetaData("Stage", "Life Loss", $"{currentSim}_{currentSZ}_{LifeLossStringConstants.COMBINED_MAGIC_STRING}", "LifeLoss", _impactAreaIDByName[currentSZ], "LifeLoss"));
-            LifeLossFunction llf = new(-1, functionID, data, alternatives.ToArray(), currentSim, currentSZ, LifeLossStringConstants.COMBINED_MAGIC_STRING);
+            LifeLossFunction llf = new(-1, functionID, data, alternatives.ToArray(), currentSim, currentSZ, currentHazardTime);
             result.Add(llf);
 
             // reset the lists of life loss function parameters
@@ -136,6 +136,7 @@ public class CombinedLifeLossFunctionSaver : SQLiteSaverBase<LifeLossFunction>
                 AddCurrent(); // we are at a new lifeloss function, so add the previous to the result
                 currentSim = reader.GetString(reader.GetOrdinal(LifeLossStringConstants.SIMULATION_HEADER));
                 currentSZ = reader.GetString(reader.GetOrdinal(LifeLossStringConstants.SUMMARY_ZONE_HEADER));
+                currentHazardTime = reader.GetString(reader.GetOrdinal(LifeLossStringConstants.HAZARD_TIME_HEADER));
                 functionID = currentFunctionID;
             }
             alternatives.Add(reader.GetString(reader.GetOrdinal(LifeLossStringConstants.ALTERNATIVE_HEADER)));

@@ -36,6 +36,47 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
     private string _savedSimulationName;
     private Dictionary<string, double> _savedHazardTimeWeights;
 
+    // Track weights used for computation to detect mismatches
+    private Dictionary<string, double> _computedHazardTimeWeights = [];
+
+    public Dictionary<string, double> ComputedHazardTimeWeights => _computedHazardTimeWeights;
+
+    /// <summary>
+    /// Returns true if the currently selected weights differ from the weights used to compute the curves.
+    /// </summary>
+    public bool HasWeightMismatch
+    {
+        get
+        {
+            if (_computedHazardTimeWeights == null || _computedHazardTimeWeights.Count == 0)
+                return false;
+
+            var currentWeights = GetCurrentSelectedWeights();
+            if (currentWeights.Count != _computedHazardTimeWeights.Count)
+                return true;
+
+            foreach (var kvp in currentWeights)
+            {
+                if (!_computedHazardTimeWeights.TryGetValue(kvp.Key, out double computedWeight))
+                    return true;
+                if (System.Math.Abs(kvp.Value - computedWeight) > 0.001)
+                    return true;
+            }
+            return false;
+        }
+    }
+
+    private Dictionary<string, double> GetCurrentSelectedWeights()
+    {
+        Dictionary<string, double> weights = [];
+        foreach (WeightedCheckableItem ht in HazardTimes)
+        {
+            if (ht.IsChecked)
+                weights[ht.Name] = ht.Weight;
+        }
+        return weights;
+    }
+
     public string SelectedPath
     {
         get { return _selectedPath; }
@@ -154,6 +195,13 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
                 item.IsEnabled = item.IsChecked || !maxReached;
             }
         }
+
+        // Update mismatch warning when weights or selection changes
+        if (e.PropertyName == nameof(WeightedCheckableItem.IsChecked) ||
+            e.PropertyName == nameof(WeightedCheckableItem.Weight))
+        {
+            NotifyPropertyChanged(nameof(HasWeightMismatch));
+        }
     }
 
     public ObservableCollection<CheckableItem> LifeSimAlternatives
@@ -231,11 +279,15 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         int indexPointsID,
         string selectedSimulation,
         List<string> selectedAlternatives,
-        Dictionary<string, double> selectedHazardTimes)
+        Dictionary<string, double> selectedHazardTimes,
+        Dictionary<string, double> computedHazardTimeWeights)
     {
         // Store saved configuration for restoring when swapping simulations
         _savedSimulationName = selectedSimulation;
         _savedHazardTimeWeights = selectedHazardTimes ?? [];
+
+        // Store computed weights for mismatch detection
+        _computedHazardTimeWeights = computedHazardTimeWeights ?? [];
 
         SelectedPath = LifeSimDataBaseFileName.IsNullOrEmpty() ? null : Path.Combine(Connection.Instance.LifeSimDirectory, LifeSimDataBaseFileName);
         LoadHydraulics();
@@ -442,10 +494,17 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
             return;
         }   
         List<LifeLossFunction> newFunctions = await generator.CreateLifeLossFunctionsAsync(impactAreasFile, indexPointsFile, uniqueImpactAreaHeader);
+        if (newFunctions.Count == 0)
+            return; // Computation was aborted (e.g., weight validation failed)
+
         LifeLossFunctions.Clear();
         LifeLossFunctions.AddRange(newFunctions);
         ChangePlot(0);
         WasRecomputed = true;
+
+        // Store the weights used for this computation
+        _computedHazardTimeWeights = GetCurrentSelectedWeights();
+        NotifyPropertyChanged(nameof(HasWeightMismatch));
     }
 
     public FdaValidationResult ValidateForm()
@@ -502,9 +561,9 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         MyModel.ResetAllAxes(); // recenter on the newly plotted lines
         if (!int.TryParse(llf.HazardTime, out int time))
         {
-            if (llf.HazardTime != LifeLossStringConstants.COMBINED_MAGIC_STRING)
+            if (!llf.HazardTime.StartsWith(LifeLossStringConstants.COMBINED_MAGIC_STRING))
                 throw new System.Exception($"Could not parse hazard time {llf.HazardTime}.");
-            MyModel.Title = $"{llf.SimulationName}: {llf.SummaryZone}";
+            MyModel.Title = $"{llf.SimulationName}: {llf.SummaryZone} {llf.HazardTime}";
         }
         else
         {

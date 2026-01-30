@@ -17,6 +17,8 @@
   <UserControl.Resources>
     <Utilities:MilitaryTimeConverter
       x:Key="MilTimeConverter" />
+    <Utilities:BoolToVisibilityConverter
+      x:Key="BoolToVisibilityConverter" />
   </UserControl.Resources>
   <Grid>
     <Grid.RowDefinitions>
@@ -247,32 +249,46 @@
       Header="Generated Curves"
       Margin="5"
       HorizontalAlignment="Stretch">
-      <ListView
-        Margin="5"
-        ItemsSource="{Binding LifeLossFunctions}"
-        SelectedItem="{Binding SelectedFunction}"
-        SelectionMode="Single">
-        <ListView.View>
-          <GridView>
-            <GridViewColumn
-              Header="Function ID"
-              Width="150"
-              DisplayMemberBinding="{Binding FunctionID}" />
-            <GridViewColumn
-              Header="Simulation"
-              Width="150"
-              DisplayMemberBinding="{Binding SimulationName}" />
-            <GridViewColumn
-              Header="Summary Zone"
-              Width="150"
-              DisplayMemberBinding="{Binding SummaryZone}" />
-            <GridViewColumn
-              Header="Hazard Time"
-              Width="150"
-              DisplayMemberBinding="{Binding HazardTime, Converter={StaticResource MilTimeConverter}}" />
-          </GridView>
-        </ListView.View>
-      </ListView>
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock
+          Grid.Row="0"
+          Text="Warning: Selected weights do not match computed curves. Please recompute."
+          Foreground="OrangeRed"
+          FontWeight="SemiBold"
+          Visibility="{Binding HasWeightMismatch, Converter={StaticResource BoolToVisibilityConverter}}"
+          Margin="5" />
+        <ListView
+          Grid.Row="1"
+          Margin="5"
+          ItemsSource="{Binding LifeLossFunctions}"
+          SelectedItem="{Binding SelectedFunction}"
+          SelectionMode="Single">
+          <ListView.View>
+            <GridView>
+              <GridViewColumn
+                Header="Function ID"
+                Width="150"
+                DisplayMemberBinding="{Binding FunctionID}" />
+              <GridViewColumn
+                Header="Simulation"
+                Width="150"
+                DisplayMemberBinding="{Binding SimulationName}" />
+              <GridViewColumn
+                Header="Summary Zone"
+                Width="150"
+                DisplayMemberBinding="{Binding SummaryZone}" />
+              <GridViewColumn
+                Header="Hazard Time"
+                Width="150"
+                DisplayMemberBinding="{Binding HazardTime, Converter={StaticResource MilTimeConverter}}" />
+            </GridView>
+          </ListView.View>
+        </ListView>
+      </Grid>
     </GroupBox>
 
     <GridSplitter
