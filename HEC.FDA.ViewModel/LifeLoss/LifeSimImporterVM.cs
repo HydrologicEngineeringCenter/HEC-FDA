@@ -80,9 +80,9 @@ public partial class LifeSimImporterVM : BaseEditorVM
         List<string> selectedAlternatives = [];
         foreach (CheckableItem alternative in indexPointsLifeLossVM.LifeSimAlternatives)
             if (alternative.IsChecked) selectedAlternatives.Add(alternative.Name);
-        List<string> selectedHazardTimes = [];
-        foreach (CheckableItem hazardTime in indexPointsLifeLossVM.HazardTimes)
-            if (hazardTime.IsChecked) selectedHazardTimes.Add(hazardTime.Name);
+        Dictionary<string, double> selectedHazardTimes = [];
+        foreach (WeightedCheckableItem hazardTime in indexPointsLifeLossVM.HazardTimes)
+            if (hazardTime.IsChecked) selectedHazardTimes[hazardTime.Name] = hazardTime.Weight;
 
         LifeSimImporterConfig config = new()
         {

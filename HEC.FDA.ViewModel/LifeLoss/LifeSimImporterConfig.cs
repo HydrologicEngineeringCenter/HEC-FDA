@@ -8,5 +8,5 @@ public class LifeSimImporterConfig
     public int SelectedIndexPoints { get; set; }
     public string SelectedSimulation { get; set; }
     public List<string> SelectedAlternatives { get; set; }
-    public List<string> SelectedHazardTimes { get; set; }
+    public Dictionary<string, double> SelectedHazardTimes { get; set; }
 }

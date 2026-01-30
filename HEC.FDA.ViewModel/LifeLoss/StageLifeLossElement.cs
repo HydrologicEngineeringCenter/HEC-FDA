@@ -28,7 +28,7 @@ public class StageLifeLossElement : ChildElement
     public int SelectedIndexPoints { get; }
     public string SelectedSimulation { get; }
     public List<string> SelectedAlternatives { get; } = [];
-    public List<string> SelectedHazardTimes { get; } = [];
+    public Dictionary<string, double> SelectedHazardTimes { get; } = [];
 
     // gets called when saving the element to sqlite (either new or existing)
     public StageLifeLossElement(string name, string lastEditDate, string description, int id, LifeSimImporterConfig config)
@@ -59,7 +59,11 @@ public class StageLifeLossElement : ChildElement
         XElement hazardTimesParent = config.Element(SELECTED_HAZARD_TIMES);
         IEnumerable<XElement> hazardTimes = hazardTimesParent.Elements(HAZARD_TIME);
         foreach (XElement hazardTime in hazardTimes)
-            SelectedHazardTimes.Add(hazardTime.Value);
+        {
+            string name = hazardTime.Value;
+            double weight = Convert.ToDouble(hazardTime.Attribute("Weight")?.Value ?? "0");
+            SelectedHazardTimes[name] = weight;
+        }
 
         AddDefaultActions(EditStageLifeLossCurves, StringConstants.EDIT_STAGE_LIFE_LOSS_FUNCTION);
     }
@@ -76,7 +80,8 @@ public class StageLifeLossElement : ChildElement
         config.Add(new XElement(SELECTED_SIMULATION, SelectedSimulation ?? ""));
         XElement alternatives = new(SELECTED_ALTERNATIVES, SelectedAlternatives?.Select(a => new XElement(ALTERNATIVE, a)));
         config.Add(alternatives);
-        XElement hazardTimes = new(SELECTED_HAZARD_TIMES, SelectedHazardTimes?.Select(h => new XElement(HAZARD_TIME, h)));
+        XElement hazardTimes = new(SELECTED_HAZARD_TIMES,
+            SelectedHazardTimes?.Select(kvp => new XElement(HAZARD_TIME, new XAttribute("Weight", kvp.Value), kvp.Key)));
         config.Add(hazardTimes);
         stageLifeLossElem.Add(config);
 

@@ -49,6 +49,12 @@ public class LifeLossFunctionGenerator
     /// <returns></returns>
     public async Task<List<LifeLossFunction>> CreateLifeLossFunctionsAsync(string summarySetPath, string indexPointsPath, string summarySetUniqueName)
     {
+        double weightSum = _hazardTimes.Values.Sum();
+        if (Math.Abs(weightSum - 1.0) > 0.001)
+        {
+            System.Windows.MessageBox.Show($"Hazard time weights must sum to 1.00, but they sum to {weightSum:F2}.", "Invalid Weights", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return [];
+        }
 
         List<LifeLossFunction> lifeLossFunctions = new();
 

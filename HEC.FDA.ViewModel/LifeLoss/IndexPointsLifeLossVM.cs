@@ -193,7 +193,7 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         int indexPointsID,
         string selectedSimulation,
         List<string> selectedAlternatives,
-        List<string> selectedHazardTimes)
+        Dictionary<string, double> selectedHazardTimes)
     {
         SelectedPath = LifeSimDataBaseFileName.IsNullOrEmpty() ? null : Path.Combine(Connection.Instance.LifeSimDirectory, LifeSimDataBaseFileName);
         LoadHydraulics();
@@ -331,14 +331,17 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         }
     }
 
-    private void SelectHazardTimes(List<string> selectedHazardTimes)
+    private void SelectHazardTimes(Dictionary<string, double> selectedHazardTimes)
     {
-        foreach (CheckableItem ht in HazardTimes)
+        foreach (WeightedCheckableItem ht in HazardTimes)
         {
             ht.IsChecked = false;
             string name = ht.Name;
-            if (selectedHazardTimes.Contains(name))
+            if (selectedHazardTimes.TryGetValue(name, out double weight))
+            {
                 ht.IsChecked = true;
+                ht.Weight = weight;
+            }
         }
     }
 
