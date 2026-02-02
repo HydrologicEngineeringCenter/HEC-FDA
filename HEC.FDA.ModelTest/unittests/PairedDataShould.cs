@@ -96,7 +96,7 @@ namespace HEC.FDA.ModelTest.unittests
             //integrate should extrapolate last value out to probability=1 if probabilty space not defined to 1.
             PairedData paired = new PairedData(probs, vals);
 
-            double actual = paired.integrate();
+            double actual = paired.Integrate();
             double relativeError = Math.Abs(actual - expected)/expected;
             double relativeTolerance = 0.03;
             Assert.True(relativeError < relativeTolerance);

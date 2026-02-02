@@ -34,6 +34,10 @@ namespace HEC.FDA.Model.paireddata
         /// <param name="ys"></param>
         public PairedData(IReadOnlyList<double> xs, IReadOnlyList<double> ys, CurveMetaData metadata = null)
         {
+            if(xs[0] > xs[^1])
+            {
+                throw new ArgumentException("X values must be in increasing order.");
+            }
             _xVals = xs == null ? null : xs.ToArray();
             _yVals = ys == null ? null : ys.ToArray();
             MetaData = metadata;
@@ -220,10 +224,15 @@ namespace HEC.FDA.Model.paireddata
         }
 
 
-        public double integrate()
+        public double Integrate(bool withPadding = true)
         {
+            if (withPadding)
+            {
+                return Mathematics.IntegrateCDF<double>(_xVals, _yVals);
+            }
+            return Mathematics.RealIntegrateTrapezoidal<double>(_xVals, _yVals);
             //This functionality was extracted to a static method to be shared with empirical.cs, which uses the same logic. 
-            return Mathematics.IntegrateCDF<double>(_xVals, _yVals);
+
         }
 
         /// <summary>
