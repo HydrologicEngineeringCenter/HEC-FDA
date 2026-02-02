@@ -9,6 +9,7 @@ using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Utilities;
 using OxyPlot;
+using OxyPlot.Legends;
 using OxyPlot.Series;
 using SciChart.Core.Extensions;
 using System.Collections.Generic;
@@ -554,9 +555,15 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         var mid = uncertainData.SamplePairedData(0.5);
 
         MyModel.Series.Clear();
-        AddLineSeriesToPlot(upper, true);
-        AddLineSeriesToPlot(lower, true);
-        AddLineSeriesToPlot(mid);
+        MyModel.Legends.Clear();
+        MyModel.Legends.Add(new Legend
+        {
+            LegendPosition = LegendPosition.TopLeft,
+            LegendPlacement = LegendPlacement.Inside
+        });
+        AddLineSeriesToPlot(upper, "97.5%", isConfidenceLimit: true);
+        AddLineSeriesToPlot(mid, "50%");
+        AddLineSeriesToPlot(lower, "2.5%", isConfidenceLimit: true);
 
         MyModel.ResetAllAxes(); // recenter on the newly plotted lines
         if (!int.TryParse(llf.HazardTime, out int time))
@@ -577,10 +584,14 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
     /// Add a single line series to a plot
     /// </summary>
     /// <param name="function"></param>
+    /// <param name="title">Title for the legend</param>
     /// <param name="isConfidenceLimit"></param>
-    private void AddLineSeriesToPlot(PairedData function, bool isConfidenceLimit = false)
+    private void AddLineSeriesToPlot(PairedData function, string title, bool isConfidenceLimit = false)
     {
-        LineSeries lineSeries = new();
+        LineSeries lineSeries = new()
+        {
+            Title = title
+        };
 
         DataPoint[] points = new DataPoint[function.Xvals.Count];
         for (int i = 0; i < function.Xvals.Count; i++)
@@ -594,8 +605,6 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         else { lineSeries.Color = OxyColors.Black; }
 
         lineSeries.ItemsSource = points;
-        //lineSeries.DataFieldX = "Stage";
-        //lineSeries.DataFieldY = "Life Loss";
         MyModel.Series.Add(lineSeries);
     }
 }
