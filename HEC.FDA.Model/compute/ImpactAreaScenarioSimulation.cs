@@ -523,7 +523,7 @@ namespace HEC.FDA.Model.compute
                     _ConvergenceCriteria);
                 uncertainCurve.AddCurveRealization(frequency_consequences, thisChunkIteration);
 
-                double eaConsequencesEstimate = frequency_consequences.integrate();
+                double eaConsequencesEstimate = frequency_consequences.Integrate();
                 _ImpactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eaConsequencesEstimate, stageUncertainConsequences.CurveMetaData.DamageCategory, stageUncertainConsequences.CurveMetaData.AssetCategory, _ImpactAreaID, thisChunkIteration, consequenceType, RiskType.Fail);
             }
         }
@@ -575,7 +575,7 @@ namespace HEC.FDA.Model.compute
                     _ConvergenceCriteria);
                 uncertainCurve.AddCurveRealization(damFreq, thisChunkIteration);
 
-                double eadOraal = damFreq.integrate();
+                double eadOraal = damFreq.Integrate();
                 _ImpactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadOraal, stageUncertainDamage.CurveMetaData.DamageCategory, stageUncertainDamage.CurveMetaData.AssetCategory, _ImpactAreaID, thisChunkIteration, type, riskType);
             }
         }
