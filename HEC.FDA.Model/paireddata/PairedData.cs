@@ -20,6 +20,7 @@ namespace HEC.FDA.Model.paireddata
 
         #region Constructors 
         /// <summary>
+        /// WARNING: Paired data allows X vals in any order, but many methods require that they be sorted in ascending order
         /// X values must always be in increasing order.
         /// X values are the independent variable, and Y values are the dependent variable.
         /// Common paired data relationships in FDA follow these conventions:
@@ -34,10 +35,6 @@ namespace HEC.FDA.Model.paireddata
         /// <param name="ys"></param>
         public PairedData(IReadOnlyList<double> xs, IReadOnlyList<double> ys, CurveMetaData metadata = null)
         {
-            if(xs[0] > xs[^1])
-            {
-                throw new ArgumentException("X values must be in increasing order.");
-            }
             _xVals = xs == null ? null : xs.ToArray();
             _yVals = ys == null ? null : ys.ToArray();
             MetaData = metadata;
@@ -52,6 +49,10 @@ namespace HEC.FDA.Model.paireddata
         /// </summary>
         public double f(double x)
         {
+            if (_xVals[0] > _xVals[^1])
+            {
+                throw new ArgumentException("X values must be in increasing order.");
+            }
             int index = Array.BinarySearch(_xVals, x);
             if (index >= 0)
             {
@@ -81,6 +82,10 @@ namespace HEC.FDA.Model.paireddata
         /// </summary>
         public double f(double x, ref int indexOfPreviousTopOfSegment)
         {
+            if (_xVals[0] > _xVals[^1])
+            {
+                throw new ArgumentException("X values must be in increasing order.");
+            }
             //We're above the curve
             if (x > Xvals[^1])
             {
@@ -112,6 +117,10 @@ namespace HEC.FDA.Model.paireddata
         }
         private double InterpolateYs(double x, int index)
         {
+            if (_xVals[0] > _xVals[^1])
+            {
+                throw new ArgumentException("X values must be in increasing order.");
+            }
             double yAtIndexMinus1 = Yvals[index - 1];
             double xAtIndexMinus1 = Xvals[index - 1];
             double m = (Yvals[index] - yAtIndexMinus1) / (Xvals[index] - xAtIndexMinus1);
@@ -126,6 +135,10 @@ namespace HEC.FDA.Model.paireddata
         /// </summary>
         public double f_inverse(double y)
         {
+            if (_xVals[0] > _xVals[^1])
+            {
+                throw new ArgumentException("X values must be in increasing order.");
+            }
             //binary search.
             double[] yvalsArray = _yVals;
             int index = Array.BinarySearch(yvalsArray, y);
@@ -175,6 +188,10 @@ namespace HEC.FDA.Model.paireddata
 
         public PairedData SumYsForGivenX(IPairedData inputPairedData)
         {
+            if (_xVals[0] > _xVals[^1])
+            {
+                throw new ArgumentException("X values must be in increasing order.");
+            }
             if (Xvals != null && Yvals != null)
             {
 
@@ -226,6 +243,10 @@ namespace HEC.FDA.Model.paireddata
 
         public double Integrate(bool withPadding = true)
         {
+            if (_xVals[0] > _xVals[^1])
+            {
+                throw new ArgumentException("X values must be in increasing order.");
+            }
             if (withPadding)
             {
                 return Mathematics.IntegrateCDF<double>(_xVals, _yVals);

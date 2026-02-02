@@ -249,8 +249,9 @@ public static class RASHelper
                 if (polygons[j].Contains(points[i]))
                 {
                     var row = polygons.AttributeTable.Rows[j];
-                    string summaryZone = row.TryGetValueAs(polygonColumnName, $"Polygon {j}").TrimEnd();
-                    result[summaryZone] = Converter.ConvertPtM(points[i]);
+                    object value = row.TryGetValueAs<object>(polygonColumnName, null);
+                    string polygonName = value?.ToString()?.TrimEnd() ?? $"Polygon {j}";
+                    result[polygonName] = Converter.ConvertPtM(points[i]);
                 }
             }
         }
