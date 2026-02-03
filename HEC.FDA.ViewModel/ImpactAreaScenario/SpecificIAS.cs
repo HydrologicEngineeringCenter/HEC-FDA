@@ -221,6 +221,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                     vr.AddErrorMessage($"No non-failure stage-life loss selected.");
                 }
             }
+            if (CalculateDefaultThreshold && !HasFailureStageDamage)
+            {
+                vr.AddErrorMessage("Please manually enter a threshold stage if you are only modeling life loss.");
+            }
             //insert the name of the impact area if not valid
             if (!vr.IsValid)
             {

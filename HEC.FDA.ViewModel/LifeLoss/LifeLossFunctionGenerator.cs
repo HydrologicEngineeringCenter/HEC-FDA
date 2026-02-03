@@ -59,7 +59,12 @@ public class LifeLossFunctionGenerator
         List<LifeLossFunction> lifeLossFunctions = new();
 
         // create the map of summary zone names to their corresponding index points
-        _indexPointBySummaryZone = RASHelper.QueryPolygons(summarySetPath, indexPointsPath, summarySetUniqueName);
+        if (!RASHelper.TryQueryPolygons(summarySetPath, indexPointsPath, summarySetUniqueName, out _indexPointBySummaryZone))
+        {
+            System.Windows.MessageBox.Show($"Could not create a 1-1 mapping of Index Points '{Path.GetFileName(indexPointsPath)}' to Impact Areas '{Path.GetFileName(summarySetPath)}'.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return [];
+        }
+            
 
         lifeLossFunctions = await Task.Run(CreateLifeLossFunctions);
 

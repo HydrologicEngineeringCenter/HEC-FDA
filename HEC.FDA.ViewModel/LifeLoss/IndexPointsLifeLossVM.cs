@@ -561,9 +561,9 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
             LegendPosition = LegendPosition.TopLeft,
             LegendPlacement = LegendPlacement.Inside
         });
-        AddLineSeriesToPlot(upper, "97.5%", isConfidenceLimit: true);
-        AddLineSeriesToPlot(mid, "50%");
-        AddLineSeriesToPlot(lower, "2.5%", isConfidenceLimit: true);
+        AddLineSeriesToPlot(upper, "97.5 Percentile", isConfidenceLimit: true);
+        AddLineSeriesToPlot(mid, "Median");
+        AddLineSeriesToPlot(lower, "2.5 Percentile", isConfidenceLimit: true);
 
         MyModel.ResetAllAxes(); // recenter on the newly plotted lines
         if (!int.TryParse(llf.HazardTime, out int time))
