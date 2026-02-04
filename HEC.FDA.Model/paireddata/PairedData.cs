@@ -188,56 +188,53 @@ namespace HEC.FDA.Model.paireddata
 
         public PairedData SumYsForGivenX(IPairedData inputPairedData)
         {
+            if (Xvals == null && Yvals == null)
+            {
+                return new PairedData(inputPairedData.Xvals.ToArray(), inputPairedData.Yvals.ToArray());
+            }
             if (_xVals[0] > _xVals[^1])
             {
                 throw new ArgumentException("X values must be in increasing order.");
             }
-            if (Xvals != null && Yvals != null)
+            double[] x = new double[inputPairedData.Xvals.Count];
+            double[] ySum = new double[inputPairedData.Yvals.Count];
+            for (int i = 0; i < inputPairedData.Xvals.Count; i++)
             {
-
-                double[] x = new double[inputPairedData.Xvals.Count];
-                double[] ySum = new double[inputPairedData.Yvals.Count];
-                for (int i = 0; i < inputPairedData.Xvals.Count; i++)
+                int index = Array.BinarySearch(_xVals, inputPairedData.Xvals[i]);
+                double yValueFromSubject;
+                if (index >= 0)
                 {
-                    int index = Array.BinarySearch(_xVals, inputPairedData.Xvals[i]);
-                    double yValueFromSubject;
-                    if (index >= 0)
-                    {
-                        //value matched exactly
-                        yValueFromSubject = Yvals[index];
+                    //value matched exactly
+                    yValueFromSubject = Yvals[index];
 
-                    }
-                    else
-                    {
-                        index = ~index;
-
-                        //if the x value from input is greater than all x values in subject
-                        if (index == Xvals.Count)
-                        {
-                            yValueFromSubject = Yvals[^1];
-                        }
-
-                        //if the x value from the input is less than all x values in subject
-                        else if (index == 0)
-                        {
-                            yValueFromSubject = Yvals[0];
-                        }
-                        else //x value from the input is within range of x values in subject, but does not match exactly
-                        { //Interpolate Y=mx+b
-                            double slope = (Yvals[index] - Yvals[index - 1]) / (Xvals[index] - Xvals[index - 1]);
-                            double intercept = Yvals[index] - slope * Xvals[index];
-                            yValueFromSubject = intercept + slope * inputPairedData.Xvals[i];
-                        }
-                    }
-                    ySum[i] = inputPairedData.Yvals[i] + yValueFromSubject;
-                    x[i] = inputPairedData.Xvals[i];
                 }
-                return new PairedData(x, ySum);
+                else
+                {
+                    index = ~index;
+
+                    //if the x value from input is greater than all x values in subject
+                    if (index == Xvals.Count)
+                    {
+                        yValueFromSubject = Yvals[^1];
+                    }
+
+                    //if the x value from the input is less than all x values in subject
+                    else if (index == 0)
+                    {
+                        yValueFromSubject = Yvals[0];
+                    }
+                    else //x value from the input is within range of x values in subject, but does not match exactly
+                    { //Interpolate Y=mx+b
+                        double slope = (Yvals[index] - Yvals[index - 1]) / (Xvals[index] - Xvals[index - 1]);
+                        double intercept = Yvals[index] - slope * Xvals[index];
+                        yValueFromSubject = intercept + slope * inputPairedData.Xvals[i];
+                    }
+                }
+                ySum[i] = inputPairedData.Yvals[i] + yValueFromSubject;
+                x[i] = inputPairedData.Xvals[i];
             }
-            else
-            {
-                return new PairedData(inputPairedData.Xvals.ToArray(), inputPairedData.Yvals.ToArray());
-            }
+            return new PairedData(x, ySum);
+
         }
 
 
