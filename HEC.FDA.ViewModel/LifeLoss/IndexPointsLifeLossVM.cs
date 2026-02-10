@@ -151,9 +151,9 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
                 string formattedTime = time < 10 ? $"0{time}00" : $"{time}00";
                 WeightedCheckableItem item = new() { Name = formattedTime, Value = time.ToString() };
                 if (i == 0)
-                    item.Weight = 0.35;
+                    item.Weight = 0.55;
                 else if (i == 1)
-                    item.Weight = 0.65;
+                    item.Weight = 0.45;
                 if (i < 2)
                 {
                     item.IsChecked = true;
