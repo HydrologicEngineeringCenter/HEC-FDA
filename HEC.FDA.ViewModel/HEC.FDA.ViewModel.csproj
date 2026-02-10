@@ -5,6 +5,10 @@
 		<UseWPF>true</UseWPF>
 		<RootNamespace>HEC.FDA.ViewModel</RootNamespace>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="HEC.FDA.TestingUtility" />
+	</ItemGroup>
 	
 	<ItemGroup>
 		<ProjectReference Include="..\HEC.FDA.Importer\HEC.FDA.Importer.csproj" />
