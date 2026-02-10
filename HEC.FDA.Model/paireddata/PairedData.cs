@@ -188,7 +188,7 @@ namespace HEC.FDA.Model.paireddata
 
         public PairedData SumYsForGivenX(IPairedData inputPairedData)
         {
-            if (Xvals == null && Yvals == null)
+            if (Xvals == null || Yvals == null)
             {
                 return new PairedData(inputPairedData.Xvals.ToArray(), inputPairedData.Yvals.ToArray());
             }
