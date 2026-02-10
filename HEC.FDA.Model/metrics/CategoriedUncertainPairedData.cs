@@ -123,6 +123,10 @@ public class CategoriedUncertainPairedData
     /// <param name="iterationIndex">The index within the current batch.</param>
     public void AddCurveRealization(PairedData frequencyCurve, long iterationIndex)
     {
+        if (frequencyCurve.Xvals.Count != Xvals.Count)
+        {
+            throw new ArgumentException("frequency curves need to have the same x ordinates to be added.");
+        }
         IReadOnlyList<double> yvals = frequencyCurve.Yvals;
         for (int i = 0; i < yvals.Count; i++)
         {
