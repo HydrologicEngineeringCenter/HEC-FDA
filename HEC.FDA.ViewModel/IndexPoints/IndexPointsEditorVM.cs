@@ -130,7 +130,7 @@ namespace HEC.FDA.ViewModel.IndexPoints
 
             if (IsCreatingNewElement)
             {
-                FdaValidationResult reprojectResult = SaveWithReprojection(Name, elementToSave.GetType());
+                FdaValidationResult reprojectResult = SaveWithReprojection(Name);
                 if (!reprojectResult.IsValid)
                 {
                     System.Windows.MessageBox.Show(reprojectResult.ErrorMessage, "Save Failed", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -145,7 +145,7 @@ namespace HEC.FDA.ViewModel.IndexPoints
             Save(elementToSave);
         }
 
-        private FdaValidationResult SaveWithReprojection(string directoryName, Type elementType)
+        private FdaValidationResult SaveWithReprojection(string directoryName)
         {
             FdaValidationResult result = new();
 
