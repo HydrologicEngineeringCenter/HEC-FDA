@@ -393,7 +393,6 @@ namespace HEC.FDA.Model.compute
             PairedData frequency_stage_sample;
             if (_FrequencyStage.CurveMetaData.IsNull)
             {
-                Debug.Assert(!_DischargeStage.CurveMetaData.IsNull);
                 PairedData frequencyDischarge;
 
                 if (_FrequencyDischargeGraphical.CurveMetaData.IsNull)
