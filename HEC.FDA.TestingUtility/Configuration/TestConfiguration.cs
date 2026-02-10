@@ -28,7 +28,7 @@ public class GlobalSettings
     public string LocalTempDirectory { get; set; } = Path.Combine(Path.GetTempPath(), "FDATests");
 
     [JsonPropertyName("timeoutMinutes")]
-    public int TimeoutMinutes { get; set; } = 30;
+    public int TimeoutMinutes { get; set; } = 120;
 }
 
 public class StudyConfiguration

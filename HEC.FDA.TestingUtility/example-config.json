@@ -1,0 +1,19 @@
+{
+  "testSuiteId": "quick-start",
+  "globalSettings": {
+    "localTempDirectory": "C:/temp/FDATests",
+    "timeoutMinutes": 60
+  },
+  "studies": [
+    {
+      "studyId": "my-study",
+      "studyName": "My Study",
+      "networkSourcePath": "C:/path/to/my/study/folder",
+      "runAllStageDamage": true,
+      "runAllScenarios": true,
+      "runAllAlternatives": true,
+      "runAllAlternativeComparisons": true,
+      "computations": []
+    }
+  ]
+}
