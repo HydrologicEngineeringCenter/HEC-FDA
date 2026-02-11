@@ -7,6 +7,8 @@ namespace HEC.FDA.View.Utilities
 {
     public class MilitaryTimeConverter : IValueConverter
     {
+        // if it's an int, return it x100 (Military Time). If it's not, but it has the magic string, display as is (combined curve) otherwise.
+        // null or empty should return empty. 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var s = value as string;
