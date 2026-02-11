@@ -26,6 +26,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         public const string FAILURE_STAGE_LIFELOSS_ID = "FailureStageLifeLossDamageID";
         public const string NON_FAILURE_STAGE_LIFELOSS_ID = "NonFailureStageLifeLossDamageID";
         public const string HAS_NON_FAILURE_STAGE_DAMAGE = "HasNonFailureStageDamage";
+        public const int NONE_SELECTED_ID = -1;
 
         private string _AnalysisYear;
         private int _FailureStageDamageID;
@@ -110,25 +111,20 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             }
             else
             {
-                NonFailureStageDamageID = -1;
+                NonFailureStageDamageID = NONE_SELECTED_ID;
                 HasNonFailureStageDamage = false;
             }
 
-            FailureStageLifeLossID = (int?)setElem.Attribute(FAILURE_STAGE_LIFELOSS_ID) ?? -1;
-            NonFailureStageLifeLossID = (int?)setElem.Attribute(NON_FAILURE_STAGE_LIFELOSS_ID) ?? -1;
-
+            FailureStageLifeLossID = (int?)setElem.Attribute(FAILURE_STAGE_LIFELOSS_ID) ?? NONE_SELECTED_ID;
+            NonFailureStageLifeLossID = (int?)setElem.Attribute(NON_FAILURE_STAGE_LIFELOSS_ID) ?? NONE_SELECTED_ID;
             IEnumerable<XElement> iasElements = setElem.Elements("IAS");
             foreach (XElement elem in iasElements)
             {
-                //SpecificIAS needs ot know about the non-failure stage damage so pass that info along.
                 SpecificIAS specificIAS = new(elem);
-                specificIAS.HasFailureStageDamage = FailureStageDamageID != -1;
-                specificIAS.HasNonFailureStageDamage = HasNonFailureStageDamage;
-                specificIAS.NonFailureStageDamageID = NonFailureStageDamageID;
-                specificIAS.HasFailureStageLifeLoss = FailureStageLifeLossID != -1;
-                specificIAS.FailureStageLifeLossID = FailureStageLifeLossID;
-                specificIAS.HasNonFailureStageLifeLoss = NonFailureStageLifeLossID != -1;
-                specificIAS.NonFailureStageLifeLossID = NonFailureStageLifeLossID;
+                specificIAS.SetConsequencesFromParent(
+                    FailureStageDamageID, NonFailureStageDamageID,
+                    FailureStageLifeLossID, NonFailureStageLifeLossID,
+                    HasNonFailureStageDamage);
                 SpecificIASElements.Add(specificIAS);
             }
 

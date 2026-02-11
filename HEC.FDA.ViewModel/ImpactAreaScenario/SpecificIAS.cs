@@ -25,13 +25,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         private const string ID = "ID";
         private const string IAS = "IAS";
         private const string IMPACT_AREA = "ImpactArea";
-        private const string HAS_NON_FAILURE_STAGE_DAMAGE = "HasNonFailureStageDamage";
         private const string FREQUENCY_RELATIONSHIP = "FrequencyRelationship";
         private const string INFLOW_OUTFLOW = "InflowOutflow";
         private const string RATING = "Rating";
         private const string LATERAL_STRUCTURE = "LateralStructure";
         private const string EXTERIOR_INTERIOR = "ExteriorInterior";
-        private const string STAGE_DAMAGE = "StageDamage";
         private const string THRESHOLDS = "Thresholds";
         private const string SCENARIO_REFLECTS_WITHOUT_PROJ = "ScenarioReflectsWithoutProject"; //leaving this for backward compatability. This was renamed in ui to "Calculate Default Threshold" 
         private const string DEFAULT_STAGE = "DefaultStage";
@@ -94,6 +92,25 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
 
         #endregion
+
+        /// <summary>
+        /// Sets all consequence config properties from the parent IASElement.
+        /// This centralizes the derivation logic for Has* booleans and ensures
+        /// no properties are accidentally omitted.
+        /// </summary>
+        public void SetConsequencesFromParent(int failureStageDamageID, int nonFailureStageDamageID,
+            int failureStageLifeLossID, int nonFailureStageLifeLossID, bool hasNonFailureStageDamage)
+        {
+            HasFailureStageDamage = failureStageDamageID != IASElement.NONE_SELECTED_ID;
+            FailureStageDamageID = failureStageDamageID;
+            HasNonFailureStageDamage = hasNonFailureStageDamage;
+            NonFailureStageDamageID = nonFailureStageDamageID;
+            HasFailureStageLifeLoss = failureStageLifeLossID != IASElement.NONE_SELECTED_ID;
+            FailureStageLifeLossID = failureStageLifeLossID;
+            HasNonFailureStageLifeLoss = nonFailureStageLifeLossID != IASElement.NONE_SELECTED_ID;
+            NonFailureStageLifeLossID = nonFailureStageLifeLossID;
+        }
+
         #region Constructors
 
         /// <summary>
@@ -132,24 +149,18 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
 
         /// <summary>
         /// This ctor is used to load elements from the database.
-        /// WARNING: Two properties of SpecificIAS : HasNonFailureStageDamage, and
-        /// NonFailureStageDamageID are not saved as part of this object, but in the parent element. 
-        /// They must be passed down after creation 
+        /// Consequence config (stage damage and life loss IDs/flags) is owned by the parent
+        /// IASElement and set via SetConsequencesFromParent() after construction.
         /// </summary>
         /// <param name="iasElem"></param>
         public SpecificIAS(XElement iasElem)
         {
-            //default values
-            HasNonFailureStageDamage = false;
-            NonFailureStageDamageID = -999; //obviously invalid value to help in debugging. 
-
             ImpactAreaID = int.Parse(iasElem.Attribute(IMPACT_AREA).Value);
             FlowFreqID = int.Parse(iasElem.Element(FREQUENCY_RELATIONSHIP).Attribute(ID).Value);
             InflowOutflowID = int.Parse(iasElem.Element(INFLOW_OUTFLOW).Attribute(ID).Value);
             RatingID = int.Parse(iasElem.Element(RATING).Attribute(ID).Value);
             LeveeFailureID = int.Parse(iasElem.Element(LATERAL_STRUCTURE).Attribute(ID).Value);
             ExtIntStageID = int.Parse(iasElem.Element(EXTERIOR_INTERIOR).Attribute(ID).Value);
-            FailureStageDamageID = int.Parse(iasElem.Element(STAGE_DAMAGE).Attribute(ID).Value);
 
             //check if new elements exist before reading
             if (iasElem.Elements(SCENARIO_REFLECTS_WITHOUT_PROJ).Any())
@@ -343,7 +354,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
         {
             XElement iasElement = new XElement(IAS);
             iasElement.SetAttributeValue(IMPACT_AREA, ImpactAreaID);
-            iasElement.SetAttributeValue(HAS_NON_FAILURE_STAGE_DAMAGE, HasNonFailureStageDamage);
 
             XElement freqRelationshipElem = new XElement(FREQUENCY_RELATIONSHIP);
             freqRelationshipElem.SetAttributeValue(ID, FlowFreqID);
@@ -364,10 +374,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             XElement extIntElem = new XElement(EXTERIOR_INTERIOR);
             extIntElem.SetAttributeValue(ID, ExtIntStageID);
             iasElement.Add(extIntElem);
-
-            XElement stageDamageElem = new XElement(STAGE_DAMAGE);
-            stageDamageElem.SetAttributeValue(ID, FailureStageDamageID);
-            iasElement.Add(stageDamageElem);
 
             XElement scenarioReflectsWithoutProjElem = new XElement(SCENARIO_REFLECTS_WITHOUT_PROJ);
             scenarioReflectsWithoutProjElem.SetAttributeValue("value", CalculateDefaultThreshold);
