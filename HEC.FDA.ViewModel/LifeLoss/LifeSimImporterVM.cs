@@ -120,7 +120,7 @@ public partial class LifeSimImporterVM : BaseEditorVM
         foreach (LifeLossFunction function in functions)
         {
             function.ElementID = id;
-            if (function.HazardTime.StartsWith(LifeLossStringConstants.COMBINED_MAGIC_STRING))
+            if (function.IsCombined)
                 // we need to save the combined functions to a table with a different schema to accomodate empirical distributions
                 combinedSaver.SaveToSQLite(function);
             else

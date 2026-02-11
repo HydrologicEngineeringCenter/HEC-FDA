@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.Model.paireddata;
+using Statistics.Distributions;
 
 namespace HEC.FDA.Model.LifeLoss
 {
@@ -21,6 +22,7 @@ namespace HEC.FDA.Model.LifeLoss
         public string SummaryZone { get; set; }
         public string HazardTime { get; }
         public string[] AlternativeNames { get; }
+        public bool IsCombined => Data?.Yvals.Length > 0 && Data?.Yvals[0] is Empirical;
 
         public LifeLossFunction(int elementID, int functionID, UncertainPairedData data, string[] alternativeNames, string simulationName, string summaryZone, string hazardTime)
         {
