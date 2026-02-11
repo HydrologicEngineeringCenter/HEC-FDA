@@ -41,12 +41,6 @@ public static class Mathematics
     /// </summary>
     public static T IntegrateCDF<T>(Span<T> xVals, Span<T> yVals) where T : IBinaryFloatingPointIeee754<T>
     {
-        //confirm these are increasing 
-        if (!(xVals[0] <= xVals[^1]) || !(yVals[0] <= yVals[^1]))
-        {
-            throw new ArgumentException("Both X and Y Vales must be in ascending order to integrate");
-        }
-
         T paddedArea = T.Zero;
         //Between 0 and x1 (Triangle)
         if (xVals[0] > T.Zero)
@@ -74,6 +68,8 @@ public static class Mathematics
         for (int i = 0; i < xVals.Length - 1; i++)
         {
             T dx = xVals[i + 1] - xVals[i];
+            if (dx < T.Zero)
+                throw new ArgumentException("X values must be in ascending order to integrate");
             area += (yVals[i] + yVals[i + 1]) / T.CreateTruncating(2.0) * dx;
         }
         return area;
