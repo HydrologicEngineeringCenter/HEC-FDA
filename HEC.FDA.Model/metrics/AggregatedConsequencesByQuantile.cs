@@ -30,23 +30,7 @@ namespace HEC.FDA.Model.metrics
             IsNull = true;
 
         }
-        /// <summary>
-        /// This constructor creates a new empirical distribution based on a list of data
-        /// </summary>
-        /// <param name="damageCategory"></param>
-        /// <param name="assetCategory"></param>
-        /// <param name="convergenceCriteria"></param>
-        /// <param name="consequences"></param>
-        /// <param name="impactAreaID"></param>
-        public AggregatedConsequencesByQuantile(string damageCategory, string assetCategory, List<double> consequences, int impactAreaID, RiskType riskType = RiskType.Fail)
-        {
-            DamageCategory = damageCategory;
-            AssetCategory = assetCategory;
-            ConsequenceDistribution = Empirical.FitToSample(consequences);
-            RegionID = impactAreaID;
-            RiskType = riskType;
 
-        }
         /// <summary>
         /// This constructor can accept a previously created Empirical Distribution
         /// as such can be used for both compute types
@@ -54,7 +38,7 @@ namespace HEC.FDA.Model.metrics
         /// <param name="damageCategory"></param>
         /// <param name="assetCategory"></param>
         /// <param name="impactAreaID"></param>
-        public AggregatedConsequencesByQuantile(string damageCategory, string assetCategory, Empirical empirical, int impactAreaID, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Fail)
+        public AggregatedConsequencesByQuantile(string damageCategory, string assetCategory, Empirical empirical, int impactAreaID, ConsequenceType consequenceType, RiskType riskType)
         {
             DamageCategory = damageCategory;
             AssetCategory = assetCategory;

@@ -111,12 +111,12 @@ public static class AlternativeComparisonReport
 
         if (iterateOnWithProject)
         {
-            singleEmpiricalDistributionOfConsequences = new AggregatedConsequencesByQuantile(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, empirical, withProjectDamageResult.RegionID, withProjectDamageResult.ConsequenceType);
+            singleEmpiricalDistributionOfConsequences = new AggregatedConsequencesByQuantile(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, empirical, withProjectDamageResult.RegionID, withProjectDamageResult.ConsequenceType, withoutProjectDamageResult.RiskType);
 
         }
         else
         {
-            singleEmpiricalDistributionOfConsequences = new AggregatedConsequencesByQuantile(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, empirical, withoutProjectDamageResult.RegionID, withoutProjectDamageResult.ConsequenceType);
+            singleEmpiricalDistributionOfConsequences = new AggregatedConsequencesByQuantile(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, empirical, withoutProjectDamageResult.RegionID, withoutProjectDamageResult.ConsequenceType, withoutProjectDamageResult.RiskType);
 
         }
         return singleEmpiricalDistributionOfConsequences;
