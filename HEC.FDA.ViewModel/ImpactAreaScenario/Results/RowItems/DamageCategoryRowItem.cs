@@ -7,7 +7,7 @@
         public string RiskType { get; set; }
 
 
-        public DamageCategoryRowItem(string damCat, double ead, string riskType = null)
+        public DamageCategoryRowItem(string damCat, double ead, string riskType)
         {
             RiskType = riskType;
             EAD = ead;

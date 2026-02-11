@@ -138,7 +138,7 @@ public class UncertaintyControlConfigs
             ConsequenceType = ConsequenceType.Damage;
         }
 
-        public IQuartileRowItem CreateRowItem(string frequency, double value, string riskType = null)
+        public IQuartileRowItem CreateRowItem(string frequency, double value, string riskType)
         {
             return new EqadRowItem(frequency, value, riskType);
         }

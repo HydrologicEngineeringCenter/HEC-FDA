@@ -12,7 +12,7 @@ internal class EqadRowItem : IQuartileRowItem
     [DisplayAsColumn("Risk Type")]
     public string RiskType { get; }
 
-    public EqadRowItem(string frequency, double value, string riskType = null)
+    public EqadRowItem(string frequency, double value, string riskType)
     {
         Frequency = frequency;
         Value = value;

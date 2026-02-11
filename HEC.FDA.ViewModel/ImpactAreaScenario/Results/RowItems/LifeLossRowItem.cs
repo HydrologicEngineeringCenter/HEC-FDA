@@ -12,7 +12,7 @@ public class LifeLossRowItem : IQuartileRowItem
     [DisplayAsColumn("Risk Type")]
     public string RiskType { get; }
 
-    public LifeLossRowItem(string frequency, double value, string riskType = null)
+    public LifeLossRowItem(string frequency, double value, string riskType)
     {
         Frequency = frequency;
         Value = value;
