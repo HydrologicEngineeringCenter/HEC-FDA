@@ -155,8 +155,8 @@ public class UncertaintyControlConfigs
 
         public LifeLossReducedWithUncertaintyControlConfig()
         {
-            PlotTitle = "EALL Reduced Distribution";
-            YAxisTitle = "Expected Annual Life Loss";
+            PlotTitle = "AALL Reduced Distribution";
+            YAxisTitle = "Average Annual Life Loss";
             MeanFormat = "N2";
             YAxisFormat = "N0";
             TrackerFormat = "X: {Probability:0.####}, Y: {Value:N2}";

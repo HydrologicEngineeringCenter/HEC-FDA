@@ -4,7 +4,7 @@ using HEC.FDA.ViewModel.Utilities;
 namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results.RowItems;
 public class LifeLossRowItem : IQuartileRowItem
 {
-    [DisplayAsColumn("Quartile of EALL Distribution")]
+    [DisplayAsColumn("Quartile of AALL Distribution")]
     public string Frequency { get; }
     public double Value { get; }
     [DisplayAsColumn(StringConstants.QUARTILE_VALUE)]

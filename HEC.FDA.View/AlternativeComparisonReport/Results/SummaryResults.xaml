@@ -73,7 +73,7 @@
           </StackPanel>
         </Border>
 
-        <!--Base Year EALL-->
+        <!--Base Year AALL-->
         <Border
           BorderBrush="Gray"
           BorderThickness="1"
@@ -83,12 +83,12 @@
           Visibility="{Binding HasLifeLossResults, Converter={StaticResource BoolToVisConverter}}">
           <StackPanel>
             <TextBlock
-              Text="{Binding AggBaseYearEALLLabel}"
+              Text="{Binding AggBaseYearAALLLabel}"
               HorizontalAlignment="Center"
               Margin="5" />
 
             <twp:FdaDataGrid
-              ItemsSource="{Binding AggBaseEALLSummaryRows}"
+              ItemsSource="{Binding AggBaseAALLSummaryRows}"
               AutoGenerateColumns="True"
               HorizontalAlignment="Left"
               VerticalAlignment="Top"
@@ -133,7 +133,7 @@
           </StackPanel>
         </Border>
 
-        <!--Future Year EALL-->
+        <!--Future Year AALL-->
         <Border
           BorderBrush="Gray"
           BorderThickness="1"
@@ -143,12 +143,12 @@
           Visibility="{Binding HasLifeLossResults, Converter={StaticResource BoolToVisConverter}}">
           <StackPanel>
             <TextBlock
-              Text="{Binding AggFutureYearEALLLabel}"
+              Text="{Binding AggFutureYearAALLLabel}"
               HorizontalAlignment="Center"
               Margin="5" />
 
             <twp:FdaDataGrid
-              ItemsSource="{Binding AggFutureEALLSummaryRows}"
+              ItemsSource="{Binding AggFutureAALLSummaryRows}"
               AutoGenerateColumns="True"
               HorizontalAlignment="Left"
               VerticalAlignment="Top"

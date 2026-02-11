@@ -172,9 +172,9 @@ public class AlternativeComparisonReportElement : ChildElement
 
         List<AggregatedEqadSummaryRowItem> eqadAggregatedSummaryRowItems = CreateAggregatedEqadSummaryTable(_Results);
         List<AggregatedEADSummaryRowItem> eADAggregatedSummaryRowItems = CreateAggregatedEADFutureYearSummaryTable(_Results);
-        List<AggregatedEALLSummaryRowItem> eALLAggregatedSummaryRowItems = CreateAggregatedEALLFutureYearSummaryTable(_Results);
+        List<AggregatedAALLSummaryRowItem> aALLAggregatedSummaryRowItems = CreateAggregatedAALLFutureYearSummaryTable(_Results);
         List<AggregatedEADSummaryRowItem> eADAggregatedBaseSummaryRowItems = CreateAggregatedEADBaseYearSummaryTable(_Results);
-        List<AggregatedEALLSummaryRowItem> eALLAggregatedBaseSummaryRowItems = CreateAggregatedEALLBaseYearSummaryTable(_Results);
+        List<AggregatedAALLSummaryRowItem> aALLAggregatedBaseSummaryRowItems = CreateAggregatedAALLBaseYearSummaryTable(_Results);
 
         // Check for available result types
         bool hasDamageResults = HasDamageResults();
@@ -188,7 +188,7 @@ public class AlternativeComparisonReportElement : ChildElement
 
         SpecificAltCompReportResultsVM summaryOption = new SummaryVM(
             eADBaseSummaryRowItems, eADFutureSummaryRowItems, eqadSummaryRowItems,
-            eADAggregatedBaseSummaryRowItems, eALLAggregatedBaseSummaryRowItems, eADAggregatedSummaryRowItems, eALLAggregatedSummaryRowItems,
+            eADAggregatedBaseSummaryRowItems, aALLAggregatedBaseSummaryRowItems, eADAggregatedSummaryRowItems, aALLAggregatedSummaryRowItems,
             eqadAggregatedSummaryRowItems, _Results.Years, hasDamageResults, hasLifeLossResults);
         results.Add(summaryOption);
         return results;
@@ -259,9 +259,9 @@ public class AlternativeComparisonReportElement : ChildElement
         return eadSummaryRowItems;
     }
 
-    private List<AggregatedEALLSummaryRowItem> CreateAggregatedEALLFutureYearSummaryTable(AlternativeComparisonReportResults results)
+    private List<AggregatedAALLSummaryRowItem> CreateAggregatedAALLFutureYearSummaryTable(AlternativeComparisonReportResults results)
     {
-        List<AggregatedEALLSummaryRowItem> eallSummaryRowItems = new();
+        List<AggregatedAALLSummaryRowItem> eallSummaryRowItems = new();
         Dictionary<int, string> impactAreaNames = IASElement.GetImpactAreaNamesFromIDs();
         string withoutProjName = GetAlternativeElementFromID(WithoutProjAltID).Name;
 
@@ -277,7 +277,7 @@ public class AlternativeComparisonReportElement : ChildElement
                 double point5 = results.FutureYearEADReducedExceededWithProbabilityQ(.5, altID, impactAreaID, consequenceType: ConsequenceType.LifeLoss);
                 double point25 = results.FutureYearEADReducedExceededWithProbabilityQ(.25, altID, impactAreaID, consequenceType: ConsequenceType.LifeLoss);
                 double eallWithoutProjDamage = results.SampleMeanWithoutProjectFutureYearEAD(impactAreaID, consequenceType: ConsequenceType.LifeLoss);
-                AggregatedEALLSummaryRowItem row = new(impactAreaNames[impactAreaID], withoutProjName, eallWithoutProjDamage, withProjName, withProjEALL, eallReduced, point75, point5, point25);
+                AggregatedAALLSummaryRowItem row = new(impactAreaNames[impactAreaID], withoutProjName, eallWithoutProjDamage, withProjName, withProjEALL, eallReduced, point75, point5, point25);
                 eallSummaryRowItems.Add(row);
             }
         }
@@ -339,9 +339,9 @@ public class AlternativeComparisonReportElement : ChildElement
         return eadSummaryRowItems;
     }
 
-    private List<AggregatedEALLSummaryRowItem> CreateAggregatedEALLBaseYearSummaryTable(AlternativeComparisonReportResults results)
+    private List<AggregatedAALLSummaryRowItem> CreateAggregatedAALLBaseYearSummaryTable(AlternativeComparisonReportResults results)
     {
-        List<AggregatedEALLSummaryRowItem> eallSummaryRowItems = new();
+        List<AggregatedAALLSummaryRowItem> eallSummaryRowItems = new();
         Dictionary<int, string> impactAreaNames = IASElement.GetImpactAreaNamesFromIDs();
         string withoutProjName = GetAlternativeElementFromID(WithoutProjAltID).Name;
 
@@ -356,7 +356,7 @@ public class AlternativeComparisonReportElement : ChildElement
                 double point5 = results.BaseYearEADReducedExceededWithProbabilityQ(.5, altID, impactAreaID, consequenceType: ConsequenceType.LifeLoss);
                 double point25 = results.BaseYearEADReducedExceededWithProbabilityQ(.25, altID, impactAreaID, consequenceType: ConsequenceType.LifeLoss);
                 double eallWithoutProjLL = results.SampleMeanWithoutProjectBaseYearEAD(impactAreaID, consequenceType: ConsequenceType.LifeLoss);
-                AggregatedEALLSummaryRowItem row = new(impactAreaNames[impactAreaID], withoutProjName, eallWithoutProjLL, withProjName, withProjEALL, eallReduced, point75, point5, point25);
+                AggregatedAALLSummaryRowItem row = new(impactAreaNames[impactAreaID], withoutProjName, eallWithoutProjLL, withProjName, withProjEALL, eallReduced, point75, point5, point25);
                 eallSummaryRowItems.Add(row);
             }
         }
