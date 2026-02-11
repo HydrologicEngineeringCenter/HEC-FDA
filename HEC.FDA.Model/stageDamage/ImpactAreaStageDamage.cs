@@ -435,13 +435,13 @@ namespace HEC.FDA.Model.stageDamage
 
             for (int i = 0; i < _StagesAtIndexLocation.Length; i++)
             {
-                List<AggregatedConsequencesBinned> consequenceDistributionResultList = new()
-                {
-                    new(damageCategory, utilities.StringGlobalConstants.STRUCTURE_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID),
-                    new(damageCategory, utilities.StringGlobalConstants.CONTENT_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID),
-                    new(damageCategory, utilities.StringGlobalConstants.OTHER_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID),
-                    new(damageCategory, utilities.StringGlobalConstants.VEHICLE_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID)
-                };
+                List<AggregatedConsequencesBinned> consequenceDistributionResultList =
+                [
+                    new(damageCategory, StringGlobalConstants.STRUCTURE_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID, ConsequenceType.Damage),
+                    new(damageCategory, StringGlobalConstants.CONTENT_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID, ConsequenceType.Damage),
+                    new(damageCategory, StringGlobalConstants.OTHER_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID, ConsequenceType.Damage),
+                    new(damageCategory, StringGlobalConstants.VEHICLE_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID, ConsequenceType.Damage)
+                ];
                 StudyAreaConsequencesBinned consequenceDistributionResults = new(consequenceDistributionResultList);
                 consequenceDistributionResultsList.Add(consequenceDistributionResults);
             }

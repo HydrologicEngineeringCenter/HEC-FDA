@@ -136,7 +136,7 @@ namespace HEC.FDA.Model.compute
             }
 
             //User has no levee. if the user set the default threshold themself, just use that. Otherwise calculate it... 
-            else if (!defaultThresholdExists)
+            else if (!defaultThresholdExists) // ONLY IF WE HAVE FIALURE DAMAGES. Validated in the VM.
             {
                 PairedData frequency_stage_sample = GetFrequencyStageSample(computeIsDeterministic: true, 1);
                 ComputeConsequencesFromStageFrequency(frequency_stage_sample, 1, 1, computeIsDeterministic: true, _FailureStageDamageFunctions, ConsequenceType.Damage, false, true);
@@ -338,7 +338,7 @@ namespace HEC.FDA.Model.compute
                             long computeIteration = iterationsStart + chunkIteration;
 
                             PairedData frequency_stage_sample = GetFrequencyStageSample(computeIsDeterministic, computeIteration);
-                            PairedData systemResponse_sample = ComputeConsequencesFromStageFrequency(frequency_stage_sample, computeIteration, chunkIteration, computeIsDeterministic);//null return if no levee. 
+                            PairedData systemResponse_sample = ComputeConsequencesFromStageFrequency(frequency_stage_sample, computeIteration, chunkIteration, computeIsDeterministic);//null return if no levee or no ll/damage to compute.
                             ComputePerformanceFromStageFrequency(frequency_stage_sample, systemResponse_sample, chunkIteration);// null checks the system response. 
                         });
                         _ImpactAreaScenarioResults.ConsequenceResults.PutDataIntoHistograms();
@@ -556,26 +556,26 @@ namespace HEC.FDA.Model.compute
 
         }
 
-        private void ComputeAnnualizedConsequence(PairedData frequency_stage, long thisComputeIteration, long thisChunkIteration, bool computeIsDeterministic, ConsequenceType type, List<UncertainPairedData> failureStageDamageFunctions, PairedData validatedSystemResponse, RiskType riskType)
+        private void ComputeAnnualizedConsequence(PairedData frequency_stage, long thisComputeIteration, long thisChunkIteration, bool computeIsDeterministic, ConsequenceType type, List<UncertainPairedData> stageConsequenceFuncs, PairedData validatedSystemResponse, RiskType riskType)
         {
-            foreach (UncertainPairedData stageUncertainDamage in failureStageDamageFunctions)
+            foreach (UncertainPairedData stageUncertainCons in stageConsequenceFuncs)
             {
-                PairedData stageDamageSample = stageUncertainDamage.SamplePairedData(thisComputeIteration, computeIsDeterministic);
+                PairedData stageDamageSample = stageUncertainCons.SamplePairedData(thisComputeIteration, computeIsDeterministic);
                 stageDamageSample = stageDamageSample.multiply(validatedSystemResponse);
                 PairedData damFreq = stageDamageSample.compose(frequency_stage);//save me for FN Plot
 
                 // Add curve to uncertain consequence frequency curve for histogram aggregation
                 CategoriedUncertainPairedData uncertainCurve = _ImpactAreaScenarioResults.GetOrCreateUncertainConsequenceFrequencyCurve(
                     damFreq.Xvals.ToArray(),
-                    stageUncertainDamage.CurveMetaData.DamageCategory,
-                    stageUncertainDamage.CurveMetaData.AssetCategory,
+                    stageUncertainCons.CurveMetaData.DamageCategory,
+                    stageUncertainCons.CurveMetaData.AssetCategory,
                     type,
                     riskType,
                     _ConvergenceCriteria);
                 uncertainCurve.AddCurveRealization(damFreq, thisChunkIteration);
 
                 double eadOraal = damFreq.Integrate();
-                _ImpactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadOraal, stageUncertainDamage.CurveMetaData.DamageCategory, stageUncertainDamage.CurveMetaData.AssetCategory, _ImpactAreaID, thisChunkIteration, type, riskType);
+                _ImpactAreaScenarioResults.ConsequenceResults.AddConsequenceRealization(eadOraal, stageUncertainCons.CurveMetaData.DamageCategory, stageUncertainCons.CurveMetaData.AssetCategory, _ImpactAreaID, thisChunkIteration, type, riskType);
             }
         }
 
@@ -673,7 +673,7 @@ namespace HEC.FDA.Model.compute
             PairedData totalFrequencyDamage = damageFrequencyFunctions[0];
             for (int i = 0; i < damageFrequencyFunctions.Count; i++)
             {
-                //Tons of unnecessary GC happening here. Need to adjust SumYsForGivenX to not reallocated every time.
+                //Some unnecessary GC happening here. Not happening in the big parallel for. 10s to 100s , not hundreds of thousands.
                 totalFrequencyDamage = totalFrequencyDamage.SumYsForGivenX(damageFrequencyFunctions[i]);
             }
             double thresholdDamage = THRESHOLD_DAMAGE_PERCENT * totalFrequencyDamage.f(THRESHOLD_DAMAGE_RECURRENCE_INTERVAL);

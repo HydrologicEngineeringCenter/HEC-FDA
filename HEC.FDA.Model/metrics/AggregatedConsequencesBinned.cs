@@ -32,7 +32,7 @@ public class AggregatedConsequencesBinned
     /// <summary>
     /// This constructor is only used for handling errors. 
     /// </summary>
-    public AggregatedConsequencesBinned(int impactAreaID, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Fail)
+    public AggregatedConsequencesBinned(int impactAreaID, ConsequenceType consequenceType, RiskType riskType)
     {
         DamageCategory = "UNASSIGNED";
         AssetCategory = "UNASSIGNED";
@@ -46,7 +46,7 @@ public class AggregatedConsequencesBinned
         _TempResults = new double[ConvergenceCriteria.IterationCount];
         _TempCounts = new double[ConvergenceCriteria.IterationCount];
     }
-    public AggregatedConsequencesBinned(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Fail)
+    public AggregatedConsequencesBinned(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID, ConsequenceType consequenceType, RiskType riskType = RiskType.Fail)
     {
         DamageCategory = damageCategory;
         AssetCategory = assetCategory;

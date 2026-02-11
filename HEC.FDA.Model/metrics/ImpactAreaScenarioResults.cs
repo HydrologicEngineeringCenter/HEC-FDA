@@ -220,14 +220,6 @@ namespace HEC.FDA.Model.metrics
             return result;
         }
 
-        // this method is called to add a consequences result with zero damages to an impact area scenario which has no damages but has a levee
-        // still want to compute performance statistics on the levee, but want to show the user that there are also zero damages
-        // previously, the damages zero damages would not be reported to the user
-        public void AddZeroConsequencesResult(int impactAreaId)
-        {
-            var zeroResult = new AggregatedConsequencesBinned(impactAreaId);
-            ConsequenceResults.ConsequenceResultList.Add(zeroResult);
-        }
 
         private readonly object _uncertainCurveLock = new();
 

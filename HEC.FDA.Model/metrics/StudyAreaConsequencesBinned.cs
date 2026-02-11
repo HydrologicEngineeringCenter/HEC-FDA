@@ -23,7 +23,7 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
     public StudyAreaConsequencesBinned(int impactAreaID)
     {
         ConsequenceResultList = [];
-        AggregatedConsequencesBinned dummyConsequenceDistributionResult = new(impactAreaID);
+        AggregatedConsequencesBinned dummyConsequenceDistributionResult = new(impactAreaID, ConsequenceType.UNASSIGNED, RiskType.Fail);
         ConsequenceResultList.Add(dummyConsequenceDistributionResult);
         IsNull = true;
 
