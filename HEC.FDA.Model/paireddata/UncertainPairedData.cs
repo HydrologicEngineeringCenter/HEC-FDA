@@ -271,7 +271,7 @@ namespace HEC.FDA.Model.paireddata
                         }
                         else if (ordinateElements.Name.ToString().Equals("ThreadsafeInlineHistogram"))
                         {
-                            yValues[i] = ThreadsafeInlineHistogram.ReadFromXML(ordinateElements);
+                            throw new Exception("ThreadsafeInlineHistogram has been deprecated");
                         }
                         else if (ordinateElements.Name.ToString().Equals("Histogram"))
                         {
