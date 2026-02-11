@@ -45,7 +45,7 @@ namespace HEC.FDA.ModelTest.integrationtests
             double max = maxSampledCurve.f(nonExceedanceProbability);
             double range = max - min;
             double quantityOfBins = (int)(1 + 3.3 * Math.Log10(convergenceCriteria.MaxIterations));
-            double binWidth = (int)(range / quantityOfBins);
+            double binWidth = (range / quantityOfBins);
             DynamicHistogram graphicalThreadsafeInlineHistogram = new DynamicHistogram(binWidth, convergenceCriteria);
             int masterseed = 1234;
             long progressChunks = 1;
