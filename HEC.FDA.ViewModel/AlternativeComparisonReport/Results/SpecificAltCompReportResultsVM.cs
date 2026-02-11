@@ -12,7 +12,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
         private const string DAMAGE_BY_IMPACT_AREA = "Damage by Impact Area";
         private const string DAMAGE_BY_DAMAGE_CATEGORY = "Damage by Damage Category";
         private const string EAD = "EAD";
-        private const string EALL = "EALL";
+        private const string AALL = "AALL";
         private const string EqAD = "EqAD";
 
         private IAlternativeResult _selectedResult;
@@ -85,7 +85,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
             }
             if (hasLifeLossResults)
             {
-                DamageMeasure.Add(EALL);
+                DamageMeasure.Add(AALL);
             }
 
             // Set the starting state of the combos based on available data
@@ -98,7 +98,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
             }
             else if (hasLifeLossResults)
             {
-                _SelectedDamageMeasure = EALL;
+                _SelectedDamageMeasure = AALL;
                 SelectedYear = altResult.EADResult.YearResults[0];
                 Reports = _lifeLossReports;
                 _SelectedReport = LIFE_LOSS_WITH_UNCERTAINTY;
@@ -119,7 +119,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
                     CurrentResultVM = SelectedYear.DamageWithUncertaintyVM;
                     SelectedReport = DAMAGE_WITH_UNCERTAINTY;
                 }
-                else if (EALL.Equals(_SelectedDamageMeasure))
+                else if (AALL.Equals(_SelectedDamageMeasure))
                 {
                     CurrentResultVM = SelectedYear.LifeLossWithUncertaintyVM;
                     SelectedReport = LIFE_LOSS_WITH_UNCERTAINTY;
@@ -137,7 +137,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
                     CurrentResultVM = SelectedYear.DamageByImpactAreaVM;
                     SelectedReport = DAMAGE_BY_IMPACT_AREA;
                 }
-                else if (EALL.Equals(_SelectedDamageMeasure))
+                else if (AALL.Equals(_SelectedDamageMeasure))
                 {
                     CurrentResultVM = SelectedYear.LifeLossByImpactAreaVM;
                     SelectedReport = LIFE_LOSS_BY_IMPACT_AREA;
@@ -161,7 +161,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
                 SelectedReport = DAMAGE_WITH_UNCERTAINTY;
                 CurrentResultVM = AlternativeResult.EqadResult.DamageWithUncertaintyVM;
             }
-            else if (EALL.Equals(_SelectedDamageMeasure))
+            else if (AALL.Equals(_SelectedDamageMeasure))
             {
                 YearsVisible = true;
                 Reports = _lifeLossReports;
