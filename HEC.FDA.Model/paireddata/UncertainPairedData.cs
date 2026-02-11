@@ -118,7 +118,7 @@ namespace HEC.FDA.Model.paireddata
             {
                 y[i] = Yvals[i].InverseCDF(probability);
             }
-            PairedData pairedData = new(Xvals, y, CurveMetaData);//mutability leakage on xvals
+            PairedData pairedData = new(Xvals, y, CurveMetaData);
             pairedData.ForceWeakMonotonicityBottomUp();
             return pairedData;
         }
@@ -133,7 +133,7 @@ namespace HEC.FDA.Model.paireddata
             {
                 y[i] = Yvals[i].InverseCDF(probability);
             }
-            PairedData pairedData = new(Xvals, y, CurveMetaData);//mutability leakage on xvals
+            PairedData pairedData = new(Xvals, y, CurveMetaData);
 
             return pairedData;
         }
@@ -149,7 +149,7 @@ namespace HEC.FDA.Model.paireddata
                 Deterministic deterministic = UncertainToDeterministicDistributionConverter.ConvertDistributionToDeterministic(Yvals[i]);
                 y[i] = (deterministic.Value);
             }
-            PairedData pairedData = new(Xvals, y, CurveMetaData);//mutability leakage on xvals
+            PairedData pairedData = new(Xvals, y, CurveMetaData);
 
             return pairedData;
         }
