@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using HEC.FDA.ViewModel.Utilities;
 
-namespace HEC.FDA.ViewModel.LifeLoss;
+namespace HEC.FDA.ViewModel.Utilities;
 public partial class WeightedCheckableItem : CheckableItem
 {
     [ObservableProperty]
