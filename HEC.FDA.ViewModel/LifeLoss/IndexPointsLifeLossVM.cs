@@ -18,7 +18,10 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
+using Utility;
 using Utility.Extensions;
+using Visual.Observables;
 
 namespace HEC.FDA.ViewModel.LifeLoss;
 public partial class IndexPointsLifeLossVM : BaseViewModel
@@ -131,6 +134,18 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
             OnSelectedSimulationChanged(value);
         }
     }
+
+    private BatchJob _job;
+    public BatchJob Job
+    {
+        get => _job;
+        private set
+        {
+            _job = value;
+            NotifyPropertyChanged();
+        }
+    }
+
     private void OnSelectedSimulationChanged(LifeSimSimulation simulation)
     {
         // reset the other options
@@ -493,8 +508,11 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
             }
             System.Windows.MessageBox.Show(msg, "Missing Hydraulics Files", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
             return;
-        }   
-        List<LifeLossFunction> newFunctions = await generator.CreateLifeLossFunctionsAsync(impactAreasFile, indexPointsFile, uniqueImpactAreaHeader);
+        }
+
+        ISynchronizationContext context = new SynchronizationContext(action => Application.Current.Dispatcher.BeginInvoke(action));
+        Job = new(uiThreadSyncContext: context);
+        List<LifeLossFunction> newFunctions = await generator.CreateLifeLossFunctionsAsync(impactAreasFile, indexPointsFile, uniqueImpactAreaHeader, Job.Reporter);
         if (newFunctions.Count == 0)
             return; // Computation was aborted (e.g., weight validation failed)
 

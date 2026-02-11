@@ -10,6 +10,7 @@
   xmlns:frameworkControls="clr-namespace:HEC.MVVMFramework.View.UserControls;assembly=HEC.MVVMFramework.View"
   xmlns:oxy="http://oxyplot.org/wpf"
   xmlns:lifeloss="clr-namespace:HEC.FDA.ViewModel.LifeLoss;assembly=HEC.FDA.ViewModel"
+  xmlns:compute="clr-namespace:HEC.FDA.View.Compute"
   mc:Ignorable="d"
   d:DesignHeight="450"
   d:DesignWidth="800"
@@ -28,11 +29,6 @@
         Height="5" />
       <RowDefinition
         Height="*" />
-      <RowDefinition
-        Height="5" />
-      <RowDefinition
-        Height="*" />
-
     </Grid.RowDefinitions>
     <GroupBox
       Header="Configure and Compute"
@@ -41,10 +37,6 @@
       <Grid
         Grid.Row="0">
         <Grid.RowDefinitions>
-          <RowDefinition
-            Height="auto" />
-          <RowDefinition
-            Height="auto" />
           <RowDefinition
             Height="auto" />
           <RowDefinition
@@ -78,93 +70,129 @@
         </Grid>
         <Grid
           Grid.Row="1">
-          <Grid.RowDefinitions>
-            <RowDefinition
-              Height="35" />
-            <RowDefinition
-              Height="35" />
-            <RowDefinition
-              Height="35" />
-          </Grid.RowDefinitions>
           <Grid.ColumnDefinitions>
             <ColumnDefinition
-              Width="120" />
+              Width="Auto" />
             <ColumnDefinition
               Width="*" />
           </Grid.ColumnDefinitions>
 
-          <Label
-            Grid.Row="0"
+          <!-- Left side: Comboboxes stacked vertically -->
+          <Grid
             Grid.Column="0"
-            Content="Hydraulics:"
-            HorizontalAlignment="Right" />
-          <ComboBox
-            Grid.Row="0"
-            Grid.Column="1"
-            HorizontalAlignment="Stretch"
-            Margin="5"
-            ItemsSource="{Binding Hydraulics}"
-            SelectedItem="{Binding SelectedHydraulics}"
-            DisplayMemberPath="Name" />
+            Margin="0,0,30,0">
+            <Grid.RowDefinitions>
+              <RowDefinition
+                Height="35" />
+              <RowDefinition
+                Height="35" />
+              <RowDefinition
+                Height="35" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition
+                Width="120" />
+              <ColumnDefinition
+                Width="150" />
+            </Grid.ColumnDefinitions>
 
-          <Label
-            Grid.Row="1"
-            Grid.Column="0"
-            Content="Index Points:"
-            HorizontalAlignment="Right" />
-          <ComboBox
-            Grid.Row="1"
-            Grid.Column="1"
-            HorizontalAlignment="Stretch"
-            Margin="5"
-            ItemsSource="{Binding IndexPoints}"
-            SelectedItem="{Binding SelectedIndexPoints}"
-            DisplayMemberPath="Name" />
+            <Label
+              Grid.Row="0"
+              Grid.Column="0"
+              Content="Hydraulics:"
+              HorizontalAlignment="Right"
+              VerticalAlignment="Center" />
+            <ComboBox
+              Grid.Row="0"
+              Grid.Column="1"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Center"
+              Margin="5"
+              ItemsSource="{Binding Hydraulics}"
+              SelectedItem="{Binding SelectedHydraulics}"
+              DisplayMemberPath="Name" />
 
-          <Label
-            Grid.Row="2"
-            Grid.Column="0"
-            Content="LifeSim Simulation:"
-            HorizontalAlignment="Right" />
-          <ComboBox
-            Grid.Row="2"
-            Grid.Column="1"
-            HorizontalAlignment="Stretch"
-            Margin="5"
-            ItemsSource="{Binding Simulations}"
-            SelectedItem="{Binding SelectedSimulation}"
-            DisplayMemberPath="Name" />
-        </Grid>
+            <Label
+              Grid.Row="1"
+              Grid.Column="0"
+              Content="Index Points:"
+              HorizontalAlignment="Right"
+              VerticalAlignment="Center" />
+            <ComboBox
+              Grid.Row="1"
+              Grid.Column="1"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Center"
+              Margin="5"
+              ItemsSource="{Binding IndexPoints}"
+              SelectedItem="{Binding SelectedIndexPoints}"
+              DisplayMemberPath="Name" />
 
-        <Grid
-          Grid.Row="2">
-          <Grid.RowDefinitions>
-            <RowDefinition
-              Height="Auto" />
-            <RowDefinition
-              Height="Auto" />
-          </Grid.RowDefinitions>
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition
-              Width="120" />
-            <ColumnDefinition
-              Width="5*" />
-            <ColumnDefinition
-              Width="5*" />
-          </Grid.ColumnDefinitions>
+            <Label
+              Grid.Row="2"
+              Grid.Column="0"
+              Content="LifeSim Simulation:"
+              HorizontalAlignment="Right"
+              VerticalAlignment="Center" />
+            <ComboBox
+              Grid.Row="2"
+              Grid.Column="1"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Center"
+              Margin="5"
+              ItemsSource="{Binding Simulations}"
+              SelectedItem="{Binding SelectedSimulation}"
+              DisplayMemberPath="Name" />
+          </Grid>
 
-          <TextBlock
-            Text="LifeSim Alternatives:"
-            Grid.Row="0"
+          <!-- Right side: Alternatives and Hazard Times side by side -->
+          <Grid
             Grid.Column="1"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Center"
-            Margin="5" />
-          <StackPanel
-            Margin="5"
-            Grid.Row="1"
-            Grid.Column="1">
+            HorizontalAlignment="Stretch">
+            <Grid.RowDefinitions>
+              <RowDefinition
+                Height="Auto" />
+              <RowDefinition
+                Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition
+                Width="Auto" />
+              <ColumnDefinition
+                Width="Auto" />
+              <ColumnDefinition
+                Width="Auto" />
+              <ColumnDefinition
+                Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock
+              Text="LifeSim Alternatives:"
+              Grid.Row="0"
+              Grid.Column="0"
+              HorizontalAlignment="Left"
+              VerticalAlignment="Center"
+              Margin="5" />
+            <Button
+              Grid.Row="0"
+              Grid.Column="2"
+              Content="Compute Curve"
+              Command="{Binding ComputeCurvesCommand}"
+              VerticalAlignment="Center"
+              Margin="20,5,5,5"
+              Padding="10,3" />
+            <compute:ProgressControl
+              Grid.Row="0"
+              Grid.RowSpan="2"
+              Grid.Column="3"
+              Margin="20,5,5,5"
+              DataContext="{Binding Job}"
+              MinWidth="200"
+              HorizontalAlignment="Stretch"/>
             <ItemsControl
+              Margin="5"
+              Grid.Row="1"
+              Grid.Column="0"
               ItemsSource="{Binding LifeSimAlternatives}">
               <ItemsControl.ItemTemplate>
                 <DataTemplate>
@@ -175,68 +203,59 @@
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
             </ItemsControl>
-          </StackPanel>
 
-          <TextBlock
-            Text="Hazard Times:"
-            Grid.Row="0"
-            Grid.Column="2"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Center"
-            Margin="5" />
-          <StackPanel
-            Margin="5"
-            Grid.Row="1"
-            Grid.Column="2">
-            <ItemsControl
-              ItemsSource="{Binding HazardTimes}">
-              <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                  <Grid
-                    Margin="4">
-                    <Grid.ColumnDefinitions>
-                      <ColumnDefinition
-                        Width="Auto" />
-                      <ColumnDefinition
-                        Width="Auto" />
-                      <ColumnDefinition
-                        Width="40" />
-                    </Grid.ColumnDefinitions>
+            <TextBlock
+              Text="Hazard Times:"
+              Grid.Row="0"
+              Grid.Column="1"
+              HorizontalAlignment="Left"
+              VerticalAlignment="Center"
+              Margin="20,5,5,5" />
+            <StackPanel
+              Margin="20,5,5,5"
+              Grid.Row="1"
+              Grid.Column="1">
+              <ItemsControl
+                ItemsSource="{Binding HazardTimes}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Grid
+                      Margin="4">
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition
+                          Width="Auto" />
+                        <ColumnDefinition
+                          Width="Auto" />
+                        <ColumnDefinition
+                          Width="40" />
+                      </Grid.ColumnDefinitions>
 
-                    <CheckBox
-                      Grid.Column="0"
-                      Content="{Binding Name}"
-                      IsChecked="{Binding IsChecked, Mode=TwoWay}"
-                      IsEnabled="{Binding IsEnabled}"
-                      VerticalAlignment="Center"
-                      Margin="0,0,8,0" />
+                      <CheckBox
+                        Grid.Column="0"
+                        Content="{Binding Name}"
+                        IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                        IsEnabled="{Binding IsEnabled}"
+                        VerticalAlignment="Center"
+                        Margin="0,0,8,0" />
 
-                    <TextBlock
-                      Grid.Column="1"
-                      Text="Weight:"
-                      VerticalAlignment="Center"
-                      Margin="0,0,4,0" />
+                      <TextBlock
+                        Grid.Column="1"
+                        Text="Weight:"
+                        VerticalAlignment="Center"
+                        Margin="0,0,4,0" />
 
-                    <TextBox
-                      Grid.Column="2"
-                      Text="{Binding Weight, Mode=TwoWay}"
-                      IsEnabled="{Binding IsChecked}"
-                      VerticalAlignment="Center" />
-                  </Grid>
-                </DataTemplate>
-              </ItemsControl.ItemTemplate>
-            </ItemsControl>
-          </StackPanel>
+                      <TextBox
+                        Grid.Column="2"
+                        Text="{Binding Weight, Mode=TwoWay}"
+                        IsEnabled="{Binding IsChecked}"
+                        VerticalAlignment="Center" />
+                    </Grid>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </Grid>
         </Grid>
-        <Button
-          Grid.Row="3"
-          Grid.Column="3"
-          Content="Compute Curves"
-          Command="{Binding ComputeCurvesCommand}"
-          Width="100"
-          HorizontalAlignment="Right"
-          Height="22"
-          Margin="5" />
       </Grid>
     </GroupBox>
 
@@ -244,60 +263,74 @@
       Grid.Row="1"
       HorizontalAlignment="Stretch" />
 
-    <GroupBox
-      Grid.Row="2"
-      Header="Generated Curves"
-      Margin="5"
-      HorizontalAlignment="Stretch">
-      <Grid>
-        <Grid.RowDefinitions>
-          <RowDefinition Height="Auto" />
-          <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <TextBlock
-          Grid.Row="0"
-          Text="Warning: Selected weights do not match computed curves. Please recompute."
-          Foreground="OrangeRed"
-          FontWeight="SemiBold"
-          Visibility="{Binding HasWeightMismatch, Converter={StaticResource BoolToVisibilityConverter}}"
-          Margin="5" />
-        <ListView
-          Grid.Row="1"
-          Margin="5"
-          ItemsSource="{Binding LifeLossFunctions}"
-          SelectedItem="{Binding SelectedFunction}"
-          SelectionMode="Single">
-          <ListView.View>
-            <GridView>
-              <GridViewColumn
-                Header="Function ID"
-                Width="150"
-                DisplayMemberBinding="{Binding FunctionID}" />
-              <GridViewColumn
-                Header="Simulation"
-                Width="150"
-                DisplayMemberBinding="{Binding SimulationName}" />
-              <GridViewColumn
-                Header="Impact Area"
-                Width="150"
-                DisplayMemberBinding="{Binding SummaryZone}" />
-              <GridViewColumn
-                Header="Hazard Time"
-                Width="150"
-                DisplayMemberBinding="{Binding HazardTime, Converter={StaticResource MilTimeConverter}}" />
-            </GridView>
-          </ListView.View>
-        </ListView>
-      </Grid>
-    </GroupBox>
-
-    <GridSplitter
-      Grid.Row="3"
-      HorizontalAlignment="Stretch" />
-
     <Grid
-      Grid.Row="4">
+      Grid.Row="2">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
+
+      <GroupBox
+        Grid.Column="0"
+        Header="Generated Curves"
+        Margin="5">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition
+              Height="Auto" />
+            <RowDefinition
+              Height="*" />
+          </Grid.RowDefinitions>
+          <TextBlock
+            Grid.Row="0"
+            Text="Warning: Selected weights do not match computed curves. Please recompute."
+            Foreground="OrangeRed"
+            FontWeight="SemiBold"
+            TextWrapping="Wrap"
+            MaxWidth="350"
+            Visibility="{Binding HasWeightMismatch, Converter={StaticResource BoolToVisibilityConverter}}"
+            Margin="5" />
+          <ListView
+            Grid.Row="1"
+            Margin="5"
+            ItemsSource="{Binding LifeLossFunctions}"
+            SelectedItem="{Binding SelectedFunction}"
+            SelectionMode="Single">
+            <ListView.Resources>
+              <Style
+                TargetType="GridViewColumnHeader">
+                <Setter
+                  Property="Padding"
+                  Value="8,4" />
+              </Style>
+            </ListView.Resources>
+            <ListView.View>
+              <GridView>
+                <GridViewColumn
+                  Header="Function ID"
+                  Width="auto"
+                  DisplayMemberBinding="{Binding FunctionID}" />
+                <GridViewColumn
+                  Header="Simulation"
+                  Width="auto"
+                  DisplayMemberBinding="{Binding SimulationName}" />
+                <GridViewColumn
+                  Header="Impact Area"
+                  Width="auto"
+                  DisplayMemberBinding="{Binding SummaryZone}" />
+                <GridViewColumn
+                  Header="Hazard Time"
+                  Width="auto"
+                  DisplayMemberBinding="{Binding HazardTime, Converter={StaticResource MilTimeConverter}}" />
+              </GridView>
+            </ListView.View>
+          </ListView>
+        </Grid>
+      </GroupBox>
+
       <oxy:PlotView
+        Grid.Column="1"
+        Margin="5"
         Model="{Binding MyModel, Mode=OneWay}" />
     </Grid>
   </Grid>

@@ -1,15 +1,19 @@
-﻿using HEC.FDA.Model.LifeLoss;
+﻿using Amazon.Runtime.SharedInterfaces;
+using HEC.FDA.Model.LifeLoss;
 using HEC.FDA.Model.LifeLoss.Saving;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.Spatial;
+using HEC.FDA.Model.utilities;
 using RasMapperLib;
 using Statistics.Histograms;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using Utility.Progress;
 
 namespace HEC.FDA.ViewModel.LifeLoss;
 
@@ -47,8 +51,9 @@ public class LifeLossFunctionGenerator
     /// <param name="summarySetPath">Path to the summary set shape file</param>
     /// <param name="indexPointsPath">Path to the index points shape file</param>
     /// <returns></returns>
-    public async Task<List<LifeLossFunction>> CreateLifeLossFunctionsAsync(string summarySetPath, string indexPointsPath, string summarySetUniqueName)
+    public async Task<List<LifeLossFunction>> CreateLifeLossFunctionsAsync(string summarySetPath, string indexPointsPath, string summarySetUniqueName, ProgressReporter pr = null)
     {
+        pr ??= ProgressReporter.None();
         double weightSum = _hazardTimes.Values.Sum();
         if (Math.Abs(weightSum - 1.0) > 0.001)
         {
@@ -64,28 +69,41 @@ public class LifeLossFunctionGenerator
             System.Windows.MessageBox.Show($"Could not create a 1-1 mapping of Index Points '{Path.GetFileName(indexPointsPath)}' to Impact Areas '{Path.GetFileName(summarySetPath)}'.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             return [];
         }
-            
 
-        lifeLossFunctions = await Task.Run(CreateLifeLossFunctions);
+        lifeLossFunctions = await Task.Run(() => CreateLifeLossFunctions(pr));
 
         return lifeLossFunctions;
     }
 
-    private List<LifeLossFunction> CreateLifeLossFunctions()
+    private List<LifeLossFunction> CreateLifeLossFunctions(ProgressReporter pr = null)
     {
+        pr ??= ProgressReporter.None();
         int functionID = 1;
         List<LifeLossFunction> lifeLossFunctions = [];
+        var computeTask = pr.SubTask("Stage Life Loss Compute", 0, 1);
+        computeTask.ReportMessage("Beginning Aggregated Stage Life Loss Function Compute");
+        Stopwatch sw = new();
+        sw.Start();
+        int i = 0;
+        int count = _impactAreaIDByName.Count;
         foreach (var (name, id) in _impactAreaIDByName.OrderBy(kvp => kvp.Value))
         {
             PointMs indexPoint = [_indexPointBySummaryZone[name]];
-            List<LifeLossFunction> functions = CreateLifeLossFunctionsForSummaryZone(name, indexPoint);
+            var iaTask = computeTask.SubTask(name, (float)i / count, 1f / count);
+            iaTask.ReportTimestampedMessage(sw?.Elapsed, 1, $"Computing Impact Area: {name}...");
+            List<LifeLossFunction> functions = CreateLifeLossFunctionsForSummaryZone(name, indexPoint, iaTask, sw);
             foreach (LifeLossFunction function in functions)
             {
                 function.FunctionID = functionID;
                 functionID++;
             }
             lifeLossFunctions.AddRange(functions); // AddRange because we are adding a list to another list
+            i++;
+            iaTask.ReportProgress(100);
         }
+        computeTask.ReportProgress(100);
+        computeTask.ReportTaskCompleted(sw.Elapsed);
+        sw.Stop();
         return lifeLossFunctions;
     }
 
@@ -110,12 +128,14 @@ public class LifeLossFunctionGenerator
     }
 
 
-    private List<LifeLossFunction> CreateLifeLossFunctionsForSummaryZone(string summaryZone, PointMs indexPoint)
+    private List<LifeLossFunction> CreateLifeLossFunctionsForSummaryZone(string summaryZone, PointMs indexPoint, ProgressReporter pr = null, Stopwatch sw = null)
     {
+        pr ??= ProgressReporter.None();
         List<LifeLossFunction> functions = [];
 
         string[] alternatives = [.. _alternativeNames]; // create a copy of the alternative names because we are sorting, don't want to sort in place as we iterate through (although I think it would still work)
         double[] stages = new double[alternatives.Length];
+        pr.ReportTimestampedMessage(sw?.Elapsed, 2, $"Computing stages...");
         for (int i = 0; i < alternatives.Length; i++)
         {
             string associatedHydraulics = _hydraulicsFolderByAlternative[alternatives[i]];
@@ -129,23 +149,30 @@ public class LifeLossFunctionGenerator
 
         Dictionary<UncertainPairedData, double> updweights = new();
         int idx = 0;
+        pr.ReportTimestampedMessage(sw?.Elapsed, 2, $"Computing for each hazard time...");
         foreach (var kvp in _hazardTimes)
         {
             string hazardTime = kvp.Key;
             double weight = kvp.Value;
+            var timeTask = pr.SubTask(hazardTime, (float)idx / _hazardTimes.Count, 1f / _hazardTimes.Count);
+            
             DynamicHistogram[] histograms = new DynamicHistogram[alternatives.Length];
             for (int i = 0; i < alternatives.Length; i++)
             {
+                var altTask = timeTask.SubTask(alternatives[i], (float)i / alternatives.Length, 1f / alternatives.Length);
                 string tableName = $"{_simulationName}>Results_By_Iteration>{alternatives[i]}>{hazardTime}>{_summarySetName}>{summaryZone}";
                 DynamicHistogram histogram = _db.QueryLifeLossTable(tableName);
                 histograms[i] = histogram;
+                altTask.ReportProgress(100);
             }
             UncertainPairedData upd = new(stages, histograms, new CurveMetaData("Stage", "Life Loss", $"{_simulationName}_{summaryZone}_{hazardTime}", "LifeLoss", _impactAreaIDByName[summaryZone], "LifeLoss"));
             updweights[upd] = weight;
             LifeLossFunction llf = new(-1, -1, upd, alternatives, _simulationName, summaryZone, hazardTime);
             functions.Add(llf);
             idx++;
+            timeTask.ReportProgress(100);
         }
+        pr.ReportTimestampedMessage(sw?.Elapsed, 2, $"Combining...");
         UncertainPairedData combined = UncertainPairedData.CombineWithWeights(updweights);
         string weightsDisplay = string.Join("/", _hazardTimes.Values.Select(w => w.ToString("F2")));
         string combinedHazardTime = $"{LifeLossStringConstants.COMBINED_MAGIC_STRING} ({weightsDisplay})";
