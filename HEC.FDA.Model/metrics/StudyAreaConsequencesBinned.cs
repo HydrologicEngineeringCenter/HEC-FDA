@@ -17,7 +17,6 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
     public List<AggregatedConsequencesBinned> ConsequenceResultList { get; }
     //this needs to be an error report
     public bool IsNull { get; }
-    internal int AlternativeID { get; }
 
     #region Constructors
     public StudyAreaConsequencesBinned(int impactAreaID)

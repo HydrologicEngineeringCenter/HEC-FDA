@@ -103,9 +103,7 @@ public class AggregatedConsequencesBinned
             double binWidth;
             if (range < INITIAL_BIN_QUANTITY)
             {
-                //this is cranked down from 1 to .001 because that's a more reasonable number for AALL. Potentially should be
-                //even lower. Needs investigation. 
-                binWidth = .001;
+                binWidth = DynamicHistogram.DEFAULT_BIN_WIDTH;
             }
             else
             {

@@ -12,6 +12,7 @@ namespace Statistics.Histograms
         #region Fields
         private const int MAX_BIN_COUNT = 500;
         private const int OVERFLOW_PREVENTION_THRESHOLD = 2000; // Prevent Int32 overflow and excessive memory
+        public const double DEFAULT_BIN_WIDTH = .0001; //reduced from 1, to ensure good histograms for AALL, which tend much smaller than $ damages. See Benchmarks and Tests for more details. 
         private double _SampleVariance;
         private bool _minHasNotBeenSet = false;
         private bool _HistogramShutDown = false;
@@ -81,7 +82,7 @@ namespace Statistics.Histograms
         /// </summary>
         public DynamicHistogram()
         {
-            BinWidth = 1;
+            BinWidth = DEFAULT_BIN_WIDTH;
             _minHasNotBeenSet = true;
             ConvergenceCriteria = new ConvergenceCriteria();
             for (int i = 0; i < 10; i++)
@@ -115,7 +116,7 @@ namespace Statistics.Histograms
             if (range == 0)
             {
                 //shoudl consider cranking this down for AALL .0001
-                BinWidth = 1;
+                BinWidth = DEFAULT_BIN_WIDTH;
 
             }
             else
@@ -280,7 +281,7 @@ namespace Statistics.Histograms
                 else if (observation > Max)
                 {
                     quantityAdditionalBins = Convert.ToInt32(Math.Ceiling((observation - Max + BinWidth) / BinWidth));
-                    Int64[] newBinCounts = new Int64[quantityAdditionalBins + BinCounts.Length];
+                    Int64[] newBinCounts = new Int64[quantityAdditionalBins + BinCounts.Length]; 
                     for (int i = 0; i < BinCounts.Length; i++)
                     {
                         newBinCounts[i] = BinCounts[i];
@@ -358,9 +359,9 @@ namespace Statistics.Histograms
 
             double projectedBinCount = projectedRange / BinWidth;
 
-            if (projectedBinCount > OVERFLOW_PREVENTION_THRESHOLD)
+            if (projectedBinCount > OVERFLOW_PREVENTION_THRESHOLD) //2000
             {
-                double newBinWidth = projectedRange / MAX_BIN_COUNT;
+                double newBinWidth = projectedRange / MAX_BIN_COUNT; //500
                 double divisor = newBinWidth / BinWidth;
                 ResizeHistogram(divisor);
             }
