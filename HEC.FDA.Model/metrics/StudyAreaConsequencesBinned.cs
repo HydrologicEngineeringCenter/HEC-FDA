@@ -233,10 +233,20 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
         return damageCategories;
     }
 
-    public static StudyAreaConsequencesByQuantile ConvertToStudyAreaConsequencesByQuantile(StudyAreaConsequencesBinned studyAreaConsequencesBinned)
+    /// <summary>
+    /// Converts binned consequence results to quantile-based results, optionally filtering by consequence type.
+    /// </summary>
+    /// <param name="studyAreaConsequencesBinned"></param>
+    /// <param name="filterByConsequenceType">will filter to the input type. "All" will apply no filter. </param>
+    /// <returns></returns>
+    public static StudyAreaConsequencesByQuantile ConvertToStudyAreaConsequencesByQuantile(StudyAreaConsequencesBinned studyAreaConsequencesBinned, ConsequenceType filterByConsequenceType)
     {
         List<AggregatedConsequencesByQuantile> aggregatedConsequencesByQuantiles = [];
-        foreach (AggregatedConsequencesBinned aggregatedConsequencesBinned in studyAreaConsequencesBinned.ConsequenceResultList)
+
+        //here we apply the filter.  
+        var res = studyAreaConsequencesBinned.ConsequenceResultList.Where((r) => r.ConsequenceType == filterByConsequenceType).ToArray();
+
+        foreach (AggregatedConsequencesBinned aggregatedConsequencesBinned in res)
         {
             AggregatedConsequencesByQuantile aggregatedConsequencesByQuantile = AggregatedConsequencesBinned.ConvertToSingleEmpiricalDistributionOfConsequences(aggregatedConsequencesBinned);
             aggregatedConsequencesByQuantiles.Add(aggregatedConsequencesByQuantile);

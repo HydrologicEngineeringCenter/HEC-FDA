@@ -66,6 +66,14 @@ public class ScenarioResults : ValidationErrorLogger
             .Distinct()
             .ToList();
     }
+    public List<ConsequenceType> GetConsequenceTypes()
+    {
+        return ResultsList
+            .SelectMany(r => r.ConsequenceResults.ConsequenceResultList)
+            .Select(r => r.ConsequenceType)
+            .Distinct()
+            .ToList();
+    }
     public IHistogram GetAEPHistogramForPlotting(int impactAreaID, int thresholdID = 0)
     {
         return GetResults(impactAreaID).GetAEPHistogramForPlotting(thresholdID);
@@ -200,12 +208,18 @@ public class ScenarioResults : ValidationErrorLogger
         return dummyResults;
     }
 
-    public static StudyAreaConsequencesByQuantile ConvertToStudyAreaConsequencesByQuantile(ScenarioResults results)
+    /// <summary>
+    /// Aggregates and converts scenario results into a single study area consequences object
+    /// </summary>
+    /// <param name="results">The scenario results containing consequence data for one or more impact areas. Cannot be null.</param>
+    /// <param name="consequenceTypeFilter">The type of consequence to filter and include in the aggregation.</param>
+    /// <returns>A StudyAreaConsequencesByQuantile object containing the aggregated consequences for all impact areas.</returns>
+    public static StudyAreaConsequencesByQuantile ConvertToStudyAreaConsequencesByQuantile(ScenarioResults results, ConsequenceType consequenceTypeFilter)
     {
         List<AggregatedConsequencesByQuantile> aggregatedConsequencesByQuantiles = new();
-        foreach (ImpactAreaScenarioResults impactAreaScenarioResults in results.ResultsList.Cast<ImpactAreaScenarioResults>())
+        foreach (ImpactAreaScenarioResults impactAreaScenarioResults in results.ResultsList)
         {
-            StudyAreaConsequencesByQuantile studyAreaConsequencesByQuantile = StudyAreaConsequencesBinned.ConvertToStudyAreaConsequencesByQuantile(impactAreaScenarioResults.ConsequenceResults);
+            StudyAreaConsequencesByQuantile studyAreaConsequencesByQuantile = StudyAreaConsequencesBinned.ConvertToStudyAreaConsequencesByQuantile(impactAreaScenarioResults.ConsequenceResults, consequenceTypeFilter);
             aggregatedConsequencesByQuantiles.AddRange(studyAreaConsequencesByQuantile.ConsequenceResultList);
         }
         StudyAreaConsequencesByQuantile allImpactAreas = new(aggregatedConsequencesByQuantiles);
@@ -216,7 +230,7 @@ public class ScenarioResults : ValidationErrorLogger
     public bool Equals(ScenarioResults scenarioResultsForComparison)
     {
         bool resultsAreEqual = true;
-        foreach (ImpactAreaScenarioResults scenarioResults in ResultsList.Cast<ImpactAreaScenarioResults>())
+        foreach (ImpactAreaScenarioResults scenarioResults in ResultsList)
         {
             ImpactAreaScenarioResults impactAreaScenarioResultsToCompare = scenarioResultsForComparison.GetResults(scenarioResults.ImpactAreaID);
             resultsAreEqual = scenarioResults.Equals(impactAreaScenarioResultsToCompare);

@@ -4,5 +4,6 @@ public enum ConsequenceType
 {
     UNASSIGNED,
     Damage,
-    LifeLoss
+    LifeLoss,
+    All
 }
