@@ -28,7 +28,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private readonly bool _UseLevee;
         private readonly int _ImpactAreaID;
         private readonly bool _HasFailureStageDamage;
-        private readonly AggregatedStageDamageElement _StageDamageElem;
+        private readonly AggregatedStageDamageElement _FailureStageDamageElem;
         private readonly bool _HasNonFailureStageDamage;
         private readonly AggregatedStageDamageElement _NonFailureStageDamageElem;
         private readonly bool _HasFailureStageLifeLoss;
@@ -41,7 +41,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         public SimulationCreator(FrequencyElement freqElem, InflowOutflowElement inOutElem, StageDischargeElement ratElem,
             ExteriorInteriorElement extIntElem, LateralStructureElement levElem, int currentImpactAreaID,
-            bool hasFailureStageDamage, AggregatedStageDamageElement stageDamElem,
+            bool hasFailureStageDamage, AggregatedStageDamageElement failureStageDamElem,
             bool hasNonFailureStageDamage, AggregatedStageDamageElement nonFailureStageDamElem,
             bool hasFailureStageLifeLoss, StageLifeLossElement failureStageLifeLossElem,
             bool hasNonFailureStageLifeLoss, StageLifeLossElement nonFailureStageLifeLossELem)
@@ -59,7 +59,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             _ImpactAreaID = currentImpactAreaID;
 
             _HasFailureStageDamage = hasFailureStageDamage;
-            _StageDamageElem = stageDamElem;
+            _FailureStageDamageElem = failureStageDamElem;
             _HasNonFailureStageDamage = hasNonFailureStageDamage;
             _NonFailureStageDamageElem = nonFailureStageDamElem;
             _HasFailureStageLifeLoss = hasFailureStageLifeLoss;
@@ -83,16 +83,16 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private FdaValidationResult IsStageDamageValid()
         {
             FdaValidationResult vr = new FdaValidationResult();
-            if (_StageDamageElem == null)
+            if (_FailureStageDamageElem == null)
             {
                 vr.AddErrorMessage("The selected aggregated stage damage element no longer exists. Edit the senario and select a new one.");
             }
             else
             {
-                List<StageDamageCurve> stageDamageCurves = _StageDamageElem.Curves.Where(curve => curve.ImpArea.ID == _ImpactAreaID).ToList();
+                List<StageDamageCurve> stageDamageCurves = _FailureStageDamageElem.Curves.Where(curve => curve.ImpArea.ID == _ImpactAreaID).ToList();
                 if (stageDamageCurves.Count == 0)
                 {
-                    vr.AddErrorMessage("The aggregated stage damage element '" + _StageDamageElem.Name + "' did not contain any curves that are associated " +
+                    vr.AddErrorMessage("The aggregated stage damage element '" + _FailureStageDamageElem.Name + "' did not contain any curves that are associated " +
                         "with the impact area.");
                 }
             }
@@ -124,7 +124,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
             if (_HasFailureStageDamage)
             {
-                _SimulationBuilder.WithStageDamages(GetStageDamagesAsPairedData(_StageDamageElem));
+                _SimulationBuilder.WithStageDamages(GetStageDamagesAsPairedData(_FailureStageDamageElem));
             }
 
             if (_HasNonFailureStageDamage)
