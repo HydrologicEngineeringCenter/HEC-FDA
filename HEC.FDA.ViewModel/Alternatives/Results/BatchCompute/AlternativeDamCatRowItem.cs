@@ -25,6 +25,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
         public string AssetCat { get; set; }
         [DisplayAsColumn("Mean EqAD")]
         public double MeanDamage { get; set; }
+        [DisplayAsColumn("Risk Type")]
+        public string RiskType { get; set; }
 
         private AlternativeDamCatRowItem(string name, string impactArea, string assetCategory, string damCat, double mean)
         {
@@ -33,6 +35,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
             AssetCat = assetCategory;
             DamCat = damCat;
             MeanDamage = mean;
+            RiskType = Model.metrics.RiskType.Total.ToString();
         }
 
         public static List<AlternativeDamCatRowItem> CreateAlternativeDamCatRowItems(AlternativeElement altElem) 

@@ -1,4 +1,5 @@
-﻿using HEC.FDA.ViewModel.ImpactAreaScenario;
+﻿using HEC.FDA.Model.metrics;
+using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
 using System;
@@ -29,8 +30,10 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
         public double Point75 { get; set; }
         [DisplayAsColumn("50th Percentile EqAD")]
         public double Point5 { get; set; }
-        [DisplayAsColumn("75th Percentile EqAD")]//This is intentionally swapped 1-x 
+        [DisplayAsColumn("75th Percentile EqAD")]//This is intentionally swapped 1-x
         public double Point25 { get; set; }
+        [DisplayAsColumn("Risk Type")]
+        public string RiskType { get; set; }
 
         private AlternativeDamageRowItem(string name, string impactArea, int baseYear, int futureYear, double discountRate, int periodOfAnalysis, double mean, double point75, double point5, double point25)
         {
@@ -44,6 +47,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
             Point75 = point75;
             Point5 = point5;
             Point25 = point25;
+            RiskType = Model.metrics.RiskType.Total.ToString();
         }
 
         public static List<AlternativeDamageRowItem> CreateAlternativeDamageRowItems(AlternativeElement altElem)
