@@ -40,9 +40,12 @@ namespace HEC.FDA.ViewModel.Alternatives
             Name = elem.Name;
             Description = elem.Description;
             SelectedBaseScenario = elem.BaseScenario.GetElement();
-            SelectedFutureScenario = elem.FutureScenario.GetElement();
             BaseYear = elem.BaseScenario.Year;
-            FutureYear = elem.FutureScenario.Year;
+            if (elem.FutureScenario != null)
+            {
+                SelectedFutureScenario = elem.FutureScenario.GetElement();
+                FutureYear = elem.FutureScenario.Year;
+            }
             ListenToIASEvents();
         }
 
@@ -85,13 +88,16 @@ namespace HEC.FDA.ViewModel.Alternatives
             {
                 result.AddErrorMessage("A base year is required and must be greater than 1900 and less than 3000.");
             }
-            if (FutureYear < 1900 || FutureYear > 3000)
+            if (SelectedFutureScenario != null)
             {
-                result.AddErrorMessage("A future year is required and must be greater than 1900 and less than 3000.");
-            }
-            if(BaseYear > FutureYear || BaseYear == FutureYear)
-            {
-                result.AddErrorMessage("The base year must be before the future year.");
+                if (FutureYear < 1900 || FutureYear > 3000)
+                {
+                    result.AddErrorMessage("A future year is required and must be greater than 1900 and less than 3000.");
+                }
+                if (BaseYear >= FutureYear)
+                {
+                    result.AddErrorMessage("The base year must be before the future year.");
+                }
             }
             return result;
         }
@@ -102,10 +108,6 @@ namespace HEC.FDA.ViewModel.Alternatives
             if(SelectedBaseScenario == null)
             {
                 vr.AddErrorMessage("Base scenario is required.");
-            }
-            if (SelectedFutureScenario == null)
-            {
-                vr.AddErrorMessage("Future scenario is required.");
             }
             return vr;
         }
@@ -129,7 +131,7 @@ namespace HEC.FDA.ViewModel.Alternatives
                     id = OriginalElement.ID;
                 }
                 AlternativeScenario baseScenario = new(SelectedBaseScenario.ID, BaseYear);
-                AlternativeScenario futureScenario = new(SelectedFutureScenario.ID, FutureYear);
+                AlternativeScenario futureScenario = SelectedFutureScenario != null ? new(SelectedFutureScenario.ID, FutureYear) : null;
                 AlternativeElement elemToSave = new(Name, Description, DateTime.Now.ToString("G"), baseScenario, futureScenario, id);
                 Save(elemToSave);
             }

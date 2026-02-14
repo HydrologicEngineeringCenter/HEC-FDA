@@ -96,7 +96,10 @@ namespace HEC.FDA.ViewModel.Alternatives
                 XElement baseElem = altElement.Element(BASE_SCENARIO);
                 BaseScenario = new AlternativeScenario(baseElem.Element(AlternativeScenario.ALTERNATIVE_SCENARIO));
                 XElement futureElem = altElement.Element(FUTURE_SCENARIO);
-                FutureScenario = new AlternativeScenario(futureElem.Element(AlternativeScenario.ALTERNATIVE_SCENARIO));
+                if (futureElem != null)
+                {
+                    FutureScenario = new AlternativeScenario(futureElem.Element(AlternativeScenario.ALTERNATIVE_SCENARIO));
+                }
             }
 
             AddDefaultActions(EditAlternative, StringConstants.EDIT_ALTERNATIVE_MENU);
@@ -116,12 +119,14 @@ namespace HEC.FDA.ViewModel.Alternatives
 
             XElement baseElem = new(BASE_SCENARIO);
             baseElem.Add(BaseScenario.ToXML());
-
-            XElement futureElem = new(FUTURE_SCENARIO);
-            futureElem.Add(FutureScenario.ToXML());
-
             altElement.Add(baseElem);
-            altElement.Add(futureElem);
+
+            if (FutureScenario != null)
+            {
+                XElement futureElem = new(FUTURE_SCENARIO);
+                futureElem.Add(FutureScenario.ToXML());
+                altElement.Add(futureElem);
+            }
 
             return altElement;
         }
@@ -144,52 +149,34 @@ namespace HEC.FDA.ViewModel.Alternatives
         public FdaValidationResult RunPreComputeValidation()
         {
             FdaValidationResult vr = new();
-
             IASElement baseElem = BaseScenario.GetElement();
-            IASElement futureElem = FutureScenario.GetElement();
+            vr.AddErrorMessage(ValidateScenarioExists(baseElem, "base").ErrorMessage);
+            if (baseElem != null)
+                vr.AddErrorMessage(ValidateScenarioHasResults(baseElem).ErrorMessage);
 
-            FdaValidationResult scenariosExistResults = DoBothScenariosExist(baseElem, futureElem);
-            vr.AddErrorMessage(scenariosExistResults.ErrorMessage);
-            if (scenariosExistResults.IsValid)
+            if (FutureScenario != null)
             {
-                vr.AddErrorMessage(DoScenariosHaveResults(baseElem, futureElem).ErrorMessage);
-            }
-
-            return vr;
-        }
-
-        private static FdaValidationResult DoScenariosHaveResults(IASElement firstElem, IASElement secondElem)
-        {
-            FdaValidationResult vr = new();
-            bool firstElemHasResults = false;
-            bool secondElemHasResults = false;
-            if (firstElem != null && firstElem.Results != null)
-            {
-                firstElemHasResults = true;
-            }
-            if (secondElem != null && secondElem.Results != null)
-            {
-                secondElemHasResults = true;
-            }
-
-            if (!firstElemHasResults)
-            {
-                vr.AddErrorMessage("Scenario '" + firstElem.Name + "' has no compute results.");
-            }
-            if (!secondElemHasResults)
-            {
-                vr.AddErrorMessage("Scenario '" + secondElem.Name + "' has no compute results.");
+                IASElement futureElem = FutureScenario.GetElement();
+                vr.AddErrorMessage(ValidateScenarioExists(futureElem, "future").ErrorMessage);
+                if (futureElem != null)
+                    vr.AddErrorMessage(ValidateScenarioHasResults(futureElem).ErrorMessage);
             }
             return vr;
         }
 
-        private static FdaValidationResult DoBothScenariosExist(IASElement firstElem, IASElement secondElem)
+        private static FdaValidationResult ValidateScenarioExists(IASElement elem, string label)
         {
             FdaValidationResult vr = new();
-            if (firstElem == null || secondElem == null)
-            {
-                vr.AddErrorMessage("There are no longer two scenarios linked to this alternative.");
-            }
+            if (elem == null)
+                vr.AddErrorMessage($"The {label} scenario linked to this alternative no longer exists.");
+            return vr;
+        }
+
+        private static FdaValidationResult ValidateScenarioHasResults(IASElement elem)
+        {
+            FdaValidationResult vr = new();
+            if (elem.Results == null)
+                vr.AddErrorMessage($"Scenario '{elem.Name}' has no compute results.");
             return vr;
         }
 
@@ -209,22 +196,27 @@ namespace HEC.FDA.ViewModel.Alternatives
                 new DamageByDamCatVM(results, DamageMeasureYear.Base),
                 null,
                 null);
-            YearResult yr2 = new(
-                analysisYears.Max(),
-                new DamageWithUncertaintyVM(results, DamageMeasureYear.Future, new DamageWithUncertaintyControlConfig()),
-                new DamageByImpactAreaVM(results, DamageMeasureYear.Future),
-                new DamageByDamCatVM(results, DamageMeasureYear.Future),
-                null,
-                null);
 
-            EADResult eadResult = new(new List<YearResult>() { yr1, yr2 });
+            List<YearResult> yearResults = [yr1];
+
+            if (FutureScenario != null)
+            {
+                YearResult yr2 = new(
+                    analysisYears.Max(),
+                    new DamageWithUncertaintyVM(results, DamageMeasureYear.Future, new DamageWithUncertaintyControlConfig()),
+                    new DamageByImpactAreaVM(results, DamageMeasureYear.Future),
+                    new DamageByDamCatVM(results, DamageMeasureYear.Future),
+                    null,
+                    null);
+                yearResults.Add(yr2);
+            }
+
+            EADResult eadResult = new(yearResults);
             EqadResult eqadResult = new(
                 new DamageWithUncertaintyVM(results, DamageMeasureYear.Eqad, new EqADWithUncertaintyControlConfig(), discountRate, period),
                 new DamageByImpactAreaVM(results, DamageMeasureYear.Eqad, discountRate, period),
                 new DamageByDamCatVM(results, discountRate, period));
-            AlternativeResult altResult = new(Name, eadResult, eqadResult);
-
-            return altResult;
+            return new AlternativeResult(Name, eadResult, eqadResult);
         }
 
         public async void ComputeAlternative(object arg1 = null, EventArgs arg2 = null)

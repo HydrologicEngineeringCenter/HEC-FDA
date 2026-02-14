@@ -30,15 +30,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
             // When only Fail exists (no Non_Fail), Fail = Total, so just show Total
             bool hasNonFail = riskTypes.Contains(RiskType.Non_Fail);
-            if (!hasNonFail)
-            {
-                foreach (string damCat in damCats)
-                {
-                    double meanValue = iasResult.MeanExpectedAnnualConsequences(damageCategory: damCat);
-                    Rows.Add(new DamageCategoryRowItem(damCat, meanValue, RiskType.Total.ToString()));
-                }
-            }
-            else
+            if (hasNonFail)
             {
                 foreach (RiskType riskType in riskTypes)
                 {
@@ -48,6 +40,11 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
                         Rows.Add(new DamageCategoryRowItem(damCat, meanValue, riskType.ToString()));
                     }
                 }
+            }
+            foreach (string damCat in damCats)
+            {
+                double meanValue = iasResult.MeanExpectedAnnualConsequences(damageCategory: damCat);
+                Rows.Add(new DamageCategoryRowItem(damCat, meanValue, RiskType.Total.ToString()));
             }
         }
 

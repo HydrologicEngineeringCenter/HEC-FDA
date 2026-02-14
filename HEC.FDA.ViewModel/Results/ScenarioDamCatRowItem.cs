@@ -24,6 +24,8 @@ namespace HEC.FDA.ViewModel.Results
         public string AssetCat { get; set; }
         [DisplayAsColumn("Mean EAD")]
         public double MeanDamage { get; set; }
+        [DisplayAsColumn("Risk Type")]
+        public RiskType RiskType { get; set; }
 
         private ScenarioDamCatRowItem(string name, string analysisYear, string impactAreaName, string damcat, string assetCat, double mean)
         {
@@ -33,6 +35,8 @@ namespace HEC.FDA.ViewModel.Results
             DamCat = damcat;
             AssetCat = assetCat;
             MeanDamage = mean;
+            //hard coded to total. We could do another loop and add all component types, but this is already a huge table. Wait to get feedback first. 
+            RiskType = RiskType.Total;
         }
 
         public static List<ScenarioDamCatRowItem> CreateScenarioDamCatRowItems(IASElement scenario)
@@ -43,8 +47,8 @@ namespace HEC.FDA.ViewModel.Results
             ScenarioResults results = scenario.Results;
             List<int> impactAreaIds = results.GetImpactAreaIDs(ConsequenceType.Damage);
             Dictionary<int, string> impactAreaIdToName = IASElement.GetImpactAreaNamesFromIDs();
-            List<string> damCats = results.GetDamageCategories();
-            List<string> assetCats = results.GetAssetCategories();
+            List<string> damCats = results.GetDamageCategories(ConsequenceType.Damage);
+            List<string> assetCats = results.GetAssetCategories(ConsequenceType.Damage);
 
             List<ScenarioDamCatRowItem> rowItems = [];
             foreach (int impactAreaID in impactAreaIds)
@@ -53,7 +57,7 @@ namespace HEC.FDA.ViewModel.Results
                 {
                     foreach (string assetCat in assetCats)
                     {
-                        double mean = results.SampleMeanExpectedAnnualConsequences(impactAreaID, damCat, assetCat);
+                        double mean = results.SampleMeanExpectedAnnualConsequences(impactAreaID, damCat, assetCat, ConsequenceType.Damage, RiskType.Total);
                         ScenarioDamCatRowItem row = new(name, analysisYear, impactAreaIdToName[impactAreaID], damCat, assetCat, mean);
                         rowItems.Add(row);
                     }

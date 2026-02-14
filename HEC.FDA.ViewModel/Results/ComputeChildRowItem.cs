@@ -74,8 +74,13 @@ namespace HEC.FDA.ViewModel.Results
             else if(childElement is AlternativeElement altElem)
             {
                 IASElement firstElem = altElem.BaseScenario.GetElement();
-                IASElement secondElem = altElem.FutureScenario.GetElement();
-                HasComputeMessage = "\t* Base year scenario: " + firstElem.Name + "\n\t* Future year scenario: " + secondElem.Name;
+                string message = "\t* Base year scenario: " + firstElem.Name;
+                if (altElem.FutureScenario != null)
+                {
+                    IASElement secondElem = altElem.FutureScenario.GetElement();
+                    message += "\n\t* Future year scenario: " + secondElem.Name;
+                }
+                HasComputeMessage = message;
             }
         }
 
