@@ -49,6 +49,12 @@ namespace HEC.FDA.ViewModel.Results
             ScenarioResults results = scenario.Results;
             List<int> impactAreaIds = results.GetImpactAreaIDs(ConsequenceType.Damage);
             List<RiskType> riskTypes = results.GetRiskTypes();
+
+            //if we only have one risk type, then it's the same as total. just display total. 
+            if (riskTypes.Count == 1)
+            {
+                riskTypes.Clear();
+            }
             riskTypes.Add(Model.metrics.RiskType.Total);
 
             Dictionary<int, string> impactAreaIdToName = IASElement.GetImpactAreaNamesFromIDs();
