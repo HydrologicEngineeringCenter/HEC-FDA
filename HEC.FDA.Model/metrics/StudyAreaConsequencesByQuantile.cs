@@ -43,7 +43,7 @@ public class StudyAreaConsequencesByQuantile : Validation
     //public for testing purposes
     public void AddExistingConsequenceResultObject(AggregatedConsequencesByQuantile consequenceResultToAdd)
     {
-        AggregatedConsequencesByQuantile consequenceResult = GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
+        AggregatedConsequencesByQuantile consequenceResult = GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID, consequenceResultToAdd.ConsequenceType, consequenceResultToAdd.RiskType);
         if (consequenceResult.IsNull)
         {
             ConsequenceResultList.Add(consequenceResultToAdd);

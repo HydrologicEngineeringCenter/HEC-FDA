@@ -99,7 +99,7 @@
               Margin="5"
               SelectionUnit="Cell"
               Width="auto"
-              CustomNumberFormat="N2" />
+              CustomNumberFormat="N4" />
           </StackPanel>
         </Border>
 
@@ -159,7 +159,7 @@
               Margin="5"
               SelectionUnit="Cell"
               Width="auto"
-              CustomNumberFormat="N2"/>
+              CustomNumberFormat="N4"/>
           </StackPanel>
         </Border>
 

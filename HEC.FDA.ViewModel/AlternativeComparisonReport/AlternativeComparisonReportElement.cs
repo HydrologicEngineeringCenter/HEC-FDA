@@ -202,7 +202,7 @@ public class AlternativeComparisonReportElement : ChildElement
 
     private bool HasLifeLossResults()
     {
-        return _Results.GetImpactAreaIDs(ConsequenceType.LifeLoss).Count > 0;
+        return _Results.HasReducedResultsOfType(ConsequenceType.LifeLoss);
     }
 
     private List<EADSummaryRowItem> CreateEADFutureYearSummaryTable(AlternativeComparisonReportResults results)
@@ -264,12 +264,13 @@ public class AlternativeComparisonReportElement : ChildElement
         List<AggregatedAALLSummaryRowItem> eallSummaryRowItems = new();
         Dictionary<int, string> impactAreaNames = IASElement.GetImpactAreaNamesFromIDs();
         string withoutProjName = GetAlternativeElementFromID(WithoutProjAltID).Name;
-
+        List<int> lifeLossAlternativeIDs = results.GetReducedAlternativeIDs(ConsequenceType.LifeLoss);
 
         foreach (int altID in WithProjAltIDs)
         {
+            if (!lifeLossAlternativeIDs.Contains(altID)) continue;
             string withProjName = GetAlternativeElementFromID(altID).Name;
-            foreach (int impactAreaID in results.GetImpactAreaIDs())
+            foreach (int impactAreaID in results.GetReducedImpactAreaIDs(ConsequenceType.LifeLoss))
             {
                 double withProjEALL = results.SampleMeanWithProjectFutureYearEAD(altID, impactAreaID, consequenceType: ConsequenceType.LifeLoss);
                 double eallReduced = results.SampleMeanFutureYearEADReduced(altID, impactAreaID, consequenceType: ConsequenceType.LifeLoss);
@@ -344,11 +345,13 @@ public class AlternativeComparisonReportElement : ChildElement
         List<AggregatedAALLSummaryRowItem> eallSummaryRowItems = new();
         Dictionary<int, string> impactAreaNames = IASElement.GetImpactAreaNamesFromIDs();
         string withoutProjName = GetAlternativeElementFromID(WithoutProjAltID).Name;
+        List<int> lifeLossAlternativeIDs = results.GetReducedAlternativeIDs(ConsequenceType.LifeLoss);
 
         foreach (int altID in WithProjAltIDs)
         {
+            if (!lifeLossAlternativeIDs.Contains(altID)) continue;
             string withProjName = GetAlternativeElementFromID(altID).Name;
-            foreach (int impactAreaID in results.GetImpactAreaIDs())
+            foreach (int impactAreaID in results.GetReducedImpactAreaIDs(ConsequenceType.LifeLoss))
             {
                 double withProjEALL = results.SampleMeanWithProjectBaseYearEAD(altID, impactAreaID, consequenceType: ConsequenceType.LifeLoss);
                 double eallReduced = results.SampleMeanBaseYearEADReduced(altID, impactAreaID, consequenceType: ConsequenceType.LifeLoss);

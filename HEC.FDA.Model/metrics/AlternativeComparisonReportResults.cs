@@ -8,14 +8,14 @@ using System.Linq;
 namespace HEC.FDA.Model.metrics;
 
 public class AlternativeComparisonReportResults : ValidationErrorLogger
-{   //TODO: save a year 
+{   //TODO: save a year
 
     //results of the alternative comparison
-    private readonly List<StudyAreaConsequencesByQuantile> _EqadReducedResultsList; // somehow this guy is coming in with calculated mean 0. zero for all quantiles, and a negative sample mean. 
+    private readonly List<StudyAreaConsequencesByQuantile> _EqadReducedResultsList; // somehow this guy is coming in with calculated mean 0. zero for all quantiles, and a negative sample mean.
     private readonly List<StudyAreaConsequencesByQuantile> _BaseYearEADReducedResultsList;
     private readonly List<StudyAreaConsequencesByQuantile> _FutureYearEADReducedResultsList;
 
-    //input to the alternative comparison. 
+    //input to the alternative comparison.
     private readonly List<AlternativeResults> _WithProjectAlternativeResults;
     private readonly AlternativeResults _WithoutProjectAlternativeResults;
 
@@ -32,10 +32,10 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     }
     #endregion
 
-    #region Methods 
-    //These methods now assume that the same impact areas are in all three results lists - a reasonable assumption 
-    //How could they not? What could happen that could cause different impact areas or damage categories to be in different results?  
-    //We could cycle through each of the three lists, but that seems unnecessary 
+    #region Methods
+    //These methods now assume that the same impact areas are in all three results lists - a reasonable assumption
+    //How could they not? What could happen that could cause different impact areas or damage categories to be in different results?
+    //We could cycle through each of the three lists, but that seems unnecessary
     public List<int> GetImpactAreaIDs(ConsequenceType consequenceType = ConsequenceType.Damage)
     {
         return _EqadReducedResultsList
@@ -72,9 +72,34 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
             .Distinct()
             .ToList();
     }
+    public bool HasReducedResultsOfType(ConsequenceType consequenceType)
+    {
+        return _BaseYearEADReducedResultsList
+            .Concat(_FutureYearEADReducedResultsList)
+            .Any(x => x.ConsequenceResultList.Any(r => r.ConsequenceType == consequenceType));
+    }
+    public List<int> GetReducedAlternativeIDs(ConsequenceType consequenceType)
+    {
+        return _BaseYearEADReducedResultsList
+            .Concat(_FutureYearEADReducedResultsList)
+            .Where(x => x.ConsequenceResultList.Any(r => r.ConsequenceType == consequenceType))
+            .Select(x => x.AlternativeID)
+            .Distinct()
+            .ToList();
+    }
+    public List<int> GetReducedImpactAreaIDs(ConsequenceType consequenceType)
+    {
+        return _BaseYearEADReducedResultsList
+            .Concat(_FutureYearEADReducedResultsList)
+            .SelectMany(x => x.ConsequenceResultList
+                .Where(r => r.ConsequenceType == consequenceType)
+                .Select(r => r.RegionID))
+            .Distinct()
+            .ToList();
+    }
     /// <summary>
-    /// This method gets the mean EqAD damage reduced between the with- and without-project conditions for a given with-project condition, 
-    /// impact area, damage category, and asset category combination. 
+    /// This method gets the mean EqAD damage reduced between the with- and without-project conditions for a given with-project condition,
+    /// impact area, damage category, and asset category combination.
     ///  The level of aggregation of  consequences is determined by the arguments used in the method
     /// For example, if you wanted the mean EqAD damage reduced for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
     /// double consequenceValue = MeanEqadReduced(1, damageCategory: "residential", impactAreaID: 2);        /// </summary>
@@ -88,8 +113,8 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
         return GetConsequencesReducedResultsForGivenAlternative(alternativeID).SampleMeanDamage(damageCategory, assetCategory, impactAreaID, consequenceType, riskType);
     }
     /// <summary>
-    /// This method gets the mean base year ead reduced between the with- and without-project conditions for a given with-project condition, 
-    /// impact area, damage category, and asset category combination. 
+    /// This method gets the mean base year ead reduced between the with- and without-project conditions for a given with-project condition,
+    /// impact area, damage category, and asset category combination.
     ///  The level of aggregation of  consequences is determined by the arguments used in the method
     /// For example, if you wanted the mean EAD reduced for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
     /// double consequenceValue = MeanBaseYearEADReduced(1, damageCategory: "residential", impactAreaID: 2);        /// </summary>
@@ -104,8 +129,8 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
         return results.SampleMeanDamage(damageCategory, assetCategory, impactAreaID, consequenceType, riskType);
     }
     /// <summary>
-    /// This method gets the mean future year ead reduced between the with- and without-project conditions for a given with-project condition, 
-    /// impact area, damage category, and asset category combination. 
+    /// This method gets the mean future year ead reduced between the with- and without-project conditions for a given with-project condition,
+    /// impact area, damage category, and asset category combination.
     ///  The level of aggregation of  consequences is determined by the arguments used in the method
     /// For example, if you wanted the mean EAD for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
     /// double consequenceValue = MeanFutureYearEADReduced(1, damageCategory: "residential", impactAreaID: 2);        /// </summary>
@@ -147,7 +172,7 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     }
 
     /// <summary>
-    /// This method calls the inverse CDF of EqAD damage reduced histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
+    /// This method calls the inverse CDF of EqAD damage reduced histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument.
     ///  The level of aggregation of  consequences is determined by the arguments used in the method
     /// For example, if you wanted the EqAD damage exceeded with probability .98 for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
     /// double consequenceValue = EqadReducedExceededWithProbabilityQ(.98, 1, damageCategory: "residential", impactAreaID: 2);
@@ -157,25 +182,25 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
         return GetConsequencesReducedResultsForGivenAlternative(alternativeID).ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID, consequenceType);
     }
     /// <summary>
-    /// This method calls the inverse CDF of base year ead reduced histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
+    /// This method calls the inverse CDF of base year ead reduced histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument.
     ///  The level of aggregation of  consequences is determined by the arguments used in the method
     /// For example, if you wanted the EqAD damage exceeded with probability .98 for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
     /// double consequenceValue = BaseYearEADReducedExceededWithProbabilityQ(.98, 1, damageCategory: "residential", impactAreaID: 2);
     /// </summary>
     /// <returns></returns>
-    public double BaseYearEADReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
+    public double BaseYearEADReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Total)
     {
-        return GetConsequencesReducedResultsForGivenAlternative(alternativeID, true, true).ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID, consequenceType);
+        return GetConsequencesReducedResultsForGivenAlternative(alternativeID, true, true).ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID, consequenceType, riskType);
     }
     /// <summary>
-    /// This method calls the inverse CDF of future year ead reduced histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
+    /// This method calls the inverse CDF of future year ead reduced histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument.
     ///  The level of aggregation of  consequences is determined by the arguments used in the method
     /// For example, if you wanted the EqAD damage exceeded with probability .98 for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
     /// double consequenceValue = FutureYearEADReducedExceededWithProbabilityQ(.98, 1, damageCategory: "residential", impactAreaID: 2);
     /// </summary>
-    public double FutureYearEADReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
+    public double FutureYearEADReducedExceededWithProbabilityQ(double exceedanceProbability, int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Total)
     {
-        return GetConsequencesReducedResultsForGivenAlternative(alternativeID, true).ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID, consequenceType);
+        return GetConsequencesReducedResultsForGivenAlternative(alternativeID, true).ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID, consequenceType, riskType);
     }
     /// <summary>
     /// This method gets the histogram (distribution) of consequences for the given damage category(ies), asset category(ies), and impact area(s)
@@ -194,10 +219,10 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     /// For example, if you wanted a histogram for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
     /// IHistogram histogram = GetBaseYearEADReducedResultsHistogram(1, damageCategory: "residential", impactAreaID: 2);
     /// </summary>
-    public Empirical GetBaseYearEADReducedResultsHistogram(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
+    public Empirical GetBaseYearEADReducedResultsHistogram(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Total)
     {
         StudyAreaConsequencesByQuantile eadResults = GetConsequencesReducedResultsForGivenAlternative(alternativeID, true, true);
-        return eadResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID, consequenceType);
+        return eadResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID, consequenceType, riskType);
     }
     /// <summary>
     /// This method gets the histogram (distribution) of future year ead reduced for the given damage category(ies), asset category(ies), and impact area(s)
@@ -205,11 +230,12 @@ public class AlternativeComparisonReportResults : ValidationErrorLogger
     /// For example, if you wanted a histogram for alternative 1, residential, impact area 2, all asset categories, then the method call would be as follows:
     /// IHistogram histogram = GetFutureYearEADReducedResultsHistogram(1, damageCategory: "residential", impactAreaID: 2);
     /// </summary>
-    public Empirical GetFutureYearEADReducedResultsHistogram(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage)
+    public Empirical GetFutureYearEADReducedResultsHistogram(int alternativeID, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Total)
     {
         StudyAreaConsequencesByQuantile eadResults = GetConsequencesReducedResultsForGivenAlternative(alternativeID, true);
-        return eadResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID, consequenceType);
+        return eadResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID, consequenceType, riskType);
     }
+
     internal void AddAlternativeResults(StudyAreaConsequencesByQuantile consequenceDistributionResults, bool isEADResults = false, bool isBaseYearResults = false)
     {
         StudyAreaConsequencesByQuantile consequenceResults = GetConsequencesReducedResultsForGivenAlternative(consequenceDistributionResults.AlternativeID, isEADResults, isBaseYearResults);
