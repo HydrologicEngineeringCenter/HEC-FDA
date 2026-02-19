@@ -234,7 +234,14 @@ namespace HEC.FDA.ViewModel.Alternatives
                 Navigate(tab, false, false);
                 StudyPropertiesElement props = StudyCache.GetStudyPropertiesElement();
                 Results = await AlternativeComputer.RunAnnualizationCompute(this, props, batchJob.Reporter);
-                ViewResults();
+                if (Results.EqadResults.ConsequenceResultList.Count < 1)
+                {
+                    MessageBox.Show("No economic damages were found for the equivalent annual damage calculation. No results are available.", "No EqAD", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    ViewResults();
+                }
             }
             else
             {

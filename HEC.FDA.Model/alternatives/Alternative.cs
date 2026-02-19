@@ -69,12 +69,17 @@ namespace HEC.FDA.Model.alternatives
             var alternativeResults = new AlternativeResults(alternativeResultsID, analysisYears, periodOfAnalysis);
             reporter.ReportMessage(new Utility.Logging.Message("Initiating discounting routine."));
 
+            //if we just have one, use it as both the base and future. 
+            computedResultsBaseYear ??= computedResultsFutureYear;
+            computedResultsFutureYear ??= computedResultsBaseYear;
+
             alternativeResults.BaseYearScenarioResults = computedResultsBaseYear;
             alternativeResults.FutureYearScenarioResults = computedResultsFutureYear;
 
             //if scenarios are identical or only one exists, no need to compute, just use the one that exists
-            if (computedResultsFutureYear == null || computedResultsBaseYear == null || computedResultsBaseYear.Equals(computedResultsFutureYear))
+            if (computedResultsBaseYear.Equals(computedResultsFutureYear))
             {
+                reporter.ReportMessage(new("Scenarios are identical or there is only one scenario. Discounting routine aborted."));
                 alternativeResults.ScenariosAreIdentical = true;
                 ScenarioResults availableResults = computedResultsBaseYear ?? computedResultsFutureYear;
                 if (availableResults == null)

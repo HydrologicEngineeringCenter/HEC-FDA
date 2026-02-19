@@ -87,12 +87,11 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
 
 
 
-    //TODO: This needs to confirm that the histograms inside each ConsequenceDistributionResult Match. 
     public bool Equals(StudyAreaConsequencesBinned inputDamageResults)
     {
         foreach (AggregatedConsequencesBinned damageResult in ConsequenceResultList)
         {
-            AggregatedConsequencesBinned inputDamageResult = inputDamageResults.GetConsequenceResult(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.RegionID, damageResult.ConsequenceType);
+            AggregatedConsequencesBinned inputDamageResult = inputDamageResults.GetConsequenceResult(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.RegionID, damageResult.ConsequenceType, damageResult.RiskType);
             if (inputDamageResult == null)
                 return false;
 
