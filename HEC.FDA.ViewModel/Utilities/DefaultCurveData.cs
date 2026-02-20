@@ -170,7 +170,8 @@ namespace HEC.FDA.ViewModel.Utilities
             {
                 IDistribution regulatedFlowDistribution = new Normal();
                 double unregulatedFlow = minFlow + (maxFlow - minFlow) * ((double)i / coordinateQuantity);
-                double regulatedFlow = unregulatedFlow - 100*(1 / Math.Pow((double)i - greatestDiffIndex, 2));
+                double indexDiff = (double)i - greatestDiffIndex;
+                double regulatedFlow = unregulatedFlow - 100*(1 / (indexDiff * indexDiff));
                 double min = regulatedFlow - regulatedFlow * 0.01;
                 double max = regulatedFlow + regulatedFlow * 0.07;
                 switch (distributionEnum)

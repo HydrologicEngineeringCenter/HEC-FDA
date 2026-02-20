@@ -115,9 +115,11 @@ namespace Statistics.Distributions
             if (x<Min){
                 return 0;
             }else if (x<= MostLikely){
-                return Math.Pow(x-Min,2)/((Max-Min)*(MostLikely-Min));
+                double diff = x - Min;
+                return (diff * diff)/((Max-Min)*(MostLikely-Min));
             }else if(x <= Max){
-                return 1- Math.Pow(Max-x,2)/((Max-Min)*(Max-MostLikely));
+                double diff = Max - x;
+                return 1 - (diff * diff)/((Max-Min)*(Max-MostLikely));
             }else{
                 return 1;
             }

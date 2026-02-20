@@ -443,7 +443,115 @@ public class HistogramTests
         }
     }
 
-    #region GitHub Ticket #1236 - EqAD with Lateral Structures   
+    #region Mean Consistency Across Bin Widths
+
+    public static IEnumerable<object[]> BinWidthConsistencyDistributions()
+    {
+        // Uniform distributions
+        yield return new object[] { new Uniform(0, 1) };
+        yield return new object[] { new Uniform(0, 100_000_000) };
+        // Triangular distributions (heavily left-skewed)
+        yield return new object[] { new Triangular(0, 100_000, 100_000_000) };
+    }
+
+    [Theory]
+    [MemberData(nameof(BinWidthConsistencyDistributions))]
+    public void MeanIsConsistentAcrossBinWidths(IDistribution distribution)
+    {
+        int observationCount = 10_000;
+        double[] binWidths = [0.0001, 1.0];
+        double tolerance = 0.01;
+
+        var rng = new Random(42);
+        double[] data = new double[observationCount];
+        for (int i = 0; i < observationCount; i++)
+            data[i] = distribution.InverseCDF(rng.NextDouble());
+
+        double expectedMean = data.Average();
+
+        foreach (double binWidth in binWidths)
+        {
+            var cc = new ConvergenceCriteria(minIterations: 100, maxIterations: observationCount);
+            var histogram = new DynamicHistogram(binWidth, cc);
+            foreach (double obs in data)
+                histogram.AddObservationToHistogram(obs);
+
+            double relativeError = Math.Abs(histogram.HistogramMean() - expectedMean) / Math.Abs(expectedMean);
+            Assert.True(relativeError < tolerance,
+                $"BinWidth={binWidth}, Distribution={distribution.Type} " +
+                $"HistogramMean={histogram.HistogramMean()}, ActualMean={expectedMean}, RelError={relativeError}");
+        }
+    }
+
+    [Theory]
+    [MemberData(nameof(BinWidthConsistencyDistributions))]
+    public void QuantilesAreConsistentAcrossBinWidths(IDistribution distribution)
+    {
+        int observationCount = 10_000;
+        double[] binWidths = [0.0001, 1.0];
+        double[] quantiles = [0.25, 0.5, 0.75];
+        double tolerance = 0.05;
+
+        var rng = new Random(42);
+        double[] data = new double[observationCount];
+        for (int i = 0; i < observationCount; i++)
+            data[i] = distribution.InverseCDF(rng.NextDouble());
+
+        // Build a histogram per bin width
+        var histograms = new DynamicHistogram[binWidths.Length];
+        for (int b = 0; b < binWidths.Length; b++)
+        {
+            var cc = new ConvergenceCriteria(minIterations: 100, maxIterations: observationCount);
+            histograms[b] = new DynamicHistogram(binWidths[b], cc);
+            foreach (double obs in data)
+                histograms[b].AddObservationToHistogram(obs);
+        }
+
+        // Compare quantiles between the two bin widths
+        foreach (double q in quantiles)
+        {
+            double val0 = histograms[0].InverseCDF(q);
+            double val1 = histograms[1].InverseCDF(q);
+            double denom = Math.Abs(val0) > 1e-12 ? Math.Abs(val0) : 1.0;
+            double relativeError = Math.Abs(val0 - val1) / denom;
+            Assert.True(relativeError < tolerance,
+                $"Quantile={q}, Distribution={distribution.Type}: " +
+                $"BinWidth={binWidths[0]} gave {val0}, BinWidth={binWidths[1]} gave {val1}, RelError={relativeError}");
+        }
+    }
+
+    // DynamicHistogram can only increase bin width to accommodate data, never decrease it.
+    // A Triangular(0, 0.05, 1) distribution crammed into a bin width of 1.0 produces a single bin,
+    // yielding a useless, uninformative histogram whose mean and quantiles diverge from the actual data.
+    [Fact]
+    public void SmallTriangularDistribution_FailsWithBinWidthOfOne()
+    {
+        int observationCount = 10_000;
+        double binWidth = 1.0;
+        double tolerance = 0.01;
+
+        var distribution = new Triangular(0, 0.05, 1);
+        var rng = new Random(42);
+        double[] data = new double[observationCount];
+        for (int i = 0; i < observationCount; i++)
+            data[i] = distribution.InverseCDF(rng.NextDouble());
+
+        double expectedMean = data.Average();
+
+        var cc = new ConvergenceCriteria(minIterations: 100, maxIterations: observationCount);
+        var histogram = new DynamicHistogram(binWidth, cc);
+        foreach (double obs in data)
+            histogram.AddObservationToHistogram(obs);
+
+        double relativeError = Math.Abs(histogram.HistogramMean() - expectedMean) / Math.Abs(expectedMean);
+        Assert.False(relativeError < tolerance,
+            $"Expected histogram mean to diverge from actual mean for a small distribution with an oversized bin width. " +
+            $"HistogramMean={histogram.HistogramMean()}, ActualMean={expectedMean}, RelError={relativeError}");
+    }
+
+    #endregion
+
+    #region GitHub Ticket #1236 - EqAD with Lateral Structures
 
     [Theory]
     [InlineData(2, 3)]

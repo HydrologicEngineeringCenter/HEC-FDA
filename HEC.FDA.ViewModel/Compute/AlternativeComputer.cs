@@ -12,23 +12,23 @@ public static class AlternativeComputer
     {
         reporter ??= ProgressReporter.None();
 
-        // Group the base and future scenarios for readability.
         var baseScenario = altElem.BaseScenario;
         var futureScenario = altElem.FutureScenario;
 
-        // Retrieve the results from each scenario's element.
         var firstResults = baseScenario.GetElement().Results;
-        var secondResults = futureScenario.GetElement().Results;
+        var secondResults = futureScenario?.GetElement().Results;
 
-        // Start the computation on a separate task.
+        int baseYear = baseScenario.Year;
+        int futureYear = futureScenario?.Year ?? (baseYear + props.PeriodOfAnalysis - 1);
+
         return Task.Run(() => Alternative.AnnualizationCompute(
             props.DiscountRate,
             props.PeriodOfAnalysis,
             altElem.ID,
             firstResults,
             secondResults,
-            baseScenario.Year,
-            futureScenario.Year,
+            baseYear,
+            futureYear,
             reporter
         ));
     }

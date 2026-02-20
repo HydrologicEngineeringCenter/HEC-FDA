@@ -475,5 +475,9 @@
         <LifeLossView:IndexPointsLifeLoss />
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type LifeLossVM:LifeLossFnChartVM}">
+        <LifeLossView:LifeLossFnChartControl />
+    </DataTemplate>
+
     </Application.Resources>
 </Application>

@@ -4,6 +4,7 @@ using HEC.FDA.Model.paireddata;
 using HEC.MVVMFramework.Base.Implementations;
 using Statistics;
 using Statistics.Distributions;
+using Statistics.Histograms;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Xunit;
@@ -85,6 +86,167 @@ namespace HEC.FDA.ModelTest.unittests.MessagingTests
             Debug.WriteLine(listener.GetMessageLogAsString());
 
             Assert.True(listener.MessageLog.Count > 0);
+        }
+
+        [Fact]
+        public void PopulateUncertainConsequenceFrequencyCurvesOnCompute()
+        {
+            // Arrange - use metadata with proper damage/asset categories
+            CurveMetaData stageDamageMetaData = new CurveMetaData("Residential", "Structure");
+            GraphicalUncertainPairedData dischargeFrequency = new GraphicalUncertainPairedData(exceedanceProbabilities, dischargeFrequencyDischarges, equivalentRecordLength, curveMetaData, usingStagesNotFlows: false);
+            UncertainPairedData stageDischarge = new UncertainPairedData(stageDischargeFunctionDischarges, stageDischargeFunctionStageDistributions, curveMetaData);
+            UncertainPairedData stageDamage = new UncertainPairedData(stageDamageStages, stageDamageDamageDistributions, stageDamageMetaData);
+            List<UncertainPairedData> stageDamageList = new List<UncertainPairedData> { stageDamage };
+
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
+                .WithFlowFrequency(dischargeFrequency)
+                .WithFlowStage(stageDischarge)
+                .WithStageDamages(stageDamageList)
+                .Build();
+
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: 200);
+
+            // Act
+            ImpactAreaScenarioResults results = simulation.Compute(convergenceCriteria);
+
+            // Assert - should have created UncertainConsequenceFrequencyCurves
+            Assert.NotEmpty(results.UncertainConsequenceFrequencyCurves);
+            Assert.Single(results.UncertainConsequenceFrequencyCurves); // One stage-damage function = one curve
+        }
+
+        [Fact]
+        public void PopulateUncertainConsequenceFrequencyCurvesWithCorrectMetadata()
+        {
+            // Arrange - use metadata with proper damage/asset categories
+            CurveMetaData stageDamageMetaData = new CurveMetaData("Residential", "Structure");
+            GraphicalUncertainPairedData dischargeFrequency = new GraphicalUncertainPairedData(exceedanceProbabilities, dischargeFrequencyDischarges, equivalentRecordLength, curveMetaData, usingStagesNotFlows: false);
+            UncertainPairedData stageDischarge = new UncertainPairedData(stageDischargeFunctionDischarges, stageDischargeFunctionStageDistributions, curveMetaData);
+            UncertainPairedData stageDamage = new UncertainPairedData(stageDamageStages, stageDamageDamageDistributions, stageDamageMetaData);
+            List<UncertainPairedData> stageDamageList = new List<UncertainPairedData> { stageDamage };
+
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
+                .WithFlowFrequency(dischargeFrequency)
+                .WithFlowStage(stageDischarge)
+                .WithStageDamages(stageDamageList)
+                .Build();
+
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: 200);
+
+            // Act
+            ImpactAreaScenarioResults results = simulation.Compute(convergenceCriteria);
+
+            // Assert - curve should have correct metadata
+            var uncertainCurve = results.UncertainConsequenceFrequencyCurves[0];
+            Assert.Equal("Residential", uncertainCurve.DamageCategory);
+            Assert.Equal("Structure", uncertainCurve.AssetCategory);
+            Assert.Equal(ConsequenceType.Damage, uncertainCurve.ConsequenceType);
+            Assert.Equal(RiskType.Fail, uncertainCurve.RiskType);
+        }
+
+        [Fact]
+        public void PopulateUncertainConsequenceFrequencyCurvesWithHistogramData()
+        {
+            // Arrange - use metadata with proper damage/asset categories
+            CurveMetaData stageDamageMetaData = new CurveMetaData("Residential", "Structure");
+            GraphicalUncertainPairedData dischargeFrequency = new GraphicalUncertainPairedData(exceedanceProbabilities, dischargeFrequencyDischarges, equivalentRecordLength, curveMetaData, usingStagesNotFlows: false);
+            UncertainPairedData stageDischarge = new UncertainPairedData(stageDischargeFunctionDischarges, stageDischargeFunctionStageDistributions, curveMetaData);
+            UncertainPairedData stageDamage = new UncertainPairedData(stageDamageStages, stageDamageDamageDistributions, stageDamageMetaData);
+            List<UncertainPairedData> stageDamageList = new List<UncertainPairedData> { stageDamage };
+
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
+                .WithFlowFrequency(dischargeFrequency)
+                .WithFlowStage(stageDischarge)
+                .WithStageDamages(stageDamageList)
+                .Build();
+
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: 200);
+
+            // Act
+            ImpactAreaScenarioResults results = simulation.Compute(convergenceCriteria);
+
+            // Assert - histograms should have been populated with data
+            var uncertainCurve = results.UncertainConsequenceFrequencyCurves[0];
+            Assert.NotEmpty(uncertainCurve.YHistograms);
+            foreach (var histogram in uncertainCurve.YHistograms)
+            {
+                Assert.True(histogram.SampleSize >= convergenceCriteria.MinIterations,
+                    $"Expected at least {convergenceCriteria.MinIterations} samples, but got {histogram.SampleSize}");
+            }
+        }
+
+        [Fact]
+        public void PopulateUncertainConsequenceFrequencyCurvesForMultipleDamageCategories()
+        {
+            // Arrange - use metadata with proper damage/asset categories
+            CurveMetaData residentialMetaData = new CurveMetaData("Residential", "Structure");
+            CurveMetaData commercialMetaData = new CurveMetaData("Commercial", "Structure");
+
+            GraphicalUncertainPairedData dischargeFrequency = new GraphicalUncertainPairedData(exceedanceProbabilities, dischargeFrequencyDischarges, equivalentRecordLength, curveMetaData, usingStagesNotFlows: false);
+            UncertainPairedData stageDischarge = new UncertainPairedData(stageDischargeFunctionDischarges, stageDischargeFunctionStageDistributions, curveMetaData);
+
+            UncertainPairedData residentialStageDamage = new UncertainPairedData(stageDamageStages, stageDamageDamageDistributions, residentialMetaData);
+            UncertainPairedData commercialStageDamage = new UncertainPairedData(stageDamageStages, stageDamageDamageDistributions, commercialMetaData);
+
+            List<UncertainPairedData> stageDamageList = new List<UncertainPairedData> { residentialStageDamage, commercialStageDamage };
+
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
+                .WithFlowFrequency(dischargeFrequency)
+                .WithFlowStage(stageDischarge)
+                .WithStageDamages(stageDamageList)
+                .Build();
+
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: 200);
+
+            // Act
+            ImpactAreaScenarioResults results = simulation.Compute(convergenceCriteria);
+
+            // Assert - should have two UncertainConsequenceFrequencyCurves (one per damage category)
+            Assert.Equal(2, results.UncertainConsequenceFrequencyCurves.Count);
+
+            var residentialCurve = results.UncertainConsequenceFrequencyCurves.Find(c => c.DamageCategory == "Residential");
+            var commercialCurve = results.UncertainConsequenceFrequencyCurves.Find(c => c.DamageCategory == "Commercial");
+
+            Assert.NotNull(residentialCurve);
+            Assert.NotNull(commercialCurve);
+        }
+
+        [Fact]
+        public void PopulateUncertainConsequenceFrequencyCurvesWithNonZeroMean()
+        {
+            // Arrange - use metadata with proper damage/asset categories
+            CurveMetaData stageDamageMetaData = new CurveMetaData("Residential", "Structure");
+            GraphicalUncertainPairedData dischargeFrequency = new GraphicalUncertainPairedData(exceedanceProbabilities, dischargeFrequencyDischarges, equivalentRecordLength, curveMetaData, usingStagesNotFlows: false);
+            UncertainPairedData stageDischarge = new UncertainPairedData(stageDischargeFunctionDischarges, stageDischargeFunctionStageDistributions, curveMetaData);
+            UncertainPairedData stageDamage = new UncertainPairedData(stageDamageStages, stageDamageDamageDistributions, stageDamageMetaData);
+            List<UncertainPairedData> stageDamageList = new List<UncertainPairedData> { stageDamage };
+
+            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
+                .WithFlowFrequency(dischargeFrequency)
+                .WithFlowStage(stageDischarge)
+                .WithStageDamages(stageDamageList)
+                .Build();
+
+            ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: 200);
+
+            // Act
+            ImpactAreaScenarioResults results = simulation.Compute(convergenceCriteria);
+
+            // Assert - the mean curve should have some non-zero values
+            var uncertainCurve = results.UncertainConsequenceFrequencyCurves[0];
+            UncertainPairedData upd = uncertainCurve.GetUncertainPairedData();
+
+            // At least some y-values should be non-zero (we have damages at higher stages)
+            bool hasNonZeroValues = false;
+            foreach (var yDist in upd.Yvals)
+            {
+                double mean = ((IHistogram)yDist).SampleMean;
+                if (mean > 0)
+                {
+                    hasNonZeroValues = true;
+                    break;
+                }
+            }
+            Assert.True(hasNonZeroValues, "Mean curve should have at least some non-zero damage values");
         }
     }
 }

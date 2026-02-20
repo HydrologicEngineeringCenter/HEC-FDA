@@ -1,6 +1,4 @@
-﻿using HEC.FDA.Model.alternatives;
-using HEC.FDA.Model.compute;
-using HEC.FDA.Model.metrics;
+﻿using HEC.FDA.Model.metrics;
 using HEC.FDA.ViewModel.Alternatives.Results;
 using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
 using HEC.FDA.ViewModel.Compute;
@@ -11,14 +9,11 @@ using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Threading;
 using System.Xml.Linq;
 using Utility;
-using Utility.Progress;
 using Visual.Observables;
+using static HEC.FDA.ViewModel.ImpactAreaScenario.Results.UncertaintyControlConfigs;
 using SynchronizationContext = Utility.SynchronizationContext;
 
 namespace HEC.FDA.ViewModel.Alternatives
@@ -29,7 +24,7 @@ namespace HEC.FDA.ViewModel.Alternatives
         public const string LAST_EDIT_DATE = "LastEditDate";
         private const string IAS_SET = "IASSet";
         private const string ID_STRING = "ID";
-        
+
         private const string BASE_SCENARIO = "BaseScenario";
         private const string FUTURE_SCENARIO = "FutureScenario";
 
@@ -70,12 +65,12 @@ namespace HEC.FDA.ViewModel.Alternatives
         public AlternativeElement(XElement altElement, int id) : base(altElement, id)
         {
             bool isOldXMLStyle = altElement.Elements(IAS_SET).Any();
-            if(isOldXMLStyle)
+            if (isOldXMLStyle)
             {
                 IEnumerable<XElement> iasElements = altElement.Elements(IAS_SET);
 
                 int i = 0;
-                foreach(XElement elem in iasElements)
+                foreach (XElement elem in iasElements)
                 {
                     int iasID = int.Parse(elem.Attribute(ID_STRING).Value);
                     //get the element from the id and grab the year from it. If no year that make it the current year.
@@ -85,7 +80,7 @@ namespace HEC.FDA.ViewModel.Alternatives
                     {
                         year = DateTime.Now.Year;
                     }
-                    if(i== 0)
+                    if (i == 0)
                     {
                         BaseScenario = new AlternativeScenario(iasID, year);
                     }
@@ -101,9 +96,12 @@ namespace HEC.FDA.ViewModel.Alternatives
                 XElement baseElem = altElement.Element(BASE_SCENARIO);
                 BaseScenario = new AlternativeScenario(baseElem.Element(AlternativeScenario.ALTERNATIVE_SCENARIO));
                 XElement futureElem = altElement.Element(FUTURE_SCENARIO);
-                FutureScenario = new AlternativeScenario(futureElem.Element(AlternativeScenario.ALTERNATIVE_SCENARIO));
+                if (futureElem != null)
+                {
+                    FutureScenario = new AlternativeScenario(futureElem.Element(AlternativeScenario.ALTERNATIVE_SCENARIO));
+                }
             }
-           
+
             AddDefaultActions(EditAlternative, StringConstants.EDIT_ALTERNATIVE_MENU);
             NamedAction viewResults = new()
             {
@@ -121,15 +119,17 @@ namespace HEC.FDA.ViewModel.Alternatives
 
             XElement baseElem = new(BASE_SCENARIO);
             baseElem.Add(BaseScenario.ToXML());
-
-            XElement futureElem = new(FUTURE_SCENARIO);
-            futureElem.Add(FutureScenario.ToXML());
-
             altElement.Add(baseElem);
-            altElement.Add(futureElem);
+
+            if (FutureScenario != null)
+            {
+                XElement futureElem = new(FUTURE_SCENARIO);
+                futureElem.Add(FutureScenario.ToXML());
+                altElement.Add(futureElem);
+            }
 
             return altElement;
-        }     
+        }
 
         public static IASElement GetElementFromID(int id)
         {
@@ -149,52 +149,34 @@ namespace HEC.FDA.ViewModel.Alternatives
         public FdaValidationResult RunPreComputeValidation()
         {
             FdaValidationResult vr = new();
-          
             IASElement baseElem = BaseScenario.GetElement();
-            IASElement futureElem = FutureScenario.GetElement();
+            vr.AddErrorMessage(ValidateScenarioExists(baseElem, "base").ErrorMessage);
+            if (baseElem != null)
+                vr.AddErrorMessage(ValidateScenarioHasResults(baseElem).ErrorMessage);
 
-            FdaValidationResult scenariosExistResults = DoBothScenariosExist(baseElem, futureElem);
-            vr.AddErrorMessage(scenariosExistResults.ErrorMessage);
-            if (scenariosExistResults.IsValid)
+            if (FutureScenario != null)
             {
-                vr.AddErrorMessage(DoScenariosHaveResults(baseElem, futureElem).ErrorMessage);
+                IASElement futureElem = FutureScenario.GetElement();
+                vr.AddErrorMessage(ValidateScenarioExists(futureElem, "future").ErrorMessage);
+                if (futureElem != null)
+                    vr.AddErrorMessage(ValidateScenarioHasResults(futureElem).ErrorMessage);
             }
-
             return vr;
         }
 
-        private static FdaValidationResult DoScenariosHaveResults(IASElement firstElem, IASElement secondElem)
+        private static FdaValidationResult ValidateScenarioExists(IASElement elem, string label)
         {
             FdaValidationResult vr = new();
-            bool firstElemHasResults = false;
-            bool secondElemHasResults = false;
-            if (firstElem != null && firstElem.Results != null)
-            {
-                firstElemHasResults = true;
-            }
-            if (secondElem != null && secondElem.Results != null)
-            {
-                secondElemHasResults = true;
-            }
-
-            if (!firstElemHasResults)
-            {
-                vr.AddErrorMessage("Scenario '" + firstElem.Name + "' has no compute results.");
-            }
-            if (!secondElemHasResults)
-            {
-                vr.AddErrorMessage("Scenario '" + secondElem.Name + "' has no compute results.");
-            }
+            if (elem == null)
+                vr.AddErrorMessage($"The {label} scenario linked to this alternative no longer exists.");
             return vr;
-        }       
+        }
 
-        private static FdaValidationResult DoBothScenariosExist(IASElement firstElem, IASElement secondElem)
+        private static FdaValidationResult ValidateScenarioHasResults(IASElement elem)
         {
             FdaValidationResult vr = new();
-            if (firstElem == null || secondElem == null)
-            {
-                vr.AddErrorMessage("There are no longer two scenarios linked to this alternative.");
-            }
+            if (elem.Results == null)
+                vr.AddErrorMessage($"Scenario '{elem.Name}' has no compute results.");
             return vr;
         }
 
@@ -207,14 +189,34 @@ namespace HEC.FDA.ViewModel.Alternatives
 
             List<int> analysisYears = results.AnalysisYears;
 
-            YearResult yr1 = new(analysisYears.Min(), new DamageWithUncertaintyVM(results, DamageMeasureYear.Base), new DamageByImpactAreaVM(results, DamageMeasureYear.Base), new DamageByDamCatVM(results, DamageMeasureYear.Base));
-            YearResult yr2 = new(analysisYears.Max(), new DamageWithUncertaintyVM(results, DamageMeasureYear.Future), new DamageByImpactAreaVM(results, DamageMeasureYear.Future), new DamageByDamCatVM(results, DamageMeasureYear.Future));
+            YearResult yr1 = new(
+                analysisYears.Min(),
+                new DamageWithUncertaintyVM(results, DamageMeasureYear.Base, new DamageWithUncertaintyControlConfig()),
+                new DamageByImpactAreaVM(results, DamageMeasureYear.Base),
+                new DamageByDamCatVM(results, DamageMeasureYear.Base),
+                null,
+                null);
 
-            EADResult eadResult = new(new List<YearResult>() { yr1, yr2 });
-            EqadResult eqadResult = new(new DamageWithUncertaintyVM( results, DamageMeasureYear.Eqad, discountRate, period), new DamageByImpactAreaVM( results, DamageMeasureYear.Eqad, discountRate, period), new DamageByDamCatVM(results, discountRate, period));
-            AlternativeResult altResult = new(Name, eadResult, eqadResult);
+            List<YearResult> yearResults = [yr1];
 
-            return altResult;
+            if (FutureScenario != null)
+            {
+                YearResult yr2 = new(
+                    analysisYears.Max(),
+                    new DamageWithUncertaintyVM(results, DamageMeasureYear.Future, new DamageWithUncertaintyControlConfig()),
+                    new DamageByImpactAreaVM(results, DamageMeasureYear.Future),
+                    new DamageByDamCatVM(results, DamageMeasureYear.Future),
+                    null,
+                    null);
+                yearResults.Add(yr2);
+            }
+
+            EADResult eadResult = new(yearResults);
+            EqadResult eqadResult = new(
+                new DamageWithUncertaintyVM(results, DamageMeasureYear.Eqad, new EqADWithUncertaintyControlConfig(), discountRate, period),
+                new DamageByImpactAreaVM(results, DamageMeasureYear.Eqad, discountRate, period),
+                new DamageByDamCatVM(results, discountRate, period));
+            return new AlternativeResult(Name, eadResult, eqadResult);
         }
 
         public async void ComputeAlternative(object arg1 = null, EventArgs arg2 = null)
@@ -232,7 +234,14 @@ namespace HEC.FDA.ViewModel.Alternatives
                 Navigate(tab, false, false);
                 StudyPropertiesElement props = StudyCache.GetStudyPropertiesElement();
                 Results = await AlternativeComputer.RunAnnualizationCompute(this, props, batchJob.Reporter);
-                ViewResults();
+                if (Results.EqadResults.ConsequenceResultList.Count < 1)
+                {
+                    MessageBox.Show("No economic damages were found for the equivalent annual damage calculation. No results are available.", "No EqAD", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    ViewResults();
+                }
             }
             else
             {

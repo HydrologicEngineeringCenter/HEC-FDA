@@ -4,6 +4,7 @@ public static class LifeLossStringConstants
     // Table names
     public const string LL_LOOKUP_TABLE_NAME = "stage_life_loss_relationships_lookup";
     public const string LL_TABLE_NAME = "stage_life_loss_relationships";
+    public const string LL_COMBINED_TABLE_NAME = "stage_life_loss_combined_relationships";
 
     // Column headers 
     public const string ID_HEADER = "ID";
@@ -37,5 +38,15 @@ public static class LifeLossStringConstants
     public const string SAMPLE_MIN_PARAMETER = "@s_min";
     public const string SAMPLE_MAX_PARAMETER = "@s_max";
     public const string BIN_COUNTS_PARAMETER = "@bin_cts";
+
+    // Combined column headers
+    public const string PROBABILITIES_HEADER = "Cumulative_Probabilities";
+    public const string QUANTILES_HEADER = "Quantiles";
+
+    // Combined parameter names
+    public const string PROBABILITIES_PARAMETER = "@probs";
+    public const string QUANTILES_PARAMETER = "@quantiles";
+
+    public const string COMBINED_MAGIC_STRING = "Combined";
 
 }

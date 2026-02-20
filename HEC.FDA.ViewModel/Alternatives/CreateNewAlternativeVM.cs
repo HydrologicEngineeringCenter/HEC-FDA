@@ -1,4 +1,4 @@
-﻿using HEC.CS.Collections;
+using HEC.CS.Collections;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Saving;
@@ -11,10 +11,24 @@ using System.Windows;
 namespace HEC.FDA.ViewModel.Alternatives
 {
     public class CreateNewAlternativeVM : BaseEditorVM
-    {        
-        public CustomObservableCollection<IASElement> Scenarios { get; } = new CustomObservableCollection<IASElement>();
-        public IASElement SelectedBaseScenario { get; set; }
-        public IASElement SelectedFutureScenario { get; set; }
+    {
+        private static readonly ScenarioRowItem _NoneItem = new();
+        public CustomObservableCollection<ScenarioRowItem> Scenarios { get; } = new CustomObservableCollection<ScenarioRowItem>();
+
+        private ScenarioRowItem _SelectedBaseScenario;
+        public ScenarioRowItem SelectedBaseScenario
+        {
+            get { return _SelectedBaseScenario; }
+            set { _SelectedBaseScenario = value; NotifyPropertyChanged(); }
+        }
+
+        private ScenarioRowItem _SelectedFutureScenario;
+        public ScenarioRowItem SelectedFutureScenario
+        {
+            get { return _SelectedFutureScenario; }
+            set { _SelectedFutureScenario = value; NotifyPropertyChanged(); }
+        }
+
         public int BaseYear { get; set; } = DateTime.Now.Year;
         public int FutureYear { get; set; } = DateTime.Now.Year;
 
@@ -26,7 +40,7 @@ namespace HEC.FDA.ViewModel.Alternatives
         /// <param name="actionManager"></param>
         public CreateNewAlternativeVM( EditorActionManager actionManager) : base(actionManager)
         {
-            Scenarios.AddRange(StudyCache.GetChildElementsOfType<IASElement>());
+            LoadScenarios();
             ListenToIASEvents();
         }
 
@@ -36,17 +50,32 @@ namespace HEC.FDA.ViewModel.Alternatives
         /// <param name="elem"></param>
         public CreateNewAlternativeVM(AlternativeElement elem, EditorActionManager actionManager) :base(elem, actionManager)
         {
-            Scenarios.AddRange(StudyCache.GetChildElementsOfType<IASElement>());
+            LoadScenarios();
             Name = elem.Name;
             Description = elem.Description;
-            SelectedBaseScenario = elem.BaseScenario.GetElement();
-            SelectedFutureScenario = elem.FutureScenario.GetElement();
+            SelectedBaseScenario = FindRowItem(elem.BaseScenario.GetElement());
             BaseYear = elem.BaseScenario.Year;
-            FutureYear = elem.FutureScenario.Year;
+            if (elem.FutureScenario != null)
+            {
+                SelectedFutureScenario = FindRowItem(elem.FutureScenario.GetElement());
+                FutureYear = elem.FutureScenario.Year;
+            }
             ListenToIASEvents();
         }
 
         #endregion
+
+        private void LoadScenarios()
+        {
+            Scenarios.Add(_NoneItem);
+            Scenarios.AddRange(StudyCache.GetChildElementsOfType<IASElement>().Select(e => new ScenarioRowItem(e)));
+        }
+
+        private ScenarioRowItem FindRowItem(IASElement element)
+        {
+            if (element == null) return _NoneItem;
+            return Scenarios.FirstOrDefault(row => row.Element != null && row.Element.ID == element.ID) ?? _NoneItem;
+        }
 
         private void ListenToIASEvents()
         {
@@ -57,12 +86,15 @@ namespace HEC.FDA.ViewModel.Alternatives
 
         private void IASAdded(object sender, ElementAddedEventArgs e)
         {
-            Scenarios.Add((IASElement)e.Element);
+            Scenarios.Add(new ScenarioRowItem((IASElement)e.Element));
         }
 
         private void IASRemoved(object sender, ElementAddedEventArgs e)
         {
-            Scenarios.Remove(Scenarios.Where(row => row.ID == e.Element.ID).Single());
+            ScenarioRowItem toRemove = Scenarios.Where(row => row.Element != null && row.Element.ID == e.Element.ID).Single();
+            if (SelectedBaseScenario == toRemove) SelectedBaseScenario = _NoneItem;
+            if (SelectedFutureScenario == toRemove) SelectedFutureScenario = _NoneItem;
+            Scenarios.Remove(toRemove);
         }
 
         private void IASUpdated(object sender, ElementUpdatedEventArgs e)
@@ -71,11 +103,11 @@ namespace HEC.FDA.ViewModel.Alternatives
             int idToUpdate = newElement.ID;
 
             //find the row with this id and update the row's values;
-            IASElement foundRow = Scenarios.Where(row => row.ID == idToUpdate).SingleOrDefault();
+            ScenarioRowItem foundRow = Scenarios.Where(row => row.Element != null && row.Element.ID == idToUpdate).SingleOrDefault();
             if(foundRow != null)
             {
-                foundRow.Name = newElement.Name;
-            }   
+                foundRow.Element.Name = newElement.Name;
+            }
         }
 
         private FdaValidationResult ValidateYears()
@@ -85,13 +117,16 @@ namespace HEC.FDA.ViewModel.Alternatives
             {
                 result.AddErrorMessage("A base year is required and must be greater than 1900 and less than 3000.");
             }
-            if (FutureYear < 1900 || FutureYear > 3000)
+            if (SelectedFutureScenario?.Element != null)
             {
-                result.AddErrorMessage("A future year is required and must be greater than 1900 and less than 3000.");
-            }
-            if(BaseYear > FutureYear || BaseYear == FutureYear)
-            {
-                result.AddErrorMessage("The base year must be before the future year.");
+                if (FutureYear < 1900 || FutureYear > 3000)
+                {
+                    result.AddErrorMessage("A future year is required and must be greater than 1900 and less than 3000.");
+                }
+                if (BaseYear >= FutureYear)
+                {
+                    result.AddErrorMessage("The base year must be before the future year.");
+                }
             }
             return result;
         }
@@ -99,13 +134,9 @@ namespace HEC.FDA.ViewModel.Alternatives
         private FdaValidationResult ValidateScenarioSelections()
         {
             FdaValidationResult vr = new();
-            if(SelectedBaseScenario == null)
+            if(SelectedBaseScenario?.Element == null)
             {
                 vr.AddErrorMessage("Base scenario is required.");
-            }
-            if (SelectedFutureScenario == null)
-            {
-                vr.AddErrorMessage("Future scenario is required.");
             }
             return vr;
         }
@@ -128,8 +159,8 @@ namespace HEC.FDA.ViewModel.Alternatives
                 {
                     id = OriginalElement.ID;
                 }
-                AlternativeScenario baseScenario = new(SelectedBaseScenario.ID, BaseYear);
-                AlternativeScenario futureScenario = new(SelectedFutureScenario.ID, FutureYear);
+                AlternativeScenario baseScenario = new(SelectedBaseScenario.Element.ID, BaseYear);
+                AlternativeScenario futureScenario = SelectedFutureScenario?.Element != null ? new(SelectedFutureScenario.Element.ID, FutureYear) : null;
                 AlternativeElement elemToSave = new(Name, Description, DateTime.Now.ToString("G"), baseScenario, futureScenario, id);
                 Save(elemToSave);
             }
@@ -137,7 +168,7 @@ namespace HEC.FDA.ViewModel.Alternatives
             {
                 MessageBox.Show(vr.ErrorMessage.ToString(), "Cannot Save", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-        }       
+        }
 
     }
 }

@@ -1,5 +1,4 @@
-using HEC.FDA.Model.paireddata;
-using Statistics.Distributions;
+using Statistics;
 using Statistics.Histograms;
 using System;
 using System.Collections.Generic;
@@ -15,7 +14,8 @@ namespace HEC.FDA.Model.metrics
         public StudyAreaConsequencesBinned ConsequenceResults { get; }
         public int ImpactAreaID { get; }
         public bool IsNull { get; }
-        internal List<(CurveMetaData, PairedData)> DamageFrequencyFunctions { get; set; }
+        public List<CategoriedPairedData> ConsequenceFrequencyFunctions { get; set; } = [];
+        public List<CategoriedUncertainPairedData> UncertainConsequenceFrequencyCurves { get; set; } = [];
         #endregion
         #region Constructors 
         public ImpactAreaScenarioResults(int impactAreaID, bool isNull)
@@ -82,131 +82,60 @@ namespace HEC.FDA.Model.metrics
         /// <param name="assetCategory"></param> either structure, content, etc...the default is null
         /// <param name="impactAreaID"></param> the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
         /// <returns></returns>The mean of consequences
-        public double MeanExpectedAnnualConsequences(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
+        public double MeanExpectedAnnualConsequences(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Total)
         {
-            return ConsequenceResults.SampleMeanDamage(damageCategory, assetCategory, impactAreaID);
+            return ConsequenceResults.SampleMeanDamage(damageCategory, assetCategory, impactAreaID, consequenceType, riskType);
         }
-        /// <summary>
-        /// This method calls the inverse CDF of the damage histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
-        /// The level of aggregation of  consequences is determined by the arguments used in the method
-        /// For example, if you wanted the EAD exceeded with probability .98 for residential, impact area 2, all asset categories, then the method call would be as follows:
-        /// double consequenceValue = ConsequenceExceededWithProbabilityQ(.98, damageCategory: "residential", impactAreaID: 2);
-        /// </summary>
-        /// <param name="damageCategory"></param> either residential, commercial, etc....the default is null
-        /// <param name="exceedanceProbability"></param>
-        /// <param name="assetCategory"></param> either structure, content, etc...the default is null
-        /// <param name="impactAreaID"></param>the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
-        /// <returns></returns> the level of consequences exceeded by the specified probability 
-        public double ConsequencesExceededWithProbabilityQ(double exceedanceProbability, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
-        {
-            return ConsequenceResults.ConsequenceExceededWithProbabilityQ(exceedanceProbability, damageCategory, assetCategory, impactAreaID);
-        }
-        /// <summary>
-        /// This method gets the histogram (distribution) of consequences for the given damage category(ies), asset category(ies), and impact area(s)
-        /// The level of aggregation of the distribution of consequences is determined by the arguments used in the method
-        /// For example, if you wanted a histogram for residential, impact area 2, all asset categories, then the method call would be as follows:
-        /// ThreadsafeInlineHistogram histogram = GetConsequencesHistogram(damageCategory: "residential", impactAreaID: 2);
-        /// </summary> aggregated consequences histogram 
-        /// <param name="damageCategory"></param> The default is null 
-        /// <param name="assetCategory"></param> The default is null 
-        /// <param name="impactAreaID"></param> The default is a null value (utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
-        /// <returns></returns>
-        public Empirical GetAggregateEmpiricalDistribution(int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, string damageCategory = null, string assetCategory = null)
-        {
-            return ConsequenceResults.GetAggregateEmpiricalDistribution(damageCategory, assetCategory, impactAreaID);
-        }
+
         public IHistogram GetSpecificHistogram(int impactAreaID, string damageCategory, string assetCategory)
         {
             return ConsequenceResults.GetSpecificHistogram(damageCategory, assetCategory, impactAreaID);
         }
-        private bool IsEADConverged(bool computeWithDamage)
+        public bool ResultsAreConverged(double upperConfidenceLimitProb, double lowerConfidenceLimitProb, bool checkConsequenceResults)
         {
-            if (computeWithDamage == true)
-            {
-                foreach (AggregatedConsequencesBinned consequenceDistributionResult in ConsequenceResults.ConsequenceResultList)
-                {
-                    if (!consequenceDistributionResult.ConsequenceHistogram.HistogramIsZeroValued)
-                    {
-                        if (consequenceDistributionResult.ConsequenceHistogram.IsConverged == false)
-                        {
-                            return false;
-                        }
-                    }
-                }
-            }
-            return true;
+            bool consequenceConverged = true;
+            if (checkConsequenceResults == true)
+                consequenceConverged = ConsequenceResultsAreConverged(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+            bool performanceConverged = PerformanceResultsAreConverged(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+            return consequenceConverged && performanceConverged;
         }
-        public bool IsPerformanceConverged() //exposed publicly for testing cnep convergence logic
-        {
 
-            List<bool> convergedList = new();
-            //dont like this
+        /// <summary>
+        /// Determines whether all system performance results across thresholds have converged based on the specified
+        /// upper and lower confidence limit probabilities.
+        /// </summary>
+        private bool PerformanceResultsAreConverged(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
+        {
             foreach (var threshold in PerformanceByThresholds.ListOfThresholds)
             {
-                convergedList.Add(threshold.SystemPerformanceResults.AssuranceIsConverged());
-            }
-            foreach (var convergenceResult in convergedList)
-            {
-                if (convergenceResult)
-                {
-                    //do nothing
-                }
-                else
+                bool thresholdAssuranceIsConverged = threshold.SystemPerformanceResults.AssuranceTestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
+                if (!thresholdAssuranceIsConverged)
                 {
                     return false;
                 }
             }
             return true;
         }
-        public bool IsConverged(bool computeWithDamage)
-        {
-            return IsEADConverged(computeWithDamage) && IsPerformanceConverged();
-        }
-        public bool ResultsAreConverged(double upperConfidenceLimitProb, double lowerConfidenceLimitProb, bool computeWithDamage)
-        {
-            bool eadIsConverged = true;
-            if (computeWithDamage == true)
-            {
-                foreach (AggregatedConsequencesBinned consequenceDistributionResult in ConsequenceResults.ConsequenceResultList)
-                {
-                    if (consequenceDistributionResult.ConsequenceHistogram.HistogramIsZeroValued)
-                    {
-                        eadIsConverged = true;
-                    }
-                    else
-                    {
-                        if (consequenceDistributionResult.ConsequenceHistogram.IsHistogramConverged(upperConfidenceLimitProb, lowerConfidenceLimitProb) == false)
-                        {
-                            eadIsConverged = false;
-                            break;
-                        }
-                    }
-                }
-            }
-            bool cnepIsConverged = true;
-            List<bool> convergedList = new();
 
-            //dont like this.
-            foreach (var threshold in PerformanceByThresholds.ListOfThresholds)
+        /// <summary>
+        /// Checks to see if all consequence results are converged based on the provided confidence limit probabilities. Zero valued histograms are skipped.
+        /// </summary>
+        private bool ConsequenceResultsAreConverged(double upperConfidenceLimitProb, double lowerConfidenceLimitProb)
+        {
+            foreach (AggregatedConsequencesBinned consequenceDistributionResult in ConsequenceResults.ConsequenceResultList)
             {
-                bool thresholdAssuranceIsConverged = threshold.SystemPerformanceResults.AssuranceTestForConvergence(upperConfidenceLimitProb, lowerConfidenceLimitProb);
-                convergedList.Add(thresholdAssuranceIsConverged);
-
-            }
-            foreach (var convergenceResult in convergedList)
-            {
-                if (convergenceResult)
+                if (consequenceDistributionResult.ConsequenceHistogram.HistogramIsZeroValued)
                 {
-                    //do nothing
+                    continue;
                 }
-                else
+                if (consequenceDistributionResult.ConsequenceHistogram.IsHistogramConverged(upperConfidenceLimitProb, lowerConfidenceLimitProb) == false)
                 {
-                    cnepIsConverged = false;
-                    break;
+                    return false;
                 }
             }
-            return eadIsConverged && cnepIsConverged;
+            return true;
         }
+
         public long RemainingIterations(double upperConfidenceLimitProb, double lowerConfidenceLimitProb, bool computeWithDamage)
         {
             List<long> eadIterationsRemaining = new();
@@ -245,24 +174,6 @@ namespace HEC.FDA.Model.metrics
                 threshold.SystemPerformanceResults.ParallelResultsAreConverged(upperConfidenceLimitProb, lowerConfidenceLimitProb);
             }
         }
-        public PairedData GetDamageFrequency(string damageCategory, string assetCategory)
-        {
-            PairedData returnValue = new(new double[] { 0, 1 }, new double[] { 0, 1 });
-            if (DamageFrequencyFunctions != null)
-            {
-                foreach ((CurveMetaData, PairedData) pairedData in DamageFrequencyFunctions)
-                {
-                    if (pairedData.Item1.DamageCategory == damageCategory)
-                    {
-                        if (pairedData.Item1.AssetCategory == assetCategory)
-                        {
-                            returnValue = pairedData.Item2 as PairedData;
-                        }
-                    }
-                }
-            }
-            return returnValue;
-        }
         public bool Equals(ImpactAreaScenarioResults incomingIContainResults)
         {
             bool performanceMatches = PerformanceByThresholds.Equals(incomingIContainResults.PerformanceByThresholds);
@@ -283,6 +194,12 @@ namespace HEC.FDA.Model.metrics
             expectedAnnualDamageResultsElement.Name = "Expected_Annual_Damage_Results";
             masterElement.Add(expectedAnnualDamageResultsElement);
             masterElement.SetAttributeValue("ImpactAreaID", ImpactAreaID);
+            XElement consequenceFrequencyFunctionsElement = new("Uncertain_Consequence_Frequency_Functions");
+            foreach (CategoriedUncertainPairedData curve in UncertainConsequenceFrequencyCurves)
+            {
+                consequenceFrequencyFunctionsElement.Add(curve.WriteToXML());
+            }
+            masterElement.Add(consequenceFrequencyFunctionsElement);
             return masterElement;
         }
 
@@ -291,16 +208,77 @@ namespace HEC.FDA.Model.metrics
             PerformanceByThresholds performanceByThresholds = PerformanceByThresholds.ReadFromXML(xElement.Element("Performance_By_Thresholds"));
             StudyAreaConsequencesBinned expectedAnnualDamageResults = StudyAreaConsequencesBinned.ReadFromXML(xElement.Element("Expected_Annual_Damage_Results"));
             int impactAreaID = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
-            return new ImpactAreaScenarioResults(performanceByThresholds, expectedAnnualDamageResults, impactAreaID);
+            ImpactAreaScenarioResults result = new(performanceByThresholds, expectedAnnualDamageResults, impactAreaID);
+            if(xElement.Element("Uncertain_Consequence_Frequency_Functions") != null)
+            {
+                foreach (XElement curveElement in xElement.Element("Uncertain_Consequence_Frequency_Functions").Elements())
+                {
+                    CategoriedUncertainPairedData curve = CategoriedUncertainPairedData.ReadFromXML(curveElement);
+                    result.UncertainConsequenceFrequencyCurves.Add(curve);
+                }
+            }
+            return result;
         }
 
-        // this method is called to add a consequences result with zero damages to an impact area scenario which has no damages but has a levee
-        // still want to compute performance statistics on the levee, but want to show the user that there are also zero damages
-        // previously, the damages zero damages would not be reported to the user
-        public void AddZeroConsequencesResult(int impactAreaId)
+
+        private readonly object _uncertainCurveLock = new();
+
+        /// <summary>
+        /// Finds an existing UncertainConsequenceFrequencyCurve matching the specified criteria, or creates a new one if none exists.
+        /// This method is thread-safe for use in parallel compute loops.
+        /// </summary>
+        /// <param name="xvals">The x-values for the curve (used when creating a new curve).</param>
+        /// <param name="damageCategory">The damage category to match.</param>
+        /// <param name="assetCategory">The asset category to match.</param>
+        /// <param name="consequenceType">The consequence type to match.</param>
+        /// <param name="riskType">The risk type to match.</param>
+        /// <param name="convergenceCriteria">The convergence criteria (used when creating a new curve).</param>
+        /// <returns>The matching or newly created UncertainConsequenceFrequencyCurve.</returns>
+        public CategoriedUncertainPairedData GetOrCreateUncertainConsequenceFrequencyCurve(
+            double[] xvals,
+            string damageCategory,
+            string assetCategory,
+            ConsequenceType consequenceType,
+            RiskType riskType,
+            ConvergenceCriteria convergenceCriteria)
         {
-            var zeroResult = new AggregatedConsequencesBinned(impactAreaId);
-            ConsequenceResults.ConsequenceResultList.Add(zeroResult);
+            lock (_uncertainCurveLock)
+            {
+                CategoriedUncertainPairedData existingCurve = UncertainConsequenceFrequencyCurves
+                    .FirstOrDefault(c =>
+                        c.DamageCategory == damageCategory &&
+                        c.AssetCategory == assetCategory &&
+                        c.ConsequenceType == consequenceType &&
+                        c.RiskType == riskType);
+
+                if (existingCurve != null)
+                {
+                    return existingCurve;
+                }
+
+                var newCurve = new CategoriedUncertainPairedData(
+                    xvals,
+                    damageCategory,
+                    assetCategory,
+                    consequenceType,
+                    riskType,
+                    convergenceCriteria);
+
+                UncertainConsequenceFrequencyCurves.Add(newCurve);
+                return newCurve;
+            }
+        }
+
+        /// <summary>
+        /// Flushes all pending curve data into histograms for all UncertainConsequenceFrequencyCurves.
+        /// Should be called after each batch of iterations completes.
+        /// </summary>
+        public void PutUncertainFrequencyCurvesIntoHistograms()
+        {
+            foreach (var curve in UncertainConsequenceFrequencyCurves)
+            {
+                curve.PutDataIntoHistograms();
+            }
         }
         #endregion
     }

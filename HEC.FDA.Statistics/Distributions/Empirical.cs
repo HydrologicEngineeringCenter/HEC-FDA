@@ -281,20 +281,26 @@ namespace Statistics.Distributions
 
         public override double InverseCDF(double p)
         {
+            double cumulativeProbsMin = CumulativeProbabilities[0];
+            double cumulativeProbsMax = CumulativeProbabilities[^1];
+            if (cumulativeProbsMax < cumulativeProbsMin)
+            {
+                throw new Exception("Cumulative Probabilities should always be ascending for an Empirical Distribution and were not.");
+            }
             if (Truncated && _Constructed)
             {
-                p = CumulativeProbabilities.Min() + (p) * (CumulativeProbabilities.Max() - CumulativeProbabilities.Min());
+                p = cumulativeProbsMin + (p) * (cumulativeProbsMax - cumulativeProbsMin);
             }
             if (!p.IsFinite())
             {
                 throw new ArgumentException($"The value of specified probability parameter: {p} is invalid because it is not on the valid probability range: [0, 1].");
             }
-            else if (p <= CumulativeProbabilities.Min())
+            else if (p <= cumulativeProbsMin)
             {
                 return Min;
 
             }
-            else if (p >= CumulativeProbabilities.Max())
+            else if (p >= cumulativeProbsMax)
             {
                 return Max;
             }
@@ -411,6 +417,41 @@ namespace Statistics.Distributions
             Empirical empirical = FitToSample([.. stackedInvCDFs]);
             empirical.SampleMean = stackedMean;
             //Handle the Sample mean here/ 
+            return empirical;
+        }
+
+        public static Empirical StackEmpiricalDistributionsWeighted(Empirical[] distributions, double[] weights)
+        {
+            if (distributions.Length != weights.Length)
+                throw new ArgumentException("Number of distributions must match number of weights");
+
+            int probabilitySteps = 2500;
+            double[] cumulativeProbabilities = new double[probabilitySteps];
+            double[] weightedInvCDFs = new double[probabilitySteps];
+
+            Parallel.For(0, probabilitySteps, i =>
+            {
+                double probabilityStep = (0.5 + i) / probabilitySteps;
+                double weightedValue = 0.0;
+
+                for (int j = 0; j < distributions.Length; j++)
+                {
+                    weightedValue += weights[j] * distributions[j].InverseCDF(probabilityStep);
+                }
+
+                cumulativeProbabilities[i] = probabilityStep;
+                weightedInvCDFs[i] = weightedValue;
+            });
+
+            // Handle the sample mean separately
+            double weightedMean = 0.0;
+            for (int j = 0; j < distributions.Length; j++)
+            {
+                weightedMean += weights[j] * distributions[j].SampleMean;
+            }
+
+            Empirical empirical = FitToSample([.. weightedInvCDFs]);
+            empirical.SampleMean = weightedMean;
             return empirical;
         }
 

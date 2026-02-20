@@ -16,7 +16,7 @@ using System.Windows;
 
 namespace HEC.FDA.ViewModel.Hydraulics.GriddedData;
 
-public partial class GriddedImporterVM : BaseEditorVM
+public partial class GriddedImporterVM : BaseEditorVM,IHaveListOfWSERows
 {
     private string _SelectedPath;
     public string SelectedPath
@@ -114,6 +114,14 @@ public partial class GriddedImporterVM : BaseEditorVM
         string path = Path.Combine(Connection.Instance.HydraulicsDirectory, elementName, profile.FileName); //path is the full path to the file from the element root.
         double prob = profile.Probability;
         return new WaterSurfaceElevationRowItemVM(name, path, prob, false); //setting this to false means the user can't change anything meaningful about this dataset. 
+    }
+
+    public void RemoveRows(List<int> rowIndices)
+    {
+        for (int i = rowIndices.Count() - 1; i >= 0; i--)
+        {
+            ListOfRows.RemoveAt(rowIndices[i]);
+        }
     }
 
     public void FolderSelected(string fullpath)

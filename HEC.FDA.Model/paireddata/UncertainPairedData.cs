@@ -1,15 +1,15 @@
-using Statistics;
-using System;
-using System.Xml.Linq;
-using HEC.MVVMFramework.Base.Events;
-using HEC.MVVMFramework.Base.Implementations;
-using HEC.MVVMFramework.Base.Interfaces;
-using HEC.MVVMFramework.Base.Enumerations;
-using Statistics.Distributions;
+using Amazon.Runtime;
 using HEC.FDA.Model.interfaces;
-using Statistics.Histograms;
+using HEC.MVVMFramework.Base.Enumerations;
+using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Model.Messaging;
+using Statistics;
+using Statistics.Distributions;
+using Statistics.Histograms;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace HEC.FDA.Model.paireddata
 {
@@ -79,9 +79,9 @@ namespace HEC.FDA.Model.paireddata
 
         private void AddRules()
         {
-                    AddSinglePropertyRule(nameof(Xvals), new Rule(() => (IsArrayValid(Xvals, (a, b) => a == b) || IsArrayValid(Xvals, (a, b) => a < b)), $"X must be deterministic or strictly monotonically increasing but is not for the function named {CurveMetaData.Name}.", ErrorLevel.Minor));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .9999, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .9999, (a, b) => a <= b), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {CurveMetaData.Name} at the upper bound.", ErrorLevel.Minor));
-                    AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .0001, (a, b) => a <= b), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {CurveMetaData.Name} at the lower found.", ErrorLevel.Minor));
+            AddSinglePropertyRule(nameof(Xvals), new Rule(() => (IsArrayValid(Xvals, (a, b) => a == b) || IsArrayValid(Xvals, (a, b) => a < b)), $"X must be deterministic or strictly monotonically increasing but is not for the function named {CurveMetaData.Name}.", ErrorLevel.Minor));
+            AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .9999, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .9999, (a, b) => a <= b), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {CurveMetaData.Name} at the upper bound.", ErrorLevel.Minor));
+            AddSinglePropertyRule(nameof(Yvals), new Rule(() => IsDistributionArrayValid(Yvals, .0001, (a, b) => a == b) || IsDistributionArrayValid(Yvals, .0001, (a, b) => a <= b), $"Y must be deterministic or weakly monotonically increasing but is not for the function named {CurveMetaData.Name} at the lower found.", ErrorLevel.Minor));
         }
         private static bool IsArrayValid(double[] arrayOfData, Func<double, double, bool> comparison)
         {
@@ -118,10 +118,11 @@ namespace HEC.FDA.Model.paireddata
             {
                 y[i] = Yvals[i].InverseCDF(probability);
             }
-            PairedData pairedData = new(Xvals, y, CurveMetaData);//mutability leakage on xvals
+            PairedData pairedData = new(Xvals, y, CurveMetaData);
             pairedData.ForceWeakMonotonicityBottomUp();
             return pairedData;
         }
+
         /// <summary>
         /// returns a paired data sampled at the given probability without enforcing any monotonicity
         /// </summary>
@@ -132,7 +133,23 @@ namespace HEC.FDA.Model.paireddata
             {
                 y[i] = Yvals[i].InverseCDF(probability);
             }
-            PairedData pairedData = new(Xvals, y, CurveMetaData);//mutability leakage on xvals
+            PairedData pairedData = new(Xvals, y, CurveMetaData);
+
+            return pairedData;
+        }
+
+        /// <summary>
+        /// returns a paired data of the central tendency sampled at the given probability without enforcing any monotonicity
+        /// </summary>
+        public PairedData SamplePairedDataRawDeterministic()
+        {
+            double[] y = new double[Yvals.Length];
+            for (int i = 0; i < Xvals.Length; i++)
+            {
+                Deterministic deterministic = UncertainToDeterministicDistributionConverter.ConvertDistributionToDeterministic(Yvals[i]);
+                y[i] = (deterministic.Value);
+            }
+            PairedData pairedData = new(Xvals, y, CurveMetaData);
 
             return pairedData;
         }
@@ -158,15 +175,15 @@ namespace HEC.FDA.Model.paireddata
             else
             {
 
-            if (_RandomNumbers.Length ==0)
-            {
-                throw new Exception("Random numbers have not been created for UPD sampling");
-            }
-            if (iterationNumber < 0 || iterationNumber >= _RandomNumbers.Length)
-            {
-                throw new Exception("Iteration number cannot be less than 0 or greater than the size of the random number array");
+                if (_RandomNumbers.Length == 0)
+                {
+                    throw new Exception("Random numbers have not been created for UPD sampling");
+                }
+                if (iterationNumber < 0 || iterationNumber >= _RandomNumbers.Length)
+                {
+                    throw new Exception("Iteration number cannot be less than 0 or greater than the size of the random number array");
 
-            }
+                }
                 for (int i = 0; i < Xvals.Length; i++)
                 {
                     y[i] = Yvals[i].InverseCDF(_RandomNumbers[iterationNumber]);
@@ -254,7 +271,7 @@ namespace HEC.FDA.Model.paireddata
                         }
                         else if (ordinateElements.Name.ToString().Equals("ThreadsafeInlineHistogram"))
                         {
-                            yValues[i] = ThreadsafeInlineHistogram.ReadFromXML(ordinateElements);
+                            throw new Exception("ThreadsafeInlineHistogram has been deprecated");
                         }
                         else if (ordinateElements.Name.ToString().Equals("Histogram"))
                         {
@@ -272,7 +289,7 @@ namespace HEC.FDA.Model.paireddata
 
         }
 
-        public static List<string> ConvertDamagedElementCountToText(List<UncertainPairedData> quantityDamagedElementsUPD, Dictionary<int,string> iaNames)
+        public static List<string> ConvertDamagedElementCountToText(List<UncertainPairedData> quantityDamagedElementsUPD, Dictionary<int, string> iaNames)
         {
             List<string> list = new();
             string header = "Impact Area Name," +
@@ -288,7 +305,7 @@ namespace HEC.FDA.Model.paireddata
                 "Damaged Element Count 0.002 AEP";
             list.Add(header);
 
-            foreach(UncertainPairedData upd in quantityDamagedElementsUPD)
+            foreach (UncertainPairedData upd in quantityDamagedElementsUPD)
             {
                 List<string> quantilesToText = QuantilesToText(upd, iaNames);
                 list.AddRange(quantilesToText);
@@ -306,7 +323,7 @@ namespace HEC.FDA.Model.paireddata
                 $"{upd.DamageCategory}," +
                 $"{upd.AssetCategory}," +
                 $"{upd.Xvals[i]}," +
-                $"{Math.Ceiling(upd.Yvals[i].InverseCDF(1-0.95))}," +
+                $"{Math.Ceiling(upd.Yvals[i].InverseCDF(1 - 0.95))}," +
                 $"{Math.Ceiling(upd.Yvals[i].InverseCDF(1 - 0.5))}," +
                 $"{Math.Ceiling(upd.Yvals[i].InverseCDF(1 - 0.5))}," +
                 $"{Math.Ceiling(upd.Yvals[i].InverseCDF(1 - 0.25))}," +
@@ -317,6 +334,58 @@ namespace HEC.FDA.Model.paireddata
             }
             return returnStrings;
         }
+
+        /// <summary>
+        /// Requires that the UncertainPairedData Y values are DynamicHistograms.
+        /// </summary>
+        public static UncertainPairedData CombineWithWeights(IReadOnlyDictionary<UncertainPairedData, double> updWeights)
+        {
+            ValidateWeightedUPDs(updWeights);
+
+            int lenUPDs = updWeights.Count;
+            double[] referenceXvals = updWeights.Keys.ToList()[0].Xvals;
+            Empirical[] weightedEmpiricals = new Empirical[referenceXvals.Length];
+            for (int i = 0; i < referenceXvals.Length; i++)
+            {
+                Empirical[] empiricals = new Empirical[lenUPDs];
+                double[] weights = new double[lenUPDs];
+                int j = 0;
+                foreach (var kvp in updWeights)
+                {
+                    DynamicHistogram histogram = (DynamicHistogram)kvp.Key.Yvals[i];
+                    Empirical emp = DynamicHistogram.ConvertToEmpiricalDistribution(histogram);
+                    empiricals[j] = emp;
+                    weights[j] = kvp.Value;
+                    j++;
+                }
+                Empirical combinedWithWeights = Empirical.StackEmpiricalDistributionsWeighted(empiricals, weights);
+                weightedEmpiricals[i] = combinedWithWeights;
+            }
+            return new UncertainPairedData(referenceXvals, weightedEmpiricals, new CurveMetaData());
+        }
+
+        private static void ValidateWeightedUPDs(IReadOnlyDictionary<UncertainPairedData, double> updWeights)
+        {
+            double weightSum = 0;
+            foreach (double weight in updWeights.Values)
+                weightSum += weight;
+            const double tolerance = 1e-10;
+            if ((Math.Abs(weightSum - 1.0) > tolerance))
+                throw new Exception("Weights must sum to 1.");
+
+            var upds = updWeights.Keys.ToList();
+
+            if (upds == null || upds.Count <= 1) return;
+
+            double[] referenceXvals = upds[0].Xvals;
+
+            for (int i = 1; i < upds.Count; i++)
+            {
+                if (!upds[i].Xvals.SequenceEqual(referenceXvals))
+                    throw new Exception("UncertainPairedData Xvals do not match.");
+            }
+        }
+
         #endregion
     }
 }

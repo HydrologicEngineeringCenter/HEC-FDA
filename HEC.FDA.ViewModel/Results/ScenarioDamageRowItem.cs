@@ -1,11 +1,7 @@
 ﻿using HEC.FDA.Model.metrics;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.TableWithPlot.Rows.Attributes;
-using Statistics.Distributions;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using Utility.Memory;
 
 namespace HEC.FDA.ViewModel.Results
 {
@@ -25,9 +21,11 @@ namespace HEC.FDA.ViewModel.Results
         public double Point5 { get; set; }
         [DisplayAsColumn("75th Percentile EAD")]
         public double Point75 { get; set; }
+        [DisplayAsColumn("Risk Type")]
+        public string RiskType { get; set; }
 
 
-        private ScenarioDamageRowItem(string name, string analysisYear, string impactArea, double mean, double point75, double point5, double point25)
+        private ScenarioDamageRowItem(string name, string analysisYear, string impactArea, double mean, double point75, double point5, double point25, RiskType riskType)
         {
             Name = name;
             AnalysisYear = analysisYear;
@@ -36,25 +34,41 @@ namespace HEC.FDA.ViewModel.Results
             Point75 = point75;
             Point5 = point5;
             Point25 = point25;
+            RiskType = riskType.ToString();
         }
 
         public static List<ScenarioDamageRowItem> CreateScenarioDamageRowItems(IASElement scenario)
         {
+            //These are specifically damage row items. 
+            ConsequenceType consequenceType = ConsequenceType.Damage;
+
             List<ScenarioDamageRowItem> rowItems = [];
 
             string name = scenario.Name;
             string analysisYear = scenario.AnalysisYear;
             ScenarioResults results = scenario.Results;
-            List<int> impactAreaIds = results.GetImpactAreaIDs();
-            Dictionary<int, string> impactAreaIdToName = IASElement.GetImpactAreaNamesFromIDs();
-           
-            foreach (int impactAreaID in impactAreaIds)
+            List<int> impactAreaIds = results.GetImpactAreaIDs(ConsequenceType.Damage);
+            List<RiskType> riskTypes = results.GetRiskTypes();
+
+            //if we only have one risk type, then it's the same as total. just display total. 
+            if (riskTypes.Count == 1)
             {
-                    double Mean = results.SampleMeanExpectedAnnualConsequences(impactAreaID);
-                    double point75 = results.ConsequencesExceededWithProbabilityQ(.75, impactAreaID);
-                    double point5 = results.ConsequencesExceededWithProbabilityQ(.50, impactAreaID);
-                    double point25 = results.ConsequencesExceededWithProbabilityQ(.25, impactAreaID);
-                    rowItems.Add(new(name, analysisYear, impactAreaIdToName[impactAreaID], Mean, point75, point5, point25));
+                riskTypes.Clear();
+            }
+            riskTypes.Add(Model.metrics.RiskType.Total);
+
+            Dictionary<int, string> impactAreaIdToName = IASElement.GetImpactAreaNamesFromIDs();
+
+            foreach( RiskType riskType in riskTypes)
+            {
+                foreach (int impactAreaID in impactAreaIds)
+                {
+                    double Mean = results.SampleMeanExpectedAnnualConsequences(impactAreaID, consequenceType: consequenceType, riskType:riskType);
+                    double point75 = results.ConsequencesExceededWithProbabilityQ(.75, impactAreaID, consequenceType: consequenceType, riskType: riskType);
+                    double point5 = results.ConsequencesExceededWithProbabilityQ(.50, impactAreaID, consequenceType: consequenceType, riskType: riskType);
+                    double point25 = results.ConsequencesExceededWithProbabilityQ(.25, impactAreaID, consequenceType: consequenceType, riskType: riskType);
+                    rowItems.Add(new(name, analysisYear, impactAreaIdToName[impactAreaID], Mean, point75, point5, point25, riskType));
+                }
             }
             return rowItems;
         }

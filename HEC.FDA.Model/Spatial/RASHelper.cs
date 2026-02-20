@@ -233,15 +233,18 @@ public static class RASHelper
         return pointMs;
     }
 
-    public static Dictionary<string, PointM> QueryPolygons(string polygonPath, string pointsPath, string polygonColumnName)
+    public static bool TryQueryPolygons(string polygonPath, string pointsPath, string polygonColumnName, out Dictionary<string, PointM> result)
     {
+        result = [];
         OperationResult polygonResult = ShapefileIO.TryRead(polygonPath, out PolygonFeatureCollection polygons);
-        if (!polygonResult.Result) return new Dictionary<string, PointM>();
-
+        if (!polygonResult.Result) 
+            return false;
         OperationResult pointsResult = ShapefileIO.TryRead(pointsPath, out PointFeatureCollection points);
-        if (!pointsResult.Result) return new Dictionary<string, PointM>();
+        if (!pointsResult.Result)
+            return false;
+        if (polygons.Count != points.Count)
+            return false;
 
-        Dictionary<string, PointM> result = new();
         for (int i = 0; i < points.Count; i++)
         {
             for (int j = 0; j < polygons.Count; j++)
@@ -249,12 +252,16 @@ public static class RASHelper
                 if (polygons[j].Contains(points[i]))
                 {
                     var row = polygons.AttributeTable.Rows[j];
-                    string summaryZone = row.TryGetValueAs(polygonColumnName, $"Polygon {j}").TrimEnd();
-                    result[summaryZone] = Converter.ConvertPtM(points[i]);
+                    object value = row.TryGetValueAs<object>(polygonColumnName, null);
+                    string polygonName = value?.ToString()?.TrimEnd() ?? $"Polygon {j}";
+                    result[polygonName] = Converter.ConvertPtM(points[i]);
+                    break;
                 }
             }
         }
-        return result;
+        if (result.Count != polygons.Count)
+            return false;
+        return true;
     }
 
     public static float[] GetStageFromHDF(PointMs pts, string hydraulicsPath)

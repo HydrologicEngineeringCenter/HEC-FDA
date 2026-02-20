@@ -47,6 +47,10 @@ namespace Statistics.Distributions
                     double mean = ((Histograms.IHistogram)iDistribution).SampleMean;
                     returnedDistribution = new Deterministic(mean);
                     break;
+                case IDistributionEnum.Empirical:
+                    double empiricalMean = ((Empirical)iDistribution).SampleMean;
+                    returnedDistribution = new Deterministic(empiricalMean);
+                    break;
             } 
             return returnedDistribution;
         } 

@@ -1,13 +1,7 @@
-﻿using System;
-using Statistics.Histograms;
-using Statistics;
-using System.Xml.Linq;
-using HEC.MVVMFramework.Base.Interfaces;
-using HEC.MVVMFramework.Base.Events;
-using HEC.MVVMFramework.Base.Implementations;
+﻿using Statistics.Distributions;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using Statistics.Distributions;
+using System.Xml.Linq;
 
 namespace HEC.FDA.Model.metrics
 {
@@ -19,6 +13,8 @@ namespace HEC.FDA.Model.metrics
         public string DamageCategory { get; }
         public string AssetCategory { get; }
         public int RegionID { get; } = -999;
+        public ConsequenceType ConsequenceType { get; }
+        public RiskType RiskType { get; }
         public bool IsNull { get; }
         #endregion 
 
@@ -27,27 +23,14 @@ namespace HEC.FDA.Model.metrics
         {
             DamageCategory = "unassigned";
             AssetCategory = "unassigned";
+            ConsequenceType = ConsequenceType.Damage;
+            RiskType = RiskType.Fail;
             RegionID = 0;
             ConsequenceDistribution = new Empirical();
             IsNull = true;
 
         }
-        /// <summary>
-        /// This constructor creates a new empirical distribution based on a list of data 
-        /// </summary>
-        /// <param name="damageCategory"></param>
-        /// <param name="assetCategory"></param>
-        /// <param name="convergenceCriteria"></param>
-        /// <param name="consequences"></param>
-        /// <param name="impactAreaID"></param>
-        public AggregatedConsequencesByQuantile(string damageCategory, string assetCategory, List<double> consequences, int impactAreaID)
-        {
-            DamageCategory = damageCategory;
-            AssetCategory = assetCategory;
-            ConsequenceDistribution = Empirical.FitToSample(consequences);
-            RegionID = impactAreaID;
 
-        }
         /// <summary>
         /// This constructor can accept a previously created Empirical Distribution
         /// as such can be used for both compute types
@@ -55,10 +38,12 @@ namespace HEC.FDA.Model.metrics
         /// <param name="damageCategory"></param>
         /// <param name="assetCategory"></param>
         /// <param name="impactAreaID"></param>
-        public AggregatedConsequencesByQuantile(string damageCategory, string assetCategory, Empirical empirical, int impactAreaID)
+        public AggregatedConsequencesByQuantile(string damageCategory, string assetCategory, Empirical empirical, int impactAreaID, ConsequenceType consequenceType, RiskType riskType)
         {
             DamageCategory = damageCategory;
             AssetCategory = assetCategory;
+            ConsequenceType = consequenceType;
+            RiskType = riskType;
             ConsequenceDistribution = empirical;
             RegionID = impactAreaID;
             IsNull = false;
@@ -66,7 +51,7 @@ namespace HEC.FDA.Model.metrics
         #endregion
 
         #region Methods
-        
+
         internal double ConsequenceSampleMean()
         {
             return ConsequenceDistribution.SampleMean;
@@ -77,27 +62,6 @@ namespace HEC.FDA.Model.metrics
             double nonExceedanceProbability = 1 - exceedanceProbability;
             double quartile = ConsequenceDistribution.InverseCDF(nonExceedanceProbability);
             return quartile;
-        }
-
-        public XElement WriteToXML()
-        {
-            XElement masterElement = new("ConsequenceResult");
-            XElement histogramElement = ConsequenceDistribution.ToXML();
-            histogramElement.Name = "DamageDistribution";
-            masterElement.Add(histogramElement);
-            masterElement.SetAttributeValue("DamageCategory", DamageCategory);
-            masterElement.SetAttributeValue("AssetCategory", AssetCategory);
-            masterElement.SetAttributeValue("ImpactAreaID", RegionID);
-            return masterElement;
-        }
-
-        public static AggregatedConsequencesByQuantile ReadFromXML(XElement xElement)
-        {
-            Empirical empirical = Empirical.ReadFromXML(xElement.Element("DamageDistribution"));
-            string damageCategory = xElement.Attribute("DamageCategory").Value;
-            string assetCategory = xElement.Attribute("AssetCategory").Value;
-            int id = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
-            return new AggregatedConsequencesByQuantile(damageCategory, assetCategory, empirical, id);
         }
         #endregion
     }

@@ -10,6 +10,9 @@ namespace Statistics.Histograms
     public class DynamicHistogram : IHistogram
     {
         #region Fields
+        private const int MAX_BIN_COUNT = 500;
+        private const int OVERFLOW_PREVENTION_THRESHOLD = 2000; // Prevent Int32 overflow and excessive memory
+        public const double DEFAULT_BIN_WIDTH = .0001; //reduced from 1, to ensure good histograms for AALL, which tend much smaller than $ damages. See Benchmarks and Tests for more details. 
         private double _SampleVariance;
         private bool _minHasNotBeenSet = false;
         private bool _HistogramShutDown = false;
@@ -79,7 +82,7 @@ namespace Statistics.Histograms
         /// </summary>
         public DynamicHistogram()
         {
-            BinWidth = 1;
+            BinWidth = DEFAULT_BIN_WIDTH;
             _minHasNotBeenSet = true;
             ConvergenceCriteria = new ConvergenceCriteria();
             for (int i = 0; i < 10; i++)
@@ -112,7 +115,8 @@ namespace Statistics.Histograms
             double range = Max - Min;
             if (range == 0)
             {
-                BinWidth = 1;
+                //shoudl consider cranking this down for AALL .0001
+                BinWidth = DEFAULT_BIN_WIDTH;
 
             }
             else
@@ -240,9 +244,11 @@ namespace Statistics.Histograms
                     if (observation < SampleMin) SampleMin = observation;
                     SampleSize += 1;
                     double tmpMean = SampleMean + ((observation - SampleMean) / (double)SampleSize);
-                    _SampleVariance = ((((double)(SampleSize - 2) / (double)(SampleSize - 1)) * _SampleVariance) + (Math.Pow(observation - SampleMean, 2)) / (double)SampleSize);
+                    double delta = observation - SampleMean;
+                    _SampleVariance = ((((double)(SampleSize - 2) / (double)(SampleSize - 1)) * _SampleVariance) + (delta * delta) / (double)SampleSize);
                     SampleMean = tmpMean;
                 }
+                EnsureCapacityForObservation(observation);
                 int quantityAdditionalBins;
                 if (observation < Min)
                 {
@@ -275,7 +281,7 @@ namespace Statistics.Histograms
                 else if (observation > Max)
                 {
                     quantityAdditionalBins = Convert.ToInt32(Math.Ceiling((observation - Max + BinWidth) / BinWidth));
-                    Int64[] newBinCounts = new Int64[quantityAdditionalBins + BinCounts.Length];
+                    Int64[] newBinCounts = new Int64[quantityAdditionalBins + BinCounts.Length]; 
                     for (int i = 0; i < BinCounts.Length; i++)
                     {
                         newBinCounts[i] = BinCounts[i];
@@ -321,9 +327,9 @@ namespace Statistics.Histograms
                 {
                     AddObservationToHistogram(x);
                 }
-                if (BinCounts.Length > 2000)
+                if (BinCounts.Length > MAX_BIN_COUNT * 4)
                 {
-                    double divisor = BinCounts.Length / 500;
+                    double divisor = (double)BinCounts.Length / MAX_BIN_COUNT;
                     ResizeHistogram(divisor);
                 }
             }
@@ -341,6 +347,24 @@ namespace Statistics.Histograms
             }
             Max = Min + newBinCount * BinWidth;
             BinCounts = newBins;
+        }
+
+        private void EnsureCapacityForObservation(double observation)
+        {
+            if (BinCounts.Length == 0) return;
+
+            double projectedMin = Math.Min(Min, observation);
+            double projectedMax = Math.Max(Max, observation);
+            double projectedRange = projectedMax - projectedMin;
+
+            double projectedBinCount = projectedRange / BinWidth;
+
+            if (projectedBinCount > OVERFLOW_PREVENTION_THRESHOLD) //2000
+            {
+                double newBinWidth = projectedRange / MAX_BIN_COUNT; //500
+                double divisor = newBinWidth / BinWidth;
+                ResizeHistogram(divisor);
+            }
         }
 
         private void ResetToZeroMin(int quantityAdditionalBins)
@@ -764,7 +788,8 @@ namespace Statistics.Histograms
             Int64 upperestimate = ConvergenceCriteria.MaxIterations;
             if (ufxp > 0.0 & uxp != 0)
             {
-                double estimate = Math.Ceiling(val * (Math.Pow((uz2 / (uxp * ConvergenceCriteria.Tolerance * ufxp)), 2.0)));
+                double ratio = uz2 / (uxp * ConvergenceCriteria.Tolerance * ufxp);
+                double estimate = Math.Ceiling(val * (ratio * ratio));
                 if (estimate > int.MaxValue - 1)
                 {
                     upperestimate = int.MaxValue - 1;
@@ -782,7 +807,8 @@ namespace Statistics.Histograms
             Int64 lowerestimate = ConvergenceCriteria.MaxIterations;
             if (lfxp > 0.0 & uxp != 0)
             {
-                double estimate = Math.Ceiling(lval * (Math.Pow((lz2 / (lxp * ConvergenceCriteria.Tolerance * lfxp)), 2.0)));
+                double lowerRatio = lz2 / (lxp * ConvergenceCriteria.Tolerance * lfxp);
+                double estimate = Math.Ceiling(lval * (lowerRatio * lowerRatio));
                 if (estimate > int.MaxValue - 1)
                 {
                     lowerestimate = int.MaxValue - 1;

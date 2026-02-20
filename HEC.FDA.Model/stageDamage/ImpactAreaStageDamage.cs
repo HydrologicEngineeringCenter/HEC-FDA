@@ -160,18 +160,18 @@ namespace HEC.FDA.Model.stageDamage
             {
                 if (_GraphicalFrequency.GraphicalDistributionWithLessSimple.UsingStagesNotFlows)
                 {
-                    IPairedData minStages = _GraphicalFrequency.SamplePairedData(MIN_PROBABILITY);
+                    PairedData minStages = _GraphicalFrequency.SamplePairedData(MIN_PROBABILITY);
                     _MinStageForArea = minStages.Yvals[0];
-                    IPairedData maxStages = _GraphicalFrequency.SamplePairedData(MAX_PROBABILITY);
+                    PairedData maxStages = _GraphicalFrequency.SamplePairedData(MAX_PROBABILITY);
                     _MaxStageForArea = maxStages.Yvals[^1];
                 }
                 else
                 {
                     if (_DischargeStage != null)
                     {
-                        IPairedData minFlows = _GraphicalFrequency.SamplePairedData(MIN_PROBABILITY);
+                        PairedData minFlows = _GraphicalFrequency.SamplePairedData(MIN_PROBABILITY);
                         double minFlow = minFlows.Yvals[0];
-                        IPairedData maxFlows = _GraphicalFrequency.SamplePairedData(MAX_PROBABILITY);
+                        PairedData maxFlows = _GraphicalFrequency.SamplePairedData(MAX_PROBABILITY);
                         double maxFlow = maxFlows.Yvals[^1];
 
                         if (_UnregulatedRegulated != null)
@@ -180,8 +180,8 @@ namespace HEC.FDA.Model.stageDamage
                             maxFlow = _UnregulatedRegulated.SamplePairedData(MAX_PROBABILITY).f(maxFlow);
                         }
 
-                        IPairedData minStages = _DischargeStage.SamplePairedData(MIN_PROBABILITY);
-                        IPairedData maxStages = _DischargeStage.SamplePairedData(MAX_PROBABILITY);
+                        PairedData minStages = _DischargeStage.SamplePairedData(MIN_PROBABILITY);
+                        PairedData maxStages = _DischargeStage.SamplePairedData(MAX_PROBABILITY);
 
                         _MinStageForArea = minStages.f(minFlow);
                         _MaxStageForArea = maxStages.f(maxFlow);
@@ -435,13 +435,13 @@ namespace HEC.FDA.Model.stageDamage
 
             for (int i = 0; i < _StagesAtIndexLocation.Length; i++)
             {
-                List<AggregatedConsequencesBinned> consequenceDistributionResultList = new()
-                {
-                    new(damageCategory, utilities.StringGlobalConstants.STRUCTURE_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID),
-                    new(damageCategory, utilities.StringGlobalConstants.CONTENT_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID),
-                    new(damageCategory, utilities.StringGlobalConstants.OTHER_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID),
-                    new(damageCategory, utilities.StringGlobalConstants.VEHICLE_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID)
-                };
+                List<AggregatedConsequencesBinned> consequenceDistributionResultList =
+                [
+                    new(damageCategory, StringGlobalConstants.STRUCTURE_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID, ConsequenceType.Damage),
+                    new(damageCategory, StringGlobalConstants.CONTENT_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID, ConsequenceType.Damage),
+                    new(damageCategory, StringGlobalConstants.OTHER_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID, ConsequenceType.Damage),
+                    new(damageCategory, StringGlobalConstants.VEHICLE_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID, ConsequenceType.Damage)
+                ];
                 StudyAreaConsequencesBinned consequenceDistributionResults = new(consequenceDistributionResultList);
                 consequenceDistributionResultsList.Add(consequenceDistributionResults);
             }

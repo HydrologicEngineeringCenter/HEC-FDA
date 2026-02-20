@@ -18,6 +18,7 @@ namespace HEC.FDA.ViewModel.Storage
         private const string INVENTORY_DIRECTORY = "Structure Inventories";
         private const string INDEX_POINTS_DIRECTORY = "Index Points";
         private const string STRUCTURE_STAGE_DAMAGE_DETAILS = "StructureStageDamageDetails";
+        private const string LIFESIM_DIRECTORY = "LifeSim Data";
 
         private static string _ProjectDirectory = "";
         #endregion
@@ -54,7 +55,7 @@ namespace HEC.FDA.ViewModel.Storage
         private void SetUpForNewStudy(string value)
         {
             EnforceFolderStructure(value);
-            SQLiteManager.CreateSqLiteFile(value);         
+            SQLiteManager.CreateSqLiteFile(value);
         }
 
         // value is the sqlite file path
@@ -112,6 +113,12 @@ namespace HEC.FDA.ViewModel.Storage
         {
             get { return _ProjectDirectory + "\\" + INDEX_POINTS_DIRECTORY; }
         }
+
+        public string LifeSimDirectory
+        {
+            get { return _ProjectDirectory + "\\" + LIFESIM_DIRECTORY; }
+        }
+
         public string GetStructureStageDamageDetailsDirectory
         {
             get { return _ProjectDirectory + "\\" + STRUCTURE_STAGE_DAMAGE_DETAILS; }
@@ -144,21 +151,21 @@ namespace HEC.FDA.ViewModel.Storage
         #region Cody's DB queries
         public void CreateTableWithPrimaryKey(string tablename, string[] colnames, Type[] coltypes)
         {
-            if(_SqliteReader.GetTableNames().Contains(tablename))
+            if (_SqliteReader.GetTableNames().Contains(tablename))
             {
                 throw new Exception("table already exists.");
             }
             SQLiteCommand command = _SqliteReader.DbConnection.CreateCommand();
             command.CommandText = GetCreateTableWithPrimaryKeyText(tablename, colnames, coltypes);
-            command.ExecuteNonQuery();   
+            command.ExecuteNonQuery();
         }
 
-        public void AddRowToTableWithPrimaryKey(object[] rowData, string tablename,  string[] colnames)
+        public void AddRowToTableWithPrimaryKey(object[] rowData, string tablename, string[] colnames)
         {
             SQLiteCommand command = _SqliteReader.DbConnection.CreateCommand();
             command.CommandText = InsertIntoTableText(rowData, tablename, colnames);
             command.ExecuteNonQuery();
-        }      
+        }
 
         private string EscapeSingleQuotes(object value)
         {
@@ -183,7 +190,7 @@ namespace HEC.FDA.ViewModel.Storage
             }
             sb.Remove(sb.Length - 1, 1);
             sb.Append(") VALUES (");
-            foreach(object obj in rowData)
+            foreach (object obj in rowData)
             {
                 sb.Append("'").Append(EscapeSingleQuotes(obj)).Append("',");
             }
@@ -277,7 +284,7 @@ namespace HEC.FDA.ViewModel.Storage
                 throw new Exception(coltypes[i].ToString() + " Not implemented, Column: " + colnames[i]);
             }
             sb.Append(");");
-        
+
             return sb.ToString();
 
         }
@@ -302,7 +309,7 @@ namespace HEC.FDA.ViewModel.Storage
                 SQLiteDataAdapter adapter = new SQLiteDataAdapter(command);
                 adapter.Fill(tab);
             }
-            
+
             return tab;
         }
 
@@ -328,7 +335,8 @@ namespace HEC.FDA.ViewModel.Storage
             {
                 // we just need to return something not null, there is definitely a better way
                 return new object();
-            }else
+            }
+            else
             {
                 return null;
             }

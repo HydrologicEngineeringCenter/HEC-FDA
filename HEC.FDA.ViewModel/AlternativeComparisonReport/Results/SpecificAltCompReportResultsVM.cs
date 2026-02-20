@@ -1,27 +1,31 @@
-﻿using System.Collections.Generic;
-using HEC.FDA.Model.metrics;
-using HEC.FDA.ViewModel.Alternatives.Results;
+﻿using HEC.FDA.ViewModel.Alternatives.Results;
 using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
-using HEC.FDA.ViewModel.Study;
+using System.Collections.Generic;
 
 namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
 {
     public class SpecificAltCompReportResultsVM : BaseViewModel
     {
         private const string DAMAGE_WITH_UNCERTAINTY = "Damage with Uncertainty";
+        private const string LIFE_LOSS_WITH_UNCERTAINTY = "Life Loss with Uncertainty";
+        private const string LIFE_LOSS_BY_IMPACT_AREA = "Life Loss by Impact Area";
         private const string DAMAGE_BY_IMPACT_AREA = "Damage by Impact Area";
         private const string DAMAGE_BY_DAMAGE_CATEGORY = "Damage by Damage Category";
         private const string EAD = "EAD";
+        private const string AALL = "AALL";
         private const string EqAD = "EqAD";
 
         private IAlternativeResult _selectedResult;
         private string _SelectedDamageMeasure;
         private string _SelectedReport;
+        private List<string> _reports = [];
+        private List<string> _damageReports = [DAMAGE_WITH_UNCERTAINTY, DAMAGE_BY_IMPACT_AREA, DAMAGE_BY_DAMAGE_CATEGORY];
+        private List<string> _lifeLossReports = [LIFE_LOSS_WITH_UNCERTAINTY, LIFE_LOSS_BY_IMPACT_AREA];
         private bool _YearsVisible;
         private YearResult _SelectedYear;
 
 
-        public string Name { get;}
+        public string Name { get; }
         public bool YearsVisible
         {
             get { return _YearsVisible; }
@@ -40,7 +44,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
             get { return _selectedResult; }
             set { _selectedResult = value; NotifyPropertyChanged(); }
         }
-        public List<string> DamageMeasure { get; } = new List<string>() { EAD, EqAD };
+        public List<string> DamageMeasure { get; } = new List<string>();
 
         public string SelectedDamageMeasure
         {
@@ -48,7 +52,11 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
             set { _SelectedDamageMeasure = value; SelectedDamageMeasureChanged(); NotifyPropertyChanged(); }
         }
 
-        public List<string> Reports { get; } = new List<string>() { DAMAGE_WITH_UNCERTAINTY, DAMAGE_BY_IMPACT_AREA, DAMAGE_BY_DAMAGE_CATEGORY };
+        public List<string> Reports
+        {
+            get { return _reports; }
+            set { _reports = value; NotifyPropertyChanged(); }
+        }
 
         public string SelectedReport
         {
@@ -58,9 +66,9 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
 
         public AlternativeResult AlternativeResult { get; }
 
-        public SpecificAltCompReportResultsVM(AlternativeResult altResult)
+        public SpecificAltCompReportResultsVM(AlternativeResult altResult, bool hasDamageResults, bool hasLifeLossResults)
         {
-            Name = altResult.Name;       
+            Name = altResult.Name;
             AlternativeResult = altResult;
             YearsVisible = true;
 
@@ -69,10 +77,32 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
                 Years.Add(yr.Year);
             }
 
-            //set the starting state of the combos.
-            _SelectedDamageMeasure = EAD;
-            SelectedYear = altResult.EADResult.YearResults[0];
-            _SelectedReport = DAMAGE_WITH_UNCERTAINTY;
+            // Dynamically populate DamageMeasure based on available data
+            if (hasDamageResults)
+            {
+                DamageMeasure.Add(EAD);
+                DamageMeasure.Add(EqAD);
+            }
+            if (hasLifeLossResults)
+            {
+                DamageMeasure.Add(AALL);
+            }
+
+            // Set the starting state of the combos based on available data
+            if (hasDamageResults)
+            {
+                _SelectedDamageMeasure = EAD;
+                SelectedYear = altResult.EADResult.YearResults[0];
+                Reports = _damageReports;
+                _SelectedReport = DAMAGE_WITH_UNCERTAINTY;
+            }
+            else if (hasLifeLossResults)
+            {
+                _SelectedDamageMeasure = AALL;
+                SelectedYear = altResult.EADResult.YearResults[0];
+                Reports = _lifeLossReports;
+                _SelectedReport = LIFE_LOSS_WITH_UNCERTAINTY;
+            }
         }
 
         public SpecificAltCompReportResultsVM()
@@ -82,22 +112,36 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
 
         private void SelectedYearChanged()
         {
-            //i can assume we are on EAD if a year is changing.
-            //we want to select the same vm when switching years
-            if(CurrentResultVM == null || CurrentResultVM is DamageWithUncertaintyVM)
+            if (CurrentResultVM == null || CurrentResultVM is DamageWithUncertaintyVM)
             {
-                CurrentResultVM = SelectedYear.DamageWithUncertaintyVM;
-                SelectedReport = DAMAGE_WITH_UNCERTAINTY;
+                if (EAD.Equals(_SelectedDamageMeasure))
+                {
+                    CurrentResultVM = SelectedYear.DamageWithUncertaintyVM;
+                    SelectedReport = DAMAGE_WITH_UNCERTAINTY;
+                }
+                else if (AALL.Equals(_SelectedDamageMeasure))
+                {
+                    CurrentResultVM = SelectedYear.LifeLossWithUncertaintyVM;
+                    SelectedReport = LIFE_LOSS_WITH_UNCERTAINTY;
+                }
             }
-            else if(CurrentResultVM is DamageByDamCatVM)
+            else if (CurrentResultVM is DamageByDamCatVM)
             {
                 CurrentResultVM = SelectedYear.DamageByDamCatVM;
                 SelectedReport = DAMAGE_BY_DAMAGE_CATEGORY;
             }
-            else if(CurrentResultVM is DamageByImpactAreaVM)
+            else if (CurrentResultVM is DamageByImpactAreaVM)
             {
-                CurrentResultVM = SelectedYear.DamageByImpactAreaVM;
-                SelectedReport = DAMAGE_BY_IMPACT_AREA;
+                if (EAD.Equals(_SelectedDamageMeasure))
+                {
+                    CurrentResultVM = SelectedYear.DamageByImpactAreaVM;
+                    SelectedReport = DAMAGE_BY_IMPACT_AREA;
+                }
+                else if (AALL.Equals(_SelectedDamageMeasure))
+                {
+                    CurrentResultVM = SelectedYear.LifeLossByImpactAreaVM;
+                    SelectedReport = LIFE_LOSS_BY_IMPACT_AREA;
+                }
             }
         }
 
@@ -106,19 +150,28 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
             if (EAD.Equals(_SelectedDamageMeasure))
             {
                 YearsVisible = true;
+                Reports = _damageReports;
                 SelectedReport = DAMAGE_WITH_UNCERTAINTY;
                 CurrentResultVM = SelectedYear.DamageWithUncertaintyVM;
             }
             else if (EqAD.Equals(_SelectedDamageMeasure))
             {
                 YearsVisible = false;
+                Reports = _damageReports;
                 SelectedReport = DAMAGE_WITH_UNCERTAINTY;
                 CurrentResultVM = AlternativeResult.EqadResult.DamageWithUncertaintyVM;
+            }
+            else if (AALL.Equals(_SelectedDamageMeasure))
+            {
+                YearsVisible = true;
+                Reports = _lifeLossReports;
+                SelectedReport = LIFE_LOSS_WITH_UNCERTAINTY;
+                CurrentResultVM = SelectedYear.LifeLossWithUncertaintyVM;
             }
         }
         private void SelectedReportChanged()
         {
-            switch(SelectedReport)
+            switch (SelectedReport)
             {
                 case DAMAGE_WITH_UNCERTAINTY:
                     if (EAD.Equals(_SelectedDamageMeasure))
@@ -149,6 +202,12 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
                     {
                         CurrentResultVM = AlternativeResult.EqadResult.DamageByDamCatVM;
                     }
+                    break;
+                case LIFE_LOSS_WITH_UNCERTAINTY:
+                    CurrentResultVM = SelectedYear.LifeLossWithUncertaintyVM;
+                    break;
+                case LIFE_LOSS_BY_IMPACT_AREA:
+                    CurrentResultVM = SelectedYear.LifeLossByImpactAreaVM;
                     break;
             }
 

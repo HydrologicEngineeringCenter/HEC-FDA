@@ -68,6 +68,8 @@ public static class Mathematics
         for (int i = 0; i < xVals.Length - 1; i++)
         {
             T dx = xVals[i + 1] - xVals[i];
+            if (dx < T.Zero)
+                throw new ArgumentException("X values must be in ascending order to integrate");
             area += (yVals[i] + yVals[i + 1]) / T.CreateTruncating(2.0) * dx;
         }
         return area;

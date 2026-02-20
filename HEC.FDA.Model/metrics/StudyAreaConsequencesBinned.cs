@@ -17,13 +17,12 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
     public List<AggregatedConsequencesBinned> ConsequenceResultList { get; }
     //this needs to be an error report
     public bool IsNull { get; }
-    internal int AlternativeID { get; }
 
     #region Constructors
     public StudyAreaConsequencesBinned(int impactAreaID)
     {
         ConsequenceResultList = [];
-        AggregatedConsequencesBinned dummyConsequenceDistributionResult = new(impactAreaID);
+        AggregatedConsequencesBinned dummyConsequenceDistributionResult = new(impactAreaID, ConsequenceType.UNASSIGNED, RiskType.Fail);
         ConsequenceResultList.Add(dummyConsequenceDistributionResult);
         IsNull = true;
 
@@ -45,28 +44,28 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
 
     #region Methods 
     //This constructor is used in the simulation parallel compute and creates a threadsafe inline histogram inside consequence distribution result 
-    internal void AddNewConsequenceResultObject(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID)
+    internal void AddNewConsequenceResultObject(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID, ConsequenceType consequenceType, RiskType riskType)
     {
-        AggregatedConsequencesBinned existingDamageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
-        if (existingDamageResult == null)
+        AggregatedConsequencesBinned existingResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID, consequenceType, riskType);
+        if (existingResult == null)
         {
-            AggregatedConsequencesBinned newDamageResult = new(damageCategory, assetCategory, convergenceCriteria, impactAreaID);
-            ConsequenceResultList.Add(newDamageResult);
+            AggregatedConsequencesBinned newResult = new(damageCategory, assetCategory, convergenceCriteria, impactAreaID, consequenceType, riskType);
+            ConsequenceResultList.Add(newResult);
         }
     }
     //public for testing purposes
     public void AddExistingConsequenceResultObject(AggregatedConsequencesBinned consequenceResultToAdd)
     {
-        AggregatedConsequencesBinned consequenceResult = GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
+        AggregatedConsequencesBinned consequenceResult = GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID, consequenceResultToAdd.ConsequenceType, consequenceResultToAdd.RiskType);
         if (consequenceResult == null)
         {
             ConsequenceResultList.Add(consequenceResultToAdd);
         }
     }
     //This approach is used in binning EAD results
-    internal void AddConsequenceRealization(double damageEstimate, string damageCategory, string assetCategory, int impactAreaID, long iteration)
+    internal void AddConsequenceRealization(double damageEstimate, string damageCategory, string assetCategory, int impactAreaID, long iteration, ConsequenceType consequenceType, RiskType riskType)
     {
-        AggregatedConsequencesBinned damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID);
+        AggregatedConsequencesBinned damageResult = GetConsequenceResult(damageCategory, assetCategory, impactAreaID, consequenceType, riskType);
         damageResult.AddConsequenceRealization(damageEstimate, iteration);
 
     }
@@ -88,12 +87,11 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
 
 
 
-    //TODO: This needs to confirm that the histograms inside each ConsequenceDistributionResult Match. 
     public bool Equals(StudyAreaConsequencesBinned inputDamageResults)
     {
         foreach (AggregatedConsequencesBinned damageResult in ConsequenceResultList)
         {
-            AggregatedConsequencesBinned inputDamageResult = inputDamageResults.GetConsequenceResult(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.RegionID);
+            AggregatedConsequencesBinned inputDamageResult = inputDamageResults.GetConsequenceResult(damageResult.DamageCategory, damageResult.AssetCategory, damageResult.RegionID, damageResult.ConsequenceType, damageResult.RiskType);
             if (inputDamageResult == null)
                 return false;
 
@@ -234,10 +232,20 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
         return damageCategories;
     }
 
-    public static StudyAreaConsequencesByQuantile ConvertToStudyAreaConsequencesByQuantile(StudyAreaConsequencesBinned studyAreaConsequencesBinned)
+    /// <summary>
+    /// Converts binned consequence results to quantile-based results, optionally filtering by consequence type.
+    /// </summary>
+    /// <param name="studyAreaConsequencesBinned"></param>
+    /// <param name="filterByConsequenceType">will filter to the input type. "All" will apply no filter. </param>
+    /// <returns></returns>
+    public static StudyAreaConsequencesByQuantile ConvertToStudyAreaConsequencesByQuantile(StudyAreaConsequencesBinned studyAreaConsequencesBinned, ConsequenceType filterByConsequenceType)
     {
         List<AggregatedConsequencesByQuantile> aggregatedConsequencesByQuantiles = [];
-        foreach (AggregatedConsequencesBinned aggregatedConsequencesBinned in studyAreaConsequencesBinned.ConsequenceResultList)
+
+        //here we apply the filter.  
+        var res = studyAreaConsequencesBinned.ConsequenceResultList.Where((r) => r.ConsequenceType == filterByConsequenceType).ToArray();
+
+        foreach (AggregatedConsequencesBinned aggregatedConsequencesBinned in res)
         {
             AggregatedConsequencesByQuantile aggregatedConsequencesByQuantile = AggregatedConsequencesBinned.ConvertToSingleEmpiricalDistributionOfConsequences(aggregatedConsequencesBinned);
             aggregatedConsequencesByQuantiles.Add(aggregatedConsequencesByQuantile);
@@ -282,10 +290,10 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
     /// <param name="assetCategory"></param> either structure, content, etc...the default is null
     /// <param name="impactAreaID"></param> the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
     /// <returns></returns>The mean of consequences
-    public double SampleMeanDamage(string damageCategory = null, string assetCategory = null, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
+    public double SampleMeanDamage(string damageCategory = null, string assetCategory = null, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Fail)
     {
         return ConsequenceResultList
-    .FilterByCategories(damageCategory, assetCategory, impactAreaID)
+    .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType, riskType)
     .Sum(result => result.SampleMeanExpectedAnnualConsequences());
     }
     /// <summary>
@@ -299,10 +307,10 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
     /// <param name="assetCategory"></param> either structure, content, etc...the default is null
     /// <param name="impactAreaID"></param>the default is the null value utilities.IntegerConstants.DEFAULT_MISSING_VALUE
     /// <returns></returns>the level of consequences exceeded by the specified probability 
-    public double ConsequenceExceededWithProbabilityQ(double exceedanceProbability, string damageCategory = null, string assetCategory = null, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
+    public double ConsequenceExceededWithProbabilityQ(double exceedanceProbability, string damageCategory = null, string assetCategory = null, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Fail)
     {
         return ConsequenceResultList
-            .FilterByCategories(damageCategory, assetCategory, impactAreaID)
+            .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType, riskType)
             .Sum(result => result.ConsequenceExceededWithProbabilityQ(exceedanceProbability));
     }
     /// <summary>
@@ -314,11 +322,11 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
     /// <param name="assetCategory"></param>
     /// <param name="impactAreaID"></param>
     /// <returns>returns the existing result, else null if no result exists for that combination.</returns>
-    public AggregatedConsequencesBinned GetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
+    public AggregatedConsequencesBinned GetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Fail)
     {
         //Try to get specific result from the list. combination of damcat, asscat, imparea
         AggregatedConsequencesBinned result = ConsequenceResultList
-            .FilterByCategories(damageCategory, assetCategory, impactAreaID)
+            .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType, riskType)
             .FirstOrDefault();
         return result;
     }
@@ -333,10 +341,10 @@ public class StudyAreaConsequencesBinned : ValidationErrorLogger
     /// <param name="assetCategory"></param> The default is null 
     /// <param name="impactAreaID"></param> The default is a null value (utilities.IntegerConstants.DEFAULT_MISSING_VALUE)
     /// <returns></returns> Aggregated consequences histogram 
-    public Empirical GetAggregateEmpiricalDistribution(string damageCategory = null, string assetCategory = null, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE)
+    public Empirical GetAggregateEmpiricalDistribution(string damageCategory = null, string assetCategory = null, int impactAreaID = utilities.IntegerGlobalConstants.DEFAULT_MISSING_VALUE, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Fail)
     {
         var empiricalDistsToStack = ConsequenceResultList
-            .FilterByCategories(damageCategory, assetCategory, impactAreaID)
+            .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType, riskType)
             .Select(result => DynamicHistogram.ConvertToEmpiricalDistribution(result.ConsequenceHistogram))
             .ToList();
         if (empiricalDistsToStack.Count == 0)

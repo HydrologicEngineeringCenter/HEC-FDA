@@ -8,7 +8,9 @@ using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.compute;
 using HEC.FDA.Model.scenarios;
 using HEC.FDA.Model.alternatives;
+using System.Linq;
 using System.Threading;
+using Statistics.Histograms;
 
 namespace HEC.FDA.ModelTest.unittests
 {
@@ -226,6 +228,164 @@ namespace HEC.FDA.ModelTest.unittests
         {
             double actual = Alternative.ComputeEqad(baseYearEAD, baseYear, mostLikelyFutureEAD, mostLikelyFutureYear, periodOfAnalysis, discountRate);
             Assert.Equal(expected, actual, .01);
+        }
+
+        [Fact]
+        public void LifeLossResultsExcludedFromEqad()
+        {
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: 100);
+
+            // Build base year consequences: one damage + one life loss
+            var baseDamageHist = new DynamicHistogram(Enumerable.Range(100, 100).Select(i => (double)i).ToList(), cc);
+            var baseLifeLossHist = new DynamicHistogram(Enumerable.Range(10, 100).Select(i => (double)i).ToList(), cc);
+            var baseDamage = new AggregatedConsequencesBinned("residential", "content", baseDamageHist, impactAreaID, ConsequenceType.Damage, RiskType.Fail);
+            var baseLifeLoss = new AggregatedConsequencesBinned("LifeLoss", "LifeLoss", baseLifeLossHist, impactAreaID, ConsequenceType.LifeLoss, RiskType.Fail);
+
+            // Build future year consequences: same categories, different values
+            var futureDamageHist = new DynamicHistogram(Enumerable.Range(200, 100).Select(i => (double)i).ToList(), cc);
+            var futureLifeLossHist = new DynamicHistogram(Enumerable.Range(20, 100).Select(i => (double)i).ToList(), cc);
+            var futureDamage = new AggregatedConsequencesBinned("residential", "content", futureDamageHist, impactAreaID, ConsequenceType.Damage, RiskType.Fail);
+            var futureLifeLoss = new AggregatedConsequencesBinned("LifeLoss", "LifeLoss", futureLifeLossHist, impactAreaID, ConsequenceType.LifeLoss, RiskType.Fail);
+
+            // Assemble base year ScenarioResults
+            var baseImpactArea = new ImpactAreaScenarioResults(impactAreaID);
+            baseImpactArea.ConsequenceResults.AddExistingConsequenceResultObject(baseDamage);
+            baseImpactArea.ConsequenceResults.AddExistingConsequenceResultObject(baseLifeLoss);
+            var baseResults = new ScenarioResults();
+            baseResults.AddResults(baseImpactArea);
+
+            // Assemble future year ScenarioResults
+            var futureImpactArea = new ImpactAreaScenarioResults(impactAreaID);
+            futureImpactArea.ConsequenceResults.AddExistingConsequenceResultObject(futureDamage);
+            futureImpactArea.ConsequenceResults.AddExistingConsequenceResultObject(futureLifeLoss);
+            var futureResults = new ScenarioResults();
+            futureResults.AddResults(futureImpactArea);
+
+            // Act
+            AlternativeResults results = Alternative.AnnualizationCompute(
+                discountRate: 0.0275, periodOfAnalysis: 50, alternativeResultsID: alternativeID,
+                baseResults, futureResults, baseYear: 2023, futureYear: 2072);
+
+            // Assert
+            Assert.NotNull(results);
+
+            // EqAD should contain only damage, no life loss
+            bool hasLifeLoss = results.EqadResults.ConsequenceResultList
+                .Any(c => c.ConsequenceType == ConsequenceType.LifeLoss);
+            Assert.False(hasLifeLoss, "EqAD results should not contain life loss consequences");
+
+            bool hasDamage = results.EqadResults.ConsequenceResultList
+                .Any(c => c.ConsequenceType == ConsequenceType.Damage);
+            Assert.True(hasDamage, "EqAD results should contain damage consequences");
+
+            // Component scenario results should still contain life loss
+            bool baseHasLifeLoss = results.BaseYearScenarioResults.ResultsList
+                .SelectMany(r => r.ConsequenceResults.ConsequenceResultList)
+                .Any(c => c.ConsequenceType == ConsequenceType.LifeLoss);
+            Assert.True(baseHasLifeLoss, "Base year scenario results should still contain life loss");
+
+            bool futureHasLifeLoss = results.FutureYearScenarioResults.ResultsList
+                .SelectMany(r => r.ConsequenceResults.ConsequenceResultList)
+                .Any(c => c.ConsequenceType == ConsequenceType.LifeLoss);
+            Assert.True(futureHasLifeLoss, "Future year scenario results should still contain life loss");
+        }
+
+        [Fact]
+        public void SingleBaseScenario_EqadMatchesInputAndExcludesLifeLoss()
+        {
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: 100);
+
+            var damageHist = new DynamicHistogram(Enumerable.Range(100, 100).Select(i => (double)i).ToList(), cc);
+            var lifeLossHist = new DynamicHistogram(Enumerable.Range(10, 100).Select(i => (double)i).ToList(), cc);
+            var damage = new AggregatedConsequencesBinned("residential", "content", damageHist, impactAreaID, ConsequenceType.Damage, RiskType.Fail);
+            var lifeLoss = new AggregatedConsequencesBinned("LifeLoss", "LifeLoss", lifeLossHist, impactAreaID, ConsequenceType.LifeLoss, RiskType.Fail);
+
+            var impactArea = new ImpactAreaScenarioResults(impactAreaID);
+            impactArea.ConsequenceResults.AddExistingConsequenceResultObject(damage);
+            impactArea.ConsequenceResults.AddExistingConsequenceResultObject(lifeLoss);
+            var baseResults = new ScenarioResults();
+            baseResults.AddResults(impactArea);
+
+            AlternativeResults results = Alternative.AnnualizationCompute(
+                discountRate: 0.0275, periodOfAnalysis: 50, alternativeResultsID: alternativeID,
+                computedResultsBaseYear: baseResults, computedResultsFutureYear: null,
+                baseYear: 2023, futureYear: 2072);
+
+            Assert.NotNull(results);
+
+            bool hasLifeLoss = results.EqadResults.ConsequenceResultList
+                .Any(c => c.ConsequenceType == ConsequenceType.LifeLoss);
+            Assert.False(hasLifeLoss, "EqAD results should not contain life loss consequences");
+
+            bool hasDamage = results.EqadResults.ConsequenceResultList
+                .Any(c => c.ConsequenceType == ConsequenceType.Damage);
+            Assert.True(hasDamage, "EqAD results should contain damage consequences");
+
+            // EqAD should match the input damage result exactly (no discounting for single scenario)
+            double eqadMean = results.EqadResults.ConsequenceResultList
+                .First(c => c.ConsequenceType == ConsequenceType.Damage)
+                .ConsequenceSampleMean();
+            Assert.Equal(damageHist.SampleMean, eqadMean);
+        }
+
+        [Fact]
+        public void SingleFutureScenario_EqadMatchesInputAndExcludesLifeLoss()
+        {
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: 100);
+
+            var damageHist = new DynamicHistogram(Enumerable.Range(200, 100).Select(i => (double)i).ToList(), cc);
+            var lifeLossHist = new DynamicHistogram(Enumerable.Range(20, 100).Select(i => (double)i).ToList(), cc);
+            var damage = new AggregatedConsequencesBinned("residential", "content", damageHist, impactAreaID, ConsequenceType.Damage, RiskType.Fail);
+            var lifeLoss = new AggregatedConsequencesBinned("LifeLoss", "LifeLoss", lifeLossHist, impactAreaID, ConsequenceType.LifeLoss, RiskType.Fail);
+
+            var impactArea = new ImpactAreaScenarioResults(impactAreaID);
+            impactArea.ConsequenceResults.AddExistingConsequenceResultObject(damage);
+            impactArea.ConsequenceResults.AddExistingConsequenceResultObject(lifeLoss);
+            var futureResults = new ScenarioResults();
+            futureResults.AddResults(impactArea);
+
+            AlternativeResults results = Alternative.AnnualizationCompute(
+                discountRate: 0.0275, periodOfAnalysis: 50, alternativeResultsID: alternativeID,
+                computedResultsBaseYear: null, computedResultsFutureYear: futureResults,
+                baseYear: 2023, futureYear: 2072);
+
+            Assert.NotNull(results);
+
+            bool hasLifeLoss = results.EqadResults.ConsequenceResultList
+                .Any(c => c.ConsequenceType == ConsequenceType.LifeLoss);
+            Assert.False(hasLifeLoss, "EqAD results should not contain life loss consequences");
+
+            bool hasDamage = results.EqadResults.ConsequenceResultList
+                .Any(c => c.ConsequenceType == ConsequenceType.Damage);
+            Assert.True(hasDamage, "EqAD results should contain damage consequences");
+
+            // EqAD should match the input damage result exactly (no discounting for single scenario)
+            double eqadMean = results.EqadResults.ConsequenceResultList
+                .First(c => c.ConsequenceType == ConsequenceType.Damage)
+                .ConsequenceSampleMean();
+            Assert.Equal(damageHist.SampleMean, eqadMean);
+        }
+
+        [Fact]
+        public void LifeLossOnly_EqadResultsIsNull()
+        {
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: 100);
+
+            var lifeLossHist = new DynamicHistogram(Enumerable.Range(10, 100).Select(i => (double)i).ToList(), cc);
+            var lifeLoss = new AggregatedConsequencesBinned("LifeLoss", "LifeLoss", lifeLossHist, impactAreaID, ConsequenceType.LifeLoss, RiskType.Fail);
+
+            var impactArea = new ImpactAreaScenarioResults(impactAreaID);
+            impactArea.ConsequenceResults.AddExistingConsequenceResultObject(lifeLoss);
+            var scenarioResults = new ScenarioResults();
+            scenarioResults.AddResults(impactArea);
+
+            AlternativeResults results = Alternative.AnnualizationCompute(
+                discountRate: 0.0275, periodOfAnalysis: 50, alternativeResultsID: alternativeID,
+                computedResultsBaseYear: scenarioResults, computedResultsFutureYear: null,
+                baseYear: 2023, futureYear: 2072);
+
+            Assert.NotNull(results);
+            Assert.Empty(results.EqadResults.ConsequenceResultList);
         }
     }
 }

@@ -93,6 +93,10 @@ public partial class GraphicalVM : ObservableObject
         {
             return;
         }
+        if (EquivalentRecordLength < 1)
+        {
+            return;
+        }
         if (CalcdPlotModel == null)
         {
             InitializePlotModel();

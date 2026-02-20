@@ -4,9 +4,12 @@
     {
         public string DamageCategory { get; set; }
         public double EAD { get; set; }
+        public string RiskType { get; set; }
 
-        public DamageCategoryRowItem(string damCat, double ead)
+
+        public DamageCategoryRowItem(string damCat, double ead, string riskType)
         {
+            RiskType = riskType;
             EAD = ead;
             DamageCategory = damCat;
         }

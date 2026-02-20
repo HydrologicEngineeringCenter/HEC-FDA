@@ -2,7 +2,6 @@
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using Statistics.Distributions;
-using Statistics.Histograms;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
@@ -44,7 +43,7 @@ public class StudyAreaConsequencesByQuantile : Validation
     //public for testing purposes
     public void AddExistingConsequenceResultObject(AggregatedConsequencesByQuantile consequenceResultToAdd)
     {
-        AggregatedConsequencesByQuantile consequenceResult = GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID);
+        AggregatedConsequencesByQuantile consequenceResult = GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID, consequenceResultToAdd.ConsequenceType, consequenceResultToAdd.RiskType);
         if (consequenceResult.IsNull)
         {
             ConsequenceResultList.Add(consequenceResultToAdd);
@@ -62,11 +61,11 @@ public class StudyAreaConsequencesByQuantile : Validation
     /// <param name="assetCategory"></param> either structure, content, etc...the default is null
     /// <param name="impactAreaID"></param> the default is the null value -999
     /// <returns></returns>The mean of consequences
-    public double SampleMeanDamage(string damageCategory = null, string assetCategory = null, int impactAreaID = -999)
+    public double SampleMeanDamage(string damageCategory = null, string assetCategory = null, int impactAreaID = -999, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Total)
     {
         return ConsequenceResultList
-    .FilterByCategories(damageCategory, assetCategory, impactAreaID)
-    .Sum(result => result.ConsequenceSampleMean());
+            .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType, riskType)
+            .Sum(result => result.ConsequenceSampleMean());
     }
     /// <summary>
     /// This method calls the inverse CDF of the damage histogram up to the non-exceedance probabilty. The method accepts exceedance probability as an argument. 
@@ -79,10 +78,10 @@ public class StudyAreaConsequencesByQuantile : Validation
     /// <param name="assetCategory"></param> either structure, content, etc...the default is null
     /// <param name="impactAreaID"></param>the default is the null value -999
     /// <returns></returns>the level of consequences exceeded by the specified probability 
-    public double ConsequenceExceededWithProbabilityQ(double exceedanceProbability, string damageCategory = null, string assetCategory = null, int impactAreaID = -999)
+    public double ConsequenceExceededWithProbabilityQ(double exceedanceProbability, string damageCategory = null, string assetCategory = null, int impactAreaID = -999, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Total)
     {
         return ConsequenceResultList
-            .FilterByCategories(damageCategory, assetCategory, impactAreaID)
+            .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType, riskType)
             .Sum(result => result.ConsequenceExceededWithProbabilityQ(exceedanceProbability));
     }
     /// <summary>
@@ -94,10 +93,10 @@ public class StudyAreaConsequencesByQuantile : Validation
     /// <param name="assetCategory"></param>
     /// <param name="impactAreaID"></param>
     /// <returns></returns>
-    public AggregatedConsequencesByQuantile GetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID = -999)
+    public AggregatedConsequencesByQuantile GetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID = -999, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Total)
     {
         AggregatedConsequencesByQuantile result = ConsequenceResultList
-            .FilterByCategories(damageCategory, assetCategory, impactAreaID)
+            .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType, riskType)
             .FirstOrDefault();
         if (result != null)
         {
@@ -124,10 +123,10 @@ public class StudyAreaConsequencesByQuantile : Validation
     /// <param name="assetCategory"></param> The default is null 
     /// <param name="impactAreaID"></param> The default is a null value (-999)
     /// <returns></returns> Aggregated consequences histogram 
-    public Empirical GetAggregateEmpiricalDistribution(string damageCategory = null, string assetCategory = null, int impactAreaID = -999)
+    public Empirical GetAggregateEmpiricalDistribution(string damageCategory = null, string assetCategory = null, int impactAreaID = -999, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Total)
     {
         var empiricalDistsToStack = ConsequenceResultList
-            .FilterByCategories(damageCategory, assetCategory, impactAreaID)
+            .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType, riskType)
             .Select(result => result.ConsequenceDistribution)
             .ToList();
 
@@ -139,28 +138,6 @@ public class StudyAreaConsequencesByQuantile : Validation
             return new Empirical();
         }
         return Empirical.StackEmpiricalDistributions(empiricalDistsToStack, Empirical.Sum);
-    }
-
-    public XElement WriteToXML()
-    {
-        XElement masterElem = new("EAD_Results");
-        foreach (AggregatedConsequencesByQuantile damageResult in ConsequenceResultList)
-        {
-            XElement damageResultElement = damageResult.WriteToXML();
-            damageResultElement.Name = $"{damageResult.DamageCategory}-{damageResult.AssetCategory}";
-            masterElem.Add(damageResultElement);
-        }
-        return masterElem;
-    }
-
-    public static StudyAreaConsequencesByQuantile ReadFromXML(XElement xElement)
-    {
-        List<AggregatedConsequencesByQuantile> damageResults = [];
-        foreach (XElement histogramElement in xElement.Elements())
-        {
-            damageResults.Add(AggregatedConsequencesByQuantile.ReadFromXML(histogramElement));
-        }
-        return new StudyAreaConsequencesByQuantile(damageResults);
     }
     #endregion
 

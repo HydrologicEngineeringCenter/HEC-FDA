@@ -1,30 +1,36 @@
-using Statistics;
-using System;
-using System.Collections.Generic;
 using HEC.FDA.Model.metrics;
-using System.Collections.Concurrent;
-using System.Threading.Tasks;
-using System.Linq;
-using Utility.Progress;
-using Statistics.Histograms;
 using Statistics.Distributions;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Utility.Progress;
 namespace HEC.FDA.Model.alternatives
 {
     public static class Alternative
     {
         /// <summary>
         /// Computes annualized consequences for an alternative using distributions of EAD from base and future year scenarios.
-        /// Returns an AlternativeResults object containing EqAD damage for each damage category, asset category, and impact area combination.
+        /// Returns an AlternativeResults object containing EqAD for each damage category, asset category, and impact area combination.
+        ///
+        /// Life loss consequences are excluded from EqAD results (there is no concept of EqAD for life loss).
+        /// Life loss data is preserved in the component base/future year scenario results.
+        /// If the scenario results contain only life loss, EqadResults will be empty.
+        ///
+        /// Either base or future year may be null (single-scenario case). When only one scenario is provided,
+        /// or when both scenarios are identical, EqAD is set directly from the available scenario's damage results
+        /// without interpolation or discounting. Returns null if both scenarios are null or if discounting parameters are invalid.
         /// </summary>
         /// <param name="discountRate">Discount rate in decimal form.</param>
         /// <param name="periodOfAnalysis">Number of years in the analysis period.</param>
         /// <param name="alternativeResultsID">Identifier for the alternative results.</param>
-        /// <param name="computedResultsBaseYear">Scenario results for the base year.</param>
-        /// <param name="computedResultsFutureYear">Scenario results for the future year.</param>
+        /// <param name="computedResultsBaseYear">Scenario results for the base year. May be null if only a future year scenario exists.</param>
+        /// <param name="computedResultsFutureYear">Scenario results for the future year. May be null if only a base year scenario exists.</param>
         /// <param name="baseYear">Base year of analysis.</param>
         /// <param name="futureYear">Future year of analysis.</param>
         /// <param name="reporter">Optional progress reporter.</param>
-        /// <returns>AlternativeResults containing EqAD damages, or null if parameters are invalid.</returns>
+        /// <returns>AlternativeResults containing EqAD damages, or null if both scenarios are null or parameters are invalid.</returns>
         public static AlternativeResults AnnualizationCompute(
             double discountRate,
             int periodOfAnalysis,
@@ -48,6 +54,9 @@ namespace HEC.FDA.Model.alternatives
             return RunAnnualizationCompute(analysisYears, discountRate, periodOfAnalysis, alternativeResultsID, computedResultsBaseYear, computedResultsFutureYear, reporter);
         }
 
+        /// <summary>
+        /// For Scenario results with Life Loss, The base and future year will still be saved in the component scenario results, but will not appear in the EQAD results, because there is currenlty no concept of EQAD for life loss. 2/13/2026
+        /// </summary>
         private static AlternativeResults RunAnnualizationCompute(
             List<int> analysisYears,
             double discountRate,
@@ -60,21 +69,32 @@ namespace HEC.FDA.Model.alternatives
             var alternativeResults = new AlternativeResults(alternativeResultsID, analysisYears, periodOfAnalysis);
             reporter.ReportMessage(new Utility.Logging.Message("Initiating discounting routine."));
 
+            //if we just have one, use it as both the base and future. 
+            computedResultsBaseYear ??= computedResultsFutureYear;
+            computedResultsFutureYear ??= computedResultsBaseYear;
+
             alternativeResults.BaseYearScenarioResults = computedResultsBaseYear;
             alternativeResults.FutureYearScenarioResults = computedResultsFutureYear;
 
-            //if scenarios are identical, no need to compute, just use one scenario
+            //if scenarios are identical or only one exists, no need to compute, just use the one that exists
             if (computedResultsBaseYear.Equals(computedResultsFutureYear))
             {
+                reporter.ReportMessage(new("Scenarios are identical or there is only one scenario. Discounting routine aborted."));
                 alternativeResults.ScenariosAreIdentical = true;
-                alternativeResults.EqadResults = ScenarioResults.ConvertToStudyAreaConsequencesByQuantile(computedResultsBaseYear);
+                ScenarioResults availableResults = computedResultsBaseYear ?? computedResultsFutureYear;
+                if (availableResults == null)
+                {
+                    reporter.ReportMessage(new Utility.Logging.Message("No scenario results available, discounting routine aborted."));
+                    return null;
+                }
+                //ONLY CONVERTING DAMAGE RESULTS FOR EQAD.
+                alternativeResults.EqadResults = ScenarioResults.ConvertToStudyAreaConsequencesByQuantile(availableResults, ConsequenceType.Damage);
             }
             else
             {
                 //To keep track of which results have yet to be processed
                 //I think this allows us to handle situations where we have uneven numbers of results 
                 var futureYearResultsList = new List<ImpactAreaScenarioResults>(computedResultsFutureYear.ResultsList);
-
                 //Iterate through the base year and future year Scenario Results simultaneously  
                 //There will be one base year results for each impact area in the impact area set
                 ProcessBaseAndFutureYearScenarioResults(
@@ -128,11 +148,17 @@ namespace HEC.FDA.Model.alternatives
                 // Process consequences that exist in base year
                 foreach (AggregatedConsequencesBinned baseYearConsequence in baseYearImpactArea.ConsequenceResults.ConsequenceResultList)
                 {
+                    //ONLY CONVERTING DAMAGE RESULTS FOR EQAD. 
+                    if (baseYearConsequence.ConsequenceType.Equals(ConsequenceType.LifeLoss))
+                    {
+                        continue;
+                    }
                     // Find matching future year result for this damage/asset category combination
                     AggregatedConsequencesBinned futureYearConsequence = futureYearImpactArea.ConsequenceResults.GetConsequenceResult(
                         baseYearConsequence.DamageCategory,
                         baseYearConsequence.AssetCategory,
-                        baseYearConsequence.RegionID);
+                        baseYearConsequence.RegionID,
+                        baseYearConsequence.ConsequenceType);
 
                     // Calculate EqAD (Equivalent Annual Damage) result
                     AggregatedConsequencesByQuantile eqadResult = IterateOnEqad(
@@ -155,11 +181,18 @@ namespace HEC.FDA.Model.alternatives
                 // Process any future year consequences that didn't have matching base year results
                 foreach (AggregatedConsequencesBinned futureYearConsequence in unprocessedFutureConsequences)
                 {
+                    //ONLY CONVERTING DAMAGE RESULTS FOR EQAD. 
+                    if (futureYearConsequence.ConsequenceType.Equals(ConsequenceType.LifeLoss))
+                    {
+                        continue;
+                    }
+
                     // Try to get base year result (likely null if we reached this point)
                     AggregatedConsequencesBinned baseYearConsequence = baseYearImpactArea.ConsequenceResults.GetConsequenceResult(
                         futureYearConsequence.DamageCategory,
                         futureYearConsequence.AssetCategory,
-                        futureYearConsequence.RegionID);
+                        futureYearConsequence.RegionID,
+                        futureYearConsequence.ConsequenceType);
 
                     // Calculate EqAD with assumed zero damage in base year if no base year result exists
                     AggregatedConsequencesByQuantile eqadResult = IterateOnEqad(
@@ -226,11 +259,13 @@ namespace HEC.FDA.Model.alternatives
             var damageCategory = iterateOnFutureYear ? mlfYearDamageResult.DamageCategory : baseYearDamageResult.DamageCategory;
             var assetCategory = iterateOnFutureYear ? mlfYearDamageResult.AssetCategory : baseYearDamageResult.AssetCategory;
             var regionID = iterateOnFutureYear ? mlfYearDamageResult.RegionID : baseYearDamageResult.RegionID;
+            var consequenceType = iterateOnFutureYear ? mlfYearDamageResult.ConsequenceType : baseYearDamageResult.ConsequenceType;
+            var riskType = iterateOnFutureYear ? mlfYearDamageResult.RiskType : baseYearDamageResult.RiskType;
             var resultList = resultCollection.ToList();
 
             Empirical empResult = Empirical.FitToSample(resultList);
             empResult.SampleMean = meanEqad;
-            AggregatedConsequencesByQuantile result = new(damageCategory, assetCategory, empResult, regionID);
+            AggregatedConsequencesByQuantile result = new(damageCategory, assetCategory, empResult, regionID, consequenceType, riskType);
             return result;
         }
 

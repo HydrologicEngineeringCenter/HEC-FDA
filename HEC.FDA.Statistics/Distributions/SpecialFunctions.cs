@@ -551,13 +551,13 @@ namespace Statistics.Distributions
             if (x < 5)
             {
                 t = Math.Pow(x, alpha);
-                r = (alpha * log_X - 1.0) / Math.Pow(alpha, 2);
+                r = (alpha * log_X - 1.0) / (alpha * alpha);
                 sum = t * r;
                 for (var i = 1; i <= 1000; i++)
                 {
                     var ai = alpha + i;
                     t = -t * x / i;
-                    r = (ai * log_X - 1.0) / Math.Pow(ai, 2);
+                    r = (ai * log_X - 1.0) / (ai * ai);
                     del = r * t;
                     sum += del;
                     if (i > 1 && Math.Abs(del) < (1.0 + Math.Abs(sum)) * tol)
