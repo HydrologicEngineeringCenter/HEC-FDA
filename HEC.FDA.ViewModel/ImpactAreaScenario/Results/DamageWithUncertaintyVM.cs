@@ -70,9 +70,9 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
 
                 List<double> qValues = new()
                 {
-                    scenarioResults.ConsequencesExceededWithProbabilityQ(.75, impactAreaID, consequenceType: _uncertaintyControlConfig.ConsequenceType),
+                    scenarioResults.ConsequencesExceededWithProbabilityQ(.25, impactAreaID, consequenceType: _uncertaintyControlConfig.ConsequenceType),
                     scenarioResults.ConsequencesExceededWithProbabilityQ(.5, impactAreaID, consequenceType: _uncertaintyControlConfig.ConsequenceType),
-                    scenarioResults.ConsequencesExceededWithProbabilityQ(.25, impactAreaID, consequenceType: _uncertaintyControlConfig.ConsequenceType)
+                    scenarioResults.ConsequencesExceededWithProbabilityQ(.75, impactAreaID, consequenceType: _uncertaintyControlConfig.ConsequenceType)
                 };
                 LoadTableValues(qValues);
 
@@ -173,7 +173,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             List<IQuartileRowItem> rows = new();
             if (qValues.Count == 3)
             {
-                List<string> xValNames = new() { "First", "Second", "Third" };
+                List<string> xValNames = new() { "25%", "50%", "75%" };
 
                 for (int i = 0; i < xValNames.Count; i++)
                 {
@@ -186,8 +186,8 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         private void LoadTableValuesGrouped(ScenarioResults scenarioResults, int impactAreaID)
         {
             var riskTypes = new[] { ("Fail", RiskType.Fail), ("Non-Fail", RiskType.Non_Fail), ("Total", RiskType.Total) };
-            var quartileNames = new[] { "First", "Second", "Third" };
-            var probabilities = new[] { 0.75, 0.5, 0.25 };
+            var quartileNames = new[] { "25%", "50%", "75%" };
+            var probabilities = new[] { 0.25, 0.5, 0.75 };
 
             foreach (var (riskTypeName, riskType) in riskTypes)
             {
