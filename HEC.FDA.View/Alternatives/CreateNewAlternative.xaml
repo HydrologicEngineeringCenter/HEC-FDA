@@ -67,7 +67,7 @@
                 <ComboBox Grid.Column="1" ItemsSource="{Binding Scenarios}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedFutureScenario}" />
                 <Label Grid.Column="2" Content="Year:" />
                 <TextBox Grid.Column="3" Text="{Binding FutureYear, TargetNullValue=''}" IsEnabled="{Binding IsFutureYearEnabled}" />
-                <TextBlock Grid.Row="1" Grid.ColumnSpan="4" Text="*Future year not required for life loss only alternatives" FontSize="11" FontStyle="Italic" Foreground="Gray" Margin="5,2,0,0"/>
+                <TextBlock Grid.Row="1" Grid.ColumnSpan="4" Text="*Future year is optional and not utilized for life loss only alternatives" FontSize="11" FontStyle="Italic" Foreground="Gray" Margin="5,2,0,0"/>
             </Grid>
         </Grid>
 
