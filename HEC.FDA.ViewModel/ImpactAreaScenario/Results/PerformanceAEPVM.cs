@@ -88,25 +88,14 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             }
         }
 
+        private record AepDataItem(double ZScore, double AEP, double Assurance);
+
         private void AddSeries(Empirical empirical, List<IPerformanceRowItem> tableRows)
         {
             MyPlot.Series.Clear();
 
             // Add the CDF line from the empirical distribution
-            var lineSeries = new LineSeries()
-            {
-                Title = "AEP CDF",
-                // {0} = series title
-                // {1} = X axis title
-                // {2} = X value (z-score, displayed as AEP via axis formatter)
-                // {3} = Y axis title
-                // {4} = Y value (assurance)
-                TrackerFormatString = "Series: {0}\nAEP: {2:0.0000}\nAssurance: {4:P2}",
-                Color = OxyColors.Blue,
-                StrokeThickness = 2,
-            };
-
-            // Plot AEP (quantiles) on X-axis as z-scores, Assurance (cumulative probabilities) on Y-axis
+            var lineData = new List<AepDataItem>();
             for (int i = 0; i < empirical.CumulativeProbabilities.Length; i++)
             {
                 double aep = empirical.Quantiles[i];
@@ -114,36 +103,46 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
                 double zScore = AepToZScore(aep);
                 if (!double.IsInfinity(zScore) && !double.IsNaN(zScore))
                 {
-                    lineSeries.Points.Add(new DataPoint(zScore, assurance));
+                    lineData.Add(new AepDataItem(zScore, aep, assurance));
                 }
             }
+
+            var lineSeries = new LineSeries()
+            {
+                Title = "AEP CDF",
+                TrackerFormatString = "AEP: {AEP:N4}\nAssurance: {Assurance:P2}",
+                Color = OxyColors.Blue,
+                StrokeThickness = 2,
+                ItemsSource = lineData,
+                Mapping = item => { var p = (AepDataItem)item; return new DataPoint(p.ZScore, p.Assurance); },
+            };
 
             MyPlot.Series.Add(lineSeries);
 
             // Add table data points as scatter markers
+            var scatterData = new List<AepDataItem>();
+            foreach (var row in tableRows)
+            {
+                if (row is PerformanceFrequencyRowItem freqRow)
+                {
+                    double zScore = AepToZScore(freqRow.Frequency);
+                    if (!double.IsInfinity(zScore) && !double.IsNaN(zScore))
+                    {
+                        scatterData.Add(new AepDataItem(zScore, freqRow.Frequency, freqRow.AEP));
+                    }
+                }
+            }
+
             var scatterSeries = new ScatterSeries()
             {
                 Title = "Table Values",
                 MarkerType = MarkerType.Circle,
                 MarkerSize = 6,
                 MarkerFill = OxyColors.Red,
-                // {2} = X value (z-score, displayed as AEP via axis formatter)
-                // {4} = Y value (assurance)
-                TrackerFormatString = "AEP: {Probability:N4}\nAssurance: {4:P2}",
+                TrackerFormatString = "AEP: {AEP:N4}\nAssurance: {Assurance:P2}",
+                ItemsSource = scatterData,
+                Mapping = item => { var p = (AepDataItem)item; return new ScatterPoint(p.ZScore, p.Assurance); },
             };
-
-            foreach (var row in tableRows)
-            {
-                if (row is PerformanceFrequencyRowItem freqRow)
-                {
-                    // X = AEP (Frequency) as z-score, Y = Assurance
-                    double zScore = AepToZScore(freqRow.Frequency);
-                    if (!double.IsInfinity(zScore) && !double.IsNaN(zScore))
-                    {
-                        scatterSeries.Points.Add(new ScatterPoint(zScore, freqRow.AEP));
-                    }
-                }
-            }
 
             MyPlot.Series.Add(scatterSeries);
             MyPlot.InvalidatePlot(true);
