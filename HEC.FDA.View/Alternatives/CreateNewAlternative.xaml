@@ -1,12 +1,14 @@
-﻿<UserControl x:Class="HEC.FDA.View.Plans.CreateNewPlan"
+<UserControl x:Class="HEC.FDA.View.Plans.CreateNewPlan"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:HEC.FDA.View.Alternatives"
              xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=HEC.FDA.UserControls"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              xmlns:utils="clr-namespace:HEC.FDA.View.Utilities"
+             xmlns:alternatives="clr-namespace:HEC.FDA.ViewModel.Alternatives;assembly=HEC.FDA.ViewModel"
+             d:DataContext="{d:DesignInstance Type=alternatives:CreateNewAlternativeVM}"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
@@ -48,7 +50,7 @@
                 <Label Grid.Column="0" Content="Base Year Scenario:" HorizontalAlignment="Right" />
                 <ComboBox Grid.Column="1" ItemsSource="{Binding Scenarios}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedBaseScenario}" />
                 <Label Grid.Column="2" Content="Year:" />
-                <TextBox Grid.Column="3" Text="{Binding BaseYear}" />
+                <TextBox Grid.Column="3" Text="{Binding BaseYear, TargetNullValue=''}" IsEnabled="{Binding IsBaseYearEnabled}" />
             </Grid>
             <Grid Grid.Row="1" Margin="5">
                 <Grid.RowDefinitions>
@@ -63,7 +65,7 @@
                 <Label Grid.Column="0" Content="Future Year Scenario:" HorizontalAlignment="Right"/>
                 <ComboBox Grid.Column="1" ItemsSource="{Binding Scenarios}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedFutureScenario}" />
                 <Label Grid.Column="2" Content="Year:" />
-                <TextBox Grid.Column="3" Text="{Binding FutureYear}" />
+                <TextBox Grid.Column="3" Text="{Binding FutureYear, TargetNullValue=''}" IsEnabled="{Binding IsFutureYearEnabled}" />
             </Grid>
         </Grid>
 
