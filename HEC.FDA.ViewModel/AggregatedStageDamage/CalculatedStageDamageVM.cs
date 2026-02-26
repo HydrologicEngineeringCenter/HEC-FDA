@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using HEC.FDA.Model.paireddata;
@@ -33,8 +34,22 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private string _CurvesEditedLabel;
         private readonly Func<string> getName;
         private bool _WriteDetailsFile = true;
+        private string _ComputeDate;
+        private string _SoftwareVersion;
 
         public int AnalysisYear { get; set; }
+
+        public string ComputeDate
+        {
+            get { return _ComputeDate; }
+            set { _ComputeDate = value; NotifyPropertyChanged(); }
+        }
+
+        public string SoftwareVersion
+        {
+            get { return _SoftwareVersion; }
+            set { _SoftwareVersion = value; NotifyPropertyChanged(); }
+        }
 
         public bool WriteDetailsFile
         {
@@ -93,10 +108,13 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             this.getName = getName;
         }
 
-        public CalculatedStageDamageVM(int wseId, int inventoryID, int analysisYear, List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impAreaFrequencyRows, bool writeDetailsOut, Func<string> getName)
+        public CalculatedStageDamageVM(int wseId, int inventoryID, int analysisYear, List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impAreaFrequencyRows, bool writeDetailsOut, Func<string> getName,
+            string computeDate = null, string softwareVersion = null)
         {
             AnalysisYear = analysisYear;
             WriteDetailsFile = writeDetailsOut;
+            ComputeDate = computeDate;
+            SoftwareVersion = softwareVersion;
             Rows = new ObservableCollection<CalculatedStageDamageRowItem>();
             LoadStructureInventories();
             SelectInventory(inventoryID);
@@ -625,6 +643,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                     Navigate(tab, false, false);
 
                     (stageDamageFunctions, quantityDamagedElementsUPD) = await Task.Run(() => scenarioStageDamage.Compute(reporter:batchJob.Reporter));
+                    SoftwareVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                    ComputeDate = DateTime.Now.ToString("G");
                     List<string> errors = scenarioStageDamage.GetErrorMessages();
                     if (errors.Count > 0)
                     {
