@@ -3,6 +3,7 @@ using Geospatial.GDALAssist;
 using Geospatial.GDALAssist.Vectors;
 using Geospatial.IO;
 using Geospatial.Vectors;
+using HEC.FDA.Model.hydraulics.enums;
 using HEC.FDA.Model.Spatial.Extensions;
 using RasMapperLib;
 using RasMapperLib.Mapping;
@@ -233,15 +234,10 @@ public static class RASHelper
         return pointMs;
     }
 
-    public static bool TryQueryPolygons(string polygonPath, string pointsPath, string polygonColumnName, out Dictionary<string, PointM> result)
+    public static bool TryQueryPolygons(PolygonFeatureCollection polygons, PointFeatureCollection points, string polygonColumnName, out Dictionary<string, PointM> result)
     {
         result = [];
-        OperationResult polygonResult = ShapefileIO.TryRead(polygonPath, out PolygonFeatureCollection polygons);
-        if (!polygonResult.Result) 
-            return false;
-        OperationResult pointsResult = ShapefileIO.TryRead(pointsPath, out PointFeatureCollection points);
-        if (!pointsResult.Result)
-            return false;
+        
         if (polygons.Count != points.Count)
             return false;
 
@@ -264,18 +260,27 @@ public static class RASHelper
         return true;
     }
 
-    public static float[] GetStageFromHDF(PointMs pts, string hydraulicsPath)
+    public static float[] GetStageFromHydraulics(PointMs pts, HydraulicDataSource dataSource, string hydraulicsPath)
     {
-        var rasResult = new RASResults(hydraulicsPath);
-        var rasGeometry = rasResult.Geometry;
-        var rasWSMap = new RASResultsMap(rasResult, MapTypes.Elevation);
-        RASGeometryMapPoints mapPixels = rasGeometry.MapPixels(pts);
-        float[] WSE = null;
-        int profileIndex = RASResultsMap.MaxProfileIndex;
+        if (dataSource == HydraulicDataSource.UnsteadyHDF)
+        {
+            var rasResult = new RASResults(hydraulicsPath);
+            var rasGeometry = rasResult.Geometry;
+            var rasWSMap = new RASResultsMap(rasResult, MapTypes.Elevation);
+            RASGeometryMapPoints mapPixels = rasGeometry.MapPixels(pts);
+            float[] WSE = null;
+            int profileIndex = RASResultsMap.MaxProfileIndex;
 
-        float[] mockTerrainElevs = new float[pts.Count];
-        rasResult.ComputeSwitch(rasWSMap, mapPixels, profileIndex, mockTerrainElevs, null, ref WSE);
-        return WSE;
+            float[] mockTerrainElevs = new float[pts.Count];
+            rasResult.ComputeSwitch(rasWSMap, mapPixels, profileIndex, mockTerrainElevs, null, ref WSE);
+            return WSE;
+        }
+        else if (dataSource == HydraulicDataSource.WSEGrid)
+        {
+            return SamplePointsOnTiff(pts, hydraulicsPath);
+        }
+        return null;
+        
     }
     #region HACKS
 

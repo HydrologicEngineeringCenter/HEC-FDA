@@ -1,9 +1,14 @@
 ﻿using Amazon.Runtime.SharedInterfaces;
+using Geospatial.Features;
+using Geospatial.GDALAssist;
+using Geospatial.IO;
+using HEC.FDA.Model.hydraulics.enums;
 using HEC.FDA.Model.LifeLoss;
 using HEC.FDA.Model.LifeLoss.Saving;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.Spatial;
 using HEC.FDA.Model.utilities;
+using HEC.FDA.ViewModel.Storage;
 using RasMapperLib;
 using Statistics.Histograms;
 using System;
@@ -13,6 +18,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using Utility.Logging;
 using Utility.Progress;
 
 namespace HEC.FDA.ViewModel.LifeLoss;
@@ -61,14 +67,26 @@ public class LifeLossFunctionGenerator
             return [];
         }
 
-        List<LifeLossFunction> lifeLossFunctions = new();
+        List<LifeLossFunction> lifeLossFunctions = [];
+
+        var prjFile = Connection.Instance.ProjectionFile;
+        Projection studyPrj = Projection.FromFile(prjFile);
+        // reproject polygons
+        OperationResult polygonResult = ShapefileIO.TryRead(summarySetPath, out PolygonFeatureCollection polygons, studyPrj);
+        if (!polygonResult.Result)
+            return lifeLossFunctions;
+        // reproject points
+        OperationResult pointsResult = ShapefileIO.TryRead(indexPointsPath, out PointFeatureCollection points, studyPrj);
+        if (!pointsResult.Result)
+            return lifeLossFunctions;
 
         // create the map of summary zone names to their corresponding index points
-        if (!RASHelper.TryQueryPolygons(summarySetPath, indexPointsPath, summarySetUniqueName, out _indexPointBySummaryZone))
+        if (!RASHelper.TryQueryPolygons(polygons, points, summarySetUniqueName, out _indexPointBySummaryZone))
         {
             System.Windows.MessageBox.Show($"Could not create a 1-1 mapping of Index Points '{Path.GetFileName(indexPointsPath)}' to Impact Areas '{Path.GetFileName(summarySetPath)}'.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             return [];
         }
+        
 
         lifeLossFunctions = await Task.Run(() => CreateLifeLossFunctions(pr));
 
@@ -89,6 +107,8 @@ public class LifeLossFunctionGenerator
         foreach (var (name, id) in _impactAreaIDByName.OrderBy(kvp => kvp.Value))
         {
             PointMs indexPoint = [_indexPointBySummaryZone[name]];
+            //Projection ptProj = RASHelper.GetVectorProjection(indexPoint);
+
             var iaTask = computeTask.SubTask(name, (float)i / count, 1f / count);
             iaTask.ReportTimestampedMessage(sw?.Elapsed, 1, $"Computing Impact Area: {name}...");
             List<LifeLossFunction> functions = CreateLifeLossFunctionsForSummaryZone(name, indexPoint, iaTask, sw);
@@ -117,11 +137,13 @@ public class LifeLossFunctionGenerator
         {
             if (_hydraulicsFolderByAlternative.TryGetValue(alternativeName, out string hydraulicsName))
             {
-                string filePath = Directory.EnumerateFiles(_topLevelHydraulicsFolder, $"{hydraulicsName}.hdf").FirstOrDefault();
-                if (filePath == null)
-                {
-                    missingHydraulics.Add($"{hydraulicsName}.hdf");
-                }
+                // this is how .tif grids are saved -- a folder at the root level with a name matching hydraulic profile, formatted [name]/
+                string tifFolderPath = Path.Combine(_topLevelHydraulicsFolder, hydraulicsName);
+                // this is how .hdf files are saved -- a .hdf file at the root level with the format [name].hdf
+                string hdfPath = Path.Combine(_topLevelHydraulicsFolder, $"{hydraulicsName}.hdf");
+                // if we either have a folder with the proper name or a .hdf the the proper name, our hydraulics exist
+                if (!Directory.Exists(tifFolderPath) && !File.Exists(hdfPath))
+                    missingHydraulics.Add(hydraulicsName);
             }
         }
         return missingHydraulics;
@@ -139,9 +161,25 @@ public class LifeLossFunctionGenerator
         for (int i = 0; i < alternatives.Length; i++)
         {
             string associatedHydraulics = _hydraulicsFolderByAlternative[alternatives[i]];
-            string filePath = Directory.EnumerateFiles(_topLevelHydraulicsFolder, $"{associatedHydraulics}.hdf").FirstOrDefault()
-                ?? throw new System.Exception($"'{associatedHydraulics}' hydraulics file not found in {_topLevelHydraulicsFolder}.");
-            float[] computedStage = RASHelper.GetStageFromHDF(indexPoint, filePath); // costly compute
+
+            // first try to get the .hdf
+            HydraulicDataSource sourceType = HydraulicDataSource.UnsteadyHDF;
+            string hydraulicsPath = Directory.EnumerateFiles(_topLevelHydraulicsFolder, $"{associatedHydraulics}.hdf", SearchOption.TopDirectoryOnly)
+                                       .FirstOrDefault();
+            if (hydraulicsPath == null)
+            {
+                // we did not find a .hdf, look for .tif in the subdir
+                string subDirPath = Path.Combine(_topLevelHydraulicsFolder, associatedHydraulics);
+                hydraulicsPath = Directory.EnumerateFiles(subDirPath, "*.tif", SearchOption.TopDirectoryOnly)
+                                           .FirstOrDefault();
+                sourceType = HydraulicDataSource.WSEGrid;
+            }
+            if (hydraulicsPath == null)
+                throw new Exception(); // no .hdf or .tif found, we shouldn't reach this unless the user tampered with the FDA project folder structure
+
+            float[] computedStage = RASHelper.GetStageFromHydraulics(indexPoint, sourceType, hydraulicsPath); // costly compute
+            if (computedStage == null)
+                throw new Exception(); // I think the only way to get here is steady HDF, but that is handled long before this is called
             double stage = computedStage[0];
             stages[i] = stage;
         }
