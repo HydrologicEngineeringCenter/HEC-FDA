@@ -154,6 +154,7 @@ public class LifeLossFunctionGenerator
         return missingHydraulics;
     }
 
+    // returns an dictionary of impact areas to their associated alternative + stage pairs
     public Dictionary<string, (string[], double[])> GetAllStages(Dictionary<string, PointM> indexPointsByIA, ProgressReporter pr = null, Stopwatch sw = null)
     {
         pr ??= ProgressReporter.None();
