@@ -3,6 +3,7 @@ using HEC.FDA.ViewModel.FlowTransforms;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.GeoTech;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
+using HEC.FDA.ViewModel.LifeLoss;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
@@ -82,7 +83,13 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private string WasStageDamageModified(IASElement iasElems, ChildElement elem, int elemID)
         {
             List<SpecificIAS> iasList = iasElems.SpecificIASElements.Where(ias => ias.FailureStageDamageID == elemID).ToList();
-            return iasList.Count > 0 ? CreateTooltipMessage("Aggregates Stage-Damage", elem.Name) : null;
+            return iasList.Count > 0 ? CreateTooltipMessage("Aggregated Stage-Damage", elem.Name) : null;
+        }
+
+        private string WasStageLifeLossModified(IASElement iasElems, ChildElement elem, int elemID)
+        {
+            List<SpecificIAS> iasList = iasElems.SpecificIASElements.Where(ias => ias.FailureStageLifeLossID == elemID).ToList();
+            return iasList.Count > 0 ? CreateTooltipMessage("Aggregated Stage-Life Loss", elem.Name) : null;
         }
 
         private string WasLeveeElementModified(IASElement iasElems, ChildElement elem, int elemID)
@@ -129,6 +136,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             else if (elemModified is AggregatedStageDamageElement)
             {
                 msg = WasStageDamageModified(iasSet, elemModified, elemID);
+            }
+            else if (elemModified is StageLifeLossElement)
+            {
+                msg = WasStageLifeLossModified(iasSet, elemModified, elemID);
             }
             if (msg != null)
             {
