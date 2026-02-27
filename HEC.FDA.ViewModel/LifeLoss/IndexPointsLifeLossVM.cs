@@ -493,7 +493,7 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         }
 
         string hydraulicsFolder = Path.Combine(Connection.Instance.HydraulicsDirectory, SelectedHydraulics.Name);
-        LifeSimSimulation currentSimulation = new(SelectedSimulation.Name, hydraulicsFolder);
+        LifeSimSimulation currentSimulation = new(SelectedSimulation.Name, hydraulicsFolder, SelectedHydraulics.DataSet.DataSource);
         foreach (CheckableItem a in LifeSimAlternatives)
             if (a.IsChecked) currentSimulation.Alternatives.Add(a.Name);
         foreach (WeightedCheckableItem h in HazardTimes)

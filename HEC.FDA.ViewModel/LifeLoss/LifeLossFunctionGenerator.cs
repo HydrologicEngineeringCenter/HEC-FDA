@@ -36,6 +36,7 @@ public class LifeLossFunctionGenerator
     private Dictionary<string, int> _impactAreaIDByName;
     private readonly string _simulationName;
     private readonly string _topLevelHydraulicsFolder;
+    private readonly HydraulicDataSource _hydraulicDataSource;
     private readonly string[] _alternativeNames;
     private readonly Dictionary<string, double> _hazardTimes;
 
@@ -48,6 +49,7 @@ public class LifeLossFunctionGenerator
         _impactAreaIDByName = impactAreaIDByName;
         _simulationName = simulation.Name;
         _topLevelHydraulicsFolder = simulation.HydraulicsFolder;
+        _hydraulicDataSource = simulation.HydraulicsDataSource;
         _alternativeNames = simulation.Alternatives.ToArray();
         _hazardTimes = simulation.HazardTimes;
     }
@@ -179,21 +181,22 @@ public class LifeLossFunctionGenerator
             var altTask = pr.SubTask(alternativeName, (float)altIdx / _alternativeNames.Length, 1f / _alternativeNames.Length);
             string associatedHydraulics = _hydraulicsFolderByAlternative[alternativeName];
             altTask.ReportTimestampedMessage(sw?.Elapsed, 2, $"Reading {associatedHydraulics}...");
-            HydraulicDataSource sourceType = HydraulicDataSource.UnsteadyHDF;
-            string hydraulicsPath = Directory.EnumerateFiles(_topLevelHydraulicsFolder, $"{associatedHydraulics}.hdf", SearchOption.TopDirectoryOnly)
-                                       .FirstOrDefault();
-            if (hydraulicsPath == null)
+
+            string hydraulicsPath;
+            if (_hydraulicDataSource == HydraulicDataSource.UnsteadyHDF)
             {
-                // we did not find a .hdf, look for .tif in the subdir
+                hydraulicsPath = Directory.EnumerateFiles(_topLevelHydraulicsFolder, $"{associatedHydraulics}.hdf", SearchOption.TopDirectoryOnly).FirstOrDefault();
+            }
+            else
+            {
                 string subDirPath = Path.Combine(_topLevelHydraulicsFolder, associatedHydraulics);
                 hydraulicsPath = Directory.EnumerateFiles(subDirPath, "*.tif", SearchOption.TopDirectoryOnly)
                                            .FirstOrDefault();
-                sourceType = HydraulicDataSource.WSEGrid;
             }
             if (hydraulicsPath == null)
                 throw new Exception(); // no .hdf or .tif found, we shouldn't reach this unless the user tampered with the FDA project folder structure
 
-            float[] computedStages = RASHelper.GetStageFromHydraulics(pointMs, sourceType, hydraulicsPath); // costly compute
+            float[] computedStages = RASHelper.GetStageFromHydraulics(pointMs, _hydraulicDataSource, hydraulicsPath); // costly compute
             if (computedStages == null)
                 throw new Exception(); // I think the only way to get here is steady HDF, but that is handled long before this is called
 
