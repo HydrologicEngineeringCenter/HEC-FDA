@@ -75,11 +75,17 @@ public class LifeLossFunctionGenerator
         // reproject polygons
         OperationResult polygonResult = ShapefileIO.TryRead(summarySetPath, out PolygonFeatureCollection polygons, studyPrj);
         if (!polygonResult.Result)
+        {
+            System.Windows.MessageBox.Show(polygonResult.GetConcatenatedMessages());
             return lifeLossFunctions;
+        }
         // reproject points
         OperationResult pointsResult = ShapefileIO.TryRead(indexPointsPath, out PointFeatureCollection points, studyPrj);
         if (!pointsResult.Result)
+        {
+            System.Windows.MessageBox.Show(pointsResult.GetConcatenatedMessages());
             return lifeLossFunctions;
+        }
 
         // create the map of summary zone names to their corresponding index points
         if (!RASHelper.TryMapPolygonsToPoints(polygons, points, summarySetUniqueName, out _indexPointBySummaryZone))
