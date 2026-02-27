@@ -3,6 +3,7 @@ using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Xml.Linq;
 
 namespace HEC.FDA.ViewModel.AggregatedStageDamage
@@ -17,6 +18,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         private const string STAGE_DAMAGE_CURVE = "StageDamageCurve";
         private const string IMPACT_AREA_ROWS = "ImpactAreaRows";
         private const string IMPACT_AREA_FREQUENCY_ROWS = "ImpactAreaFrequencyRow";
+        private const string COMPUTE_DATE = "ComputeDate";
+        private const string SOFTWARE_VERSION = "SoftwareVersion";
 
         #region Properties
         public int AnalysisYear { get; }
@@ -26,12 +29,15 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public bool IsManual { get; }
         public List<ImpactAreaFrequencyFunctionRowItem> ImpactAreaFrequencyRows { get; } = new List<ImpactAreaFrequencyFunctionRowItem>();
         public bool WriteDetailsOut { get; }
+        public string ComputeDate { get; set; }
+        public string SoftwareVersion { get; set; }
 
         #endregion
         #region Constructors
 
-        public AggregatedStageDamageElement(String name, string lastEditDate, string description, int analysisYear, int selectedWSE, int selectedStructs, 
-             List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impactAreaRows, bool isManual, bool writeDetailsOut, int id) 
+        public AggregatedStageDamageElement(String name, string lastEditDate, string description, int analysisYear, int selectedWSE, int selectedStructs,
+             List<StageDamageCurve> curves, List<ImpactAreaFrequencyFunctionRowItem> impactAreaRows, bool isManual, bool writeDetailsOut, int id,
+             string computeDate = null, string softwareVersion = null)
             : base(name, lastEditDate, description, id)
         {
             AnalysisYear = analysisYear;
@@ -42,6 +48,8 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             IsManual = isManual;
             SelectedWSE = selectedWSE;
             SelectedStructures = selectedStructs;
+            ComputeDate = computeDate;
+            SoftwareVersion = softwareVersion;
 
             AddDefaultActions(EditDamageCurve, StringConstants.EDIT_STAGE_DAMAGE_MENU);
         }
@@ -85,7 +93,17 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 ImpactAreaFrequencyRows.Add(new ImpactAreaFrequencyFunctionRowItem(impAreaRow));
             }
 
+            if (elementXML.Attribute(COMPUTE_DATE) != null)
+            {
+                ComputeDate = elementXML.Attribute(COMPUTE_DATE).Value;
+            }
+            if (elementXML.Attribute(SOFTWARE_VERSION) != null)
+            {
+                SoftwareVersion = elementXML.Attribute(SOFTWARE_VERSION).Value;
+            }
+
             AddDefaultActions(EditDamageCurve, StringConstants.EDIT_STAGE_DAMAGE_MENU);
+            UpdateTooltip();
         }
         #endregion
         #region Voids
@@ -104,6 +122,18 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             Navigate(tab, false, true);
         }
 
+        public void UpdateTooltip()
+        {
+            StringBuilder sb = new();
+            sb.AppendLine("Last Edited: " + LastEditDate);
+            if (ComputeDate != null)
+            {
+                sb.AppendLine("Last Computed: " + ComputeDate);
+                sb.AppendLine("Computed with: HEC-FDA " + (SoftwareVersion ?? "NA"));
+            }
+            CustomTreeViewHeader.Tooltip = sb.ToString().Trim();
+        }
+
         public override XElement ToXML()
         {
             XElement stageDamageElem = new XElement(StringConstants.ELEMENT_XML_TAG);
@@ -112,9 +142,16 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             stageDamageElem.SetAttributeValue("AnalysisYear", AnalysisYear);
             stageDamageElem.SetAttributeValue(SELECTED_STRUCTURES, SelectedStructures);
             stageDamageElem.SetAttributeValue(SELECTED_HYDRO, SelectedWSE);
-            //todo: save the selected wse
             stageDamageElem.SetAttributeValue(IS_MANUAL, IsManual);
             stageDamageElem.SetAttributeValue(WRITE_DETAILS, WriteDetailsOut);
+            if (ComputeDate != null)
+            {
+                stageDamageElem.SetAttributeValue(COMPUTE_DATE, ComputeDate);
+            }
+            if (SoftwareVersion != null)
+            {
+                stageDamageElem.SetAttributeValue(SOFTWARE_VERSION, SoftwareVersion);
+            }
 
             XElement curveElements = new XElement(STAGE_DAMAGE_CURVES);
             foreach (StageDamageCurve curve in Curves)

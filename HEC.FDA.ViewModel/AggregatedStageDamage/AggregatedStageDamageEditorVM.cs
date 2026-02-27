@@ -3,6 +3,7 @@ using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Windows;
 
@@ -12,6 +13,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
     {
         private bool _IsManualRadioSelected = false;
         private BaseViewModel _CurrentVM;
+        private string _ComputeInfoText = "";
 
         #region properties
         public BaseViewModel CurrentVM
@@ -23,6 +25,12 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         {
             get { return _IsManualRadioSelected; }
             set { _IsManualRadioSelected = value; UpdateVM(); NotifyPropertyChanged(); }
+        }
+
+        public string ComputeInfoText
+        {
+            get { return _ComputeInfoText; }
+            set { _ComputeInfoText = value; NotifyPropertyChanged(); }
         }
 
         public ManualStageDamageVM ManualVM { get; set; }
@@ -43,6 +51,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             RegisterChildViewModel(CalculatedVM);
             CurrentVM = CalculatedVM;
             CalculatedVM.RequestNavigation += Navigate;
+            CalculatedVM.PropertyChanged += CalculatedVM_PropertyChanged;
         }
 
         public AggregatedStageDamageEditorVM(ChildElement elem, EditorActionManager actionManager) : base(elem, actionManager)
@@ -60,19 +69,42 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
             else
             {
                 ManualVM = new ManualStageDamageVM();
-                CalculatedVM = new CalculatedStageDamageVM(element.SelectedWSE, element.SelectedStructures, element.AnalysisYear, element.Curves, element.ImpactAreaFrequencyRows,element.WriteDetailsOut, GetName);
+                CalculatedVM = new CalculatedStageDamageVM(element.SelectedWSE, element.SelectedStructures, element.AnalysisYear, element.Curves, element.ImpactAreaFrequencyRows, element.WriteDetailsOut, GetName,
+                    element.ComputeDate, element.SoftwareVersion);
                 CurrentVM = CalculatedVM;
             }
             CalculatedVM.RequestNavigation += Navigate;
+            CalculatedVM.PropertyChanged += CalculatedVM_PropertyChanged;
             //this registration is so that fda can detect changes made in child view models
             //and prompt the user if they want to save when closing
             RegisterChildViewModel(ManualVM);
             RegisterChildViewModel(CalculatedVM);
+            UpdateComputeInfoText();
         }
         #endregion
 
-        #region voids          
-        
+        #region voids
+
+        private void CalculatedVM_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(CalculatedStageDamageVM.ComputeDate))
+            {
+                UpdateComputeInfoText();
+            }
+        }
+
+        private void UpdateComputeInfoText()
+        {
+            if (CalculatedVM.ComputeDate != null)
+            {
+                ComputeInfoText = "Last Computed: " + CalculatedVM.ComputeDate + "  Computed with: HEC-FDA " + (CalculatedVM.SoftwareVersion ?? "NA");
+            }
+            else
+            {
+                ComputeInfoText = "";
+            }
+        }
+
         private void UpdateVM()
         {
             if(_IsManualRadioSelected)
@@ -115,9 +147,11 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
                 }
                 List<StageDamageCurve> stageDamageCurves = CalculatedVM.GetStageDamageCurves();
                 UpdateStageDamageMetaData(stageDamageCurves);
-                AggregatedStageDamageElement elemToSave = new AggregatedStageDamageElement(Name, lastEditDate, Description, CalculatedVM.AnalysisYear, wseID, structID, 
-                   stageDamageCurves, CalculatedVM.ImpactAreaFrequencyRows, false, CalculatedVM.WriteDetailsFile, id);              
+                AggregatedStageDamageElement elemToSave = new AggregatedStageDamageElement(Name, lastEditDate, Description, CalculatedVM.AnalysisYear, wseID, structID,
+                   stageDamageCurves, CalculatedVM.ImpactAreaFrequencyRows, false, CalculatedVM.WriteDetailsFile, id,
+                   CalculatedVM.ComputeDate, CalculatedVM.SoftwareVersion);
                 base.Save(elemToSave);
+                elemToSave.UpdateTooltip();
             }
             else
             {
