@@ -19,18 +19,59 @@ namespace HEC.FDA.ViewModel.Alternatives
         public ScenarioRowItem SelectedBaseScenario
         {
             get { return _SelectedBaseScenario; }
-            set { _SelectedBaseScenario = value; NotifyPropertyChanged(); }
+            set
+            {
+                _SelectedBaseScenario = value;
+                bool hasElement = value?.Element != null;
+                IsBaseYearEnabled = hasElement;
+                if (!hasElement) { BaseYear = null; }
+                else if (BaseYear == null) { BaseYear = DateTime.Now.Year; }
+                NotifyPropertyChanged();
+            }
         }
 
         private ScenarioRowItem _SelectedFutureScenario;
         public ScenarioRowItem SelectedFutureScenario
         {
             get { return _SelectedFutureScenario; }
-            set { _SelectedFutureScenario = value; NotifyPropertyChanged(); }
+            set
+            {
+                _SelectedFutureScenario = value;
+                bool hasElement = value?.Element != null;
+                IsFutureYearEnabled = hasElement;
+                if (!hasElement) { FutureYear = null; }
+                else if (FutureYear == null) { FutureYear = DateTime.Now.Year; }
+                NotifyPropertyChanged();
+            }
         }
 
-        public int BaseYear { get; set; } = DateTime.Now.Year;
-        public int FutureYear { get; set; } = DateTime.Now.Year;
+        private int? _BaseYear;
+        public int? BaseYear
+        {
+            get { return _BaseYear; }
+            set { _BaseYear = value; NotifyPropertyChanged(); }
+        }
+
+        private int? _FutureYear;
+        public int? FutureYear
+        {
+            get { return _FutureYear; }
+            set { _FutureYear = value; NotifyPropertyChanged(); }
+        }
+
+        private bool _IsBaseYearEnabled;
+        public bool IsBaseYearEnabled
+        {
+            get { return _IsBaseYearEnabled; }
+            set { _IsBaseYearEnabled = value; NotifyPropertyChanged(); }
+        }
+
+        private bool _IsFutureYearEnabled;
+        public bool IsFutureYearEnabled
+        {
+            get { return _IsFutureYearEnabled; }
+            set { _IsFutureYearEnabled = value; NotifyPropertyChanged(); }
+        }
 
 
         #region Constructors
@@ -41,6 +82,8 @@ namespace HEC.FDA.ViewModel.Alternatives
         public CreateNewAlternativeVM( EditorActionManager actionManager) : base(actionManager)
         {
             LoadScenarios();
+            SelectedBaseScenario = _NoneItem;
+            SelectedFutureScenario = _NoneItem;
             ListenToIASEvents();
         }
 
@@ -113,17 +156,17 @@ namespace HEC.FDA.ViewModel.Alternatives
         private FdaValidationResult ValidateYears()
         {
             FdaValidationResult result = new();
-            if(BaseYear<1900 || BaseYear > 3000)
+            if(!BaseYear.HasValue || BaseYear<1900 || BaseYear > 3000)
             {
                 result.AddErrorMessage("A base year is required and must be greater than 1900 and less than 3000.");
             }
             if (SelectedFutureScenario?.Element != null)
             {
-                if (FutureYear < 1900 || FutureYear > 3000)
+                if (!FutureYear.HasValue || FutureYear < 1900 || FutureYear > 3000)
                 {
                     result.AddErrorMessage("A future year is required and must be greater than 1900 and less than 3000.");
                 }
-                if (BaseYear >= FutureYear)
+                if (BaseYear.HasValue && FutureYear.HasValue && BaseYear >= FutureYear)
                 {
                     result.AddErrorMessage("The base year must be before the future year.");
                 }
@@ -159,8 +202,8 @@ namespace HEC.FDA.ViewModel.Alternatives
                 {
                     id = OriginalElement.ID;
                 }
-                AlternativeScenario baseScenario = new(SelectedBaseScenario.Element.ID, BaseYear);
-                AlternativeScenario futureScenario = SelectedFutureScenario?.Element != null ? new(SelectedFutureScenario.Element.ID, FutureYear) : null;
+                AlternativeScenario baseScenario = new(SelectedBaseScenario.Element.ID, BaseYear.Value);
+                AlternativeScenario futureScenario = SelectedFutureScenario?.Element != null ? new(SelectedFutureScenario.Element.ID, FutureYear.Value) : null;
                 AlternativeElement elemToSave = new(Name, Description, DateTime.Now.ToString("G"), baseScenario, futureScenario, id);
                 Save(elemToSave);
             }
