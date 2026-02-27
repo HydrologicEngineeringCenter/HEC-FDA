@@ -236,6 +236,7 @@ public static class RASHelper
 
     /// <summary>
     /// Given a feature collection of polygons and a feature collection of points, returns true if there is a 1-1 mapping of points to polygons via containment, and false if otherwise.
+    /// Expects points and polygons to be in the same projection.
     /// </summary>
     /// <param name="polygons"></param>
     /// <param name="points"></param>
