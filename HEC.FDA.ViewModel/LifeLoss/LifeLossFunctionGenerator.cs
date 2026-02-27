@@ -1,9 +1,15 @@
-﻿using Amazon.Runtime.SharedInterfaces;
+﻿using Amazon.Runtime;
+using Amazon.Runtime.SharedInterfaces;
+using Geospatial.Features;
+using Geospatial.GDALAssist;
+using Geospatial.IO;
+using HEC.FDA.Model.hydraulics.enums;
 using HEC.FDA.Model.LifeLoss;
 using HEC.FDA.Model.LifeLoss.Saving;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.Spatial;
 using HEC.FDA.Model.utilities;
+using HEC.FDA.ViewModel.Storage;
 using RasMapperLib;
 using Statistics.Histograms;
 using System;
@@ -13,6 +19,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using Utility.Logging;
 using Utility.Progress;
 
 namespace HEC.FDA.ViewModel.LifeLoss;
@@ -29,6 +36,7 @@ public class LifeLossFunctionGenerator
     private Dictionary<string, int> _impactAreaIDByName;
     private readonly string _simulationName;
     private readonly string _topLevelHydraulicsFolder;
+    private readonly HydraulicDataSource _hydraulicDataSource;
     private readonly string[] _alternativeNames;
     private readonly Dictionary<string, double> _hazardTimes;
 
@@ -41,6 +49,7 @@ public class LifeLossFunctionGenerator
         _impactAreaIDByName = impactAreaIDByName;
         _simulationName = simulation.Name;
         _topLevelHydraulicsFolder = simulation.HydraulicsFolder;
+        _hydraulicDataSource = simulation.HydraulicsDataSource;
         _alternativeNames = simulation.Alternatives.ToArray();
         _hazardTimes = simulation.HazardTimes;
     }
@@ -61,14 +70,32 @@ public class LifeLossFunctionGenerator
             return [];
         }
 
-        List<LifeLossFunction> lifeLossFunctions = new();
+        List<LifeLossFunction> lifeLossFunctions = [];
+
+        var prjFile = Connection.Instance.ProjectionFile;
+        Projection studyPrj = Projection.FromFile(prjFile);
+        // reproject polygons
+        OperationResult polygonResult = ShapefileIO.TryRead(summarySetPath, out PolygonFeatureCollection polygons, studyPrj);
+        if (!polygonResult.Result)
+        {
+            System.Windows.MessageBox.Show(polygonResult.GetConcatenatedMessages());
+            return lifeLossFunctions;
+        }
+        // reproject points
+        OperationResult pointsResult = ShapefileIO.TryRead(indexPointsPath, out PointFeatureCollection points, studyPrj);
+        if (!pointsResult.Result)
+        {
+            System.Windows.MessageBox.Show(pointsResult.GetConcatenatedMessages());
+            return lifeLossFunctions;
+        }
 
         // create the map of summary zone names to their corresponding index points
-        if (!RASHelper.TryQueryPolygons(summarySetPath, indexPointsPath, summarySetUniqueName, out _indexPointBySummaryZone))
+        if (!RASHelper.TryMapPolygonsToPoints(polygons, points, summarySetUniqueName, out _indexPointBySummaryZone))
         {
             System.Windows.MessageBox.Show($"Could not create a 1-1 mapping of Index Points '{Path.GetFileName(indexPointsPath)}' to Impact Areas '{Path.GetFileName(summarySetPath)}'.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             return [];
         }
+        
 
         lifeLossFunctions = await Task.Run(() => CreateLifeLossFunctions(pr));
 
@@ -80,18 +107,24 @@ public class LifeLossFunctionGenerator
         pr ??= ProgressReporter.None();
         int functionID = 1;
         List<LifeLossFunction> lifeLossFunctions = [];
-        var computeTask = pr.SubTask("Stage Life Loss Compute", 0, 1);
+        var stageTask = pr.SubTask("Get Stages", 0, 0.5f);
+        var computeTask = pr.SubTask("Stage Life Loss Compute", 0.5f, 0.5f);
         computeTask.ReportMessage("Beginning Aggregated Stage Life Loss Function Compute");
         Stopwatch sw = new();
         sw.Start();
         int i = 0;
         int count = _impactAreaIDByName.Count;
+        var altStagePairsByIA = GetAllStages(_indexPointBySummaryZone, stageTask, sw);
+
         foreach (var (name, id) in _impactAreaIDByName.OrderBy(kvp => kvp.Value))
         {
             PointMs indexPoint = [_indexPointBySummaryZone[name]];
+
             var iaTask = computeTask.SubTask(name, (float)i / count, 1f / count);
             iaTask.ReportTimestampedMessage(sw?.Elapsed, 1, $"Computing Impact Area: {name}...");
-            List<LifeLossFunction> functions = CreateLifeLossFunctionsForSummaryZone(name, indexPoint, iaTask, sw);
+            string[] alternatives = altStagePairsByIA[name].Item1;
+            double[] stages = altStagePairsByIA[name].Item2;
+            List<LifeLossFunction> functions = CreateLifeLossFunctionsForSummaryZone(name, alternatives, stages, iaTask, sw);
             foreach (LifeLossFunction function in functions)
             {
                 function.FunctionID = functionID;
@@ -117,35 +150,79 @@ public class LifeLossFunctionGenerator
         {
             if (_hydraulicsFolderByAlternative.TryGetValue(alternativeName, out string hydraulicsName))
             {
-                string filePath = Directory.EnumerateFiles(_topLevelHydraulicsFolder, $"{hydraulicsName}.hdf").FirstOrDefault();
-                if (filePath == null)
-                {
-                    missingHydraulics.Add($"{hydraulicsName}.hdf");
-                }
+                // this is how .tif grids are saved -- a folder at the root level with a name matching hydraulic profile, formatted [name]/
+                string tifFolderPath = Path.Combine(_topLevelHydraulicsFolder, hydraulicsName);
+                // this is how .hdf files are saved -- a .hdf file at the root level with the format [name].hdf
+                string hdfPath = Path.Combine(_topLevelHydraulicsFolder, $"{hydraulicsName}.hdf");
+                // if we either have a folder with the proper name or a .hdf the the proper name, our hydraulics exist
+                if (!Directory.Exists(tifFolderPath) && !File.Exists(hdfPath))
+                    missingHydraulics.Add(hydraulicsName);
             }
         }
         return missingHydraulics;
     }
 
+    // returns an dictionary of impact areas to their associated alternative + stage pairs
+    public Dictionary<string, (string[], double[])> GetAllStages(Dictionary<string, PointM> indexPointsByIA, ProgressReporter pr = null, Stopwatch sw = null)
+    {
+        pr ??= ProgressReporter.None();
+        pr.ReportTimestampedMessage(sw?.Elapsed, 1, $"Querying stages off of hydraulic profiles...");
 
-    private List<LifeLossFunction> CreateLifeLossFunctionsForSummaryZone(string summaryZone, PointMs indexPoint, ProgressReporter pr = null, Stopwatch sw = null)
+        var ias = _indexPointBySummaryZone.Keys;
+        var pts = _indexPointBySummaryZone.Values;
+        PointMs pointMs = new(pts);
+        Dictionary<string, (string[], double[])> altStagePairsByIA = [];
+        foreach (string ia in ias)
+            altStagePairsByIA[ia] = new(new string[_alternativeNames.Length], new double[_alternativeNames.Length]);
+
+        int altIdx = 0;
+        foreach (string alternativeName in _alternativeNames)
+        {
+            var altTask = pr.SubTask(alternativeName, (float)altIdx / _alternativeNames.Length, 1f / _alternativeNames.Length);
+            string associatedHydraulics = _hydraulicsFolderByAlternative[alternativeName];
+            altTask.ReportTimestampedMessage(sw?.Elapsed, 2, $"Reading {associatedHydraulics}...");
+
+            string hydraulicsPath;
+            if (_hydraulicDataSource == HydraulicDataSource.UnsteadyHDF)
+            {
+                hydraulicsPath = Directory.EnumerateFiles(_topLevelHydraulicsFolder, $"{associatedHydraulics}.hdf", SearchOption.TopDirectoryOnly).FirstOrDefault();
+            }
+            else
+            {
+                string subDirPath = Path.Combine(_topLevelHydraulicsFolder, associatedHydraulics);
+                hydraulicsPath = Directory.EnumerateFiles(subDirPath, "*.tif", SearchOption.TopDirectoryOnly)
+                                           .FirstOrDefault();
+            }
+            if (hydraulicsPath == null)
+                throw new Exception(); // no .hdf or .tif found, we shouldn't reach this unless the user tampered with the FDA project folder structure
+
+            float[] computedStages = RASHelper.GetStageFromHydraulics(pointMs, _hydraulicDataSource, hydraulicsPath); // costly compute
+            if (computedStages == null)
+                throw new Exception(); // I think the only way to get here is steady HDF, but that is handled long before this is called
+
+            int stageIdx = 0;
+            foreach (string ia in ias)
+            {
+                var (altArr, stageArr) = altStagePairsByIA[ia];
+                altArr[altIdx] = alternativeName;
+                stageArr[altIdx] = computedStages[stageIdx];
+                stageIdx++;
+            }
+            altIdx++;
+            altTask.ReportProgress(100);
+        }
+
+        pr.ReportProgress(100);
+        return altStagePairsByIA;
+    }
+    private List<LifeLossFunction> CreateLifeLossFunctionsForSummaryZone(string summaryZone, string[] alternatives, double[] stages, ProgressReporter pr = null, Stopwatch sw = null)
     {
         pr ??= ProgressReporter.None();
         List<LifeLossFunction> functions = [];
 
-        string[] alternatives = [.. _alternativeNames]; // create a copy of the alternative names because we are sorting, don't want to sort in place as we iterate through (although I think it would still work)
-        double[] stages = new double[alternatives.Length];
-        pr.ReportTimestampedMessage(sw?.Elapsed, 2, $"Computing stages...");
-        for (int i = 0; i < alternatives.Length; i++)
-        {
-            string associatedHydraulics = _hydraulicsFolderByAlternative[alternatives[i]];
-            string filePath = Directory.EnumerateFiles(_topLevelHydraulicsFolder, $"{associatedHydraulics}.hdf").FirstOrDefault()
-                ?? throw new System.Exception($"'{associatedHydraulics}' hydraulics file not found in {_topLevelHydraulicsFolder}.");
-            float[] computedStage = RASHelper.GetStageFromHDF(indexPoint, filePath); // costly compute
-            double stage = computedStage[0];
-            stages[i] = stage;
-        }
-        Array.Sort(stages, alternatives); // both arrays are now sorted in ascending stage order which is what we need for UPD
+        // sort ascending stage order which is what we need for UPD
+        // cannot guarantee they come in sorted
+        Array.Sort(stages, alternatives); 
 
         Dictionary<UncertainPairedData, double> updweights = new();
         int idx = 0;

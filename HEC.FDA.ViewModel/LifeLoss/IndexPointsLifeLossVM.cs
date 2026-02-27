@@ -19,6 +19,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Interop;
 using Utility;
 using Utility.Extensions;
 using Visual.Observables;
@@ -484,9 +485,15 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         if (LifeSimAlternatives.IsEmpty() || HazardTimes.IsEmpty())
             return;
 
-        string hydraulicsFolder = Path.Combine(Connection.Instance.HydraulicsDirectory, SelectedHydraulics.Name);
+        if (SelectedHydraulics.DataSet.DataSource == Model.hydraulics.enums.HydraulicDataSource.SteadyHDF)
+        {
+            string msg = "Steady HDF hydraulics are not supported for life risk assessment. Please select an Unsteady HDF or Gridded Data hydraulics element.";
+            System.Windows.MessageBox.Show(msg, "Steady HDF Not Supported", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+            return;
+        }
 
-        LifeSimSimulation currentSimulation = new(SelectedSimulation.Name, hydraulicsFolder);
+        string hydraulicsFolder = Path.Combine(Connection.Instance.HydraulicsDirectory, SelectedHydraulics.Name);
+        LifeSimSimulation currentSimulation = new(SelectedSimulation.Name, hydraulicsFolder, SelectedHydraulics.DataSet.DataSource);
         foreach (CheckableItem a in LifeSimAlternatives)
             if (a.IsChecked) currentSimulation.Alternatives.Add(a.Name);
         foreach (WeightedCheckableItem h in HazardTimes)

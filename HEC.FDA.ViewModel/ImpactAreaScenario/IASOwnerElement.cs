@@ -58,6 +58,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             StudyCache.LeveeRemoved += ChildElementRemoved;
             StudyCache.ExteriorInteriorRemoved += ChildElementRemoved;
             StudyCache.StageDamageRemoved += ChildElementRemoved;
+            StudyCache.StageLifeLossRemoved += ChildElementRemoved;
 
             StudyCache.ImpactAreaUpdated += ChildElementUpdated;
             StudyCache.FlowFrequencyUpdated += ChildElementUpdated;
@@ -66,6 +67,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
             StudyCache.LeveeUpdated += ChildElementUpdated;
             StudyCache.ExteriorInteriorUpdated += ChildElementUpdated;
             StudyCache.StageDamageUpdated += ChildElementUpdated;
+            StudyCache.StageLifeLossUpdated += ChildElementUpdated;
         }
 
         /// <summary>
