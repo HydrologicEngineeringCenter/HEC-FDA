@@ -234,7 +234,15 @@ public static class RASHelper
         return pointMs;
     }
 
-    public static bool TryQueryPolygons(PolygonFeatureCollection polygons, PointFeatureCollection points, string polygonColumnName, out Dictionary<string, PointM> result)
+    /// <summary>
+    /// Given a feature collection of polygons and a feature collection of points, returns true if there is a 1-1 mapping of points to polygons via containment, and false if otherwise.
+    /// </summary>
+    /// <param name="polygons"></param>
+    /// <param name="points"></param>
+    /// <param name="polygonColumnName">The column header in the polygon collection's attribute table for the column which contains a unique name for each polygon.</param>
+    /// <param name="result">A dictionary mapping the polygon names to the point which they contain.</param>
+    /// <returns></returns>
+    public static bool TryMapPolygonsToPoints(PolygonFeatureCollection polygons, PointFeatureCollection points, string polygonColumnName, out Dictionary<string, PointM> result)
     {
         result = [];
         
