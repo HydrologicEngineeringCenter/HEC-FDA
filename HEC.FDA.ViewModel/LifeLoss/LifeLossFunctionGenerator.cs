@@ -39,6 +39,7 @@ public class LifeLossFunctionGenerator
     private readonly HydraulicDataSource _hydraulicDataSource;
     private readonly string[] _alternativeNames;
     private readonly Dictionary<string, double> _hazardTimes;
+    private readonly Dictionary<string, string> _hdfFilePathByPlanName;
 
     public LifeLossFunctionGenerator(string selectedPath, LifeSimSimulation simulation, Dictionary<string, int> impactAreaIDByName)
     {
@@ -52,6 +53,29 @@ public class LifeLossFunctionGenerator
         _hydraulicDataSource = simulation.HydraulicsDataSource;
         _alternativeNames = simulation.Alternatives.ToArray();
         _hazardTimes = simulation.HazardTimes;
+        _hdfFilePathByPlanName = BuildPlanNameToFilePathMap(_topLevelHydraulicsFolder);
+    }
+
+    private static Dictionary<string, string> BuildPlanNameToFilePathMap(string hydraulicsFolder)
+    {
+        Dictionary<string, string> map = [];
+        foreach (string filePath in Directory.EnumerateFiles(hydraulicsFolder, "*.hdf"))
+        {
+            try
+            {
+                RASResults result = new(filePath);
+                string planName = result.PlanAttributes?.PlanTitle;
+                if (!string.IsNullOrEmpty(planName))
+                {
+                    map[planName] = filePath;
+                }
+            }
+            catch
+            {
+                // skip files that can't be loaded as RAS results
+            }
+        }
+        return map;
     }
 
     /// <summary>
@@ -150,12 +174,11 @@ public class LifeLossFunctionGenerator
         {
             if (_hydraulicsFolderByAlternative.TryGetValue(alternativeName, out string hydraulicsName))
             {
-                // this is how .tif grids are saved -- a folder at the root level with a name matching hydraulic profile, formatted [name]/
+                // .tif grids are saved as a folder at the root level with a name matching hydraulic profile
                 string tifFolderPath = Path.Combine(_topLevelHydraulicsFolder, hydraulicsName);
-                // this is how .hdf files are saved -- a .hdf file at the root level with the format [name].hdf
-                string hdfPath = Path.Combine(_topLevelHydraulicsFolder, $"{hydraulicsName}.hdf");
-                // if we either have a folder with the proper name or a .hdf the the proper name, our hydraulics exist
-                if (!Directory.Exists(tifFolderPath) && !File.Exists(hdfPath))
+                // .hdf files are matched by the plan name stored inside the file, not the filename
+                bool hdfFound = _hdfFilePathByPlanName.ContainsKey(hydraulicsName);
+                if (!Directory.Exists(tifFolderPath) && !hdfFound)
                     missingHydraulics.Add(hydraulicsName);
             }
         }
@@ -185,16 +208,17 @@ public class LifeLossFunctionGenerator
             string hydraulicsPath;
             if (_hydraulicDataSource == HydraulicDataSource.UnsteadyHDF)
             {
-                hydraulicsPath = Directory.EnumerateFiles(_topLevelHydraulicsFolder, $"{associatedHydraulics}.hdf", SearchOption.TopDirectoryOnly).FirstOrDefault();
+                if (!_hdfFilePathByPlanName.TryGetValue(associatedHydraulics, out hydraulicsPath))
+                    throw new Exception($"'{associatedHydraulics}' hydraulics plan not found in {_topLevelHydraulicsFolder}.");
             }
             else
             {
                 string subDirPath = Path.Combine(_topLevelHydraulicsFolder, associatedHydraulics);
                 hydraulicsPath = Directory.EnumerateFiles(subDirPath, "*.tif", SearchOption.TopDirectoryOnly)
                                            .FirstOrDefault();
+                if (hydraulicsPath == null)
+                    throw new Exception($"No .tif file found in {subDirPath}.");
             }
-            if (hydraulicsPath == null)
-                throw new Exception(); // no .hdf or .tif found, we shouldn't reach this unless the user tampered with the FDA project folder structure
 
             float[] computedStages = RASHelper.GetStageFromHydraulics(pointMs, _hydraulicDataSource, hydraulicsPath); // costly compute
             if (computedStages == null)
