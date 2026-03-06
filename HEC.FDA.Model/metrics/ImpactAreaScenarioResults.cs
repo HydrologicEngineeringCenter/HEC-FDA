@@ -139,6 +139,8 @@ namespace HEC.FDA.Model.metrics
         public long RemainingIterations(double upperConfidenceLimitProb, double lowerConfidenceLimitProb, bool computeWithDamage)
         {
             List<long> eadIterationsRemaining = new();
+            //for the case we don't actually have ead results, do not have any more remaining iterations. 
+            eadIterationsRemaining.Add(0);
             if (computeWithDamage == true)
             {
                 foreach (AggregatedConsequencesBinned consequenceDistributionResult in ConsequenceResults.ConsequenceResultList)
@@ -206,7 +208,8 @@ namespace HEC.FDA.Model.metrics
         public static ImpactAreaScenarioResults ReadFromXML(XElement xElement)
         {
             PerformanceByThresholds performanceByThresholds = PerformanceByThresholds.ReadFromXML(xElement.Element("Performance_By_Thresholds"));
-            StudyAreaConsequencesBinned expectedAnnualDamageResults = StudyAreaConsequencesBinned.ReadFromXML(xElement.Element("Expected_Annual_Damage_Results"));
+            StudyAreaConsequencesBinned expectedAnnualDamageResults = StudyAreaConsequencesBinned.ReadFromXML
+                (xElement.Element("Expected_Annual_Damage_Results"));
             int impactAreaID = Convert.ToInt32(xElement.Attribute("ImpactAreaID").Value);
             ImpactAreaScenarioResults result = new(performanceByThresholds, expectedAnnualDamageResults, impactAreaID);
             if(xElement.Element("Uncertain_Consequence_Frequency_Functions") != null)
