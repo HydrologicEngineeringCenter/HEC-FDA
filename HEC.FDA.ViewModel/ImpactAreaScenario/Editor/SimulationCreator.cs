@@ -9,6 +9,7 @@ using HEC.FDA.ViewModel.LifeLoss;
 using HEC.FDA.ViewModel.StageTransforms;
 using HEC.FDA.ViewModel.Utilities;
 using Statistics;
+using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -194,7 +195,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             return stageDamageCurves;
         }
 
-        // returns an empty list if no damages
+        // Curves with all-zero Y values are simplified to a 2-point curve (min and max X) with deterministic zero damages
         private List<UncertainPairedData> GetStageDamagesAsPairedData(AggregatedStageDamageElement stageDamageElement)
         {
             List<UncertainPairedData> stageDamages = new List<UncertainPairedData>();
@@ -206,6 +207,14 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 {
                     UncertainPairedData upd = curve.ComputeComponent.SelectedItemToPairedData(curve.DamCat, curve.AssetCategory);
                     stageDamages.Add(upd);
+                }
+                else
+                {
+                    UncertainPairedData fullCurve = curve.ComputeComponent.SelectedItemToPairedData(curve.DamCat, curve.AssetCategory);
+                    double[] xs = new double[] { fullCurve.Xvals.First(), fullCurve.Xvals.Last() };
+                    IDistribution[] ys = [new Deterministic(0), new Deterministic(0)];
+                    UncertainPairedData zeroCurve = new UncertainPairedData(xs, ys, fullCurve.CurveMetaData);
+                    stageDamages.Add(zeroCurve);
                 }
             }
 
