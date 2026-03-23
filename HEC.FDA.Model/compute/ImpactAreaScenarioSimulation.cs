@@ -230,7 +230,7 @@ namespace HEC.FDA.Model.compute
                 stageDamage.GenerateRandomNumbers(STAGE_DAMAGE_SEED, quantityOfRandomNumbers);
             }
             foreach (UncertainPairedData stageLifeLoss in _FailureStageLifeLossFunctions)
-            {
+            { 
                 stageLifeLoss.GenerateRandomNumbers(STAGE_LIFELOSS_SEED, quantityOfRandomNumbers);
             }
             foreach (UncertainPairedData stageLifeLoss in _NonFailureStageLifeLossFunctions)
@@ -364,6 +364,7 @@ namespace HEC.FDA.Model.compute
                                 throw new TaskCanceledException();
                             }
                         }
+                        throw;
                     }
                 }
                 if (!_ImpactAreaScenarioResults.ResultsAreConverged(.95, .05, checkConsequenceResults:(_HasFailureStageDamage || _HasFailureStageLifeLoss)))

@@ -35,7 +35,20 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
             UpdateMinMax(FrequencyRelationshipControl, RatingRelationshipControl, DamageFrequencyControl);
             UpdateMinMax(RatingRelationshipControl, FrequencyRelationshipControl, StageDamageControl);
-            UpdateMinMax(StageDamageControl, DamageFrequencyControl, RatingRelationshipControl);
+            // if we don't have a rating curve, we need to set the axes instead to match the STAGE frequency function
+            if (RatingRelationshipControl.Function.Xvals.Count == 0 && RatingRelationshipControl.Function.Yvals.Count == 0)
+            {
+                Tuple<double, double> freqYMinMax = FrequencyRelationshipControl.GetMinMax(Axis.Y);
+                Tuple<double, double> minMaxX = GetMinMax(StageDamageControl.GetMinMax(Axis.X), freqYMinMax);
+                Tuple<double, double> minMaxY = GetMinMax(StageDamageControl.GetMinMax(Axis.Y), DamageFrequencyControl.GetMinMax(Axis.Y));
+                StageDamageControl.SetMinMax(minMaxX, minMaxY);
+                //Rating Curve and Stage Damage enforce the same X axis in the 4 plot chart. The Y here is arbitrary. The x needs to match. 
+                RatingRelationshipControl.SetMinMax(minMaxX, Tuple.Create(100d, 1000d));
+            }
+            else
+            {
+                UpdateMinMax(StageDamageControl, DamageFrequencyControl, RatingRelationshipControl);
+            }
             UpdateMinMax(DamageFrequencyControl, StageDamageControl, FrequencyRelationshipControl);
 
         }
