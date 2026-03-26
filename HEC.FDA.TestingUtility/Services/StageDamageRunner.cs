@@ -2,6 +2,7 @@ using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.stageDamage;
 using HEC.FDA.ViewModel;
 using HEC.FDA.ViewModel.AggregatedStageDamage;
+using HEC.FDA.ViewModel.Hydraulics;
 using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Inventory;

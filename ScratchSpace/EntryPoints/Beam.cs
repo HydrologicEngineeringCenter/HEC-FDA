@@ -33,6 +33,7 @@ using Statistics.Distributions;
 using Statistics.Histograms;
 using ScottPlot;
 using HEC.FDA.Model.utilities;
+using ScratchSpace.Beam;
 
 namespace ScratchSpace.EntryPoints;
 
@@ -44,9 +45,9 @@ public static class Beam
     private static readonly string STUDY_PATH = @"C:\Users\HEC\Projects\AlaiWai2\AlaiWai2\AlaiWai2.sqlite";
     private static readonly string SCENARIO_NAME = "FWOP"; // Leave empty to compute all scenarios, or set a specific name
 
-    public static void EntryPoint()
+    public static async void EntryPoint()
     {
-        RunScenarioCompute();
+       int success = await ValidationAndVerification.RunValidationAndVerificationReport();
     }
 
     /// <summary>

@@ -1,0 +1,19 @@
+{
+  "testSuiteId": "west-sac-mixed",
+  "globalSettings": {
+    "localTempDirectory": "C:/temp/FDATests",
+    "timeoutMinutes": 60
+  },
+  "studies": [
+    {
+      "studyId": "west-sac-mixed",
+      "studyName": "West Sac Mixed",
+      "networkSourcePath": "C:/nexus_share/_HEYDUMMY/2.0.2",
+      "runAllStageDamage": true,
+      "runAllScenarios": true,
+      "runAllAlternatives": true,
+      "runAllAlternativeComparisons": true,
+      "computations": []
+    }
+  ]
+}

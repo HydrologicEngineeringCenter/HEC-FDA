@@ -78,7 +78,7 @@ public class CsvReportFactory
                 double maxStage = pointCount > 0 ? curve.Xvals!.Max() : 0;
 
                 PairedData medianCurve = curve.SamplePairedData(.5);
-                double integral = medianCurve.integrate();
+                double integral = medianCurve.Integrate(false);
 
                 _stageDamageSummary.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(elementName)},{impactAreaId},{EscapeCsv(damCat)},{EscapeCsv(assetCat)},{pointCount},{minStage:F2},{maxStage:F2},{integral:F2}");
             }
