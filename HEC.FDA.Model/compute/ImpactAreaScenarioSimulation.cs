@@ -410,7 +410,12 @@ namespace HEC.FDA.Model.compute
             {
                 frequency_stage_sample = _FrequencyStage.SamplePairedData(thisComputeIteration, computeIsDeterministic);
             }
-
+            if (!_ChannelStageFloodplainStage.IsNull)
+            {
+                PairedData _channelstage_floodplainstage_sample = _ChannelStageFloodplainStage.SamplePairedData(thisComputeIteration, computeIsDeterministic);
+                PairedData frequency_floodplainstage = _channelstage_floodplainstage_sample.compose(frequency_stage_sample);
+                return frequency_floodplainstage;
+            }
             return frequency_stage_sample;
         }
 
