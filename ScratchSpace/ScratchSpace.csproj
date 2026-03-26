@@ -18,6 +18,7 @@
     <ProjectReference Include="..\HEC.FDA.Model\HEC.FDA.Model.csproj" />
     <ProjectReference Include="..\HEC.FDA.StatisticsTests\HEC.FDA.StatisticsTest.csproj" />
     <ProjectReference Include="..\HEC.FDA.Statistics\HEC.FDA.Statistics.csproj" />
+    <ProjectReference Include="..\HEC.FDA.TestingUtility\HEC.FDA.TestingUtility.csproj" />
     <ProjectReference Include="..\HEC.FDA.ViewModel\HEC.FDA.ViewModel.csproj" />
     <ProjectReference Include="..\HEC.MVVMFramework.BaseTest\HEC.MVVMFramework.BaseTest.csproj" />
     <ProjectReference Include="..\HEC.MVVMFramework.Base\HEC.MVVMFramework.Base.csproj" />

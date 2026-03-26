@@ -1,0 +1,64 @@
+=== FDA COMPUTATION RESULTS REPORT ===
+Generated: 2026-03-23 11:45:55
+
+=== SCENARIO RESULTS ===
+Study ID,Name,Analysis Year,Impact Area,Mean EAD,25th Percentile EAD,50th Percentile EAD,75th Percentile EAD
+west-sac-mixed,WOP,2025,Sole,1905043.32,1332887.55,1804764.20,2373226.31
+
+=== SCENARIO DAMAGE BY CATEGORY ===
+Study ID,Scenario Name,Analysis Year,Impact Area,Damage Category,Asset Category,Mean EAD
+west-sac-mixed,WOP,2025,Sole,RES,Structure,171487.20
+west-sac-mixed,WOP,2025,Sole,RES,Content,110842.82
+west-sac-mixed,WOP,2025,Sole,RES,Other,0.00
+west-sac-mixed,WOP,2025,Sole,RES,Vehicle,0.00
+west-sac-mixed,WOP,2025,Sole,COM,Structure,351976.86
+west-sac-mixed,WOP,2025,Sole,COM,Content,767616.45
+west-sac-mixed,WOP,2025,Sole,COM,Other,0.00
+west-sac-mixed,WOP,2025,Sole,COM,Vehicle,0.00
+west-sac-mixed,WOP,2025,Sole,IND,Structure,93064.37
+west-sac-mixed,WOP,2025,Sole,IND,Content,383460.04
+west-sac-mixed,WOP,2025,Sole,IND,Other,0.00
+west-sac-mixed,WOP,2025,Sole,IND,Vehicle,0.00
+west-sac-mixed,WOP,2025,Sole,PUB,Structure,14586.62
+west-sac-mixed,WOP,2025,Sole,PUB,Content,12008.96
+west-sac-mixed,WOP,2025,Sole,PUB,Other,0.00
+west-sac-mixed,WOP,2025,Sole,PUB,Vehicle,0.00
+
+=== SCENARIO PERFORMANCE ===
+Study ID,Name,Analysis Year,Impact Area,Threshold Type,Threshold Value,LT Risk 10yr,LT Risk 30yr,LT Risk 50yr,Mean AEP,Median AEP,Assurance 0.10,Assurance 0.04,Assurance 0.02,Assurance 0.01,Assurance 0.004,Assurance 0.002
+west-sac-mixed,WOP,2025,Sole,Default Exterior Stage,12.50,1.0000,1.0000,1.0000,0.998995,0.999097,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+
+=== SCENARIO ASSURANCE OF AEP ===
+Study ID,Name,Analysis Year,Impact Area,Threshold Type,Threshold Value,Mean AEP,Median AEP,90% Assurance AEP,Assurance of 0.10 AEP,Assurance of 0.04 AEP,Assurance of 0.02 AEP,Assurance of 0.01 AEP,Assurance of 0.004 AEP,Assurance of 0.002 AEP
+west-sac-mixed,WOP,2025,Sole,Default Exterior Stage,12.50,0.998995,0.999097,0.999179,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+
+=== ALTERNATIVE RESULTS ===
+Study ID,Name,Impact Area,Base Year,Future Year,Discount Rate,Period of Analysis,Mean EqAD,25th Percentile EqAD,50th Percentile EqAD,75th Percentile EqAD
+
+=== ALTERNATIVE DAMAGE BY CATEGORY ===
+Study ID,Scenario Name,Impact Area,Damage Category,Asset Category,Mean EqAD
+
+=== STAGE DAMAGE SUMMARY ===
+Study ID,Element Name,Impact Area ID,Impact Area Name,Damage Category,Asset Category,Point Count,Min Stage,Max Stage, Median Sample Integral
+west-sac-mixed,WOP,0,RES,Structure,124,11.33,41.57,19532836.97
+west-sac-mixed,WOP,0,RES,Content,124,11.33,41.57,11072203.33
+west-sac-mixed,WOP,0,RES,Other,124,11.33,41.57,0.00
+west-sac-mixed,WOP,0,RES,Vehicle,124,11.33,41.57,0.00
+west-sac-mixed,WOP,0,COM,Structure,124,11.33,41.57,19349898.65
+west-sac-mixed,WOP,0,COM,Content,124,11.33,41.57,35406768.31
+west-sac-mixed,WOP,0,COM,Other,124,11.33,41.57,0.00
+west-sac-mixed,WOP,0,COM,Vehicle,124,11.33,41.57,0.00
+west-sac-mixed,WOP,0,IND,Structure,124,11.33,41.57,4336490.28
+west-sac-mixed,WOP,0,IND,Content,124,11.33,41.57,16141781.26
+west-sac-mixed,WOP,0,IND,Other,124,11.33,41.57,0.00
+west-sac-mixed,WOP,0,IND,Vehicle,124,11.33,41.57,0.00
+west-sac-mixed,WOP,0,PUB,Structure,124,11.33,41.57,943265.66
+west-sac-mixed,WOP,0,PUB,Content,124,11.33,41.57,682918.17
+west-sac-mixed,WOP,0,PUB,Other,124,11.33,41.57,0.00
+west-sac-mixed,WOP,0,PUB,Vehicle,124,11.33,41.57,0.00
+
+=== ALTERNATIVE COMPARISON SUMMARY ===
+Study ID,Report Name,With Project Alt,Impact Area ID,Without Proj EqAD,With Proj EqAD,EqAD Reduced,EqAD Reduced 25th Pct,EqAD Reduced 50th Pct,EqAD Reduced 75th Pct,Without Proj Base EAD,With Proj Base EAD,Base EAD Reduced,Without Proj Future EAD,With Proj Future EAD,Future EAD Reduced
+
+=== ALTERNATIVE COMPARISON BY CATEGORY ===
+Study ID,Report Name,With Project Alt,Impact Area ID,Damage Category,Asset Category,EqAD Reduced,Base Year EAD Reduced,Future Year EAD Reduced
