@@ -550,7 +550,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             else if(_SelectedStageDamage() == null && _HasFailureStageDamage == true){
             }
 
-                ChildElementComboItem selectedStageDamage = _SelectedStageDamage();
+            ChildElementComboItem selectedStageDamage = _SelectedStageDamage();
             FrequencyElement freqElem = SelectedFrequencyElement.ChildElement as FrequencyElement;
             InflowOutflowElement inOutElem = SelectedInflowOutflowElement.ChildElement as InflowOutflowElement;
             StageDischargeElement ratElem = SelectedRatingCurveElement.ChildElement as StageDischargeElement;
