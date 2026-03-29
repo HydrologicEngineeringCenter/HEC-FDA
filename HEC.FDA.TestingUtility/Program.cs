@@ -17,16 +17,19 @@ public class Program
         // ============ COMPUTE COMMAND ============
         Command computeCommand = new("compute", "Run computations on FDA studies and generate CSV result reports");
 
-        Option<FileInfo> computeConfigOption = new(
+        Option<FileInfo?> computeConfigOption = new(
             name: "--config",
-            description: "Path to JSON configuration file")
-        { IsRequired = true };
+            description: "Path to JSON configuration file");
         computeConfigOption.AddAlias("-c");
 
-        Option<DirectoryInfo> computeOutputOption = new(
+        Option<FileInfo?> studyPathOption = new(
+            name: "--study-path",
+            description: "Path to a .sqlite study file (runs all computations)");
+        studyPathOption.AddAlias("-sp");
+
+        Option<DirectoryInfo?> computeOutputOption = new(
             name: "--output",
-            description: "Output directory for generated files",
-            getDefaultValue: () => new DirectoryInfo(Environment.CurrentDirectory));
+            description: "Output directory for generated files");
         computeOutputOption.AddAlias("-o");
 
         Option<string[]> computeStudyOption = new(
@@ -36,10 +39,11 @@ public class Program
         computeStudyOption.AddAlias("-s");
 
         computeCommand.AddOption(computeConfigOption);
+        computeCommand.AddOption(studyPathOption);
         computeCommand.AddOption(computeOutputOption);
         computeCommand.AddOption(computeStudyOption);
 
-        computeCommand.SetHandler(async (configFile, outputDir, studyFilter) =>
+        computeCommand.SetHandler(async (configFile, studyPath, outputDir, studyFilter) =>
         {
             try
             {
@@ -47,23 +51,71 @@ public class Program
                 Console.WriteLine("=============================");
                 Console.WriteLine();
 
-                if (!configFile.Exists)
+                if (configFile != null && studyPath != null)
                 {
-                    Console.WriteLine($"Error: Configuration file not found: {configFile.FullName}");
+                    Console.WriteLine("Error: Cannot specify both --config and --study-path. Use one or the other.");
                     return;
                 }
 
-                Console.WriteLine($"Loading configuration: {configFile.FullName}");
-                TestConfiguration config = TestConfiguration.LoadFromFile(configFile.FullName);
-
-                if (!outputDir.Exists)
+                if (configFile == null && studyPath == null)
                 {
-                    outputDir.Create();
+                    Console.WriteLine("Error: Must specify either --config or --study-path.");
+                    return;
                 }
+
+                TestConfiguration config;
+                string outputPath;
+
+                if (studyPath != null)
+                {
+                    if (!studyPath.Exists)
+                    {
+                        Console.WriteLine($"Error: Study file not found: {studyPath.FullName}");
+                        return;
+                    }
+
+                    string studyName = Path.GetFileNameWithoutExtension(studyPath.Name);
+                    string studyDir = studyPath.DirectoryName!;
+
+                    Console.WriteLine($"Direct study mode: {studyPath.FullName}");
+                    config = new TestConfiguration
+                    {
+                        TestSuiteId = $"direct-{studyName}",
+                        Studies = new List<StudyConfiguration>
+                        {
+                            new()
+                            {
+                                StudyId = studyName,
+                                StudyName = studyName,
+                                NetworkSourcePath = studyDir,
+                                RunAllStageDamage = true,
+                                RunAllScenarios = true,
+                                RunAllAlternatives = true,
+                                RunAllAlternativeComparisons = true,
+                            }
+                        }
+                    };
+
+                    outputPath = outputDir?.FullName ?? studyDir;
+                }
+                else
+                {
+                    if (!configFile!.Exists)
+                    {
+                        Console.WriteLine($"Error: Configuration file not found: {configFile.FullName}");
+                        return;
+                    }
+
+                    Console.WriteLine($"Loading configuration: {configFile.FullName}");
+                    config = TestConfiguration.LoadFromFile(configFile.FullName);
+                    outputPath = outputDir?.FullName ?? Environment.CurrentDirectory;
+                }
+
+                Directory.CreateDirectory(outputPath);
 
                 ComputeRunner runner = new(
                     config,
-                    outputDir.FullName,
+                    outputPath,
                     studyFilter?.Length > 0 ? studyFilter : null);
 
                 await runner.RunAsync();
@@ -73,7 +125,7 @@ public class Program
                 Console.WriteLine($"Fatal error: {ex.Message}");
                 Console.WriteLine(ex.StackTrace);
             }
-        }, computeConfigOption, computeOutputOption, computeStudyOption);
+        }, computeConfigOption, studyPathOption, computeOutputOption, computeStudyOption);
 
         // Add subcommands to root
         rootCommand.AddCommand(computeCommand);
