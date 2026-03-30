@@ -277,6 +277,44 @@ namespace HEC.FDA.ModelTest.unittests
 
 
 
+        [Fact]
+        public void StructureDetailsShouldNotContainNoDataValues()
+        {
+            //Arrange - create profiles where some return -9999 (no data) to simulate dry/projection mismatch
+            float noData = -9999f;
+            DummyHydraulicProfile noDataProfile2 = new DummyHydraulicProfile(new float[] { noData, noData, noData, noData }, 0.5);
+            DummyHydraulicProfile noDataProfile5 = new DummyHydraulicProfile(new float[] { noData, noData, noData, noData }, 0.2);
+            DummyHydraulicProfile noDataProfile10 = new DummyHydraulicProfile(new float[] { noData, noData, noData, noData }, 0.1);
+            DummyHydraulicProfile noDataProfile25 = new DummyHydraulicProfile(new float[] { noData, noData, noData, noData }, 0.04);
+            DummyHydraulicProfile noDataProfile50 = new DummyHydraulicProfile(new float[] { 4, 4, 4, 4 }, .02);
+            DummyHydraulicProfile noDataProfile100 = new DummyHydraulicProfile(new float[] { 5, 5, 5, 5 }, .01);
+            DummyHydraulicProfile noDataProfile200 = new DummyHydraulicProfile(new float[] { 6, 6, 6, 6 }, .005);
+            DummyHydraulicProfile noDataProfile500 = new DummyHydraulicProfile(new float[] { 7, 7, 7, 7 }, .002);
+
+            List<IHydraulicProfile> noDataProfiles = new List<IHydraulicProfile>()
+            {
+                noDataProfile2, noDataProfile5, noDataProfile10, noDataProfile25,
+                noDataProfile50, noDataProfile100, noDataProfile200, noDataProfile500
+            };
+            HydraulicDataset noDataHydraulicDataset = new HydraulicDataset(noDataProfiles, hydraulicDataSource);
+
+            Inventory inventory = CreateInventory();
+            ImpactAreaStageDamage impactAreaStageDamage = new ImpactAreaStageDamage(impactAreaID, inventory, noDataHydraulicDataset, String.Empty, graphicalFrequency: stageFrequency, usingMockData: true);
+            List<ImpactAreaStageDamage> impactAreaStageDamageList = new List<ImpactAreaStageDamage>() { impactAreaStageDamage };
+            ScenarioStageDamage scenarioStageDamage = new ScenarioStageDamage(impactAreaStageDamageList);
+            Dictionary<int, string> iaNames = new();
+            iaNames.Add(1, "Test Impact Area");
+
+            //Act
+            List<string> structureDetails = scenarioStageDamage.ProduceStructureDetails(iaNames);
+
+            //Assert - no structure detail line should contain -9999
+            for (int i = 1; i < structureDetails.Count; i++)
+            {
+                Assert.DoesNotContain("-9999", structureDetails[i]);
+            }
+        }
+
         [Theory]
         [InlineData(new float[] { 5, 4, 3 }, new float[] { 10, 9, 8 })]
         public void ExtrapolateFromAboveShould(float[] input, float[] expectedResult)
