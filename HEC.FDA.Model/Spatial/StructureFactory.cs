@@ -87,7 +87,9 @@ public class StructureFactory
 
             double found_ht = row.TryGetValueAs<double>(map.FoundationHeightCol, DEFAULT_MISSING_NUMBER_VALUE);
             double ground_elv = updateGroundElevFromTerrain ? groundelevs[i] : row.TryGetValueAs<double>(map.GroundElevCol, DEFAULT_MISSING_NUMBER_VALUE);
-            double ff_elev = row.TryGetValueAs<double>(map.FirstFloorElevCol, ground_elv + found_ht);
+            double ff_elev = map.IsUsingFirstFloorElevation
+                ? row.TryGetValueAs<double>(map.FirstFloorElevCol, DEFAULT_MISSING_NUMBER_VALUE)
+                : ground_elv + found_ht;
 
             // Optional parameters:
             double val_cont = row.TryGetValueAs<double>(map.ContentValueCol, 0);
