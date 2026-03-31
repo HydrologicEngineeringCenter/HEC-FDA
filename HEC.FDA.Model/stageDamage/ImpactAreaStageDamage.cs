@@ -653,16 +653,18 @@ namespace HEC.FDA.Model.stageDamage
             //this list will be the size of the number of structures + 1 where the first string is the header
             List<DeterministicOccupancyType> deterministicOccupancyTypes = Inventory.SampleOccupancyTypes(iteration: 1, computeIsDeterministic: true);
             List<string> structureDetails = Inventory.StructureDetails(deterministicOccupancyTypes, impactAreaNames);
-            //here I need to add to structure details: occ types, impact area,
-            StagesToStrings(ref structureDetails);
-            DepthsToStrings(ref structureDetails);
+
+            //get corrected WSE data once — same correction the compute path applies
+            (List<double> profileProbabilities, List<float[]> correctedWSEs) = _HydraulicDataset.GetHydraulicDatasetInFloatsWithProbabilities(Inventory, _HydraulicParentDirectory);
+
+            StagesToStrings(correctedWSEs, ref structureDetails);
+            DepthsToStrings(correctedWSEs, ref structureDetails);
 
             List<List<ConsequenceResult>> consequencesAllHydraulicProfiles = new();
 
-            foreach (IHydraulicProfile hydraulicProfile in _HydraulicDataset.HydraulicProfiles)
+            for (int p = 0; p < correctedWSEs.Count; p++)
             {
-                float[] stagesAtStructures = hydraulicProfile.GetWSE(Inventory.GetPointMs(), _HydraulicDataset.DataSource, _HydraulicParentDirectory);
-
+                float[] stagesAtStructures = correctedWSEs[p];
 
                 List<ConsequenceResult> consequenceResultList = new();
                 for (int i = 0; i < stagesAtStructures.Length; i++)
@@ -731,13 +733,12 @@ namespace HEC.FDA.Model.stageDamage
             }
         }
 
-        private void DepthsToStrings(ref List<string> structureDetails)
+        private void DepthsToStrings(List<float[]> correctedWSEs, ref List<string> structureDetails)
         {
-            foreach (IHydraulicProfile hydraulicProfile in _HydraulicDataset.HydraulicProfiles)
+            for (int p = 0; p < _HydraulicDataset.HydraulicProfiles.Count; p++)
             {
-                float[] stagesAtStructures = hydraulicProfile.GetWSE(Inventory.GetPointMs(), _HydraulicDataset.DataSource, _HydraulicParentDirectory);
-                //first, create the header with the probability information on the hydraulic profile 
-                //that will go in structureDetails[0]
+                float[] stagesAtStructures = correctedWSEs[p];
+                IHydraulicProfile hydraulicProfile = _HydraulicDataset.HydraulicProfiles[p];
                 structureDetails[0] += $"DepthAboveFirstFloorOf{hydraulicProfile.Probability}AEP,";
                 for (int i = 0; i < stagesAtStructures.Length; i++)
                 {
@@ -746,13 +747,12 @@ namespace HEC.FDA.Model.stageDamage
             }
         }
 
-        private void StagesToStrings(ref List<string> structureDetails)
+        private void StagesToStrings(List<float[]> correctedWSEs, ref List<string> structureDetails)
         {
-            foreach (IHydraulicProfile hydraulicProfile in _HydraulicDataset.HydraulicProfiles)
+            for (int p = 0; p < _HydraulicDataset.HydraulicProfiles.Count; p++)
             {
-                float[] stagesAtStructures = hydraulicProfile.GetWSE(Inventory.GetPointMs(), _HydraulicDataset.DataSource, _HydraulicParentDirectory);
-                //first, create the header with the probability information on the hydraulic profile 
-                //that will go in structureDetails[0]
+                float[] stagesAtStructures = correctedWSEs[p];
+                IHydraulicProfile hydraulicProfile = _HydraulicDataset.HydraulicProfiles[p];
                 structureDetails[0] += $"StageOf{hydraulicProfile.Probability}AEP,";
                 for (int i = 0; i < stagesAtStructures.Length; i++)
                 {
