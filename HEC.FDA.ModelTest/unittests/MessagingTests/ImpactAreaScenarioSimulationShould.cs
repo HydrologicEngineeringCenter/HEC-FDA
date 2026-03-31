@@ -62,12 +62,91 @@ namespace HEC.FDA.ModelTest.unittests.MessagingTests
         static int impactAreaID = 0;
         static CurveMetaData curveMetaData = new CurveMetaData(xLabel, name, damCat);
 
+        private static GraphicalUncertainPairedData CreateDischargeFrequency()
+        {
+            return new GraphicalUncertainPairedData(exceedanceProbabilities, dischargeFrequencyDischarges, equivalentRecordLength, curveMetaData, usingStagesNotFlows: false);
+        }
+
+        private static UncertainPairedData CreateStageDischarge()
+        {
+            return new UncertainPairedData(stageDischargeFunctionDischarges, stageDischargeFunctionStageDistributions, curveMetaData);
+        }
+
+        private static UncertainPairedData CreateStageDamage(CurveMetaData metaData)
+        {
+            return new UncertainPairedData(stageDamageStages, stageDamageDamageDistributions, metaData);
+        }
+
+        private static CurveMetaData CreateResidentialStructureMetaData()
+        {
+            return new CurveMetaData("Residential", "Structure");
+        }
+
+        /// <summary>
+        /// Builds a standard simulation with flow frequency, flow-stage, and a single stage-damage function.
+        /// </summary>
+        private static ImpactAreaScenarioSimulation BuildStandardSimulation(CurveMetaData stageDamageMetaData)
+        {
+            return ImpactAreaScenarioSimulation.Builder(impactAreaID)
+                .WithFlowFrequency(CreateDischargeFrequency())
+                .WithFlowStage(CreateStageDischarge())
+                .WithStageDamages(new List<UncertainPairedData> { CreateStageDamage(stageDamageMetaData) })
+                .Build();
+        }
+
+        /// <summary>
+        /// Builds a simulation with an interior-exterior relationship added to the standard setup.
+        /// </summary>
+        private static ImpactAreaScenarioSimulation BuildSimulationWithInteriorExterior(
+            CurveMetaData stageDamageMetaData, UncertainPairedData interiorExterior)
+        {
+            return ImpactAreaScenarioSimulation.Builder(impactAreaID)
+                .WithFlowFrequency(CreateDischargeFrequency())
+                .WithFlowStage(CreateStageDischarge())
+                .WithInteriorExterior(interiorExterior)
+                .WithStageDamages(new List<UncertainPairedData> { CreateStageDamage(stageDamageMetaData) })
+                .Build();
+        }
+
+        private static UncertainPairedData CreateInteriorExterior(double[] channelStages, IDistribution[] floodplainStageDistributions)
+        {
+            CurveMetaData interiorExteriorMetaData = new CurveMetaData(xLabel, yLabel, name);
+            return new UncertainPairedData(channelStages, floodplainStageDistributions, interiorExteriorMetaData);
+        }
+
+        /// <summary>
+        /// Creates a stage-reducing interior-exterior relationship where floodplain stages are lower
+        /// than channel stages (typical interior area).
+        /// </summary>
+        private static UncertainPairedData CreateStageReducingInteriorExterior()
+        {
+            double[] channelStages = new double[] { 458, 465, 470, 475, 480 };
+            IDistribution[] floodplainStageDistributions = new IDistribution[]
+            {
+                new Normal(455, 0),
+                new Normal(461, .2),
+                new Normal(465, .3),
+                new Normal(469, .4),
+                new Normal(473, .5)
+            };
+            return CreateInteriorExterior(channelStages, floodplainStageDistributions);
+        }
+
+        /// <summary>
+        /// Computes the residential structure EAD for a given simulation.
+        /// </summary>
+        private static double ComputeResidentialStructureEAD(ImpactAreaScenarioSimulation simulation, ConvergenceCriteria convergenceCriteria)
+        {
+            ImpactAreaScenarioResults results = simulation.Compute(convergenceCriteria);
+            return results.ConsequenceResults.SampleMeanDamage("Residential", "Structure", impactAreaID);
+        }
+
         [Theory]
         [InlineData(1234)]
         public void ReportErrorsAndWarningsMessages(int seed)
         {
-            GraphicalUncertainPairedData dischargeFrequency = new GraphicalUncertainPairedData(exceedanceProbabilities, dischargeFrequencyDischarges, equivalentRecordLength, curveMetaData, usingStagesNotFlows: false);
-            UncertainPairedData stageDischarge = new UncertainPairedData(stageDischargeFunctionDischarges, stageDischargeFunctionStageDistributions, curveMetaData);
+            GraphicalUncertainPairedData dischargeFrequency = CreateDischargeFrequency();
+            UncertainPairedData stageDischarge = CreateStageDischarge();
             UncertainPairedData stageDamage = new UncertainPairedData(stageDamageStages, stageDamageDamageDistributions, curveMetaData);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stageDamage);
@@ -91,19 +170,9 @@ namespace HEC.FDA.ModelTest.unittests.MessagingTests
         [Fact]
         public void PopulateUncertainConsequenceFrequencyCurvesOnCompute()
         {
-            // Arrange - use metadata with proper damage/asset categories
-            CurveMetaData stageDamageMetaData = new CurveMetaData("Residential", "Structure");
-            GraphicalUncertainPairedData dischargeFrequency = new GraphicalUncertainPairedData(exceedanceProbabilities, dischargeFrequencyDischarges, equivalentRecordLength, curveMetaData, usingStagesNotFlows: false);
-            UncertainPairedData stageDischarge = new UncertainPairedData(stageDischargeFunctionDischarges, stageDischargeFunctionStageDistributions, curveMetaData);
-            UncertainPairedData stageDamage = new UncertainPairedData(stageDamageStages, stageDamageDamageDistributions, stageDamageMetaData);
-            List<UncertainPairedData> stageDamageList = new List<UncertainPairedData> { stageDamage };
-
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
-                .WithFlowFrequency(dischargeFrequency)
-                .WithFlowStage(stageDischarge)
-                .WithStageDamages(stageDamageList)
-                .Build();
-
+            // Arrange
+            CurveMetaData stageDamageMetaData = CreateResidentialStructureMetaData();
+            ImpactAreaScenarioSimulation simulation = BuildStandardSimulation(stageDamageMetaData);
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: 200);
 
             // Act
@@ -117,19 +186,9 @@ namespace HEC.FDA.ModelTest.unittests.MessagingTests
         [Fact]
         public void PopulateUncertainConsequenceFrequencyCurvesWithCorrectMetadata()
         {
-            // Arrange - use metadata with proper damage/asset categories
-            CurveMetaData stageDamageMetaData = new CurveMetaData("Residential", "Structure");
-            GraphicalUncertainPairedData dischargeFrequency = new GraphicalUncertainPairedData(exceedanceProbabilities, dischargeFrequencyDischarges, equivalentRecordLength, curveMetaData, usingStagesNotFlows: false);
-            UncertainPairedData stageDischarge = new UncertainPairedData(stageDischargeFunctionDischarges, stageDischargeFunctionStageDistributions, curveMetaData);
-            UncertainPairedData stageDamage = new UncertainPairedData(stageDamageStages, stageDamageDamageDistributions, stageDamageMetaData);
-            List<UncertainPairedData> stageDamageList = new List<UncertainPairedData> { stageDamage };
-
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
-                .WithFlowFrequency(dischargeFrequency)
-                .WithFlowStage(stageDischarge)
-                .WithStageDamages(stageDamageList)
-                .Build();
-
+            // Arrange
+            CurveMetaData stageDamageMetaData = CreateResidentialStructureMetaData();
+            ImpactAreaScenarioSimulation simulation = BuildStandardSimulation(stageDamageMetaData);
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: 200);
 
             // Act
@@ -146,19 +205,9 @@ namespace HEC.FDA.ModelTest.unittests.MessagingTests
         [Fact]
         public void PopulateUncertainConsequenceFrequencyCurvesWithHistogramData()
         {
-            // Arrange - use metadata with proper damage/asset categories
-            CurveMetaData stageDamageMetaData = new CurveMetaData("Residential", "Structure");
-            GraphicalUncertainPairedData dischargeFrequency = new GraphicalUncertainPairedData(exceedanceProbabilities, dischargeFrequencyDischarges, equivalentRecordLength, curveMetaData, usingStagesNotFlows: false);
-            UncertainPairedData stageDischarge = new UncertainPairedData(stageDischargeFunctionDischarges, stageDischargeFunctionStageDistributions, curveMetaData);
-            UncertainPairedData stageDamage = new UncertainPairedData(stageDamageStages, stageDamageDamageDistributions, stageDamageMetaData);
-            List<UncertainPairedData> stageDamageList = new List<UncertainPairedData> { stageDamage };
-
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
-                .WithFlowFrequency(dischargeFrequency)
-                .WithFlowStage(stageDischarge)
-                .WithStageDamages(stageDamageList)
-                .Build();
-
+            // Arrange
+            CurveMetaData stageDamageMetaData = CreateResidentialStructureMetaData();
+            ImpactAreaScenarioSimulation simulation = BuildStandardSimulation(stageDamageMetaData);
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: 200);
 
             // Act
@@ -177,21 +226,18 @@ namespace HEC.FDA.ModelTest.unittests.MessagingTests
         [Fact]
         public void PopulateUncertainConsequenceFrequencyCurvesForMultipleDamageCategories()
         {
-            // Arrange - use metadata with proper damage/asset categories
+            // Arrange
             CurveMetaData residentialMetaData = new CurveMetaData("Residential", "Structure");
             CurveMetaData commercialMetaData = new CurveMetaData("Commercial", "Structure");
 
-            GraphicalUncertainPairedData dischargeFrequency = new GraphicalUncertainPairedData(exceedanceProbabilities, dischargeFrequencyDischarges, equivalentRecordLength, curveMetaData, usingStagesNotFlows: false);
-            UncertainPairedData stageDischarge = new UncertainPairedData(stageDischargeFunctionDischarges, stageDischargeFunctionStageDistributions, curveMetaData);
-
-            UncertainPairedData residentialStageDamage = new UncertainPairedData(stageDamageStages, stageDamageDamageDistributions, residentialMetaData);
-            UncertainPairedData commercialStageDamage = new UncertainPairedData(stageDamageStages, stageDamageDamageDistributions, commercialMetaData);
+            UncertainPairedData residentialStageDamage = CreateStageDamage(residentialMetaData);
+            UncertainPairedData commercialStageDamage = CreateStageDamage(commercialMetaData);
 
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData> { residentialStageDamage, commercialStageDamage };
 
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
-                .WithFlowFrequency(dischargeFrequency)
-                .WithFlowStage(stageDischarge)
+                .WithFlowFrequency(CreateDischargeFrequency())
+                .WithFlowStage(CreateStageDischarge())
                 .WithStageDamages(stageDamageList)
                 .Build();
 
@@ -215,31 +261,9 @@ namespace HEC.FDA.ModelTest.unittests.MessagingTests
         {
             // Arrange - interior-exterior maps channel stage to floodplain stage
             // The floodplain stage is lower than the channel stage (typical interior area)
-            double[] channelStages = new double[] { 458, 465, 470, 475, 480 };
-            IDistribution[] floodplainStageDistributions = new IDistribution[]
-            {
-                new Normal(455, 0),
-                new Normal(461, .2),
-                new Normal(465, .3),
-                new Normal(469, .4),
-                new Normal(473, .5)
-            };
-            CurveMetaData interiorExteriorMetaData = new CurveMetaData(xLabel, yLabel, name);
-            UncertainPairedData interiorExterior = new UncertainPairedData(channelStages, floodplainStageDistributions, interiorExteriorMetaData);
-
-            CurveMetaData stageDamageMetaData = new CurveMetaData("Residential", "Structure");
-            GraphicalUncertainPairedData dischargeFrequency = new GraphicalUncertainPairedData(exceedanceProbabilities, dischargeFrequencyDischarges, equivalentRecordLength, curveMetaData, usingStagesNotFlows: false);
-            UncertainPairedData stageDischarge = new UncertainPairedData(stageDischargeFunctionDischarges, stageDischargeFunctionStageDistributions, curveMetaData);
-            UncertainPairedData stageDamage = new UncertainPairedData(stageDamageStages, stageDamageDamageDistributions, stageDamageMetaData);
-            List<UncertainPairedData> stageDamageList = new List<UncertainPairedData> { stageDamage };
-
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
-                .WithFlowFrequency(dischargeFrequency)
-                .WithFlowStage(stageDischarge)
-                .WithInteriorExterior(interiorExterior)
-                .WithStageDamages(stageDamageList)
-                .Build();
-
+            CurveMetaData stageDamageMetaData = CreateResidentialStructureMetaData();
+            UncertainPairedData interiorExterior = CreateStageReducingInteriorExterior();
+            ImpactAreaScenarioSimulation simulation = BuildSimulationWithInteriorExterior(stageDamageMetaData, interiorExterior);
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: 200);
 
             // Act
@@ -254,48 +278,18 @@ namespace HEC.FDA.ModelTest.unittests.MessagingTests
         public void ProduceLowerDamagesWithInteriorExteriorThatReducesStage()
         {
             // Arrange - compute without interior-exterior first
-            CurveMetaData stageDamageMetaData = new CurveMetaData("Residential", "Structure");
-            GraphicalUncertainPairedData dischargeFrequency = new GraphicalUncertainPairedData(exceedanceProbabilities, dischargeFrequencyDischarges, equivalentRecordLength, curveMetaData, usingStagesNotFlows: false);
-            UncertainPairedData stageDischarge = new UncertainPairedData(stageDischargeFunctionDischarges, stageDischargeFunctionStageDistributions, curveMetaData);
-            UncertainPairedData stageDamage = new UncertainPairedData(stageDamageStages, stageDamageDamageDistributions, stageDamageMetaData);
-            List<UncertainPairedData> stageDamageList = new List<UncertainPairedData> { stageDamage };
+            CurveMetaData stageDamageMetaData = CreateResidentialStructureMetaData();
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: 200);
 
-            ImpactAreaScenarioSimulation simulationWithout = ImpactAreaScenarioSimulation.Builder(impactAreaID)
-                .WithFlowFrequency(dischargeFrequency)
-                .WithFlowStage(stageDischarge)
-                .WithStageDamages(stageDamageList)
-                .Build();
-            ImpactAreaScenarioResults resultsWithout = simulationWithout.Compute(convergenceCriteria);
-            double eadWithout = resultsWithout.ConsequenceResults.SampleMeanDamage("Residential", "Structure", impactAreaID);
+            ImpactAreaScenarioSimulation simulationWithout = BuildStandardSimulation(stageDamageMetaData);
+            double eadWithout = ComputeResidentialStructureEAD(simulationWithout, convergenceCriteria);
 
             // Arrange - compute with interior-exterior that lowers floodplain stage
-            double[] channelStages = new double[] { 458, 465, 470, 475, 480 };
-            IDistribution[] floodplainStageDistributions = new IDistribution[]
-            {
-                new Normal(455, 0),
-                new Normal(461, .2),
-                new Normal(465, .3),
-                new Normal(469, .4),
-                new Normal(473, .5)
-            };
-            CurveMetaData interiorExteriorMetaData = new CurveMetaData(xLabel, yLabel, name);
-            UncertainPairedData interiorExterior = new UncertainPairedData(channelStages, floodplainStageDistributions, interiorExteriorMetaData);
+            UncertainPairedData interiorExterior = CreateStageReducingInteriorExterior();
 
             // Need fresh objects since random numbers get generated during compute
-            GraphicalUncertainPairedData dischargeFrequency2 = new GraphicalUncertainPairedData(exceedanceProbabilities, dischargeFrequencyDischarges, equivalentRecordLength, curveMetaData, usingStagesNotFlows: false);
-            UncertainPairedData stageDischarge2 = new UncertainPairedData(stageDischargeFunctionDischarges, stageDischargeFunctionStageDistributions, curveMetaData);
-            UncertainPairedData stageDamage2 = new UncertainPairedData(stageDamageStages, stageDamageDamageDistributions, stageDamageMetaData);
-            List<UncertainPairedData> stageDamageList2 = new List<UncertainPairedData> { stageDamage2 };
-
-            ImpactAreaScenarioSimulation simulationWith = ImpactAreaScenarioSimulation.Builder(impactAreaID)
-                .WithFlowFrequency(dischargeFrequency2)
-                .WithFlowStage(stageDischarge2)
-                .WithInteriorExterior(interiorExterior)
-                .WithStageDamages(stageDamageList2)
-                .Build();
-            ImpactAreaScenarioResults resultsWith = simulationWith.Compute(convergenceCriteria);
-            double eadWith = resultsWith.ConsequenceResults.SampleMeanDamage("Residential", "Structure", impactAreaID);
+            ImpactAreaScenarioSimulation simulationWith = BuildSimulationWithInteriorExterior(stageDamageMetaData, interiorExterior);
+            double eadWith = ComputeResidentialStructureEAD(simulationWith, convergenceCriteria);
 
             // Assert - interior-exterior that reduces stage should reduce damages
             Assert.True(eadWith < eadWithout, $"EAD with interior-exterior ({eadWith}) should be less than without ({eadWithout})");
@@ -305,20 +299,12 @@ namespace HEC.FDA.ModelTest.unittests.MessagingTests
         public void ComputeWithIdentityInteriorExteriorProducesSimilarResults()
         {
             // Arrange - identity interior-exterior (floodplain stage = channel stage) should produce similar EAD
-            CurveMetaData stageDamageMetaData = new CurveMetaData("Residential", "Structure");
+            CurveMetaData stageDamageMetaData = CreateResidentialStructureMetaData();
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: 200);
 
             // Without interior-exterior
-            GraphicalUncertainPairedData dischargeFrequency1 = new GraphicalUncertainPairedData(exceedanceProbabilities, dischargeFrequencyDischarges, equivalentRecordLength, curveMetaData, usingStagesNotFlows: false);
-            UncertainPairedData stageDischarge1 = new UncertainPairedData(stageDischargeFunctionDischarges, stageDischargeFunctionStageDistributions, curveMetaData);
-            UncertainPairedData stageDamage1 = new UncertainPairedData(stageDamageStages, stageDamageDamageDistributions, stageDamageMetaData);
-
-            ImpactAreaScenarioSimulation simWithout = ImpactAreaScenarioSimulation.Builder(impactAreaID)
-                .WithFlowFrequency(dischargeFrequency1)
-                .WithFlowStage(stageDischarge1)
-                .WithStageDamages(new List<UncertainPairedData> { stageDamage1 })
-                .Build();
-            double eadWithout = simWithout.Compute(convergenceCriteria).ConsequenceResults.SampleMeanDamage("Residential", "Structure", impactAreaID);
+            ImpactAreaScenarioSimulation simWithout = BuildStandardSimulation(stageDamageMetaData);
+            double eadWithout = ComputeResidentialStructureEAD(simWithout, convergenceCriteria);
 
             // With identity interior-exterior (output = input, no uncertainty)
             double[] channelStages = new double[] { 458, 465, 470, 475, 480 };
@@ -330,23 +316,13 @@ namespace HEC.FDA.ModelTest.unittests.MessagingTests
                 new Normal(475, 0),
                 new Normal(480, 0)
             };
-            CurveMetaData interiorExteriorMetaData = new CurveMetaData(xLabel, yLabel, name);
-            UncertainPairedData identityInteriorExterior = new UncertainPairedData(channelStages, identityDistributions, interiorExteriorMetaData);
+            UncertainPairedData identityInteriorExterior = CreateInteriorExterior(channelStages, identityDistributions);
 
-            GraphicalUncertainPairedData dischargeFrequency2 = new GraphicalUncertainPairedData(exceedanceProbabilities, dischargeFrequencyDischarges, equivalentRecordLength, curveMetaData, usingStagesNotFlows: false);
-            UncertainPairedData stageDischarge2 = new UncertainPairedData(stageDischargeFunctionDischarges, stageDischargeFunctionStageDistributions, curveMetaData);
-            UncertainPairedData stageDamage2 = new UncertainPairedData(stageDamageStages, stageDamageDamageDistributions, stageDamageMetaData);
+            ImpactAreaScenarioSimulation simWith = BuildSimulationWithInteriorExterior(stageDamageMetaData, identityInteriorExterior);
+            double eadWith = ComputeResidentialStructureEAD(simWith, convergenceCriteria);
 
-            ImpactAreaScenarioSimulation simWith = ImpactAreaScenarioSimulation.Builder(impactAreaID)
-                .WithFlowFrequency(dischargeFrequency2)
-                .WithFlowStage(stageDischarge2)
-                .WithInteriorExterior(identityInteriorExterior)
-                .WithStageDamages(new List<UncertainPairedData> { stageDamage2 })
-                .Build();
-            double eadWith = simWith.Compute(convergenceCriteria).ConsequenceResults.SampleMeanDamage("Residential", "Structure", impactAreaID);
-
-            // Assert - identity transform should produce similar EAD (within 10% tolerance for Monte Carlo noise)
-            double tolerance = eadWithout * 0.10;
+            // Assert - identity transform should produce similar EAD (within 1% tolerance for Monte Carlo noise)
+            double tolerance = eadWithout * 0.01;
             Assert.True(System.Math.Abs(eadWith - eadWithout) < tolerance,
                 $"Identity interior-exterior EAD ({eadWith}) should be close to no-transform EAD ({eadWithout}), tolerance: {tolerance}");
         }
@@ -364,8 +340,7 @@ namespace HEC.FDA.ModelTest.unittests.MessagingTests
                 new Normal(469, 0),
                 new Normal(473, 0)
             };
-            CurveMetaData interiorExteriorMetaData = new CurveMetaData(xLabel, yLabel, name);
-            UncertainPairedData interiorExterior = new UncertainPairedData(channelStages, floodplainStageDistributions, interiorExteriorMetaData);
+            UncertainPairedData interiorExterior = CreateInteriorExterior(channelStages, floodplainStageDistributions);
 
             // Levee fragility defined in channel stage (exterior) - levee starts failing at channel stage 474
             double[] leveeStages = new double[] { 473, 474, 475, 476, 477 };
@@ -380,18 +355,14 @@ namespace HEC.FDA.ModelTest.unittests.MessagingTests
             UncertainPairedData levee = new UncertainPairedData(leveeStages, leveeFailureProbs, new CurveMetaData(xLabel, yLabel, name));
             double topOfLevee = 477;
 
-            CurveMetaData stageDamageMetaData = new CurveMetaData("Residential", "Structure");
-            GraphicalUncertainPairedData dischargeFrequency = new GraphicalUncertainPairedData(exceedanceProbabilities, dischargeFrequencyDischarges, equivalentRecordLength, curveMetaData, usingStagesNotFlows: false);
-            UncertainPairedData stageDischarge = new UncertainPairedData(stageDischargeFunctionDischarges, stageDischargeFunctionStageDistributions, curveMetaData);
-            UncertainPairedData stageDamage = new UncertainPairedData(stageDamageStages, stageDamageDamageDistributions, stageDamageMetaData);
-            List<UncertainPairedData> stageDamageList = new List<UncertainPairedData> { stageDamage };
+            CurveMetaData stageDamageMetaData = CreateResidentialStructureMetaData();
 
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
-                .WithFlowFrequency(dischargeFrequency)
-                .WithFlowStage(stageDischarge)
+                .WithFlowFrequency(CreateDischargeFrequency())
+                .WithFlowStage(CreateStageDischarge())
                 .WithInteriorExterior(interiorExterior)
                 .WithLevee(levee, topOfLevee)
-                .WithStageDamages(stageDamageList)
+                .WithStageDamages(new List<UncertainPairedData> { CreateStageDamage(stageDamageMetaData) })
                 .Build();
 
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: 200);
@@ -421,8 +392,7 @@ namespace HEC.FDA.ModelTest.unittests.MessagingTests
                 new Normal(459, 0),
                 new Normal(462, 0)
             };
-            CurveMetaData interiorExteriorMetaData = new CurveMetaData(xLabel, yLabel, name);
-            UncertainPairedData interiorExterior = new UncertainPairedData(channelStages, floodplainStageDistributions, interiorExteriorMetaData);
+            UncertainPairedData interiorExterior = CreateInteriorExterior(channelStages, floodplainStageDistributions);
 
             // Levee fragility at channel stage 474 - only fails at high channel stages
             double[] leveeStages = new double[] { 473, 474, 475 };
@@ -447,16 +417,13 @@ namespace HEC.FDA.ModelTest.unittests.MessagingTests
                 new Normal(150, 0),
                 new Normal(200, 0)
             };
-            CurveMetaData stageDamageMetaData = new CurveMetaData("Residential", "Structure");
+            CurveMetaData stageDamageMetaData = CreateResidentialStructureMetaData();
             UncertainPairedData stageDamage = new UncertainPairedData(floodplainDamageStages, floodplainDamageDistributions, stageDamageMetaData);
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData> { stageDamage };
 
-            GraphicalUncertainPairedData dischargeFrequency = new GraphicalUncertainPairedData(exceedanceProbabilities, dischargeFrequencyDischarges, equivalentRecordLength, curveMetaData, usingStagesNotFlows: false);
-            UncertainPairedData stageDischarge = new UncertainPairedData(stageDischargeFunctionDischarges, stageDischargeFunctionStageDistributions, curveMetaData);
-
             ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
-                .WithFlowFrequency(dischargeFrequency)
-                .WithFlowStage(stageDischarge)
+                .WithFlowFrequency(CreateDischargeFrequency())
+                .WithFlowStage(CreateStageDischarge())
                 .WithInteriorExterior(interiorExterior)
                 .WithLevee(levee, 475)
                 .WithStageDamages(stageDamageList)
@@ -477,19 +444,9 @@ namespace HEC.FDA.ModelTest.unittests.MessagingTests
         [Fact]
         public void PopulateUncertainConsequenceFrequencyCurvesWithNonZeroMean()
         {
-            // Arrange - use metadata with proper damage/asset categories
-            CurveMetaData stageDamageMetaData = new CurveMetaData("Residential", "Structure");
-            GraphicalUncertainPairedData dischargeFrequency = new GraphicalUncertainPairedData(exceedanceProbabilities, dischargeFrequencyDischarges, equivalentRecordLength, curveMetaData, usingStagesNotFlows: false);
-            UncertainPairedData stageDischarge = new UncertainPairedData(stageDischargeFunctionDischarges, stageDischargeFunctionStageDistributions, curveMetaData);
-            UncertainPairedData stageDamage = new UncertainPairedData(stageDamageStages, stageDamageDamageDistributions, stageDamageMetaData);
-            List<UncertainPairedData> stageDamageList = new List<UncertainPairedData> { stageDamage };
-
-            ImpactAreaScenarioSimulation simulation = ImpactAreaScenarioSimulation.Builder(impactAreaID)
-                .WithFlowFrequency(dischargeFrequency)
-                .WithFlowStage(stageDischarge)
-                .WithStageDamages(stageDamageList)
-                .Build();
-
+            // Arrange
+            CurveMetaData stageDamageMetaData = CreateResidentialStructureMetaData();
+            ImpactAreaScenarioSimulation simulation = BuildStandardSimulation(stageDamageMetaData);
             ConvergenceCriteria convergenceCriteria = new ConvergenceCriteria(minIterations: 100, maxIterations: 200);
 
             // Act
