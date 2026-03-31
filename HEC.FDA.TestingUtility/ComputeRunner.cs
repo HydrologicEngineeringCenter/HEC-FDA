@@ -90,9 +90,10 @@ public class ComputeRunner
                         switch (compute.Type.ToLowerInvariant())
                         {
                             case "stagedamage":
-                                List<UncertainPairedData> sdCurves = StageDamageRunner.RunStageDamage(compute.ElementName);
-                                SaveStageDamageResults(compute.ElementName, sdCurves);
-                                _csvReportFactory.AddStageDamageSummary(study.StudyId, compute.ElementName, sdCurves);
+                                StageDamageResult sdResult = StageDamageRunner.RunStageDamage(compute.ElementName);
+                                SaveStageDamageResults(compute.ElementName, sdResult.StageDamageFunctions);
+                                WriteStructureDetails(study.StudyId, compute.ElementName, sdResult);
+                                _csvReportFactory.AddStageDamageSummary(study.StudyId, compute.ElementName, sdResult.StageDamageFunctions);
                                 break;
 
                             case "scenario":
@@ -322,5 +323,46 @@ public class ComputeRunner
 
         PersistenceFactory.GetElementManager<AggregatedStageDamageElement>().SaveExisting(element);
         Console.WriteLine($"      Saved {curves.Count} curves to temp database.");
+    }
+
+    private void WriteStructureDetails(string studyId, string elementName, StageDamageResult sdResult)
+    {
+        if (sdResult.ScenarioStageDamage == null)
+        {
+            Console.WriteLine($"      Skipping structure details for manual stage damage '{elementName}'.");
+            return;
+        }
+
+        string detailsDir = Path.Combine(_outputDir, studyId, "StructureDetails");
+        Directory.CreateDirectory(detailsDir);
+
+        Dictionary<int, string> iaNames = [];
+        List<ImpactAreaRowItem> iaRows = sdResult.ImpactAreaElement.ImpactAreaRows;
+        for (int i = 0; i < iaRows.Count; i++)
+        {
+            iaNames[i] = iaRows[i].Name;
+        }
+
+        string detailsPath = Path.Combine(detailsDir, $"{elementName}_StructureStageDamageDetails.csv");
+        List<string> structureDetails = sdResult.ScenarioStageDamage.ProduceStructureDetails(iaNames);
+        using (StreamWriter writer = new(File.Create(detailsPath)))
+        {
+            foreach (string line in structureDetails)
+            {
+                writer.WriteLine(line);
+            }
+        }
+        Console.WriteLine($"      Wrote structure details to {detailsPath}");
+
+        string damagedElesPath = Path.Combine(detailsDir, $"{elementName}_DamagedElementCountsByStage.csv");
+        List<string> damagedElementCounts = UncertainPairedData.ConvertDamagedElementCountToText(sdResult.DamagedElementCounts, iaNames);
+        using (StreamWriter writer = new(File.Create(damagedElesPath)))
+        {
+            foreach (string line in damagedElementCounts)
+            {
+                writer.WriteLine(line);
+            }
+        }
+        Console.WriteLine($"      Wrote damaged element counts to {damagedElesPath}");
     }
 }

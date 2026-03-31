@@ -7,12 +7,19 @@ using HEC.FDA.ViewModel.Hydraulics.GriddedData;
 using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Inventory;
 using HEC.FDA.ViewModel.Utilities;
+using Utility.Progress;
 
 namespace HEC.FDA.TestingUtility.Services;
 
+public record StageDamageResult(
+    List<UncertainPairedData> StageDamageFunctions,
+    List<UncertainPairedData> DamagedElementCounts,
+    ScenarioStageDamage? ScenarioStageDamage,
+    ImpactAreaElement ImpactAreaElement);
+
 public static class StageDamageRunner
 {
-    public static List<UncertainPairedData> RunStageDamage(string elementName)
+    public static StageDamageResult RunStageDamage(string elementName)
     {
         if (string.IsNullOrWhiteSpace(elementName))
         {
@@ -23,18 +30,18 @@ public static class StageDamageRunner
 
         AggregatedStageDamageElement element = ScenarioRunner.FindElement<AggregatedStageDamageElement>(elementName);
 
-        if (element.IsManual)
-        {
-            Console.WriteLine($"    Stage damage '{elementName}' is manual - returning existing curves.");
-            return ConvertCurvesToUPD(element.Curves);
-        }
-
         var impactAreaElements = BaseViewModel.StudyCache.GetChildElementsOfType<ImpactAreaElement>();
         if (impactAreaElements.Count == 0)
         {
             throw new InvalidOperationException("No impact area element found in study.");
         }
         ImpactAreaElement impactAreaElement = impactAreaElements[0];
+
+        if (element.IsManual)
+        {
+            Console.WriteLine($"    Stage damage '{elementName}' is manual - returning existing curves.");
+            return new StageDamageResult(ConvertCurvesToUPD(element.Curves), [], null, impactAreaElement);
+        }
 
         HydraulicElement hydraulicElement = ScenarioRunner.FindElementById<HydraulicElement>(element.SelectedWSE);
         InventoryElement inventoryElement = ScenarioRunner.FindElementById<InventoryElement>(element.SelectedStructures);
@@ -72,11 +79,11 @@ public static class StageDamageRunner
 
         Console.WriteLine($"    Computing stage damage with {totalStructureCount} structures...");
 
-        (List<UncertainPairedData> stageDamageFunctions, _) = scenarioStageDamage.Compute();
+        (List<UncertainPairedData> stageDamageFunctions, List<UncertainPairedData> damagedElementCounts) = scenarioStageDamage.Compute(false,ProgressReporter.ConsoleWrite());
 
         Console.WriteLine($"    Stage damage computation complete. Generated {stageDamageFunctions.Count} curves.");
 
-        return stageDamageFunctions;
+        return new StageDamageResult(stageDamageFunctions, damagedElementCounts, scenarioStageDamage, impactAreaElement);
     }
 
     private static List<UncertainPairedData> ConvertCurvesToUPD(List<StageDamageCurve> curves)

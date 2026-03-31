@@ -78,12 +78,12 @@ public class StudyLoader : IDisposable
 
     private static string FindDatabaseFile(string studyPath)
     {
-        // Look for .sqlite or .db files
+        // Look for .sqlite or .db files recursively
         string[] dbExtensions = { "*.sqlite", "*.db" };
 
         foreach (string pattern in dbExtensions)
         {
-            string[] files = Directory.GetFiles(studyPath, pattern);
+            string[] files = Directory.GetFiles(studyPath, pattern, SearchOption.AllDirectories);
             if (files.Length > 0)
             {
                 return files[0];
@@ -130,30 +130,29 @@ public class StudyLoader : IDisposable
 
     public void Cleanup()
     {
-        if (_localStudyPath != null && Directory.Exists(_localStudyPath))
+        try
         {
-            try
+            // Close the connection first
+            if (!Connection.Instance.IsConnectionNull && Connection.Instance.IsOpen)
             {
-                // Close the connection first
-                if (!Connection.Instance.IsConnectionNull && Connection.Instance.IsOpen)
-                {
-                    Connection.Instance.Close();
-                }
-
-                // Clear SQLite connection pool to release file handles
-                SQLiteConnection.ClearAllPools();
-
-                // Force garbage collection to release any remaining handles
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-
-                Directory.Delete(_localStudyPath, recursive: true);
-                Console.WriteLine($"  Cleaned up temp study folder: {_localStudyPath}");
+                Connection.Instance.Close();
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"  Warning: Failed to cleanup temp folder: {ex.Message}");
-            }
+
+            // Clear SQLite connection pool to release file handles
+            SQLiteConnection.ClearAllPools();
+
+            // Force garbage collection to release any remaining handles
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"  Warning: Failed to close connections: {ex.Message}");
+        }
+
+        if (_localStudyPath != null)
+        {
+            Console.WriteLine($"  Temp study folder retained at: {_localStudyPath}");
         }
     }
 

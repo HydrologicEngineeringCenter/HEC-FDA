@@ -9,6 +9,7 @@ using Xunit;
 
 namespace HEC.FDA.ModelTest.unittests;
 
+[Trait("RunsOn","Remote")]
 /// <summary>
 /// Tests that the consolidated EAD methods correctly return life loss (AALL) reduced results
 /// alongside damage reduced results, verifying that the separate AALL computation path is no longer needed.
