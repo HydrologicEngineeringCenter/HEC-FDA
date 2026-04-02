@@ -15,11 +15,11 @@ public class AggregatedAALLSummaryRowItem
     public double WithProjEAD { get; set; }
     [DisplayAsColumn("Mean AALL Reduced")]
     public double EADDamageReduced { get; set; }
-    [DisplayAsColumn("25th Percentile AALL Reduced")] //This is intentionally swapped 1-x 
+    [DisplayAsColumn("25th Percentile AALL Reduced")] // Point75 = ExceededWithProbabilityQ(.75) = InverseCDF(1-.75) = 25th percentile
     public double Point75 { get; set; }
     [DisplayAsColumn("50th Percentile AALL Reduced")]
     public double Point5 { get; set; }
-    [DisplayAsColumn("75th Percentile AALL Reduced")] //This is intentionally swapped 1-x 
+    [DisplayAsColumn("75th Percentile AALL Reduced")] // Point25 = ExceededWithProbabilityQ(.25) = InverseCDF(1-.25) = 75th percentile
     public double Point25 { get; set; }
 
 

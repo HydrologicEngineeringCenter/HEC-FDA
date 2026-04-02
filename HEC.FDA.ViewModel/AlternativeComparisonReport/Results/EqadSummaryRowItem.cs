@@ -20,11 +20,11 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
         public double WithProjEqad { get; set; }
         [DisplayAsColumn("Mean EqAD Reduced")]
         public double EqadReduced { get; set; }
-        [DisplayAsColumn("25th Percentile EqAD Reduced")]// This is intentionally swapped 1-x
+        [DisplayAsColumn("25th Percentile EqAD Reduced")] // Point75 = ExceededWithProbabilityQ(.75) = InverseCDF(1-.75) = 25th percentile
         public double Point75 { get; set; }
         [DisplayAsColumn("50th Percentile EqAD Reduced")]
         public double Point5 { get; set; }
-        [DisplayAsColumn("75th Percentile EqAD Reduced")] // This is intentionally swapped 1-x
+        [DisplayAsColumn("75th Percentile EqAD Reduced")] // Point25 = ExceededWithProbabilityQ(.25) = InverseCDF(1-.25) = 75th percentile
         public double Point25 { get; set; }
         public EqadSummaryRowItem(string impactArea, string damcat, string assetcat,string withoutName, double withoutEqad, string withProjName, double withProjEqad, 
             double eqadReduced, double point75, double point5, double point25)
