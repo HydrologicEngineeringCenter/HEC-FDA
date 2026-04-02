@@ -3,6 +3,7 @@ using HEC.FDA.TestingUtility.Configuration;
 using HEC.FDA.ViewModel;
 using HEC.FDA.ViewModel.AggregatedStageDamage;
 using HEC.FDA.ViewModel.Alternatives;
+using HEC.FDA.ViewModel.AlternativeComparisonReport;
 using HEC.FDA.ViewModel.FlowTransforms;
 using HEC.FDA.ViewModel.FrequencyRelationships;
 using HEC.FDA.ViewModel.GeoTech;
@@ -111,6 +112,7 @@ public class StudyLoader : IDisposable
         LoadElementType<AggregatedStageDamageElement>("Stage Damage");
         LoadElementType<IASElement>("Scenarios");
         LoadElementType<AlternativeElement>("Alternatives");
+        LoadElementType<AlternativeComparisonReportElement>("Alternative Comparison Reports");
         LoadElementType<StudyPropertiesElement>("Study Properties");
 
         Console.WriteLine("  All elements loaded.");
