@@ -505,5 +505,220 @@ namespace HEC.FDA.ModelTest.unittests
             // Verify median values are reasonable (should be around 1.0 + (batchSize-1)/2 * 0.1 = ~5.95 for first position)
             Assert.True(median.Yvals[0] > 0, "Median should have positive values");
         }
+
+        [Fact]
+        public void AccumulateLifeLossFnCurveAcrossImpactAreas()
+        {
+            // Arrange: create two impact areas with known life loss F-N curves
+            int batchSize = 100;
+            ConvergenceCriteria cc = new(minIterations: batchSize, maxIterations: batchSize * 10);
+
+            // Impact area 1: life loss values ~[10, 20, 30, 40, 50] at each AEP
+            ImpactAreaScenarioResults ia1 = new(1);
+            CategoriedUncertainPairedData curve1 = ia1.GetOrCreateUncertainConsequenceFrequencyCurve(
+                TestXvals, "LifeLoss", "LifeLoss", ConsequenceType.LifeLoss, RiskType.Fail, cc);
+            for (int i = 0; i < batchSize; i++)
+            {
+                double[] yvals = { 10, 20, 30, 40, 50 };
+                curve1.AddCurveRealization(new PairedData(TestXvals, yvals), i);
+            }
+            ia1.PutUncertainFrequencyCurvesIntoHistograms();
+
+            // Impact area 2: life loss values ~[5, 10, 15, 20, 25] at each AEP
+            ImpactAreaScenarioResults ia2 = new(2);
+            CategoriedUncertainPairedData curve2 = ia2.GetOrCreateUncertainConsequenceFrequencyCurve(
+                TestXvals, "LifeLoss", "LifeLoss", ConsequenceType.LifeLoss, RiskType.Fail, cc);
+            for (int i = 0; i < batchSize; i++)
+            {
+                double[] yvals = { 5, 10, 15, 20, 25 };
+                curve2.AddCurveRealization(new PairedData(TestXvals, yvals), i);
+            }
+            ia2.PutUncertainFrequencyCurvesIntoHistograms();
+
+            ScenarioResults scenarioResults = new();
+            scenarioResults.AddResults(ia1);
+            scenarioResults.AddResults(ia2);
+
+            // Act
+            var accumulated = scenarioResults.GetAccumulatedLifeLossFnCurveData();
+
+            // Assert
+            Assert.NotNull(accumulated);
+            Assert.Equal(TestXvals.Length, accumulated.Xvals.Length);
+            Assert.True(accumulated.Xvals.SequenceEqual(TestXvals));
+
+            // The accumulated median should approximate the sum: [15, 30, 45, 60, 75]
+            PairedData median = accumulated.SamplePairedData(0.5);
+            Assert.Equal(TestXvals.Length, median.Yvals.Count);
+
+            double tolerance = 2.0;
+            Assert.InRange(median.Yvals[0], 15 - tolerance, 15 + tolerance);
+            Assert.InRange(median.Yvals[1], 30 - tolerance, 30 + tolerance);
+            Assert.InRange(median.Yvals[2], 45 - tolerance, 45 + tolerance);
+            Assert.InRange(median.Yvals[3], 60 - tolerance, 60 + tolerance);
+            Assert.InRange(median.Yvals[4], 75 - tolerance, 75 + tolerance);
+        }
+
+        [Fact]
+        public void ReturnNullWhenSingleImpactArea()
+        {
+            int batchSize = 100;
+            ConvergenceCriteria cc = new(minIterations: batchSize, maxIterations: batchSize * 10);
+
+            ImpactAreaScenarioResults ia1 = new(1);
+            CategoriedUncertainPairedData curve1 = ia1.GetOrCreateUncertainConsequenceFrequencyCurve(
+                TestXvals, "LifeLoss", "LifeLoss", ConsequenceType.LifeLoss, RiskType.Fail, cc);
+            for (int i = 0; i < batchSize; i++)
+            {
+                curve1.AddCurveRealization(new PairedData(TestXvals, new double[] { 10, 20, 30, 40, 50 }), i);
+            }
+            ia1.PutUncertainFrequencyCurvesIntoHistograms();
+
+            ScenarioResults scenarioResults = new();
+            scenarioResults.AddResults(ia1);
+
+            var accumulated = scenarioResults.GetAccumulatedLifeLossFnCurveData();
+            Assert.Null(accumulated);
+        }
+
+        [Fact]
+        public void ReturnNullWhenNoLifeLossData()
+        {
+            ImpactAreaScenarioResults ia1 = new(1);
+            ImpactAreaScenarioResults ia2 = new(2);
+
+            ScenarioResults scenarioResults = new();
+            scenarioResults.AddResults(ia1);
+            scenarioResults.AddResults(ia2);
+
+            var accumulated = scenarioResults.GetAccumulatedLifeLossFnCurveData();
+            Assert.Null(accumulated);
+        }
+
+        [Fact]
+        public void ReturnNullWhenXvalsMismatch()
+        {
+            int batchSize = 100;
+            ConvergenceCriteria cc = new(minIterations: batchSize, maxIterations: batchSize * 10);
+
+            double[] xvals1 = { 0.01, 0.1, 0.5, 0.9, 0.99 };
+            double[] xvals2 = { 0.02, 0.2, 0.5, 0.8, 0.98 };
+
+            ImpactAreaScenarioResults ia1 = new(1);
+            CategoriedUncertainPairedData curve1 = ia1.GetOrCreateUncertainConsequenceFrequencyCurve(
+                xvals1, "LifeLoss", "LifeLoss", ConsequenceType.LifeLoss, RiskType.Fail, cc);
+            for (int i = 0; i < batchSize; i++)
+            {
+                curve1.AddCurveRealization(new PairedData(xvals1, new double[] { 10, 20, 30, 40, 50 }), i);
+            }
+            ia1.PutUncertainFrequencyCurvesIntoHistograms();
+
+            ImpactAreaScenarioResults ia2 = new(2);
+            CategoriedUncertainPairedData curve2 = ia2.GetOrCreateUncertainConsequenceFrequencyCurve(
+                xvals2, "LifeLoss", "LifeLoss", ConsequenceType.LifeLoss, RiskType.Fail, cc);
+            for (int i = 0; i < batchSize; i++)
+            {
+                curve2.AddCurveRealization(new PairedData(xvals2, new double[] { 5, 10, 15, 20, 25 }), i);
+            }
+            ia2.PutUncertainFrequencyCurvesIntoHistograms();
+
+            ScenarioResults scenarioResults = new();
+            scenarioResults.AddResults(ia1);
+            scenarioResults.AddResults(ia2);
+
+            var accumulated = scenarioResults.GetAccumulatedLifeLossFnCurveData();
+            Assert.Null(accumulated);
+        }
+
+        [Fact]
+        public void AccumulateLifeLossFnCurveAcrossThreeImpactAreas()
+        {
+            int batchSize = 100;
+            ConvergenceCriteria cc = new(minIterations: batchSize, maxIterations: batchSize * 10);
+
+            ImpactAreaScenarioResults ia1 = new(1);
+            CategoriedUncertainPairedData curve1 = ia1.GetOrCreateUncertainConsequenceFrequencyCurve(
+                TestXvals, "LifeLoss", "LifeLoss", ConsequenceType.LifeLoss, RiskType.Fail, cc);
+
+            ImpactAreaScenarioResults ia2 = new(2);
+            CategoriedUncertainPairedData curve2 = ia2.GetOrCreateUncertainConsequenceFrequencyCurve(
+                TestXvals, "LifeLoss", "LifeLoss", ConsequenceType.LifeLoss, RiskType.Fail, cc);
+
+            ImpactAreaScenarioResults ia3 = new(3);
+            CategoriedUncertainPairedData curve3 = ia3.GetOrCreateUncertainConsequenceFrequencyCurve(
+                TestXvals, "LifeLoss", "LifeLoss", ConsequenceType.LifeLoss, RiskType.Fail, cc);
+
+            for (int i = 0; i < batchSize; i++)
+            {
+                curve1.AddCurveRealization(new PairedData(TestXvals, new double[] { 10, 20, 30, 40, 50 }), i);
+                curve2.AddCurveRealization(new PairedData(TestXvals, new double[] { 5, 10, 15, 20, 25 }), i);
+                curve3.AddCurveRealization(new PairedData(TestXvals, new double[] { 3, 6, 9, 12, 15 }), i);
+            }
+            ia1.PutUncertainFrequencyCurvesIntoHistograms();
+            ia2.PutUncertainFrequencyCurvesIntoHistograms();
+            ia3.PutUncertainFrequencyCurvesIntoHistograms();
+
+            ScenarioResults scenarioResults = new();
+            scenarioResults.AddResults(ia1);
+            scenarioResults.AddResults(ia2);
+            scenarioResults.AddResults(ia3);
+
+            var accumulated = scenarioResults.GetAccumulatedLifeLossFnCurveData();
+            Assert.NotNull(accumulated);
+
+            // Expected sums: [18, 36, 54, 72, 90]
+            PairedData median = accumulated.SamplePairedData(0.5);
+            double tolerance = 2.0;
+            Assert.InRange(median.Yvals[0], 18 - tolerance, 18 + tolerance);
+            Assert.InRange(median.Yvals[1], 36 - tolerance, 36 + tolerance);
+            Assert.InRange(median.Yvals[2], 54 - tolerance, 54 + tolerance);
+            Assert.InRange(median.Yvals[3], 72 - tolerance, 72 + tolerance);
+            Assert.InRange(median.Yvals[4], 90 - tolerance, 90 + tolerance);
+        }
+
+        [Fact]
+        public void AccumulateOnlyImpactAreasWithLifeLossData()
+        {
+            int batchSize = 100;
+            ConvergenceCriteria cc = new(minIterations: batchSize, maxIterations: batchSize * 10);
+
+            // IA 1 and IA 3 have life loss data; IA 2 does not
+            ImpactAreaScenarioResults ia1 = new(1);
+            CategoriedUncertainPairedData curve1 = ia1.GetOrCreateUncertainConsequenceFrequencyCurve(
+                TestXvals, "LifeLoss", "LifeLoss", ConsequenceType.LifeLoss, RiskType.Fail, cc);
+            for (int i = 0; i < batchSize; i++)
+            {
+                curve1.AddCurveRealization(new PairedData(TestXvals, new double[] { 10, 20, 30, 40, 50 }), i);
+            }
+            ia1.PutUncertainFrequencyCurvesIntoHistograms();
+
+            ImpactAreaScenarioResults ia2 = new(2); // no life loss data
+
+            ImpactAreaScenarioResults ia3 = new(3);
+            CategoriedUncertainPairedData curve3 = ia3.GetOrCreateUncertainConsequenceFrequencyCurve(
+                TestXvals, "LifeLoss", "LifeLoss", ConsequenceType.LifeLoss, RiskType.Fail, cc);
+            for (int i = 0; i < batchSize; i++)
+            {
+                curve3.AddCurveRealization(new PairedData(TestXvals, new double[] { 5, 10, 15, 20, 25 }), i);
+            }
+            ia3.PutUncertainFrequencyCurvesIntoHistograms();
+
+            ScenarioResults scenarioResults = new();
+            scenarioResults.AddResults(ia1);
+            scenarioResults.AddResults(ia2);
+            scenarioResults.AddResults(ia3);
+
+            var accumulated = scenarioResults.GetAccumulatedLifeLossFnCurveData();
+            Assert.NotNull(accumulated);
+
+            // Only IA1 + IA3 contribute: expected sums [15, 30, 45, 60, 75]
+            PairedData median = accumulated.SamplePairedData(0.5);
+            double tolerance = 2.0;
+            Assert.InRange(median.Yvals[0], 15 - tolerance, 15 + tolerance);
+            Assert.InRange(median.Yvals[1], 30 - tolerance, 30 + tolerance);
+            Assert.InRange(median.Yvals[2], 45 - tolerance, 45 + tolerance);
+            Assert.InRange(median.Yvals[3], 60 - tolerance, 60 + tolerance);
+            Assert.InRange(median.Yvals[4], 75 - tolerance, 75 + tolerance);
+        }
     }
 }

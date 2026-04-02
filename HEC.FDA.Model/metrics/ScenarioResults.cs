@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.Model.metrics.Extensions;
+using HEC.FDA.Model.paireddata;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
 using HEC.MVVMFramework.Model.Messaging;
@@ -187,6 +188,50 @@ public class ScenarioResults : ValidationErrorLogger
             return Empirical.StackEmpiricalDistributions(empiricalDistsToStack, Empirical.Sum);
         }
     }
+    /// <summary>
+    /// Accumulates life loss F-N curve data across all impact areas by summing
+    /// the DynamicHistogram distributions at each AEP ordinate.
+    /// Returns null if no life loss F-N data exists or if Xvals don't match across impact areas.
+    /// </summary>
+    public UncertainPairedData GetAccumulatedLifeLossFnCurveData()
+    {
+        List<UncertainPairedData> lifeLossUPDs = new();
+        foreach (ImpactAreaScenarioResults iaResult in ResultsList)
+        {
+            CategoriedUncertainPairedData curve = iaResult.UncertainConsequenceFrequencyCurves
+                .FirstOrDefault(c => c.ConsequenceType == ConsequenceType.LifeLoss);
+            if (curve != null && curve.YHistograms != null && curve.YHistograms.Count > 0)
+            {
+                lifeLossUPDs.Add(curve.GetUncertainPairedData());
+            }
+        }
+
+        if (lifeLossUPDs.Count <= 1) return null;
+
+        double[] referenceXvals = lifeLossUPDs[0].Xvals;
+        for (int i = 1; i < lifeLossUPDs.Count; i++)
+        {
+            if (!lifeLossUPDs[i].Xvals.SequenceEqual(referenceXvals))
+            {
+                return null;
+            }
+        }
+
+        Empirical[] stackedEmpiricals = new Empirical[referenceXvals.Length];
+        for (int i = 0; i < referenceXvals.Length; i++)
+        {
+            List<Empirical> empiricalsAtOrdinate = new();
+            foreach (UncertainPairedData upd in lifeLossUPDs)
+            {
+                DynamicHistogram histogram = (DynamicHistogram)upd.Yvals[i];
+                empiricalsAtOrdinate.Add(DynamicHistogram.ConvertToEmpiricalDistribution(histogram));
+            }
+            stackedEmpiricals[i] = Empirical.StackEmpiricalDistributions(empiricalsAtOrdinate, Empirical.Sum);
+        }
+
+        return new UncertainPairedData(referenceXvals, stackedEmpiricals, new CurveMetaData());
+    }
+
     public void AddResults(ImpactAreaScenarioResults resultsToAdd)
     {
         ResultsList.Add(resultsToAdd);
