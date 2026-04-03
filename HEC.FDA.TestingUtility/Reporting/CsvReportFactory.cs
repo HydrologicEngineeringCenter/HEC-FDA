@@ -11,51 +11,140 @@ namespace HEC.FDA.TestingUtility.Reporting;
 /// <summary>
 /// Factory class that produces a comprehensive CSV report containing all tabularly
 /// visualized results from FDA computations across all studies.
-/// Uses ViewModel row item classes for scenario and alternative results.
+/// All data is extracted eagerly when Add* methods are called (while the correct
+/// study is loaded in StudyCache), not deferred to SaveReport().
 /// </summary>
 public class CsvReportFactory
 {
-    private readonly List<(string StudyId, IASElement Element)> _scenarioElements = [];
-    private readonly List<(string StudyId, AlternativeElement Element)> _alternativeElements = [];
+    private readonly StringBuilder _scenarioResults = new();
+    private readonly StringBuilder _scenarioDamCat = new();
+    private readonly StringBuilder _scenarioPerformance = new();
+    private readonly StringBuilder _scenarioAssurance = new();
+    private readonly StringBuilder _alternativeResults = new();
+    private readonly StringBuilder _alternativeDamCat = new();
     private readonly StringBuilder _stageDamageSummary = new();
     private readonly StringBuilder _altComparisonSummary = new();
     private readonly StringBuilder _altComparisonByCategory = new();
 
     public CsvReportFactory()
     {
-        WriteStageDamageHeader();
-        WriteAltComparisonHeaders();
-    }
-
-    private void WriteStageDamageHeader()
-    {
+        _scenarioResults.AppendLine("Study ID,Name,Analysis Year,Impact Area,Mean EAD,25th Percentile EAD,50th Percentile EAD,75th Percentile EAD");
+        _scenarioDamCat.AppendLine("Study ID,Scenario Name,Analysis Year,Impact Area,Damage Category,Asset Category,Mean EAD");
+        _scenarioPerformance.AppendLine("Study ID,Name,Analysis Year,Impact Area,Threshold Type,Threshold Value,LT Risk 10yr,LT Risk 30yr,LT Risk 50yr,Mean AEP,Median AEP,Assurance 0.10,Assurance 0.04,Assurance 0.02,Assurance 0.01,Assurance 0.004,Assurance 0.002");
+        _scenarioAssurance.AppendLine("Study ID,Name,Analysis Year,Impact Area,Threshold Type,Threshold Value,Mean AEP,Median AEP,90% Assurance AEP,Assurance of 0.10 AEP,Assurance of 0.04 AEP,Assurance of 0.02 AEP,Assurance of 0.01 AEP,Assurance of 0.004 AEP,Assurance of 0.002 AEP");
+        _alternativeResults.AppendLine("Study ID,Name,Impact Area,Base Year,Future Year,Discount Rate,Period of Analysis,Mean EqAD,25th Percentile EqAD,50th Percentile EqAD,75th Percentile EqAD");
+        _alternativeDamCat.AppendLine("Study ID,Scenario Name,Impact Area,Damage Category,Asset Category,Mean EqAD");
         _stageDamageSummary.AppendLine("Study ID,Element Name,Impact Area ID,Impact Area Name,Damage Category,Asset Category,Point Count,Min Stage,Max Stage, Median Sample Integral");
-    }
-
-    private void WriteAltComparisonHeaders()
-    {
         _altComparisonSummary.AppendLine("Study ID,Report Name,With Project Alt,Impact Area ID,Without Proj EqAD,With Proj EqAD,EqAD Reduced,EqAD Reduced 25th Pct,EqAD Reduced 50th Pct,EqAD Reduced 75th Pct,Without Proj Base EAD,With Proj Base EAD,Base EAD Reduced,Without Proj Future EAD,With Proj Future EAD,Future EAD Reduced");
         _altComparisonByCategory.AppendLine("Study ID,Report Name,With Project Alt,Impact Area ID,Damage Category,Asset Category,EqAD Reduced,Base Year EAD Reduced,Future Year EAD Reduced");
     }
 
     /// <summary>
-    /// Adds a scenario element to be included in the report.
-    /// Uses ScenarioDamageRowItem, ScenarioDamCatRowItem, and ScenarioPerformanceRowItem for data extraction.
+    /// Extracts scenario results immediately while the correct study is loaded in StudyCache.
     /// </summary>
     public void AddScenarioResults(string studyId, IASElement element)
     {
         if (element?.Results == null) return;
-        _scenarioElements.Add((studyId, element));
+
+        try
+        {
+            var rows = ScenarioDamageRowItem.CreateScenarioDamageRowItems(element);
+            foreach (var row in rows)
+            {
+                _scenarioResults.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(row.Name)},{EscapeCsv(row.AnalysisYear)},{EscapeCsv(row.ImpactArea)},{row.Mean:F2},{row.Point25:F2},{row.Point5:F2},{row.Point75:F2}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"    Warning: Error extracting scenario results for {element.Name}: {ex.Message}");
+        }
+
+        try
+        {
+            var rows = ScenarioDamCatRowItem.CreateScenarioDamCatRowItems(element);
+            foreach (var row in rows)
+            {
+                _scenarioDamCat.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(row.Name)},{EscapeCsv(row.AnalysisYear)},{EscapeCsv(row.ImpactAreaName)},{EscapeCsv(row.DamCat)},{EscapeCsv(row.AssetCat)},{row.MeanDamage:F2}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"    Warning: Error extracting scenario damage categories for {element.Name}: {ex.Message}");
+        }
+
+        try
+        {
+            foreach (var iaResult in element.Results.ResultsList)
+            {
+                int iasID = iaResult.ImpactAreaID;
+                SpecificIAS? ias = element.SpecificIASElements.FirstOrDefault(s => s.ImpactAreaID == iasID);
+                if (ias == null) continue;
+
+                foreach (var threshold in iaResult.PerformanceByThresholds.ListOfThresholds)
+                {
+                    var row = new ScenarioPerformanceRowItem(element, ias, threshold);
+                    _scenarioPerformance.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(row.Name)},{EscapeCsv(row.AnalysisYear)},{EscapeCsv(row.ImpactArea)},{EscapeCsv(row.ThresholdType)},{row.ThresholdValue:F2},{row.LongTerm10:F4},{row.LongTerm30:F4},{row.LongTerm50:F4},{row.Mean:F6},{row.Median:F6},{row.Threshold1:F4},{row.Threshold04:F4},{row.Threshold02:F4},{row.Threshold01:F4},{row.Threshold004:F4},{row.Threshold002:F4}");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"    Warning: Error extracting scenario performance for {element.Name}: {ex.Message}");
+        }
+
+        try
+        {
+            foreach (var iaResult in element.Results.ResultsList)
+            {
+                int iasID = iaResult.ImpactAreaID;
+                SpecificIAS? ias = element.SpecificIASElements.FirstOrDefault(s => s.ImpactAreaID == iasID);
+                if (ias == null) continue;
+
+                foreach (var threshold in iaResult.PerformanceByThresholds.ListOfThresholds)
+                {
+                    var row = new AssuranceOfAEPRowItem(element, ias, threshold);
+                    _scenarioAssurance.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(row.Name)},{EscapeCsv(row.AnalysisYear)},{EscapeCsv(row.ImpactArea)},{EscapeCsv(row.ThresholdType)},{row.ThresholdValue:F2},{row.Mean:F6},{row.Median:F6},{row.NinetyPercentAssurance:F6},{row.AEP1:F4},{row.AEP04:F4},{row.AEP02:F4},{row.AEP01:F4},{row.AEP004:F4},{row.AEP002:F4}");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"    Warning: Error extracting scenario assurance for {element.Name}: {ex.Message}");
+        }
     }
 
     /// <summary>
-    /// Adds an alternative element to be included in the report.
-    /// Uses AlternativeDamageRowItem and AlternativeDamCatRowItem for data extraction.
+    /// Extracts alternative results immediately while the correct study is loaded in StudyCache.
     /// </summary>
     public void AddAlternativeResults(string studyId, AlternativeElement element)
     {
         if (element?.Results == null || element.Results.IsNull) return;
-        _alternativeElements.Add((studyId, element));
+
+        try
+        {
+            var rows = AlternativeDamageRowItem.CreateAlternativeDamageRowItems(element);
+            foreach (var row in rows)
+            {
+                _alternativeResults.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(row.Name)},{EscapeCsv(row.ImpactArea)},{row.BaseYear},{row.FutureYear},{row.DiscountRate:F4},{row.PeriodOfAnalysis},{row.Mean:F2},{row.Point75:F2},{row.Point5:F2},{row.Point25:F2}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"    Warning: Error extracting alternative results for {element.Name}: {ex.Message}");
+        }
+
+        try
+        {
+            var rows = AlternativeDamCatRowItem.CreateAlternativeDamCatRowItems(element);
+            foreach (var row in rows)
+            {
+                _alternativeDamCat.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(row.Name)},{EscapeCsv(row.ImpactAreaName)},{EscapeCsv(row.DamCat)},{EscapeCsv(row.AssetCat)},{row.MeanDamage:F2}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"    Warning: Error extracting alternative damage categories for {element.Name}: {ex.Message}");
+        }
     }
 
     /// <summary>
@@ -161,27 +250,27 @@ public class CsvReportFactory
         report.AppendLine();
 
         report.AppendLine("=== SCENARIO RESULTS ===");
-        report.Append(BuildScenarioResultsSection());
+        report.Append(_scenarioResults);
         report.AppendLine();
 
         report.AppendLine("=== SCENARIO DAMAGE BY CATEGORY ===");
-        report.Append(BuildScenarioDamCatSection());
+        report.Append(_scenarioDamCat);
         report.AppendLine();
 
         report.AppendLine("=== SCENARIO PERFORMANCE ===");
-        report.Append(BuildScenarioPerformanceSection());
+        report.Append(_scenarioPerformance);
         report.AppendLine();
 
         report.AppendLine("=== SCENARIO ASSURANCE OF AEP ===");
-        report.Append(BuildScenarioAssuranceSection());
+        report.Append(_scenarioAssurance);
         report.AppendLine();
 
         report.AppendLine("=== ALTERNATIVE RESULTS ===");
-        report.Append(BuildAlternativeResultsSection());
+        report.Append(_alternativeResults);
         report.AppendLine();
 
         report.AppendLine("=== ALTERNATIVE DAMAGE BY CATEGORY ===");
-        report.Append(BuildAlternativeDamCatSection());
+        report.Append(_alternativeDamCat);
         report.AppendLine();
 
         report.AppendLine("=== STAGE DAMAGE SUMMARY ===");
@@ -198,172 +287,6 @@ public class CsvReportFactory
         File.WriteAllText(outputPath, report.ToString());
         Console.WriteLine($"CSV report saved to: {outputPath}");
     }
-
-    #region Scenario Section Builders
-
-    private StringBuilder BuildScenarioResultsSection()
-    {
-        StringBuilder sb = new();
-        sb.AppendLine("Study ID,Name,Analysis Year,Impact Area,Mean EAD,25th Percentile EAD,50th Percentile EAD,75th Percentile EAD");
-
-        foreach (var (studyId, element) in _scenarioElements)
-        {
-            try
-            {
-                var rows = ScenarioDamageRowItem.CreateScenarioDamageRowItems(element);
-                foreach (var row in rows)
-                {
-                    sb.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(row.Name)},{EscapeCsv(row.AnalysisYear)},{EscapeCsv(row.ImpactArea)},{row.Mean:F2},{row.Point25:F2},{row.Point5:F2},{row.Point75:F2}");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"    Warning: Error extracting scenario results for {element.Name}: {ex.Message}");
-            }
-        }
-
-        return sb;
-    }
-
-    private StringBuilder BuildScenarioDamCatSection()
-    {
-        StringBuilder sb = new();
-        sb.AppendLine("Study ID,Scenario Name,Analysis Year,Impact Area,Damage Category,Asset Category,Mean EAD");
-
-        foreach (var (studyId, element) in _scenarioElements)
-        {
-            try
-            {
-                var rows = ScenarioDamCatRowItem.CreateScenarioDamCatRowItems(element);
-                foreach (var row in rows)
-                {
-                    sb.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(row.Name)},{EscapeCsv(row.AnalysisYear)},{EscapeCsv(row.ImpactAreaName)},{EscapeCsv(row.DamCat)},{EscapeCsv(row.AssetCat)},{row.MeanDamage:F2}");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"    Warning: Error extracting scenario damage categories for {element.Name}: {ex.Message}");
-            }
-        }
-
-        return sb;
-    }
-
-    private StringBuilder BuildScenarioPerformanceSection()
-    {
-        StringBuilder sb = new();
-        sb.AppendLine("Study ID,Name,Analysis Year,Impact Area,Threshold Type,Threshold Value,LT Risk 10yr,LT Risk 30yr,LT Risk 50yr,Mean AEP,Median AEP,Assurance 0.10,Assurance 0.04,Assurance 0.02,Assurance 0.01,Assurance 0.004,Assurance 0.002");
-
-        foreach (var (studyId, element) in _scenarioElements)
-        {
-            try
-            {
-                foreach (var iaResult in element.Results.ResultsList)
-                {
-                    int iasID = iaResult.ImpactAreaID;
-                    SpecificIAS? ias = element.SpecificIASElements.FirstOrDefault(s => s.ImpactAreaID == iasID);
-                    if (ias == null) continue;
-
-                    foreach (var threshold in iaResult.PerformanceByThresholds.ListOfThresholds)
-                    {
-                        var row = new ScenarioPerformanceRowItem(element, ias, threshold);
-                        sb.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(row.Name)},{EscapeCsv(row.AnalysisYear)},{EscapeCsv(row.ImpactArea)},{EscapeCsv(row.ThresholdType)},{row.ThresholdValue:F2},{row.LongTerm10:F4},{row.LongTerm30:F4},{row.LongTerm50:F4},{row.Mean:F6},{row.Median:F6},{row.Threshold1:F4},{row.Threshold04:F4},{row.Threshold02:F4},{row.Threshold01:F4},{row.Threshold004:F4},{row.Threshold002:F4}");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"    Warning: Error extracting scenario performance for {element.Name}: {ex.Message}");
-            }
-        }
-
-        return sb;
-    }
-
-    private StringBuilder BuildScenarioAssuranceSection()
-    {
-        StringBuilder sb = new();
-        sb.AppendLine("Study ID,Name,Analysis Year,Impact Area,Threshold Type,Threshold Value,Mean AEP,Median AEP,90% Assurance AEP,Assurance of 0.10 AEP,Assurance of 0.04 AEP,Assurance of 0.02 AEP,Assurance of 0.01 AEP,Assurance of 0.004 AEP,Assurance of 0.002 AEP");
-
-        foreach (var (studyId, element) in _scenarioElements)
-        {
-            try
-            {
-                foreach (var iaResult in element.Results.ResultsList)
-                {
-                    int iasID = iaResult.ImpactAreaID;
-                    SpecificIAS? ias = element.SpecificIASElements.FirstOrDefault(s => s.ImpactAreaID == iasID);
-                    if (ias == null) continue;
-
-                    foreach (var threshold in iaResult.PerformanceByThresholds.ListOfThresholds)
-                    {
-                        var row = new AssuranceOfAEPRowItem(element, ias, threshold);
-                        sb.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(row.Name)},{EscapeCsv(row.AnalysisYear)},{EscapeCsv(row.ImpactArea)},{EscapeCsv(row.ThresholdType)},{row.ThresholdValue:F2},{row.Mean:F6},{row.Median:F6},{row.NinetyPercentAssurance:F6},{row.AEP1:F4},{row.AEP04:F4},{row.AEP02:F4},{row.AEP01:F4},{row.AEP004:F4},{row.AEP002:F4}");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"    Warning: Error extracting scenario assurance for {element.Name}: {ex.Message}");
-            }
-        }
-
-        return sb;
-    }
-
-    #endregion
-
-    #region Alternative Section Builders
-
-    private StringBuilder BuildAlternativeResultsSection()
-    {
-        StringBuilder sb = new();
-        sb.AppendLine("Study ID,Name,Impact Area,Base Year,Future Year,Discount Rate,Period of Analysis,Mean EqAD,25th Percentile EqAD,50th Percentile EqAD,75th Percentile EqAD");
-
-        foreach (var (studyId, element) in _alternativeElements)
-        {
-            try
-            {
-                var rows = AlternativeDamageRowItem.CreateAlternativeDamageRowItems(element);
-                foreach (var row in rows)
-                {
-                    sb.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(row.Name)},{EscapeCsv(row.ImpactArea)},{row.BaseYear},{row.FutureYear},{row.DiscountRate:F4},{row.PeriodOfAnalysis},{row.Mean:F2},{row.Point75:F2},{row.Point5:F2},{row.Point25:F2}");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"    Warning: Error extracting alternative results for {element.Name}: {ex.Message}");
-            }
-        }
-
-        return sb;
-    }
-
-    private StringBuilder BuildAlternativeDamCatSection()
-    {
-        StringBuilder sb = new();
-        sb.AppendLine("Study ID,Scenario Name,Impact Area,Damage Category,Asset Category,Mean EqAD");
-
-        foreach (var (studyId, element) in _alternativeElements)
-        {
-            try
-            {
-                var rows = AlternativeDamCatRowItem.CreateAlternativeDamCatRowItems(element);
-                foreach (var row in rows)
-                {
-                    sb.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(row.Name)},{EscapeCsv(row.ImpactAreaName)},{EscapeCsv(row.DamCat)},{EscapeCsv(row.AssetCat)},{row.MeanDamage:F2}");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"    Warning: Error extracting alternative damage categories for {element.Name}: {ex.Message}");
-            }
-        }
-
-        return sb;
-    }
-
-    #endregion
 
     /// <summary>
     /// Escapes a value for CSV output (handles commas and quotes).
