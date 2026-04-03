@@ -712,7 +712,7 @@ namespace HEC.FDA.Model.compute
             }
             PairedData totalStageDamage = ComputeTotalStageDamage(_FailureStageDamageFunctions);
             PairedData totalFrequencyDamage = damageFrequencyFunctions[0];
-            for (int i = 0; i < damageFrequencyFunctions.Count; i++)
+            for (int i = 1; i < damageFrequencyFunctions.Count; i++)
             {
                 //Some unnecessary GC happening here. Not happening in the big parallel for. 10s to 100s , not hundreds of thousands.
                 totalFrequencyDamage = totalFrequencyDamage.SumYsForGivenX(damageFrequencyFunctions[i]);
