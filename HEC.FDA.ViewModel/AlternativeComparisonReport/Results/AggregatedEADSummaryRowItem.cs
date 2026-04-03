@@ -17,11 +17,11 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
         public double WithProjEAD { get; set; }
         [DisplayAsColumn("Mean EAD Reduced")]
         public double EADDamageReduced { get; set; }
-        [DisplayAsColumn("25th Percentile EAD Reduced")] //This is intentionally swapped 1-x 
+        [DisplayAsColumn("25th Percentile EAD Reduced")] // Point75 = ExceededWithProbabilityQ(.75) = InverseCDF(1-.75) = 25th percentile
         public double Point75 { get; set; }
         [DisplayAsColumn("50th Percentile EAD Reduced")]
         public double Point5 { get; set; }
-        [DisplayAsColumn("75th Percentile EAD Reduced")] //This is intentionally swapped 1-x 
+        [DisplayAsColumn("75th Percentile EAD Reduced")] // Point25 = ExceededWithProbabilityQ(.25) = InverseCDF(1-.25) = 75th percentile
         public double Point25 { get; set; }
 
 

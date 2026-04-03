@@ -230,7 +230,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results
 
         private void LoadData(AlternativeResults scenarioResults, DamageMeasureYear damageMeasureYear)
         {
-            List<double> xVals = new() { .25, .5, .75 };
+            List<double> xVals = new() { .75, .5, .25 };
             List<string> xValNames = new() { "25%", "50%", "75%" };
             List<double> yVals = LoadYData(xVals, scenarioResults, damageMeasureYear);
 
