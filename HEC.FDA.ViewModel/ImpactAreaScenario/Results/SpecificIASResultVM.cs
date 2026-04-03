@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.Model.metrics;
+using HEC.FDA.Model.paireddata;
 using HEC.FDA.ViewModel.Alternatives.Results;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.ImpactAreaScenario.Editor;
@@ -23,12 +24,16 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
         private const string ANNUAL_EXC_PROB = "Annual Exceedance Probability";
         private const string LONG_TERM_EXCEEDANCE_PROBABILITY = "Long-Term Exceedance Probability";
         private const string ASSURANCE_OF_THRESHOLD = "Assurance of Threshold";
+        public const string TOTAL = "Total";
         #endregion
 
         #region Property Backing Fields
         private readonly List<string> _damageReports = new List<string>() { DAMAGE_WITH_UNCERTAINTY, DAMAGE_BY_DAMCAT };
         private List<string> _lifeLossReports = new List<string>() { LIFE_LOSS_WITH_UNCERTAINTY, FN_CURVE };
         private readonly List<string> _performanceReports = new List<string>() { ANNUAL_EXC_PROB, LONG_TERM_EXCEEDANCE_PROBABILITY, ASSURANCE_OF_THRESHOLD };
+        /// <summary>
+        /// Null when constructed via the "Total" accumulated F-N curve constructor.
+        /// </summary>
         private readonly ImpactAreaScenarioResults _IASResult;
         private string _selectedOutcome;
         private string _selectedReport;
@@ -127,6 +132,27 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Results
             }
 
             // Set default selection to first available outcome
+            if (Outcomes.Count > 0)
+            {
+                SelectedOutcome = Outcomes.First();
+            }
+        }
+
+        /// <summary>
+        /// Constructor for the accumulated "Total" F-N curve result across all impact areas.
+        /// Only shows the Life Loss > F-N Curve report.
+        /// </summary>
+        public SpecificIASResultVM(string name, UncertainPairedData accumulatedFnData)
+        {
+            IASName = name;
+            _lifeLossReports = new List<string>() { FN_CURVE };
+
+            if (accumulatedFnData != null)
+            {
+                _lifeLossFnChartVM = new LifeLossFnChartVM(accumulatedFnData, FN_CURVE);
+                Outcomes.Add(LIFE_LOSS);
+            }
+
             if (Outcomes.Count > 0)
             {
                 SelectedOutcome = Outcomes.First();
