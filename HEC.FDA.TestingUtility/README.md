@@ -1,6 +1,6 @@
 # HEC.FDA.TestingUtility
 
-A command-line regression testing tool for HEC-FDA studies. It loads FDA study databases, runs computations (stage damage, scenarios, alternatives, and alternative comparisons), and produces a comprehensive CSV report of the results.
+A command-line regression testing tool for HEC-FDA studies. It loads FDA study databases, runs computations (stage damage, scenarios, alternatives, and alternative comparisons), and produces comprehensive CSV reports of the results.
 
 ## Purpose
 
@@ -18,7 +18,17 @@ This utility runs FDA computations outside the GUI so that results can be valida
 dotnet build HEC.FDA.TestingUtility/HEC.FDA.TestingUtility.csproj
 ```
 
-### 2. Create a configuration file
+### 2a. Run directly against a study file (simplest)
+
+If you just want to run all computations on a single study, point directly at its `.sqlite` file:
+
+```bash
+dotnet run --project HEC.FDA.TestingUtility -- compute -sp "C:/path/to/my/study/MyStudy.sqlite" -o results
+```
+
+This auto-discovers and runs all stage damage, scenario, alternative, and alternative comparison elements in the study. Output defaults to the study's directory if `-o` is not specified.
+
+### 2b. Run with a configuration file (multiple studies or selective runs)
 
 Copy `example-config.json` from this project directory and update `networkSourcePath` to point to your FDA study folder (the folder containing the `.sqlite` or `.db` file):
 
@@ -82,11 +92,32 @@ dotnet run --project HEC.FDA.TestingUtility -- compute -c my-test.json -o result
 
 # Filter to multiple studies
 dotnet run --project HEC.FDA.TestingUtility -- compute -c my-test.json -s "study-a" -s "study-b"
+
+# Run directly against a single .sqlite file
+dotnet run --project HEC.FDA.TestingUtility -- compute -sp "C:/Studies/Muncie/Muncie.sqlite" -o results
 ```
 
 ### 4. Check the output
 
-After the run completes, look for `results_report.csv` in the output directory. It contains separate sections for scenario EAD, damage by category, performance metrics, alternative EqAD, stage damage summaries, and alternative comparison results.
+After the run completes, the output directory will contain:
+
+```
+results/
+  results_report.csv                          # Global summary across all studies
+  muncie/
+    results_report.csv                        # Per-study report for Muncie
+    StructureDetails/
+      My Stage Damage_StructureStageDamageDetails.csv
+      My Stage Damage_DamagedElementCountsByStage.csv
+  greenbrook/
+    results_report.csv                        # Per-study report for Greenbrook
+    StructureDetails/
+      ...
+```
+
+- **`results_report.csv`** (root) - Combined report across all studies with sections for scenario EAD, damage by category, performance metrics, alternative EqAD, stage damage summaries, and alternative comparison results.
+- **`{studyId}/results_report.csv`** - Same report format, but scoped to a single study.
+- **`{studyId}/StructureDetails/`** - Generated for computed (non-manual) stage damage elements. Contains per-structure stage-damage details and damaged element counts by stage.
 
 The console output will also show a summary:
 
@@ -118,16 +149,19 @@ dotnet build HEC.FDA.TestingUtility/HEC.FDA.TestingUtility.csproj
 The utility uses the `System.CommandLine` library and exposes a `compute` subcommand:
 
 ```bash
-dotnet run --project HEC.FDA.TestingUtility -- compute --config <path-to-config.json> [options]
+dotnet run --project HEC.FDA.TestingUtility -- compute [options]
 ```
+
+You must provide either `--config` or `--study-path` (but not both).
 
 ### Options
 
-| Option | Alias | Required | Description |
-|---|---|---|---|
-| `--config` | `-c` | Yes | Path to a JSON configuration file defining the studies and computations to run. |
-| `--output` | `-o` | No | Output directory for generated files. Defaults to the current working directory. |
-| `--study` | `-s` | No | Filter to one or more specific study IDs. Can be specified multiple times. |
+| Option | Alias | Description |
+|---|---|---|
+| `--config` | `-c` | Path to a JSON configuration file defining the studies and computations to run. Required unless `--study-path` is used. |
+| `--study-path` | `-sp` | Path to a `.sqlite` study file. Runs all computations (stage damage, scenarios, alternatives, alternative comparisons) automatically. Required unless `--config` is used. |
+| `--output` | `-o` | Output directory for generated files. Defaults to the current working directory (or the study directory when using `--study-path`). |
+| `--study` | `-s` | Filter to one or more specific study IDs. Can be specified multiple times. Only applies when using `--config`. |
 
 ### Examples
 
@@ -143,6 +177,18 @@ Run only a specific study:
 dotnet run --project HEC.FDA.TestingUtility -- compute -c tests/regression.json -s "muncie"
 ```
 
+Run a single study directly without a config file:
+
+```bash
+dotnet run --project HEC.FDA.TestingUtility -- compute -sp "E:/Studies/Muncie/Muncie.sqlite" -o results/
+```
+
+Run all case studies from a directory (see `example-directory.json`):
+
+```bash
+dotnet run --project HEC.FDA.TestingUtility -- compute -c example-directory.json -o results/
+```
+
 ## Configuration File
 
 The configuration is a JSON file with the following structure:
@@ -152,7 +198,7 @@ The configuration is a JSON file with the following structure:
   "testSuiteId": "regression-v1",
   "globalSettings": {
     "localTempDirectory": "C:/temp/FDATests",
-    "timeoutMinutes": 30
+    "timeoutMinutes": 120
   },
   "studies": [
     {
@@ -174,7 +220,7 @@ The configuration is a JSON file with the following structure:
 | Field | Default | Description |
 |---|---|---|
 | `localTempDirectory` | System temp + `FDATests` | Directory where studies are copied locally before computation. |
-| `timeoutMinutes` | `30` | Maximum wall-clock time for all computations before cancellation. |
+| `timeoutMinutes` | `120` | Maximum wall-clock time for all computations before cancellation. Set to `0` to disable the timeout. |
 
 ### Study Configuration
 
@@ -211,6 +257,15 @@ Valid `type` values (case-insensitive):
 
 Computations are automatically sorted in dependency order: stage damage -> scenario -> alternative -> alternative comparison. This means you can list them in any order and the utility will execute them correctly.
 
+## Example Configuration Files
+
+| File | Description |
+|---|---|
+| `example-config.json` | Minimal template for a single study with all `runAll*` flags enabled. |
+| `example-directory.json` | Template for running all studies found as subfolders under a common parent directory. |
+| `all_case_studies.json` | Real-world config targeting 9 case studies with all computations. |
+| `sunnyvale_alt_only.json` | Example of a selective run (alternatives only). |
+
 ## How It Works
 
 1. **Study Loading** - The study folder is copied from `networkSourcePath` to a local temp directory to avoid locking network files. The SQLite database is opened and all element types are loaded into the `StudyCache` in dependency order (terrains, impact areas, hydraulics, frequencies, inventories, stage damage, scenarios, alternatives, etc.).
@@ -223,7 +278,7 @@ Computations are automatically sorted in dependency order: stage damage -> scena
 
 3. **Result Saving** - Computed results are saved back to the temp study database so that downstream computations (e.g., alternatives depending on scenario results) can access them.
 
-4. **CSV Report** - A single `results_report.csv` file is written to the output directory containing sections for:
+4. **CSV Report** - A `results_report.csv` file is written both globally (to the output directory) and per-study (to `{outputDir}/{studyId}/`). Each report contains sections for:
    - Scenario results (mean and percentile EAD by impact area)
    - Scenario damage by category
    - Scenario performance (long-term risk, AEP, assurance)
@@ -234,7 +289,11 @@ Computations are automatically sorted in dependency order: stage damage -> scena
    - Alternative comparison summary (EqAD reduced, base/future EAD reduced)
    - Alternative comparison by damage category
 
-5. **Cleanup** - When a study finishes, the temp copy is deleted automatically.
+5. **Structure Details** - For computed (non-manual) stage damage elements, two additional CSVs are written to `{outputDir}/{studyId}/StructureDetails/`:
+   - `{elementName}_StructureStageDamageDetails.csv` - Per-structure stage-damage detail curves.
+   - `{elementName}_DamagedElementCountsByStage.csv` - Number of damaged elements at each stage.
+
+6. **Cleanup** - When a study finishes, the temp copy is deleted automatically.
 
 ## Project Structure
 
