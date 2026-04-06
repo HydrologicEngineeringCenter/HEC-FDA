@@ -138,5 +138,28 @@ new double[] { 6.6, 7.4, 8.55, 9.95, 11.5, 12.7, 13.85, 14.7, 15.8, 16.7, 17.5, 
 
         }
 
+        [Theory]
+        [InlineData(new double[] { .99, .5, .1, .02, .01, .002 }, new double[] { 500, 2000, 34900, 66900, 86000, 146000 }, 5, false)]
+        [InlineData(new double[] { .99, .95, .90, .85, .8, .75, .7, .65, .6, .55, .5, .45, .4, .35, .3, .25, .2, .15, .1, .05, .02, .01, .005, .0025 },
+            new double[] { 6.6, 7.4, 8.55, 9.95, 11.5, 12.7, 13.85, 14.7, 15.8, 16.7, 17.5, 18.25, 19, 19.7, 20.3, 21.1, 21.95, 23, 24.2, 25.7, 27.4, 28.4, 29.1, 29.4 },
+            20, true)]
+        [InlineData(new double[] { 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.005, 0.002 }, new double[] { -2, -1.9, 1.93, 1.98, 2.02, 2.04, 2.18, 2.3 }, 40, true)]
+        [InlineData(new double[] { 0.999, 0.5, 0.2, 0.1, 0.04, 0.02, 0.01, 0.004, 0.002 }, new double[] { 80, 82, 84, 84.5, 84.8, 85, 86, 88, 90 }, 50, true)]
+        public void DeterministicSamplingShouldReturnInputRelationship(double[] exceedanceProbabilities, double[] flowOrStageValues, int erl, bool usingStagesNotFlows)
+        {
+            GraphicalUncertainPairedData graphical = new GraphicalUncertainPairedData(exceedanceProbabilities, flowOrStageValues, erl, curveMetaData, usingStagesNotFlows);
+            PairedData sampled = graphical.SamplePairedData(1, computeIsDeterministic: true);
+
+            for (int i = 0; i < exceedanceProbabilities.Length; i++)
+            {
+                double nonExceedanceProbability = 1 - exceedanceProbabilities[i];
+                double actual = sampled.f(nonExceedanceProbability);
+                double expected = flowOrStageValues[i];
+                double tolerance = usingStagesNotFlows ? 0.01 : Math.Max(1, Math.Abs(expected) * 0.01);
+                Assert.True(Math.Abs(actual - expected) < tolerance,
+                    $"At exceedance probability {exceedanceProbabilities[i]}: expected {expected}, got {actual}");
+            }
+        }
+
     }
 }

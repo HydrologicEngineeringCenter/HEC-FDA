@@ -151,7 +151,7 @@ namespace HEC.FDA.Model.compute
                 FrequencyStageCurves curves = GetFrequencyStageSample(computeIsDeterministic: true, 1);
                 //Floodplain stage because we're computing risk.
                 ComputeRiskFromStageFrequency(curves.FloodplainStage, 1, 1, computeIsDeterministic: true, _FailureStageDamageFunctions, ConsequenceType.Damage, false, true);
-                //default threshold represents a channel stage, because the stage damage functions are in channel stage. 
+                //default threshold represents a channel stage, because the stage damage functions are in channel stage.
                 Threshold defaultThreshold = ComputeDefaultThreshold(convergenceCriteria, damageFrequencyFunctions: _ImpactAreaScenarioResults.ConsequenceFrequencyFunctions.Select((c) => c.FrequencyCurve).ToList());
                 _ImpactAreaScenarioResults.PerformanceByThresholds.AddThreshold(defaultThreshold);
             }
@@ -714,7 +714,6 @@ namespace HEC.FDA.Model.compute
             PairedData totalFrequencyDamage = damageFrequencyFunctions[0];
             for (int i = 1; i < damageFrequencyFunctions.Count; i++)
             {
-                //Some unnecessary GC happening here. Not happening in the big parallel for. 10s to 100s , not hundreds of thousands.
                 totalFrequencyDamage = totalFrequencyDamage.SumYsForGivenX(damageFrequencyFunctions[i]);
             }
             double thresholdDamage = THRESHOLD_DAMAGE_PERCENT * totalFrequencyDamage.f(THRESHOLD_DAMAGE_RECURRENCE_INTERVAL);

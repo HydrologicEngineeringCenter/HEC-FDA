@@ -74,8 +74,9 @@ namespace HEC.FDA.ModelTest.unittests
             double[] subjectY = new double[5] { 20, 30, 40, 50, 60 };
             PairedData subjectPairedData = new PairedData(subjectX, subjectY);
 
-            double[] expectedX = new double[6] { 1, 2, 3, 4.5, 5, 6 };
-            double[] expectedY = new double[6] { 30, 40, 60, 90, 100, 120 };
+            // Union of x-grids: {1, 2, 3, 4, 4.5, 5, 6}
+            double[] expectedX = new double[7] { 1, 2, 3, 4, 4.5, 5, 6 };
+            double[] expectedY = new double[7] { 30, 40, 60, 80, 90, 100, 120 };
             PairedData expected = new PairedData(expectedX, expectedY);
 
             IPairedData actual = subjectPairedData.SumYsForGivenX(inputPairedData);
