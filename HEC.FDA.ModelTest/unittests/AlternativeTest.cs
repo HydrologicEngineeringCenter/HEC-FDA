@@ -387,5 +387,51 @@ namespace HEC.FDA.ModelTest.unittests
             Assert.NotNull(results);
             Assert.Empty(results.EqadResults.ConsequenceResultList);
         }
+
+        /// <summary>
+        /// Regression test for the exceedance/non-exceedance quartile swap bug.
+        /// ExceededWithProbabilityQ(0.75) should return the 25th percentile (small value),
+        /// and ExceededWithProbabilityQ(0.25) should return the 75th percentile (large value).
+        /// Previously, ScenarioResults.ConsequencesExceededWithProbabilityQ was missing the
+        /// 1-p conversion, causing quartiles to be swapped in certain code paths.
+        /// </summary>
+        [Fact]
+        public void ExceededWithProbabilityQ_HigherExceedance_ReturnsLowerValue()
+        {
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: 100);
+
+            // Create a histogram with values [1000, 1001, ..., 1099] — has clear spread for distinct quartiles
+            var damageHist = new DynamicHistogram(Enumerable.Range(1000, 100).Select(i => (double)i).ToList(), cc);
+            var damage = new AggregatedConsequencesBinned(damCat, assetCat, damageHist, impactAreaID, ConsequenceType.Damage, RiskType.Fail);
+
+            var impactArea = new ImpactAreaScenarioResults(impactAreaID);
+            impactArea.ConsequenceResults.AddExistingConsequenceResultObject(damage);
+            var scenarioResults = new ScenarioResults();
+            scenarioResults.AddResults(impactArea);
+
+            // ScenarioResults path (the fixed method)
+            double exceededWith25Pct = scenarioResults.ConsequencesExceededWithProbabilityQ(0.25, impactAreaID, damCat, assetCat);
+            double exceededWith75Pct = scenarioResults.ConsequencesExceededWithProbabilityQ(0.75, impactAreaID, damCat, assetCat);
+
+            // Value exceeded with 25% probability = 75th percentile = LARGE
+            // Value exceeded with 75% probability = 25th percentile = SMALL
+            Assert.True(exceededWith25Pct > exceededWith75Pct,
+                $"The value exceeded with 25% probability ({exceededWith25Pct}) should be greater than " +
+                $"the value exceeded with 75% probability ({exceededWith75Pct}). " +
+                $"If these are swapped, the 1-p conversion in ScenarioResults may be missing.");
+
+            // Also verify via AlternativeResults (ScenariosAreIdentical path) for consistency
+            AlternativeResults altResults = Alternative.AnnualizationCompute(
+                discountRate: 0.0275, periodOfAnalysis: 50, alternativeResultsID: alternativeID,
+                computedResultsBaseYear: scenarioResults, computedResultsFutureYear: null,
+                baseYear: 2023, futureYear: 2072);
+
+            double altExceededWith25Pct = altResults.EqadExceededWithProbabilityQ(0.25, impactAreaID, damCat, assetCat);
+            double altExceededWith75Pct = altResults.EqadExceededWithProbabilityQ(0.75, impactAreaID, damCat, assetCat);
+
+            Assert.True(altExceededWith25Pct > altExceededWith75Pct,
+                $"AlternativeResults (ScenariosAreIdentical path): value exceeded with 25% probability ({altExceededWith25Pct}) " +
+                $"should be greater than value exceeded with 75% probability ({altExceededWith75Pct}).");
+        }
     }
 }

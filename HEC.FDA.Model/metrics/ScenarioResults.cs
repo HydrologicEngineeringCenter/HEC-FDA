@@ -140,12 +140,13 @@ public class ScenarioResults : ValidationErrorLogger
         ConsequenceType consequenceType = ConsequenceType.Damage,
         RiskType riskType = RiskType.Total)
     {
+        double nonExceedanceProbability = 1 - exceedanceProbability;
         double consequenceValue = 0;
         foreach (ImpactAreaScenarioResults impactAreaScenarioResults in ResultsList)
         {
             consequenceValue += impactAreaScenarioResults.ConsequenceResults.ConsequenceResultList
                .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType, riskType)
-               .Sum((x) => x.ConsequenceHistogram.InverseCDF(exceedanceProbability));
+               .Sum((x) => x.ConsequenceHistogram.InverseCDF(nonExceedanceProbability));
         }
         return consequenceValue;
     }
