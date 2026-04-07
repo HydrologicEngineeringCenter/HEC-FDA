@@ -1,0 +1,90 @@
+{
+  "testSuiteId": "all-case-studies",
+  "globalSettings": {
+    "localTempDirectory": "E:\\HEC-FDA_CaseStudies_Temp",
+    "timeoutMinutes": 360
+  },
+  "studies": [
+    {
+      "studyId": "glendive",
+      "studyName": "Glendive",
+      "networkSourcePath": "E:\\HEC-FDA_CaseStudies_New\\2.0.2\\Glendive",
+      "runAllStageDamage": true,
+      "runAllScenarios": true,
+      "runAllAlternatives": true,
+      "runAllAlternativeComparisons": true
+    },
+    {
+      "studyId": "greenbrook",
+      "studyName": "Greenbrook",
+      "networkSourcePath": "E:\\HEC-FDA_CaseStudies_New\\2.0.2\\Greenbrook",
+      "runAllStageDamage": true,
+      "runAllScenarios": true,
+      "runAllAlternatives": true,
+      "runAllAlternativeComparisons": true
+    },
+    {
+      "studyId": "london-orleans",
+      "studyName": "LondonOrleans",
+      "networkSourcePath": "E:\\HEC-FDA_CaseStudies_New\\2.0.2\\LondonOrleans",
+      "runAllStageDamage": true,
+      "runAllScenarios": true,
+      "runAllAlternatives": true,
+      "runAllAlternativeComparisons": true
+    },
+    {
+      "studyId": "muncie",
+      "studyName": "Muncie",
+      "networkSourcePath": "E:\\HEC-FDA_CaseStudies_New\\2.0.2\\Muncie",
+      "runAllStageDamage": true,
+      "runAllScenarios": true,
+      "runAllAlternatives": true,
+      "runAllAlternativeComparisons": true
+    },
+    {
+      "studyId": "north-desoto",
+      "studyName": "NorthDeSoto",
+      "networkSourcePath": "E:\\HEC-FDA_CaseStudies_New\\2.0.2\\NorthDeSoto",
+      "runAllStageDamage": true,
+      "runAllScenarios": true,
+      "runAllAlternatives": true,
+      "runAllAlternativeComparisons": true
+    },
+    {
+      "studyId": "river-des-peres",
+      "studyName": "RiverDesPeres",
+      "networkSourcePath": "E:\\HEC-FDA_CaseStudies_New\\2.0.2\\RiverDesPeres",
+      "runAllStageDamage": true,
+      "runAllScenarios": true,
+      "runAllAlternatives": true,
+      "runAllAlternativeComparisons": true
+    },
+    {
+      "studyId": "tarfuna",
+      "studyName": "Tarfuna",
+      "networkSourcePath": "E:\\HEC-FDA_CaseStudies_New\\2.0.2\\Tarfuna",
+      "runAllStageDamage": true,
+      "runAllScenarios": true,
+      "runAllAlternatives": true,
+      "runAllAlternativeComparisons": true
+    },
+    {
+      "studyId": "watertown",
+      "studyName": "Watertown",
+      "networkSourcePath": "E:\\HEC-FDA_CaseStudies_New\\2.0.2\\Watertown",
+      "runAllStageDamage": true,
+      "runAllScenarios": true,
+      "runAllAlternatives": true,
+      "runAllAlternativeComparisons": true
+    },
+    {
+      "studyId": "west-sacramento",
+      "studyName": "WestSacramento",
+      "networkSourcePath": "E:\\HEC-FDA_CaseStudies_New\\2.0.2\\WestSacramento",
+      "runAllStageDamage": true,
+      "runAllScenarios": true,
+      "runAllAlternatives": true,
+      "runAllAlternativeComparisons": true
+    }
+  ]
+}

@@ -71,6 +71,7 @@ public class ComputeRunner
             Stopwatch studyStopwatch = Stopwatch.StartNew();
             int studyErrors = 0;
             int studyCompleted = 0;
+            CsvReportFactory studyReportFactory = new();
 
             try
             {
@@ -94,23 +95,27 @@ public class ComputeRunner
                                 SaveStageDamageResults(compute.ElementName, sdResult.StageDamageFunctions);
                                 WriteStructureDetails(study.StudyId, compute.ElementName, sdResult);
                                 _csvReportFactory.AddStageDamageSummary(study.StudyId, compute.ElementName, sdResult.StageDamageFunctions);
+                                studyReportFactory.AddStageDamageSummary(study.StudyId, compute.ElementName, sdResult.StageDamageFunctions);
                                 break;
 
                             case "scenario":
                                 ScenarioResults scenarioResults = ScenarioRunner.RunScenario(compute.ElementName, _cts.Token);
                                 IASElement scenarioElement = SaveScenarioResults(compute.ElementName, scenarioResults);
                                 _csvReportFactory.AddScenarioResults(study.StudyId, scenarioElement);
+                                studyReportFactory.AddScenarioResults(study.StudyId, scenarioElement);
                                 break;
 
                             case "alternative":
                                 AlternativeResults altResults = AlternativeRunner.RunAlternative(compute.ElementName, _cts.Token);
                                 AlternativeElement altElement = SaveAlternativeResults(compute.ElementName, altResults);
                                 _csvReportFactory.AddAlternativeResults(study.StudyId, altElement);
+                                studyReportFactory.AddAlternativeResults(study.StudyId, altElement);
                                 break;
 
                             case "alternativecomparison":
                                 (AlternativeComparisonReportResults compResults, List<(int altId, string altName)> withProjAlts) = RunAlternativeComparisonWithMetadata(compute.ElementName, _cts.Token);
                                 _csvReportFactory.AddAlternativeComparisonResults(study.StudyId, compute.ElementName, compResults, withProjAlts);
+                                studyReportFactory.AddAlternativeComparisonResults(study.StudyId, compute.ElementName, compResults, withProjAlts);
                                 break;
 
                             default:
@@ -149,6 +154,13 @@ public class ComputeRunner
             studyTimings.Add((study.StudyId, studyStopwatch.Elapsed, studyCompleted, studyErrors));
             completed += studyCompleted;
             errors += studyErrors;
+
+            // Save per-study CSV report
+            string studyOutputDir = Path.Combine(_outputDir, study.StudyId);
+            Directory.CreateDirectory(studyOutputDir);
+            string studyCsvPath = Path.Combine(studyOutputDir, "results_report.csv");
+            studyReportFactory.SaveReport(studyCsvPath);
+
             Console.WriteLine($"  Completed in {FormatDuration(studyStopwatch.Elapsed)} ({studyCompleted} succeeded, {studyErrors} failed)");
             Console.WriteLine();
         }
