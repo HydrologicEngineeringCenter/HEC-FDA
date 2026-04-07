@@ -11,7 +11,9 @@
       "Bash(./HEC.FDA.TestingUtility.exe:*)",
       "Bash(./HEC.FDA.TestingUtility/bin/Debug/net9.0-windows/HEC.FDA.TestingUtility.exe:*)",
       "Bash(dir /s \"C:\\\\Programs\\\\Source\\\\HEC-FDA\\\\HEC.FDA.TestingUtility\\\\*.cs\")",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(dotnet run:*)",
+      "Bash(ls *.sln)"
     ],
     "deny": []
   }

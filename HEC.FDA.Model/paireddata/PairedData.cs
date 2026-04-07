@@ -196,45 +196,28 @@ namespace HEC.FDA.Model.paireddata
             {
                 throw new ArgumentException("X values must be in increasing order.");
             }
-            double[] x = new double[inputPairedData.Xvals.Count];
-            double[] ySum = new double[inputPairedData.Yvals.Count];
+
+            // Build a sorted union of both x-grids
+            SortedSet<double> unionXSet = new SortedSet<double>();
+            for (int i = 0; i < Xvals.Count; i++)
+            {
+                unionXSet.Add(Xvals[i]);
+            }
             for (int i = 0; i < inputPairedData.Xvals.Count; i++)
             {
-                int index = Array.BinarySearch(_xVals, inputPairedData.Xvals[i]);
-                double yValueFromSubject;
-                if (index >= 0)
-                {
-                    //value matched exactly
-                    yValueFromSubject = Yvals[index];
-
-                }
-                else
-                {
-                    index = ~index;
-
-                    //if the x value from input is greater than all x values in subject
-                    if (index == Xvals.Count)
-                    {
-                        yValueFromSubject = Yvals[^1];
-                    }
-
-                    //if the x value from the input is less than all x values in subject
-                    else if (index == 0)
-                    {
-                        yValueFromSubject = Yvals[0];
-                    }
-                    else //x value from the input is within range of x values in subject, but does not match exactly
-                    { //Interpolate Y=mx+b
-                        double slope = (Yvals[index] - Yvals[index - 1]) / (Xvals[index] - Xvals[index - 1]);
-                        double intercept = Yvals[index] - slope * Xvals[index];
-                        yValueFromSubject = intercept + slope * inputPairedData.Xvals[i];
-                    }
-                }
-                ySum[i] = inputPairedData.Yvals[i] + yValueFromSubject;
-                x[i] = inputPairedData.Xvals[i];
+                unionXSet.Add(inputPairedData.Xvals[i]);
             }
-            return new PairedData(x, ySum);
 
+            double[] unionX = new double[unionXSet.Count];
+            double[] unionY = new double[unionXSet.Count];
+            int idx = 0;
+            foreach (double x in unionXSet)
+            {
+                unionX[idx] = x;
+                unionY[idx] = f(x) + inputPairedData.f(x);
+                idx++;
+            }
+            return new PairedData(unionX, unionY);
         }
 
 

@@ -11,6 +11,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\HEC.FDA.Statistics\HEC.FDA.Statistics.csproj" />
+		<ProjectReference Include="..\HEC.FDA.Model\HEC.FDA.Model.csproj" />
 	</ItemGroup>
 
 </Project>
