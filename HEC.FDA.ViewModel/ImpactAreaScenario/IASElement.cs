@@ -1,4 +1,5 @@
 ﻿using HEC.FDA.Model.metrics;
+using HEC.FDA.Model.paireddata;
 using HEC.FDA.ViewModel.Compute;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.ImpactArea;
@@ -201,6 +202,16 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario
                         SpecificIASResultVM result = new(impactAreaName, impactAreaID, Results, damCats);
                         results.Add(result);
                     }
+                }
+            }
+
+            // Add accumulated "Total" F-N curve when multiple IAs have life loss data
+            if (results.Count > 1)
+            {
+                UncertainPairedData accumulatedFnData = Results.GetAccumulatedLifeLossFnCurveData();
+                if (accumulatedFnData != null)
+                {
+                    results.Add(new SpecificIASResultVM(SpecificIASResultVM.TOTAL, accumulatedFnData));
                 }
             }
             return results;
