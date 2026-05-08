@@ -644,25 +644,25 @@ namespace HEC.FDA.Model.compute
         //this method assumes that the levee fragility function spans the entire probability domain 
         public void ComputeLeveePerformance(PairedData frequency_stage, PairedData levee_curve_sample, int thisChunkIteration)
         {
-            PairedData levee_frequency_stage = levee_curve_sample.compose(frequency_stage);
+            PairedData anep_failProb = levee_curve_sample.compose(frequency_stage); //verify
             double aep = 0;
             //extrapolate below
-            if (levee_frequency_stage.Xvals[0] != 0)
+            if (anep_failProb.Xvals[0] != 0)
             {
-                double initialProbOfStageInRange = levee_frequency_stage.Xvals[0] - 0;
-                double initialProbFailure = (levee_frequency_stage.Yvals[0] + 0) / 2;
+                double initialProbOfStageInRange = anep_failProb.Xvals[0] - 0; //AEPs. X values. 
+                double initialProbFailure = (anep_failProb.Yvals[0] + 0) / 2;
                 aep += initialProbOfStageInRange * initialProbFailure;
             }
             //within function range
-            for (int i = 1; i < levee_frequency_stage.Xvals.Count; i++)
+            for (int i = 1; i < anep_failProb.Xvals.Count; i++)
             {
-                double probabilityOfStageInRange = levee_frequency_stage.Xvals[i] - levee_frequency_stage.Xvals[i - 1];
-                double averageProbFailure = (levee_frequency_stage.Yvals[i] + levee_frequency_stage.Yvals[i - 1]) / 2;
+                double probabilityOfStageInRange = anep_failProb.Xvals[i] - anep_failProb.Xvals[i - 1];
+                double averageProbFailure = (anep_failProb.Yvals[i] + anep_failProb.Yvals[i - 1]) / 2;
                 aep += probabilityOfStageInRange * averageProbFailure;
             }
             //extrapolate above
-            double finalProbOfStageInRange = 1 - levee_frequency_stage.Xvals[^1];
-            double finalAvgProbFailure = levee_frequency_stage.Yvals[^1];
+            double finalProbOfStageInRange = 1 - anep_failProb.Xvals[^1];
+            double finalAvgProbFailure = anep_failProb.Yvals[^1];
             aep += finalProbOfStageInRange * finalAvgProbFailure;
             foreach (var thresholdEntry in _ImpactAreaScenarioResults.PerformanceByThresholds.ListOfThresholds)
             {
