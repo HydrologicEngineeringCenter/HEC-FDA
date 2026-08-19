@@ -117,7 +117,7 @@
           Visibility="{Binding LifeLossRows, Converter={StaticResource CollectionToVisibilityConverter}}">
           <StackPanel>
             <TextBlock
-              Text="Average Annual Life Loss Distribution Summary"
+              Text="Expected Annual Life Loss Distribution Summary"
               HorizontalAlignment="Center"
               Margin="5" />
             <twp:FdaDataGrid

@@ -49,9 +49,9 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
             EqadLabel = "Equivalent Annual Damage Distribution (EqAD) Reduced by Damage and Asset Category";
 
             AggBaseYearLabel = "Base Year Expected Annual Damage Reduced Distribution " + years[0];
-            AggBaseYearAALLLabel = "Base Year Average Annual Life Loss Reduced Distribution " + years[0];
+            AggBaseYearAALLLabel = "Base Year Expected Annual Life Loss Reduced Distribution " + years[0];
             AggFutureYearLabel = "Future Year Expected Annual Damage Reduced Distribution " + years[1];
-            AggFutureYearAALLLabel = "Future Year Average Annual Life Loss Reduced Distribution " + years[1];
+            AggFutureYearAALLLabel = "Future Year Expected Annual Life Loss Reduced Distribution " + years[1];
             AggEqadLabel = "Equivalent Annual Damage (EqAD) Reduced Distribution";
         }
 
