@@ -128,7 +128,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 _SimulationBuilder.WithStageDamages(GetStageDamagesAsPairedData(_FailureStageDamageElem));
             }
 
-            if (_HasNonFailureStageDamage)
+            //Non-failure relationships are optional even when a lateral structure is present.
+            //If none was selected the element is null, so skip it rather than modeling an empty
+            //relationship or dereferencing null in the compute.
+            if (_HasNonFailureStageDamage && _NonFailureStageDamageElem != null)
             {
                 _SimulationBuilder.WithNonFailureStageDamage(GetStageDamagesAsPairedData(_NonFailureStageDamageElem));
             }
@@ -137,7 +140,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             {
                 _SimulationBuilder.WithStageLifeLoss(_FailureStageLifeLossElement.StageLifeLossRelationshipsAsUPD(_ImpactAreaID));
             }
-            if (_HasNonFailureStageLifeLoss)
+            if (_HasNonFailureStageLifeLoss && _NonFailureStageLifeLossElement != null)
             {
                 _SimulationBuilder.WithNonFailureStageLifeLoss(_NonFailureStageLifeLossElement.StageLifeLossRelationshipsAsUPD(_ImpactAreaID));
             }

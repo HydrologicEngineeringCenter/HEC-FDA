@@ -25,9 +25,9 @@
       <RowDefinition
         Height="Auto" />
       <RowDefinition
-        Height="60" />
+        Height="Auto" />
       <RowDefinition
-        Height="60" />
+        Height="Auto" />
       <RowDefinition
         Height="*" />
       <RowDefinition
@@ -102,7 +102,7 @@
       Margin="0,5,5,0">
       <Grid.ColumnDefinitions>
         <ColumnDefinition
-          Width="260" />
+          Width="110" />
         <ColumnDefinition
           Width="Auto" />
         <ColumnDefinition
@@ -120,17 +120,9 @@
         VerticalAlignment="Center">
 
         <CheckBox
-          Margin="0,0,0,5"
           IsChecked="{Binding HasFailureStageDamage}">
           <TextBlock
-            Text="Failure Stage-Damage Modeled"
-            TextWrapping="Wrap" />
-        </CheckBox>
-
-        <CheckBox
-          IsChecked="{Binding HasNonFailureStageDamage}">
-          <TextBlock
-            Text="Non-Failure Stage-Damage Modeled"
+            Text="Economics"
             TextWrapping="Wrap" />
         </CheckBox>
 
@@ -140,11 +132,10 @@
         Grid.Column="1"
         VerticalAlignment="Center"
         HorizontalAlignment="Right"
-        Margin="0,0,15,0">
-        Failure 
-        <LineBreak />
-        Stage-Damage
-      </TextBlock>
+        TextWrapping="Wrap"
+        TextAlignment="Left"
+        Text="{Binding FailureStageDamageLabel}"
+        Margin="0,0,15,0" />
 
       <Label
         Grid.Column="1"
@@ -167,27 +158,22 @@
         Grid.Column="3"
         VerticalAlignment="Center"
         HorizontalAlignment="Right"
-        Margin="0,0,15,0">
+        Margin="0,0,15,0"
+        Visibility="{Binding ShowNonFailureCombos, Converter={StaticResource BoolToVisibilityConverter}}">
         Non-Failure
         <LineBreak />
         Stage-Damage
       </TextBlock>
 
-      <Label
-        Grid.Column="3"
-        VerticalAlignment="Center"
-        HorizontalAlignment="Right"
-        Content="*"
-        Foreground="Red"
-        Visibility="{Binding HasNonFailureStageDamage, Converter={StaticResource BoolToVisibilityConverter}}" />
       <ComboBox
         Grid.Column="4"
         Height="26"
         HorizontalAlignment="Stretch"
-        IsEnabled="{Binding HasNonFailureStageDamage}"
+        IsEnabled="{Binding HasFailureStageDamage}"
         ItemsSource="{Binding StageDamageElements}"
         DisplayMemberPath="Name"
-        SelectedItem="{Binding SelectedNonFailureStageDamageElement}" />
+        SelectedItem="{Binding SelectedNonFailureStageDamageElement}"
+        Visibility="{Binding ShowNonFailureCombos, Converter={StaticResource BoolToVisibilityConverter}}" />
 
     </Grid>
 
@@ -196,7 +182,7 @@
       Margin="0,5,5,0">
       <Grid.ColumnDefinitions>
         <ColumnDefinition
-          Width="260" />
+          Width="110" />
         <ColumnDefinition
           Width="Auto" />
         <ColumnDefinition
@@ -214,17 +200,9 @@
         VerticalAlignment="Center">
 
         <CheckBox
-          Margin="0,0,0,5"
           IsChecked="{Binding HasFailureStageLifeLoss}">
           <TextBlock
-            Text="Failure Stage-Life Loss Modeled"
-            TextWrapping="Wrap" />
-        </CheckBox>
-
-        <CheckBox
-          IsChecked="{Binding HasNonFailureStageLifeLoss}">
-          <TextBlock
-            Text="Non-Failure Stage-Life Loss Modeled"
+            Text="Life Loss"
             TextWrapping="Wrap" />
         </CheckBox>
 
@@ -234,11 +212,10 @@
         Grid.Column="1"
         VerticalAlignment="Center"
         HorizontalAlignment="Right"
-        Margin="0,0,15,0">
-        Failure
-        <LineBreak />
-        Stage-Life Loss
-      </TextBlock>
+        TextWrapping="Wrap"
+        TextAlignment="Right"
+        Text="{Binding FailureStageLifeLossLabel}"
+        Margin="0,0,15,0" />
 
       <Label
         Grid.Column="1"
@@ -261,27 +238,22 @@
         Grid.Column="3"
         VerticalAlignment="Center"
         HorizontalAlignment="Right"
-        Margin="0,0,15,0">
+        Margin="0,0,15,0"
+        Visibility="{Binding ShowNonFailureCombos, Converter={StaticResource BoolToVisibilityConverter}}">
             Non-Failure
             <LineBreak />
             Stage-Life Loss
       </TextBlock>
 
-      <Label
-        Grid.Column="3"
-        VerticalAlignment="Center"
-        HorizontalAlignment="Right"
-        Content="*"
-        Foreground="Red"
-        Visibility="{Binding HasNonFailureStageLifeLoss, Converter={StaticResource BoolToVisibilityConverter}}" />
       <ComboBox
         Grid.Column="4"
         Height="26"
         HorizontalAlignment="Stretch"
-        IsEnabled="{Binding HasNonFailureStageLifeLoss}"
+        IsEnabled="{Binding HasFailureStageLifeLoss}"
         ItemsSource="{Binding StageLifeLossElements}"
         DisplayMemberPath="Name"
-        SelectedItem="{Binding SelectedNonFailureStageLifeLossElement}" />
+        SelectedItem="{Binding SelectedNonFailureStageLifeLossElement}"
+        Visibility="{Binding ShowNonFailureCombos, Converter={StaticResource BoolToVisibilityConverter}}" />
 
     </Grid>
 

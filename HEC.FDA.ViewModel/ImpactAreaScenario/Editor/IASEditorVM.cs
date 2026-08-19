@@ -28,6 +28,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
         private bool _HasNonFailureStageDamage;
         private bool _HasFailureStageLifeLoss;
         private bool _HasNonFailureStageLifeLoss;
+        private bool _ShowNonFailureCombos;
         private ScenarioResults _Results;
         #endregion
 
@@ -76,6 +77,21 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 NotifyPropertyChanged();
             }
         }
+
+        public bool ShowNonFailureCombos
+        {
+            get { return _ShowNonFailureCombos; }
+            set
+            {
+                _ShowNonFailureCombos = value;
+                NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(FailureStageDamageLabel));
+                NotifyPropertyChanged(nameof(FailureStageLifeLossLabel));
+            }
+        }
+
+        public string FailureStageDamageLabel => ShowNonFailureCombos ? "Fail Stage-Damage" : "Stage-Damage";
+        public string FailureStageLifeLossLabel => ShowNonFailureCombos ? "Fail Stage-Life Loss" : "Stage-Life Loss";
 
         public List<SpecificIASEditorVM> ImpactAreaTabs { get; } = new List<SpecificIASEditorVM>();
         public ChildElementComboItem SelectedFailureStageDamageElement
@@ -208,10 +224,48 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                     ImpactAreas.Add(row);
                     SpecificIASEditorVM specificIASEditorVM = new SpecificIASEditorVM(row, GetSelectedStageDamage);
                     specificIASEditorVM.RequestNavigation += Navigate;
+                    specificIASEditorVM.PropertyChanged += SpecificIAS_PropertyChanged;
                     ImpactAreaTabs.Add(specificIASEditorVM);
                     RegisterChildViewModel(specificIASEditorVM);
                 }
             }
+            UpdateShowNonFailureCombos();
+        }
+
+        private void SpecificIAS_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(SpecificIASEditorVM.SelectedLeveeFeatureElement))
+            {
+                UpdateShowNonFailureCombos();
+            }
+        }
+
+        /// <summary>
+        /// Non-failure relationships are optional. A domain "has" a non-failure relationship only when a
+        /// non-failure curve is actually selected - never merely because the combo is visible. This keeps
+        /// the compute from attempting (or being blocked on) a non-failure relationship that isn't there.
+        /// </summary>
+        private void RecomputeNonFailureFlags()
+        {
+            HasNonFailureStageDamage = SelectedNonFailureStageDamageElement != null && SelectedNonFailureStageDamageElement.ChildElement != null;
+            HasNonFailureStageLifeLoss = SelectedNonFailureStageLifeLossElement != null && SelectedNonFailureStageLifeLossElement.ChildElement != null;
+        }
+
+        /// <summary>
+        /// The non-failure consequence combos only apply when a lateral structure (levee) can breach.
+        /// Show them when any impact area tab has a lateral structure selected; otherwise clear the
+        /// non-failure selections so no stale value is saved, and hide.
+        /// </summary>
+        private void UpdateShowNonFailureCombos()
+        {
+            bool anyLevee = ImpactAreaTabs.Any(t => t.HasLeveeSelected());
+            ShowNonFailureCombos = anyLevee;
+            if (!anyLevee)
+            {
+                SelectedNonFailureStageDamageElement = StageDamageElements[0];
+                SelectedNonFailureStageLifeLossElement = StageLifeLossElements[0];
+            }
+            RecomputeNonFailureFlags();
         }
 
         /// <summary>
@@ -258,6 +312,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 {
                     SpecificIASEditorVM specificIASEditorVM = new SpecificIASEditorVM(foundElement, row, GetSelectedStageDamage);
                     specificIASEditorVM.RequestNavigation += Navigate;
+                    specificIASEditorVM.PropertyChanged += SpecificIAS_PropertyChanged;
                     ImpactAreaTabs.Add(specificIASEditorVM);
                     RegisterChildViewModel(specificIASEditorVM);
                 }
@@ -265,6 +320,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
                 {
                     SpecificIASEditorVM specificIASEditorVM = new SpecificIASEditorVM(row, GetSelectedStageDamage);
                     specificIASEditorVM.RequestNavigation += Navigate;
+                    specificIASEditorVM.PropertyChanged += SpecificIAS_PropertyChanged;
                     ImpactAreaTabs.Add(specificIASEditorVM);
                     RegisterChildViewModel(specificIASEditorVM);
                 }
@@ -277,12 +333,10 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             else
                 HasFailureStageDamage = true; // the selected element is not null. this allows for backward compatibility for this checkbox
 
-            //select the correct non-failure stage damage curve. 
+            //select the correct non-failure stage damage curve.
             SelectedNonFailureStageDamageElement = StageDamageElements.FirstOrDefault(stage => stage.ChildElement != null && stage.ChildElement.ID == elem.NonFailureStageDamageID);
             if (SelectedNonFailureStageDamageElement == null && StageDamageElements.Count > 0)
                 SelectedNonFailureStageDamageElement = StageDamageElements[0];
-            else
-                HasNonFailureStageDamage = true;
 
             SelectedFailureStageLifeLossElement = StageLifeLossElements.FirstOrDefault(stage => stage.ChildElement != null && stage.ChildElement.ID == elem.FailureStageLifeLossID);
             if (SelectedFailureStageLifeLossElement == null && StageLifeLossElements.Count > 0)
@@ -293,13 +347,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             SelectedNonFailureStageLifeLossElement = StageLifeLossElements.FirstOrDefault(stage => stage.ChildElement != null && stage.ChildElement.ID == elem.NonFailureStageLifeLossID);
             if (SelectedNonFailureStageLifeLossElement == null && StageLifeLossElements.Count > 0)
                 SelectedNonFailureStageLifeLossElement = StageLifeLossElements[0];
-            else
-                HasNonFailureStageLifeLoss = true;
 
-
-            //setting this one after the specific ias editors have been created is important
-            //because it updates those editors as well. 
-            HasNonFailureStageDamage = elem.HasNonFailureStageDamage;
+            //The non-failure combos are only shown when an impact area tab has a lateral structure.
+            //This also clears any legacy non-failure selection that has no backing lateral structure,
+            //and derives HasNonFailureStageDamage / HasNonFailureStageLifeLoss.
+            UpdateShowNonFailureCombos();
         }
 
         private void NotifyUserOfImpactAreasInError()
@@ -443,6 +495,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private void OnNonFailureStageDamageSelectionChanged()
         {
+            RecomputeNonFailureFlags();
             foreach (SpecificIASEditorVM specificIAS in ImpactAreaTabs)
             {
                 specificIAS.SelectedNonFailureStageDamage = _SelectedNonFailureStageDamageElement;
@@ -461,6 +514,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private void OnNonFailureStageLifeLossSelectionChanged()
         {
+            RecomputeNonFailureFlags();
             foreach (SpecificIASEditorVM specificIAS in ImpactAreaTabs)
             {
                 specificIAS.SelectedNonFailureStageLifeLoss = SelectedNonFailureStageLifeLossElement;
@@ -470,11 +524,12 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private void OnHasFailureStageDamageChanged(bool newVal)
         {
+            //The single Economics checkbox governs both the failure and non-failure stage-damage combos.
+            //Unchecking it clears both selections; clearing the non-failure selection drives its flag false.
             if (!newVal)
             {
                 SelectedFailureStageDamageElement = StageDamageElements[0];
-                if (HasNonFailureStageDamage)
-                    HasNonFailureStageDamage = false;
+                SelectedNonFailureStageDamageElement = StageDamageElements[0];
             }
 
             foreach (SpecificIASEditorVM specificIAS in ImpactAreaTabs)
@@ -486,17 +541,11 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private void OnHasNonFailureStageDamageChanged(bool newValue)
         {
-            if (newValue && !HasFailureStageDamage)
-                HasFailureStageDamage = true;
-
-            if (!newValue)
-                SelectedNonFailureStageDamageElement = StageDamageElements[0];
-
+            //Flag is derived from the selection (see RecomputeNonFailureFlags); do not clear the selection
+            //here or it would feed back into the selection handler and loop. Just propagate to the tabs so
+            //their exterior-interior option updates.
             foreach (SpecificIASEditorVM specificIAS in ImpactAreaTabs)
             {
-                //pass the boolean value to the tab vm's so that they can flip
-                //their boolean and notify property changed so that the exterior interior
-                //option updates.
                 specificIAS.HasNonFailureStageDamage = HasNonFailureStageDamage;
                 specificIAS.UpdateSufficientToCompute();
             }
@@ -507,8 +556,7 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
             if (!newVal)
             {
                 SelectedFailureStageLifeLossElement = StageLifeLossElements[0];
-                if (HasNonFailureStageLifeLoss)
-                    HasNonFailureStageLifeLoss = false;
+                SelectedNonFailureStageLifeLossElement = StageLifeLossElements[0];
             }
 
             foreach (SpecificIASEditorVM specificIAS in ImpactAreaTabs)
@@ -520,12 +568,6 @@ namespace HEC.FDA.ViewModel.ImpactAreaScenario.Editor
 
         private void OnHasNonFailureStageLifeLossChanged(bool newVal)
         {
-            if (newVal && !HasFailureStageLifeLoss)
-                HasFailureStageLifeLoss = true;
-
-            if (!newVal)
-                SelectedNonFailureStageLifeLossElement = StageLifeLossElements[0];
-
             foreach (SpecificIASEditorVM specificIAS in ImpactAreaTabs)
             {
                 specificIAS.HasNonFailureStageLifeLoss = HasNonFailureStageLifeLoss;
