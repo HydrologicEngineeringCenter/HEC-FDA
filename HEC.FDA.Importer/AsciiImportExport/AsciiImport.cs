@@ -861,8 +861,7 @@ namespace Importer
             //Determines the parameters associated with the structure (first floor, S, C, O, A)
             for (int jfl = _IStartOcctype; jfl < _NumFieldsInputString; jfl++)
             {
-                if (_InputStringParsed[jfl].Length < 1)
-                    continue;
+                if (string.IsNullOrWhiteSpace(_InputStringParsed[jfl])) continue;
 
                 int iKeyStructData = jfl - _IStartOcctype;
                 string fieldCap = _InputStringCapParsed[jfl];
