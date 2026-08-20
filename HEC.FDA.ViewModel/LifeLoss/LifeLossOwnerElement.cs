@@ -1,8 +1,10 @@
 ﻿using HEC.FDA.ViewModel.Editors;
+using HEC.FDA.ViewModel.ImpactArea;
 using HEC.FDA.ViewModel.Saving;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Windows;
 
 namespace HEC.FDA.ViewModel.LifeLoss;
 public class LifeLossOwnerElement : ParentElement
@@ -43,6 +45,14 @@ public class LifeLossOwnerElement : ParentElement
 
     private void AddNew(object arg1, EventArgs arg2)
     {
+        //An impact area set is required
+        List<ImpactAreaElement> impactAreaSet = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
+        if (impactAreaSet.Count == 0)
+        {
+            MessageBox.Show("An impact area set is required to import stage-life loss functions.", "Impact Area Set Required", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
         EditorActionManager actionManager = new EditorActionManager().WithSiblingRules(this);
         LifeSimImporterVM vm = new(actionManager);
         DynamicTabVM tab = new("Import LifeSim", vm, "Import LifeSim");
