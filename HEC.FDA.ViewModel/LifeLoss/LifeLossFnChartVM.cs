@@ -72,7 +72,7 @@ public class LifeLossFnChartVM : BaseViewModel
         var xAxis = new LogarithmicAxis
         {
             Position = AxisPosition.Bottom,
-            Title = "Average Annual Life Loss",
+            Title = "Expected Annual Life Loss",
             Base = 10,
             MajorGridlineStyle = LineStyle.Solid,
             MajorGridlineColor = OxyColor.FromRgb(200, 200, 200),

@@ -12,7 +12,7 @@ namespace HEC.FDA.ViewModel.AlternativeComparisonReport.Results
         private const string DAMAGE_BY_IMPACT_AREA = "Damage by Impact Area";
         private const string DAMAGE_BY_DAMAGE_CATEGORY = "Damage by Damage Category";
         private const string EAD = "EAD";
-        private const string AALL = "AALL";
+        private const string AALL = "EALL";
         private const string EqAD = "EqAD";
 
         private IAlternativeResult _selectedResult;

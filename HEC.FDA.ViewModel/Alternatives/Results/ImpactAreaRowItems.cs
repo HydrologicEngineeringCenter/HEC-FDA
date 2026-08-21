@@ -76,7 +76,7 @@ public class LifeLossByImpactAreaRowItem : IConsequenceByImpactAreaRowItem
 
     public double Value { get; }
 
-    [DisplayAsColumn("Mean AALL")]
+    [DisplayAsColumn("Mean EALL")]
     public string FormattedValue => Value.ToString("N2");
 
     [DisplayAsColumn("Risk Type")]
