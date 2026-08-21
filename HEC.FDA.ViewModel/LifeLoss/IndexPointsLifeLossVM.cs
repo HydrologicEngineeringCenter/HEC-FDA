@@ -492,6 +492,14 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
             return;
         }
 
+        List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
+        if (impactAreaElements.Count == 0)
+        {
+            string msg = "An impact area set is required to compute stage-life loss functions. Please import an impact area set and try again.";
+            System.Windows.MessageBox.Show(msg, "Impact Area Set Required", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+            return;
+        }
+
         string hydraulicsFolder = Path.Combine(Connection.Instance.HydraulicsDirectory, SelectedHydraulics.Name);
         LifeSimSimulation currentSimulation = new(SelectedSimulation.Name, hydraulicsFolder, SelectedHydraulics.DataSet.DataSource);
         foreach (CheckableItem a in LifeSimAlternatives)
@@ -501,7 +509,6 @@ public partial class IndexPointsLifeLossVM : BaseViewModel
         string indexPointsFile = GetIndexPointsFile();
         string impactAreasFile = GetImpactAreaFile();
         LifeLossFunctions.Clear();
-        List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
         string uniqueImpactAreaHeader = impactAreaElements[0].UniqueNameColumnHeader;
         Dictionary<string, int> IANameToID = impactAreaElements[0].GetNameToIDPairs();
         LifeLossFunctionGenerator generator = new(SelectedPath, currentSimulation, IANameToID);
