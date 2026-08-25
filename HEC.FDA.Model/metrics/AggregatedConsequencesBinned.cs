@@ -46,7 +46,7 @@ public class AggregatedConsequencesBinned
         _TempResults = new double[ConvergenceCriteria.IterationCount];
         _TempCounts = new double[ConvergenceCriteria.IterationCount];
     }
-    public AggregatedConsequencesBinned(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID, ConsequenceType consequenceType, RiskType riskType = RiskType.Fail)
+    public AggregatedConsequencesBinned(string damageCategory, string assetCategory, ConvergenceCriteria convergenceCriteria, int impactAreaID, ConsequenceType consequenceType, RiskType riskType)
     {
         DamageCategory = damageCategory;
         AssetCategory = assetCategory;
@@ -61,7 +61,7 @@ public class AggregatedConsequencesBinned
 
     }
 
-    public AggregatedConsequencesBinned(string damageCategory, string assetCategory, IHistogram histogram, int impactAreaID, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Fail)
+    public AggregatedConsequencesBinned(string damageCategory, string assetCategory, IHistogram histogram, int impactAreaID, ConsequenceType consequenceType, RiskType riskType)
     {
         DamageCategory = damageCategory;
         AssetCategory = assetCategory;
@@ -76,7 +76,7 @@ public class AggregatedConsequencesBinned
 
     }
 
-    public AggregatedConsequencesBinned(string damageCategory, string assetCategory, int impactAreaID, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Fail)
+    public AggregatedConsequencesBinned(string damageCategory, string assetCategory, int impactAreaID, ConsequenceType consequenceType, RiskType riskType)
     {
         DamageCategory = damageCategory;
         AssetCategory = assetCategory;

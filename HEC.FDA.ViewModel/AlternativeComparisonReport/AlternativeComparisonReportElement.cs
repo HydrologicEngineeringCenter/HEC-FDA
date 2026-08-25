@@ -1,4 +1,5 @@
-﻿using HEC.FDA.Model.metrics;
+﻿using HEC.FDA.Model.alternatives;
+using HEC.FDA.Model.metrics;
 using HEC.FDA.ViewModel.AlternativeComparisonReport.Results;
 using HEC.FDA.ViewModel.Alternatives;
 using HEC.FDA.ViewModel.Alternatives.Results;
@@ -136,15 +137,43 @@ public class AlternativeComparisonReportElement : ChildElement
             Navigate(tab, false, false);
 
             var props = StudyCache.GetStudyPropertiesElement();
-            var woAltResult = await AlternativeComputer.RunAnnualizationCompute(withoutAlt, props);
+            AlternativeResults woAltResult;
             AlternativeResults[] withProjAltsResults = new AlternativeResults[withProjAlts.Count];
-            for (int i = 0; i < withProjAlts.Count; i++)
+
+            //Every alternative here is required for the report, so the first failure ends it - but the message
+            //has to name the alternative that failed, or the user has no idea which one to go fix.
+            try
             {
-                withProjAltsResults[i] = await AlternativeComputer.RunAnnualizationCompute(withProjAlts[i], props);
+                woAltResult = await ComputeOrThrow(withoutAlt, props);
+                for (int i = 0; i < withProjAlts.Count; i++)
+                {
+                    withProjAltsResults[i] = await ComputeOrThrow(withProjAlts[i], props);
+                }
+            }
+            catch (InvalidAnalysisYearsException ex)
+            {
+                MessageBox.Show(ex.Message, "Cannot Compute Alternative Comparison Report", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return;
             }
 
             _Results = await Task.Run(() => Model.alternativeComparisonReport.AlternativeComparisonReport.ComputeAlternativeComparisonReport(woAltResult, withProjAltsResults, batchJob.Reporter));
             ViewResults();
+        }
+    }
+
+    /// <summary>
+    /// Runs one alternative's annualization compute, rethrowing an invalid-years failure with the
+    /// alternative's name attached so the report's error message identifies which one to correct.
+    /// </summary>
+    private static async Task<AlternativeResults> ComputeOrThrow(AlternativeElement alternative, StudyPropertiesElement props)
+    {
+        try
+        {
+            return await AlternativeComputer.RunAnnualizationCompute(alternative, props);
+        }
+        catch (InvalidAnalysisYearsException ex)
+        {
+            throw new InvalidAnalysisYearsException($"{alternative.Name}:{Environment.NewLine}{ex.Message}");
         }
     }
 

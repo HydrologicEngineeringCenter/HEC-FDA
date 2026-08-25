@@ -27,13 +27,13 @@ namespace HEC.FDA.ModelTest.unittests
             DynamicHistogram histogram = FillHistogram(mean);
 
             //Impact Area 1
-            AggregatedConsequencesBinned residentialStructure_1 = new(residentialDamageCategory, structureAssetCategory, histogram, impactAreaID_1);
+            AggregatedConsequencesBinned residentialStructure_1 = new(residentialDamageCategory, structureAssetCategory, histogram, impactAreaID_1, ConsequenceType.Damage, RiskType.Fail);
             consequenceDistributionResults.AddExistingConsequenceResultObject(residentialStructure_1);
-            AggregatedConsequencesBinned residentialContent_1 = new(residentialDamageCategory, contentAssetCategory, histogram, impactAreaID_1);
+            AggregatedConsequencesBinned residentialContent_1 = new(residentialDamageCategory, contentAssetCategory, histogram, impactAreaID_1, ConsequenceType.Damage, RiskType.Fail);
             consequenceDistributionResults.AddExistingConsequenceResultObject(residentialContent_1);
-            AggregatedConsequencesBinned commercialStructure_1 = new(commercialDamageCategory, structureAssetCategory, histogram, impactAreaID_1);
+            AggregatedConsequencesBinned commercialStructure_1 = new(commercialDamageCategory, structureAssetCategory, histogram, impactAreaID_1, ConsequenceType.Damage, RiskType.Fail);
             consequenceDistributionResults.AddExistingConsequenceResultObject(commercialStructure_1);
-            AggregatedConsequencesBinned commercialContent_1 = new(commercialDamageCategory, contentAssetCategory, histogram, impactAreaID_1);
+            AggregatedConsequencesBinned commercialContent_1 = new(commercialDamageCategory, contentAssetCategory, histogram, impactAreaID_1, ConsequenceType.Damage, RiskType.Fail);
             consequenceDistributionResults.AddExistingConsequenceResultObject(commercialContent_1);
 
 
@@ -91,12 +91,43 @@ namespace HEC.FDA.ModelTest.unittests
             StudyAreaConsequencesBinned expected = new StudyAreaConsequencesBinned(0);
             List<AggregatedConsequencesBinned> resultList = new();
             List<double> data = new() { 0, 1, 2, 3, 4 };
-            expected.AddExistingConsequenceResultObject(new AggregatedConsequencesBinned("DamCat", "AssetCat", new DynamicHistogram(data, new ConvergenceCriteria(69, 8008)), 0));
+            expected.AddExistingConsequenceResultObject(new AggregatedConsequencesBinned("DamCat", "AssetCat", new DynamicHistogram(data, new ConvergenceCriteria(69, 8008)), 0, ConsequenceType.Damage, RiskType.Fail));
             XElement xElement = expected.WriteToXML();
 
             StudyAreaConsequencesBinned actual = StudyAreaConsequencesBinned.ReadFromXML(xElement);
 
             Assert.True(actual.Equals(expected));
+        }
+
+        /// <summary>
+        /// StudyAreaConsequencesBinned used to default riskType to Fail while its StudyAreaConsequencesByQuantile
+        /// sibling defaulted to Total, so an omitted argument silently dropped every Non_Fail row - the same
+        /// class of understatement the risk type lookups were fixed for. Both now default to Total.
+        /// </summary>
+        [Fact]
+        public void SampleMeanDamageIncludesNonFailureConsequencesByDefault()
+        {
+            //Arrange
+            const string damageCategory = "Residential";
+            const string assetCategory = "Structure";
+            const int impactAreaID = 1;
+            DynamicHistogram histogram = FillHistogram(2);
+
+            StudyAreaConsequencesBinned results = new(false);
+            results.AddExistingConsequenceResultObject(
+                new AggregatedConsequencesBinned(damageCategory, assetCategory, histogram, impactAreaID, ConsequenceType.Damage, RiskType.Fail));
+            results.AddExistingConsequenceResultObject(
+                new AggregatedConsequencesBinned(damageCategory, assetCategory, histogram, impactAreaID, ConsequenceType.Damage, RiskType.Non_Fail));
+
+            //Act
+            double fail = results.SampleMeanDamage(damageCategory, assetCategory, impactAreaID, ConsequenceType.Damage, RiskType.Fail);
+            double nonFail = results.SampleMeanDamage(damageCategory, assetCategory, impactAreaID, ConsequenceType.Damage, RiskType.Non_Fail);
+            double defaulted = results.SampleMeanDamage(damageCategory, assetCategory, impactAreaID);
+
+            //Assert
+            Assert.True(fail > 0);
+            Assert.True(nonFail > 0);
+            Assert.Equal(fail + nonFail, defaulted, 5);
         }
     }
 }

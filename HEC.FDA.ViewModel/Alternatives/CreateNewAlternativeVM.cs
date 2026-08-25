@@ -1,12 +1,15 @@
 using HEC.CS.Collections;
+using HEC.FDA.Model.alternatives;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using Utility.Logging;
 
 namespace HEC.FDA.ViewModel.Alternatives
 {
@@ -71,6 +74,28 @@ namespace HEC.FDA.ViewModel.Alternatives
         {
             get { return _IsFutureYearEnabled; }
             set { _IsFutureYearEnabled = value; NotifyPropertyChanged(); }
+        }
+
+        /// <summary>
+        /// Tells the user the period of analysis constraint up front, rather than only after a failed save.
+        /// Read once when the editor opens; study properties cannot be edited while this dialog is open.
+        /// </summary>
+        public string YearRangeHint
+        {
+            get
+            {
+                StudyPropertiesElement props = StudyCache.GetStudyPropertiesElement();
+                if (props == null)
+                {
+                    return "";
+                }
+                if (props.PeriodOfAnalysis < 2)
+                {
+                    return "*The study's period of analysis is too short to compute an alternative. Set it to at least 2 years in Study Properties";
+                }
+                //the span is inclusive of both years, so the allowed gap is one less than the period
+                return $"*The future year must be no more than {props.PeriodOfAnalysis - 1} years after the base year (the study's period of analysis is {props.PeriodOfAnalysis} years)";
+            }
         }
 
 
@@ -171,8 +196,30 @@ namespace HEC.FDA.ViewModel.Alternatives
                     result.AddErrorMessage("The base year must be before the future year.");
                 }
             }
+
+            //only worth checking the span once the years themselves are sane, otherwise the user gets
+            //two overlapping messages for the same mistake. Study properties are absent in contexts where
+            //there is no period of analysis to check against, and there is nothing to report there.
+            StudyPropertiesElement props = StudyCache.GetStudyPropertiesElement();
+            if (result.IsValid && BaseYear.HasValue && props != null)
+            {
+                //when there is no future scenario the compute derives the future year from the period of analysis
+                int futureYear = EffectiveFutureYear ?? (BaseYear.Value + props.PeriodOfAnalysis - 1);
+                OperationResult yearValidation = Alternative.TryValidateAnalysisYears(BaseYear.Value, futureYear, props.PeriodOfAnalysis);
+                if (!yearValidation)
+                {
+                    result.AddErrorMessage(yearValidation.GetConcatenatedMessages());
+                }
+            }
             return result;
         }
+
+        /// <summary>
+        /// The future year this alternative would actually be saved with. FutureYear can hold a year left over
+        /// from a future scenario that has since been deleted; Save() writes no future scenario in that case,
+        /// so validating the leftover year would reject an alternative that is in fact valid.
+        /// </summary>
+        private int? EffectiveFutureYear => SelectedFutureScenario?.Element != null ? FutureYear : null;
 
         private FdaValidationResult ValidateScenarioSelections()
         {

@@ -36,6 +36,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid Grid.Row="0" Margin="5">
                 <Grid.RowDefinitions>
@@ -69,6 +70,7 @@
                 <TextBox Grid.Column="3" Text="{Binding FutureYear, TargetNullValue=''}" IsEnabled="{Binding IsFutureYearEnabled}" />
                 <TextBlock Grid.Row="1" Grid.ColumnSpan="4" Text="*Future year is optional and not utilized for life loss only alternatives" FontSize="11" FontStyle="Italic" Foreground="Gray" Margin="5,2,0,0"/>
             </Grid>
+            <TextBlock Grid.Row="2" Text="{Binding YearRangeHint}" TextWrapping="Wrap" FontSize="11" FontStyle="Italic" Foreground="Gray" Margin="10,2,0,0"/>
         </Grid>
 
         <utils:SaveCloseControl Grid.Row="3" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5" />

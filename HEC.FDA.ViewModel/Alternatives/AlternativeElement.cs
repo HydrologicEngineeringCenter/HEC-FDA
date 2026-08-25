@@ -1,4 +1,5 @@
-﻿using HEC.FDA.Model.metrics;
+﻿using HEC.FDA.Model.alternatives;
+using HEC.FDA.Model.metrics;
 using HEC.FDA.ViewModel.Alternatives.Results;
 using HEC.FDA.ViewModel.Alternatives.Results.ResultObject;
 using HEC.FDA.ViewModel.Compute;
@@ -12,6 +13,7 @@ using System.Linq;
 using System.Windows;
 using System.Xml.Linq;
 using Utility;
+using Utility.Logging;
 using Visual.Observables;
 using static HEC.FDA.ViewModel.ImpactAreaScenario.Results.UncertaintyControlConfigs;
 using SynchronizationContext = Utility.SynchronizationContext;
@@ -161,6 +163,27 @@ namespace HEC.FDA.ViewModel.Alternatives
                 if (futureElem != null)
                     vr.AddErrorMessage(ValidateScenarioHasResults(futureElem).ErrorMessage);
             }
+
+            vr.AddErrorMessage(ValidateAnalysisYears().ErrorMessage);
+            return vr;
+        }
+
+        /// <summary>
+        /// The discounting routine cannot run when the analysis years fall outside the study's period of
+        /// analysis. Checking it here catches alternatives saved before the editor enforced it, and covers
+        /// the single, batch, and comparison report compute paths, which all gate on this method.
+        /// </summary>
+        private FdaValidationResult ValidateAnalysisYears()
+        {
+            FdaValidationResult vr = new();
+            StudyPropertiesElement props = StudyCache.GetStudyPropertiesElement();
+            if (props == null)
+                return vr;
+
+            (int baseYear, int futureYear) = AlternativeComputer.GetAnalysisYears(this, props);
+            OperationResult yearValidation = Alternative.TryValidateAnalysisYears(baseYear, futureYear, props.PeriodOfAnalysis);
+            if (!yearValidation)
+                vr.AddErrorMessage(yearValidation.GetConcatenatedMessages());
             return vr;
         }
 
@@ -233,8 +256,21 @@ namespace HEC.FDA.ViewModel.Alternatives
                 DynamicTabVM tab = new(header, vm, "ComputeLog" + Name);
                 Navigate(tab, false, false);
                 StudyPropertiesElement props = StudyCache.GetStudyPropertiesElement();
-                Results = await AlternativeComputer.RunAnnualizationCompute(this, props, batchJob.Reporter);
-                if (Results.EqadResults.ConsequenceResultList.Count < 1)
+                try
+                {
+                    Results = await AlternativeComputer.RunAnnualizationCompute(this, props, batchJob.Reporter);
+                }
+                catch (InvalidAnalysisYearsException ex)
+                {
+                    MessageBox.Show(ex.Message, "Cannot Compute Alternative Results", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    return;
+                }
+
+                if (Results == null)
+                {
+                    MessageBox.Show("The alternative compute did not produce any results. See the compute log for details.", "Cannot Compute Alternative Results", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                }
+                else if (Results.EqadResults.ConsequenceResultList.Count < 1)
                 {
                     MessageBox.Show("No economic damages were found for the equivalent annual damage calculation. No results are available. Any life loss results will still be available in the alternative comparison report.", "No EqAD", MessageBoxButton.OK, MessageBoxImage.Information);
                 }

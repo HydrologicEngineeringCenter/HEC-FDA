@@ -18,8 +18,7 @@ public static class AlternativeComputer
         var firstResults = baseScenario.GetElement().Results;
         var secondResults = futureScenario?.GetElement().Results;
 
-        int baseYear = baseScenario.Year;
-        int futureYear = futureScenario?.Year ?? (baseYear + props.PeriodOfAnalysis - 1);
+        (int baseYear, int futureYear) = GetAnalysisYears(altElem, props);
 
         return Task.Run(() => Alternative.AnnualizationCompute(
             props.DiscountRate,
@@ -31,5 +30,17 @@ public static class AlternativeComputer
             futureYear,
             reporter
         ));
+    }
+
+    /// <summary>
+    /// The base and future years the annualization compute will actually use. When the alternative has no
+    /// future scenario the future year is derived from the study's period of analysis. Validation in the
+    /// alternative editor and pre-compute checks call this so they cannot drift from what gets computed.
+    /// </summary>
+    public static (int BaseYear, int FutureYear) GetAnalysisYears(AlternativeElement altElem, StudyPropertiesElement props)
+    {
+        int baseYear = altElem.BaseScenario.Year;
+        int futureYear = altElem.FutureScenario?.Year ?? (baseYear + props.PeriodOfAnalysis - 1);
+        return (baseYear, futureYear);
     }
 }

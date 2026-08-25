@@ -88,16 +88,17 @@ public class StudyAreaConsequencesByQuantile : Validation
     /// This method returns a consequence result for the given damage category, asset category, and impact area 
     /// Impact area ID is used for alternative and alternative comparison reports 
     /// Impact area ID is -999 otherwise 
+    /// A miss is treated as a defect here: it logs a Fatal message and hands back an IsNull placeholder that
+    /// carries no identity. Callers for which a miss is an expected, legitimate outcome - one side holding a
+    /// category or risk type the other does not - must use <see cref="GetConsequenceResultOrNull"/> instead.
     /// </summary>
     /// <param name="damageCategory"></param>
     /// <param name="assetCategory"></param>
     /// <param name="impactAreaID"></param>
     /// <returns></returns>
-    public AggregatedConsequencesByQuantile GetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID = -999, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Total)
+    public AggregatedConsequencesByQuantile GetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID, ConsequenceType consequenceType, RiskType riskType)
     {
-        AggregatedConsequencesByQuantile result = ConsequenceResultList
-            .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType, riskType)
-            .FirstOrDefault();
+        AggregatedConsequencesByQuantile result = GetConsequenceResultOrNull(damageCategory, assetCategory, impactAreaID, consequenceType, riskType);
         if (result != null)
         {
             return result;
@@ -107,6 +108,20 @@ public class StudyAreaConsequencesByQuantile : Validation
         ReportMessage(this, new MessageEventArgs(errorMessage));
         AggregatedConsequencesByQuantile singleEmpiricalDistributionOfConsequences = new();
         return singleEmpiricalDistributionOfConsequences;
+    }
+
+    /// <summary>
+    /// The same lookup as <see cref="GetConsequenceResult"/>, but a miss returns null and logs nothing.
+    /// Comparing two analysis years or two project conditions turns up categories and risk types that only
+    /// one side carries - a with-project levee introduces Non_Fail consequences the without-project condition
+    /// has no counterpart for - and that is ordinary, not a Fatal defect worth a line in the compute log.
+    /// Matches the null-on-miss contract of StudyAreaConsequencesBinned.GetConsequenceResult.
+    /// </summary>
+    public AggregatedConsequencesByQuantile GetConsequenceResultOrNull(string damageCategory, string assetCategory, int impactAreaID, ConsequenceType consequenceType, RiskType riskType)
+    {
+        return ConsequenceResultList
+            .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType, riskType)
+            .FirstOrDefault();
     }
 
     public void ReportMessage(object sender, MessageEventArgs e)

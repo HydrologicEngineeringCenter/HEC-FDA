@@ -31,6 +31,11 @@ namespace HEC.FDA.Model.stageDamage
         private const int MINIMUM_EXTRAPOLATION_COORDINATES = 4;
         //require at least two coordinates of stages at which we'll calculate damage betweem the events in the hydraulic profiles 
         private const int MINIMUM_INTERPOLATION_COORDINATES = 2;
+        //Every row this compute creates is keyed uniformly. Stage damage is computed before any scenario assigns
+        //it a failure or non-failure role, so the risk type is a placeholder here rather than a claim about
+        //failure. CreateConsequenceDistributionResults writes these keys and the compute reads them back.
+        private const ConsequenceType STAGE_DAMAGE_CONSEQUENCE_TYPE = ConsequenceType.Damage;
+        private const RiskType STAGE_DAMAGE_RISK_TYPE = RiskType.Fail;
         private readonly ConvergenceCriteria _ConvergenceCriteria = new(minIterations: 1000, maxIterations: 5000);
         #endregion
 
@@ -437,10 +442,10 @@ namespace HEC.FDA.Model.stageDamage
             {
                 List<AggregatedConsequencesBinned> consequenceDistributionResultList =
                 [
-                    new(damageCategory, StringGlobalConstants.STRUCTURE_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID, ConsequenceType.Damage),
-                    new(damageCategory, StringGlobalConstants.CONTENT_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID, ConsequenceType.Damage),
-                    new(damageCategory, StringGlobalConstants.OTHER_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID, ConsequenceType.Damage),
-                    new(damageCategory, StringGlobalConstants.VEHICLE_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID, ConsequenceType.Damage)
+                    new(damageCategory, StringGlobalConstants.STRUCTURE_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID, STAGE_DAMAGE_CONSEQUENCE_TYPE, STAGE_DAMAGE_RISK_TYPE),
+                    new(damageCategory, StringGlobalConstants.CONTENT_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID, STAGE_DAMAGE_CONSEQUENCE_TYPE, STAGE_DAMAGE_RISK_TYPE),
+                    new(damageCategory, StringGlobalConstants.OTHER_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID, STAGE_DAMAGE_CONSEQUENCE_TYPE, STAGE_DAMAGE_RISK_TYPE),
+                    new(damageCategory, StringGlobalConstants.VEHICLE_ASSET_CATEGORY, _ConvergenceCriteria, ImpactAreaID, STAGE_DAMAGE_CONSEQUENCE_TYPE, STAGE_DAMAGE_RISK_TYPE)
                 ];
                 StudyAreaConsequencesBinned consequenceDistributionResults = new(consequenceDistributionResultList);
                 consequenceDistributionResultsList.Add(consequenceDistributionResults);
@@ -532,7 +537,7 @@ namespace HEC.FDA.Model.stageDamage
             int i = 0;
             foreach (ConsequenceResult consequenceResult in consequenceResults)
             {
-                parallelConsequenceResultCollection[i].AddConsequenceRealization(consequenceResult, damageCategory, ImpactAreaID, thisChunkIteration);
+                parallelConsequenceResultCollection[i].AddConsequenceRealization(consequenceResult, damageCategory, ImpactAreaID, thisChunkIteration, STAGE_DAMAGE_CONSEQUENCE_TYPE, STAGE_DAMAGE_RISK_TYPE);
                 i++;
             }
         }
@@ -587,7 +592,7 @@ namespace HEC.FDA.Model.stageDamage
             List<ConsequenceResult> consequenceResults = inventory.ComputeDamages(stagesAllStructuresAllStages, _AnalysisYear, damageCategory, occTypes);
             foreach (ConsequenceResult consequenceResult in consequenceResults)
             {
-                parallelConsequenceResultCollection[stageIndex + i].AddConsequenceRealization(consequenceResult, damageCategory, ImpactAreaID, thisChunkIteration);
+                parallelConsequenceResultCollection[stageIndex + i].AddConsequenceRealization(consequenceResult, damageCategory, ImpactAreaID, thisChunkIteration, STAGE_DAMAGE_CONSEQUENCE_TYPE, STAGE_DAMAGE_RISK_TYPE);
                 i++;
             }
         }
@@ -632,7 +637,7 @@ namespace HEC.FDA.Model.stageDamage
             int i = 1;
             foreach (ConsequenceResult consequenceResult in consequenceResults)
             {
-                parallelConsequenceResultCollection[stageIndex + i].AddConsequenceRealization(consequenceResult, damageCategory, ImpactAreaID, thisChunkIteration);
+                parallelConsequenceResultCollection[stageIndex + i].AddConsequenceRealization(consequenceResult, damageCategory, ImpactAreaID, thisChunkIteration, STAGE_DAMAGE_CONSEQUENCE_TYPE, STAGE_DAMAGE_RISK_TYPE);
                 i++;
             }
         }
