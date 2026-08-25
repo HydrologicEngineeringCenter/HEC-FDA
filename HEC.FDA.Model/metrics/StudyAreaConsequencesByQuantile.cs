@@ -90,7 +90,7 @@ public class StudyAreaConsequencesByQuantile : Validation
     /// Impact area ID is -999 otherwise 
     /// A miss is treated as a defect here: it logs a Fatal message and hands back an IsNull placeholder that
     /// carries no identity. Callers for which a miss is an expected, legitimate outcome - one side holding a
-    /// category or risk type the other does not - must use <see cref="TryGetConsequenceResult"/> instead.
+    /// category or risk type the other does not - must use <see cref="GetConsequenceResultOrNull"/> instead.
     /// </summary>
     /// <param name="damageCategory"></param>
     /// <param name="assetCategory"></param>
@@ -98,7 +98,7 @@ public class StudyAreaConsequencesByQuantile : Validation
     /// <returns></returns>
     public AggregatedConsequencesByQuantile GetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID, ConsequenceType consequenceType, RiskType riskType)
     {
-        AggregatedConsequencesByQuantile result = TryGetConsequenceResult(damageCategory, assetCategory, impactAreaID, consequenceType, riskType);
+        AggregatedConsequencesByQuantile result = GetConsequenceResultOrNull(damageCategory, assetCategory, impactAreaID, consequenceType, riskType);
         if (result != null)
         {
             return result;
@@ -117,7 +117,7 @@ public class StudyAreaConsequencesByQuantile : Validation
     /// has no counterpart for - and that is ordinary, not a Fatal defect worth a line in the compute log.
     /// Matches the null-on-miss contract of StudyAreaConsequencesBinned.GetConsequenceResult.
     /// </summary>
-    public AggregatedConsequencesByQuantile TryGetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID, ConsequenceType consequenceType, RiskType riskType)
+    public AggregatedConsequencesByQuantile GetConsequenceResultOrNull(string damageCategory, string assetCategory, int impactAreaID, ConsequenceType consequenceType, RiskType riskType)
     {
         return ConsequenceResultList
             .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType, riskType)

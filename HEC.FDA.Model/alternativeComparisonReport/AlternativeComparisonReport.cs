@@ -83,7 +83,7 @@ public static class AlternativeComparisonReport
                 //so use the lookup that returns null without logging a Fatal, and stand a zero damage
                 //counterpart in its place. The counterpart carries the with-project row's identity; the
                 //IsNull placeholder GetConsequenceResult hands back carries none and defaults to RiskType.Fail.
-                AggregatedConsequencesByQuantile withoutProjectDamageResult = withoutProjectAlternativeResults.EqadResults.TryGetConsequenceResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, withProjectDamageResult.RegionID, withProjectDamageResult.ConsequenceType, withProjectDamageResult.RiskType); //GetEqadHistogram;
+                AggregatedConsequencesByQuantile withoutProjectDamageResult = withoutProjectAlternativeResults.EqadResults.GetConsequenceResultOrNull(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, withProjectDamageResult.RegionID, withProjectDamageResult.ConsequenceType, withProjectDamageResult.RiskType); //GetEqadHistogram;
                 withoutProjectConsequenceDistList.Remove(withoutProjectDamageResult);
 
                 withoutProjectDamageResult ??= withProjectDamageResult.ZeroDamageCounterpart();
@@ -95,7 +95,7 @@ public static class AlternativeComparisonReport
             {
                 foreach (AggregatedConsequencesByQuantile withoutProjectDamageResult in withoutProjectConsequenceDistList)
                 {
-                    AggregatedConsequencesByQuantile withProjectDamageResult = withProjectAlternativeResults.EqadResults.TryGetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID, withoutProjectDamageResult.ConsequenceType, withoutProjectDamageResult.RiskType);
+                    AggregatedConsequencesByQuantile withProjectDamageResult = withProjectAlternativeResults.EqadResults.GetConsequenceResultOrNull(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID, withoutProjectDamageResult.ConsequenceType, withoutProjectDamageResult.RiskType);
                     withProjectDamageResult ??= withoutProjectDamageResult.ZeroDamageCounterpart();
 
                     AggregatedConsequencesByQuantile damageReducedResult = IterateOnConsequenceDistributionResult(withProjectDamageResult, withoutProjectDamageResult, pr, false);

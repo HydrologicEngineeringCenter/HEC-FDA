@@ -144,10 +144,10 @@ public class AlternativeComparisonReportElement : ChildElement
             //has to name the alternative that failed, or the user has no idea which one to go fix.
             try
             {
-                woAltResult = await ComputeOrExplain(withoutAlt, props);
+                woAltResult = await ComputeOrThrow(withoutAlt, props);
                 for (int i = 0; i < withProjAlts.Count; i++)
                 {
-                    withProjAltsResults[i] = await ComputeOrExplain(withProjAlts[i], props);
+                    withProjAltsResults[i] = await ComputeOrThrow(withProjAlts[i], props);
                 }
             }
             catch (InvalidAnalysisYearsException ex)
@@ -165,7 +165,7 @@ public class AlternativeComparisonReportElement : ChildElement
     /// Runs one alternative's annualization compute, rethrowing an invalid-years failure with the
     /// alternative's name attached so the report's error message identifies which one to correct.
     /// </summary>
-    private static async Task<AlternativeResults> ComputeOrExplain(AlternativeElement alternative, StudyPropertiesElement props)
+    private static async Task<AlternativeResults> ComputeOrThrow(AlternativeElement alternative, StudyPropertiesElement props)
     {
         try
         {
