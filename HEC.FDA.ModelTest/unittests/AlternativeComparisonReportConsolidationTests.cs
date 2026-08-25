@@ -62,7 +62,7 @@ public class AlternativeComparisonReportConsolidationTests
         // Create a histogram from a list of identical values so the mean is deterministic
         List<double> data = Enumerable.Repeat(value, 100).ToList();
         DynamicHistogram histogram = new(data, cc);
-        return new AggregatedConsequencesBinned(DamageCategory, AssetCategory, histogram, ImpactAreaID, consequenceType);
+        return new AggregatedConsequencesBinned(DamageCategory, AssetCategory, histogram, ImpactAreaID, consequenceType, RiskType.Fail);
     }
 
     private static AlternativeComparisonReportResults ComputeResults(

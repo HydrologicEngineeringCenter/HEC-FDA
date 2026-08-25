@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Statistics.Distributions;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace HEC.FDA.Model.metrics.Extensions;
@@ -45,4 +46,34 @@ public static class ConsequenceExtensions
             (riskType == RiskType.Total || riskType == result.RiskType));
     }
 
+    /// <summary>
+    /// A zero damage stand in for a category one side carries and the other does not, which happens when two
+    /// analysis years or two project conditions hold different categories or risk types. Carries the source
+    /// row's identity so it pairs with its own kind.
+    /// </summary>
+    public static AggregatedConsequencesBinned ZeroDamageCounterpart(this AggregatedConsequencesBinned present)
+    {
+        return new AggregatedConsequencesBinned(
+            present.DamageCategory,
+            present.AssetCategory,
+            present.RegionID,
+            present.ConsequenceType,
+            present.RiskType);
+    }
+
+    /// <summary>
+    /// A zero damage stand in for a category one side carries and the other does not, which happens when two
+    /// analysis years or two project conditions hold different categories or risk types. Carries the source
+    /// row's identity so it pairs with its own kind.
+    /// </summary>
+    public static AggregatedConsequencesByQuantile ZeroDamageCounterpart(this AggregatedConsequencesByQuantile present)
+    {
+        return new AggregatedConsequencesByQuantile(
+            present.DamageCategory,
+            present.AssetCategory,
+            new Empirical(),
+            present.RegionID,
+            present.ConsequenceType,
+            present.RiskType);
+    }
 }

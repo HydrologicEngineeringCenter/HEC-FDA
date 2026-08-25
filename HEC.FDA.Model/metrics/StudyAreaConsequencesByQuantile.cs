@@ -93,7 +93,7 @@ public class StudyAreaConsequencesByQuantile : Validation
     /// <param name="assetCategory"></param>
     /// <param name="impactAreaID"></param>
     /// <returns></returns>
-    public AggregatedConsequencesByQuantile GetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID = -999, ConsequenceType consequenceType = ConsequenceType.Damage, RiskType riskType = RiskType.Total)
+    public AggregatedConsequencesByQuantile GetConsequenceResult(string damageCategory, string assetCategory, int impactAreaID, ConsequenceType consequenceType, RiskType riskType)
     {
         AggregatedConsequencesByQuantile result = ConsequenceResultList
             .FilterByCategories(damageCategory, assetCategory, impactAreaID, consequenceType, riskType)

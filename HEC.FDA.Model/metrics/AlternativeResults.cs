@@ -230,7 +230,7 @@ namespace HEC.FDA.Model.metrics
         }
         internal void AddConsequenceResults(AggregatedConsequencesByQuantile consequenceResultToAdd)
         {
-            AggregatedConsequencesByQuantile consequenceResults = EqadResults.GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID, consequenceResultToAdd.ConsequenceType);
+            AggregatedConsequencesByQuantile consequenceResults = EqadResults.GetConsequenceResult(consequenceResultToAdd.DamageCategory, consequenceResultToAdd.AssetCategory, consequenceResultToAdd.RegionID, consequenceResultToAdd.ConsequenceType, consequenceResultToAdd.RiskType);
             if (consequenceResults.IsNull)
             {
                 EqadResults.ConsequenceResultList.Add(consequenceResultToAdd);

@@ -1,4 +1,5 @@
 using HEC.FDA.Model.metrics;
+using HEC.FDA.Model.metrics.Extensions;
 using Statistics.Distributions;
 using System;
 using System.Collections.Concurrent;
@@ -158,7 +159,12 @@ namespace HEC.FDA.Model.alternatives
                         baseYearConsequence.DamageCategory,
                         baseYearConsequence.AssetCategory,
                         baseYearConsequence.RegionID,
-                        baseYearConsequence.ConsequenceType);
+                        baseYearConsequence.ConsequenceType,
+                        baseYearConsequence.RiskType);
+
+                    //GetConsequenceResult returns null when the future year has no result for this category and
+                    //risk type. Discounting still needs a distribution for that year, and no result means no damage.
+                    futureYearConsequence ??= baseYearConsequence.ZeroDamageCounterpart();
 
                     // Calculate EqAD (Equivalent Annual Damage) result
                     AggregatedConsequencesByQuantile eqadResult = IterateOnEqad(
@@ -192,7 +198,10 @@ namespace HEC.FDA.Model.alternatives
                         futureYearConsequence.DamageCategory,
                         futureYearConsequence.AssetCategory,
                         futureYearConsequence.RegionID,
-                        futureYearConsequence.ConsequenceType);
+                        futureYearConsequence.ConsequenceType,
+                        futureYearConsequence.RiskType);
+
+                    baseYearConsequence ??= futureYearConsequence.ZeroDamageCounterpart();
 
                     // Calculate EqAD with assumed zero damage in base year if no base year result exists
                     AggregatedConsequencesByQuantile eqadResult = IterateOnEqad(

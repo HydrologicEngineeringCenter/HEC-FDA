@@ -7,6 +7,7 @@ using Statistics;
 using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Diagnostics.Contracts;
 using System.Threading;
 using System.Xml.Linq;
@@ -345,6 +346,120 @@ namespace HEC.FDA.ModelTest.unittests
             double actual = impactAreaScenarioResults.MeanExpectedAnnualConsequences(id, damCat, assetCat,ConsequenceType.Damage,RiskType.Total);
             double relativeTolerance = Math.Abs(expected - actual) / actual;
             Assert.True(relativeTolerance < 0.01);
+        }
+
+        private static UncertainPairedData DeterministicCurve(double[] xs, double[] ys, CurveMetaData metaData)
+        {
+            IDistribution[] distributions = new IDistribution[ys.Length];
+            for (int i = 0; i < ys.Length; i++)
+            {
+                distributions[i] = new Deterministic(ys[i]);
+            }
+            return new UncertainPairedData(xs, distributions, metaData);
+        }
+
+        private const string RoleDamCat = "residential";
+        private const string RoleAssetCat = "Structure";
+        private static readonly double[] RoleStages = { 10, 11, 13, 17, 17.5 };
+        private static readonly double[] RoleFlows = { 0, 250, 500, 750, 1000 };
+        private static readonly double[] RoleDamages = { 0, 6000, 14000, 150000, 500000 };
+        private static readonly double[] RoleFailureProbs = { 0, 0, 0.1, 0.8, 1 };
+
+        private static ImpactAreaScenarioSimulation.SimulationBuilder RoleSimulationBuilder(int impactAreaID, CurveMetaData metaData)
+        {
+            ContinuousDistribution flowFrequency = new Uniform(0, 1000, 5);
+            UncertainPairedData flowStage = DeterministicCurve(RoleFlows, RoleStages, metaData);
+            return ImpactAreaScenarioSimulation.Builder(impactAreaID)
+                .WithFlowFrequency(flowFrequency)
+                .WithFlowStage(flowStage);
+        }
+
+        /// <summary>
+        /// Stage damage results are keyed to RiskType.Fail internally, because ImpactAreaStageDamage creates every
+        /// row that way before any scenario assigns the element a role. That key must not follow the function into
+        /// the scenario compute. Handing one and the same function to both roles must therefore produce a Fail row
+        /// and a Non_Fail row, weighted by the system response and its complement, which partition the undamped
+        /// damage exactly.
+        /// </summary>
+        [Fact]
+        public void StageDamageRiskTypeDoesNotFollowTheFunctionIntoTheScenarioCompute()
+        {
+            const int impactAreaID = 1;
+            CurveMetaData metaData = new(damageCategory: RoleDamCat, assetCategory: RoleAssetCat);
+            ConvergenceCriteria convergenceCriteria = new(minIterations: 1, maxIterations: 1);
+
+            UncertainPairedData theSameFunction = DeterministicCurve(RoleStages, RoleDamages, metaData);
+            UncertainPairedData systemResponse = DeterministicCurve(RoleStages, RoleFailureProbs, metaData);
+
+            ImpactAreaScenarioSimulation simulation = RoleSimulationBuilder(impactAreaID, metaData)
+                .WithStageDamages(new List<UncertainPairedData> { theSameFunction })
+                .WithNonFailureStageDamage(new List<UncertainPairedData> { theSameFunction })
+                .WithLevee(systemResponse, topOfLeveeElevation: 17)
+                .Build();
+            ImpactAreaScenarioResults results = simulation.Compute(convergenceCriteria, new CancellationToken(), computeIsDeterministic: true);
+
+            List<RiskType> riskTypes = results.ConsequenceResults.ConsequenceResultList.Select(r => r.RiskType).ToList();
+            Assert.Contains(RiskType.Fail, riskTypes);
+            Assert.Contains(RiskType.Non_Fail, riskTypes);
+
+            double fail = results.MeanExpectedAnnualConsequences(impactAreaID, RoleDamCat, RoleAssetCat, ConsequenceType.Damage, RiskType.Fail);
+            double nonFail = results.MeanExpectedAnnualConsequences(impactAreaID, RoleDamCat, RoleAssetCat, ConsequenceType.Damage, RiskType.Non_Fail);
+            Assert.True(fail > 0, $"expected a positive failure side, got {fail}");
+            Assert.True(nonFail > 0, $"expected a positive non-failure side, got {nonFail}");
+
+            //the same function with no system response is weighted by probability one, so the two sides of the
+            //split have to add back up to it
+            ImpactAreaScenarioSimulation noSystemResponse = RoleSimulationBuilder(impactAreaID, metaData)
+                .WithStageDamages(new List<UncertainPairedData> { theSameFunction })
+                .Build();
+            double undamped = noSystemResponse
+                .Compute(convergenceCriteria, new CancellationToken(), computeIsDeterministic: true)
+                .MeanExpectedAnnualConsequences(impactAreaID, RoleDamCat, RoleAssetCat, ConsequenceType.Damage, RiskType.Total);
+
+            Assert.Equal(undamped, fail + nonFail, 2);
+        }
+
+        /// <summary>
+        /// Which risk type a stage damage function lands under is decided solely by the role the scenario assigns
+        /// it, not by anything the function carries. Giving the real damage to one role and a zero curve to the
+        /// other must leave the consequences under that role's risk type and nothing under the other.
+        /// </summary>
+        [Theory]
+        [InlineData(true)]  //real damage assigned as the failure function
+        [InlineData(false)] //real damage assigned as the non-failure function
+        public void StageDamageIsKeyedByTheRoleTheScenarioAssigns(bool realDamageIsTheFailureFunction)
+        {
+            const int impactAreaID = 1;
+            CurveMetaData metaData = new(damageCategory: RoleDamCat, assetCategory: RoleAssetCat);
+            ConvergenceCriteria convergenceCriteria = new(minIterations: 1, maxIterations: 1);
+
+            UncertainPairedData realDamage = DeterministicCurve(RoleStages, RoleDamages, metaData);
+            UncertainPairedData zeroDamage = DeterministicCurve(RoleStages, new double[] { 0, 0, 0, 0, 0 }, metaData);
+            UncertainPairedData systemResponse = DeterministicCurve(RoleStages, RoleFailureProbs, metaData);
+
+            List<UncertainPairedData> failureFunctions = new() { realDamageIsTheFailureFunction ? realDamage : zeroDamage };
+            List<UncertainPairedData> nonFailureFunctions = new() { realDamageIsTheFailureFunction ? zeroDamage : realDamage };
+
+            ImpactAreaScenarioSimulation simulation = RoleSimulationBuilder(impactAreaID, metaData)
+                .WithStageDamages(failureFunctions)
+                .WithNonFailureStageDamage(nonFailureFunctions)
+                .WithLevee(systemResponse, topOfLeveeElevation: 17)
+                .Build();
+            ImpactAreaScenarioResults results = simulation.Compute(convergenceCriteria, new CancellationToken(), computeIsDeterministic: true);
+
+            double fail = results.MeanExpectedAnnualConsequences(impactAreaID, RoleDamCat, RoleAssetCat, ConsequenceType.Damage, RiskType.Fail);
+            double nonFail = results.MeanExpectedAnnualConsequences(impactAreaID, RoleDamCat, RoleAssetCat, ConsequenceType.Damage, RiskType.Non_Fail);
+
+            if (realDamageIsTheFailureFunction)
+            {
+                Assert.True(fail > 0, $"real damage was the failure function but the failure side was {fail}");
+                Assert.Equal(0, nonFail, 6);
+            }
+            else
+            {
+                Assert.True(nonFail > 0, $"real damage was the non-failure function but the non-failure side was {nonFail}");
+                Assert.Equal(0, fail, 6);
+            }
         }
     }
 }

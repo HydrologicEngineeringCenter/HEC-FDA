@@ -27,13 +27,13 @@ namespace HEC.FDA.ModelTest.unittests
             DynamicHistogram histogram = FillHistogram(mean);
 
             //Impact Area 1
-            AggregatedConsequencesBinned residentialStructure_1 = new(residentialDamageCategory, structureAssetCategory, histogram, impactAreaID_1);
+            AggregatedConsequencesBinned residentialStructure_1 = new(residentialDamageCategory, structureAssetCategory, histogram, impactAreaID_1, ConsequenceType.Damage, RiskType.Fail);
             consequenceDistributionResults.AddExistingConsequenceResultObject(residentialStructure_1);
-            AggregatedConsequencesBinned residentialContent_1 = new(residentialDamageCategory, contentAssetCategory, histogram, impactAreaID_1);
+            AggregatedConsequencesBinned residentialContent_1 = new(residentialDamageCategory, contentAssetCategory, histogram, impactAreaID_1, ConsequenceType.Damage, RiskType.Fail);
             consequenceDistributionResults.AddExistingConsequenceResultObject(residentialContent_1);
-            AggregatedConsequencesBinned commercialStructure_1 = new(commercialDamageCategory, structureAssetCategory, histogram, impactAreaID_1);
+            AggregatedConsequencesBinned commercialStructure_1 = new(commercialDamageCategory, structureAssetCategory, histogram, impactAreaID_1, ConsequenceType.Damage, RiskType.Fail);
             consequenceDistributionResults.AddExistingConsequenceResultObject(commercialStructure_1);
-            AggregatedConsequencesBinned commercialContent_1 = new(commercialDamageCategory, contentAssetCategory, histogram, impactAreaID_1);
+            AggregatedConsequencesBinned commercialContent_1 = new(commercialDamageCategory, contentAssetCategory, histogram, impactAreaID_1, ConsequenceType.Damage, RiskType.Fail);
             consequenceDistributionResults.AddExistingConsequenceResultObject(commercialContent_1);
 
 
@@ -91,7 +91,7 @@ namespace HEC.FDA.ModelTest.unittests
             StudyAreaConsequencesBinned expected = new StudyAreaConsequencesBinned(0);
             List<AggregatedConsequencesBinned> resultList = new();
             List<double> data = new() { 0, 1, 2, 3, 4 };
-            expected.AddExistingConsequenceResultObject(new AggregatedConsequencesBinned("DamCat", "AssetCat", new DynamicHistogram(data, new ConvergenceCriteria(69, 8008)), 0));
+            expected.AddExistingConsequenceResultObject(new AggregatedConsequencesBinned("DamCat", "AssetCat", new DynamicHistogram(data, new ConvergenceCriteria(69, 8008)), 0, ConsequenceType.Damage, RiskType.Fail));
             XElement xElement = expected.WriteToXML();
 
             StudyAreaConsequencesBinned actual = StudyAreaConsequencesBinned.ReadFromXML(xElement);

@@ -230,6 +230,128 @@ namespace HEC.FDA.ModelTest.unittests
             Assert.Equal(expected, actual, .01);
         }
 
+        /// <summary>
+        /// Scenarios with a system response function carry Non_Fail damage consequences alongside Fail ones.
+        /// The counterpart lookup defaults riskType to Fail, so omitting it made a Non_Fail category present in
+        /// BOTH years pair with the other year's Fail row rather than with its own kind. AddConsequenceResults
+        /// then discarded that mispaired result as a duplicate against the Total wildcard, leaving Non_Fail EqAD
+        /// absent from the results entirely. Both risk types must pair with their own kind and both must survive.
+        /// </summary>
+        [Fact]
+        public void NonFailureConsequencesPairWithTheirOwnRiskType()
+        {
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: 100);
+
+            var failBaseHist = new DynamicHistogram(Enumerable.Range(100, 100).Select(i => (double)i).ToList(), cc);
+            var failFutureHist = new DynamicHistogram(Enumerable.Range(200, 100).Select(i => (double)i).ToList(), cc);
+            var nonFailBaseHist = new DynamicHistogram(Enumerable.Range(300, 100).Select(i => (double)i).ToList(), cc);
+            var nonFailFutureHist = new DynamicHistogram(Enumerable.Range(400, 100).Select(i => (double)i).ToList(), cc);
+
+            var baseImpactArea = new ImpactAreaScenarioResults(impactAreaID);
+            baseImpactArea.ConsequenceResults.AddExistingConsequenceResultObject(
+                new AggregatedConsequencesBinned("residential", "content", failBaseHist, impactAreaID, ConsequenceType.Damage, RiskType.Fail));
+            baseImpactArea.ConsequenceResults.AddExistingConsequenceResultObject(
+                new AggregatedConsequencesBinned("residential", "content", nonFailBaseHist, impactAreaID, ConsequenceType.Damage, RiskType.Non_Fail));
+
+            var futureImpactArea = new ImpactAreaScenarioResults(impactAreaID);
+            futureImpactArea.ConsequenceResults.AddExistingConsequenceResultObject(
+                new AggregatedConsequencesBinned("residential", "content", failFutureHist, impactAreaID, ConsequenceType.Damage, RiskType.Fail));
+            futureImpactArea.ConsequenceResults.AddExistingConsequenceResultObject(
+                new AggregatedConsequencesBinned("residential", "content", nonFailFutureHist, impactAreaID, ConsequenceType.Damage, RiskType.Non_Fail));
+
+            var baseResults = new ScenarioResults();
+            baseResults.AddResults(baseImpactArea);
+            var futureResults = new ScenarioResults();
+            futureResults.AddResults(futureImpactArea);
+
+            AlternativeResults results = Alternative.AnnualizationCompute(
+                discountRate: 0.0275, periodOfAnalysis: 50, alternativeResultsID: alternativeID,
+                baseResults, futureResults, baseYear: 2023, futureYear: 2072);
+
+            Assert.NotNull(results);
+
+            //both risk types must survive; the Non_Fail row was previously dropped as a duplicate
+            AggregatedConsequencesByQuantile fail = results.EqadResults.ConsequenceResultList
+                .Single(c => c.RiskType == RiskType.Fail);
+            AggregatedConsequencesByQuantile nonFail = results.EqadResults.ConsequenceResultList
+                .Single(c => c.RiskType == RiskType.Non_Fail);
+
+            //each pairs with its own risk type in the other year, rather than discounting against zero
+            double expectedFail = Alternative.ComputeEqad(
+                failBaseHist.SampleMean, 2023, failFutureHist.SampleMean, 2072, 50, 0.0275);
+            double expectedNonFail = Alternative.ComputeEqad(
+                nonFailBaseHist.SampleMean, 2023, nonFailFutureHist.SampleMean, 2072, 50, 0.0275);
+
+            Assert.Equal(expectedFail, fail.ConsequenceDistribution.SampleMean, 6);
+            Assert.Equal(expectedNonFail, nonFail.ConsequenceDistribution.SampleMean, 6);
+
+            //guard the value specifically: pairing against the Fail row, or discounting against zero, would
+            //both land this below its base year mean
+            Assert.True(nonFail.ConsequenceDistribution.SampleMean > nonFailBaseHist.SampleMean,
+                "Non_Fail EqAD fell below its base year mean, so it did not pair with its own risk type");
+        }
+
+        /// <summary>
+        /// A damage category can exist in one analysis year and not the other, for example under managed retreat
+        /// where an impact area is bought out. The missing year must be treated as zero damage rather than
+        /// dereferenced - GetConsequenceResult returns null in that case.
+        /// </summary>
+        [Theory]
+        [InlineData(true)]  //category present in the base year, absent in the future year
+        [InlineData(false)] //category present in the future year, absent in the base year
+        public void CategoryMissingFromOneAnalysisYear_IsTreatedAsZeroDamage(bool missingFromFutureYear)
+        {
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: 100);
+
+            //"residential" exists in both years, "commercial" only in one
+            var sharedBaseHist = new DynamicHistogram(Enumerable.Range(100, 100).Select(i => (double)i).ToList(), cc);
+            var sharedFutureHist = new DynamicHistogram(Enumerable.Range(200, 100).Select(i => (double)i).ToList(), cc);
+            var loneHist = new DynamicHistogram(Enumerable.Range(300, 100).Select(i => (double)i).ToList(), cc);
+
+            var baseImpactArea = new ImpactAreaScenarioResults(impactAreaID);
+            baseImpactArea.ConsequenceResults.AddExistingConsequenceResultObject(
+                new AggregatedConsequencesBinned("residential", "content", sharedBaseHist, impactAreaID, ConsequenceType.Damage, RiskType.Fail));
+
+            var futureImpactArea = new ImpactAreaScenarioResults(impactAreaID);
+            futureImpactArea.ConsequenceResults.AddExistingConsequenceResultObject(
+                new AggregatedConsequencesBinned("residential", "content", sharedFutureHist, impactAreaID, ConsequenceType.Damage, RiskType.Fail));
+
+            var lone = new AggregatedConsequencesBinned("commercial", "content", loneHist, impactAreaID, ConsequenceType.Damage, RiskType.Fail);
+            if (missingFromFutureYear)
+            {
+                baseImpactArea.ConsequenceResults.AddExistingConsequenceResultObject(lone);
+            }
+            else
+            {
+                futureImpactArea.ConsequenceResults.AddExistingConsequenceResultObject(lone);
+            }
+
+            var baseResults = new ScenarioResults();
+            baseResults.AddResults(baseImpactArea);
+            var futureResults = new ScenarioResults();
+            futureResults.AddResults(futureImpactArea);
+
+            //this threw a NullReferenceException out of the Parallel.For in IterateOnEqad before the fix
+            AlternativeResults results = Alternative.AnnualizationCompute(
+                discountRate: 0.0275, periodOfAnalysis: 50, alternativeResultsID: alternativeID,
+                baseResults, futureResults, baseYear: 2023, futureYear: 2072);
+
+            Assert.NotNull(results);
+
+            //both categories survive into EqAD
+            List<string> damageCategories = results.GetDamageCategories();
+            Assert.Contains("residential", damageCategories);
+            Assert.Contains("commercial", damageCategories);
+
+            //the one sided category still carries damage, discounted from zero in the year it was absent,
+            //so it lands strictly between zero and the value it holds in the year it is present
+            AggregatedConsequencesByQuantile commercial = results.EqadResults.ConsequenceResultList
+                .Single(c => c.DamageCategory == "commercial");
+            double mean = commercial.ConsequenceDistribution.SampleMean;
+            Assert.True(mean > 0, $"expected positive EqAD for the one sided category, got {mean}");
+            Assert.True(mean < loneHist.SampleMean, $"expected EqAD {mean} below the single year mean {loneHist.SampleMean}");
+        }
+
         [Fact]
         public void LifeLossResultsExcludedFromEqad()
         {
@@ -432,6 +554,157 @@ namespace HEC.FDA.ModelTest.unittests
             Assert.True(altExceededWith25Pct > altExceededWith75Pct,
                 $"AlternativeResults (ScenariosAreIdentical path): value exceeded with 25% probability ({altExceededWith25Pct}) " +
                 $"should be greater than value exceeded with 75% probability ({altExceededWith75Pct}).");
+        }
+
+        /// <summary>
+        /// Two configurations of the same curves produce the same EAD in both analysis years, and discounting a
+        /// flat stream of damages back into equivalent annual terms is an identity operation. ComputeEqad is
+        /// linear in (base, future) with weights that sum to one, so EqAD must reproduce that EAD exactly -
+        /// mean, aggregate, and quantile for quantile.
+        ///
+        /// The scenarios below carry identical damages but differing threshold values, so ScenarioResults.Equals
+        /// reports them as distinct and AnnualizationCompute runs the real discounting routine. Without that the
+        /// identical-scenarios shortcut copies base year EAD across and the assertions prove nothing, which is
+        /// why each test guards on ScenariosAreIdentical first.
+        /// </summary>
+        [Fact]
+        public void MeanEqadEqualsMeanEad_ForEveryDamageCategoryAndInTotal()
+        {
+            ScenarioResults baseYearResults = BuildScenarioResultsWithFlatDamages(thresholdValue: 10);
+            ScenarioResults futureYearResults = BuildScenarioResultsWithFlatDamages(thresholdValue: 20);
+
+            AlternativeResults results = Alternative.AnnualizationCompute(
+                discountRate: 0.0275, periodOfAnalysis: 50, alternativeResultsID: alternativeID,
+                baseYearResults, futureYearResults, baseYear: 2023, futureYear: 2072);
+
+            Assert.NotNull(results);
+            Assert.False(results.ScenariosAreIdentical,
+                "This test must exercise the discounting routine, not the identical-scenarios shortcut.");
+
+            foreach (AggregatedConsequencesBinned consequence in baseYearResults.ResultsList
+                         .SelectMany(r => r.ConsequenceResults.ConsequenceResultList))
+            {
+                double ead = consequence.ConsequenceHistogram.SampleMean;
+                double eqad = results.SampleMeanEqad(impactAreaID, consequence.DamageCategory, consequence.AssetCategory);
+
+                AssertRelativelyEqual(ead, eqad, 1e-9,
+                    $"Mean EqAD for {consequence.DamageCategory}/{consequence.AssetCategory}");
+            }
+
+            //aggregated over everything, which is the figure the alternative results summary surfaces
+            double totalEad = baseYearResults.SampleMeanExpectedAnnualConsequences(riskType: RiskType.Total);
+            AssertRelativelyEqual(totalEad, results.SampleMeanEqad(), 1e-9, "Total mean EqAD");
+        }
+
+        [Fact]
+        public void EqadDistributionEqualsEadDistribution_AcrossExceedanceProbabilities()
+        {
+            ScenarioResults baseYearResults = BuildScenarioResultsWithFlatDamages(thresholdValue: 10);
+            ScenarioResults futureYearResults = BuildScenarioResultsWithFlatDamages(thresholdValue: 20);
+
+            AlternativeResults results = Alternative.AnnualizationCompute(
+                discountRate: 0.0275, periodOfAnalysis: 50, alternativeResultsID: alternativeID,
+                baseYearResults, futureYearResults, baseYear: 2023, futureYear: 2072);
+
+            Assert.NotNull(results);
+            Assert.False(results.ScenariosAreIdentical,
+                "This test must exercise the discounting routine, not the identical-scenarios shortcut.");
+
+            double[] exceedanceProbabilities = [0.99, 0.9, 0.75, 0.5, 0.25, 0.1, 0.04, 0.01];
+
+            foreach (double exceedanceProbability in exceedanceProbabilities)
+            {
+                double ead = baseYearResults.ConsequencesExceededWithProbabilityQ(
+                    exceedanceProbability, impactAreaID, riskType: RiskType.Total);
+                double eqad = results.EqadExceededWithProbabilityQ(exceedanceProbability, impactAreaID);
+
+                AssertRelativelyEqual(ead, eqad, 1e-3,
+                    $"EqAD exceeded with probability {exceedanceProbability}");
+            }
+        }
+
+        [Fact]
+        public void EqadEmpiricalMatchesBaseYearEadEmpirical_QuantileForQuantile()
+        {
+            ScenarioResults baseYearResults = BuildScenarioResultsWithFlatDamages(thresholdValue: 10);
+            ScenarioResults futureYearResults = BuildScenarioResultsWithFlatDamages(thresholdValue: 20);
+
+            AlternativeResults results = Alternative.AnnualizationCompute(
+                discountRate: 0.0275, periodOfAnalysis: 50, alternativeResultsID: alternativeID,
+                baseYearResults, futureYearResults, baseYear: 2023, futureYear: 2072);
+
+            Assert.NotNull(results);
+            Assert.False(results.ScenariosAreIdentical,
+                "This test must exercise the discounting routine, not the identical-scenarios shortcut.");
+
+            Empirical eadDistribution = results.GetBaseYearEADDistribution(impactAreaID);
+            Empirical eqadDistribution = results.GetEqadDistribution(impactAreaID);
+
+            AssertRelativelyEqual(eadDistribution.SampleMean, eqadDistribution.SampleMean, 1e-9,
+                "Sample mean of the aggregated distribution");
+
+            for (int i = 1; i < 100; i++)
+            {
+                double nonExceedanceProbability = i / 100.0;
+                AssertRelativelyEqual(
+                    eadDistribution.InverseCDF(nonExceedanceProbability),
+                    eqadDistribution.InverseCDF(nonExceedanceProbability),
+                    1e-3,
+                    $"Quantile at non-exceedance probability {nonExceedanceProbability}");
+            }
+        }
+
+        /// <summary>
+        /// The damages are the same in every call; only the threshold value varies, which is what keeps
+        /// ScenarioResults.Equals from short circuiting the discounting routine.
+        /// </summary>
+        private static ScenarioResults BuildScenarioResultsWithFlatDamages(double thresholdValue)
+        {
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 1000, maxIterations: 1000);
+
+            var impactArea = new ImpactAreaScenarioResults(impactAreaID);
+            impactArea.ConsequenceResults.AddExistingConsequenceResultObject(
+                new AggregatedConsequencesBinned("residential", "structure",
+                    new DynamicHistogram(SkewedConsequenceSample(600000), cc),
+                    impactAreaID, ConsequenceType.Damage, RiskType.Fail));
+            impactArea.ConsequenceResults.AddExistingConsequenceResultObject(
+                new AggregatedConsequencesBinned("residential", "content",
+                    new DynamicHistogram(SkewedConsequenceSample(200000), cc),
+                    impactAreaID, ConsequenceType.Damage, RiskType.Fail));
+            impactArea.ConsequenceResults.AddExistingConsequenceResultObject(
+                new AggregatedConsequencesBinned("commercial", "structure",
+                    new DynamicHistogram(SkewedConsequenceSample(122493), cc),
+                    impactAreaID, ConsequenceType.Damage, RiskType.Fail));
+
+            impactArea.PerformanceByThresholds.AddThreshold(
+                new Threshold(1, cc, ThresholdEnum.AdditionalExteriorStage, thresholdValue));
+
+            var scenarioResults = new ScenarioResults();
+            scenarioResults.AddResults(impactArea);
+            return scenarioResults;
+        }
+
+        /// <summary>
+        /// Skewed sample with a mean of <paramref name="mean"/>. Exponential quantiles give the long right tail
+        /// real EAD distributions have, and being quantile based rather than sampled it is deterministic, so
+        /// both analysis years receive identical inputs.
+        /// </summary>
+        private static List<double> SkewedConsequenceSample(double mean, int count = 10000)
+        {
+            var sample = new List<double>(count);
+            for (int i = 0; i < count; i++)
+            {
+                double nonExceedanceProbability = (i + 0.5) / count;
+                sample.Add(-mean * Math.Log(1 - nonExceedanceProbability));
+            }
+            return sample;
+        }
+
+        private static void AssertRelativelyEqual(double expected, double actual, double relativeTolerance, string what)
+        {
+            double error = expected == 0 ? Math.Abs(actual) : Math.Abs((actual - expected) / expected);
+            Assert.True(error <= relativeTolerance,
+                $"{what}: expected {expected:N4}, actual {actual:N4}, relative error {error:P4} exceeds {relativeTolerance:P4}.");
         }
     }
 }

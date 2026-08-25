@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using Xunit;
 using Statistics;
 using Statistics.Distributions;
+using Statistics.Histograms;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.compute;
@@ -459,6 +461,203 @@ namespace HEC.FDA.ModelTest.unittests
 
         }
 
+
+
+        private const string RiskTypeDamCat = "residential";
+        private const string RiskTypeAssetCat = "content";
+
+        private static DynamicHistogram RangeHistogram(int start, ConvergenceCriteria cc)
+        {
+            return new DynamicHistogram(Enumerable.Range(start, 100).Select(i => (double)i).ToList(), cc);
+        }
+
+        private static AlternativeResults BuildAlternativeCarryingBothRiskTypes(
+            int alternativeID, int impactAreaID, int baseYear, int futureYear, int periodOfAnalysis, double discountRate,
+            DynamicHistogram failBase, DynamicHistogram failFuture,
+            DynamicHistogram nonFailBase, DynamicHistogram nonFailFuture)
+        {
+            ImpactAreaScenarioResults baseImpactArea = new(impactAreaID);
+            baseImpactArea.ConsequenceResults.AddExistingConsequenceResultObject(
+                new AggregatedConsequencesBinned(RiskTypeDamCat, RiskTypeAssetCat, failBase, impactAreaID, ConsequenceType.Damage, RiskType.Fail));
+            baseImpactArea.ConsequenceResults.AddExistingConsequenceResultObject(
+                new AggregatedConsequencesBinned(RiskTypeDamCat, RiskTypeAssetCat, nonFailBase, impactAreaID, ConsequenceType.Damage, RiskType.Non_Fail));
+
+            ImpactAreaScenarioResults futureImpactArea = new(impactAreaID);
+            futureImpactArea.ConsequenceResults.AddExistingConsequenceResultObject(
+                new AggregatedConsequencesBinned(RiskTypeDamCat, RiskTypeAssetCat, failFuture, impactAreaID, ConsequenceType.Damage, RiskType.Fail));
+            futureImpactArea.ConsequenceResults.AddExistingConsequenceResultObject(
+                new AggregatedConsequencesBinned(RiskTypeDamCat, RiskTypeAssetCat, nonFailFuture, impactAreaID, ConsequenceType.Damage, RiskType.Non_Fail));
+
+            ScenarioResults baseResults = new();
+            baseResults.AddResults(baseImpactArea);
+            ScenarioResults futureResults = new();
+            futureResults.AddResults(futureImpactArea);
+
+            return Alternative.AnnualizationCompute(
+                discountRate, periodOfAnalysis, alternativeID, baseResults, futureResults, baseYear, futureYear);
+        }
+
+        /// <summary>
+        /// EqAD consequences are stored per risk type - RiskType.Total is only ever a query wildcard in
+        /// FilterByCategories, never a value assigned to a row - so a scenario with a system response function
+        /// leaves both a Fail and a Non_Fail row in EqadResults. The counterpart lookups in
+        /// ComputeDistributionOfEqadReduced must pass the risk type through. Omitting it falls back to the Total
+        /// wildcard, so FirstOrDefault returns whichever row happens to be first and the with- and without-project
+        /// conditions are subtracted across risk types, silently corrupting benefits.
+        /// </summary>
+        [Fact]
+        public void EqadReducedPairsEachRiskTypeWithItsOwnKind()
+        {
+            const int impactAreaID = 1;
+            const int withoutProjectAlternativeID = 1;
+            const int withProjectAlternativeID = 2;
+            const int baseYear = 2023;
+            const int futureYear = 2072;
+            const int periodOfAnalysis = 50;
+            const double discountRate = 0.0275;
+            const double tolerance = 1.0;
+
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: 100);
+
+            //base and future year must differ, or AnnualizationCompute short circuits on identical scenarios
+            //and never runs the discounting routine this test covers
+            DynamicHistogram withoutFailBase = RangeHistogram(100, cc);
+            DynamicHistogram withoutFailFuture = RangeHistogram(300, cc);
+            DynamicHistogram withoutNonFailBase = RangeHistogram(700, cc);
+            DynamicHistogram withoutNonFailFuture = RangeHistogram(900, cc);
+
+            DynamicHistogram withFailBase = RangeHistogram(50, cc);
+            DynamicHistogram withFailFuture = RangeHistogram(150, cc);
+            DynamicHistogram withNonFailBase = RangeHistogram(200, cc);
+            DynamicHistogram withNonFailFuture = RangeHistogram(400, cc);
+
+            AlternativeResults withoutProject = BuildAlternativeCarryingBothRiskTypes(
+                withoutProjectAlternativeID, impactAreaID, baseYear, futureYear, periodOfAnalysis, discountRate,
+                withoutFailBase, withoutFailFuture, withoutNonFailBase, withoutNonFailFuture);
+
+            AlternativeResults withProject = BuildAlternativeCarryingBothRiskTypes(
+                withProjectAlternativeID, impactAreaID, baseYear, futureYear, periodOfAnalysis, discountRate,
+                withFailBase, withFailFuture, withNonFailBase, withNonFailFuture);
+
+            AlternativeComparisonReportResults report = AlternativeComparisonReport.ComputeAlternativeComparisonReport(
+                withoutProject, new List<AlternativeResults> { withProject });
+
+            Assert.NotNull(report);
+
+            double expectedFailReduced =
+                Alternative.ComputeEqad(withoutFailBase.SampleMean, baseYear, withoutFailFuture.SampleMean, futureYear, periodOfAnalysis, discountRate)
+                - Alternative.ComputeEqad(withFailBase.SampleMean, baseYear, withFailFuture.SampleMean, futureYear, periodOfAnalysis, discountRate);
+
+            double expectedNonFailReduced =
+                Alternative.ComputeEqad(withoutNonFailBase.SampleMean, baseYear, withoutNonFailFuture.SampleMean, futureYear, periodOfAnalysis, discountRate)
+                - Alternative.ComputeEqad(withNonFailBase.SampleMean, baseYear, withNonFailFuture.SampleMean, futureYear, periodOfAnalysis, discountRate);
+
+            //pre-fix, the with-project Non_Fail row paired against the without-project Fail row, so this landed
+            //on withoutNonFail - withFail instead of withoutNonFail - withNonFail
+            double actualNonFailReduced = report.SampleMeanEqadReduced(withProjectAlternativeID, riskType: RiskType.Non_Fail);
+            double actualFailReduced = report.SampleMeanEqadReduced(withProjectAlternativeID, riskType: RiskType.Fail);
+
+            Assert.Equal(expectedFailReduced, actualFailReduced, tolerance);
+            Assert.Equal(expectedNonFailReduced, actualNonFailReduced, tolerance);
+
+            //Total is the wildcard that sums both rows, and is what the alternative comparison report surfaces
+            Assert.Equal(expectedFailReduced + expectedNonFailReduced,
+                report.SampleMeanEqadReduced(withProjectAlternativeID, riskType: RiskType.Total), tolerance);
+        }
+        private static AlternativeResults BuildAlternativeCarryingOnlyFailure(
+            int alternativeID, int impactAreaID, int baseYear, int futureYear, int periodOfAnalysis, double discountRate,
+            DynamicHistogram failBase, DynamicHistogram failFuture)
+        {
+            ImpactAreaScenarioResults baseImpactArea = new(impactAreaID);
+            baseImpactArea.ConsequenceResults.AddExistingConsequenceResultObject(
+                new AggregatedConsequencesBinned(RiskTypeDamCat, RiskTypeAssetCat, failBase, impactAreaID, ConsequenceType.Damage, RiskType.Fail));
+
+            ImpactAreaScenarioResults futureImpactArea = new(impactAreaID);
+            futureImpactArea.ConsequenceResults.AddExistingConsequenceResultObject(
+                new AggregatedConsequencesBinned(RiskTypeDamCat, RiskTypeAssetCat, failFuture, impactAreaID, ConsequenceType.Damage, RiskType.Fail));
+
+            ScenarioResults baseResults = new();
+            baseResults.AddResults(baseImpactArea);
+            ScenarioResults futureResults = new();
+            futureResults.AddResults(futureImpactArea);
+
+            return Alternative.AnnualizationCompute(
+                discountRate, periodOfAnalysis, alternativeID, baseResults, futureResults, baseYear, futureYear);
+        }
+
+        /// <summary>
+        /// The ordinary project configuration is asymmetric: only the with-project condition carries non-failure
+        /// stage damage, so its Non_Fail row has no without-project counterpart. GetConsequenceResult signals that
+        /// miss with an IsNull placeholder carrying RiskType.Fail, which unsubstituted stamps the reduced row Fail,
+        /// collides with the genuine Fail row and is dropped - removing the whole Non_Fail component from benefits
+        /// while it remains in with-project EqAD.
+        /// </summary>
+        [Fact]
+        public void EqadReducedKeepsNonFailWhenOnlyTheWithProjectConditionHasNonFailureDamage()
+        {
+            const int impactAreaID = 1;
+            const int withoutProjectAlternativeID = 1;
+            const int withProjectAlternativeID = 2;
+            const int baseYear = 2023;
+            const int futureYear = 2072;
+            const int periodOfAnalysis = 50;
+            const double discountRate = 0.0275;
+            const double tolerance = 1.0;
+
+            ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: 100);
+
+            //without project: no levee, so no non-failure stage damage functions and no Non_Fail rows
+            DynamicHistogram withoutFailBase = RangeHistogram(100, cc);
+            DynamicHistogram withoutFailFuture = RangeHistogram(300, cc);
+
+            //with project: a levee, so the residual non-failure damages appear alongside the failure damages
+            DynamicHistogram withFailBase = RangeHistogram(50, cc);
+            DynamicHistogram withFailFuture = RangeHistogram(150, cc);
+            DynamicHistogram withNonFailBase = RangeHistogram(200, cc);
+            DynamicHistogram withNonFailFuture = RangeHistogram(400, cc);
+
+            AlternativeResults withoutProject = BuildAlternativeCarryingOnlyFailure(
+                withoutProjectAlternativeID, impactAreaID, baseYear, futureYear, periodOfAnalysis, discountRate,
+                withoutFailBase, withoutFailFuture);
+
+            AlternativeResults withProject = BuildAlternativeCarryingBothRiskTypes(
+                withProjectAlternativeID, impactAreaID, baseYear, futureYear, periodOfAnalysis, discountRate,
+                withFailBase, withFailFuture, withNonFailBase, withNonFailFuture);
+
+            AlternativeComparisonReportResults report = AlternativeComparisonReport.ComputeAlternativeComparisonReport(
+                withoutProject, new List<AlternativeResults> { withProject });
+
+            Assert.NotNull(report);
+
+            //the Non_Fail reduction must survive rather than colliding with the Fail row and being discarded
+            List<RiskType> reducedRiskTypes = report
+                .GetConsequencesReducedResultsForGivenAlternative(withProjectAlternativeID)
+                .ConsequenceResultList.Select(c => c.RiskType).ToList();
+            Assert.Contains(RiskType.Fail, reducedRiskTypes);
+            Assert.Contains(RiskType.Non_Fail, reducedRiskTypes);
+
+            double withoutFailEqad = Alternative.ComputeEqad(
+                withoutFailBase.SampleMean, baseYear, withoutFailFuture.SampleMean, futureYear, periodOfAnalysis, discountRate);
+            double withFailEqad = Alternative.ComputeEqad(
+                withFailBase.SampleMean, baseYear, withFailFuture.SampleMean, futureYear, periodOfAnalysis, discountRate);
+            double withNonFailEqad = Alternative.ComputeEqad(
+                withNonFailBase.SampleMean, baseYear, withNonFailFuture.SampleMean, futureYear, periodOfAnalysis, discountRate);
+
+            //the failure side pairs normally; the non-failure side discounts against zero because the
+            //without-project condition genuinely has no such damages
+            Assert.Equal(withoutFailEqad - withFailEqad,
+                report.SampleMeanEqadReduced(withProjectAlternativeID, riskType: RiskType.Fail), tolerance);
+            Assert.Equal(-withNonFailEqad,
+                report.SampleMeanEqadReduced(withProjectAlternativeID, riskType: RiskType.Non_Fail), tolerance);
+
+            //the alternative comparison report puts without-project EqAD, with-project EqAD and EqAD reduced on
+            //a single row, so they have to subtract. Dropping the Non_Fail reduction breaks exactly this.
+            double withoutProjectEqad = withoutProject.SampleMeanEqad();
+            double withProjectEqad = withProject.SampleMeanEqad();
+            double reducedTotal = report.SampleMeanEqadReduced(withProjectAlternativeID);
+
+            Assert.Equal(withoutProjectEqad - withProjectEqad, reducedTotal, tolerance);
+        }
 
     }
 }
