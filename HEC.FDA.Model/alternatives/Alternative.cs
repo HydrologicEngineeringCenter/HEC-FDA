@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Utility.Logging;
 using Utility.Progress;
 namespace HEC.FDA.Model.alternatives
 {
@@ -21,7 +22,7 @@ namespace HEC.FDA.Model.alternatives
         ///
         /// Either base or future year may be null (single-scenario case). When only one scenario is provided,
         /// or when both scenarios are identical, EqAD is set directly from the available scenario's damage results
-        /// without interpolation or discounting. Returns null if both scenarios are null or if discounting parameters are invalid.
+        /// without interpolation or discounting. Returns null if both scenarios are null.
         /// </summary>
         /// <param name="discountRate">Discount rate in decimal form.</param>
         /// <param name="periodOfAnalysis">Number of years in the analysis period.</param>
@@ -31,7 +32,10 @@ namespace HEC.FDA.Model.alternatives
         /// <param name="baseYear">Base year of analysis.</param>
         /// <param name="futureYear">Future year of analysis.</param>
         /// <param name="reporter">Optional progress reporter.</param>
-        /// <returns>AlternativeResults containing EqAD damages, or null if both scenarios are null or parameters are invalid.</returns>
+        /// <returns>AlternativeResults containing EqAD damages, or null if both scenarios are null.</returns>
+        /// <exception cref="InvalidAnalysisYearsException">
+        /// Thrown when the analysis years cannot be discounted over the period of analysis. See <see cref="TryValidateAnalysisYears"/>.
+        /// </exception>
         public static AlternativeResults AnnualizationCompute(
             double discountRate,
             int periodOfAnalysis,
@@ -47,10 +51,12 @@ namespace HEC.FDA.Model.alternatives
 
             var analysisYears = new List<int> { baseYear, futureYear };
 
-            if (!CanCompute(baseYear, futureYear, periodOfAnalysis))
+            OperationResult analysisYearValidation = TryValidateAnalysisYears(baseYear, futureYear, periodOfAnalysis);
+            if (!analysisYearValidation)
             {
-                reporter.ReportMessage(new Utility.Logging.Message("The discounting parameters are not valid, discounting routine aborted."));
-                return null;
+                string analysisYearError = analysisYearValidation.GetConcatenatedMessages();
+                reporter.ReportMessage(new Utility.Logging.Message(analysisYearError));
+                throw new InvalidAnalysisYearsException(analysisYearError);
             }
             return RunAnnualizationCompute(analysisYears, discountRate, periodOfAnalysis, alternativeResultsID, computedResultsBaseYear, computedResultsFutureYear, reporter);
         }
@@ -219,12 +225,40 @@ namespace HEC.FDA.Model.alternatives
             }
         }
 
-        private static bool CanCompute(int baseYear, int futureYear, int periodOfAnalysis)
+        /// <summary>
+        /// Validates that the analysis years can be discounted over the given period of analysis. On failure the
+        /// result carries a user facing explanation of the specific problem. The discounting routine interpolates
+        /// EAD across an array sized by the period of analysis, so the years must fall inside it.
+        /// </summary>
+        /// <param name="baseYear">Base year of analysis.</param>
+        /// <param name="futureYear">Most likely future year of analysis.</param>
+        /// <param name="periodOfAnalysis">Number of years in the study's analysis period.</param>
+        public static OperationResult TryValidateAnalysisYears(int baseYear, int futureYear, int periodOfAnalysis)
         {
-            int difference = futureYear - baseYear + 1;
-            return baseYear <= futureYear
-                && difference >= 2
-                && difference <= periodOfAnalysis;
+            //Study Properties allows a period of 0 or 1, neither of which can hold two distinct years.
+            //Naming that directly beats reporting it as a year problem the user cannot fix in this editor.
+            if (periodOfAnalysis < 2)
+            {
+                string yearLabel = periodOfAnalysis == 1 ? "year" : "years";
+                return OperationResult.Fail($"The study's period of analysis is {periodOfAnalysis} {yearLabel}, which is too short to compute an alternative. " +
+                    "Set it to at least 2 years in Study Properties.");
+            }
+            if (futureYear < baseYear)
+            {
+                return OperationResult.Fail($"The base year ({baseYear}) must be earlier than the future year ({futureYear}).");
+            }
+            if (futureYear == baseYear)
+            {
+                return OperationResult.Fail($"The base year and future year must be at least one year apart. Both are currently {baseYear}.");
+            }
+            int yearsInclusive = futureYear - baseYear + 1;
+            if (yearsInclusive > periodOfAnalysis)
+            {
+                return OperationResult.Fail($"The base year ({baseYear}) and future year ({futureYear}) span {yearsInclusive} years, " +
+                    $"which exceeds the study's period of analysis of {periodOfAnalysis} years. " +
+                    "Change the analysis years, or increase the period of analysis in Study Properties.");
+            }
+            return OperationResult.Success();
         }
 
         private static AggregatedConsequencesByQuantile IterateOnEqad(

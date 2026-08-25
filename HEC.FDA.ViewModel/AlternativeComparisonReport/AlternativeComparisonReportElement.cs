@@ -1,4 +1,5 @@
-﻿using HEC.FDA.Model.metrics;
+﻿using HEC.FDA.Model.alternatives;
+using HEC.FDA.Model.metrics;
 using HEC.FDA.ViewModel.AlternativeComparisonReport.Results;
 using HEC.FDA.ViewModel.Alternatives;
 using HEC.FDA.ViewModel.Alternatives.Results;
@@ -136,11 +137,20 @@ public class AlternativeComparisonReportElement : ChildElement
             Navigate(tab, false, false);
 
             var props = StudyCache.GetStudyPropertiesElement();
-            var woAltResult = await AlternativeComputer.RunAnnualizationCompute(withoutAlt, props);
+            AlternativeResults woAltResult;
             AlternativeResults[] withProjAltsResults = new AlternativeResults[withProjAlts.Count];
-            for (int i = 0; i < withProjAlts.Count; i++)
+            try
             {
-                withProjAltsResults[i] = await AlternativeComputer.RunAnnualizationCompute(withProjAlts[i], props);
+                woAltResult = await AlternativeComputer.RunAnnualizationCompute(withoutAlt, props);
+                for (int i = 0; i < withProjAlts.Count; i++)
+                {
+                    withProjAltsResults[i] = await AlternativeComputer.RunAnnualizationCompute(withProjAlts[i], props);
+                }
+            }
+            catch (InvalidAnalysisYearsException ex)
+            {
+                MessageBox.Show(ex.Message, "Cannot Compute Alternative Comparison Report", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return;
             }
 
             _Results = await Task.Run(() => Model.alternativeComparisonReport.AlternativeComparisonReport.ComputeAlternativeComparisonReport(woAltResult, withProjAltsResults, batchJob.Reporter));

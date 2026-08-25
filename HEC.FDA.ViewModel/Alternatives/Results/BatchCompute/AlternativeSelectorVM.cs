@@ -8,6 +8,7 @@ using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using HEC.MVVMFramework.Base.Events;
 using HEC.MVVMFramework.Base.Implementations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -111,6 +112,8 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
             ReportMessage(this, new MessageEventArgs(new Message("Beginning Batch Compute")));
 
             List<Task<AlternativeResults>> computeTasks = [];
+            List<ComputeChildRowItem> computeRows = [];
+            List<string> computeErrors = [];
             List<AlternativeElement> alternativeElements = [];
             StudyPropertiesElement props = StudyCache.GetStudyPropertiesElement();
 
@@ -126,24 +129,50 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
                 {
                     // RunAnnualizationCompute returns a started task.
                     computeTasks.Add(AlternativeComputer.RunAnnualizationCompute(altElement, props));
+                    computeRows.Add(row);
                 }
                 else
                 {
                     row.MarkInError(validation.ErrorMessage);
+                    computeErrors.Add($"{altElement.Name}:{Environment.NewLine}{validation.ErrorMessage}");
+                    HasFatalError = true;
                 }
             }
-            // Wait for all valid compute tasks to finish.
-            AlternativeResults[] aggregatedResults = await Task.WhenAll(computeTasks);
+            // Wait for all valid compute tasks to finish. Task.WhenAll only rethrows the first failure, and each
+            // faulted task is reported against its own row below, so the rethrow is deliberately swallowed here.
+            try
+            {
+                await Task.WhenAll(computeTasks);
+            }
+            catch (Exception)
+            {
+                // handled per task below
+            }
 
             // Assign the computed results to the matching alternative element.
-            foreach (var result in aggregatedResults)
+            for (int i = 0; i < computeTasks.Count; i++)
             {
-                ComputeCompleted(result);
+                Task<AlternativeResults> task = computeTasks[i];
+                if (task.IsCompletedSuccessfully)
+                {
+                    ComputeCompleted(task.Result);
+                }
+                else
+                {
+                    string message = task.Exception?.InnerException?.Message ?? "The compute did not finish.";
+                    computeRows[i].MarkInError(message);
+                    computeErrors.Add($"{computeRows[i].ChildElement.Name}:{Environment.NewLine}{message}");
+                    ReportMessage(this, new MessageEventArgs(new Message(message)));
+                    HasFatalError = true;
+                }
             }
 
             if (HasFatalError)
             {
-                MessageBox.Show("One or more of your selected alternatives failed to compute");
+                string details = computeErrors.Count > 0
+                    ? string.Join(Environment.NewLine + Environment.NewLine, computeErrors)
+                    : "One or more of your selected alternatives failed to compute";
+                MessageBox.Show(details, "Cannot Compute Alternative Results", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 HasFatalError = false;
                 return;
             }

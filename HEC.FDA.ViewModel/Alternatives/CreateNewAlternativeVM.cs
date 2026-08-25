@@ -1,12 +1,15 @@
 using HEC.CS.Collections;
+using HEC.FDA.Model.alternatives;
 using HEC.FDA.ViewModel.Editors;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Saving;
+using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using Utility.Logging;
 
 namespace HEC.FDA.ViewModel.Alternatives
 {
@@ -71,6 +74,23 @@ namespace HEC.FDA.ViewModel.Alternatives
         {
             get { return _IsFutureYearEnabled; }
             set { _IsFutureYearEnabled = value; NotifyPropertyChanged(); }
+        }
+
+        /// <summary>
+        /// Tells the user the period of analysis constraint up front, rather than only after a failed save.
+        /// </summary>
+        public string YearRangeHint
+        {
+            get
+            {
+                int periodOfAnalysis = GetPeriodOfAnalysis();
+                if (periodOfAnalysis < 2)
+                {
+                    return "*The study's period of analysis is too short to compute an alternative. Set it to at least 2 years in Study Properties";
+                }
+                //the span is inclusive of both years, so the allowed gap is one less than the period
+                return $"*The future year must be no more than {periodOfAnalysis - 1} years after the base year (the study's period of analysis is {periodOfAnalysis} years)";
+            }
         }
 
 
@@ -171,7 +191,27 @@ namespace HEC.FDA.ViewModel.Alternatives
                     result.AddErrorMessage("The base year must be before the future year.");
                 }
             }
+
+            //only worth checking the span once the years themselves are sane, otherwise the user gets
+            //two overlapping messages for the same mistake.
+            if (result.IsValid && BaseYear.HasValue)
+            {
+                int periodOfAnalysis = GetPeriodOfAnalysis();
+                //when there is no future scenario the compute derives the future year from the period of analysis
+                int futureYear = FutureYear ?? (BaseYear.Value + periodOfAnalysis - 1);
+                OperationResult yearValidation = Alternative.TryValidateAnalysisYears(BaseYear.Value, futureYear, periodOfAnalysis);
+                if (!yearValidation)
+                {
+                    result.AddErrorMessage(yearValidation.GetConcatenatedMessages());
+                }
+            }
             return result;
+        }
+
+        private int GetPeriodOfAnalysis()
+        {
+            StudyPropertiesElement props = StudyCache.GetStudyPropertiesElement();
+            return props?.PeriodOfAnalysis ?? 0;
         }
 
         private FdaValidationResult ValidateScenarioSelections()

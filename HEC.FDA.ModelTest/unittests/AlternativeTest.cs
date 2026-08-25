@@ -11,6 +11,7 @@ using HEC.FDA.Model.alternatives;
 using System.Linq;
 using System.Threading;
 using Statistics.Histograms;
+using Utility.Logging;
 
 namespace HEC.FDA.ModelTest.unittests
 {
@@ -350,6 +351,47 @@ namespace HEC.FDA.ModelTest.unittests
             double mean = commercial.ConsequenceDistribution.SampleMean;
             Assert.True(mean > 0, $"expected positive EqAD for the one sided category, got {mean}");
             Assert.True(mean < loneHist.SampleMean, $"expected EqAD {mean} below the single year mean {loneHist.SampleMean}");
+        }
+
+        [Theory]
+        //base year, future year, period of analysis
+        [InlineData(2023, 2072, 50)] //span exactly fills the period of analysis
+        [InlineData(2023, 2047, 50)] //span well inside the period of analysis
+        [InlineData(2023, 2024, 50)] //minimum valid span
+        public void TryValidateAnalysisYears_Succeeds_WhenYearsFitThePeriodOfAnalysis(int baseYear, int futureYear, int periodOfAnalysis)
+        {
+            OperationResult result = Alternative.TryValidateAnalysisYears(baseYear, futureYear, periodOfAnalysis);
+            Assert.True(result.Result);
+        }
+
+        [Theory]
+        [InlineData(2023, 2073, 50)] //one year past the inclusive span a 50 year period allows
+        [InlineData(2030, 2100, 50)] //71 year span exceeds a 50 year period of analysis
+        [InlineData(2023, 2023, 50)] //base and future year are the same
+        [InlineData(2072, 2023, 50)] //future year is before the base year
+        [InlineData(2023, 2024, 1)]  //period of analysis is too short for any alternative
+        public void TryValidateAnalysisYears_ExplainsTheProblem_WhenYearsDoNotFit(int baseYear, int futureYear, int periodOfAnalysis)
+        {
+            OperationResult result = Alternative.TryValidateAnalysisYears(baseYear, futureYear, periodOfAnalysis);
+            Assert.False(result.Result);
+        }
+
+        [Fact]
+        public void AnnualizationCompute_ThrowsDescriptiveException_WhenYearsExceedPeriodOfAnalysis()
+        {
+            int baseYear = 2030;
+            int futureYear = 2100;
+            int periodOfAnalysis = 50;
+
+            InvalidAnalysisYearsException ex = Assert.Throws<InvalidAnalysisYearsException>(() => Alternative.AnnualizationCompute(
+                discountRate: 0.0275, periodOfAnalysis: periodOfAnalysis, alternativeResultsID: 1,
+                computedResultsBaseYear: new ScenarioResults(), computedResultsFutureYear: new ScenarioResults(),
+                baseYear: baseYear, futureYear: futureYear));
+
+            //the message has to name the values so the user knows what to change
+            Assert.Contains(baseYear.ToString(), ex.Message);
+            Assert.Contains(futureYear.ToString(), ex.Message);
+            Assert.Contains(periodOfAnalysis.ToString(), ex.Message);
         }
 
         [Fact]
