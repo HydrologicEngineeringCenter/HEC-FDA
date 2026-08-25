@@ -98,5 +98,36 @@ namespace HEC.FDA.ModelTest.unittests
 
             Assert.True(actual.Equals(expected));
         }
+
+        /// <summary>
+        /// StudyAreaConsequencesBinned used to default riskType to Fail while its StudyAreaConsequencesByQuantile
+        /// sibling defaulted to Total, so an omitted argument silently dropped every Non_Fail row - the same
+        /// class of understatement the risk type lookups were fixed for. Both now default to Total.
+        /// </summary>
+        [Fact]
+        public void SampleMeanDamageIncludesNonFailureConsequencesByDefault()
+        {
+            //Arrange
+            const string damageCategory = "Residential";
+            const string assetCategory = "Structure";
+            const int impactAreaID = 1;
+            DynamicHistogram histogram = FillHistogram(2);
+
+            StudyAreaConsequencesBinned results = new(false);
+            results.AddExistingConsequenceResultObject(
+                new AggregatedConsequencesBinned(damageCategory, assetCategory, histogram, impactAreaID, ConsequenceType.Damage, RiskType.Fail));
+            results.AddExistingConsequenceResultObject(
+                new AggregatedConsequencesBinned(damageCategory, assetCategory, histogram, impactAreaID, ConsequenceType.Damage, RiskType.Non_Fail));
+
+            //Act
+            double fail = results.SampleMeanDamage(damageCategory, assetCategory, impactAreaID, ConsequenceType.Damage, RiskType.Fail);
+            double nonFail = results.SampleMeanDamage(damageCategory, assetCategory, impactAreaID, ConsequenceType.Damage, RiskType.Non_Fail);
+            double defaulted = results.SampleMeanDamage(damageCategory, assetCategory, impactAreaID);
+
+            //Assert
+            Assert.True(fail > 0);
+            Assert.True(nonFail > 0);
+            Assert.Equal(fail + nonFail, defaulted, 5);
+        }
     }
 }

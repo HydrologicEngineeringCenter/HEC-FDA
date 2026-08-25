@@ -395,6 +395,19 @@ namespace HEC.FDA.ModelTest.unittests
         }
 
         [Fact]
+        public void AnnualizationCompute_ReturnsNull_WhenNeitherScenarioHasResults()
+        {
+            //the doc contract promises null here; before the guard was made reachable this threw a
+            //NullReferenceException out of the identical-scenario branch instead
+            AlternativeResults results = Alternative.AnnualizationCompute(
+                discountRate: 0.0275, periodOfAnalysis: 50, alternativeResultsID: 1,
+                computedResultsBaseYear: null, computedResultsFutureYear: null,
+                baseYear: 2030, futureYear: 2050);
+
+            Assert.Null(results);
+        }
+
+        [Fact]
         public void LifeLossResultsExcludedFromEqad()
         {
             ConvergenceCriteria cc = new ConvergenceCriteria(minIterations: 100, maxIterations: 100);

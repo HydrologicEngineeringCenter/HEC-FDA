@@ -139,12 +139,15 @@ public class AlternativeComparisonReportElement : ChildElement
             var props = StudyCache.GetStudyPropertiesElement();
             AlternativeResults woAltResult;
             AlternativeResults[] withProjAltsResults = new AlternativeResults[withProjAlts.Count];
+
+            //Every alternative here is required for the report, so the first failure ends it - but the message
+            //has to name the alternative that failed, or the user has no idea which one to go fix.
             try
             {
-                woAltResult = await AlternativeComputer.RunAnnualizationCompute(withoutAlt, props);
+                woAltResult = await ComputeOrExplain(withoutAlt, props);
                 for (int i = 0; i < withProjAlts.Count; i++)
                 {
-                    withProjAltsResults[i] = await AlternativeComputer.RunAnnualizationCompute(withProjAlts[i], props);
+                    withProjAltsResults[i] = await ComputeOrExplain(withProjAlts[i], props);
                 }
             }
             catch (InvalidAnalysisYearsException ex)
@@ -155,6 +158,22 @@ public class AlternativeComparisonReportElement : ChildElement
 
             _Results = await Task.Run(() => Model.alternativeComparisonReport.AlternativeComparisonReport.ComputeAlternativeComparisonReport(woAltResult, withProjAltsResults, batchJob.Reporter));
             ViewResults();
+        }
+    }
+
+    /// <summary>
+    /// Runs one alternative's annualization compute, rethrowing an invalid-years failure with the
+    /// alternative's name attached so the report's error message identifies which one to correct.
+    /// </summary>
+    private static async Task<AlternativeResults> ComputeOrExplain(AlternativeElement alternative, StudyPropertiesElement props)
+    {
+        try
+        {
+            return await AlternativeComputer.RunAnnualizationCompute(alternative, props);
+        }
+        catch (InvalidAnalysisYearsException ex)
+        {
+            throw new InvalidAnalysisYearsException($"{alternative.Name}:{Environment.NewLine}{ex.Message}");
         }
     }
 

@@ -78,17 +78,15 @@ public static class AlternativeComparisonReport
 
             foreach (AggregatedConsequencesByQuantile withProjectDamageResult in withProjectAlternativeResults.EqadResults.ConsequenceResultList)
             {
-                AggregatedConsequencesByQuantile withoutProjectDamageResult = withoutProjectAlternativeResults.EqadResults.GetConsequenceResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, withProjectDamageResult.RegionID, withProjectDamageResult.ConsequenceType, withProjectDamageResult.RiskType); //GetEqadHistogram;
+                //A with-project levee introduces Non_Fail consequences that the without-project condition has
+                //no counterpart for. That is an ordinary difference between the two conditions, not a defect,
+                //so use the lookup that returns null without logging a Fatal, and stand a zero damage
+                //counterpart in its place. The counterpart carries the with-project row's identity; the
+                //IsNull placeholder GetConsequenceResult hands back carries none and defaults to RiskType.Fail.
+                AggregatedConsequencesByQuantile withoutProjectDamageResult = withoutProjectAlternativeResults.EqadResults.TryGetConsequenceResult(withProjectDamageResult.DamageCategory, withProjectDamageResult.AssetCategory, withProjectDamageResult.RegionID, withProjectDamageResult.ConsequenceType, withProjectDamageResult.RiskType); //GetEqadHistogram;
                 withoutProjectConsequenceDistList.Remove(withoutProjectDamageResult);
 
-                //A with-project levee introduces Non_Fail consequences that the without-project condition has
-                //no counterpart for. GetConsequenceResult reports that miss with an IsNull placeholder rather
-                //than null, and that placeholder carries no identity and defaults to RiskType.Fail, so it has
-                //to be replaced before it reaches the subtraction below.
-                if (withoutProjectDamageResult.IsNull)
-                {
-                    withoutProjectDamageResult = withProjectDamageResult.ZeroDamageCounterpart();
-                }
+                withoutProjectDamageResult ??= withProjectDamageResult.ZeroDamageCounterpart();
 
                 AggregatedConsequencesByQuantile damageReducedResult = IterateOnConsequenceDistributionResult(withProjectDamageResult, withoutProjectDamageResult, pr, true);
                 damageReducedOneAlternative.AddExistingConsequenceResultObject(damageReducedResult);
@@ -97,11 +95,8 @@ public static class AlternativeComparisonReport
             {
                 foreach (AggregatedConsequencesByQuantile withoutProjectDamageResult in withoutProjectConsequenceDistList)
                 {
-                    AggregatedConsequencesByQuantile withProjectDamageResult = withProjectAlternativeResults.EqadResults.GetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID, withoutProjectDamageResult.ConsequenceType, withoutProjectDamageResult.RiskType);
-                    if (withProjectDamageResult.IsNull)
-                    {
-                        withProjectDamageResult = withoutProjectDamageResult.ZeroDamageCounterpart();
-                    }
+                    AggregatedConsequencesByQuantile withProjectDamageResult = withProjectAlternativeResults.EqadResults.TryGetConsequenceResult(withoutProjectDamageResult.DamageCategory, withoutProjectDamageResult.AssetCategory, withoutProjectDamageResult.RegionID, withoutProjectDamageResult.ConsequenceType, withoutProjectDamageResult.RiskType);
+                    withProjectDamageResult ??= withoutProjectDamageResult.ZeroDamageCounterpart();
 
                     AggregatedConsequencesByQuantile damageReducedResult = IterateOnConsequenceDistributionResult(withProjectDamageResult, withoutProjectDamageResult, pr, false);
                     damageReducedOneAlternative.AddExistingConsequenceResultObject(damageReducedResult);

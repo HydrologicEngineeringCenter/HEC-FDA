@@ -80,6 +80,15 @@ namespace HEC.FDA.Model.alternatives
             computedResultsBaseYear ??= computedResultsFutureYear;
             computedResultsFutureYear ??= computedResultsBaseYear;
 
+            //After the coalescing above, a null base year means both were null. Everything below dereferences
+            //these, so the "no results" case has to be caught here rather than inside the identical-scenario
+            //branch, where the check could never fire.
+            if (computedResultsBaseYear == null)
+            {
+                reporter.ReportMessage(new Utility.Logging.Message("No scenario results available, discounting routine aborted."));
+                return null;
+            }
+
             alternativeResults.BaseYearScenarioResults = computedResultsBaseYear;
             alternativeResults.FutureYearScenarioResults = computedResultsFutureYear;
 
@@ -88,14 +97,8 @@ namespace HEC.FDA.Model.alternatives
             {
                 reporter.ReportMessage(new("Scenarios are identical or there is only one scenario. Discounting routine aborted."));
                 alternativeResults.ScenariosAreIdentical = true;
-                ScenarioResults availableResults = computedResultsBaseYear ?? computedResultsFutureYear;
-                if (availableResults == null)
-                {
-                    reporter.ReportMessage(new Utility.Logging.Message("No scenario results available, discounting routine aborted."));
-                    return null;
-                }
                 //ONLY CONVERTING DAMAGE RESULTS FOR EQAD.
-                alternativeResults.EqadResults = ScenarioResults.ConvertToStudyAreaConsequencesByQuantile(availableResults, ConsequenceType.Damage);
+                alternativeResults.EqadResults = ScenarioResults.ConvertToStudyAreaConsequencesByQuantile(computedResultsBaseYear, ConsequenceType.Damage);
             }
             else
             {
@@ -272,10 +275,6 @@ namespace HEC.FDA.Model.alternatives
         ProgressReporter reporter = null)
         {
             reporter ??= ProgressReporter.None();
-
-            var convergenceCriteria = iterateOnFutureYear
-                ? mlfYearDamageResult.ConvergenceCriteria
-                : baseYearDamageResult.ConvergenceCriteria;
 
             int probabilitySteps = 25000;
             var resultCollection = new ConcurrentBag<double>();

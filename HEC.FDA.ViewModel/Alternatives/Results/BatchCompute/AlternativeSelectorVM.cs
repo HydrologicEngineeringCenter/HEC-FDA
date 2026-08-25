@@ -149,22 +149,23 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
                 // handled per task below
             }
 
-            // Assign the computed results to the matching alternative element.
+            // Assign the computed results to the matching alternative element. A task that completes with a
+            // null result is a failure too, so it is reported against its own row rather than only flipping
+            // the fatal flag and leaving the dialog to list every other alternative but this one.
             for (int i = 0; i < computeTasks.Count; i++)
             {
                 Task<AlternativeResults> task = computeTasks[i];
-                if (task.IsCompletedSuccessfully)
+                if (task.IsCompletedSuccessfully && ComputeCompleted(task.Result))
                 {
-                    ComputeCompleted(task.Result);
+                    continue;
                 }
-                else
-                {
-                    string message = task.Exception?.InnerException?.Message ?? "The compute did not finish.";
-                    computeRows[i].MarkInError(message);
-                    computeErrors.Add($"{computeRows[i].ChildElement.Name}:{Environment.NewLine}{message}");
-                    ReportMessage(this, new MessageEventArgs(new Message(message)));
-                    HasFatalError = true;
-                }
+
+                string message = task.Exception?.InnerException?.Message
+                    ?? "The compute did not produce any results. See the compute log for details.";
+                computeRows[i].MarkInError(message);
+                computeErrors.Add($"{computeRows[i].ChildElement.Name}:{Environment.NewLine}{message}");
+                ReportMessage(this, new MessageEventArgs(new Message(message)));
+                HasFatalError = true;
             }
 
             if (HasFatalError)
@@ -187,13 +188,15 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
         }
 
 
-        private void ComputeCompleted(AlternativeResults results)
+        /// <summary>
+        /// Assigns the results to the matching alternative element. Returns false when the compute produced no
+        /// results, so the caller can report it against the row that failed.
+        /// </summary>
+        private bool ComputeCompleted(AlternativeResults results)
         {
             if (results == null)
             {
-                HasFatalError = true;
-
-                return; // if failed, don't try to save a result. 
+                return false; // if failed, don't try to save a result. 
             }
             // Assign the computed results to the matching alternative element.
             foreach (var row in Rows)
@@ -203,7 +206,7 @@ namespace HEC.FDA.ViewModel.Alternatives.Results.BatchCompute
                     ((AlternativeElement)row.ChildElement).Results = results;
                 }
             }
-
+            return true;
         }
 
     }
