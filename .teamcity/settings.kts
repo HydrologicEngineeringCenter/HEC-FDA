@@ -41,12 +41,11 @@ project {
 
 object SetVersion : BuildType({
     name = "Set Version"
-    description = "Computes Version and IsRelease from branch context (tag vs. branch). No triggers - pulled into chains via snapshot dependency."
+    description = "Computes Version from branch context: a v* tag yields the tag without its leading v, anything else yields 2.1.0.<counter>-Beta. No triggers - pulled into chains via snapshot dependency."
 
     buildNumberPattern = "%Version%"
 
     params {
-        param("IsRelease", "false")
         param("Version", "")
     }
 
@@ -70,18 +69,14 @@ object SetVersion : BuildType({
                     if (${'$'}branch -match '^v') {
                         # Release tag: strip the leading 'v' (v2.3.1 -> 2.3.1)
                         ${'$'}version = ${'$'}branch -replace '^v', ''
-                        ${'$'}isRelease = 'true'
                     } else {
                         ${'$'}version = "2.1.0.%build.counter%-Beta"
-                        ${'$'}isRelease = 'false'
                     }
                     
                     Write-Host "Branch: ${'$'}branch"
                     Write-Host "Version: ${'$'}version"
-                    Write-Host "IsRelease: ${'$'}isRelease"
                     
                     Write-Host "##teamcity[setParameter name='Version' value='${'$'}version']"
-                    Write-Host "##teamcity[setParameter name='IsRelease' value='${'$'}isRelease']"
                     Write-Host "##teamcity[buildNumber '${'$'}version']"
                 """.trimIndent()
             }
