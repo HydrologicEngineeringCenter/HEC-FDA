@@ -255,6 +255,69 @@ object Build_Test : BuildType({
 
 object Deploy : Project({
     name = "Deploy"
+
+    buildType(Deploy_PushToNexus)
+})
+
+object Deploy_PushToNexus : BuildType({
+    name = "Push to Nexus"
+    description = "Uploads the signed HEC-FDA distribution zip to the fda-releases raw Nexus repository. Tag builds only - reached via the Release endpoint."
+
+    type = BuildTypeSettings.Type.DEPLOYMENT
+    buildNumberPattern = "%Version%"
+
+    params {
+        param("nexus.raw.repo", "fda-releases")
+        param("Version", "${SignExecutables.depParamRefs["Version"]}")
+        param("nexus.raw.url", "https://www.hec.usace.army.mil/nexus/repository")
+    }
+
+    steps {
+        script {
+            name = "Upload distribution to Nexus"
+            scriptContent = """
+                #!/bin/bash
+                set -euo pipefail
+                
+                ZIP="HEC-FDA-%Version%.zip"
+                TARGET="%nexus.raw.url%/%nexus.raw.repo%/HEC-FDA/%Version%/${'$'}{ZIP}"
+                
+                if [ ! -f "${'$'}ZIP" ]; then
+                  echo "Expected artifact not found: ${'$'}ZIP" >&2
+                  exit 1
+                 fi
+                
+                echo "Uploading ${'$'}{ZIP} (${'$'}(du -h "${'$'}ZIP" | cut -f1)) to ${'$'}{TARGET}"
+                
+                # --fail-with-body makes curl exit non-zero on 4xx/5xx; without it a 401 would
+                # still exit 0 and the build would go green on a failed upload.
+                curl --fail-with-body --show-error --silent \
+                  -u "%env.NEXUS_USER%:%env.NEXUS_PASSWORD%" \
+                  --upload-file "${'$'}ZIP" \
+                  "${'$'}TARGET"
+                
+                echo "Upload complete: ${'$'}{TARGET}"
+            """.trimIndent()
+        }
+    }
+
+    dependencies {
+        dependency(SignExecutables) {
+            snapshot {
+                reuseBuilds = ReuseBuilds.NO
+                onDependencyFailure = FailureAction.FAIL_TO_START
+            }
+
+            artifacts {
+                cleanDestination = true
+                artifactRules = "HEC-FDA-%Version%.zip"
+            }
+        }
+    }
+
+    requirements {
+        contains("teamcity.agent.name", "linux")
+    }
 })
 
 
@@ -310,7 +373,7 @@ object Endpoints_Release : BuildType({
     buildNumberPattern = "%Version%"
 
     params {
-        param("Version", "${SignExecutables.depParamRefs["Version"]}")
+        param("Version", "${Deploy_PushToNexus.depParamRefs["Version"]}")
     }
 
     vcs {
@@ -325,7 +388,7 @@ object Endpoints_Release : BuildType({
     }
 
     dependencies {
-        snapshot(SignExecutables) {
+        snapshot(Deploy_PushToNexus) {
             reuseBuilds = ReuseBuilds.NO
             onDependencyFailure = FailureAction.FAIL_TO_START
         }
