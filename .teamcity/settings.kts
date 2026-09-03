@@ -47,6 +47,7 @@ object SetVersion : BuildType({
 
     params {
         param("Version", "")
+        param("VersionShort", "")
     }
 
     vcs {
@@ -73,10 +74,20 @@ object SetVersion : BuildType({
                         ${'$'}version = "2.1.0.%build.counter%-Beta"
                     }
                     
-                    Write-Host "Branch: ${'$'}branch"
-                    Write-Host "Version: ${'$'}version"
+                    # Abbreviated form used for the portable zip filename:
+                    #   major+minor, patch appended only when non-zero, 4th component appended when present.
+                    #   2.1.0 -> 21 | 2.0.2 -> 202 | 2.0.0 -> 20 | 2.1.0.1534 -> 21_1534 | 2.1.0.3-Beta -> 21_3-Beta
+                    ${'$'}parts = ${'$'}version -split '\.'
+                    ${'$'}short = "${'$'}(${'$'}parts[0])${'$'}(${'$'}parts[1])"
+                    if (${'$'}parts.Count -ge 3 -and ${'$'}parts[2] -ne '0') { ${'$'}short += ${'$'}parts[2] }
+                    if (${'$'}parts.Count -ge 4) { ${'$'}short += "_${'$'}(${'$'}parts[3])" }
+                    
+                    Write-Host "Branch:       ${'$'}branch"
+                    Write-Host "Version:      ${'$'}version"
+                    Write-Host "VersionShort: ${'$'}short"
                     
                     Write-Host "##teamcity[setParameter name='Version' value='${'$'}version']"
+                    Write-Host "##teamcity[setParameter name='VersionShort' value='${'$'}short']"
                     Write-Host "##teamcity[buildNumber '${'$'}version']"
                 """.trimIndent()
             }
@@ -89,12 +100,13 @@ object SignExecutables : BuildType({
     name = "Sign Binaries"
     description = """Signs the HEC-FDA distribution produced by Build, then packages it as HEC-FDA-<version>.zip. Uses the shared Root-level "Sign Binaries" template."""
 
-    artifactRules = "%TO_BE_SIGNED_DIR% => HEC-FDA-%Version%.zip!/HEC-FDA-%Version%"
+    artifactRules = "%TO_BE_SIGNED_DIR% => HEC-FDA_%VersionShort%_Portable.zip!/HEC-FDA-%Version%"
     buildNumberPattern = "%Version%"
 
     params {
         param("Version", "${Build_Publish.depParamRefs["Version"]}")
         param("sign.filePatterns", "'HEC.FDA.View.exe' 'HEC.*.dll' 'Hec.*.dll' 'HecCs.dll' 'hecdss.dll' 'Geospatial.*.dll' 'H5Assist.dll' 'PipeClient.dll' 'PlottingLibrary*.dll' 'Ras.*.dll' 'Tiff*.dll' 'Utility.*.dll' 'Visual.*.dll'")
+        param("VersionShort", "${Build_Publish.depParamRefs["VersionShort"]}")
     }
 
     vcs {
@@ -138,6 +150,7 @@ object Build_Publish : BuildType({
     params {
         param("env.RAS_GDAL", "%teamcity.build.checkoutDir%/%PUBLISH_OUT_DIR%/GDAL/")
         param("Version", "${SetVersion.depParamRefs["Version"]}")
+        param("VersionShort", "${SetVersion.depParamRefs["VersionShort"]}")
         param("PUBLISH_OUT_DIR", "Distribution")
     }
 
@@ -267,9 +280,11 @@ object Deploy_PushToNexus : BuildType({
     buildNumberPattern = "%Version%"
 
     params {
+        param("nexus.raw.url", "https://www.hec.usace.army.mil/nexus/repository")
+        param("ALLOW_OVERWRITE", "false")
         param("nexus.raw.repo", "fda-releases")
         param("Version", "${SignExecutables.depParamRefs["Version"]}")
-        param("nexus.raw.url", "https://www.hec.usace.army.mil/nexus/repository")
+        param("VersionShort", "${SignExecutables.depParamRefs["VersionShort"]}")
     }
 
     steps {
@@ -279,13 +294,27 @@ object Deploy_PushToNexus : BuildType({
                 #!/bin/bash
                 set -euo pipefail
                 
-                ZIP="HEC-FDA-%Version%.zip"
+                ZIP="HEC-FDA_%VersionShort%_Portable.zip"
+                # Nexus path keeps the full, precise version so artifacts stay uniquely addressable.
                 TARGET="%nexus.raw.url%/%nexus.raw.repo%/HEC-FDA/%Version%/${'$'}{ZIP}"
                 
                 if [ ! -f "${'$'}ZIP" ]; then
                   echo "Expected artifact not found: ${'$'}ZIP" >&2
                   exit 1
-                 fi
+                fi
+                
+                # Releases are immutable. A VCS trigger can re-fire on an already-built tag, so
+                # refuse to overwrite a published artifact rather than silently replacing a
+                # signed release. Set ALLOW_OVERWRITE=true on the build to deliberately replace.
+                HTTP=${'$'}(curl --silent --output /dev/null --write-out '%%{http_code}' --head \
+                  -u "%env.NEXUS_USER%:%env.NEXUS_PASSWORD%" "${'$'}TARGET" || true)
+                
+                if [ "${'$'}HTTP" = "200" ] && [ "%ALLOW_OVERWRITE%" != "true" ]; then
+                  echo "Refusing to overwrite an already-published release artifact:" >&2
+                  echo "  ${'$'}TARGET" >&2
+                  echo "Set ALLOW_OVERWRITE=true to replace it deliberately." >&2
+                  exit 1
+                fi
                 
                 echo "Uploading ${'$'}{ZIP} (${'$'}(du -h "${'$'}ZIP" | cut -f1)) to ${'$'}{TARGET}"
                 
@@ -310,7 +339,7 @@ object Deploy_PushToNexus : BuildType({
 
             artifacts {
                 cleanDestination = true
-                artifactRules = "HEC-FDA-%Version%.zip"
+                artifactRules = "HEC-FDA_%VersionShort%_Portable.zip"
             }
         }
     }
