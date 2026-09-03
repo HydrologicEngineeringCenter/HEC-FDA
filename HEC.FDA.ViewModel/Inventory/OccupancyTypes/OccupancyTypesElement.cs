@@ -27,7 +27,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         {
             ListOfOccupancyTypes = listOfOccTypes;
             AddDefaultActions(EditOccupancyTypes, StringConstants.EDIT_OCCTYPE_MENU);
-            AddExportActions();
+            // Purposely commented out, will revisit later
+            // AddExportActions();
         }
 
         public OccupancyTypesElement(XElement occtypeElem, int id) : base(occtypeElem, id)
