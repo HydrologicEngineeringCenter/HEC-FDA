@@ -36,8 +36,8 @@ project {
     // Password-type parameter in TeamCity (on this project or the parent) so the value
     // is masked in build logs. The DSL cannot enforce the type of an inherited parameter,
     // so verify it in the UI whenever a secret is added or rotated.
-    //   env.NEXUS_USER, env.NEXUS_PASSWORD  inherited from the parent Consequences project;
-    //                                       Nexus NuGet feed (read) and fda-releases (write)
+    //   env.NEXUS_USER, env.NEXUS_PASSWORD  attached per build configuration by NexusCredentials
+    //                                       below; Nexus NuGet feed (read) and fda-releases (write)
     //   env.FDA_READ_ONLY_PAT               Bitbucket repository-scoped read token (Mirror to GitHub)
     //   env.GITHUB_MIRROR_TOKEN             GitHub token for the public mirror (Mirror to GitHub)
     //
@@ -47,13 +47,6 @@ project {
     // let a pull request rewrite this pipeline.
 
     params {
-        // NuGet reads credentials for a package source from the environment variable
-        // NuGetPackageSourceCredentials_<source name>, where <source name> is the key in
-        // nuget.config. This replaces `dotnet nuget update source --store-password-in-clear-text`,
-        // which wrote the password into nuget.config inside the checkout directory. Only the
-        // Windows agents consume it, and '-' is a valid character in a Windows variable name.
-        param("env.NuGetPackageSourceCredentials_ras-nuget-private", "Username=%env.NEXUS_USER%;Password=%env.NEXUS_PASSWORD%")
-
         // GDAL runtime bundle unpacked into the distribution. The SHA-256 is pinned so a
         // modified upload to the bucket fails the build instead of shipping in a signed release.
         // When updating GDAL, download the new zip and record its hash here in the same change.
@@ -72,6 +65,27 @@ project {
     subProject(Deploy)
     subProject(Endpoints)
     subProject(Build)
+}
+
+/**
+ * Nexus credentials, attached only to the build configurations that talk to Nexus (feed
+ * restore in Build/Test and Build/Publish, upload in Deploy/Push to Nexus). They are deliberately
+ * not project-level parameters: a project-level env. parameter is injected into every build in
+ * the project, including ones that never touch Nexus. The credentialsJSON value is an opaque
+ * reference to the secret stored on the server for this project, not the secret itself.
+ *
+ * NuGet reads credentials for a package source from the environment variable
+ * NuGetPackageSourceCredentials_<source name>, where <source name> is the key in nuget.config.
+ * This replaces `dotnet nuget update source --store-password-in-clear-text`, which wrote the
+ * password into nuget.config inside the checkout directory. Only the Windows agents consume it,
+ * and '-' is a valid character in a Windows variable name.
+ */
+object NexusCredentials {
+    fun attach(buildType: BuildType) = buildType.params {
+        param("env.NEXUS_USER", "bbeam")
+        password("env.NEXUS_PASSWORD", "credentialsJSON:93766cea-6722-458b-933b-d40045f7ff10")
+        param("env.NuGetPackageSourceCredentials_ras-nuget-private", "Username=%env.NEXUS_USER%;Password=%env.NEXUS_PASSWORD%")
+    }
 }
 
 /**
@@ -343,6 +357,8 @@ object Build_Publish : BuildType({
         param("PUBLISH_OUT_DIR", "Distribution")
     }
 
+    NexusCredentials.attach(this)
+
     vcs {
         root(DslContext.settingsRoot)
     }
@@ -382,6 +398,8 @@ object Build_Test : BuildType({
         param("Version", "${SetVersion.depParamRefs["Version"]}")
         param("PUBLISH_OUT_DIR", "Distribution")
     }
+
+    NexusCredentials.attach(this)
 
     vcs {
         root(DslContext.settingsRoot)
@@ -429,6 +447,8 @@ object Deploy_PushToNexus : BuildType({
         param("Version", "${SignExecutables.depParamRefs["Version"]}")
         param("VersionShort", "${SignExecutables.depParamRefs["VersionShort"]}")
     }
+
+    NexusCredentials.attach(this)
 
     steps {
         script {
