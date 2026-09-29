@@ -3,6 +3,7 @@ import jetbrains.buildServer.configs.kotlin.buildSteps.dotnetPublish
 import jetbrains.buildServer.configs.kotlin.buildSteps.dotnetTest
 import jetbrains.buildServer.configs.kotlin.buildSteps.powerShell
 import jetbrains.buildServer.configs.kotlin.buildSteps.script
+import jetbrains.buildServer.configs.kotlin.triggers.schedule
 import jetbrains.buildServer.configs.kotlin.triggers.vcs
 
 /*
@@ -33,6 +34,7 @@ project {
 
     buildType(SignExecutables)
     buildType(SetVersion)
+    buildType(MirrorToGitHub)
 
     subProject(Deploy)
     subProject(Endpoints)
@@ -95,6 +97,121 @@ object SetVersion : BuildType({
     }
 })
 
+object MirrorToGitHub : BuildType({
+    name = "Mirror to GitHub"
+    description = """
+        Pushes every branch and tag from the canonical Bitbucket repository to the public GitHub mirror.
+        Runs on every push (any branch or tag) and nightly, so anything pushed directly to GitHub is
+        overwritten within a day. Pushes are forced and pruned with explicit refs/heads and refs/tags
+        refspecs, so the mirror always matches Bitbucket exactly.
+        Requires two project-level secure parameters: env.FDA_READ_ONLY_PAT (a repository-scoped
+        Bitbucket HTTP access token with read access to hec-fda) and env.GITHUB_MIRROR_TOKEN (a token
+        with Contents read/write on the mirror that is allowed to force-push and delete branches).
+    """.trimIndent()
+
+    maxRunningBuilds = 1
+
+    params {
+        param("github.mirror.url", "https://github.com/HydrologicEngineeringCenter/HEC-FDA.git")
+        // Explicit rather than %vcsroot.Consequences_HecFda.url% so the mirror source cannot drift
+        // if the shared VCS root is ever changed or repointed.
+        param("bitbucket.source.url", "https://bitbucket.hecdev.net/scm/con/hec-fda.git")
+    }
+
+    vcs {
+        root(AbsoluteId("Consequences_HecFda"))
+
+        // The VCS root is attached only so TeamCity detects changes and triggers the build.
+        // The script maintains its own bare clone with every ref, which the normal checkout
+        // (a single branch, no tags) cannot provide.
+        checkoutMode = CheckoutMode.MANUAL
+
+        branchFilter = """
+            +:*
+            +:refs/tags/*
+        """.trimIndent()
+    }
+
+    steps {
+        script {
+            name = "Mirror all branches and tags to GitHub"
+            scriptContent = """
+                #!/bin/bash
+                set -euo pipefail
+
+                : "${'$'}{FDA_READ_ONLY_PAT:?Set project parameter env.FDA_READ_ONLY_PAT}"
+                : "${'$'}{GITHUB_MIRROR_TOKEN:?Set project parameter env.GITHUB_MIRROR_TOKEN}"
+
+                SOURCE_URL="%bitbucket.source.url%"
+                MIRROR_URL="%github.mirror.url%"
+                MIRROR_DIR="%teamcity.build.checkoutDir%/mirror.git"
+
+                # Credentials are handed to git through inline credential helpers that read the
+                # environment, so tokens never appear in remote URLs, git config, or the build log.
+                # Bitbucket repository HTTP access tokens are sent as the basic-auth password and
+                # Bitbucket ignores the username; GitHub expects x-access-token.
+                SOURCE_CRED='!f() { echo "username=x-token-auth"; echo "password=${'$'}FDA_READ_ONLY_PAT"; }; f'
+                MIRROR_CRED='!f() { echo "username=x-access-token"; echo "password=${'$'}GITHUB_MIRROR_TOKEN"; }; f'
+
+                # Keep a persistent bare clone on the agent so each run only fetches what changed.
+                if [ ! -d "${'$'}MIRROR_DIR" ]; then
+                  echo "Creating bare clone of ${'$'}SOURCE_URL"
+                  git -c credential.helper= -c "credential.helper=${'$'}SOURCE_CRED" \
+                    clone --bare "${'$'}SOURCE_URL" "${'$'}MIRROR_DIR"
+                fi
+
+                cd "${'$'}MIRROR_DIR"
+                git remote set-url origin "${'$'}SOURCE_URL"
+
+                echo "Fetching all branches and tags from Bitbucket"
+                git -c credential.helper= -c "credential.helper=${'$'}SOURCE_CRED" \
+                  fetch --prune --prune-tags --force origin \
+                    '+refs/heads/*:refs/heads/*' \
+                    '+refs/tags/*:refs/tags/*'
+
+                echo "Refs to mirror:"
+                git for-each-ref --format='  %%(refname)' refs/heads refs/tags
+
+                # Force-push with explicit refspecs and --prune so the GitHub mirror ends up
+                # identical to Bitbucket: rewritten, added, or deleted branches and tags on
+                # GitHub are all corrected, undoing any direct changes made there.
+                echo "Pushing to ${'$'}MIRROR_URL"
+                git -c credential.helper= -c "credential.helper=${'$'}MIRROR_CRED" \
+                  push --prune --force "${'$'}MIRROR_URL" \
+                    '+refs/heads/*:refs/heads/*' \
+                    '+refs/tags/*:refs/tags/*'
+
+                echo "Mirror is in sync with Bitbucket."
+            """.trimIndent()
+        }
+    }
+
+    triggers {
+        // Every push to any branch or tag on Bitbucket.
+        vcs {
+            branchFilter = """
+                +:*
+                +:refs/tags/*
+            """.trimIndent()
+        }
+        // Nightly full sync, even with no new commits, to undo anything pushed
+        // directly to GitHub since the last run.
+        schedule {
+            schedulingPolicy = daily {
+                hour = 2
+                minute = 0
+            }
+            branchFilter = "+:<default>"
+            triggerBuild = always()
+            withPendingChangesOnly = false
+        }
+    }
+
+    requirements {
+        contains("teamcity.agent.name", "linux")
+    }
+})
+
 object SignExecutables : BuildType({
     templates(AbsoluteId("SignExecutables"))
     name = "Sign Binaries"
@@ -142,7 +259,7 @@ object Build : Project({
 
 object Build_Publish : BuildType({
     name = "Publish"
-    description = "Publishes the self-contained HEC.FDA.View win-x64 distribution. Mirrors the publish step of CI.yaml/Release.yml."
+    description = "Publishes the self-contained HEC.FDA.View win-x64 distribution. Replaces the publish step of the former CI.yaml/Release.yml GitHub Actions workflows."
 
     artifactRules = "%PUBLISH_OUT_DIR% => HEC-FDA-%Version%"
     buildNumberPattern = "%Version%"
@@ -207,7 +324,7 @@ object Build_Publish : BuildType({
 
 object Build_Test : BuildType({
     name = "Test"
-    description = "Runs the RunsOn=Remote test suite. Mirrors the test step of CI.yaml."
+    description = "Runs the RunsOn=Remote test suite. Replaces the test step of the former CI.yaml GitHub Actions workflow."
 
     buildNumberPattern = "%Version%"
 
@@ -359,7 +476,7 @@ object Endpoints : Project({
 
 object Endpoints_CI : BuildType({
     name = "CI"
-    description = "Triggers the HEC-FDA build chain on pushes to main and pull requests. Mirrors CI.yaml."
+    description = "Triggers the HEC-FDA build chain on pushes to main and pull requests. Replaces the former CI.yaml GitHub Actions workflow."
 
     type = BuildTypeSettings.Type.DEPLOYMENT
     buildNumberPattern = "%Version%"
@@ -377,7 +494,7 @@ object Endpoints_CI : BuildType({
             triggerRules = "-:.teamcity/**"
             branchFilter = """
                 +:main
-                +:*/merge
+                +:*/from
             """.trimIndent()
         }
     }
@@ -396,7 +513,7 @@ object Endpoints_CI : BuildType({
 
 object Endpoints_Release : BuildType({
     name = "Release"
-    description = "Triggers the signed release chain on v*.*.* tags. Mirrors Release.yml."
+    description = "Triggers the signed release chain on v*.*.* tags. Replaces the former Release.yml GitHub Actions workflow."
 
     type = BuildTypeSettings.Type.DEPLOYMENT
     buildNumberPattern = "%Version%"

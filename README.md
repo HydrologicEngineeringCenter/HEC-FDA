@@ -1,7 +1,7 @@
 # HEC-FDA
 
-# Current Status of Main
-![example workflow](https://github.com/HydrologicEngineeringCenter/HEC-FDA/actions/workflows/CI.yaml/badge.svg)
+> **This GitHub repository is a read-only mirror.**
+> Anything committed or pushed directly to this GitHub repository will be overwritten by the next sync. Please do not open pull requests against this mirror; use GitHub Issues to report bugs or request features.
 
 # Build Process with Visual Studio 2022
 - Clone the HEC-FDA Repo to your PC
