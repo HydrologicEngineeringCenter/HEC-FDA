@@ -59,6 +59,10 @@ project {
         // When updating GDAL, download the new zip and record its hash here in the same change.
         param("gdal.zip.url", "https://s3.hecdev.net/ras-public-data/ras-GDAL-3.9.1.zip")
         param("gdal.zip.sha256", "99df8bd72b76f59b2f3ddc0f2d2f04d5fe4bdfcf715addf4302525ef7a1ac5a1")
+
+        // Password-type parameter added in the TeamCity UI; the credentialsJSON value is an
+        // opaque reference to the secret stored on the server, not the secret itself.
+        password("env.FDA_READ_ONLY_PAT", "credentialsJSON:3877294f-82ce-4df0-9e27-091e5b4cd1ff")
     }
 
     buildType(SignExecutables)
