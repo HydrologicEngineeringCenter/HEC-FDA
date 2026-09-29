@@ -32,6 +32,35 @@ version = "2026.1"
 
 project {
 
+    // Secrets consumed by this project. Every one of these must be declared as a
+    // Password-type parameter in TeamCity (on this project or the parent) so the value
+    // is masked in build logs. The DSL cannot enforce the type of an inherited parameter,
+    // so verify it in the UI whenever a secret is added or rotated.
+    //   env.NEXUS_USER, env.NEXUS_PASSWORD  inherited from the parent Consequences project;
+    //                                       Nexus NuGet feed (read) and fda-releases (write)
+    //   env.FDA_READ_ONLY_PAT               Bitbucket repository-scoped read token (Mirror to GitHub)
+    //   env.GITHUB_MIRROR_TOKEN             GitHub token for the public mirror (Mirror to GitHub)
+    //
+    // Versioned Settings for this project must stay in read-only "sync from VCS" mode with
+    // "apply settings from the branch being built" left off. CI builds pull-request branches
+    // with the Nexus credentials in the environment; applying DSL from those branches would
+    // let a pull request rewrite this pipeline.
+
+    params {
+        // NuGet reads credentials for a package source from the environment variable
+        // NuGetPackageSourceCredentials_<source name>, where <source name> is the key in
+        // nuget.config. This replaces `dotnet nuget update source --store-password-in-clear-text`,
+        // which wrote the password into nuget.config inside the checkout directory. Only the
+        // Windows agents consume it, and '-' is a valid character in a Windows variable name.
+        param("env.NuGetPackageSourceCredentials_ras-nuget-private", "Username=%env.NEXUS_USER%;Password=%env.NEXUS_PASSWORD%")
+
+        // GDAL runtime bundle unpacked into the distribution. The SHA-256 is pinned so a
+        // modified upload to the bucket fails the build instead of shipping in a signed release.
+        // When updating GDAL, download the new zip and record its hash here in the same change.
+        param("gdal.zip.url", "https://s3.hecdev.net/ras-public-data/ras-GDAL-3.9.1.zip")
+        param("gdal.zip.sha256", "99df8bd72b76f59b2f3ddc0f2d2f04d5fe4bdfcf715addf4302525ef7a1ac5a1")
+    }
+
     buildType(SignExecutables)
     buildType(SetVersion)
     buildType(MirrorToGitHub)
@@ -39,6 +68,41 @@ project {
     subProject(Deploy)
     subProject(Endpoints)
     subProject(Build)
+}
+
+/**
+ * Downloads the pinned GDAL bundle, verifies it against gdal.zip.sha256, and unpacks it into
+ * PUBLISH_OUT_DIR. Shared by Build/Test and Build/Publish so the check cannot drift between them.
+ */
+fun BuildSteps.downloadAndVerifyGdal() {
+    powerShell {
+        name = "Download and verify GDAL"
+        scriptMode = script {
+            content = """
+                ${'$'}ErrorActionPreference = 'Stop'
+
+                ${'$'}zipUrl   = "%gdal.zip.url%"
+                ${'$'}expected = "%gdal.zip.sha256%".ToLowerInvariant()
+                ${'$'}zipPath  = Join-Path "%teamcity.build.checkoutDir%" "downloaded.zip"
+                ${'$'}dest     = Join-Path "%teamcity.build.checkoutDir%" "%PUBLISH_OUT_DIR%"
+
+                Write-Host "Downloading ${'$'}zipUrl"
+                Invoke-WebRequest -Uri ${'$'}zipUrl -OutFile ${'$'}zipPath
+
+                ${'$'}actual = (Get-FileHash -Path ${'$'}zipPath -Algorithm SHA256).Hash.ToLowerInvariant()
+                if (${'$'}actual -ne ${'$'}expected) {
+                    Remove-Item ${'$'}zipPath -Force
+                    throw "GDAL bundle checksum mismatch. Expected ${'$'}expected but downloaded file is ${'$'}actual. Refusing to unpack."
+                }
+                Write-Host "SHA-256 verified: ${'$'}actual"
+
+                Write-Host "Expanding to ${'$'}dest"
+                Expand-Archive -Path ${'$'}zipPath -DestinationPath ${'$'}dest -Force
+
+                Remove-Item ${'$'}zipPath -Force
+            """.trimIndent()
+        }
+    }
 }
 
 object SetVersion : BuildType({
@@ -276,30 +340,7 @@ object Build_Publish : BuildType({
     }
 
     steps {
-        script {
-            name = "Configure NuGet private feed credentials"
-            scriptContent = """dotnet nuget update source ras-nuget-private --username "%env.NEXUS_USER%" --password "%env.NEXUS_PASSWORD%" --store-password-in-clear-text --configfile nuget.config"""
-        }
-        powerShell {
-            name = "Download and unzip GDAL"
-            scriptMode = script {
-                content = """
-                    ${'$'}ErrorActionPreference = 'Stop'
-                    
-                    ${'$'}zipUrl  = "https://s3.hecdev.net/ras-public-data/ras-GDAL-3.9.1.zip"
-                    ${'$'}zipPath = Join-Path "%teamcity.build.checkoutDir%" "downloaded.zip"
-                    ${'$'}dest    = Join-Path "%teamcity.build.checkoutDir%" "%PUBLISH_OUT_DIR%"
-                    
-                    Write-Host "Downloading ${'$'}zipUrl"
-                    Invoke-WebRequest -Uri ${'$'}zipUrl -OutFile ${'$'}zipPath
-                    
-                    Write-Host "Expanding to ${'$'}dest"
-                    Expand-Archive -Path ${'$'}zipPath -DestinationPath ${'$'}dest -Force
-                    
-                    Remove-Item ${'$'}zipPath -Force
-                """.trimIndent()
-            }
-        }
+        downloadAndVerifyGdal()
         dotnetPublish {
             name = "Publish"
             projects = "HEC.FDA.View/HEC.FDA.View.csproj"
@@ -339,30 +380,7 @@ object Build_Test : BuildType({
     }
 
     steps {
-        script {
-            name = "Configure NuGet private feed credentials"
-            scriptContent = """dotnet nuget update source ras-nuget-private --username "%env.NEXUS_USER%" --password "%env.NEXUS_PASSWORD%" --store-password-in-clear-text --configfile nuget.config"""
-        }
-        powerShell {
-            name = "Download and unzip GDAL"
-            scriptMode = script {
-                content = """
-                    ${'$'}ErrorActionPreference = 'Stop'
-                    
-                    ${'$'}zipUrl  = "https://s3.hecdev.net/ras-public-data/ras-GDAL-3.9.1.zip"
-                    ${'$'}zipPath = Join-Path "%teamcity.build.checkoutDir%" "downloaded.zip"
-                    ${'$'}dest    = Join-Path "%teamcity.build.checkoutDir%" "%PUBLISH_OUT_DIR%"
-                    
-                    Write-Host "Downloading ${'$'}zipUrl"
-                    Invoke-WebRequest -Uri ${'$'}zipUrl -OutFile ${'$'}zipPath
-                    
-                    Write-Host "Expanding to ${'$'}dest"
-                    Expand-Archive -Path ${'$'}zipPath -DestinationPath ${'$'}dest -Force
-                    
-                    Remove-Item ${'$'}zipPath -Force
-                """.trimIndent()
-            }
-        }
+        downloadAndVerifyGdal()
         dotnetTest {
             name = "Test Solution"
             configuration = "Release"
@@ -411,6 +429,18 @@ object Deploy_PushToNexus : BuildType({
                 #!/bin/bash
                 set -euo pipefail
                 
+                # Nexus credentials are env. parameters, read from the environment here rather than
+                # substituted into the script text, and handed to curl through a config read from
+                # stdin. They never appear on a command line, so they are not visible in the agent's
+                # process table while curl runs.
+                : "${'$'}{NEXUS_USER:?Set project parameter env.NEXUS_USER}"
+                : "${'$'}{NEXUS_PASSWORD:?Set project parameter env.NEXUS_PASSWORD}"
+                nexus_curl() {
+                  curl --config - "${'$'}@" <<EOF
+                user = "${'$'}{NEXUS_USER}:${'$'}{NEXUS_PASSWORD}"
+                EOF
+                }
+
                 ZIP="HEC-FDA_%VersionShort%_Portable.zip"
                 # Nexus path keeps the full, precise version so artifacts stay uniquely addressable.
                 TARGET="%nexus.raw.url%/%nexus.raw.repo%/HEC-FDA/%Version%/${'$'}{ZIP}"
@@ -423,8 +453,8 @@ object Deploy_PushToNexus : BuildType({
                 # Releases are immutable. A VCS trigger can re-fire on an already-built tag, so
                 # refuse to overwrite a published artifact rather than silently replacing a
                 # signed release. Set ALLOW_OVERWRITE=true on the build to deliberately replace.
-                HTTP=${'$'}(curl --silent --output /dev/null --write-out '%%{http_code}' --head \
-                  -u "%env.NEXUS_USER%:%env.NEXUS_PASSWORD%" "${'$'}TARGET" || true)
+                HTTP=${'$'}(nexus_curl --silent --output /dev/null --write-out '%%{http_code}' \
+                  --head "${'$'}TARGET" || true)
                 
                 if [ "${'$'}HTTP" = "200" ] && [ "%ALLOW_OVERWRITE%" != "true" ]; then
                   echo "Refusing to overwrite an already-published release artifact:" >&2
@@ -437,8 +467,7 @@ object Deploy_PushToNexus : BuildType({
                 
                 # --fail-with-body makes curl exit non-zero on 4xx/5xx; without it a 401 would
                 # still exit 0 and the build would go green on a failed upload.
-                curl --fail-with-body --show-error --silent \
-                  -u "%env.NEXUS_USER%:%env.NEXUS_PASSWORD%" \
+                nexus_curl --fail-with-body --show-error --silent \
                   --upload-file "${'$'}ZIP" \
                   "${'$'}TARGET"
                 
