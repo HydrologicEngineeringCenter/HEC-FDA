@@ -53,7 +53,7 @@ object SetVersion : BuildType({
     }
 
     vcs {
-        root(AbsoluteId("Consequences_HecFda"))
+        root(DslContext.settingsRoot)
 
         branchFilter = """
             +:<default>
@@ -113,13 +113,13 @@ object MirrorToGitHub : BuildType({
 
     params {
         param("github.mirror.url", "https://github.com/HydrologicEngineeringCenter/HEC-FDA.git")
-        // Explicit rather than %vcsroot.Consequences_HecFda.url% so the mirror source cannot drift
+        // Explicit rather than derived from the VCS root's URL so the mirror source cannot drift
         // if the shared VCS root is ever changed or repointed.
         param("bitbucket.source.url", "https://bitbucket.hecdev.net/scm/con/hec-fda.git")
     }
 
     vcs {
-        root(AbsoluteId("Consequences_HecFda"))
+        root(DslContext.settingsRoot)
 
         // The VCS root is attached only so TeamCity detects changes and triggers the build.
         // The script maintains its own bare clone with every ref, which the normal checkout
@@ -227,7 +227,7 @@ object SignExecutables : BuildType({
     }
 
     vcs {
-        root(AbsoluteId("Consequences_HecFda"))
+        root(DslContext.settingsRoot)
     }
 
     dependencies {
@@ -272,7 +272,7 @@ object Build_Publish : BuildType({
     }
 
     vcs {
-        root(AbsoluteId("Consequences_HecFda"))
+        root(DslContext.settingsRoot)
     }
 
     steps {
@@ -335,7 +335,7 @@ object Build_Test : BuildType({
     }
 
     vcs {
-        root(AbsoluteId("Consequences_HecFda"))
+        root(DslContext.settingsRoot)
     }
 
     steps {
@@ -486,7 +486,7 @@ object Endpoints_CI : BuildType({
     }
 
     vcs {
-        root(AbsoluteId("Consequences_HecFda"))
+        root(DslContext.settingsRoot)
     }
 
     triggers {
@@ -523,7 +523,7 @@ object Endpoints_Release : BuildType({
     }
 
     vcs {
-        root(AbsoluteId("Consequences_HecFda"))
+        root(DslContext.settingsRoot)
     }
 
     triggers {
