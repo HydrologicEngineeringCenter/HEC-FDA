@@ -77,9 +77,13 @@ project {
 /**
  * Downloads the pinned GDAL bundle, verifies it against gdal.zip.sha256, and unpacks it into
  * PUBLISH_OUT_DIR. Shared by Build/Test and Build/Publish so the check cannot drift between them.
+ *
+ * Lives in an object rather than as a top-level function: in a .kts script a top-level function
+ * makes every object that calls it capture the script instance, which the TeamCity DSL runner
+ * rejects ("Object Build_Publish captures the script class instance").
  */
-fun BuildSteps.downloadAndVerifyGdal() {
-    powerShell {
+object Gdal {
+    fun downloadAndVerify(steps: BuildSteps) = steps.powerShell {
         name = "Download and verify GDAL"
         scriptMode = script {
             content = """
@@ -344,7 +348,7 @@ object Build_Publish : BuildType({
     }
 
     steps {
-        downloadAndVerifyGdal()
+        Gdal.downloadAndVerify(this)
         dotnetPublish {
             name = "Publish"
             projects = "HEC.FDA.View/HEC.FDA.View.csproj"
@@ -384,7 +388,7 @@ object Build_Test : BuildType({
     }
 
     steps {
-        downloadAndVerifyGdal()
+        Gdal.downloadAndVerify(this)
         dotnetTest {
             name = "Test Solution"
             configuration = "Release"
