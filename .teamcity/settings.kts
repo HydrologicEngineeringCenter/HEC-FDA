@@ -42,9 +42,9 @@ project {
     //   env.GITHUB_MIRROR_TOKEN             GitHub token for the public mirror (Mirror to GitHub)
     //
     // Versioned Settings for this project must stay in read-only "sync from VCS" mode with
-    // "apply settings from the branch being built" left off. CI builds pull-request branches
-    // with the Nexus credentials in the environment; applying DSL from those branches would
-    // let a pull request rewrite this pipeline.
+    // "apply settings from the branch being built" left off. Snapshot builds pull-request
+    // branches with the Nexus credentials in the environment; applying DSL from those branches
+    // would let a pull request rewrite this pipeline.
 
     params {
         // NuGet reads credentials for a package source from the environment variable
@@ -173,9 +173,9 @@ object MirrorToGitHub : BuildType({
     name = "Mirror to GitHub"
     description = """
         Pushes every branch and tag from the canonical Bitbucket repository to the public GitHub mirror.
-        Runs on every push (any branch or tag) and nightly, so anything pushed directly to GitHub is
-        overwritten within a day. Pushes are forced and pruned with explicit refs/heads and refs/tags
-        refspecs, so the mirror always matches Bitbucket exactly.
+        No triggers - started by the Mirror endpoint on every push (any branch or tag) and nightly, so
+        anything pushed directly to GitHub is overwritten within a day. Pushes are forced and pruned
+        with explicit refs/heads and refs/tags refspecs, so the mirror always matches Bitbucket exactly.
         Requires two project-level secure parameters: env.FDA_READ_ONLY_PAT (a repository-scoped
         Bitbucket HTTP access token with read access to hec-fda) and env.GITHUB_MIRROR_TOKEN (a token
         with Contents read/write on the mirror that is allowed to force-push and delete branches).
@@ -193,9 +193,9 @@ object MirrorToGitHub : BuildType({
     vcs {
         root(DslContext.settingsRoot)
 
-        // The VCS root is attached only so TeamCity detects changes and triggers the build.
-        // The script maintains its own bare clone with every ref, which the normal checkout
-        // (a single branch, no tags) cannot provide.
+        // The VCS root is attached only so the build runs on the branch the Mirror endpoint
+        // resolved for the chain. The script maintains its own bare clone with every ref, which
+        // the normal checkout (a single branch, no tags) cannot provide.
         checkoutMode = CheckoutMode.MANUAL
 
         branchFilter = """
@@ -255,27 +255,6 @@ object MirrorToGitHub : BuildType({
 
                 echo "Mirror is in sync with Bitbucket."
             """.trimIndent()
-        }
-    }
-
-    triggers {
-        // Every push to any branch or tag on Bitbucket.
-        vcs {
-            branchFilter = """
-                +:*
-                +:refs/tags/*
-            """.trimIndent()
-        }
-        // Nightly full sync, even with no new commits, to undo anything pushed
-        // directly to GitHub since the last run.
-        schedule {
-            schedulingPolicy = daily {
-                hour = 2
-                minute = 0
-            }
-            branchFilter = "+:<default>"
-            triggerBuild = always()
-            withPendingChangesOnly = false
         }
     }
 
@@ -507,12 +486,13 @@ object Deploy_PushToNexus : BuildType({
 object Endpoints : Project({
     name = "Endpoints"
 
-    buildType(Endpoints_CI)
+    buildType(Endpoints_Snapshot)
     buildType(Endpoints_Release)
+    buildType(Endpoints_Mirror)
 })
 
-object Endpoints_CI : BuildType({
-    name = "CI"
+object Endpoints_Snapshot : BuildType({
+    name = "Snapshot"
     description = "Triggers the HEC-FDA build chain on pushes to main and pull requests. Replaces the former CI.yaml GitHub Actions workflow."
 
     type = BuildTypeSettings.Type.DEPLOYMENT
@@ -572,6 +552,51 @@ object Endpoints_Release : BuildType({
 
     dependencies {
         snapshot(Deploy_PushToNexus) {
+            reuseBuilds = ReuseBuilds.NO
+            onDependencyFailure = FailureAction.FAIL_TO_START
+        }
+    }
+})
+
+object Endpoints_Mirror : BuildType({
+    name = "Mirror"
+    description = "Triggers Mirror to GitHub on every push to any branch or tag, and nightly to undo anything pushed directly to GitHub."
+
+    type = BuildTypeSettings.Type.DEPLOYMENT
+
+    vcs {
+        root(DslContext.settingsRoot)
+
+        branchFilter = """
+            +:*
+            +:refs/tags/*
+        """.trimIndent()
+    }
+
+    triggers {
+        // Every push to any branch or tag on Bitbucket.
+        vcs {
+            branchFilter = """
+                +:*
+                +:refs/tags/*
+            """.trimIndent()
+        }
+        // Nightly full sync, even with no new commits, to undo anything pushed
+        // directly to GitHub since the last run.
+        schedule {
+            schedulingPolicy = daily {
+                hour = 2
+                minute = 0
+            }
+            branchFilter = "+:<default>"
+            triggerBuild = always()
+            withPendingChangesOnly = false
+        }
+    }
+
+    dependencies {
+        // reuseBuilds = NO so the nightly run actually re-mirrors even when no commits changed.
+        snapshot(MirrorToGitHub) {
             reuseBuilds = ReuseBuilds.NO
             onDependencyFailure = FailureAction.FAIL_TO_START
         }
