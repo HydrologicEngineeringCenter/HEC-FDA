@@ -544,9 +544,13 @@ object Endpoints_PullRequest : BuildType({
     vcs {
         root(DslContext.settingsRoot)
 
-        // Only pull-request branches, which the Pull Requests feature below adds to the VCS root's
-        // branch spec. Never <default>: main is covered by Snapshot.
-        branchFilter = "+:pull-requests/*"
+        // Bitbucket PR discovery uses source branches (for example stageDamageDetailsBug).
+        // Keep these visible to discovery and manual builds; the trigger below restricts
+        // automatic builds to recognized PRs. Main is covered by Snapshot.
+        branchFilter = """
+            +:*
+            -:<default>
+        """.trimIndent()
     }
 
     triggers {
@@ -554,7 +558,10 @@ object Endpoints_PullRequest : BuildType({
         // status before a pull request can merge, so a pull request that only touches TeamCity
         // settings must still produce one or it can never be merged.
         vcs {
-            branchFilter = "+:pull-requests/*"
+            branchFilter = """
+                -:*
+                +pr:target=main
+            """.trimIndent()
         }
     }
 
@@ -565,11 +572,10 @@ object Endpoints_PullRequest : BuildType({
                 serverUrl = "https://bitbucket.hecdev.net"
                 // Reuses the VCS root's HTTP(S) credentials, which need read access to the repository.
                 authType = vcsRoot()
-                // Builds refs/pull-requests/<id>/from, which points at the pull request's head commit,
-                // so the status reported below lands on the commit the Required builds check looks at.
-                // The /merge ref is not used: under fast-forward-only merging it would add nothing,
-                // and Bitbucket only refreshes it lazily.
-                usePullRequestBranches = true
+                // Use the supported source-branch discovery mode. The legacy numerical PR
+                // refs are officially unsupported by Bitbucket. Build and publish status
+                // against the source branch's head commit.
+                usePullRequestBranches = false
                 filterTargetBranch = "+:refs/heads/main"
             }
         }
