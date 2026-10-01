@@ -1,4 +1,6 @@
 import jetbrains.buildServer.configs.kotlin.*
+import jetbrains.buildServer.configs.kotlin.buildFeatures.commitStatusPublisher
+import jetbrains.buildServer.configs.kotlin.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.buildSteps.dotnetPublish
 import jetbrains.buildServer.configs.kotlin.buildSteps.dotnetTest
 import jetbrains.buildServer.configs.kotlin.buildSteps.powerShell
@@ -42,9 +44,9 @@ project {
     //   env.GITHUB_MIRROR_TOKEN             GitHub token for the public mirror (Mirror to GitHub)
     //
     // Versioned Settings for this project must stay in read-only "sync from VCS" mode with
-    // "apply settings from the branch being built" left off. Snapshot builds pull-request
-    // branches with the Nexus credentials in the environment; applying DSL from those branches
-    // would let a pull request rewrite this pipeline.
+    // "apply settings from the branch being built" left off. Pull Request builds
+    // pull-request branches with the Nexus credentials in the environment; applying DSL from
+    // those branches would let a pull request rewrite this pipeline.
 
     params {
         // NuGet reads credentials for a package source from the environment variable
@@ -487,13 +489,14 @@ object Endpoints : Project({
     name = "Endpoints"
 
     buildType(Endpoints_Snapshot)
+    buildType(Endpoints_PullRequest)
     buildType(Endpoints_Release)
     buildType(Endpoints_Mirror)
 })
 
 object Endpoints_Snapshot : BuildType({
     name = "Snapshot"
-    description = "Triggers the HEC-FDA build chain on pushes to main and pull requests. Replaces the former CI.yaml GitHub Actions workflow."
+    description = "Triggers the HEC-FDA build chain on pushes to main. Replaces the former CI.yaml GitHub Actions workflow. Pull requests are covered by the Pull Request endpoint."
 
     type = BuildTypeSettings.Type.DEPLOYMENT
     buildNumberPattern = "%Version%"
@@ -509,10 +512,7 @@ object Endpoints_Snapshot : BuildType({
     triggers {
         vcs {
             triggerRules = "-:.teamcity/**"
-            branchFilter = """
-                +:main
-                +:*/from
-            """.trimIndent()
+            branchFilter = "+:main"
         }
     }
 
@@ -521,6 +521,69 @@ object Endpoints_Snapshot : BuildType({
             reuseBuilds = ReuseBuilds.NO
             onDependencyFailure = FailureAction.FAIL_TO_START
         }
+        snapshot(Build_Test) {
+            reuseBuilds = ReuseBuilds.NO
+            onDependencyFailure = FailureAction.FAIL_TO_START
+        }
+    }
+})
+
+object Endpoints_PullRequest : BuildType({
+    name = "Pull Request"
+    description = """
+        Merge gate for pull requests into main: builds and runs the test suite on the pull request's
+        head commit and reports the result to Bitbucket, where the Required builds merge check reads
+        it. Fires when a pull request is opened and whenever new commits are pushed to it. Publishes
+        nothing. Pairs with the "Squash, fast-forward only" merge strategy: Bitbucket refuses to merge
+        a pull request that does not already contain main, so the head commit tested here is exactly
+        the tree that lands.
+    """.trimIndent()
+
+    type = BuildTypeSettings.Type.COMPOSITE
+
+    vcs {
+        root(DslContext.settingsRoot)
+
+        // Only pull-request branches, which the Pull Requests feature below adds to the VCS root's
+        // branch spec. Never <default>: main is covered by Snapshot.
+        branchFilter = "+:pull-requests/*"
+    }
+
+    triggers {
+        // No -:.teamcity/** rule here, unlike the other endpoints. Bitbucket requires this build's
+        // status before a pull request can merge, so a pull request that only touches TeamCity
+        // settings must still produce one or it can never be merged.
+        vcs {
+            branchFilter = "+:pull-requests/*"
+        }
+    }
+
+    features {
+        pullRequests {
+            vcsRootExtId = "${DslContext.settingsRoot.id}"
+            provider = bitbucketServer {
+                serverUrl = "https://bitbucket.hecdev.net"
+                // Reuses the VCS root's HTTP(S) credentials, which need read access to the repository.
+                authType = vcsRoot()
+                // Builds refs/pull-requests/<id>/from, which points at the pull request's head commit,
+                // so the status reported below lands on the commit the Required builds check looks at.
+                // The /merge ref is not used: under fast-forward-only merging it would add nothing,
+                // and Bitbucket only refreshes it lazily.
+                usePullRequestBranches = true
+                filterTargetBranch = "+:refs/heads/main"
+            }
+        }
+        commitStatusPublisher {
+            vcsRootExtId = "${DslContext.settingsRoot.id}"
+            publisher = bitbucketServer {
+                url = "https://bitbucket.hecdev.net"
+                authType = vcsRoot()
+            }
+        }
+    }
+
+    dependencies {
+        // Test only - Publish is deliberately not part of the pull-request gate.
         snapshot(Build_Test) {
             reuseBuilds = ReuseBuilds.NO
             onDependencyFailure = FailureAction.FAIL_TO_START
