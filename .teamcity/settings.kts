@@ -498,7 +498,7 @@ object Endpoints_Snapshot : BuildType({
     name = "Snapshot"
     description = "Triggers the HEC-FDA build chain on pushes to main. Replaces the former CI.yaml GitHub Actions workflow. Pull requests are covered by the Pull Request endpoint."
 
-    type = BuildTypeSettings.Type.DEPLOYMENT
+    type = BuildTypeSettings.Type.COMPOSITE
     buildNumberPattern = "%Version%"
 
     params {
@@ -601,7 +601,7 @@ object Endpoints_Release : BuildType({
     name = "Release"
     description = "Triggers the signed release chain on v*.*.* tags. Replaces the former Release.yml GitHub Actions workflow."
 
-    type = BuildTypeSettings.Type.DEPLOYMENT
+    type = BuildTypeSettings.Type.COMPOSITE
     buildNumberPattern = "%Version%"
 
     params {
@@ -631,7 +631,7 @@ object Endpoints_Mirror : BuildType({
     name = "Mirror"
     description = "Triggers Mirror to GitHub on every push to any branch or tag, and nightly to undo anything pushed directly to GitHub."
 
-    type = BuildTypeSettings.Type.DEPLOYMENT
+    type = BuildTypeSettings.Type.COMPOSITE
 
     vcs {
         root(DslContext.settingsRoot)
