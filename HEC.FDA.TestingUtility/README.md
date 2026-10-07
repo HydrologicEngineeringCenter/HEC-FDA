@@ -12,6 +12,26 @@ This utility runs FDA computations outside the GUI so that results can be valida
 
 ## Quick Start
 
+### Generate a report from the FDA interface
+
+In an open study, choose **File → Generate Study Report…** and select a CSV destination.
+The report includes every stage damage element, scenario, alternative, and alternative comparison.
+Save editor changes before starting; the report uses saved component definitions.
+
+The compute log explains which saved results are reused and why other components need computing.
+Stage damage and scenarios compute only when results are missing, their nodes are dirty, or their
+inputs have changed since the last compute. Successful results save to the active study database
+as each compute finishes. Alternatives and comparisons compute on demand and remain transient;
+each alternative computes once per report run, including when several comparisons use it.
+
+The log shows progress and provides a Cancel button. Cancellation discards the active result;
+stage damage stops between impact areas. Previously saved results remain. A failed required compute
+or cancellation leaves any existing destination report intact. The report replaces that file only
+after computation and report writing succeed. The log stays open for review.
+
+The CLI's `compute` command continues to run its configured computations on temporary study copies.
+Both entry points share the CSV formatter and stage damage/scenario compute runners.
+
 ### 1. Build the project
 
 ```bash

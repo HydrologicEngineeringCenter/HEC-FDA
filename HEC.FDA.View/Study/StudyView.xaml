@@ -127,6 +127,10 @@
           Click="Properties_MenuItem_Click"
           IsEnabled="{Binding CurrentStudyElement.StudyLoaded}" />
         <Separator />
+        <MenuItem Header="_Generate Study Report…"
+                  Click="GenerateStudyReport_Click"
+                  IsEnabled="{Binding CanGenerateStudyReport}" />
+        <Separator />
       </MenuItem>
       <MenuItem
         Header="_Help">

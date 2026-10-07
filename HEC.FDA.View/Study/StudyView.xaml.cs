@@ -35,6 +35,12 @@ namespace HEC.FDA.View.Study
             }
         }
 
+        private async void GenerateStudyReport_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is FdaStudyVM study)
+                await study.GenerateStudyReportAsync();
+        }
+
         private void Open_MenuItem_Click(object sender, RoutedEventArgs e)
         {
             if (DataContext is FdaStudyVM study)

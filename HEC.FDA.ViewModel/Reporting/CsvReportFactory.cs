@@ -1,3 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.IO;
+using System.Threading;
 using System.Text;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.paireddata;
@@ -6,7 +11,7 @@ using HEC.FDA.ViewModel.Alternatives.Results.BatchCompute;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Results;
 
-namespace HEC.FDA.TestingUtility.Reporting;
+namespace HEC.FDA.ViewModel.Reporting;
 
 /// <summary>
 /// Factory class that produces a comprehensive CSV report containing all tabularly
@@ -26,8 +31,18 @@ public class CsvReportFactory
     private readonly StringBuilder _altComparisonSummary = new();
     private readonly StringBuilder _altComparisonByCategory = new();
 
-    public CsvReportFactory()
+    private readonly Action<string> _log;
+    public bool HasWarnings { get; private set; }
+
+    private void Warn(string message)
     {
+        HasWarnings = true;
+        _log(message);
+    }
+
+    public CsvReportFactory(Action<string> log = null)
+    {
+        _log = log ?? Console.WriteLine;
         _scenarioResults.AppendLine("Study ID,Name,Analysis Year,Impact Area,Mean EAD,25th Percentile EAD,50th Percentile EAD,75th Percentile EAD");
         _scenarioDamCat.AppendLine("Study ID,Scenario Name,Analysis Year,Impact Area,Damage Category,Asset Category,Mean EAD");
         _scenarioPerformance.AppendLine("Study ID,Name,Analysis Year,Impact Area,Threshold Type,Threshold Value,LT Risk 10yr,LT Risk 30yr,LT Risk 50yr,Mean AEP,Median AEP,Assurance 0.10,Assurance 0.04,Assurance 0.02,Assurance 0.01,Assurance 0.004,Assurance 0.002");
@@ -51,12 +66,12 @@ public class CsvReportFactory
             var rows = ScenarioDamageRowItem.CreateScenarioDamageRowItems(element);
             foreach (var row in rows)
             {
-                _scenarioResults.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(row.Name)},{EscapeCsv(row.AnalysisYear)},{EscapeCsv(row.ImpactArea)},{row.Mean:F2},{row.Point25:F2},{row.Point5:F2},{row.Point75:F2}");
+                _scenarioResults.AppendLine(FormattableString.Invariant($"{EscapeCsv(studyId)},{EscapeCsv(row.Name)},{EscapeCsv(row.AnalysisYear)},{EscapeCsv(row.ImpactArea)},{row.Mean:F2},{row.Point25:F2},{row.Point5:F2},{row.Point75:F2}"));
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"    Warning: Error extracting scenario results for {element.Name}: {ex.Message}");
+            Warn($"    Warning: Error extracting scenario results for {element.Name}: {ex.Message}");
         }
 
         try
@@ -64,12 +79,12 @@ public class CsvReportFactory
             var rows = ScenarioDamCatRowItem.CreateScenarioDamCatRowItems(element);
             foreach (var row in rows)
             {
-                _scenarioDamCat.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(row.Name)},{EscapeCsv(row.AnalysisYear)},{EscapeCsv(row.ImpactAreaName)},{EscapeCsv(row.DamCat)},{EscapeCsv(row.AssetCat)},{row.MeanDamage:F2}");
+                _scenarioDamCat.AppendLine(FormattableString.Invariant($"{EscapeCsv(studyId)},{EscapeCsv(row.Name)},{EscapeCsv(row.AnalysisYear)},{EscapeCsv(row.ImpactAreaName)},{EscapeCsv(row.DamCat)},{EscapeCsv(row.AssetCat)},{row.MeanDamage:F2}"));
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"    Warning: Error extracting scenario damage categories for {element.Name}: {ex.Message}");
+            Warn($"    Warning: Error extracting scenario damage categories for {element.Name}: {ex.Message}");
         }
 
         try
@@ -77,19 +92,19 @@ public class CsvReportFactory
             foreach (var iaResult in element.Results.ResultsList)
             {
                 int iasID = iaResult.ImpactAreaID;
-                SpecificIAS? ias = element.SpecificIASElements.FirstOrDefault(s => s.ImpactAreaID == iasID);
+                SpecificIAS ias = element.SpecificIASElements.FirstOrDefault(s => s.ImpactAreaID == iasID);
                 if (ias == null) continue;
 
                 foreach (var threshold in iaResult.PerformanceByThresholds.ListOfThresholds)
                 {
                     var row = new ScenarioPerformanceRowItem(element, ias, threshold);
-                    _scenarioPerformance.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(row.Name)},{EscapeCsv(row.AnalysisYear)},{EscapeCsv(row.ImpactArea)},{EscapeCsv(row.ThresholdType)},{row.ThresholdValue:F2},{row.LongTerm10:F4},{row.LongTerm30:F4},{row.LongTerm50:F4},{row.Mean:F6},{row.Median:F6},{row.Threshold1:F4},{row.Threshold04:F4},{row.Threshold02:F4},{row.Threshold01:F4},{row.Threshold004:F4},{row.Threshold002:F4}");
+                    _scenarioPerformance.AppendLine(FormattableString.Invariant($"{EscapeCsv(studyId)},{EscapeCsv(row.Name)},{EscapeCsv(row.AnalysisYear)},{EscapeCsv(row.ImpactArea)},{EscapeCsv(row.ThresholdType)},{row.ThresholdValue:F2},{row.LongTerm10:F4},{row.LongTerm30:F4},{row.LongTerm50:F4},{row.Mean:F6},{row.Median:F6},{row.Threshold1:F4},{row.Threshold04:F4},{row.Threshold02:F4},{row.Threshold01:F4},{row.Threshold004:F4},{row.Threshold002:F4}"));
                 }
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"    Warning: Error extracting scenario performance for {element.Name}: {ex.Message}");
+            Warn($"    Warning: Error extracting scenario performance for {element.Name}: {ex.Message}");
         }
 
         try
@@ -97,19 +112,19 @@ public class CsvReportFactory
             foreach (var iaResult in element.Results.ResultsList)
             {
                 int iasID = iaResult.ImpactAreaID;
-                SpecificIAS? ias = element.SpecificIASElements.FirstOrDefault(s => s.ImpactAreaID == iasID);
+                SpecificIAS ias = element.SpecificIASElements.FirstOrDefault(s => s.ImpactAreaID == iasID);
                 if (ias == null) continue;
 
                 foreach (var threshold in iaResult.PerformanceByThresholds.ListOfThresholds)
                 {
                     var row = new AssuranceOfAEPRowItem(element, ias, threshold);
-                    _scenarioAssurance.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(row.Name)},{EscapeCsv(row.AnalysisYear)},{EscapeCsv(row.ImpactArea)},{EscapeCsv(row.ThresholdType)},{row.ThresholdValue:F2},{row.Mean:F6},{row.Median:F6},{row.NinetyPercentAssurance:F6},{row.AEP1:F4},{row.AEP04:F4},{row.AEP02:F4},{row.AEP01:F4},{row.AEP004:F4},{row.AEP002:F4}");
+                    _scenarioAssurance.AppendLine(FormattableString.Invariant($"{EscapeCsv(studyId)},{EscapeCsv(row.Name)},{EscapeCsv(row.AnalysisYear)},{EscapeCsv(row.ImpactArea)},{EscapeCsv(row.ThresholdType)},{row.ThresholdValue:F2},{row.Mean:F6},{row.Median:F6},{row.NinetyPercentAssurance:F6},{row.AEP1:F4},{row.AEP04:F4},{row.AEP02:F4},{row.AEP01:F4},{row.AEP004:F4},{row.AEP002:F4}"));
                 }
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"    Warning: Error extracting scenario assurance for {element.Name}: {ex.Message}");
+            Warn($"    Warning: Error extracting scenario assurance for {element.Name}: {ex.Message}");
         }
     }
 
@@ -125,12 +140,12 @@ public class CsvReportFactory
             var rows = AlternativeDamageRowItem.CreateAlternativeDamageRowItems(element);
             foreach (var row in rows)
             {
-                _alternativeResults.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(row.Name)},{EscapeCsv(row.ImpactArea)},{row.BaseYear},{row.FutureYear},{row.DiscountRate:F4},{row.PeriodOfAnalysis},{row.Mean:F2},{row.Point75:F2},{row.Point5:F2},{row.Point25:F2}");
+                _alternativeResults.AppendLine(FormattableString.Invariant($"{EscapeCsv(studyId)},{EscapeCsv(row.Name)},{EscapeCsv(row.ImpactArea)},{row.BaseYear},{row.FutureYear},{row.DiscountRate:F4},{row.PeriodOfAnalysis},{row.Mean:F2},{row.Point75:F2},{row.Point5:F2},{row.Point25:F2}"));
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"    Warning: Error extracting alternative results for {element.Name}: {ex.Message}");
+            Warn($"    Warning: Error extracting alternative results for {element.Name}: {ex.Message}");
         }
 
         try
@@ -138,12 +153,12 @@ public class CsvReportFactory
             var rows = AlternativeDamCatRowItem.CreateAlternativeDamCatRowItems(element);
             foreach (var row in rows)
             {
-                _alternativeDamCat.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(row.Name)},{EscapeCsv(row.ImpactAreaName)},{EscapeCsv(row.DamCat)},{EscapeCsv(row.AssetCat)},{row.MeanDamage:F2}");
+                _alternativeDamCat.AppendLine(FormattableString.Invariant($"{EscapeCsv(studyId)},{EscapeCsv(row.Name)},{EscapeCsv(row.ImpactAreaName)},{EscapeCsv(row.DamCat)},{EscapeCsv(row.AssetCat)},{row.MeanDamage:F2}"));
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"    Warning: Error extracting alternative damage categories for {element.Name}: {ex.Message}");
+            Warn($"    Warning: Error extracting alternative damage categories for {element.Name}: {ex.Message}");
         }
     }
 
@@ -156,6 +171,7 @@ public class CsvReportFactory
 
         try
         {
+            var impactAreaNames = IASElement.GetImpactAreaNamesFromIDs();
             foreach (var curve in curves)
             {
                 int impactAreaId = curve.ImpactAreaID;
@@ -169,12 +185,13 @@ public class CsvReportFactory
                 PairedData medianCurve = curve.SamplePairedData(.5);
                 double integral = medianCurve.Integrate(false);
 
-                _stageDamageSummary.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(elementName)},{impactAreaId},{EscapeCsv(damCat)},{EscapeCsv(assetCat)},{pointCount},{minStage:F2},{maxStage:F2},{integral:F2}");
+                string impactAreaName = impactAreaNames.GetValueOrDefault(impactAreaId, "");
+                _stageDamageSummary.AppendLine(FormattableString.Invariant($"{EscapeCsv(studyId)},{EscapeCsv(elementName)},{impactAreaId},{EscapeCsv(impactAreaName)},{EscapeCsv(damCat)},{EscapeCsv(assetCat)},{pointCount},{minStage:F2},{maxStage:F2},{integral:F2}"));
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"    Warning: Error extracting stage damage for CSV: {ex.Message}");
+            Warn($"    Warning: Error extracting stage damage for CSV: {ex.Message}");
         }
     }
 
@@ -210,7 +227,7 @@ public class CsvReportFactory
                     double withProjFutureEad = results.SampleMeanWithProjectFutureYearEAD(altId, impactAreaId);
                     double futureEadReduced = results.SampleMeanFutureYearEADReduced(altId, impactAreaId);
 
-                    _altComparisonSummary.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(reportName)},{EscapeCsv(altName)},{impactAreaId},{withoutProjEqad:F2},{withProjEqad:F2},{eqadReduced:F2},{eqadReduced25:F2},{eqadReduced50:F2},{eqadReduced75:F2},{withoutProjBaseEad:F2},{withProjBaseEad:F2},{baseEadReduced:F2},{withoutProjFutureEad:F2},{withProjFutureEad:F2},{futureEadReduced:F2}");
+                    _altComparisonSummary.AppendLine(FormattableString.Invariant($"{EscapeCsv(studyId)},{EscapeCsv(reportName)},{EscapeCsv(altName)},{impactAreaId},{withoutProjEqad:F2},{withProjEqad:F2},{eqadReduced:F2},{eqadReduced25:F2},{eqadReduced50:F2},{eqadReduced75:F2},{withoutProjBaseEad:F2},{withProjBaseEad:F2},{baseEadReduced:F2},{withoutProjFutureEad:F2},{withProjFutureEad:F2},{futureEadReduced:F2}"));
                 }
 
                 foreach (int impactAreaId in impactAreaIds)
@@ -225,7 +242,7 @@ public class CsvReportFactory
 
                             if (eqadReduced != 0 || baseEadReduced != 0 || futureEadReduced != 0)
                             {
-                                _altComparisonByCategory.AppendLine($"{EscapeCsv(studyId)},{EscapeCsv(reportName)},{EscapeCsv(altName)},{impactAreaId},{EscapeCsv(damCat)},{EscapeCsv(assetCat)},{eqadReduced:F2},{baseEadReduced:F2},{futureEadReduced:F2}");
+                                _altComparisonByCategory.AppendLine(FormattableString.Invariant($"{EscapeCsv(studyId)},{EscapeCsv(reportName)},{EscapeCsv(altName)},{impactAreaId},{EscapeCsv(damCat)},{EscapeCsv(assetCat)},{eqadReduced:F2},{baseEadReduced:F2},{futureEadReduced:F2}"));
                             }
                         }
                     }
@@ -234,14 +251,31 @@ public class CsvReportFactory
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"    Warning: Error extracting alternative comparison results for CSV: {ex.Message}");
+            Warn($"    Warning: Error extracting alternative comparison results for CSV: {ex.Message}");
         }
     }
 
     /// <summary>
     /// Saves the comprehensive report to a CSV file.
     /// </summary>
-    public void SaveReport(string outputPath)
+    public void SaveReportAtomically(string outputPath, CancellationToken cancellationToken)
+    {
+        string temporaryPath = outputPath + "." + Guid.NewGuid().ToString("N") + ".tmp";
+        try
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            SaveReport(temporaryPath, false);
+            cancellationToken.ThrowIfCancellationRequested();
+            File.Move(temporaryPath, outputPath, overwrite: true);
+            _log($"CSV report saved to: {outputPath}");
+        }
+        finally
+        {
+            if (File.Exists(temporaryPath)) File.Delete(temporaryPath);
+        }
+    }
+
+    public void SaveReport(string outputPath, bool logSaved = true)
     {
         StringBuilder report = new();
 
@@ -285,7 +319,7 @@ public class CsvReportFactory
         report.Append(_altComparisonByCategory);
 
         File.WriteAllText(outputPath, report.ToString());
-        Console.WriteLine($"CSV report saved to: {outputPath}");
+        if (logSaved) _log($"CSV report saved to: {outputPath}");
     }
 
     /// <summary>

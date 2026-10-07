@@ -1,6 +1,8 @@
 ﻿using HEC.FDA.ViewModel.Storage;
 using HEC.FDA.ViewModel.Study;
 using HEC.FDA.ViewModel.Utilities;
+using HEC.FDA.ViewModel.AggregatedStageDamage;
+using HEC.FDA.ViewModel.ImpactAreaScenario;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -114,6 +116,11 @@ namespace HEC.FDA.ViewModel.Saving
             OpenConnection();
             string editDate = DateTime.Now.ToString("G");
             elementToSave.LastEditDate = editDate;
+            // Stamp edits and newly computed results together so a save cannot immediately look stale.
+            if (elementToSave is AggregatedStageDamageElement stageDamage && stageDamage.UpdateComputeDate)
+                stageDamage.ComputeDate = editDate;
+            if (elementToSave is IASElement scenario && scenario.UpdateComputeDate && scenario.Results != null)
+                scenario.Results.ComputeDate = editDate;
 
             if (IDExistsInDB(_TableName, elementToSave.ID, ID_COL_NAME))
             {

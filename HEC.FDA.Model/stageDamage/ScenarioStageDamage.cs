@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Utility.Progress;
+using System.Threading;
 
 namespace HEC.FDA.Model.stageDamage
 {
@@ -36,8 +37,9 @@ namespace HEC.FDA.Model.stageDamage
         /// W.S.Profile
         /// </summary>
         /// <returns></returns>
-        public (List<UncertainPairedData>, List<UncertainPairedData>) Compute(bool computeIsDeterministic = false, ProgressReporter reporter = null)
+        public (List<UncertainPairedData>, List<UncertainPairedData>) Compute(bool computeIsDeterministic = false, ProgressReporter reporter = null, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             reporter ??= ProgressReporter.None();
             Stopwatch sw = new();
             sw.Start();
@@ -47,6 +49,7 @@ namespace HEC.FDA.Model.stageDamage
             int countImpactAreas = _ImpactAreaStageDamage.Count;
             for (int i = 0; i < countImpactAreas; i++)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 ImpactAreaStageDamage impactAreaStageDamage = _ImpactAreaStageDamage[i];
                 var subPr = computeTask.SubTask($"Impact Area {impactAreaStageDamage.ImpactAreaID} Compute", (float)i / countImpactAreas, 1f / countImpactAreas);
                 subPr.ReportTimestampedMessage(sw?.Elapsed, 1, $"Starting Impact Area ID: {impactAreaStageDamage.ImpactAreaID}, Structure Count: {impactAreaStageDamage.Inventory.Structures.Count}");
@@ -55,6 +58,7 @@ namespace HEC.FDA.Model.stageDamage
                 scenarioStageDamageResults.Item2.AddRange(impactAreaStageDamageResults.Item2);
                 subPr.ReportProgress(100);
             }
+            cancellationToken.ThrowIfCancellationRequested();
             computeTask.ReportProgressFraction(1f);
             computeTask.ReportTaskCompleted(sw.Elapsed);
             sw.Stop();

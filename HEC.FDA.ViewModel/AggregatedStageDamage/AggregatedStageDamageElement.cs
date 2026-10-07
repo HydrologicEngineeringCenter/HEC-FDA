@@ -30,6 +30,7 @@ namespace HEC.FDA.ViewModel.AggregatedStageDamage
         public List<ImpactAreaFrequencyFunctionRowItem> ImpactAreaFrequencyRows { get; } = new List<ImpactAreaFrequencyFunctionRowItem>();
         public bool WriteDetailsOut { get; }
         public string ComputeDate { get; set; }
+        public bool UpdateComputeDate { get; set; }
         public string SoftwareVersion { get; set; }
 
         #endregion

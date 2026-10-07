@@ -322,6 +322,9 @@
     <DataTemplate DataType="{x:Type ComputeVM:StageDamageComputeLogVM }">
        <computeView:StageDamageComputeLogControl />
     </DataTemplate>
+    <DataTemplate DataType="{x:Type ComputeVM:StudyReportLogVM}">
+      <computeView:StudyReportLogControl />
+    </DataTemplate>
 
     <DataTemplate DataType="{x:Type ScenarioResultsVM:PerformanceAssuranceOfThresholdVM }">
       <IASResultsView:PerformanceAssuranceOfThreshold />

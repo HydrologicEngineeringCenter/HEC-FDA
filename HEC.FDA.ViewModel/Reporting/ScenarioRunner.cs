@@ -1,26 +1,37 @@
+using HEC.MVVMFramework.Base.Events;
+using HEC.MVVMFramework.Base.Implementations;
+using Utility.Progress;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using HEC.FDA.Model.compute;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.scenarios;
-using HEC.FDA.ViewModel;
 using HEC.FDA.ViewModel.Compute;
 using HEC.FDA.ViewModel.ImpactAreaScenario;
 using HEC.FDA.ViewModel.Utilities;
 using Statistics;
 
-namespace HEC.FDA.TestingUtility.Services;
+namespace HEC.FDA.ViewModel.Reporting;
 
 public static class ScenarioRunner
 {
     public static ScenarioResults RunScenario(string elementName, CancellationToken cancellationToken)
+        => RunScenario(FindElement<IASElement>(elementName), cancellationToken,
+            ProgressReporter.ConsoleWrite(), Console.WriteLine);
+
+    public static ScenarioResults RunScenario(IASElement element, CancellationToken cancellationToken,
+        ProgressReporter reporter, Action<string> log)
     {
+        string elementName = element.Name;
+        cancellationToken.ThrowIfCancellationRequested();
         if (string.IsNullOrWhiteSpace(elementName))
         {
             throw new ArgumentException("Scenario element name cannot be empty.", nameof(elementName));
         }
 
-        IASElement element = FindElement<IASElement>(elementName);
-
-        Console.WriteLine($"    Running scenario '{elementName}'...");
+        log($"    Running scenario '{elementName}'...");
 
         FdaValidationResult validation = element.CanCompute();
         if (!validation.IsValid)
@@ -43,12 +54,40 @@ public static class ScenarioRunner
         }
 
         ConvergenceCriteria cc = studyProps.GetStudyConvergenceCriteria();
-        Console.WriteLine($"    Computing with convergence criteria: min={cc.MinIterations}, max={cc.MaxIterations}");
+        log($"    Computing with convergence criteria: min={cc.MinIterations}, max={cc.MaxIterations}");
 
-        ScenarioResults results = scenario.Compute(cc, cancellationToken, computeIsDeterministic: false);
-        Console.WriteLine($"    Scenario computation complete.");
-
-        return results;
+        int completed = 0;
+        void OnProgress(object sender, ProgressReportEventArgs e)
+        {
+            bool finished = e.Progress == ImpactAreaScenarioSimulation.IMPACT_AREA_SIM_COMPLETED;
+            reporter.ReportProgress((int)(100 * (completed + (finished ? 1 : Math.Clamp(e.Progress, 0, 100) / 100f)) / sims.Count));
+            if (finished) completed++;
+        }
+        void OnMessage(object sender, MessageEventArgs e) => log(e.Message.Message);
+        foreach (var sim in sims)
+        {
+            sim.ProgressReport += OnProgress;
+            sim.MessageReport += OnMessage;
+        }
+        try
+        {
+            ScenarioResults results = scenario.Compute(cc, cancellationToken, computeIsDeterministic: false);
+            cancellationToken.ThrowIfCancellationRequested();
+            if (results.ResultsList.Count != sims.Count || results.ResultsList.Any(r => r.IsNull))
+                throw new InvalidOperationException($"Scenario '{elementName}' did not produce complete results.");
+            reporter.ReportProgress(100);
+            log($"    Scenario computation complete.");
+            return results;
+        }
+        finally
+        {
+            foreach (var sim in sims)
+            {
+                sim.ProgressReport -= OnProgress;
+                sim.MessageReport -= OnMessage;
+                MessageHub.Unregister(sim);
+            }
+        }
     }
 
     internal static T FindElement<T>(string elementName) where T : ChildElement

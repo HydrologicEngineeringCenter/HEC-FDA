@@ -1,3 +1,4 @@
+using HEC.FDA.ViewModel.Reporting;
 using HEC.FDA.Model.alternatives;
 using HEC.FDA.Model.alternativeComparisonReport;
 using HEC.FDA.Model.metrics;

@@ -2,7 +2,7 @@ using System.Diagnostics;
 using HEC.FDA.Model.metrics;
 using HEC.FDA.Model.paireddata;
 using HEC.FDA.TestingUtility.Configuration;
-using HEC.FDA.TestingUtility.Reporting;
+using HEC.FDA.ViewModel.Reporting;
 using HEC.FDA.TestingUtility.Services;
 using HEC.FDA.ViewModel;
 using HEC.FDA.ViewModel.AggregatedStageDamage;

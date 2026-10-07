@@ -86,6 +86,11 @@ namespace HEC.FDA.View
             if (vm.Tab != null)
             {
                 IDynamicTab tab = vm.Tab;
+                if (!tab.BaseVM.IsOkToClose())
+                {
+                    e.Cancel = true;
+                    return;
+                }
                 if (tab.IsPoppingIn)
                 {
                     tab.RemoveWindow();
